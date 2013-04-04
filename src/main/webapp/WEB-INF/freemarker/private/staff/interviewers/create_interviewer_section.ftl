@@ -42,33 +42,29 @@
   </div>
 </div>
 <script type="text/javascript">
-// k:name, v:surname, d:email
-var listofcapitals = [{"k": "Juan","v" :"Mingo", "d":"shexpire@hotmail.com"},
-                { "k":"Abuja","v" :"Nigeria", "d":"chel@hotmail.com"},
-{  "k":"Accra","v" :"Ghana", "d":"f2@hotmail.com", "id": "100"},
-{  "k":"Adamstown","v" :"Pitcairn Islands", "d":"bat@hotmail.com"},
-{  "k":"Addis Ababa","v" :"Ethiopia", "d":"sdfe@hotmail.com"},];
-
-
 	$(document).ready(function() {
 
-		
 		var $fname = $("#newInterviewerFirstName");
 		var $lname = $("#newInterviewerLastName");
 		var $email = $("#newInterviewerEmail");
 
-		// Fname autocomplete//
+		// Firstname autocomplete//
 	    $fname.typeaheadmap({
-		"source" : listofcapitals,
-		"key" : "k",
-		"value" : "v",
-		"email" : "d",
-		"items": 8,
-		"listener" : function(k, v, d) {
+		source : function (query, process) {
+                    return $.getJSON("/pgadmissions/user/autosuggest/firstname/" + $fname.val(), function (data) {
+                        return process(data);
+                    });
+		},
+		matcher : function() { return true},
+		key: "k",
+		value: "v",
+		email: "d",
+		items: 8,
+		listener: function(k, v, d) {
 		    $lname.val(v);
 		    $email.val(d);  
 		},
-		"displayer": function(that, item, highlighted) {
+		displayer: function(that, item, highlighted) {
 			var allquery = highlighted+' '+item[that.value]+' ('+item[that.email]+')';
 		    if (that.value != "") {	
 			    return allquery;	
@@ -77,18 +73,24 @@ var listofcapitals = [{"k": "Juan","v" :"Mingo", "d":"shexpire@hotmail.com"},
 		    }
 		}
 	    })
-		// Surname autocomplete//
+	    
+		// Lastname autocomplete//
 	    $lname.typeaheadmap({
-		"source" : function(q, process) { process(listofcapitals)},
-		"key" : "v",
-		"value" : "k",
-		"email" : "d",
-		"items": 8,
-		"listener" : function(k, v, d) {
+		source : function (query, process) {
+                    return $.getJSON("/pgadmissions/user/autosuggest/lastname/" + $lname.val(), function (data) {
+                        return process(data);
+                    });
+        },
+        matcher : function() { return true},
+		key : "v",
+		value : "k",
+		email : "d",
+		items: 8,
+		listener : function(k, v, d) {
 		    $fname.val(v);
 			$email.val(d);
 		},
-		"displayer": function(that, item, highlighted) {
+		displayer: function(that, item, highlighted) {
 			var allquery = item[that.value]+' '+highlighted+' ('+item[that.email]+')';
 		    if (that.value != "") {
 			    return allquery;			
@@ -97,18 +99,24 @@ var listofcapitals = [{"k": "Juan","v" :"Mingo", "d":"shexpire@hotmail.com"},
 		    } 
 		   }
 	    })
-		// Fname autocomplete//
+		
+		// Email autocomplete//
 	    $email.typeaheadmap({
-		"source" : function(q, process) { process(listofcapitals)},
-		"key" : "d",
-		"value" : "v",
-		"email" : "k",
-		"items": 8,
-		"listener" : function(k, v, d) {
+		source : function (query, process) {
+                    return $.getJSON("/pgadmissions/user/autosuggest/email/" + $email.val(), function (data) {
+                        return process(data);
+                    });
+        },
+        matcher : function() { return true},
+		key : "d",
+		value : "v",
+		email : "k",
+		items: 8,
+		listener : function(k, v, d) {
 		    $fname.val(d);
 			$lname.val(v);
 		},
-		"displayer": function(that, item, highlighted) {
+		displayer: function(that, item, highlighted) {
 			var allquery = item[that.email]+' '+item[that.value]+' ('+highlighted+')';
 		    if (that.value != "") {
 			    return allquery;			

@@ -9,6 +9,8 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
@@ -54,30 +56,30 @@ public class FullTextSearchDAO {
     @SuppressWarnings("unchecked")
     private List<RegisteredUser> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<RegisteredUser> comparator) {
         String trimmedSearchTerm = StringUtils.trimToEmpty(searchTerm);
+
         if (StringUtils.isEmpty(trimmedSearchTerm)) {
             return Collections.emptyList();
         }
         
         TreeSet<RegisteredUser> uniqueResults = new TreeSet<RegisteredUser>(comparator);
         
-        FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
-        QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(RegisteredUser.class).get();
-        
-        FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(
-                queryBuilder
-                .keyword()
-                .fuzzy()
-                .withThreshold(.5f)
-                .withPrefixLength(0)
-                .onField(propertyName)
-                .matching(trimmedSearchTerm)
-                .createQuery(), RegisteredUser.class);
-        
-        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class);
-        wildcardCriteria.add(Restrictions.ilike(propertyName, trimmedSearchTerm));
-
-        uniqueResults.addAll(fuzzyQuery.list());
+        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START))
+                .addOrder(Order.asc("lastName")).setMaxResults(25);
         uniqueResults.addAll(wildcardCriteria.list());
+
+        if (StringUtils.length(trimmedSearchTerm) >= 3) {
+            FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
+            QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder()
+                    .forEntity(RegisteredUser.class).get();
+
+            FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(queryBuilder.keyword().fuzzy()
+                    .withThreshold(.5f).withPrefixLength(0).onField(propertyName).matching(trimmedSearchTerm)
+                    .createQuery(), RegisteredUser.class);
+
+            uniqueResults.addAll(fuzzyQuery.list());
+        }
+
         
         return new ArrayList<RegisteredUser>(uniqueResults);
     }

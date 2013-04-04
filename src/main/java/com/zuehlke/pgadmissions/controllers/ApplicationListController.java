@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
@@ -74,6 +75,9 @@ public class ApplicationListController {
         if (applicationSearchDTO.getFilters() == null || reloadFilters) {
             // filters not initialized in session or filter reload requested
             applicationsFilters = getUser().getApplicationsFilters();
+            if (applicationsFilters.isEmpty()) {
+                addFiltersForActiveApplications(applicationsFilters);
+            }
         } else {
             applicationsFilters = applicationSearchDTO.getFilters();
         }
@@ -96,7 +100,6 @@ public class ApplicationListController {
             ApplicationActionsDefinition actionsDefinition = applicationsService.getActionsDefinition(user, applicationForm);
             actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
         }
-
         model.addAttribute("applications", applications);
         model.addAttribute("actionDefinitions", actionDefinitions);
         return APPLICATION_LIST_SECTION_VIEW_NAME;
@@ -151,5 +154,21 @@ public class ApplicationListController {
     @ModelAttribute("messageApplication")
     public ApplicationForm getApplicationForm(@RequestParam(required = false) String application) {
         return applicationsService.getApplicationByApplicationNumber(application);
+    }
+
+    private void addFiltersForActiveApplications(List<ApplicationsFilter> applicationsFilters) {
+        RegisteredUser user = getUser();
+        applicationsFilters.add(getFilterForNonStatus(user, ApplicationFormStatus.APPROVED));
+        applicationsFilters.add(getFilterForNonStatus(user, ApplicationFormStatus.REJECTED));
+        applicationsFilters.add(getFilterForNonStatus(user, ApplicationFormStatus.WITHDRAWN));
+    }
+
+    private ApplicationsFilter getFilterForNonStatus(RegisteredUser user, ApplicationFormStatus status) {
+        ApplicationsFilter notApprovedFilter = new ApplicationsFilter();
+        notApprovedFilter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
+        notApprovedFilter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
+        notApprovedFilter.setUser(user);
+        notApprovedFilter.setSearchTerm(status.displayValue());
+        return notApprovedFilter;
     }
 }

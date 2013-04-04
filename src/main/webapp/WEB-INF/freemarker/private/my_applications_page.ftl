@@ -148,7 +148,7 @@
                                     <button class="btn add">Add</button>
                                  </div>
                                 
-                                <button class="btn btn-primary" type="button" id="search-go">Active applications</button>
+                                <button class="btn btn-primary" type="button" id="add-active-application-filters">Active applications</button>
                                 <button class="btn btn-primary" type="button" id="search-go">Go</button>
                                 <button class="btn" type="button" id="search-reset">Clear</button>
                                 <button class="btn" id="storeFiltersBtn">Store</button>

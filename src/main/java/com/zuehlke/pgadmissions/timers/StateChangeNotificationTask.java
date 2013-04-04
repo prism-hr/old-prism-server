@@ -58,8 +58,8 @@ public class StateChangeNotificationTask extends TimerTask {
 	    log.info(notificationType +  " Notification Task Running");
 	    Transaction transaction = null;
 	    try {
+	        transaction = sessionFactory.getCurrentSession().beginTransaction();
 	    	EmailTemplate template = emailTemplateService.getActiveEmailTemplate(emailTemplateName);
-    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus);
     		transaction.commit();
     		for (ApplicationForm application : applications) {

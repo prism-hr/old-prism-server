@@ -41,9 +41,9 @@ public enum EmailTemplateName {
 	APPLICATION_INTERVIEW_REMINDER("Application interview reminder"),//updated
 	APPLICATION_REVIEW_REMINDER_FIRST("Application review reminder first"),//updated
 	APPLICATION_REVIEW_REMINDER("Application review reminder"),//updated
-	APPLICATION_WITHDRAWN_NOTIFICATION("Application withdrawn notification"), //updated (!!THIS TEMPLATE HAS TO BE IMPORTED INTO THE DB)
-	NEW_USER_SUGGESTION("New user suggestion"), //updated (!!THIS TEMPLATE HAS TO BE IMPORTED INTO THE DB)
-	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation");//not found
+	APPLICATION_WITHDRAWN_NOTIFICATION("Application withdrawn notification"), //updated 
+	NEW_USER_SUGGESTION("New user suggestion"), //not found
+	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation");//ok
 	
 	private final String displayValue;
 	

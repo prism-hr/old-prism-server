@@ -30,6 +30,16 @@ public class SourcesOfInterestPropertyEditorTest {
     }
     
     @Test   
+    public void shouldReturnNullValueIfTextIsEmpty(){ 
+        
+        EasyMock.replay(encryptionHelperMock);
+        editor.setAsText("");
+        EasyMock.verify(encryptionHelperMock);
+        
+        assertNull(editor.getValue());
+    }
+    
+    @Test   
     public void shouldReturnNullIfValueIsNull(){            
         editor.setValue(null);
         assertNull(editor.getAsText());

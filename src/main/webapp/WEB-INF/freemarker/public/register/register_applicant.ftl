@@ -100,7 +100,7 @@
 			            <#if RequestParameters.activationCode?has_content>
 			            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
 			            </#if>
-			            <input id="email" type="text" placeholder="Email Address" name="email" value='${(pendingUser.email?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="email" type="email" placeholder="Email Address" name="email" value='${(pendingUser.email?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 			            <#if RequestParameters.activationCode?has_content>
 	                    </div>
 	                    </#if>
@@ -113,7 +113,7 @@
 					
 					<div class="control-group">
 		                <label class="control-label" for="password">Password <em>*</em></label>
-		                <span class="hint" data-desc="Please enter a password with a minimum of 8 characters."></span>
+		                <span class="hint" data-desc="<@spring.message 'myaccount.newPw'/>"></span>
 		                <div class="controls">
 			            <input id="password" type="password" name="password" placeholder="Password"/>
 	                    <@spring.bind "pendingUser.password" /> 
@@ -124,7 +124,7 @@
 	                </div>
 	                <div class="control-group">
 	                	<label class="control-label" for="password">Confirm <em>*</em></label>
-	                	<span class="hint" data-desc="Please confirm your password."></span>
+	                	<span class="hint" data-desc="<@spring.message 'myaccount.confirmPw'/>"></span>
 			            <div class="controls">
 			            <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm password"/>
 	                    <@spring.bind "pendingUser.confirmPassword" /> 

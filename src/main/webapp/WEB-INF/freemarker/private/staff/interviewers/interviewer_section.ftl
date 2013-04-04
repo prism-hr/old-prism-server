@@ -16,16 +16,22 @@
       <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}">
          -->
         <select id="programInterviewers" class="list-select-from" multiple="multiple" size="8">
-        <optgroup id="default" label="Default interviewers"> <#list programmeInterviewers as interviewer> <option value="${encrypter.encrypt(interviewer.id)}" category="default" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
-        ${interviewer.firstName?html}
-        ${interviewer.lastName?html}
-        </option>
-        </#list> </optgroup>
-        <optgroup id="previous" label="Previous interviewers"> <#list previousInterviewers as interviewer> <option value="${encrypter.encrypt(interviewer.id)}" category="previous" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
-        ${interviewer.firstName?html}
-        ${interviewer.lastName?html}
-        </option>
-        </#list> </optgroup>
+        <optgroup id="default" label="Default interviewers"> 
+            <#list programmeInterviewers as interviewer> 
+                <option value="${encrypter.encrypt(interviewer.id)}" category="default" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
+                ${interviewer.firstName?html}
+                ${interviewer.lastName?html}
+                </option>
+            </#list> 
+        </optgroup>
+        <optgroup id="previous" label="Previous interviewers"> 
+            <#list previousInterviewers as interviewer> 
+                <option value="${encrypter.encrypt(interviewer.id)}" category="previous" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
+                ${interviewer.firstName?html}
+                ${interviewer.lastName?html}
+                </option>
+            </#list> 
+        </optgroup>
       </select>
     </div>
   </div>
@@ -33,7 +39,7 @@
   <!-- Available Reviewer Buttons -->
   <div class="row interviewer-buttons list-select-buttons">
     <div class="field"> <span>
-      <button class="btn" type="button" id="addInterviewerBtn"><span class="icon-down"></span> Add</button>
+      <button class="btn btn-primary" type="button" id="addInterviewerBtn"><span class="icon-down"></span> Add</button>
       <button class="btn btn-danger" type="button" id="removeInterviewerBtn"><span class="icon-up"></span> Remove</button>
       </span> </div>
   </div>
@@ -58,7 +64,7 @@
   </div>
 </div>
 <div id="section_2">
-  <p><strong>Interview Arrangements</strong></p>
+  <h3>Interview Arrangements</h3>
   <div class="row">
     <label class="plain-label normal" for="interviewDate">Interview Date<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
@@ -83,8 +89,7 @@
     <label class="plain-label normal" for="furtherDetails">Interview Instructions for Candidate<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.instructions'/>"></span>
     <div class="field"> <#if assignOnly?? && assignOnly>
-      <textarea id="furtherDetails" readonly disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}
-</textarea>
+      <textarea id="furtherDetails" readonly disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
       <#else>
       <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}
 </textarea>
@@ -100,11 +105,9 @@
     <label class="plain-label normal" for="interviewLocation">Interview Location</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
     <div class="field"> <#if assignOnly?? && assignOnly>
-      <textarea id="interviewLocation" readonly disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}
-</textarea>
+      <textarea id="interviewLocation" readonly disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
       <#else>
-      <textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/">${(interview.locationURL?html)!}
-</textarea>
+      <textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/">${(interview.locationURL?html)!}</textarea>
       </#if>
       <@spring.bind "interview.locationURL" />
       <#list spring.status.errorMessages as error>

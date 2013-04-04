@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 
 @Service("applicationsService")
 @Transactional
@@ -117,7 +120,7 @@ public class ApplicationsService {
 	}
 
 	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,
-	        List<ApplicationsFilter> filters, SortCategory sort, SortOrder order, Integer page) {
+			SearchCategory searchCategory, String term, SortCategory sort, SortOrder order, Integer page) {
 		// default values
 		int pageCount = page == null ? 1 : page;
 		SortCategory sortCategory = sort == null ? SortCategory.APPLICATION_DATE : sort;
@@ -125,8 +128,74 @@ public class ApplicationsService {
 		if (pageCount < 0) {
 			pageCount = 0;
 		}
-		return applicationFormListDAO.getVisibleApplications(user, filters, sortCategory, sortOrder,
+		return applicationFormListDAO.getVisibleApplications(user, searchCategory, term, sortCategory, sortOrder,
 				pageCount, APPLICATION_BLOCK_SIZE);
+
+    public ApplicationActionsDefinition getActionsDefinition(RegisteredUser user, ApplicationForm application) {
+        ApplicationActionsDefinition actions = new ApplicationActionsDefinition();
+        if (user.canSee(application)) {
+            if (application.isUserAllowedToSeeAndEditAsAdministrator(user) || (user == application.getApplicant() && application.isModifiable())) {
+                actions.addAction("view", "View / Edit");
+            } else {
+                actions.addAction("view", "View");
+            }
+        }
+
+        if (user.hasAdminRightsOnApplication(application) && application.isInState("VALIDATION")) {
+            actions.addAction("validate", "Validation");
+        }
+        if (user.hasAdminRightsOnApplication(application) && application.isInState("REVIEW")) {
+            actions.addAction("validate", "Evaluate reviews");
+        }
+
+        if (user.hasAdminRightsOnApplication(application) && application.isInState("INTERVIEW")) {
+            actions.addAction("validate", "Evaluate interview feedback");
+        }
+
+        if (user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application)) {
+            actions.addAction("comment", "Comment");
+        }
+
+        if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState("REVIEW")
+                && !user.hasRespondedToProvideReviewForApplicationLatestRound(application)) {
+            actions.addAction("review", "Add review");
+            actions.setRequiresAttention(true);
+        }
+        if (user.isInterviewerOfApplicationForm(application) && application.isInState("INTERVIEW")
+                && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+            actions.addAction("interviewFeedback", "Add interview feedback");
+            actions.setRequiresAttention(true);
+        }
+        if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable()
+                && !user.getRefereeForApplicationForm(application).hasResponded()) {
+            actions.addAction("reference", "Add reference");
+            actions.setRequiresAttention(true);
+        }
+        if (user == application.getApplicant() && !application.isDecided() && !application.isWithdrawn()) {
+            actions.addAction("withdraw", "Withdraw");
+        }
+        if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart()) {
+            actions.addAction("restartApproval", "Approve");
+            actions.setRequiresAttention(true);
+        }
+
+        if (user.isInRoleInProgram("APPROVER", application.getProgram()) && application.isInState("APPROVAL") && !application.isPendingApprovalRestart()) {
+            Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
+            if (primarySupervisor != null && BooleanUtils.isTrue(primarySupervisor.getConfirmedSupervision())) {
+                actions.addAction("validate", "Approve");
+                actions.setRequiresAttention(true);
+            }
+        }
+
+        if (application.isInState("APPROVAL")) {
+            Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
+            if (primarySupervisor != null && user == primarySupervisor.getUser() && BooleanUtils.isNotTrue(primarySupervisor.getConfirmedSupervision())) {
+                actions.addAction("confirmSupervision", "Confirm supervision");
+                actions.setRequiresAttention(true);
+            }
+        }
+
+        return actions;
 	}
 
 	public void refresh(ApplicationForm applicationForm) {

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
-import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -80,15 +80,25 @@ public class ApplicationListController {
     }
     
     @ModelAttribute("applicationSearchDTO")
+
     public ApplicationSearchDTO getApplicationSearchDTO(){
         return new ApplicationSearchDTO();
     }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
     public String getApplicationListSection(@ModelAttribute("applicationSearchDTO") ApplicationSearchDTO dto, Model model) {
+		RegisteredUser user = getUser();
+		List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(getUser(), dto.getFilters(), dto.getSortCategory(),
                 dto.getOrder(), dto.getBlockCount());
+		Map<String, ApplicationActionsDefinition> actionDefinitions = new LinkedHashMap<String, ApplicationActionsDefinition>();
+		for (ApplicationForm applicationForm : applications) {
+            ApplicationActionsDefinition actionsDefinition = applicationsService.getActionsDefinition(user, applicationForm);
+            actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
+        }
+		
         model.addAttribute("applications", applications);
+		model.addAttribute("actionDefinitions", actionDefinitions);
         return APPLICATION_LIST_SECTION_VIEW_NAME;
     }
 

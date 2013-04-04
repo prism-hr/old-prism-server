@@ -46,27 +46,20 @@
 
 							<div>
 							
-								<div id="existingUsers">
+								<div id="existingUsers"  class="tableContainer table table-condensed">
 									<table class="data" border="0">
 										<colgroup>
-											<col style="width: 20px;" />
-											<col style="width: 472px;" />
+											<col style="width: 30px;" />
+											<col/>
 										</colgroup>
-										<thead>
-											<tr>
-												<th scope="col">&nbsp;</th>
-												<th scope="col">Name</th>
-												<th scope="col">&nbsp;</th>
-											</tr>
-										</thead>
 										<tbody>
 											<tr>
 												<td colspan="4" class="scrollparent">
 													<div class="scroll">
-														<table>
+														<table class="table-hover table-hover table-striped">
 															<colgroup>
-																<col style="width: 20px;" />
-																<col style="width: 672px;" />
+																<col style="width:30px;" />
+																<col  />
 															</colgroup>
 															<tbody>
 																<#list superadmins as superadmin>
@@ -85,7 +78,7 @@
 
 								<div class="alert alert-info">
           							<i class="icon-info-sign"></i> 
-									Manage superadministrators. You can also <a class="proceed-link" href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
+									Manage superadministrators. You can also <a class="proceed-link" href="<@spring.url '/manageUsers/edit'/>"><strong>manage programme roles</strong>.</a>
 								</div>
 
 								<div class="row-group">

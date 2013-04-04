@@ -1,4 +1,4 @@
-<p><strong>Interview Arrangements</strong></p>
+<h3>Interview Arrangements</h3>
 <div class="row">
 	<label class="plain-label normal" for="interviewDate">Interview Date<em>*</em></label>
 	<span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>

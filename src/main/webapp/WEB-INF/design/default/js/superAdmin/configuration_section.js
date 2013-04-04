@@ -6,22 +6,41 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------
 	
 	// Delete buttons
+	
+	
+	function checkTableForm() {
+		var rowCount = $('#registryUsers tr').length;
+		if (rowCount == 0) {
+			$('#registryUsers').css('display', 'none');
+		} else {
+			$('#registryUsers').css('display', 'table');
+		}
+	}
+	checkTableForm();
+
+	function displaytableForm() {
+		$('#registryUsers').css('display', 'table');
+	}
+
+	
 	$('#registryUsers').on('click', '.button-delete', function()
 	{
 		var $row = $(this).closest('tr');
 		$row.remove();
+		checkTableForm();
 		updateRegistryForm();
+		
 	});
 	
 	/* Add button. */
 	$('#registryUserAdd').click(function()
 	{
-		
+		displaytableForm();
 		var errors = false;
 		$('#section-registryusers div.alert-error').remove();
 		
 		// Allow a maximum of three users.
-		var user_count = $('#registryUsers .scroll tr').length;
+		var user_count = $('#registryUsers tr').length;
 		if (user_count >= 3)
 		{
 			$('#reg-email').after('<div class="alert alert-error"> <i class="icon-warning-sign"> Only three registry users can be specified.</div>');
@@ -47,7 +66,7 @@ $(document).ready(function()
 
 		if (!errors)
 		{
-			$('#registryUsers .scroll tbody').append('<tr>'
+			$('#registryUsers tbody').append('<tr>'
 				+ '<td>'
 				+ $('#reg-firstname').val() + ' ' + $('#reg-lastname').val() + ' (' + $('#reg-email').val() + ')'
 				+ '</td>'
@@ -75,7 +94,7 @@ $(document).ready(function()
 		$('#regContactData input.registryUsers').remove();
 		
 		// Grab the hidden field values from the table.
-		$('#registryUsers .scroll tbody tr').each(function()
+		$('#registryUsers tbody tr').each(function()
 		{
 			var $row			= $(this);
 			var id				= $('input[name="id"]', $row).val();
@@ -142,7 +161,7 @@ $(document).ready(function()
 
 function updateRegistryForm()
 {
-	var user_count = $('#registryUsers .scroll tr').length;
+	var user_count = $('#registryUsers tr').length;
 	if (user_count >= 3)
 	{
 		$('#reg-firstname').attr('disabled', 'disabled');
@@ -163,6 +182,7 @@ function updateRegistryForm()
 		$('#reg-lastname').parent().parent().children('.plain-label').removeClass('grey-label');
 		$('#reg-email').parent().parent().children('.plain-label').removeClass('grey-label');
 	}
+	checkTableForm();
 }
 
 function validateReminderInterval()

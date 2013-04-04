@@ -21,6 +21,11 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -28,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
+@Indexed
 public class RegisteredUser extends Authorisable implements UserDetails, Comparable<RegisteredUser>, Serializable {
 
     private static final long serialVersionUID = 7913035836949510857L;
@@ -37,18 +43,23 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     private Integer id;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName2;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName3;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String email;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
@@ -668,6 +679,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     @Override
     public String toString() {
-        return "RegisteredUser [id=" + id + ", username=" + username + "]";
+        return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName,
+                lastName, email, enabled);
     }
 }

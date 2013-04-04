@@ -6,12 +6,12 @@
             <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80" >${(referee.reference.comment?html)!}</textarea>
         </div>
     </div>
-    <div class="row"><div id="commentError_${encRefereeId}" class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div></div>
+    <div class="row"><div id="commentError_${encRefereeId}" class="alert alert-error"> <i class="icon-warning-sign"></i>  </div></div>
 </div>
 
 <div class="row-group">
     <div class="row">
-        <label class="plain-label" for="referenceDocument_${encRefereeId}">Attach Document</label>
+        <label class="plain-label" for="referenceDocument_${encRefereeId}">Attach Document (PDF)</label>
         <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
         <div class="field <#if referee.reference.documents[0]??>uploaded</#if>" id="psUploadFields">
             <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">

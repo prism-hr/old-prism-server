@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -136,6 +137,12 @@ public class SubmitApplicationFormController {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
+    }
+    
+    @ModelAttribute("actionsDefinition")
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+        ApplicationForm application = getApplicationForm(applicationId);
+        return applicationService.getActionsDefinition(getUser(), application);
     }
 
     @ModelAttribute("user")

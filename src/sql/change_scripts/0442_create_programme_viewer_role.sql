@@ -1,4 +1,4 @@
-CREATE TABLE PROGRAM_VIEWER_LINK (
+CREATE TABLE IF NOT EXISTS PROGRAM_VIEWER_LINK (
   viewer_id int(10) UNSIGNED NOT NULL,
   program_id int(10) UNSIGNED NOT NULL,
   KEY user_program_user_fk (viewer_id),

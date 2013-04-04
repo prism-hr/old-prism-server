@@ -234,7 +234,7 @@
 		          </section>
 		          
 		          <!-- Additional Information -->
-		          <section id="additionalInformationSection" class="folding form-rows lightblue" <#if additionalInformationError> error</#if>>
+		          <section id="additionalInformationSection" class="folding form-rows lightblue <#if additionalInformationError> error</#if>">
 		          </section>
 		
 		          <hr />

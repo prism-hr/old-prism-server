@@ -8,8 +8,14 @@
         <span class="icon-status ${applicationForm.status.displayValue()?lower_case?replace(' ','-')}"></span>
       </div>
 
-    
-    <#include "/private/common/actions.ftl"/> 
+        <#assign actions = actionsDefinition.actions>
+         
+        <select id="actionTypeSelect" class="actionType" name="app_[${applicationForm.applicationNumber}]">
+            <option>Actions</option>
+            <#list actions?keys as actionName>
+                <option value="${actionName}">${actions[actionName]}</option>
+            </#list>
+        </select>
     
    </div>
   <div id="tools">

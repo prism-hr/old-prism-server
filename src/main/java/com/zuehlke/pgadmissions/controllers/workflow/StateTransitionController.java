@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -85,7 +86,12 @@ public class StateTransitionController {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
-
+    }
+    
+    @ModelAttribute("actionsDefinition")
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+        ApplicationForm application = getApplicationForm(applicationId);
+        return applicationsService.getActionsDefinition(getUser(), application);
     }
 
     RegisteredUser getCurrentUser() {

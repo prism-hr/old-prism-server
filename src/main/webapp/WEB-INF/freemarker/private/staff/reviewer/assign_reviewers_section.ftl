@@ -31,7 +31,7 @@
 <div class="row list-select-buttons">
 	<div class="field">
 	  <span>
-	    <button class="btn" type="button" id="addReviewerBtn"><span class="icon-down"></span> Add</button>
+	    <button class="btn btn-primary" type="button" id="addReviewerBtn"><span class="icon-down"></span> Add</button>
 	    <button class="btn btn-danger" type="button" id="removeReviewerBtn"><span class="icon-up"></span> Remove</button>
 	  </span>
 	</div>

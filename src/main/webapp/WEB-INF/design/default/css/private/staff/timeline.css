@@ -28,7 +28,7 @@
 #timeline-statuses .box ul { margin: 0 30px; padding: 10px 0; }
 #timeline-statuses .box ul li { margin-bottom: .25em; }
 
-#timeline-statuses .box h3.answer { line-height: 1; margin-top: 0; padding: 5px 10px 5px 40px; }
+#timeline-statuses .box h3.answer { line-height: 1; margin-top: 0; padding: 0 10px 0 40px; }
 #timeline-statuses .box h3.answer span { background: url(../../../images/icon_answers.png) no-repeat; display: inline-block; height: 17px; margin: 0 10px 0 -30px; vertical-align: text-top; width: 19px; }
 #timeline-statuses .box h3.answer.unsure span { background-position: 0 0; }
 #timeline-statuses .box h3.answer.no span { background-position: -19px 0; }
@@ -171,6 +171,9 @@
   position: relative;
   margin-top: 40px;
 }
+#timelineview section:last-child {
+	margin-bottom:0px;
+}
 #timelineview ul.tabs {
   margin-top: -43px;
   background: none;
@@ -203,6 +206,7 @@
   border-radius: 2px 2px 0 0;
   color: #FFFFFF;
   padding: 0px 10px;
+  font-size:13px;
   text-shadow: 0 1px #26538C;
 }
 #timelineview ul.tabs li a:hover {

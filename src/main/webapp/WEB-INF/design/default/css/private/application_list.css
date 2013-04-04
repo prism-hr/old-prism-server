@@ -52,7 +52,7 @@ td.status { text-align: center !important; }
   background-position:0 0;
   background-repeat:repeat;
   margin-top:0;
-  text-indent: -51px;
+  text-indent: -53px;
   text-decoration: none;
   text-align: center;
   cursor: pointer !important;
@@ -63,7 +63,7 @@ td.status { text-align: center !important; }
 }
 
 /* Search box. */
-#search-box { background: #FFF; border: 1px solid #AAA; margin-left: 47px; padding: 1px; position: relative; text-align: right; border-radius: 4px; padding-right: 10px; }
+#search-box { background: #FFF; border: 1px solid #AAA; margin-left: 56px; padding: 1px; position: relative; text-align: right; border-radius: 4px; padding-right: 10px; }
 #search-box label { font-weight: bold; }
 #search-box input, #search-box select { border: 1px solid #CCC; margin-left: 1em; }
 #search-box input { padding: 3px; width: 300px; }

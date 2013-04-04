@@ -185,7 +185,7 @@
                         </table>
                         
                         <div id="loadMoreApplicationsTable" border="0">
-                            <a id="loadMoreApplications" class="proceed-link btn btn-large btn-block" href="javascript:void(0);">Display next 50 Applications</a>
+                            <a id="loadMoreApplications" class="proceed-link btn btn-large btn-block btn-primary" href="javascript:void(0);">Display next 50 Applications</a>
                         </div>
 
                     </div>

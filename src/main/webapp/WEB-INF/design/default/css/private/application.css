@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 
-section.form-rows { margin-bottom: 7px; position: relative; }
+section.form-rows { margin-bottom: 10px; position: relative; }
 body.old-ie section.form-rows { width: 100%; }
 body.ie9 section.form-rows { margin-bottom: 0; }
 body.ie9 section.form-rows > div { margin-bottom: 10px; }
@@ -14,7 +14,7 @@ section.form-rows h2,
   -moz-border-radius: 4px;
   border-radius: 4px;
   box-shadow: none;
-  color: #FFF; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; }
+  color: #FFF; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 10px; }
 section.form-rows h2 .left { background: url(../../images/bg_expand_arrow.png) no-repeat; float: left; height: 11px; margin: 5px 4px 0 0; width: 11px; }
 section.form-rows h2.open .left { background-position: 0 -11px; }
 section.form-rows h2 .status { 

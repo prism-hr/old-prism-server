@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -164,6 +165,12 @@ public class ApprovalController {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return application;
+    }
+    
+    @ModelAttribute("actionsDefinition")
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+        ApplicationForm application = getApplicationForm(applicationId);
+        return applicationsService.getActionsDefinition(getUser(), application);
     }
 
     @ModelAttribute("programmeSupervisors")

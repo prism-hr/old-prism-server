@@ -75,7 +75,7 @@
 						<!-- Modal -->
 						<div id="previewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						  <div class="modal-header">
-						    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">ï¿½</button>
 						    <h3 id="previewModalLabel"></h3>
 						  </div>
 						  <div id="previewModalContent" class="modal-body">
@@ -98,7 +98,7 @@
 
                                     <div class="row-group">
                                         <div class="row">
-                                            <label class="plain-label" for="emailTemplateType">Template</label> <span data-desc="Select the template to edit" class="hint"></span>
+                                            <label class="plain-label" for="emailTemplateType">Template <em>*</em></label> <span data-desc="Select the template to edit" class="hint"></span>
                                             <div class="field">
                                                 <select name="emailTemplateType" id="emailTemplateType" class="templateType">
                                                     <option value="default">Template...</option> <#list templateTypes as type>
@@ -147,7 +147,7 @@
 	  									<form>
 	                                    <div class="row-group">
 	                                        <div class="row">
-	                                            <label class="plain-label" for="throttoleSwitchOnId">Portico Interface</label><span data-desc="Enable/disable the Portico interface" class="hint"></span> 
+	                                            <label class="plain-label" for="throttoleSwitchOnId">Portico Interface <em>*</em></label><span data-desc="Enable/disable the Portico interface" class="hint"></span> 
 	                                            <div class="field"> 
 	                                            	<input id="throttoleSwitchOnId" type="radio" name="switch" value="on"> On </input> 
 	                                            	<input type="radio" name="switch" value="off"> Off </input>
@@ -155,9 +155,9 @@
 	                                        </div>
 	
 	                                        <div class="row">
-	                                            <label class="plain-label" for="batchSizeId">Throttling batch size</label> <span data-desc="Maximum number of rejected and withdrawn applications to send to Portico every night (0 = no limit)" class="hint"></span>                                            
+	                                            <label class="plain-label" for="batchSizeId">Throttling batch size <em>*</em></label> <span data-desc="Maximum number of rejected and withdrawn applications to send to Portico every night (0 = no limit)" class="hint"></span>                                            
 	                                        	<div class="field">
-	                                            	<input type="text" id="batchSizeId" />
+	                                            	<input type="text" id="batchSizeId" class="input-small" />
 													<input type="hidden" id="throttleId" />
 	                                        	</div>
 	                                    	</div>

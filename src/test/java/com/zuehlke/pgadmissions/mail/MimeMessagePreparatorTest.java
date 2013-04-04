@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_APPROVAL_REMINDER;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -15,6 +17,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,6 +26,9 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.test.utils.MultiPartMimeMessageParser;
 
 import freemarker.template.Configuration;
@@ -41,6 +47,10 @@ public class MimeMessagePreparatorTest {
     private String template;
 
     private String subject;
+    
+    private EmailTemplate emailTemplate;
+    
+    private EmailTemplateName emailTemplateName;
 
     private InternetAddress[] tos;
 
@@ -48,6 +58,12 @@ public class MimeMessagePreparatorTest {
 
     @Before
     public void setUp() throws AddressException, UnsupportedEncodingException {
+    	
+    	
+    	emailTemplate = new EmailTemplateBuilder().active(true).id(1L).build();
+    	
+    	emailTemplateName = APPLICATION_APPROVAL_REMINDER;
+    	
         template = "template";
 
         tos = new InternetAddress[] { new InternetAddress("email@bla.com"), new InternetAddress("dummy@test.com") };
@@ -67,8 +83,8 @@ public class MimeMessagePreparatorTest {
 
     @Test
     public void stripHtmlWithListingAndSendMultiPartMimeMessage() throws IOException, Exception {
-        EasyMock.expect(configMock.getTemplate(template)).andReturn(new ApprovalOutcomeHtmlTemplate());
-        EasyMock.replay(freeMarkerConfigMock, configMock);
+    	String templateContent = FileUtils.readFileToString(FileUtils.toFile(getClass().getResource("/mail/approval_outcome.html")));
+    	emailTemplate.setContent(templateContent);
 
         final ArrayList<MimeMessage> messages = new ArrayList<MimeMessage>();
         final FakeLoggingMailSender mailSender = new FakeLoggingMailSender() {
@@ -82,7 +98,7 @@ public class MimeMessagePreparatorTest {
         };
 
         mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
+        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, emailTemplateName, emailTemplate.getContent(), model, replyToAddress);
         mailSender.send(msgPreparator);
 
         Assert.assertEquals(1, messages.size());
@@ -98,8 +114,8 @@ public class MimeMessagePreparatorTest {
 
     @Test
     public void stripHtmlWithButtonAndSendMultiPartMimeMessage() throws IOException, Exception {
-        EasyMock.expect(configMock.getTemplate(template)).andReturn(new InterviewEvaluationRequestTemplate());
-        EasyMock.replay(freeMarkerConfigMock, configMock);
+    	String templateContent = FileUtils.readFileToString(FileUtils.toFile(getClass().getResource("/mail/interview_evaluation_request.html")));
+    	emailTemplate.setContent(templateContent);
 
         final ArrayList<MimeMessage> messages = new ArrayList<MimeMessage>();
         final FakeLoggingMailSender mailSender = new FakeLoggingMailSender() {
@@ -113,7 +129,7 @@ public class MimeMessagePreparatorTest {
         };
 
         mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
+        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, emailTemplateName, emailTemplate.getContent(), model, replyToAddress);
         mailSender.send(msgPreparator);
 
         Assert.assertEquals(1, messages.size());
@@ -129,8 +145,8 @@ public class MimeMessagePreparatorTest {
     
     @Test
     public void stripHtmlWithTwoButtonAndSendMultiPartMimeMessage() throws IOException, Exception {
-        EasyMock.expect(configMock.getTemplate(template)).andReturn(new ReviewRequestReminderTemplate());
-        EasyMock.replay(freeMarkerConfigMock, configMock);
+    	String templateContent = FileUtils.readFileToString(FileUtils.toFile(getClass().getResource("/mail/review_request_reminder.html")));
+    	emailTemplate.setContent(templateContent);
 
         final ArrayList<MimeMessage> messages = new ArrayList<MimeMessage>();
         final FakeLoggingMailSender mailSender = new FakeLoggingMailSender() {
@@ -144,7 +160,7 @@ public class MimeMessagePreparatorTest {
         };
 
         mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
+        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, emailTemplateName, emailTemplate.getContent(), model, replyToAddress);
         mailSender.send(msgPreparator);
 
         Assert.assertEquals(1, messages.size());
@@ -160,8 +176,8 @@ public class MimeMessagePreparatorTest {
     
     @Test
     public void stripHtmlAndNoLeadingWhitespacesAndSendMultiPartMimeMessage() throws IOException, Exception {
-        EasyMock.expect(configMock.getTemplate(template)).andReturn(new InterviewConfirmationTemplate());
-        EasyMock.replay(freeMarkerConfigMock, configMock);
+    	String templateContent = FileUtils.readFileToString(FileUtils.toFile(getClass().getResource("/mail/interview_confirmation.html")));
+    	emailTemplate.setContent(templateContent);
 
         final ArrayList<MimeMessage> messages = new ArrayList<MimeMessage>();
         final FakeLoggingMailSender mailSender = new FakeLoggingMailSender() {
@@ -175,7 +191,7 @@ public class MimeMessagePreparatorTest {
         };
 
         mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
+        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, emailTemplateName, emailTemplate.getContent(), model, replyToAddress);
         mailSender.send(msgPreparator);
 
         Assert.assertEquals(1, messages.size());
@@ -187,65 +203,5 @@ public class MimeMessagePreparatorTest {
         String plainTextMessage = parsedMessage.get(0);
 
         Assert.assertEquals("Dear apply, \n\nWe are pleased to confirm that your Application TMRMBISING01-2012-000005 for \nUCLMRes Medical and Biomedical Imaging has been advanced to interview. \n\nThe interview will take place at 07:00 on 27 Sep 2012. \n\nTesting. \n\n *  Get Directions: http://www.google.co.uk/ \n *  View/Update Application: http://pgadmissions-sit.zuehlke.com/pgadmissions/application?view=view&applicationId=TMRMBISING01-2012-000005 \n\nPlease let us know by e-mail <admin@aktest.com> if you are unable to attend. \n\nYours sincerely,\nUCL Prism \n\n University College London, Gower Street, London, WC1E 6BT\n Tel: +44 (0) 20 7679 2000\n \u00a9 UCL 1999\u20132012 \n\nIf the links do not work in your email client copy and paste them into your browser.", plainTextMessage);
-    }
-
-    class ApprovalOutcomeHtmlTemplate extends Template {
-        public ApprovalOutcomeHtmlTemplate() throws Exception {
-            super(null, new StringReader(""), null);
-        }
-
-        @Override
-        public void process(Object rootMap, Writer out) {
-            try {
-                out.write(FileUtils.readFileToString(new File("src/test/resources/mail/approval_outcome.html")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    class InterviewEvaluationRequestTemplate extends Template {
-        public InterviewEvaluationRequestTemplate() throws Exception {
-            super(null, new StringReader(""), null);
-        }
-
-        @Override
-        public void process(Object rootMap, Writer out) {
-            try {
-                out.write(FileUtils.readFileToString(new File("src/test/resources/mail/interview_evaluation_request.html")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    
-    class ReviewRequestReminderTemplate extends Template {
-        public ReviewRequestReminderTemplate() throws Exception {
-            super(null, new StringReader(""), null);
-        }
-
-        @Override
-        public void process(Object rootMap, Writer out) {
-            try {
-                out.write(FileUtils.readFileToString(new File("src/test/resources/mail/review_request_reminder.html")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    
-    class InterviewConfirmationTemplate extends Template {
-        public InterviewConfirmationTemplate() throws Exception {
-            super(null, new StringReader(""), null);
-        }
-
-        @Override
-        public void process(Object rootMap, Writer out) {
-            try {
-                out.write(FileUtils.readFileToString(new File("src/test/resources/mail/interview_confirmation.html")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

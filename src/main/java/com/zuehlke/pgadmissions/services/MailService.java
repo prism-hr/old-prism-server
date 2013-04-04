@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_UPDATED_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_WITHDRAWN_NOTIFICATION;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,12 +22,14 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -36,15 +41,18 @@ public class MailService {
     private final Logger log = LoggerFactory.getLogger(MailService.class);
     private final MessageSource msgSource;
 
+    private final EmailTemplateService emailTemplateService;
+    
     public MailService() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, MessageSource msgSource) {
+    public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, MessageSource msgSource, EmailTemplateService emailTemplateService) {
         this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
         this.mailsender = mailsender;
         this.msgSource = msgSource;
+        this.emailTemplateService=emailTemplateService;
     }
 
     @Transactional
@@ -52,12 +60,13 @@ public class MailService {
         List<RegisteredUser> administrators = form.getProgram().getAdministrators();
         String mailSubject = resolveMessage("application.update", form.getApplicationNumber(), form.getProgram().getTitle(),
                 form.getApplicant().getFirstName(), form.getApplicant().getLastName());
+        EmailTemplate template = emailTemplateService.getActiveEmailTemplate(APPLICATION_UPDATED_CONFIRMATION);
         for (RegisteredUser admin : administrators) {
             try {
                 Map<String, Object> model = createModel(form);
                 model.put("admin", admin);
                 InternetAddress toAddress = createAddress(admin);
-                delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
+                delegateToMailSender(toAddress, null, mailSubject, APPLICATION_UPDATED_CONFIRMATION, template.getContent(), model);
             } catch (Exception e) {
                 log.warn("error while sending email", e);
             }
@@ -69,7 +78,7 @@ public class MailService {
                         Map<String, Object> model = createModel(form);
                         model.put("admin", interviewer.getUser());
                         InternetAddress toAddress = createAddress(interviewer.getUser());
-                        delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
+                        delegateToMailSender(toAddress, null, mailSubject, APPLICATION_UPDATED_CONFIRMATION, template.getContent(), model);
                     } catch (Exception e) {
                         log.warn("error while sending email", e);
                     }
@@ -82,7 +91,7 @@ public class MailService {
                     Map<String, Object> model = createModel(form);
                     model.put("admin", approver);
                     InternetAddress toAddress = createAddress(approver);
-                    delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
+                    delegateToMailSender(toAddress, null, mailSubject, APPLICATION_UPDATED_CONFIRMATION, template.getContent(), model);
                 } catch (Exception e) {
                     log.warn("error while sending email", e);
                 }
@@ -205,12 +214,13 @@ public class MailService {
         try {
             Map<String, Object> model = createModel(application);
             model.put("user", recipient);
+            EmailTemplate template = emailTemplateService.getActiveEmailTemplate(APPLICATION_WITHDRAWN_NOTIFICATION);
 
             InternetAddress toAddress = createAddress(recipient);
             String mailSubject = resolveMessage("application.withdrawal", application.getApplicationNumber(), application.getProgram().getTitle(), application
                     .getApplicant().getFirstName(), application.getApplicant().getLastName());
 
-            delegateToMailSender(toAddress, null, mailSubject, "private/staff/mail/application_withdrawn_notification.ftl", model);
+            delegateToMailSender(toAddress, null, mailSubject, APPLICATION_WITHDRAWN_NOTIFICATION, template.getContent(), model);
         } catch (Exception e) {
             log.warn("error while sending email", e);
         }
@@ -236,8 +246,8 @@ public class MailService {
         }
     }
 
-    private void delegateToMailSender(InternetAddress toAddress, InternetAddress[] ccAddresses, String subject, String template, Map<String, Object> model) {
-        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject, template, model, null);
+    private void delegateToMailSender(InternetAddress toAddress, InternetAddress[] ccAddresses, String subject, EmailTemplateName templateName, String templateContent, Map<String, Object> model) {
+        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject, templateName, templateContent, model, null);
         mailsender.send(msgPreparator);
     }
 }

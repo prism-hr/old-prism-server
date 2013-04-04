@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_REMINDER_FIRST;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,14 +14,17 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class InterviewerMailSender extends MailSender {
 
-	public InterviewerMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource) {
-		super(mimeMessagePreparatorFactory, mailSender, msgSource);
+	public InterviewerMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource, EmailTemplateService emailTemplateService) {
+		super(mimeMessagePreparatorFactory, mailSender, msgSource, emailTemplateService);
 	}
 
 	Map<String, Object> createModel(Interviewer interviewer) {
@@ -35,24 +42,26 @@ public class InterviewerMailSender extends MailSender {
 	}
 
 	public void sendInterviewerNotification(Interviewer interviewer) {
-		internalSendMail(interviewer, "interview.notification.interviewer", "private/interviewers/mail/interviewer_notification_email.ftl");
+		EmailTemplate tempalte = getDefaultEmailtemplate(INTERVIEWER_NOTIFICATION);
+		internalSendMail(interviewer, "interview.notification.interviewer", INTERVIEWER_NOTIFICATION, tempalte.getContent());
 	}
 
 	public void sendInterviewerReminder(Interviewer interviewer, boolean firstReminder) {
 		String subject = "interview.feedback.request.reminder";
-		String template = "private/interviewers/mail/interviewer_reminder_email.ftl";
+		EmailTemplateName templateName = INTERVIEWER_REMINDER;
 		if (firstReminder) {
 			subject = "interview.feedback.request";
-			template = "private/interviewers/mail/interviewer_reminder_email_first.ftl";
+			templateName= INTERVIEWER_REMINDER_FIRST;
 		}
-		internalSendMail(interviewer, subject, template);
+		EmailTemplate template = getDefaultEmailtemplate(templateName);
+		internalSendMail(interviewer, subject, templateName, template.getContent());
 	}
 
-	private void internalSendMail(Interviewer interviewer, String subjectCode, String template) {
+	private void internalSendMail(Interviewer interviewer, String subjectCode, EmailTemplateName templateName, String templateContent) {
 		InternetAddress toAddress = createAddress(interviewer.getUser());
 		String subject = resolveMessage(subjectCode, interviewer.getInterview().getApplication());
 
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
-				template, createModel(interviewer), null));
+				templateName, templateContent, createModel(interviewer), null));
 	}
 }

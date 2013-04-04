@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_APPROVAL_REMINDER;
+import static org.easymock.EasyMock.createMock;
+
 import java.io.IOException;
 
 import javax.mail.internet.MimeMessage;
@@ -15,16 +18,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 import freemarker.template.TemplateException;
 
@@ -35,6 +41,7 @@ public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithF
     private ConfigurationService personServiceMock;
     
     private AdminMailSender adminMailSender;
+    private EmailTemplateService templateServiceMock;
 
     @Test
     public void shouldSendApproverEmailWithRegistrationLink() throws IOException {
@@ -56,7 +63,9 @@ public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithF
                 .latestApprovalRound(latestApprovalRound).applicationNumber("007").applicant(applicant)
                 .program(program).build();
 
-        String expTemplate = "private/approvers/mail/application_approval_reminder.ftl";
+        
+        EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application approval reminder template - pgadmissions/register?activationCode=1&directToUrl=/approved/moveToApproved?applicationId=007&activationCode=1").name(APPLICATION_APPROVAL_REMINDER).build();
         
         fakeLoggingMailSender.registerListeners(new FakeLoggingMailSenderListener() {
             
@@ -91,13 +100,14 @@ public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithF
             }
         });
         
-        adminMailSender.sendMailsForApplication(application, "approval.request.reminder", expTemplate, NotificationType.APPROVAL_REMINDER);
+        adminMailSender.sendMailsForApplication(application, "approval.request.reminder", APPLICATION_APPROVAL_REMINDER, template.getContent(), NotificationType.APPROVAL_REMINDER);
     }
     
     @Before
     public void setup() throws IOException, TemplateException {
         fakeLoggingMailSender = new FakeLoggingMailSender();
         personServiceMock = EasyMock.createMock(ConfigurationService.class);
-        adminMailSender = new AdminMailSender(mimeMessagePreparatorFactory, fakeLoggingMailSender, messageSource, personServiceMock);
+        templateServiceMock = createMock(EmailTemplateService.class);
+        adminMailSender = new AdminMailSender(mimeMessagePreparatorFactory, fakeLoggingMailSender, messageSource, personServiceMock, templateServiceMock);
     }
 }

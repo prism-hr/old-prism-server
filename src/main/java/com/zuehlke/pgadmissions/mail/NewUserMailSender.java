@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,15 +13,17 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class NewUserMailSender extends MailSender {
 
-	public NewUserMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource) {
-		super(mimeMessagePreparatorFactory, mailSender, msgSource);
+	public NewUserMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource, EmailTemplateService emailTemplateService) {
+		super(mimeMessagePreparatorFactory, mailSender, msgSource, emailTemplateService);
 	}
 
 	public Map<String, Object> createModel(RegisteredUser user) {
@@ -78,7 +82,8 @@ public class NewUserMailSender extends MailSender {
 	    InternetAddress toAddress = createAddress(user);	    
 	    Map<String, Object> model = createModel(user);
 	    String subject = createSubject(model, resent);
-	    javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/staff/mail/new_user_suggestion.ftl", model, null));
+	    EmailTemplate template = getDefaultEmailtemplate(NEW_USER_SUGGESTION);
+	    javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, NEW_USER_SUGGESTION, template.getContent(), model, null));
 	}
 	
 	private String createSubject(Map<String, Object> model, boolean reminder) {

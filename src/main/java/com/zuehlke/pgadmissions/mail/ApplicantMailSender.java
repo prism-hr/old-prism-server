@@ -12,8 +12,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSender extends StateChangeMailSender {
@@ -21,8 +23,8 @@ public class ApplicantMailSender extends StateChangeMailSender {
 	private final ConfigurationService personService;
 
     public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,//
-            MessageSource msgSource, ConfigurationService personService) {
-        super(mimeMessagePreparatorFactory, mailSender, msgSource);
+            MessageSource msgSource, ConfigurationService personService, EmailTemplateService emailTemplateService) {
+        super(mimeMessagePreparatorFactory, mailSender, msgSource, emailTemplateService);
         this.personService = personService;
     }
 
@@ -52,10 +54,10 @@ public class ApplicantMailSender extends StateChangeMailSender {
 	}
 
 	@Override
-	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename, NotificationType notificationType) {
+	public void sendMailsForApplication(ApplicationForm form, String messageCode, EmailTemplateName templateName, String templateContent, NotificationType notificationType) {
 		InternetAddress toAddress = createAddress(form.getApplicant());
 		String subject = resolveSubject(form, messageCode);
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, templatename, createModel(form), null));
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, templateName, templateContent, createModel(form), null));
 	}
 
 	private String resolveSubject(ApplicationForm form, String messageCode) {

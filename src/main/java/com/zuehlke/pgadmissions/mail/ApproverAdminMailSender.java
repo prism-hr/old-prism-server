@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPROVAL_NOTIFICATION;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,15 +15,17 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApproverAdminMailSender extends MailSender {
 
     public ApproverAdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-            JavaMailSender mailSender, MessageSource msgSource) {
-		super(mimeMessagePreparatorFactory, mailSender, msgSource);
+            JavaMailSender mailSender, MessageSource msgSource, EmailTemplateService emailTemplateService) {
+		super(mimeMessagePreparatorFactory, mailSender, msgSource, emailTemplateService);
 	}
 
 	Map<String, Object> createModel(RegisteredUser user, ApplicationForm application) {
@@ -43,11 +47,12 @@ public class ApproverAdminMailSender extends MailSender {
 		approversAndAdmins.addAll(application.getProgram().getAdministrators());
 		Set<RegisteredUser> uniqueUsers = new HashSet<RegisteredUser>(approversAndAdmins);
 		ApplicationFormStatus previousStage = application.getOutcomeOfStage();
+		EmailTemplate template = getDefaultEmailtemplate(APPROVAL_NOTIFICATION);
 		for (RegisteredUser user : uniqueUsers) {
 			InternetAddress toAddress = createAddress(user);
 			String subject = resolveMessage("approval.notification.approverAndAdmin", application, previousStage);
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
-					"private/approvers/mail/approval_notification_email.ftl", createModel(user, application), null));
+					APPROVAL_NOTIFICATION, template.getContent(), createModel(user, application), null));
 		}
 	}
 }

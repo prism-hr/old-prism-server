@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.timers;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_REVIEW_NOTIFICATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -21,13 +22,17 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.ApplicantMailSender;
 import com.zuehlke.pgadmissions.mail.StateChangeMailSender;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 public class StateChangeNotificationTaskTest {
 
@@ -37,9 +42,11 @@ public class StateChangeNotificationTaskTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private StateChangeMailSender applicationMailSenderMock;
 	private String subjectMessage;
-	private String emailTemplate;
 	private NotificationType notificationType;
 	private ApplicationFormStatus newStatus;
+	private EmailTemplateName templateName;
+	private EmailTemplate template;
+	private EmailTemplateService templateServiceMock;
 
 	@Test
 	public void shouldGetApplicationsAndSendInReviewNotifications() throws UnsupportedEncodingException, ParseException {
@@ -65,19 +72,19 @@ public class StateChangeNotificationTaskTest {
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus)).andReturn(applicationFormList);
 		transactionOne.commit();
 
-		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate, null);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, templateName, template.getContent(), null);
 		applicationFormDAOMock.save(applicationFormOne);
 		transactionTwo.commit();
 
-		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate, null);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, templateName, template.getContent(), null);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
-		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
+		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, templateServiceMock, applicationFormDAOMock);
 
 		notificationTask.run();
 
-		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
+		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, templateServiceMock, applicationFormDAOMock);
 
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
 				DateUtils.truncate(applicationFormOne.getNotificationForType(notificationType).getDate(), Calendar.DATE));
@@ -106,18 +113,18 @@ public class StateChangeNotificationTaskTest {
 				.andReturn(applicationFormList);
 
 		transactionOne.commit();
-		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate, null);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, templateName, template.getContent(), null);
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate, null);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, templateName, template.getContent(), null);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
-		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
+		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, templateServiceMock, applicationFormDAOMock);
 
 		notificationTask.run();
 
-		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
+		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, templateServiceMock, applicationFormDAOMock);
 		assertNull(applicationFormOne.getNotificationForType(notificationType));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
 				DateUtils.truncate(applicationFormTwo.getNotificationForType(notificationType).getDate(), Calendar.DATE));
@@ -130,12 +137,15 @@ public class StateChangeNotificationTaskTest {
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		applicationMailSenderMock = EasyMock.createMock(ApplicantMailSender.class);
 		subjectMessage = "now being reviewed";
-		emailTemplate = "private/pgStudents/mail/moved_to_review_notification.ftl";
 		notificationType = NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION;
 		newStatus = ApplicationFormStatus.REVIEW;
+		templateServiceMock = EasyMock.createMock(EmailTemplateService.class);
+		templateName = MOVED_TO_REVIEW_NOTIFICATION;
+		template=new EmailTemplateBuilder().content("template content").active(true).name(templateName).build();
+		EasyMock.expect(templateServiceMock.getActiveEmailTemplate(templateName)).andReturn(template);
 
 		notificationTask = new StateChangeNotificationTask(sessionFactoryMock, applicationFormDAOMock, applicationMailSenderMock, notificationType, newStatus,
-				subjectMessage, emailTemplate);
+				subjectMessage, templateName, templateServiceMock);
 
 	}
 

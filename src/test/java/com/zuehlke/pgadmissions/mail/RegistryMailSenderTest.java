@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -22,9 +26,11 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -32,6 +38,7 @@ import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class RegistryMailSenderTest {
@@ -42,6 +49,7 @@ public class RegistryMailSenderTest {
 	private MessageSource msgSourceMock;
 	private PdfDocumentBuilder pdfDocumentBuilderMock;
 	private PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactoryMock;
+	private EmailTemplateService templateServiceMock;
 
 	@Test
 	public void shouldReturnModelWithApplicationFormAndSingleRecipient() {
@@ -77,7 +85,7 @@ public class RegistryMailSenderTest {
 	@Test
 	public void shoulSendMailToRegistryContacts() throws MalformedURLException, DocumentException, IOException {
 		final Map<String, Object> model = new HashMap<String, Object>();
-		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock,pdfDocumentBuilderMock, pdfAttachmentInputSourceFactoryMock) {
+		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock,pdfDocumentBuilderMock, templateServiceMock, pdfAttachmentInputSourceFactoryMock) {
 			@Override
 			public Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser currentAdminUser, List<Person> registryContacts) {
 				return model;
@@ -95,6 +103,9 @@ public class RegistryMailSenderTest {
 		InternetAddress toAddress2 = new InternetAddress("peters@test.com", "Karla Peters");
 		InternetAddress toAddress3 = new InternetAddress("hobnob@test.com", "Hanna Hobnop");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true).content("Registry validation template").name(REGISTRY_VALIDATION_REQUEST).build();
+		expect(templateServiceMock.getActiveEmailTemplate(REGISTRY_VALIDATION_REQUEST)).andReturn(template);
+		
 		byte[] pdf = "pdf".getBytes();
 		EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(PdfModelBuilder.class), EasyMock.eq(applicationForm))).andReturn(pdf);		
 		PdfAttachmentInputSource attachmentInputSource = EasyMock.createMock(PdfAttachmentInputSource.class);
@@ -106,16 +117,17 @@ public class RegistryMailSenderTest {
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.aryEq(new InternetAddress[] { toAddress1, toAddress2 }),
 						EasyMock.aryEq(new InternetAddress[] { toAddress3 }), EasyMock.eq("resolved subject"),
-						EasyMock.eq("private/staff/admin/mail/registry_validation_request.ftl"), EasyMock.eq(model), EasyMock.eq(toAddress3),
+						eq(REGISTRY_VALIDATION_REQUEST),
+						eq(template.getContent()), EasyMock.eq(model), EasyMock.eq(toAddress3),
 						EasyMock.eq(attachmentInputSource))).andReturn(preparatorMock);
 		
 		javaMailSenderMock.send(preparatorMock);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock,  pdfDocumentBuilderMock,pdfAttachmentInputSourceFactoryMock , msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, templateServiceMock, pdfDocumentBuilderMock,pdfAttachmentInputSourceFactoryMock , msgSourceMock);
 
 		registryMailSender.sendApplicationToRegistryContacts(applicationForm, registryContacts);
 
-		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock,  pdfDocumentBuilderMock,pdfAttachmentInputSourceFactoryMock , msgSourceMock);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, templateServiceMock, javaMailSenderMock,  pdfDocumentBuilderMock,pdfAttachmentInputSourceFactoryMock , msgSourceMock);
 	}
 
 	@Before
@@ -125,6 +137,8 @@ public class RegistryMailSenderTest {
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
 		pdfAttachmentInputSourceFactoryMock = EasyMock.createMock(PdfAttachmentInputSourceFactory.class);
-		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock,pdfDocumentBuilderMock, pdfAttachmentInputSourceFactoryMock);
+		templateServiceMock = createMock(EmailTemplateService.class);
+		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,
+				msgSourceMock,pdfDocumentBuilderMock, templateServiceMock, pdfAttachmentInputSourceFactoryMock);
 	}
 }

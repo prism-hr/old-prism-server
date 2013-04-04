@@ -12,13 +12,17 @@ import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 public abstract class MailSender {
 
@@ -29,11 +33,15 @@ public abstract class MailSender {
     protected final JavaMailSender javaMailSender;
 	
     private final MessageSource messageSource;
+    
+    private final EmailTemplateService emailTemplateService;
 	
-	public MailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource messageSource) {
+    @Autowired
+	public MailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource messageSource, EmailTemplateService emailTemplateService) {
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.javaMailSender = mailSender;
 		this.messageSource = messageSource;
+		this.emailTemplateService = emailTemplateService;
 		
         if (this.javaMailSender instanceof JavaMailSenderImpl) {
             JavaMailSenderImpl impl = (JavaMailSenderImpl) this.javaMailSender;
@@ -103,6 +111,10 @@ public abstract class MailSender {
 		} catch (UnsupportedEncodingException uee) {// this shouldn't happen...
 			throw new RuntimeException(uee);
 		}
+	}
+	
+	protected EmailTemplate getDefaultEmailtemplate(EmailTemplateName templateName) {
+		return this.emailTemplateService.getActiveEmailTemplate(templateName);
 	}
 
 }

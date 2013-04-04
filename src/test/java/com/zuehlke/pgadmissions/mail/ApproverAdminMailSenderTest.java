@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPROVAL_NOTIFICATION;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
@@ -16,17 +18,20 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApproverAdminMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private ApproverAdminMailSender approverMailSender;
+	private EmailTemplateService templateServiceMock;
 	private MessageSource msgSourceMock;
 
 	@Test
@@ -56,11 +61,15 @@ public class ApproverAdminMailSenderTest {
 
 		InternetAddress expAddr1 = new InternetAddress("bob@test.com", "bob the builder");
 		InternetAddress expAddr2 = new InternetAddress("admin@test.com", "bob the builder");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Approval notification template").name(APPROVAL_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPROVAL_NOTIFICATION)).andReturn(template);
 
-		String expTemplate = "private/approvers/mail/approval_notification_email.ftl";
+
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock) {
 			@Override
 			Map<String, Object> createModel(RegisteredUser approver, ApplicationForm application) {
 				return model;
@@ -71,18 +80,18 @@ public class ApproverAdminMailSenderTest {
 				EasyMock.aryEq(new Object[] {"bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr1, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr1, "subject", APPROVAL_NOTIFICATION, template.getContent(), model, null)).andReturn(mimePrepMock);
 		javaMailSenderMock.send(mimePrepMock);
 
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr2, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr2, "subject", APPROVAL_NOTIFICATION, template.getContent(), model, null)).andReturn(mimePrepMock);
 		javaMailSenderMock.send(mimePrepMock);
 		
 		EasyMock.expectLastCall();
-		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);
 
 		approverMailSender.sendApprovalNotificationToApproversAndAdmins(application);
 
-		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);
 	}
 
 	@Before
@@ -90,6 +99,7 @@ public class ApproverAdminMailSenderTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		templateServiceMock = EasyMock.createMock(EmailTemplateService.class);
+		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 	}
 }

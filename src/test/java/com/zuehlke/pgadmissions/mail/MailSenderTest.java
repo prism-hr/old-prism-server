@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static org.easymock.EasyMock.createMock;
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
@@ -10,6 +11,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 public class MailSenderTest {
 
@@ -27,6 +29,7 @@ public class MailSenderTest {
         RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
         ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
         Program programMock = EasyMock.createMock(Program.class);
+        EmailTemplateService templateServiceMock = createMock(EmailTemplateService.class);
         
         EasyMock.expect(applicationFormMock.getApplicant()).andReturn(userMock);
         EasyMock.expect(applicationFormMock.getProgram()).andReturn(programMock);
@@ -34,7 +37,7 @@ public class MailSenderTest {
         EasyMock.expect(userMock.getLastName()).andReturn("Est\u00E9vez Soto");
         EasyMock.expect(applicationFormMock.getApplicationNumber()).andReturn("ABC-2013-00001");
         EasyMock.expect(programMock.getTitle()).andReturn("MRES");
-        MailSender sender = new MailSender(null, null, messageSource) {
+        MailSender sender = new MailSender(null, null, messageSource, templateServiceMock) {
         };
         
         EasyMock.replay(userMock, applicationFormMock, programMock);

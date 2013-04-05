@@ -101,6 +101,7 @@ $(document).ready(function() {
 	    	        success : function(data) {
 	    	        				$('#emailTemplateVersion').append(new Option(data.version, data.id));
 	    	        				$('#emailTemplateVersion').val(data.id);
+									$("#templateContentId").parent().find('.alert-error').remove();
 	    	               		},
 	    	        complete : function() {
 	    	        				$('div.ajax').remove();
@@ -129,6 +130,7 @@ $(document).ready(function() {
 			 url : "/pgadmissions/configuration/activateEmailTemplate/"+$('#emailTemplateType').val()+"/"+$('#emailTemplateVersion').val(),
 			 data : options,
 			 success : function(data) {
+				 $("#templateContentId").parent().find('.alert-error').remove();
 				 if (options.saveCopy) {
 					$('#emailTemplateVersion').append(new Option(data.version, data.id));
      				$('#emailTemplateVersion').val(data.id);
@@ -166,11 +168,12 @@ $(document).ready(function() {
     		url : "/pgadmissions/configuration/deleteEmailTemplate/"+$('#emailTemplateVersion').val(),
     		data : null,
     		success : function(data) {
+				$("#templateContentId").parent().find('.alert-error').remove();
     			if (data.error!=null) {
-    				$("#errorModalContent").html('<html><h2>'+data.error+'</h2></html>');
-    				$("#errorModal").modal({show: true});
+					$("#templateContentId").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> '+data.error+'</div>');
     			}
     			else {
+					$("#templateContentId").parent().find('.alert-error').remove();
 	    			var optionVal = $('#emailTemplateVersion').val();
 	    			$("#emailTemplateVersion option[value="+optionVal+"]").remove();
 	    			$('#emailTemplateVersion').val(data.activeTemplateId);

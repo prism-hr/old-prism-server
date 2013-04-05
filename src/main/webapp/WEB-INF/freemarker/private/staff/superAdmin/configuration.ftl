@@ -86,8 +86,6 @@
 						    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 						  </div>
 						</div>
-
-
                             <section class="form-rows">
                                 <h2>Email templates</h2>
 

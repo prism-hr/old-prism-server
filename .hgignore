@@ -214,6 +214,7 @@ src/sql/pgadmissions.dump.06_02_2013_11_39_13.sql
 src/main/java/com/zuehlke/pgadmissions/utils/DateUtils.java.orig
 src/environments/jboss-7.1.1-standalone.xml.orig
 src/main/webapp/WEB-INF/freemarker/private/staff/superAdmin/configuration.ftl.orig
+src/test/java/com/zuehlke/pgadmissions/utils/InsertTemplatesIntoDB.java
 syntax: regexp
 target/*
 

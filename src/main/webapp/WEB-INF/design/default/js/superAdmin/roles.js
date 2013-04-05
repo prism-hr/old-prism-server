@@ -1,5 +1,7 @@
 $(document).ready(function()
 {
+	
+	autosuggest($("#firstName"), $("#lastName"), $("#email"));
 
 	// ------------------------------------------------------------------------------
 	// Load a list of assigned users for a specific programme.

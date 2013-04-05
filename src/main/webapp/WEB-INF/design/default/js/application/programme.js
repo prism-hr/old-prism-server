@@ -34,6 +34,8 @@ function enableOrDisableReferrerText() {
 
 $(document).ready(function()
 {
+	autosuggest($("#supervisorFirstname"), $("#supervisorLastname"), $("#supervisorEmail"));
+	
 	enableOrDisableStartDate();
 	enableOrDisableReferrerText();
 	

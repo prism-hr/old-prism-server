@@ -2,7 +2,7 @@ function autosuggest($fname, $lname, $email) {
 
 	$fname.typeaheadmap({
 		source : function(query, process) {
-			return $.getJSON("/pgadmissions/autosuggest/allUsers/firstname/" + $fname.val(), function(data) {
+			return $.getJSON("/pgadmissions/autosuggest/users/firstname/" + $fname.val(), function(data) {
 				return process(data);
 			});
 		},
@@ -29,7 +29,7 @@ function autosuggest($fname, $lname, $email) {
 
 	$lname.typeaheadmap({
 		source : function(query, process) {
-			return $.getJSON("/pgadmissions/autosuggest/allUsers/lastname/" + $lname.val(), function(data) {
+			return $.getJSON("/pgadmissions/autosuggest/users/lastname/" + $lname.val(), function(data) {
 				return process(data);
 			});
 		},
@@ -56,7 +56,7 @@ function autosuggest($fname, $lname, $email) {
 
 	$email.typeaheadmap({
 		source : function(query, process) {
-			return $.getJSON("/pgadmissions/autosuggest/allUsers/email/" + $email.val(), function(data) {
+			return $.getJSON("/pgadmissions/autosuggest/users/email/" + $email.val(), function(data) {
 				return process(data);
 			});
 		},

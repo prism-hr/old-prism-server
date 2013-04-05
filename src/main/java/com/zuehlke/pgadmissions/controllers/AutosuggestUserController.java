@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
 @Controller
-@RequestMapping("/user/autosuggest")
+@RequestMapping("/autosuggest")
 public class AutosuggestUserController {
 
     private final FullTextSearchService searchService;
@@ -34,19 +34,19 @@ public class AutosuggestUserController {
         this.searchService = searchService;
     }
     
-    @RequestMapping(value="/firstname/{searchTerm}", method = RequestMethod.GET)
+    @RequestMapping(value="/allUsers/firstname/{searchTerm}", method = RequestMethod.GET)
     @ResponseBody
     public String provideSuggestionsForFirstname(@PathVariable final String searchTerm) {
         return convertToJson(searchService.getMatchingUsersWithFirstnameLike(searchTerm));
     }
     
-    @RequestMapping(value="/lastname/{searchTerm}", method = RequestMethod.GET)
+    @RequestMapping(value="/allUsers/lastname/{searchTerm}", method = RequestMethod.GET)
     @ResponseBody
     public String provideSuggestionsForLastname(@PathVariable final String searchTerm) {
         return convertToJson(searchService.getMatchingUsersWithLastnameLike(searchTerm));
     }
     
-    @RequestMapping(value="/email/{searchTerm}", method = RequestMethod.GET)
+    @RequestMapping(value="/allUsers/email/{searchTerm}", method = RequestMethod.GET)
     @ResponseBody
     public String provideSuggestionsForEmail(@PathVariable final String searchTerm) {
         return convertToJson(searchService.getMatchingUsersWithEmailLike(searchTerm));

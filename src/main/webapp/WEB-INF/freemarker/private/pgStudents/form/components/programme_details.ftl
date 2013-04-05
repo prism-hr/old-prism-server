@@ -269,4 +269,5 @@
   </form>
 </div>
 
+<script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>

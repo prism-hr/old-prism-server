@@ -31,7 +31,7 @@ $(document).ready(function() {
         	        url : url,
         	        success : function(data) {
         	            		$('#templateContentId').val(data.content);
-        	            		emailTemplateContent=data.content;
+        	            		emailTemplateContent=$('#templateContentId').val();
         	            		$('#templateContentId').prop('disabled', false);
         	            		toggleButtons(false);
         	            		$('#emailTemplateVersion').empty();
@@ -73,7 +73,7 @@ $(document).ready(function() {
     			url : url,
     			success : function(data) {
     				$('#templateContentId').val(data.content);
-    				emailTemplateContent=data.content;
+    				emailTemplateContent=$('#templateContentId').val();
     				$('#templateContentId').prop('disabled', false);
     				toggleButtons(false);
     			},
@@ -91,8 +91,8 @@ $(document).ready(function() {
     });
     
     $('#save-go').click(function() {
-    	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
-    	if ($('#templateContentId').val()!=emailTemplateContent) {//user has chnaged template before rnabling it
+    	if ($('#templateContentId').val()!=emailTemplateContent) {//user has changed template before re-enabling it
+    		$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
 	    	 $.ajax({
 	    	        type : 'POST',
 	    	        statusCode : errorCodes,
@@ -101,6 +101,8 @@ $(document).ready(function() {
 	    	        success : function(data) {
 	    	        				$('#emailTemplateVersion').append(new Option(data.version, data.id));
 	    	        				$('#emailTemplateVersion').val(data.id);
+									$("#templateContentId").parent().find('.alert-error').remove();
+									emailTemplateContent=$('#templateContentId').val();
 	    	               		},
 	    	        complete : function() {
 	    	        				$('div.ajax').remove();
@@ -129,6 +131,7 @@ $(document).ready(function() {
 			 url : "/pgadmissions/configuration/activateEmailTemplate/"+$('#emailTemplateType').val()+"/"+$('#emailTemplateVersion').val(),
 			 data : options,
 			 success : function(data) {
+				 $("#templateContentId").parent().find('.alert-error').remove();
 				 if (options.saveCopy) {
 					$('#emailTemplateVersion').append(new Option(data.version, data.id));
      				$('#emailTemplateVersion').val(data.id);
@@ -166,16 +169,17 @@ $(document).ready(function() {
     		url : "/pgadmissions/configuration/deleteEmailTemplate/"+$('#emailTemplateVersion').val(),
     		data : null,
     		success : function(data) {
+				$("#templateContentId").parent().find('.alert-error').remove();
     			if (data.error!=null) {
-    				$("#errorModalContent").html('<html><h2>'+data.error+'</h2></html>');
-    				$("#errorModal").modal({show: true});
+					$("#templateContentId").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> '+data.error+'</div>');
     			}
     			else {
+					$("#templateContentId").parent().find('.alert-error').remove();
 	    			var optionVal = $('#emailTemplateVersion').val();
 	    			$("#emailTemplateVersion option[value="+optionVal+"]").remove();
 	    			$('#emailTemplateVersion').val(data.activeTemplateId);
 	    			$('#templateContentId').val(data.activeTemplateContent);
-	    			emailTemplateContent=data.activeTemplateContent;
+	    			emailTemplateContent=$('#templateContentId').val();
     			}
     		},
     		complete : function() {

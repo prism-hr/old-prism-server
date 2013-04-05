@@ -228,9 +228,9 @@ function getFilters() {
         
         if(search_category && search_term.length > 0){
             filters.push({
-                search_category : search_category,
-                search_predicate : search_predicate,
-                search_term : search_term
+                searchCategory : search_category,
+                searchPredicate : search_predicate,
+                searchTerm : search_term
             });
         }
     });

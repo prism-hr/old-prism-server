@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -42,74 +43,77 @@ import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 @RequestMapping("/update")
 @Controller
 public class ProgrammeDetailsController {
-	private static final String STUDENTS_FORM_PROGRAMME_DETAILS_VIEW = "/private/pgStudents/form/components/programme_details";
-	private final ApplicationsService applicationsService;
-	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
-	private final DatePropertyEditor datePropertyEditor;
-	private final ProgrammeDetailsValidator programmeDetailsValidator;
-	private final ProgrammeDetailsService programmeDetailsService;
-	private final SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
-	private final SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
-	private final UserService userService;
+    private static final String STUDENTS_FORM_PROGRAMME_DETAILS_VIEW = "/private/pgStudents/form/components/programme_details";
+    private final ApplicationsService applicationsService;
+    private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
+    private final DatePropertyEditor datePropertyEditor;
+    private final ProgrammeDetailsValidator programmeDetailsValidator;
+    private final ProgrammeDetailsService programmeDetailsService;
+    private final SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
+    private final SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
+    private final UserService userService;
 
-	ProgrammeDetailsController() {
-		this(null, null, null, null, null, null, null, null);
-	}
+    ProgrammeDetailsController() {
+        this(null, null, null, null, null, null, null, null);
+    }
 
-	@Autowired
-	public ProgrammeDetailsController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
-			DatePropertyEditor datePropertyEditor, SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
-			ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService, UserService userService,
-			SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor) {
-		this.applicationsService = applicationsService;
-		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
-		this.datePropertyEditor = datePropertyEditor;
-		this.supervisorJSONPropertyEditor = supervisorJSONPropertyEditor;
-		this.programmeDetailsValidator = programmeDetailsValidator;
-		this.programmeDetailsService = programmeDetailsService;
-		this.userService = userService;
-		this.sourcesOfInterestPropertyEditor = sourcesOfInterestPropertyEditor;
-	}
+    @Autowired
+    public ProgrammeDetailsController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
+            DatePropertyEditor datePropertyEditor, SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
+            ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService, UserService userService,
+            SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor) {
+        this.applicationsService = applicationsService;
+        this.applicationFormPropertyEditor = applicationFormPropertyEditor;
+        this.datePropertyEditor = datePropertyEditor;
+        this.supervisorJSONPropertyEditor = supervisorJSONPropertyEditor;
+        this.programmeDetailsValidator = programmeDetailsValidator;
+        this.programmeDetailsService = programmeDetailsService;
+        this.userService = userService;
+        this.sourcesOfInterestPropertyEditor = sourcesOfInterestPropertyEditor;
+    }
 
-	@RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
-	public String editProgrammeDetails( @Valid ProgrammeDetails programmeDetails, BindingResult result) {
-		
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
-		
-		if (programmeDetails.getApplication().isDecided()) {
-			throw new CannotUpdateApplicationException(programmeDetails.getApplication().getApplicationNumber());
-		}
-		
-		if (result.hasErrors()) {
-			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
-		}
+    @RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
+    public String editProgrammeDetails(@Valid ProgrammeDetails programmeDetails, BindingResult result, Model model) {
 
-		programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(programmeDetails.getApplication().getProgram(), programmeDetails.getStudyOption()));
-		programmeDetailsService.save(programmeDetails);
-		programmeDetails.getApplication().setLastUpdated(new Date());
-		applicationsService.save(programmeDetails.getApplication());
-		return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
-	}
-	
-	@RequestMapping(value = "/getProgrammeStartDate", method = RequestMethod.GET)
-	@ResponseBody
-	public String getProgrammeDetailsView(@RequestParam String applicationId, @RequestParam String studyOption) {
-	    if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+        RegisteredUser user = (RegisteredUser) model.asMap().get("user");
+        if (!user.isInRole(Authority.APPLICANT)) {
             throw new ResourceNotFoundException();
         }
-	    
-	    if (StringUtils.isBlank(studyOption) || StringUtils.isBlank(applicationId)) {
-	        return StringUtils.EMPTY;
-	    }
-	    
-	    List<ProgramInstance> availableProgramInstances = programmeDetailsService.getActiveProgramInstancesOrderedByApplicationStartDate(getApplicationForm(applicationId).getProgram(), studyOption);
-	    
-	    String convertedDate = StringUtils.EMPTY;
+
+        if (programmeDetails.getApplication().isDecided()) {
+            throw new CannotUpdateApplicationException(programmeDetails.getApplication().getApplicationNumber());
+        }
+
+        if (result.hasErrors()) {
+            return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
+        }
+
+        programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(programmeDetails.getApplication().getProgram(),
+                programmeDetails.getStudyOption()));
+        programmeDetailsService.save(programmeDetails);
+        programmeDetails.getApplication().setLastUpdated(new Date());
+        applicationsService.save(programmeDetails.getApplication());
+        return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
+    }
+
+    @RequestMapping(value = "/getProgrammeStartDate", method = RequestMethod.GET)
+    @ResponseBody
+    public String getProgrammeDetailsView(@RequestParam String applicationId, @RequestParam String studyOption) {
+        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+            throw new ResourceNotFoundException();
+        }
+
+        if (StringUtils.isBlank(studyOption) || StringUtils.isBlank(applicationId)) {
+            return StringUtils.EMPTY;
+        }
+
+        List<ProgramInstance> availableProgramInstances = programmeDetailsService.getActiveProgramInstancesOrderedByApplicationStartDate(
+                getApplicationForm(applicationId).getProgram(), studyOption);
+
+        String convertedDate = StringUtils.EMPTY;
         DateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
         Date today = new Date();
-        
+
         for (ProgramInstance instance : availableProgramInstances) {
             try {
                 if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(today)) {
@@ -120,67 +124,68 @@ public class ProgrammeDetailsController {
                 // do nothing
             }
         }
-	    return convertedDate;
-	}
+        return convertedDate;
+    }
 
-	@RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
-	public String getProgrammeDetailsView() {
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
-		return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
-	}
+    @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
+    public String getProgrammeDetailsView() {
+        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+            throw new ResourceNotFoundException();
+        }
+        return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
+    }
 
-	@ModelAttribute("studyOptions")
-	public List<StudyOption> getStudyOptions(@RequestParam String applicationId) {
-		return programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram());
-	}
+    @ModelAttribute("studyOptions")
+    public List<StudyOption> getStudyOptions(@RequestParam String applicationId) {
+        return programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram());
+    }
 
-	@ModelAttribute("sourcesOfInterests")
-	public List<SourcesOfInterest> getSourcesOfInterests() {
-		return programmeDetailsService.getAllEnabledSourcesOfInterest();
-	}
+    @ModelAttribute("sourcesOfInterests")
+    public List<SourcesOfInterest> getSourcesOfInterests() {
+        return programmeDetailsService.getAllEnabledSourcesOfInterest();
+    }
 
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 
-		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (application == null || !getCurrentUser().canSee(application)) {
-			throw new ResourceNotFoundException();
-		}
-		return application;
-	}
+        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (application == null || !getCurrentUser().canSee(application)) {
+            throw new ResourceNotFoundException();
+        }
+        return application;
+    }
 
-	@ModelAttribute("message")
-	public String getMessage(@RequestParam(required = false) String message) {
-		return message;
-	}
+    @ModelAttribute("message")
+    public String getMessage(@RequestParam(required = false) String message) {
+        return message;
+    }
 
-	@InitBinder(value = "programmeDetails")
-	public void registerPropertyEditors(WebDataBinder binder) {
-		binder.setValidator(programmeDetailsValidator);
-		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-		binder.registerCustomEditor(Date.class, datePropertyEditor);
-		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
-		binder.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditor);
-		binder.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditor);
-	}
-	
+    @InitBinder(value = "programmeDetails")
+    public void registerPropertyEditors(WebDataBinder binder) {
+        binder.setValidator(programmeDetailsValidator);
+        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(Date.class, datePropertyEditor);
+        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditor);
+        binder.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditor);
+    }
+
     public StringTrimmerEditor newStringTrimmerEditor() {
         return new StringTrimmerEditor(false);
     }
 
-	@ModelAttribute
-	public ProgrammeDetails getProgrammeDetails(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
+    @ModelAttribute
+    public ProgrammeDetails getProgrammeDetails(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
 
-		if (applicationForm.getProgrammeDetails() == null) {
-			return new ProgrammeDetails();
-		}
-		return applicationForm.getProgrammeDetails();
-	}
+        if (applicationForm.getProgrammeDetails() == null) {
+            return new ProgrammeDetails();
+        }
+        return applicationForm.getProgrammeDetails();
+    }
 
-	private RegisteredUser getCurrentUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("user")
+    private RegisteredUser getCurrentUser() {
+        return userService.getCurrentUser();
+    }
 }

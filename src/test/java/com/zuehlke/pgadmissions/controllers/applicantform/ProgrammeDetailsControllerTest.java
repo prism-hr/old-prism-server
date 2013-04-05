@@ -15,6 +15,8 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -45,223 +47,236 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 public class ProgrammeDetailsControllerTest {
-	private RegisteredUser currentUser;
-	private DatePropertyEditor datePropertyEditorMock;
-	private ApplicationsService applicationsServiceMock;
-	private ProgrammeDetailsValidator programmeDetailsValidatorMock;
-	private ProgrammeDetailsService programmeDetailsServiceMock;
-	private ProgrammeDetailsController controller;
-	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
-	private SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditorMock;
+    private RegisteredUser currentUser;
+    private DatePropertyEditor datePropertyEditorMock;
+    private ApplicationsService applicationsServiceMock;
+    private ProgrammeDetailsValidator programmeDetailsValidatorMock;
+    private ProgrammeDetailsService programmeDetailsServiceMock;
+    private ProgrammeDetailsController controller;
+    private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
+    private SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditorMock;
 
-	private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
-	private UserService userServiceMock;
+    private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
+    private UserService userServiceMock;
 
-	@Test(expected = CannotUpdateApplicationException.class)
-	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder()
-                .id(1)
-                .applicationForm(
-                        new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVED).build())
-                .build();
-		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.replay(programmeDetailsServiceMock, errors);
-		controller.editProgrammeDetails( programmeDetails, errors);
-		EasyMock.verify(programmeDetailsServiceMock);
+    @Test(expected = CannotUpdateApplicationException.class)
+    public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1)
+                .applicationForm(new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVED).build()).build();
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
 
-	}
+        Model model = new ExtendedModelMap();
+        model.addAttribute("user", currentUser);
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
-		currentUser.getRoles().clear();
-		controller.editProgrammeDetails( null, null);
-	}
+        EasyMock.replay(programmeDetailsServiceMock, errors);
+        controller.editProgrammeDetails(programmeDetails, errors, model);
+        EasyMock.verify(programmeDetailsServiceMock);
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
-		currentUser.getRoles().clear();
-		controller.getProgrammeDetailsView();
-	}
+    }
 
-	@Test
-	public void shouldReturnProgrammeDetailsView() {
-		assertEquals("/private/pgStudents/form/components/programme_details", controller.getProgrammeDetailsView());
-	}
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
+        currentUser.getRoles().clear();
 
-	@Test
-	public void shouldReturnAvaialbeStudyOptionLevels() {
-		final String applicationNumber = "1";
-		Program program = new ProgramBuilder().id(7).build();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).build();
-		controller =  new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
-				supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock, sourcesOfInterestPropertyEditorMock){
+        Model model = new ExtendedModelMap();
+        model.addAttribute("user", currentUser);
 
-					@Override
-					public ApplicationForm getApplicationForm(String id) {
-						if(applicationNumber.equals(id)){
-							return applicationForm;
-						}
-						return null;
-					}
-			
-		};
+        controller.editProgrammeDetails(null, null, model);
+    }
 
-		StudyOption option1 = new StudyOption("1", "Full-time");
-		StudyOption option2 = new StudyOption("31", "Part-time");
-		
-		List<StudyOption> optionsList = Arrays.asList(option1, option2);
-		
-		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(optionsList);
-		EasyMock.replay(programmeDetailsServiceMock);
-		List<StudyOption> studyOptions = controller.getStudyOptions(applicationNumber);
-		assertSame(studyOptions, optionsList);
-	}
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
+        currentUser.getRoles().clear();
+        controller.getProgrammeDetailsView();
+    }
 
-	@Test
-	public void shouldReturnAllSourcesOfInterest() {
-	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("ZZ").name("ZZ").build();
-	    EasyMock.expect(programmeDetailsServiceMock.getAllEnabledSourcesOfInterest()).andReturn(Collections.singletonList(sourcesOfInterest));
-	    EasyMock.replay(programmeDetailsServiceMock);
-	    assertEquals(controller.getSourcesOfInterests().get(0), sourcesOfInterest);
-	}
+    @Test
+    public void shouldReturnProgrammeDetailsView() {
+        assertEquals("/private/pgStudents/form/components/programme_details", controller.getProgrammeDetailsView());
+    }
 
-	@Test
-	public void shouldReturnApplicationForm() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUser);
-		ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-		assertEquals(applicationForm, returnedApplicationForm);
-	}
+    @Test
+    public void shouldReturnAvaialbeStudyOptionLevels() {
+        final String applicationNumber = "1";
+        Program program = new ProgramBuilder().id(7).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).build();
+        controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
+                supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
+                sourcesOfInterestPropertyEditorMock) {
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("1");
-	}
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                if (applicationNumber.equals(id)) {
+                    return applicationForm;
+                }
+                return null;
+            }
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(applicationsServiceMock, currentUser);
-		controller.getApplicationForm("1");
+        };
 
-	}
+        StudyOption option1 = new StudyOption("1", "Full-time");
+        StudyOption option2 = new StudyOption("31", "Part-time");
 
-	@Test
-	public void shouldBindPropertyEditors() {
-		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.setValidator(programmeDetailsValidatorMock);
-		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
-		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
-		binderMock.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditorMock);
-		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
-		binderMock.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditorMock);
-		EasyMock.replay(binderMock);
-		controller.registerPropertyEditors(binderMock);
-		EasyMock.verify(binderMock);
-	}
+        List<StudyOption> optionsList = Arrays.asList(option1, option2);
 
-	@Test
-	public void shouldGetProgrammeDetailsFromApplicationForm() {
+        EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(optionsList);
+        EasyMock.replay(programmeDetailsServiceMock);
+        List<StudyOption> studyOptions = controller.getStudyOptions(applicationNumber);
+        assertSame(studyOptions, optionsList);
+    }
 
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-		applicationForm.setProgrammeDetails(programmeDetails);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.replay(applicationsServiceMock, currentUser);
+    @Test
+    public void shouldReturnAllSourcesOfInterest() {
+        SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("ZZ").name("ZZ").build();
+        EasyMock.expect(programmeDetailsServiceMock.getAllEnabledSourcesOfInterest()).andReturn(Collections.singletonList(sourcesOfInterest));
+        EasyMock.replay(programmeDetailsServiceMock);
+        assertEquals(controller.getSourcesOfInterests().get(0), sourcesOfInterest);
+    }
 
-		ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
-		assertEquals(programmeDetails, returnedProgrammeDetails);
-	}
+    @Test
+    public void shouldReturnApplicationForm() {
+        currentUser = EasyMock.createMock(RegisteredUser.class);
 
-	@Test
-	public void shouldReturnNewProgrammeDetailsIfApplicationFormHasNoProgrammeDetails() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.replay(applicationsServiceMock, currentUser);
-		ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
-		assertNull(returnedProgrammeDetails.getId());
-	}
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock, currentUser);
+        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
+        assertEquals(applicationForm, returnedApplicationForm);
+    }
 
-	
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        EasyMock.replay(applicationsServiceMock);
+        controller.getApplicationForm("1");
+    }
 
-	@Test
-	public void shouldReturnMessage() {
-		assertEquals("bob", controller.getMessage("bob"));
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
+        currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
+        EasyMock.replay(applicationsServiceMock, currentUser);
+        controller.getApplicationForm("1");
 
-	}
+    }
 
-	@Test
-	public void shouldSaveProgrammeDetailsAndApplicationAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(applicationForm).build();
-		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errors.hasErrors()).andReturn(false);
-		EasyMock.expect(programmeDetailsServiceMock.getStudyOptionCodeForProgram(null, null)).andReturn("1");
-		programmeDetailsServiceMock.save(programmeDetails);
-		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(programmeDetailsServiceMock,applicationsServiceMock, errors);
-		String view = controller.editProgrammeDetails(programmeDetails, errors);
-		EasyMock.verify(programmeDetailsServiceMock, applicationsServiceMock);
-		assertEquals("redirect:/update/getProgrammeDetails?applicationId=ABC", view);
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
-	}
+    @Test
+    public void shouldBindPropertyEditors() {
+        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        binderMock.setValidator(programmeDetailsValidatorMock);
+        binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
+        binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+        binderMock.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditorMock);
+        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+        binderMock.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditorMock);
+        EasyMock.replay(binderMock);
+        controller.registerPropertyEditors(binderMock);
+        EasyMock.verify(binderMock);
+    }
 
-	@Test
-	public void shouldNotSaveAndReturnToViewIfErrors() {
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).build())
-				.build();
-		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errors.hasErrors()).andReturn(true);
-		EasyMock.replay(programmeDetailsServiceMock, errors);
-		String view = controller.editProgrammeDetails(programmeDetails, errors);
-		EasyMock.verify(programmeDetailsServiceMock);
-		assertEquals("/private/pgStudents/form/components/programme_details", view);
-	}
-	
-	@Before
-	public void setUp() {
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
-		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
-		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-		supervisorJSONPropertyEditorMock = EasyMock.createMock(SuggestedSupervisorJSONPropertyEditor.class);
-		programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
-		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		sourcesOfInterestPropertyEditorMock =  EasyMock.createMock(SourcesOfInterestPropertyEditor.class);
-		
-        controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock,
-                datePropertyEditorMock, supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock,
-                programmeDetailsServiceMock, userServiceMock, sourcesOfInterestPropertyEditorMock);
+    @Test
+    public void shouldGetProgrammeDetailsFromApplicationForm() {
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        applicationForm.setProgrammeDetails(programmeDetails);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.replay(applicationsServiceMock, currentUser);
 
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-	}
+        ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
+        assertEquals(programmeDetails, returnedProgrammeDetails);
+    }
+
+    @Test
+    public void shouldReturnNewProgrammeDetailsIfApplicationFormHasNoProgrammeDetails() {
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.replay(applicationsServiceMock, currentUser);
+        ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
+        assertNull(returnedProgrammeDetails.getId());
+    }
+
+    @Test
+    public void shouldReturnMessage() {
+        assertEquals("bob", controller.getMessage("bob"));
+
+    }
+
+    @Test
+    public void shouldSaveProgrammeDetailsAndApplicationAndRedirectIfNoErrors() {
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(applicationForm).build();
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
+        Model model = new ExtendedModelMap();
+        model.addAttribute("user", currentUser);
+
+        EasyMock.expect(errors.hasErrors()).andReturn(false);
+        EasyMock.expect(programmeDetailsServiceMock.getStudyOptionCodeForProgram(null, null)).andReturn("1");
+        programmeDetailsServiceMock.save(programmeDetails);
+        applicationsServiceMock.save(applicationForm);
+
+        EasyMock.replay(programmeDetailsServiceMock, applicationsServiceMock, errors);
+        String view = controller.editProgrammeDetails(programmeDetails, errors, model);
+        EasyMock.verify(programmeDetailsServiceMock, applicationsServiceMock);
+
+        assertEquals("redirect:/update/getProgrammeDetails?applicationId=ABC", view);
+        assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+    }
+
+    @Test
+    public void shouldNotSaveAndReturnToViewIfErrors() {
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).build()).build();
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
+        Model model = new ExtendedModelMap();
+        model.addAttribute("user", currentUser);
+
+        EasyMock.expect(errors.hasErrors()).andReturn(true);
+
+        EasyMock.replay(programmeDetailsServiceMock, errors);
+        String view = controller.editProgrammeDetails(programmeDetails, errors, model);
+        EasyMock.verify(programmeDetailsServiceMock);
+
+        assertEquals("/private/pgStudents/form/components/programme_details", view);
+    }
+
+    @Before
+    public void setUp() {
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
+        applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
+        datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
+        supervisorJSONPropertyEditorMock = EasyMock.createMock(SuggestedSupervisorJSONPropertyEditor.class);
+        programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
+        programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        sourcesOfInterestPropertyEditorMock = EasyMock.createMock(SourcesOfInterestPropertyEditor.class);
+
+        controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
+                supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
+                sourcesOfInterestPropertyEditorMock);
+
+        currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+    }
 }

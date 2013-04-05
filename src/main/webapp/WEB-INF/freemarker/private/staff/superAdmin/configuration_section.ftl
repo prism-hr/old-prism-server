@@ -161,4 +161,11 @@
 		</form>
 	</div>
 </section>
-<script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/configuration_section.js' />"></script> 
+<script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/configuration_section.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        autosuggest($("#reg-firstname"), $("#reg-lastname"), $("#reg-email"));
+    });
+</script>
+ 

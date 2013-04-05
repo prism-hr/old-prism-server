@@ -29,7 +29,6 @@
             </#list>
 		</#if>		                                      
 	</div>
-	
 </div>
 
 <div class="row">
@@ -52,3 +51,10 @@
 		<button class="btn" type="button" id="createSupervisor">Add</button>
 	</div>
 </div>
+
+<script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        autosuggest($("#newSupervisorFirstName"), $("#newSupervisorLastName"), $("#newSupervisorEmail"));
+    });
+</script>

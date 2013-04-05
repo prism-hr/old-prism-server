@@ -42,3 +42,10 @@
       <button class="btn" type="button" id="createReviewer">Add</button>
     </div>
  </div>
+ 
+<script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        autosuggest($("#newReviewerFirstName"), $("#newReviewerLastName"), $("#newReviewerEmail"));
+    });
+</script>

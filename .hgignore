@@ -215,3 +215,6 @@ target/*
 
 syntax: regexp
 ^\.settings$
+
+syntax: regexp
+testIndexes/*

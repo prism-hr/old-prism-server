@@ -111,11 +111,6 @@ public class StateTransitionController {
 
     @ModelAttribute("reviewersWillingToInterview")
     public List<RegisteredUser> getReviewersWillingToInterview(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        if (applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
-            return userService.getReviewersWillingToInterview(applicationForm);
-        }
-        return null;
+        return userService.getReviewersWillingToInterview(getApplicationForm(applicationId));
     }
-
 }

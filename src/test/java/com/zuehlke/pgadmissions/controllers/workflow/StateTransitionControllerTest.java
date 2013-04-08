@@ -2,11 +2,12 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.easymock.EasyMock;
@@ -160,29 +161,31 @@ public class StateTransitionControllerTest {
 		assertTrue(willingToInterview.containsAll(Arrays.asList(userOne, userTwo)));
 	}
 
-	@Test
-	public void shouldReturnNullIfppliationNotInReview() {
-		final String applicationNumber = "5";
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber(applicationNumber).id(5)
-				.status(ApplicationFormStatus.VALIDATION).build();
-		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock) {
+    @Test
+    public void shouldAlwaysReturnUsersWillingToInterviewNoMatterWhatStateTheApplicationIsIn() {
+        final String applicationNumber = "5";
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber(applicationNumber).id(5)
+                .status(ApplicationFormStatus.VALIDATION).build();
+        
+        controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock,
+                commentFactoryMock, stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock,
+                approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock) {
 
-			@Override
-			public ApplicationForm getApplicationForm(String application) {
+            @Override
+            public ApplicationForm getApplicationForm(String application) {
+                if (application.equals(applicationNumber)) {
+                    return applicationForm;
+                }
+                return null;
+            }
+        };
+        
+        EasyMock.expect(userServiceMock.getReviewersWillingToInterview(applicationForm)).andReturn(Collections.<RegisteredUser>emptyList());
 
-				if (application.equals(applicationNumber)) {
-					return applicationForm;
-				}
-				return null;
-			}
-
-		};
-
-		EasyMock.replay(userServiceMock);
-		assertNull(controller.getReviewersWillingToInterview(applicationNumber));
-		EasyMock.verify(userServiceMock);
-	}
+        EasyMock.replay(userServiceMock);
+        assertNotNull(controller.getReviewersWillingToInterview(applicationNumber));
+        EasyMock.verify(userServiceMock);
+    }
 
 	@Test
 	public void shouldReturnAvaialableNextStati() {

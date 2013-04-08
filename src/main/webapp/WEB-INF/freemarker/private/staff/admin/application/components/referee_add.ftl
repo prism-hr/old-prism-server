@@ -188,3 +188,11 @@
       </#list> </div>
   </div>
 </div>
+
+<script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js' />"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        autosuggest($("#firstname_${encRefereeId}"), $("#lastname_${encRefereeId}"), $("#email_${encRefereeId}"));
+    });
+</script>
+

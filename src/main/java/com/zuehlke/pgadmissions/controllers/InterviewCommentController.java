@@ -62,14 +62,15 @@ public class InterviewCommentController {
         if (!currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
-        if (applicationForm.isDecided() || applicationForm.isWithdrawn() || currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
+        if (applicationForm.isDecided() || applicationForm.isWithdrawn()
+                || currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
         return applicationForm;
     }
-    
+
     @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return applicationsService.getActionsDefinition(getUser(), application);
     }
@@ -110,6 +111,11 @@ public class InterviewCommentController {
             return INTERVIEW_FEEDBACK_PAGE;
         }
         commentService.save(comment);
-        return "redirect:/applications?messageCode=interview.feedback&application=" + comment.getApplication().getApplicationNumber();
+        
+        ApplicationForm applicationForm = comment.getApplication();
+        applicationForm.setApplicationAdministrator(null);
+        applicationsService.save(applicationForm);
+        
+        return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
     }
 }

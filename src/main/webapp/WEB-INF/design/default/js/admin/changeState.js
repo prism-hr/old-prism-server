@@ -6,6 +6,8 @@ $(document).ready(function()
     var suggestions = [];
     var selectedDates = {};
     
+    getCreateInterviewersSection();
+    
     // -------------------------------------------------------------------------------
     // Initialise datepicker with highligted dates
     // -------------------------------------------------------------------------------
@@ -116,6 +118,44 @@ $(document).ready(function()
 		}
 		
 	});
+	
+	
+    // ------------------------------------------------------------------------------
+    // Delegate application processing radio buttons.
+    // ------------------------------------------------------------------------------
+    $('#status').change(function()
+    {
+        if ($('#status').val() == 'INTERVIEW')
+        {
+            // enable the delegation dropdown box.
+            $('#applicationAdministrator').removeAttr('disabled');
+            $('#delegateLabel').removeClass('grey-label');
+        }
+        else if ($('#status').val() == 'REQUEST_RESTART_APPROVAL') 
+        {
+            $('#stateChangeForm').attr('action', '/pgadmissions/approval/submitRequestRestart');
+        }
+        else
+        {
+            // disable the delegation dropdown box.
+            $('#applicationAdministrator').attr('disabled', 'disabled');
+            $('#delegateLabel').addClass('grey-label');
+        }
+        
+        if ($('#status').val() != 'REQUEST_RESTART_APPROVAL') { 
+            $('#stateChangeForm').attr('action', originalPostUrl);
+        }
+        
+    });
+    
+    $('input:radio[name=switch]').change(function()
+    {
+        if($(this).val() == 'yes'){
+            $("#interviewDelegation").show();
+        } else if ($(this).val() == 'no'){
+            $("#interviewDelegation").hide();
+        }
+    });
 
 
 	// ------------------------------------------------------------------------------
@@ -202,9 +242,41 @@ function saveComment()
 		$('#stateChangeForm').append(
 				'<input type="hidden" name="documents" value="' + $(this).val() + '"/>');
 	});
-	 $('#stateChangeForm').submit();
+	
+	$('#stateChangeForm').submit();
 }
 
+function getCreateInterviewersSection() {
+    $('#createInterviewerSection').append('<div class="ajax" />');
+
+    $.ajax({
+        type : 'GET',
+        statusCode : {
+            401 : function() {
+                window.location.reload();
+            },
+            500 : function() {
+                window.location.href = "/pgadmissions/error";
+            },
+            404 : function() {
+                window.location.href = "/pgadmissions/404";
+            },
+            400 : function() {
+                window.location.href = "/pgadmissions/400";
+            },
+            403 : function() {
+                window.location.href = "/pgadmissions/404";
+            }
+        },
+        url : "/pgadmissions/interview/create_interviewer_section?applicationId=" + $('#applicationId').val(),
+        success : function(data) {
+            $('#createInterviewerSection').html(data);
+        },
+        complete : function() {
+            $('#createInterviewerSection div.ajax').remove();
+        }
+    });
+}
 
 function changeState()
 {
@@ -216,7 +288,7 @@ function changeState()
 	
 	if ($('#status').val() == 'INTERVIEW')
 	{
-		if ($('#applicationAdministrator').length == 0 || $('#applicationAdministrator').val() == '')
+		if ($('input:radio[name=switch]:checked').val() != 'yes')
 		{
 			saveComment();
 			return;
@@ -245,7 +317,9 @@ function changeState()
 				url:"/pgadmissions/delegate",
 				data:{
 					applicationId : $('#applicationId').val(),
-					applicationAdministrator : $('#applicationAdministrator').val()
+					firstName : $('#newInterviewerFirstName').val(),
+					lastName : $('#newInterviewerLastName').val(),
+					email : $('#newInterviewerEmail').val(),
 				},
 				success:function(data)
 				{

@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 
 @Controller
@@ -129,15 +130,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             map.put("success", "true");
         } else {
             map.put("success", "false");
-            for (FieldError error : result.getFieldErrors()) {
-                String message;
-                if (!StringUtils.isBlank(error.getCode())) {
-                    message = messageSource.getMessage(error.getCode(), null, Locale.getDefault());
-                } else {
-                    message = error.getDefaultMessage();
-                }
-                map.put(error.getField(), message);
-            }
+            map.putAll(FieldErrorUtils.populateMapWithErrors(result, messageSource));
         }
 
         Gson gson = new Gson();

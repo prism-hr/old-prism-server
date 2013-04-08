@@ -226,26 +226,22 @@
                                               </div></#list>
 										</div>
 									</div>
-									<#if reviewersWillingToInterview??>		            			
-										<div class="row">
-											<label id="delegateLabel" class="plain-label grey-label">Delegate Application Processing</label>
-											<span class="hint" data-desc="<@spring.message 'validateApp.delegate'/>"></span>
-											<div class="field">		   
-												<form id="delegateForm" method="POST" action="<@spring.url '/delegate' />">   
-													<input type="hidden" name="applicationId" value="${(applicationForm.applicationNumber)!}"/>     				
-													<select class="max" name="applicationAdministrator" id="applicationAdministrator" disabled="disabled">
-														<option value="">Select...</option>
-														<#list reviewersWillingToInterview as reviewerWillingToInterview>
-														<option value="${encrypter.encrypt(reviewerWillingToInterview.id)}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
-														</#list>
-													</select>	
-												</form>
-											</div>
-										</div>
 									
-									</#if>
-							
+                  <div class="row">
+                    <label class="plain-label" for="delegateProcessing">Delegate interview administration<em>*</em></label><span data-desc="" class="hint"></span> 
+                    <div class="field">
+                      <input id="delegateProcessing" type="radio" name="switch" value="no" checked="checked"/>
+                        No
+                      <input type="radio" name="switch" value="yes"/>
+                        Yes 
+                    </div>
+                  </div>
+
 								</div><!-- close .row-group -->
+								
+								<div class="row-group" id="interviewDelegation" style="display:none">
+								  <#include "/private/staff/admin/interview_delegation.ftl"/>
+								</div>
 	
 								<div class="buttons">
 								    <button class="btn btn-primary" type="button" id="changeStateButton" value="save">Submit</button>

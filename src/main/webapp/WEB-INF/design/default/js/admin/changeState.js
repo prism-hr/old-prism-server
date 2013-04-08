@@ -6,7 +6,7 @@ $(document).ready(function()
     var suggestions = [];
     var selectedDates = {};
     
-    getCreateInterviewersSection();
+    refreshDelegationControls();
     
     // -------------------------------------------------------------------------------
     // Initialise datepicker with highligted dates
@@ -91,58 +91,16 @@ $(document).ready(function()
 	});
 
 
-	// ------------------------------------------------------------------------------
-	// Next stage dropdown field.
-	// ------------------------------------------------------------------------------
-	$('#status').change(function()
-	{
-		if ($('#status').val() == 'INTERVIEW')
-		{
-			// enable the delegation dropdown box.
-			$('#applicationAdministrator').removeAttr('disabled');
-			$('#delegateLabel').removeClass('grey-label');
-		}
-		else if ($('#status').val() == 'REQUEST_RESTART_APPROVAL') 
-		{
-		    $('#stateChangeForm').attr('action', '/pgadmissions/approval/submitRequestRestart');
-		}
-		else
-		{
-			// disable the delegation dropdown box.
-			$('#applicationAdministrator').attr('disabled', 'disabled');
-			$('#delegateLabel').addClass('grey-label');
-		}
-		
-		if ($('#status').val() != 'REQUEST_RESTART_APPROVAL') { 
-		    $('#stateChangeForm').attr('action', originalPostUrl);
-		}
-		
-	});
-	
-	
     // ------------------------------------------------------------------------------
     // Delegate application processing radio buttons.
     // ------------------------------------------------------------------------------
     $('#status').change(function()
     {
-        if ($('#status').val() == 'INTERVIEW')
-        {
-            // enable the delegation dropdown box.
-            $('#applicationAdministrator').removeAttr('disabled');
-            $('#delegateLabel').removeClass('grey-label');
-        }
-        else if ($('#status').val() == 'REQUEST_RESTART_APPROVAL') 
-        {
-            $('#stateChangeForm').attr('action', '/pgadmissions/approval/submitRequestRestart');
-        }
-        else
-        {
-            // disable the delegation dropdown box.
-            $('#applicationAdministrator').attr('disabled', 'disabled');
-            $('#delegateLabel').addClass('grey-label');
-        }
+        refreshDelegationControls();
         
-        if ($('#status').val() != 'REQUEST_RESTART_APPROVAL') { 
+        if ($('#status').val() == 'REQUEST_RESTART_APPROVAL') {
+            $('#stateChangeForm').attr('action', '/pgadmissions/approval/submitRequestRestart');
+        } else { 
             $('#stateChangeForm').attr('action', originalPostUrl);
         }
         
@@ -150,11 +108,7 @@ $(document).ready(function()
     
     $('input:radio[name=switch]').change(function()
     {
-        if($(this).val() == 'yes'){
-            $("#interviewDelegation").show();
-        } else if ($(this).val() == 'no'){
-            $("#interviewDelegation").hide();
-        }
+        refreshDelegationControls();
     });
 
 
@@ -243,6 +197,10 @@ function saveComment()
 				'<input type="hidden" name="documents" value="' + $(this).val() + '"/>');
 	});
 	
+	$('#firstName').val($('#newInterviewerFirstName').val());
+	$('#lastName').val($('#newInterviewerLastName').val());
+	$('#email').val($('#newInterviewerEmail').val());
+	
 	$('#stateChangeForm').submit();
 }
 
@@ -323,10 +281,46 @@ function changeState()
 				},
 				success:function(data)
 				{
-					$('#delegate').val('true');
-					saveComment();
+				    $("#interviewDelegation").find("div.alert").remove();
+		            if(data.success == "false"){
+	                    if (data.firstName != null) {
+	                        $('#newInterviewerFirstName').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.firstName + '</div>');
+	                    } 
+	                    if (data.lastName != null) {
+                            $('#newInterviewerLastName').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.lastName + '</div>');
+                        }
+	                    if (data.email != null) {
+                            $('#newInterviewerEmail').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.email + '</div>');
+                        }
+		            } else {
+    					$('#delegate').val('true');
+    					saveComment();
+				    }
 				}
 			});
 		}
 	}
+}
+
+function refreshDelegationControls() {
+    if ($('#status').val() == 'INTERVIEW') {
+
+        // enable the delegation user component.
+        $('input:radio[name=switch]').removeAttr('disabled');
+        $('#delegateLabel').removeClass('grey-label');
+        
+        if($('input:radio[name=switch]:checked').val() == 'yes'){
+            $("#interviewDelegation").show();
+        } else {
+            $("#interviewDelegation").hide();
+        }
+    } else {
+        // disable the delegation dropdown box.
+        $('input:radio[name=switch]')[0].checked = true;
+        $("#interviewDelegation").hide();
+        $('input:radio[name=switch]').attr('disabled', 'disabled');
+        $('#delegateLabel').addClass('grey-label');
+    }     
+    
+
 }

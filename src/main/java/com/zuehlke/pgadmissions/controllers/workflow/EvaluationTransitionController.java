@@ -56,8 +56,10 @@ public class EvaluationTransitionController extends StateTransitionController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
 	public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
-			ModelMap modelMap, @RequestParam(required = false) Boolean delegate) {
+			ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
 		
+	    modelMap.put("delegate", delegate);
+	    
 	    if (result.hasErrors()) {
 			return STATE_TRANSITION_VIEW;
 		}

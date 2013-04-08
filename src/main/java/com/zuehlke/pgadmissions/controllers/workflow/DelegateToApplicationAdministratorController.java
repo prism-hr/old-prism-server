@@ -1,15 +1,26 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import java.util.Locale;
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -30,18 +41,20 @@ public class DelegateToApplicationAdministratorController {
     private final UserService userService;
     private final NewUserByAdminValidator newUserByAdminValidator;
     private final CommentService commentService;
+    private final MessageSource messageSource;
 
     DelegateToApplicationAdministratorController() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
     public DelegateToApplicationAdministratorController(ApplicationsService applicationsService, UserService userService,
-            NewUserByAdminValidator newUserByAdminValidator, CommentService commentService) {
+            NewUserByAdminValidator newUserByAdminValidator, CommentService commentService, MessageSource messageSource) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.newUserByAdminValidator = newUserByAdminValidator;
         this.commentService = commentService;
+        this.messageSource = messageSource;
     }
 
     @ModelAttribute("applicationForm")
@@ -70,8 +83,24 @@ public class DelegateToApplicationAdministratorController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
-            @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+    @ResponseBody
+    public Map<String, String> delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
+            @Valid @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer, BindingResult delegatedInterviewerResult) {
+        Map<String, String> result = Maps.newHashMap();
+
+        if (delegatedInterviewerResult.hasErrors()) {
+            result.put("success", "false");
+            for (FieldError error : delegatedInterviewerResult.getFieldErrors()) {
+                String message;
+                if (!StringUtils.isBlank(error.getCode())) {
+                    message = messageSource.getMessage(error.getCode(), null, Locale.getDefault());
+                } else {
+                    message = error.getDefaultMessage();
+                }
+                result.put(error.getField(), message);
+            }
+            return result;
+        }
 
         RegisteredUser applicationAdmin = userService.getUserByEmailIncludingDisabledAccounts(delegatedInterviewer.getEmail());
         if (applicationAdmin == null) {
@@ -85,6 +114,6 @@ public class DelegateToApplicationAdministratorController {
             applicationForm.removeNotificationRecord(reviewReminderNotification);
         }
         commentService.createDelegateComment(getCurrentUser(), applicationForm);
-        return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
+        return result;
     }
 }

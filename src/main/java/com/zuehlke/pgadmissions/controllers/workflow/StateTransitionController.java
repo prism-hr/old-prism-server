@@ -87,9 +87,9 @@ public class StateTransitionController {
         }
         return applicationForm;
     }
-    
+
     @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return applicationsService.getActionsDefinition(getUser(), application);
     }
@@ -107,6 +107,11 @@ public class StateTransitionController {
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return getCurrentUser();
+    }
+
+    @ModelAttribute("delegatedInterviewer")
+    public RegisteredUser getDelegatedInterviewer() {
+        return new RegisteredUser();
     }
 
     @ModelAttribute("reviewersWillingToInterview")

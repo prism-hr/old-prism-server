@@ -228,11 +228,15 @@
 									</div>
 									
                   <div class="row">
-                    <label class="plain-label" for="delegateProcessing">Delegate interview administration<em>*</em></label><span data-desc="" class="hint"></span> 
+                    <label id="delegateLabel" class="plain-label grey-label">Delegate interview administration<em>*</em></label><span data-desc="" class="hint"></span> 
                     <div class="field">
-                      <input id="delegateProcessing" type="radio" name="switch" value="no" checked="checked"/>
+                      <input id="delegateProcessing" type="radio" name="switch" value="no"
+                        <#if delegate?? && !delegate>checked="checked"</#if>
+                      disabled="disabled"/>
                         No
-                      <input type="radio" name="switch" value="yes"/>
+                      <input type="radio" name="switch" value="yes" 
+                        <#if delegate?? && delegate>checked="checked"</#if>
+                      disabled="disabled"/>
                         Yes 
                     </div>
                   </div>
@@ -267,6 +271,9 @@
 									<input type="hidden" id="commentType" name="type" value="APPROVAL_EVALUATION"/>
 								</#if>
 								<input type="hidden" id="delegate" name ="delegate" value="false"/>
+								<input type="hidden" id="firstName" name ="firstName"/>
+								<input type="hidden" id="lastName" name ="lastName"/>
+								<input type="hidden" id="email" name ="email"/>
 						 	</form>
 						</div>
 					</section>

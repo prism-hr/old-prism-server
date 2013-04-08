@@ -4,10 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+import java.util.Map;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.MessageSource;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -33,6 +38,7 @@ public class DelegateToApplicationAdministratorControllerTest {
     private DelegateToApplicationAdministratorController controller;
     private NewUserByAdminValidator newUserByAdminValidator;
     private CommentService commentServiceMock;
+    private MessageSource messageSourceMock;
 
     @Test
     public void shouldReturnCurrentUser() {
@@ -98,7 +104,8 @@ public class DelegateToApplicationAdministratorControllerTest {
         RegisteredUser currentUser = new RegisteredUserBuilder().build();
         RegisteredUser proposedInterviewerDetails = new RegisteredUserBuilder().firstName("Claudia").lastName("Scanduro").email("cs@zuhlke.com").build();
         RegisteredUser applicationAdmin = new RegisteredUserBuilder().build();
-
+        BindingResult delegatedInterviewerResult = new BeanPropertyBindingResult(proposedInterviewerDetails, "delegatedInterviewer"); 
+        
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("cs@zuhlke.com")).andReturn(null);
         EasyMock.expect(
@@ -106,11 +113,10 @@ public class DelegateToApplicationAdministratorControllerTest {
                         DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm)).andReturn(applicationAdmin);
 
         EasyMock.replay(userServiceMock);
-        String view = controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails);
+        Map<String, String> map = controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
         EasyMock.verify(userServiceMock);
 
         assertSame(applicationAdmin, applicationForm.getApplicationAdministrator());
-        assertEquals("redirect:/applications?messageCode=delegate.success&application=abc", view);
     }
 
     @Test
@@ -120,12 +126,13 @@ public class DelegateToApplicationAdministratorControllerTest {
         RegisteredUser currentUser = new RegisteredUserBuilder().build();
         RegisteredUser proposedInterviewerDetails = new RegisteredUserBuilder().firstName("Claudia").lastName("Scanduro").email("cs@zuhlke.com").build();
         RegisteredUser applicationAdmin = new RegisteredUserBuilder().build();
+        BindingResult delegatedInterviewerResult = new BeanPropertyBindingResult(proposedInterviewerDetails, "delegatedInterviewer");
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("cs@zuhlke.com")).andReturn(applicationAdmin);
 
         EasyMock.replay(userServiceMock);
-        controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails);
+        controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
         EasyMock.verify(userServiceMock);
 
         assertNull(applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER));
@@ -138,13 +145,14 @@ public class DelegateToApplicationAdministratorControllerTest {
         RegisteredUser currentUser = new RegisteredUserBuilder().build();
         RegisteredUser proposedInterviewerDetails = new RegisteredUserBuilder().firstName("Claudia").lastName("Scanduro").email("cs@zuhlke.com").build();
         RegisteredUser applicationAdmin = new RegisteredUserBuilder().build();
-
+        BindingResult delegatedInterviewerResult = new BeanPropertyBindingResult(proposedInterviewerDetails, "delegatedInterviewer");
+        
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("cs@zuhlke.com")).andReturn(applicationAdmin);
         commentServiceMock.createDelegateComment(currentUser, applicationForm);
 
         EasyMock.replay(userServiceMock, commentServiceMock);
-        controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails);
+        controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
         EasyMock.verify(userServiceMock, commentServiceMock);
     }
 
@@ -154,7 +162,8 @@ public class DelegateToApplicationAdministratorControllerTest {
         applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         newUserByAdminValidator = EasyMock.createMock(NewUserByAdminValidator.class);
-        controller = new DelegateToApplicationAdministratorController(applicationServiceMock, userServiceMock, newUserByAdminValidator, commentServiceMock);
+        messageSourceMock = EasyMock.createMock(MessageSource.class);
+        controller = new DelegateToApplicationAdministratorController(applicationServiceMock, userServiceMock, newUserByAdminValidator, commentServiceMock, messageSourceMock);
 
     }
 }

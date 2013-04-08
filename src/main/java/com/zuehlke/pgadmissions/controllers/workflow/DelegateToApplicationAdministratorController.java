@@ -1,17 +1,14 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.Locale;
 import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,6 +28,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @RequestMapping("/delegate")
@@ -90,15 +88,7 @@ public class DelegateToApplicationAdministratorController {
 
         if (delegatedInterviewerResult.hasErrors()) {
             result.put("success", "false");
-            for (FieldError error : delegatedInterviewerResult.getFieldErrors()) {
-                String message;
-                if (!StringUtils.isBlank(error.getCode())) {
-                    message = messageSource.getMessage(error.getCode(), null, Locale.getDefault());
-                } else {
-                    message = error.getDefaultMessage();
-                }
-                result.put(error.getField(), message);
-            }
+            result.putAll(FieldErrorUtils.populateMapWithErrors(delegatedInterviewerResult, messageSource));
             return result;
         }
 

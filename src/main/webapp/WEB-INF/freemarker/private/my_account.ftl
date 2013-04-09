@@ -18,7 +18,6 @@
         <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
         <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
         <!-- Styles for Application List Page -->
 
 		<!--[if lt IE 9]>

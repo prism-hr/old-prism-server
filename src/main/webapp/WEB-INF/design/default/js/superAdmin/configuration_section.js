@@ -171,13 +171,14 @@ function updateRegistryForm()
 		$('#reg-firstname').parent().parent().children('.plain-label').addClass('grey-label');
 		$('#reg-lastname').parent().parent().children('.plain-label').addClass('grey-label');
 		$('#reg-email').parent().parent().children('.plain-label').addClass('grey-label');
+		$('#registryUserAdd').attr('disabled', 'disabled');
 	}
 	else
 	{
 		$('#reg-firstname').removeAttr('disabled');
 		$('#reg-lastname').removeAttr('disabled');
 		$('#reg-email').removeAttr('disabled');
-
+		$('#registryUserAdd').removeAttr('disabled');
 		$('#reg-firstname').parent().parent().children('.plain-label').removeClass('grey-label');
 		$('#reg-lastname').parent().parent().children('.plain-label').removeClass('grey-label');
 		$('#reg-email').parent().parent().children('.plain-label').removeClass('grey-label');

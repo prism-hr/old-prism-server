@@ -10,7 +10,7 @@
 		<!-- Styles for Login List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/register.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/jquery-ui-1.8.23.custom.css' />"/>
@@ -169,5 +169,6 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/register_applicant.js'/>"></script>
+        <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 	</body>
 </html>

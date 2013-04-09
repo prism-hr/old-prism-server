@@ -211,6 +211,8 @@ $(document).ready(function()
 				'<td data-desc="Supervisor ' + awareState + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
 				'<a class="button-edit" data-desc="Edit" id="us_'+unsavedSupervisors+'" name="editSupervisorLink">edit</a> ' +
+				'</td>' +
+				'<td>' +
 				'<a class="button-delete" data-desc="Delete" id="usd_'+unsavedSupervisors+'" name="deleteSupervisor">delete</a>' +
 				'<input type="hidden" name="sId" id="us_'+unsavedSupervisors+'_supervisorId" value="" />' +
 				'<input type="hidden" name="sFN" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								

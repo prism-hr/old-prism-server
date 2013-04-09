@@ -280,7 +280,9 @@
       </#if> 
       <div class="row">
        <label for="acceptTermsQDCB" class="terms-label"> Confirm that the information that you have provided in this section is true and correct. Failure to provide true and correct information may result in a subsequent offer of study being withdrawn. </label>
+       <div class="terms-field">
         <input type="checkbox" name="acceptTermsQDCB" id="acceptTermsQDCB" />
+        </div>
         <input type="hidden" name="acceptTermsQDValue" id="acceptTermsQDValue" />
       </div>
     </div>

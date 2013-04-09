@@ -61,7 +61,7 @@
       <@spring.message 'referencesDetails.sectionInfo'/>
     </div>
     </#if>
-    <div class="row-group"> 
+    <div class="row-group aSDisplay"> 
       <!-- First name -->
       <div class="row">
         <label for="ref_firstname" class=
@@ -285,7 +285,7 @@
           </#list> </div>
       </div>
     </div>
-    <div class="row-group"> 
+    <div class="row-group aSDisplay"> 
 
       <h3 class=
         <#if referee.editable && (applicationForm.referees?size &lt; 4 || referee.id??) > "group-heading-label"
@@ -295,7 +295,7 @@
         >Contact Details</h3>
         
       <!-- Email address -->
-      <div class="row">
+      <div class="row" >
         <label for="ref_email" class=
         <#if referee.editable && (applicationForm.referees?size &lt; 4 || referee.id??) > "plain-label"
           <#else>

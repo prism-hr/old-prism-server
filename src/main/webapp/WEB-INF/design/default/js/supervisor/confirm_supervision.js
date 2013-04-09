@@ -47,7 +47,7 @@ function disableProjectDescription() {
 	
     $("#projectTitle").attr("disabled", "disabled");
     $("#lbl_projectTitle").addClass("grey-label").parent().find('.hint').addClass("grey");
-    $("#lbl_projectTitle").html("Project Title");
+    $("#lbl_projectTitle").html("Project Title"); 
     
     $("#projectAbstract").attr("disabled", "disabled");
     $("#lbl_projectAbstract").addClass("grey-label").parent().find('.hint').addClass("grey");
@@ -96,13 +96,18 @@ function enableRecommendedOffer() {
 }
 
 function recomendedConditionsChange() {
-    var conditionsAvailable = $("input[name='recommendedConditionsAvailable']:checked").val();
-    if(conditionsAvailable == "true"){
-        enableConditions();
-    } else {
-        disableConditions();
-    }
-}
+	var conditionsAvailable = $("input[name='recommendedConditionsAvailable']:checked").val();
+	if(conditionsAvailable == "true"){
+	var selected_radio = $("input[name='confirmedSupervision']:checked").val();
+		if (selected_radio == 'true') {
+			enableConditions();
+		} else {
+			disableConditions();
+		}
+	} else {
+		disableConditions();
+	}
+} 
 
 function disableConditions() {
     $("#recommendedConditions").attr("disabled", "disabled");
@@ -118,8 +123,10 @@ function enableConditions() {
 
 function disableDeclinedSupervisionReason() {
     $("#declinedSupervisionReason").attr("disabled", "disabled");
-    $("#lbl_declinedSupervisionReason").addClass("grey-label").parent().find('.hint').addClass("grey");
-    $("#lbl_declinedSupervisionReason").html("Reason");
+	$("#declinedSupervisionReason").parent().find('.alert-error').remove();
+	$("#declinedSupervisionReason").val('');
+	$("#lbl_declinedSupervisionReason").addClass("grey-label").parent().find('.hint').addClass("grey");
+	$("#lbl_declinedSupervisionReason").html("Reason"); 
 }
 
 function enableDeclinedSupervisionReason() {

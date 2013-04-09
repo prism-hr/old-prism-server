@@ -7,12 +7,7 @@
           <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
           <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
         </div>
-            
-            <p class="project_title"><span/>
-                <b>Project Title:</b> ${(comment.projectTitle?html)!}
-            </p>
-            
-        
+            <p class="project_title"><span/><b>Project Title:</b> ${(comment.projectTitle?html)!}</p>
       </div>
     </li>
 </#if>
@@ -26,21 +21,14 @@
           <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
         </div>
             
-            <p class="start_date"><span/>
-                <b>${comment.recommendedStartDate?string('dd MMM yy')}</b> 
-            </p>
+            <p class="start_date"><span/><b>${comment.recommendedStartDate?string('dd MMM yy')}</b></p>
             
             <#if comment.recommendedConditionsAvailable>
                 <p class="conditional_offer"><span/>
-                    <b>Recommended conditions: </b> ${(comment.recommendedConditions?html)!}
-                </p>
+                    <b>Recommended conditions: </b>${(comment.recommendedConditions?html)!}</p>
             <#else>
-                <p class="unconditional_offer"><span/>
-                    <b>Unconditional offer recommended.</b>
-                </p>
+                <p class="unconditional_offer"><span/><b>Unconditional offer recommended.</b></p>
             </#if>
-            
-        
       </div>
     </li>
 </#if>

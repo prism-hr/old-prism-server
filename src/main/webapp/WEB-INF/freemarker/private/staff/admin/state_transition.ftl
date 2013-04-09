@@ -227,21 +227,6 @@
 										</div>
 									</div>
 									
-                  <div class="row">
-                    <label id="delegateLabel" class="plain-label grey-label">Delegate interview administration<em>*</em></label><span data-desc="" class="hint"></span> 
-											<span class="hint grey" data-desc="<@spring.message 'validateApp.delegate'/>"></span>
-                    <div class="field">
-                      <input id="delegateProcessing" type="radio" name="switch" value="no"
-                        <#if delegate?? && !delegate>checked="checked"</#if>
-                      disabled="disabled"/>
-                        No
-                      <input type="radio" name="switch" value="yes" 
-                        <#if delegate?? && delegate>checked="checked"</#if>
-                      disabled="disabled"/>
-                        Yes 
-                    </div>
-                  </div>
-
 								</div><!-- close .row-group -->
 								
 								<div class="row-group" id="interviewDelegation" style="display:none">

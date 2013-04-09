@@ -271,11 +271,9 @@ function loadProgrammeSection(clear){
 				checkLoadedSections();
 				if(clear){
 					$("#addSupervisorButton").show();
-					$("#updateSupervisorButton").hide();
-
-					
+					$("#updateSupervisorButton").hide();				
 					$("#studyOption").val("");
-					$("#startDate").val("01 Oct 2012");
+					$("#startDate").val("");
 					$("#referrer").val("");
 					$("#supervisorFirstname").val("");
 					$("#supervisorLastname").val("");

@@ -1,0 +1,36 @@
+@charset "utf-8";
+
+/* REGISTRATION page * previous design * -------------------------------------------------------------------------------------------- */
+#form-box { background: #FFF; border-radius: 8px; box-shadow: 0 0 4px #999; bottom: 30px; left: 35px; padding: 20px; position: absolute; }
+#form-box h1 { color: #F30; font-size: 16pt; margin-bottom: 1em; }
+#form-box div.row label { float: left; font-weight: bold; width: 150px; }
+#form-box div.row div.field { margin-left: 160px; width: 350px; }
+#form-box div.row input { margin-bottom: 4px; width: 90%; }
+#form-box div.row select { margin-bottom: 4px; width: 92%; }
+ 
+
+/* REGISTRATION page * new design - date:27-03-12 * -------------------------------------------------------------------------------------------- */
+#registration-box {
+	background: white;
+
+	/* Mofified height from 108px to auto - Manish*/
+	border-radius: 4px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: auto; position: absolute; right: 35px; top: 35px; width: 330px;
+	padding-bottom: 0px;
+	box-shadow: 0 0 3px 1px #888888;
+}
+#registration-box em {	color: red;}
+#registration-box label { width: 70px;}
+.form-horizontal .controls {	margin-left: 105px;}
+#registration-box .control-group {	margin-bottom: 14px;}
+#registration-box .alert {	margin-top: 4px !important; margin-bottom:0; width: 164px; padding: 8px; line-height: 1.4em; padding-left: 22px; }
+#registration-box .alert i{ margin-left: -14px;}
+#registration-box form { padding: 0px 14px 0; margin-bottom: 0px; }
+#registration-box p { line-height: 18px; }
+#registration-box legend {	border-bottom: none; color: #58585A; margin-bottom: 6px;}
+
+/* Changed - Manish*/
+
+#registration-box form span.invalid { 
+	color:white; padding-bottom:10px; padding-top:10px;
+	background: url("../../images/button_exclaim.png") no-repeat scroll 0 0.5em transparent;
+}

@@ -1,4 +1,28 @@
 <#import "/spring.ftl" as spring />
+<section id="emailSettingsSection" class="form-rows">
+    <h2 class="no-arrow">Email Settings</h2>
+    <div>
+        <form>
+            <div class="alert alert-info">
+                <i class="icon-info-sign"></i> Edit your email settings.
+            </div>
+            <div class="row-group">
+                <div class="row">
+                    <label id="emailNotification-lbl" class="plain-label" for="emailNotificationStrategy">Would you like to receive email notifications in a daily digest?</label> 
+                    <span class="hint" data-desc=""></span>
+                    <div class="field">
+                        <input id="emailNotificationStrategy" type="radio" name="emailNotificationStrategy" value="DIGEST" <#if updatedUser.emailNotificationType.name() == 'DIGEST'>checked</#if> /> Yes </input> 
+                        <input type="radio" name="emailNotificationStrategy" value="INDIVIDUAL" <#if updatedUser.emailNotificationType.name() == 'INDIVIDUAL'>checked</#if>> No </input>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button class="btn btn-primary" id="saveEmailSettings" type="button">Submit</button>
+            </div>
+        </form>
+    </div>
+</section>
+
 <section id="accountDetailsSection" class="form-rows">
     <h2 class="no-arrow">Account Details</h2>
     <div>

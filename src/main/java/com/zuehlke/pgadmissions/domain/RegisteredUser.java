@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -30,6 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
@@ -79,6 +82,13 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     @Column(name = "original_querystring")
     private String originalApplicationQueryString;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "email_notification_type")
+    private EmailNotificationType emailNotificationType;
+    
+    @Column(name = "digest_notification")
+    private boolean digestNotification;
 
     private boolean enabled;
 
@@ -675,6 +685,22 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public void setUsername(final String username) {
         this.username = username;
+    }
+    
+    public EmailNotificationType getEmailNotificationType() {
+        return emailNotificationType;
+    }
+
+    public void setEmailNotificationType(final EmailNotificationType type) {
+        this.emailNotificationType = type;
+    }
+    
+    public boolean isDigestNotification() {
+        return digestNotification;
+    }
+
+    public void setDigestNotification(final boolean flag) {
+        this.digestNotification = flag;
     }
 
     @Override

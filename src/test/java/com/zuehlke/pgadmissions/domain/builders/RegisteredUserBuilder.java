@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
 
 public class RegisteredUserBuilder {
     private String firstName;
@@ -30,6 +31,8 @@ public class RegisteredUserBuilder {
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
     private String activationCode;
+    private boolean dailyDigestNotification = false;
+    private EmailNotificationType emailNotificationType = EmailNotificationType.INDIVIDUAL; 
 
     private List<Referee> referees = new ArrayList<Referee>();
     private List<Comment> comments = new ArrayList<Comment>();
@@ -48,6 +51,16 @@ public class RegisteredUserBuilder {
 
     private String originalApplicationQueryString;
 
+    public RegisteredUserBuilder dailyDigestNotification(boolean flag) {
+        this.dailyDigestNotification = flag;
+        return this;
+    }
+    
+    public RegisteredUserBuilder emailNotificationType(EmailNotificationType type) {
+        this.emailNotificationType = type;
+        return this;
+    }
+    
     public RegisteredUserBuilder pendingRoleNotifications(PendingRoleNotification... pendingRoleNotifications) {
         this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
         return this;
@@ -219,7 +232,9 @@ public class RegisteredUserBuilder {
         user.setCredentialsNonExpired(credentialsNonExpired);
         user.setActivationCode(activationCode);
         user.getRoles().addAll(roles);
-
+        user.setEmailNotificationType(emailNotificationType);
+        user.setDigestNotification(dailyDigestNotification);
+        
         user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
         user.setProgramsOfWhichApprover(programsOfWhichApprover);
         user.setProgramsOfWhichReviewer(programsOfWhichReviewer);

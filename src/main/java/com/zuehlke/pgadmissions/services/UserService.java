@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -59,8 +60,10 @@ public class UserService {
 	}
 
 	@Autowired
-	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-			JavaMailSender mailsender, MessageSource msgSource, EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO, EmailTemplateService emailTemplateService) {
+    public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory,
+            MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,
+            MessageSource msgSource, EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO,
+            EmailTemplateService emailTemplateService) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.userFactory = userFactory;
@@ -317,6 +320,20 @@ public class UserService {
         }
         currentUser.setUsername(user.getEmail());
         save(currentUser);
+    }
+    
+    public void setEmailNotificationStrategy(final EmailNotificationType type) {
+        RegisteredUser currentUser = getCurrentUser();
+        currentUser.setEmailNotificationType(type);
+        if (type == EmailNotificationType.INDIVIDUAL) {
+            currentUser.setDigestNotification(false);
+        }
+        save(currentUser);
+    }
+    
+    public void setNeedsDailyDigestNotification(final RegisteredUser user, final boolean value) {
+        user.setDigestNotification(value);
+        save(user);
     }
 
     public void resetPassword(String email) {

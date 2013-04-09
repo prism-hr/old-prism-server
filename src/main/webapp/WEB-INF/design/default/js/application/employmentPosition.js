@@ -1,3 +1,18 @@
+// -------------------------------------------------------------------------------
+	// Show or hide the AdPosisionButton
+	// -------------------------------------------------------------------------------
+	function showOrHideAdPosisionButton() {
+		numberOfSavedPositions = $("#positionSection .existing .button-edit").size();
+		if (numberOfSavedPositions >= 5) {
+			//$("#addPosisionButton").removeClass("blue");
+            //$("#positionSaveAndCloseButton").addClass("clear");
+            $('#position-H2').trigger('click');
+		} else {
+			$("#addPosisionButton").show();
+			//$("#positionSaveAndCloseButton").addClass("blue");
+            //$("#positionSaveAndCloseButton").removeClass("clear");
+		}
+	}
 $(document).ready(function(){
 	//Add Counter
     addCounter();
@@ -9,21 +24,7 @@ $(document).ready(function(){
 	//limitTextArea();
 	showOrHideAdPosisionButtonOnly();
 	
-	// -------------------------------------------------------------------------------
-	// Show or hide the AdPosisionButton
-	// -------------------------------------------------------------------------------
-	function showOrHideAdPosisionButton() {
-		numberOfSavedPositions = $("#positionSection .existing .button-edit").size();
-		if (numberOfSavedPositions >= 5) {
-			$("#addPosisionButton").removeClass("blue");
-            $("#positionSaveAndCloseButton").addClass("clear");
-            $('#position-H2').trigger('click');
-		} else {
-			$("#addPosisionButton").show();
-			$("#positionSaveAndCloseButton").addClass("blue");
-            $("#positionSaveAndCloseButton").removeClass("clear");
-		}
-	}
+	
 	
 	// -------------------------------------------------------------------------------
 	// Show or hide the AdPosisionButton Without minimizing 
@@ -33,12 +34,9 @@ $(document).ready(function(){
 		if (numberOfSavedPositions >= 5 && $("#position_title").val() == "") {
 			$("#addPosisionButton").removeClass("blue");
 			$("#addPosisionButton").attr('disabled','true');
-            $("#positionSaveAndCloseButton").addClass("clear");
 		} else {
 			$("#addPosisionButton").show();
 			$("#addPosisionButton").removeAttr('disabled');
-			$("#positionSaveAndCloseButton").addClass("blue");
-            $("#positionSaveAndCloseButton").removeClass("clear");
 		}
 	}
 	

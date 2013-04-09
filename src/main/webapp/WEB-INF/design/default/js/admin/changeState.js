@@ -304,22 +304,26 @@ function changeState()
 
 function refreshDelegationControls() {
     if ($('#status').val() == 'INTERVIEW') {
-
-        // enable the delegation user component.
-        $('input:radio[name=switch]').removeAttr('disabled');
-        $('#delegateLabel').removeClass('grey-label');
-        
+    	$("#interviewDelegation").show();
         if($('input:radio[name=switch]:checked').val() == 'yes'){
-            $("#interviewDelegation").show();
+        	$('#delegateFirstName').removeAttr('disabled');
+        	$('#delegateLastName').removeAttr('disabled');
+        	$('#delegateEmail').removeAttr('disabled');
+        	$('#delegateFristName').removeAttr('disabled');
+        	$('#delegateFirstNameLabel').removeClass('grey-label');
+        	$('#delegateLastNameLabel').removeClass('grey-label');
+        	$('#delegateEmailLabel').removeClass('grey-label');
         } else {
-            $("#interviewDelegation").hide();
+        	$('#delegateFirstName').attr('disabled', 'disabled');
+        	$('#delegateLastName').attr('disabled', 'disabled');
+        	$('#delegateEmail').attr('disabled', 'disabled');
+        	$('#delegateFirstNameLabel').addClass('grey-label');
+        	$('#delegateLastNameLabel').addClass('grey-label');
+        	$('#delegateEmailLabel').addClass('grey-label');
         }
     } else {
-        // disable the delegation dropdown box.
+    	$("#interviewDelegation").hide();
         $('input:radio[name=switch]')[0].checked = true;
-        $("#interviewDelegation").hide();
-        $('input:radio[name=switch]').attr('disabled', 'disabled');
-        $('#delegateLabel').addClass('grey-label');
     }     
     
 

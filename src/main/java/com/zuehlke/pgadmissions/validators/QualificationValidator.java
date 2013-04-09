@@ -36,14 +36,13 @@ public class QualificationValidator extends FormSectionObjectValidator implement
 
         Qualification qualification = (Qualification) target;
 
-        if (qualification.getQualificationStartDate() != null && qualification.getQualificationAwardDate() != null) {
-            if (qualification.getQualificationStartDate().after(qualification.getQualificationAwardDate())) {
+        if (qualification.getQualificationStartDate() != null) {
+            if (qualification.getQualificationStartDate().after(today)) {
+                errors.rejectValue("qualificationStartDate", "date.field.notpast");
+            } else if (qualification.getQualificationAwardDate() != null
+                    && qualification.getQualificationStartDate().after(qualification.getQualificationAwardDate())) {
                 errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
             }
-        }
-
-        if (qualification.getQualificationStartDate() != null && qualification.getQualificationStartDate().after(today)) {
-            errors.rejectValue("qualificationStartDate", "date.field.notpast");
         }
 
         if (qualification.isQualificationCompleted()) {

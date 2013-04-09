@@ -110,6 +110,21 @@ public class QualificationValidatorTest {
         Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("qualificationStartDate").getCode());
         Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("qualificationAwardDate").getCode());
     }
+    
+    @Test
+    public void shouldRejectIfStartDateIsInFutureAndAfterAwardDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, 1);
+        Date tomorrow = calendar.getTime();
+        calendar.add(Calendar.DATE, -1);
+        Date yesterday = calendar.getTime();
+        qualification.setQualificationStartDate(tomorrow);
+        qualification.setQualificationAwardDate(yesterday);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+        qualificationValidator.validate(qualification, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("qualificationStartDate").getCode());
+    }
 
     @Test
     public void shouldRejectIfTypeIsEmpty() {

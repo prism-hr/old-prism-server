@@ -310,16 +310,16 @@ function refreshDelegationControls() {
         	$('#delegateLastName').removeAttr('disabled');
         	$('#delegateEmail').removeAttr('disabled');
         	$('#delegateFristName').removeAttr('disabled');
-        	$('#delegateFirstNameLabel').removeClass('grey-label');
-        	$('#delegateLastNameLabel').removeClass('grey-label');
-        	$('#delegateEmailLabel').removeClass('grey-label');
+        	$('#delegateFirstNameLabel').removeClass('grey-label').parent().find('.hint').removeClass("grey");
+        	$('#delegateLastNameLabel').removeClass('grey-label').parent().find('.hint').removeClass("grey");
+        	$('#delegateEmailLabel').removeClass('grey-label').parent().find('.hint').removeClass("grey");
         } else {
         	$('#delegateFirstName').attr('disabled', 'disabled');
         	$('#delegateLastName').attr('disabled', 'disabled');
         	$('#delegateEmail').attr('disabled', 'disabled');
-        	$('#delegateFirstNameLabel').addClass('grey-label');
-        	$('#delegateLastNameLabel').addClass('grey-label');
-        	$('#delegateEmailLabel').addClass('grey-label');
+        	$('#delegateFirstNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+        	$('#delegateLastNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+        	$('#delegateEmailLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
         }
     } else {
     	$("#interviewDelegation").hide();

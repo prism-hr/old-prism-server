@@ -11,7 +11,7 @@ $(document).ready(function() {
             if ($(this).hasClass("ui-selected")) {
                 $("#programSupervisors option[value='" + id + "']").removeClass('selected').removeAttr('disabled');
                 $(this).remove();
-                if($('#applicationSupervisorsList li').length < 2){
+                if($('#applicationSupervisorsList li').length < 2){ 
                 	enableAddingSupervisorsToList();
                 }
             }
@@ -79,10 +79,13 @@ $(document).ready(function() {
                 }
                 resetSupervisorsErrors();
                 getCreateSupervisorsSection();
-
+				
+				
+				
             },
             complete : function() {
                 $('#createsupervisorsection div.ajax').remove();
+	
             }
         });
 
@@ -177,13 +180,14 @@ $(document).ready(function() {
             complete : function() {
                 $('#approvalsection div.ajax').remove();
 				addCounter();
+				
             }
         });
     });
     
     if($('#applicationSupervisorsList li').length >= 2){
     	disableAddingSupervisorsToList();
-    }
+    } 
     
     bindDatePicker('#offerStartDate');
 });
@@ -242,6 +246,9 @@ function getCreateSupervisorsSection() {
         success : function(data) {
             $('#createsupervisorsection div.ajax').remove();
             $('#createsupervisorsection').html(data);
+			if($('#applicationSupervisorsList li').length >= 2){
+				disableAddingSupervisorsToList();
+			}
         }
     });
 }
@@ -314,6 +321,7 @@ function enableProjectDescription() {
 }
 
 function disableAddingSupervisorsToList() {
+
 	$('#programSupervisors').attr("disabled", "disabled");
 	$("#addSupervisorBtn").addClass("disabled");
 	
@@ -336,7 +344,7 @@ function disableAddingSupervisorsToList() {
     
     $("#createsupervisorsection").find('div.alert-error').remove(); // remove all previous form errors
     
-    $("#createSupervisor").hide();
+    $("#createSupervisor").attr('disabled', 'disabled');
 }
 
 function enableAddingSupervisorsToList() {
@@ -357,5 +365,5 @@ function enableAddingSupervisorsToList() {
     $("#lbl_newSupervisorEmail").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_newSupervisorEmail").html("Email<em>*</em>");
     
-    $("#createSupervisor").show();
+    $("#createSupervisor").removeAttr('disabled')
 }

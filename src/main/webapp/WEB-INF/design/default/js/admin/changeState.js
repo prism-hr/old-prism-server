@@ -306,17 +306,17 @@ function refreshDelegationControls() {
     if ($('#status').val() == 'INTERVIEW') {
     	$("#interviewDelegation").show();
         if($('input:radio[name=switch]:checked').val() == 'yes'){
-        	$('#delegateFirstName').removeAttr('disabled');
-        	$('#delegateLastName').removeAttr('disabled');
-        	$('#delegateEmail').removeAttr('disabled');
+        	$('#newInterviewerFirstName').removeAttr('disabled');
+        	$('#newInterviewerLastName').removeAttr('disabled');
+        	$('#newInterviewerEmail').removeAttr('disabled');
         	$('#delegateFristName').removeAttr('disabled');
         	$('#delegateFirstNameLabel').removeClass('grey-label');
         	$('#delegateLastNameLabel').removeClass('grey-label');
         	$('#delegateEmailLabel').removeClass('grey-label');
         } else {
-        	$('#delegateFirstName').attr('disabled', 'disabled');
-        	$('#delegateLastName').attr('disabled', 'disabled');
-        	$('#delegateEmail').attr('disabled', 'disabled');
+        	$('#newInterviewerFirstName').attr('disabled', 'disabled');
+        	$('#newInterviewerLastName').attr('disabled', 'disabled');
+        	$('#newInterviewerEmail').attr('disabled', 'disabled');
         	$('#delegateFirstNameLabel').addClass('grey-label');
         	$('#delegateLastNameLabel').addClass('grey-label');
         	$('#delegateEmailLabel').addClass('grey-label');

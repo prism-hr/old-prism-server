@@ -15,7 +15,7 @@
   <label id="delegateFirstNameLabel" class="plain-label normal" for="newInterviewerFirstName">Delegate First Name<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateFirstName'/>"></span>
   <div class="field">
-    <input id="delegateFirstName" class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  
+    <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  
     <#if delegatedInterviewer?? && delegatedInterviewer.firstName??>value="${delegatedInterviewer.firstName}"</#if>/>
   </div>
 </div>
@@ -23,7 +23,7 @@
   <label id="delegateLastNameLabel" class="plain-label normal" for="newInterviewerLastName">Delegate Last Name<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateLastName'/>"></span>
   <div class="field">
-    <input id="delegateLastName" class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName" 
+    <input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName" 
     <#if delegatedInterviewer?? && delegatedInterviewer.lastName??>value="${delegatedInterviewer.lastName}"</#if>/>
   </div>
 </div>
@@ -31,7 +31,7 @@
   <label id="delegateEmailLabel" class="plain-label normal" for="newInterviewerEmail">Delegate Email Address<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateEmail'/>"></span>
   <div class="field">
-    <input id="delegateEmail" class="full" type="email"  name="newInterviewerEmail" id="newInterviewerEmail" 
+    <input class="full" type="email"  name="newInterviewerEmail" id="newInterviewerEmail" 
     <#if delegatedInterviewer?? && delegatedInterviewer.email??>value="${delegatedInterviewer.email}"</#if>/>
   </div>
 </div>

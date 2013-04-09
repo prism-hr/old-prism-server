@@ -235,7 +235,7 @@ public class ApplicationListControllerTest {
     public void shouldReturnSearchPredicatesMap() {
         String predicatesMap = controller.getSearchPredicatesMap();
         assertEquals(
-                "{\"APPLICATION_NUMBER\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"APPLICANT_NAME\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"PROGRAMME_NAME\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"APPLICATION_STATUS\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"SUBMISSION_DATE\":[\"FROM_DATE\",\"ON_DATE\",\"TO_DATE\"],\"LAST_EDITED_DATE\":[\"FROM_DATE\",\"ON_DATE\",\"TO_DATE\"]}",
+                "{\"APPLICATION_NUMBER\":[{\"name\":\"CONTAINING\",\"displayName\":\"containing\"},{\"name\":\"NOT_CONTAINING\",\"displayName\":\"not containing\"}],\"APPLICANT_NAME\":[{\"name\":\"CONTAINING\",\"displayName\":\"containing\"},{\"name\":\"NOT_CONTAINING\",\"displayName\":\"not containing\"}],\"PROGRAMME_NAME\":[{\"name\":\"CONTAINING\",\"displayName\":\"containing\"},{\"name\":\"NOT_CONTAINING\",\"displayName\":\"not containing\"}],\"APPLICATION_STATUS\":[{\"name\":\"CONTAINING\",\"displayName\":\"containing\"},{\"name\":\"NOT_CONTAINING\",\"displayName\":\"not containing\"}],\"SUBMISSION_DATE\":[{\"name\":\"FROM_DATE\",\"displayName\":\"from\"},{\"name\":\"ON_DATE\",\"displayName\":\"on\"},{\"name\":\"TO_DATE\",\"displayName\":\"to\"}],\"LAST_EDITED_DATE\":[{\"name\":\"FROM_DATE\",\"displayName\":\"from\"},{\"name\":\"ON_DATE\",\"displayName\":\"on\"},{\"name\":\"TO_DATE\",\"displayName\":\"to\"}]}",
                 predicatesMap);
     }
 

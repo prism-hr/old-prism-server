@@ -1,4 +1,3 @@
-<section id="reviewcommentsectopm" >
   <!DOCTYPE HTML>
   <#import "/spring.ftl" as spring />
   <#setting locale = "en_US">
@@ -49,6 +48,7 @@
     <div id="middle"> <#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
       <@header/>
       <!-- Main content area. -->
+      <section id="reviewcommentsectopm" >
       <article id="content" role="main"> 
         
         <!-- "Tools" 
@@ -151,6 +151,7 @@
         <!-- .content-box --> 
         
       </article>
+      </section>
     </div>
     <!-- Middle Ends --> 
     
@@ -159,4 +160,3 @@
   
   </body>
   </html>
-</section>

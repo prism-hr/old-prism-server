@@ -36,9 +36,9 @@
 	<span class="hint" data-desc="<@spring.message 'assignInterviewer.instructions'/>"></span>
 	<div class="field">
 		<#if assignOnly?? && assignOnly>
-		<textarea id="furtherDetails" readonly disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+		<textarea id="furtherDetails" readonly disabled="disabled" name="furtherDetails" class="max counter" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
 		<#else>
-		<textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+		<textarea id="furtherDetails" name="furtherDetails" class="max counter" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
 		</#if>
 		<@spring.bind "interview.furtherDetails" /> 
 		<#list spring.status.errorMessages as error>

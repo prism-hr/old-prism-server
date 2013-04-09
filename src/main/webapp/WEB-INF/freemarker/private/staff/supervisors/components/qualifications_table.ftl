@@ -1,9 +1,8 @@
-        <table class="existing">
+        <table class="existing table table-striped table-condensed table-bordered table-hover">
             <colgroup>
                 <col style="width: 30px" />
                 <col />
                 <col style="width: 90px" />
-                <col style="width: 30px" />
                 <col style="width: 30px" />
             </colgroup>
             <thead>
@@ -11,7 +10,7 @@
                     <th id="primary-header" colspan="2">Qualification</th>
                     <th>Date</th>
                     <th>&nbsp;</th>
-                    <th id="last-col">&nbsp;</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -59,7 +58,6 @@
                         </#if>
                     </td> 
                     <td><a name="showQualificationLink" id="showQualificationLink_${encQualificationId}" toggles="qualification_${encQualificationId}" class="button-show button-hint" data-desc="Show">edit</a></td>
-                    <td></td>
                 </tr>
                 </#list>
             </tbody>

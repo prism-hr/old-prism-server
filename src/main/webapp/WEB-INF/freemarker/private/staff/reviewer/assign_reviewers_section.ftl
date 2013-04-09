@@ -48,7 +48,11 @@
 		  </#list>	  
 	  </select>
 	  <@spring.bind "reviewRound.reviewers" /> 
-	  <#list spring.status.errorMessages as error> <span class="invalid" id="reviwersErrorSpan">${error}</span></#list>
+	  <#list spring.status.errorMessages as error> 
+      <div class="alert alert-error" id="reviwersErrorSpan"> <i class="icon-warning-sign"></i>
+            ${error}
+          </div> 
+       </#list>
 	</div>
 </div>
   

@@ -7,8 +7,9 @@
 <#setting locale = "en_US">
 
 <h2 id="qualifications-H2" class="no-arrow empty">Qualifications</h2>
-<div class="open">
 
+<div class="open">
+	<form>
         <#include "/private/staff/supervisors/components/qualifications_table.ftl"/>
         
         <@spring.bind "sendToPorticoData.emptyQualificationsExplanation" />
@@ -16,20 +17,20 @@
         <input type="hidden" name="showExplanationText" id="showExplanationText" value="${spring.status.errorCodes?seq_contains("portico.submit.explanation.empty")?string("yes", "no")}" />
         
         <#if spring.status.errorCodes?seq_contains("portico.submit.explanation.empty")>
-            <div class="section-error-bar">
-                <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
+            <div class="alert alert-error">
+                <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
                     <#if anyQualificationEnabled>
                         You have not selected any transcripts to submit for offer processing. <b>You must explain why.</b>
                     <#else>
                         You must explain why no transcripts have been not selected to submit for offer processing.
                     </#if>
-                </span>
+                
             </div>
         <#elseif spring.status.errorCodes?seq_contains("portico.submit.qualifications.exceed")>
-            <div class="section-error-bar">
-                <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
+            <div class="alert alert-error">
+                 <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
                     Select the proof award documents that you wish to send to UCL Admissions. <b>You may select a maximum of 2.</b>
-                </span>
+                
             </div>
         <#else>
                 <#if sendToPorticoData.emptyQualificationsExplanation??>
@@ -77,6 +78,7 @@
             <button type="button" id="qualificationCloseButton" class="btn">Close</button>
             <button type="button" id="qualificationSaveButton" class="btn btn-primary">Save</button>
         </div> 
+  </form>
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/qualifications_portico_validation.js' />"></script>

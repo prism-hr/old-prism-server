@@ -97,14 +97,25 @@ $(document).ready(function()
 		else
 		{*/
 			$("span[name='nonAcceptedRD']").html('');
-			// Check for a "dirty" referee form. If there is data try to submit it.
-			if ($('#referencesSection table.existing tbody tr').length < 3 || !isFormEmpty('#referencesSection form'))
+			// Check for 3 references provided.
+			if ($('#referencesSection table.existing tbody tr').length == 3)
 			{
-				postRefereeData('close');
+				$('#refereeForm').each (function(){
+				  this.reset();
+				});
+				$('#refereeCloseButton').trigger('click');
 			}
 			else
 			{
-				$('#refereeCloseButton').trigger('click');
+				// Check for a "dirty" referee form. If there is data try to submit it.
+				if ($('#referencesSection table.existing tbody tr').length < 3 || !isFormEmpty('#referencesSection form'))
+				{
+					postRefereeData('close');
+				}
+				else
+				{
+					$('#refereeCloseButton').trigger('click');
+				}
 			}
 		//}
 	});

@@ -62,7 +62,7 @@
 					<#if additionalInformation.convictions?? && !additionalInformation.convictions> disabled="disabled"</#if>
 					class="max" rows="6" cols="80"    >${(additionalInformation.convictionsText?html)!}</textarea>
 					<#else>
-					<textarea readonly id="convictionsText" name="convictionsText" class="max" rows="10" cols=80"   >${(additionalInformation.convictionsText?html)!}</textarea>
+					<textarea readonly id="convictionsText" name="convictionsText" class="max" rows="10" cols=80">${(additionalInformation.convictionsText?html)!}</textarea>
 					</#if>
                     <@spring.bind "additionalInformation.convictionsText" />
                     <#list spring.status.errorMessages as error>

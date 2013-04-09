@@ -91,6 +91,7 @@ $(document).ready(function() {
     });
     
     $('#save-go').click(function() {
+		$("#templateContentId").parent().find('.alert-info').remove();
     	if ($('#templateContentId').val()!=emailTemplateContent) {//user has changed template before re-enabling it
     		$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
 	    	 $.ajax({
@@ -108,7 +109,9 @@ $(document).ready(function() {
 	    	        				$('div.ajax').remove();
 	    	        			}
 	    	    });
-    	}
+    	} else {
+			$("#templateContentId").parent().append('<div class="alert alert-info"><i class="icon-info-sign"></i> You have not made any changes.</div>');
+		}
     });
     
     

@@ -14,14 +14,14 @@
     <col />
     <col style="width: 90px" />
     <col style="width: 30px" />
-    <col style="width: 30px" />
+    <col style="width: 28px" />
     </colgroup>
     <thead>
       <tr>
         <th>Funding</th>
         <th>Awarded</th>
         <th>&nbsp;</th>
-        <th id="last-col">&nbsp;</th>
+        <th>&nbsp;</th>
       </tr>
     </thead>
     <tbody>
@@ -30,12 +30,10 @@
       <td><#if existingFunding.document??> <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(existingFunding.document.id)}" data-desc="Proof of Award" class="button-hint" target="_blank">
         ${existingFunding.type.displayValue}
         (&pound;
-        ${(existingFunding.value?html)!}
-        ) </a> <#else>
+        ${(existingFunding.value?html)!}) </a> <#else>
         ${existingFunding.type.displayValue}
         (&pound;
-        ${(existingFunding.value?html)!}
-        ) - no document!
+        ${(existingFunding.value?html)!}) - no document!
         </#if> </td>
       <td>${existingFunding.awardDate?string('dd MMM yyyy')}</td>
       <td><a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_

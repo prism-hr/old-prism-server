@@ -155,7 +155,8 @@
         <table id="supervisors" class="table table-striped table-condensed table-bordered table-hover">
           <colgroup>
             <col />
-            <col style="width: 65px;" />
+            <col style="width: 30px;" />
+            <col style="width: 30px;" />
           </colgroup>
           <tbody>
             <#list programmeDetails.suggestedSupervisors! as supervisor>
@@ -166,6 +167,8 @@
               <td>
                 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>                    
                 <a class="button-edit" data-desc="Edit" id="supervisor_<#if supervisor.id??>${encrypter.encrypt(supervisor.id)!}</#if>" name="editSupervisorLink">edit</a>
+              </td>
+              <td>
                 <a class="button-delete" data-desc="Delete" id="supervisorDelete_<#if supervisor.id??>${encrypter.encrypt(supervisor.id)!}</#if>" name="deleteSupervisor">delete</a>
                 </#if>
                 <input type="hidden" id="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>_supervisorId" name="sId" value="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>" />

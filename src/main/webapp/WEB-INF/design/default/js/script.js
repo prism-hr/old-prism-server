@@ -284,14 +284,19 @@ function addCounter() {
     var $textArea = $("textarea[class='max']");
     var maxlength = 2000;
     $.each($textArea, function() {
-        
-
+        if ($(this).attr('id') == 'convictionsText') {
+			 maxlength = 400;
+		} else if  ($(this).attr('id') == 'projectAbstract') {
+			maxlength = 1000;
+		} else {
+			maxlength = 2000;
+		}
         // Create the span with all the content and characters left
         $(this).after('<span class="badge count">' + ( maxlength - $(this).val().length) + ' Characters left</span>');
 
-         if ($(this).val().length > 1990) {
+         if ($(this).val().length > (maxlength-10)) {
             $(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
-            if ($(this).val().length > 2000) {
+            if ($(this).val().length > maxlength) {
                 $(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
             }
         }

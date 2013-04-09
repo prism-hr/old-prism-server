@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	
     getInterviewersAndDetailsSections();
 
     getCreateInterviewersSection();
@@ -78,6 +79,7 @@ $(document).ready(function() {
             },
             complete : function() {
                 $('#createinterviewersection div.ajax').remove();
+				addCounter();
             }
         });
 
@@ -164,10 +166,10 @@ $(document).ready(function() {
             },
             complete : function() {
                 $('#interviewsection div.ajax').remove();
+				addCounter();
             }
         });
     });
-
 });
 
 function getInterviewersAndDetailsSections() {
@@ -212,6 +214,7 @@ function getInterviewersAndDetailsSections() {
         },
         complete : function() {
             $('#interviewsection div.ajax').remove();
+			addCounter();
         }
     });
 }

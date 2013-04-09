@@ -229,6 +229,7 @@
 									
                   <div class="row">
                     <label id="delegateLabel" class="plain-label grey-label">Delegate interview administration<em>*</em></label><span data-desc="" class="hint"></span> 
+											<span class="hint grey" data-desc="<@spring.message 'validateApp.delegate'/>"></span>
                     <div class="field">
                       <input id="delegateProcessing" type="radio" name="switch" value="no"
                         <#if delegate?? && !delegate>checked="checked"</#if>

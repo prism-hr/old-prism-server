@@ -8,10 +8,10 @@ $(document).ready(function()
 	
 	$('#submitInterviewFeedback').click(function()
 	{
-		if (!validateFeedback())
+		/*if (!validateFeedback())
 		{
 			return false;
-		}
+		}*/
 		
 		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()
@@ -81,7 +81,7 @@ $(document).ready(function()
 			$('input[name="suitableCandidate"]').parent().removeClass("grey-label");
 		}
 	});
-	
+	addCounter();
 });
 
 

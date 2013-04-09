@@ -104,11 +104,13 @@
   <div class="row">
     <label class="plain-label normal" for="interviewLocation">Interview Location</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
-    <div class="field"> <#if assignOnly?? && assignOnly>
-      <textarea id="interviewLocation" readonly disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
+    <div class="field"> 
+    <#if assignOnly?? && assignOnly>
+      <input type="text" id="interviewLocation" name="interviewLocation" class="input-xxlarge" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/" value="${(interview.locationURL?html)!}">
       <#else>
-      <textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/">${(interview.locationURL?html)!}</textarea>
+      <input type="text" id="interviewLocation" name="interviewLocation" class="input-xxlarge" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/" value="${(interview.locationURL?html)!}">
       </#if>
+      
       <@spring.bind "interview.locationURL" />
       <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>

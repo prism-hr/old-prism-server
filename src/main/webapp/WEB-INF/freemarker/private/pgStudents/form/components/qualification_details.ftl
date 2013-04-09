@@ -18,16 +18,15 @@
     <#list applicationForm.qualifications as existingQualification>
     <tr>
       <td><#if existingQualification.proofOfAward?? && existingQualification.proofOfAward.id?? > 
-        <#assign encProofOfAwardId = encrypter.encrypt(existingQualification.proofOfAward.id) /> <a href="<@spring.url '/download?documentId=${encProofOfAwardId}'/>" data-desc="Proof Of Award" class="button-hint" target="_blank"> <#if existingQualification.otherQualificationInstitution?has_content>
+        <#assign encProofOfAwardId = encrypter.encrypt(existingQualification.proofOfAward.id) /> 
+        <a href="<@spring.url '/download?documentId=${encProofOfAwardId}'/>" data-desc="Proof Of Award" class="button-hint" target="_blank"> <#if existingQualification.otherQualificationInstitution?has_content>
         ${(existingQualification.otherQualificationInstitution?html)!}
         <#else>
         ${(existingQualification.qualificationInstitution?html)!}
         </#if>
         ${(existingQualification.qualificationTitle?html)!}
         ${(existingQualification.qualificationSubject?html)!}
-        (
-        ${(existingQualification.qualificationGrade?html)!}
-        ) </a> <#else>
+        (${(existingQualification.qualificationGrade?html)!})</a> <#else>
         <#if existingQualification.otherQualificationInstitution?has_content>
         ${(existingQualification.otherQualificationInstitution?html)!}
         <#else>
@@ -35,9 +34,7 @@
         </#if>
         ${(existingQualification.qualificationTitle?html)!}
         ${(existingQualification.qualificationSubject?html)!}
-        (
-        ${(existingQualification.qualificationGrade?html)!}
-        ) 
+        (${(existingQualification.qualificationGrade?html)!}) 
         </#if> </td>
       <td><#if existingQualification.isQualificationCompleted()>
         ${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}

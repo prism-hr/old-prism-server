@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -124,10 +126,18 @@ public class ApplicationListController {
 
     @ModelAttribute("searchPredicatesMap")
     public String getSearchPredicatesMap() {
-        Map<SearchCategory, List<SearchPredicate>> predicatesMap = Maps.newLinkedHashMap();
+        Map<SearchCategory, List<Map<String, String>>> predicatesMap = Maps.newLinkedHashMap();
         for (SearchCategory searchCategory : SearchCategory.values()) {
-            predicatesMap.put(searchCategory, searchCategory.getAvailablePredicates());
+            List<Map<String, String>> availablePredicates = Lists.newLinkedList();
+            for (SearchPredicate predicate : searchCategory.getAvailablePredicates()) {
+                Map<String, String> availablePredicate = Maps.newLinkedHashMap();
+                availablePredicate.put("name", predicate.name());
+                availablePredicate.put("displayName", predicate.displayValue());
+                availablePredicates.add(availablePredicate);
+            }
+            predicatesMap.put(searchCategory, availablePredicates);
         }
+        System.out.println(new Gson().toJson(predicatesMap));
         return new Gson().toJson(predicatesMap);
     }
 

@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
@@ -81,7 +82,10 @@ public class ValidationTransitionController extends StateTransitionController {
 
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
     public String addComment(@RequestParam String applicationId, @RequestParam String closingDate, @RequestParam String projectTitle,
-            @Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap modelMap) {
+            @Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap modelMap,
+            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+    	
+    	 modelMap.put("delegate", delegate);
         try {
             ApplicationForm form = getApplicationForm(applicationId);
             Program programme = form.getProgram();

@@ -41,7 +41,10 @@ $(document).ready(function() {
 
     $('#institutionCountry').change(function() {
         showOrHideQualificationInstitution();
-
+		$("#otherInstitutionProviderName").val("");
+		$("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
+		$("#otherInstitutionProviderName").attr("readonly", "readonly");
+		$("#otherInstitutionProviderName").attr("disabled", "disabled");
         if ($('#institutionCountry').val() == "") {
             $("#qualificationInstitution").empty();
             $("#otherInstitutionProviderName").val("");
@@ -281,6 +284,7 @@ $(document).ready(function() {
                     $("#lbl-otherInstitutionProviderName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
                     $("#otherInstitutionProviderName").removeAttr("readonly", "readonly");
                     $("#otherInstitutionProviderName").removeAttr("disabled", "disabled");
+					
                 }
 
                 // Cheap way of changing the button text.

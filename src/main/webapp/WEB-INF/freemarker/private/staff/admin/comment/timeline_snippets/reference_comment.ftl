@@ -19,7 +19,7 @@
 				<#if timelineObject.referee.declined>
 					<p class="declined"><span></span><em>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee.</em></p>
 				<#else>  	          
-					<p><em>${(timelineObject.referee.reference.comment?html?replace("\n", "<br>"))!}</em></p>
+					<div class="textContainer"><p><em>${(timelineObject.referee.reference.comment?html?replace("\n", "<br>"))!}</em></p></div>
 						<#if timelineObject.referee.reference.documents?? && timelineObject.referee.reference.documents?size &gt; 0>
 							<ul class="uploads">                
 								<#list timelineObject.referee.reference.documents as document>

@@ -69,7 +69,7 @@
 
 <!-- Project Description -->
 <div class="row-group" id ="projectdescriptionsection">
-  <p> <strong>Project Description</strong> </p>
+  <H3>Project Description</H3>
   <div class="row">
     <label id="lbl_provideProjectDescription" class="plain-label">Do you wish to provide a project description?<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectDescription'/>"></span>
@@ -91,11 +91,14 @@
       </div>
       </#list> </div>
   </div>
-  <div class="row"> <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
+  <div class="row"> 
+    <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
     <label for="projectTitle" id="lbl_projectTitle" class="plain-label grey-label">Project Title</label>
+    <span class="hint grey" data-desc="<@spring.message 'assignSupervisor.projectTitle'/>"></span>
     <#else>
     <label for="projectTitle" id="lbl_projectTitle" class="plain-label">Project Title<em>*</em></label>
-    </#if> <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectTitle'/>"></span>
+    <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectTitle'/>"></span>
+    </#if> 
     <div class="field"> <input class="max" type="text" name="projectTitle" id="projectTitle" 
                         <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
       disabled="disabled"
@@ -111,16 +114,13 @@
      </div>
   <div class="row"> <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
     <label for="projectAbstract" id="lbl_projectAbstract" class="plain-label grey-label">Project Abstract (ATAS)</label>
+    <span class="hint grey" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
     <#else>
     <label for="projectAbstract" id="lbl_projectAbstract" class="plain-label">Project Abstract (ATAS)<em>*</em></label>
-    </#if> <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
-    <div class="field"> <textarea class="max" cols="80" rows="6" name="projectAbstract" id="projectAbstract"
-                        <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
-      disabled="disabled"
-      </#if>
-      >
-      ${(approvalRound.projectAbstract?html)!}
-      </textarea>
+    <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
+    </#if> 
+    <div class="field"> <textarea class="max" cols="80" rows="6" name="projectAbstract" id="projectAbstract" <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable > disabled="disabled" </#if>
+      >${(approvalRound.projectAbstract?html)!}</textarea>
       <@spring.bind "approvalRound.projectAbstract" />
     <#list spring.status.errorMessages as error >
     <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
@@ -164,16 +164,13 @@
      </div>
   <div class="row"> <#if  !approvalRound.recommendedConditionsAvailable?? || !approvalRound.recommendedConditionsAvailable >
     <label id="lbl_offerConditions" class="plain-label grey-label">Recommended Conditions</label>
+    <span class="hint grey" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
     <#else>
     <label id="lbl_offerConditions" class="plain-label">Recommended Conditions <em>*</em></label>
-    </#if> <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
-    <div class="field"> <textarea class="max" cols="80" rows="6" name="offerConditions" id="offerConditions"
-                        <#if  !approvalRound.recommendedConditionsAvailable?? || !approvalRound.recommendedConditionsAvailable >
-      disabled="disabled"
-      </#if>
-      >
-      ${(approvalRound.recommendedConditions?html)!}
-      </textarea>
+    <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
+    </#if> 
+    <div class="field"> <textarea class="max" cols="80" rows="6" name="offerConditions" id="offerConditions"             <#if  !approvalRound.recommendedConditionsAvailable?? || !approvalRound.recommendedConditionsAvailable > disabled="disabled"  </#if>
+      >${(approvalRound.recommendedConditions?html)!}</textarea>
     </div>
     <@spring.bind "approvalRound.recommendedConditions" />
     <#list spring.status.errorMessages as error >

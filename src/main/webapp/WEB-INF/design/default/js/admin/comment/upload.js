@@ -3,10 +3,10 @@ $(document).ready(function() {
 	
 	$('#referenceSaveButton').click(function()
 	{
-		if (!validateReference())
+		/*if (!validateReference())
 		{
 			return false;
-		}
+		}*/
 		
 		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()

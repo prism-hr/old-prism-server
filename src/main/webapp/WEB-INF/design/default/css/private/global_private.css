@@ -126,27 +126,7 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 
 
 /* BUTTONS / INDICATORS ----------------------------------------------------------------------------------- */
-button, a.button, div.button, span.indicator {
-  background: rgb(147,149,152); /* Old browsers */
-  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-  /*background: -moz-linear-gradient(top,  rgba(147,149,152,1) 0%, rgba(147,149,152,1) 50%, rgba(98,99,101,1) 51%, rgba(140,142,145,1) 100%); /* FF3.6+ */
-  /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(147,149,152,1)), color-stop(50%,rgba(147,149,152,1)), color-stop(51%,rgba(98,99,101,1)), color-stop(100%,rgba(140,142,145,1))); /* Chrome,Safari4+ */
-  /*background: -webkit-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Chrome10+,Safari5.1+ */
-  /*background: -o-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Opera 11.10+ */
-  /*background: -ms-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* IE10+ */
-  /*background: linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* W3C */
-  /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#939598', endColorstr='#8c8e91',GradientType=0 ); /* IE6-8 */
-  /*border: 2px solid #FFF;
-  border-radius: 11px;
-  box-shadow: 0 0 3px 0 #999;*/
-  color: #FFF;
-  cursor: pointer;
-  font: bold 8.5pt Arial, Helvetica, sans-serif;
-  line-height: 16px;
-  /*padding: 1px 10px;*/
-  text-align: center;
-  vertical-align: middle;
-}
+
 .ie9 button, .ie9 a.button, .ie9 div.button, .ie9 span.indicator {
  /*background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzkzOTU5OCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzkzOTU5OCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUxJSIgc3RvcC1jb2xvcj0iIzYyNjM2NSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM4YzhlOTEiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);*/
 }
@@ -1095,16 +1075,15 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   font-size: 15px;
   padding: 6px 14px;
 }
-input[readonly]#fundingAwardDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate {
+input[readonly]#fundingAwardDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate {
 	background-color: #FFFFFF;
 	cursor:auto;
 }
-input[readonly][disabled]#fundingAwardDate, input[readonly][disabled]#interviewDate, input[readonly][disabled]#position_endDate, input[readonly][disabled]#qualificationAwardDate, input[readonly][disabled]#position_startDate, input[readonly][disabled]#qualificationStartDate, input[readonly][disabled]#startDate, input[readonly][disabled]#dateOfBirth, input[readonly][disabled]#dateOfExamination, input[readonly][disabled]#passportIssueDate, input[readonly][disabled]#passportExpiryDate {
+input[readonly][disabled]#fundingAwardDate, input[readonly][disabled]#offerStartDate, input[readonly][disabled]#interviewDate, input[readonly][disabled]#position_endDate, input[readonly][disabled]#qualificationAwardDate, input[readonly][disabled]#position_startDate, input[readonly][disabled]#qualificationStartDate, input[readonly][disabled]#startDate, input[readonly][disabled]#dateOfBirth, input[readonly][disabled]#dateOfExamination, input[readonly][disabled]#passportIssueDate, input[readonly][disabled]#passportExpiryDate {
 	background-color: #EEEEEE;
 	cursor: not-allowed;
 }
 section.form-rows > div {
-  border: 1px solid;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -1216,6 +1195,13 @@ section.form-rows .hint{
 }
 .hint.grey:before{
 	color: #DDE4E2;
+}
+.button-delete.grey {
+	background:#DDE4E2;
+	cursor: default !important;
+}
+.button-delete.grey:before {
+	cursor: default !important;
 }
 .button-delete:before, .button-edit:before, .button-show:before, .button-responded:before {
   cursor: pointer;
@@ -1421,7 +1407,7 @@ i {
   margin-bottom: 10px !important;
 }
 #appliList.table-bordered th, #appliList.table-bordered td { border-color: #B5B1B3;}
-#createinterviewersection {
+#createinterviewersection, #createreviewersection {
 	overflow: visible;
 }
 #section-registryusers .table-bordered th, #section-registryusers .table-bordered td{
@@ -1448,4 +1434,7 @@ form#removeForm {
 }
 #supervisor_div .alert-info {
 	margin-bottom: 0px;
+}
+#badgeS {
+	margin-bottom: -10px;
 }

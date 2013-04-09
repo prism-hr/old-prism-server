@@ -176,6 +176,7 @@ $(document).ready(function() {
             },
             complete : function() {
                 $('#approvalsection div.ajax').remove();
+				addCounter();
             }
         });
     });
@@ -279,36 +280,36 @@ function resetSupervisorsErrors() {
 function disableConditions() {
     $("#offerConditions").attr("disabled", "disabled");
     $("#offerConditions").val("");
-    $("#lbl_offerConditions").addClass("grey-label");
+    $("#lbl_offerConditions").addClass("grey-label").parent().find('.hint').addClass("grey");
     $("#lbl_offerConditions").html("Recommended Conditions");
 }
 
 function enableConditions() {
     $("#offerConditions").removeAttr("disabled", "disabled");
     $("#offerConditions").removeAttr("readonly", "readonly");
-    $("#lbl_offerConditions").removeClass("grey-label");
+    $("#lbl_offerConditions").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_offerConditions").html("Recommended Conditions<em>*</em>");
 }
 
 function disableProjectDescription() {
     $("#projectTitle").attr("disabled", "disabled");
     $("#projectTitle").val("");
-    $("#lbl_projectTitle").addClass("grey-label");
+    $("#lbl_projectTitle").addClass("grey-label").parent().find('.hint').addClass("grey");
     $("#lbl_projectTitle").html("Project Title");
 
     $("#projectAbstract").attr("disabled", "disabled");
     $("#projectAbstract").val("");
-    $("#lbl_projectAbstract").addClass("grey-label");
+    $("#lbl_projectAbstract").addClass("grey-label").parent().find('.hint').addClass("grey");
     $("#lbl_projectAbstract").html("Project Abstract");
 }
 
 function enableProjectDescription() {
     $("#projectTitle").removeAttr("disabled", "disabled");
-    $("#lbl_projectTitle").removeClass("grey-label");
+    $("#lbl_projectTitle").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_projectTitle").html("Project Title<em>*</em>");
     
     $("#projectAbstract").removeAttr("disabled", "disabled");
-    $("#lbl_projectAbstract").removeClass("grey-label");
+    $("#lbl_projectAbstract").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_projectAbstract").html("Project Abstract<em>*</em>");
 }
 
@@ -316,21 +317,21 @@ function disableAddingSupervisorsToList() {
 	$('#programSupervisors').attr("disabled", "disabled");
 	$("#addSupervisorBtn").addClass("disabled");
 	
-	$("#p_newSupervisor").addClass("grey-label");
+	$("#p_newSupervisor").addClass("grey-label").parent().find('.hint').addClass("grey");
 	
 	$("#newSupervisorFirstName").attr("disabled", "disabled");
 	$("#newSupervisorFirstName").val("");
-    $("#lbl_newSupervisorFirstName").addClass("grey-label");
+    $("#lbl_newSupervisorFirstName").addClass("grey-label").parent().find('.hint').addClass("grey");
     $("#lbl_newSupervisorFirstName").html("Supervisor First Name");
 	
 	$("#newSupervisorLastName").attr("disabled", "disabled");
 	$("#newSupervisorLastName").val("");
-    $("#lbl_newSupervisorLastName").addClass("grey-label");
+    $("#lbl_newSupervisorLastName").addClass("grey-label").parent().find('.hint').addClass("grey");
     $("#lbl_newSupervisorLastName").html("Supervisor Last Name");
 	
 	$("#newSupervisorEmail").attr("disabled", "disabled");
 	$("#newSupervisorEmail").val("");
-    $("#lbl_newSupervisorEmail").addClass("grey-label");
+    $("#lbl_newSupervisorEmail").addClass("grey-label").parent().find('.hint').addClass("grey");
     $("#lbl_newSupervisorEmail").html("Email");
     
     $("#createsupervisorsection").find('div.alert-error').remove(); // remove all previous form errors
@@ -342,18 +343,18 @@ function enableAddingSupervisorsToList() {
 	$('#programSupervisors').removeAttr("disabled", "disabled");
 	$("#addSupervisorBtn").removeClass("disabled");
 	
-	$("#p_newSupervisor").removeClass("grey-label");
+	$("#p_newSupervisor").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	
 	$("#newSupervisorFirstName").removeAttr("disabled", "disabled");
-    $("#lbl_newSupervisorFirstName").removeClass("grey-label");
+    $("#lbl_newSupervisorFirstName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_newSupervisorFirstName").html("Supervisor First Name<em>*</em>");
     
 	$("#newSupervisorLastName").removeAttr("disabled", "disabled");
-    $("#lbl_newSupervisorLastName").removeClass("grey-label");
+    $("#lbl_newSupervisorLastName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_newSupervisorLastName").html("Supervisor Last Name<em>*</em>");
     
 	$("#newSupervisorEmail").removeAttr("disabled", "disabled");
-    $("#lbl_newSupervisorEmail").removeClass("grey-label");
+    $("#lbl_newSupervisorEmail").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_newSupervisorEmail").html("Email<em>*</em>");
     
     $("#createSupervisor").show();

@@ -22,13 +22,16 @@ $(document).ready(function() {
     	        url : "/pgadmissions/configuration/updateThrottle/",
     	        data: options,
     	        success : function(data) {
+							$("#batchSizeId").parent().find('.alert-error').remove();
     	        				if (data.error!=null) {
-    	        					alert(data.error);
+    	        					
+									$("#batchSizeId").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> The throttling batch size must a number greater than 0.</div>');
     	        					$('#batchSizeId').val('');
     	        				}
     	               		},
     	        complete : function() {
     	        				$('div.ajax').remove();
+								
     	        			}
     	    });
     });

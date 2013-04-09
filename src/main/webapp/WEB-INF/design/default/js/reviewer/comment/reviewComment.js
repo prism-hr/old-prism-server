@@ -7,10 +7,10 @@ $(document).ready(function(){
 	
 	$('#submitReviewFeedback').click(function()
 	{
-		if (!validateReview())
+		/*if (!validateReview())
 		{
 			return false;
-		}
+		}*/
 		
 		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()
@@ -85,28 +85,29 @@ function validateReview()
 {
 	var errors = 0;
 	$('#reviewForm div.alert-error').remove();
+	$('#reviewForm .extrafield').remove();
 	
 	if ($('#review-comment').val() == '')
 	{
-		$('#review-comment').after('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make an entry.</div>');
+		$('#review-comment').parent().after('<div class="field extrafield"><div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make an entry.</div></div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableCandidateForUcl"]:checked').length == 0)
 	{
-		$('#field-issuitableucl').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
+		$('#field-issuitableucl').append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make a selection.</div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableCandidateForProgramme"]:checked').length == 0)
 	{
-		$('#field-issuitableprog').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
+		$('#field-issuitableprog').append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make a selection.</div>');
 		errors++;
 	}
 	
 	if ($('input[name="willingToInterview"]:checked').length == 0)
 	{
-		$('#field-wouldinterview').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
+		$('#field-wouldinterview').append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make a selection.</div>');
 		errors++;
 	}
 	

@@ -51,7 +51,7 @@ $(document).ready(function(){
 		if ($('#current:checked').val() !== undefined) 
 		{
 			// checked
-			$("#posi-end-date-lb").text("End Date").addClass("grey-label");
+			$("#posi-end-date-lb").text("End Date").addClass("grey-label").parent().find('.hint').addClass("grey");
 			$('#position_endDate').attr("disabled", "disabled")
                             .val(''); // empty date field.
 		}
@@ -59,7 +59,7 @@ $(document).ready(function(){
 		{
 			// unchecked
 			$('#position_endDate').removeAttr("disabled");
-			$("#posi-end-date-lb").text("End Date").append('<em>*</em>').removeClass("grey-label");
+			$("#posi-end-date-lb").text("End Date").append('<em>*</em>').removeClass("grey-label").parent().find('.hint').removeClass("grey");
 		}
 	});
 	
@@ -208,7 +208,7 @@ $(document).ready(function(){
 				if (curruntPos == true)
 				{
 					$('#position_endDate').attr('disabled','disabled');
-					$('#posi-end-date-lb').addClass('grey-label');
+					$('#posi-end-date-lb').addClass("grey-label").parent().find('.hint').addClass("grey");
 					$('#posi-end-date-lb em').hide();
 				}
 				$('#addPosisionButton').html('Update');

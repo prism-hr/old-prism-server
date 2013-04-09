@@ -184,8 +184,7 @@
                   <label for="recommendedConditions" id="lbl_recommendedConditions" class="plain-label">Recommended Conditions<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
                   <div class="field">
-                    <textarea id="recommendedConditions" name="recommendedConditions" class="max" cols="80" rows="6"  >${(confirmSupervisionDTO.recommendedConditions?html)!}
-</textarea>
+                    <textarea id="recommendedConditions" name="recommendedConditions" class="max" cols="80" rows="6"  >{(confirmSupervisionDTO.recommendedConditions?html)!}</textarea>
                     <@spring.bind "confirmSupervisionDTO.recommendedConditions" />
                     <#list spring.status.errorMessages as error >
                     <div class="alert alert-error"> <i class="icon-warning-sign"></i>

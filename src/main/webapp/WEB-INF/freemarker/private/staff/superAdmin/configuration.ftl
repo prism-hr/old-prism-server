@@ -169,7 +169,7 @@
 	                            </section>
 	                        </div>
 						</#if>
-                        <div>
+                        <div id="badgeS">
                             <section class="form-rows">
                                 <h2>Badge</h2>
 

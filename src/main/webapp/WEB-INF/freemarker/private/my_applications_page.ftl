@@ -83,7 +83,14 @@
           </#if> </#if>
           <div id="table-bar"> 
             
-            <div id="search-box" class="clearfix"> <#list filters as filter> 
+            <div id="search-box" class="clearfix"> 
+            <div class="actions">
+          	<!-- Download button. --> 
+            <a target="_blank" name="downloadAll" id="downloadAll" class="btn btn-small"><i class="icon-download-alt"></i> Download  PDF</a>
+            <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
+          </div>
+            
+            <#list filters as filter> 
               <!-- Search/filter box. -->
               <div class="filter" id="filter_${filter_index}">
                 <select class="selectCategory" name="searchCategory" id="searchCategory_${filter_index}">
@@ -122,26 +129,21 @@
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>
                   <div class="btn-actions">
-                      <button class="btn btn-success" type="button" id="search-go">Apply</button>
+                      
                       <div class="btn-group">
-                        <button id="search-reset" class="btn btn-info">Clear Filters</button>
-                        <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                        <button class="btn btn-success" id="search-go">Apply</button>
+                        <button class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<@spring.url '/applications?reloadFilters=true'/>">Load Default Filters</a></li>
-                            <li><a href="#" id="storeFiltersBtn">Set as Default </a></li>
-                            <li><a href="#" id="loadActiveAppl">Load Active Applications</a></li>
+                            <li><a href="#" id="storeFiltersBtn">Save as Default Filter</a></li>
+                            <li><a href="<@spring.url '/applications?reloadFilters=true'/>">Load Default Filter</a></li>
+                            <li><a href="#" id="loadActiveAppl">Display my Active Applications</a></li>
               
                         </ul>
                       </div>
-                     
+                     <button class="btn btn-info" type="button" id="search-reset"  >Clear</button>
                   </div>
-               </div>
-               <div class="actions">
-          	<!-- Download button. --> 
-            
-            <a target="_blank" name="downloadAll" id="downloadAll" class="btn btn-small"><i class="icon-download-alt"></i> Download slected as PDF</a>
-            <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
-          </div>
+            </div>
+               
           </div>
           
           <table class="data table table-striped table-condensed table-bordered table-hover" id="appliList" border="0">

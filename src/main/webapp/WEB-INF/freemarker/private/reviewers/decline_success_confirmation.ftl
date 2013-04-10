@@ -32,12 +32,8 @@
 			<!-- Middle. -->
 			<div id="middle">
 	  
-        <div id="site-message" class="success">
-          <div class="header">
-            <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_app.png'/>" alt="" /></div>
-            <div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
-          </div>
-          <div class="content">          
+         <div id="site-message" class="success" style="height:170px">
+           <div class="content">         
             <h1>Declined</h1>
              <p>${message}</p>  
           </div>

@@ -41,12 +41,8 @@
     <!-- Middle. -->
     <div id="middle">
 
-        <div id="site-message" class="notice">
-            <div class="header">
-                <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_app.png'/>" alt="" /></div>
-                <div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
-            </div>
-            <div class="content">
+       <div id="site-message" class="notice" style="height:170px">
+           <div class="content"> 
                 <p>Our records indicate that you have already been invited to use UCL Prism. We have resent the 
                 invitation by email. Follow the instructions in the email to register.</p>
             </div>

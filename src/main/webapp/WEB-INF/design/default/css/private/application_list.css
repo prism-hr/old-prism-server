@@ -29,19 +29,23 @@ td.status { text-align: center !important; }
 
 
 /* Search box. */
-#search-box { background: #FFF; border: 1px solid #AAA; position: relative;  border-radius: 4px; padding: 10px; padding-bottom: 0px; }
+#search-box { background: #FFF; border: 1px solid #AAA; position: relative;  border-radius: 4px; padding: 10px; padding-bottom: 0px; position: relative;
+ }
 #search-box label { font-weight: bold; }
-#search-box input { padding: 4px; width: 300px; height: 17px; margin-bottom: 0px;}
-#search-box select { padding: 4px; width: 147px; height: auto; margin-bottom: 0px;  margin-right: 6px; }
+#search-box input { padding: 4px; width: 240px; height: 17px; margin-bottom: 0px; margin-right:4px;}
+#search-box select { padding: 4px; width: 150px; height: auto; margin-bottom: 0px;  margin-right: 6px; }
+#search-box select:nth-child(2) { width: 120px; }
 #search-box button { margin-top: -2px; }
 #search-box .invalid  { display: block; margin-left: 147px; margin-top: 5px; padding: 3px; text-align: left; }
 #search-box .filter {
+  padding-left: 123px;
   float: left;
   padding-bottom: 10px;
+
 }
 #search-box #searchTerm {margin-bottom: 5px; margin-top: 5px;}
 #search-box #searchCategory {padding: 4px; height: 28px;}
-#search-box #search-go {margin-right: 8px;}
+#search-box .dropdown-toggle {margin-right: 8px;}
 div.fetching { text-align: center; font-weight: bold; padding: 5px; }
 
 
@@ -53,10 +57,11 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 
 /* new actions line/*/
 .actions {
-  border: 1px solid #AAA;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 10px 0;
+  position: absolute;
+  left: 10px;
+  bottom: 11px;
+  float: left;
+  padding-right: 10px;
 }
 .btn-actions {
   margin-top: 2px;

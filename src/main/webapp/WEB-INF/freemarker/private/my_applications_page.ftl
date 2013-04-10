@@ -82,10 +82,8 @@
           </div>
           </#if> </#if>
           <div id="table-bar"> 
-            <!-- Download button. --> 
-            <a target="_blank" name="downloadAll" id="downloadAll" data-desc="<@spring.message 'myApps.downloadAll'/>">Download</a>
-            <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
-            <div id="search-box"> <#list filters as filter> 
+            
+            <div id="search-box" class="clearfix"> <#list filters as filter> 
               <!-- Search/filter box. -->
               <div class="filter" id="filter_${filter_index}">
                 <select class="selectCategory" name="searchCategory" id="searchCategory_${filter_index}">
@@ -102,8 +100,8 @@
                   </#list>
                 </select>
                 <input class="filterInput" type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
-                <button class="btn remove">Remove</button>
-                <button class="btn add">Add</button>
+                <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
+                <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>
               </#list> 
               
@@ -114,20 +112,38 @@
                   <#list searchCategories as category>
                   <option value="${category}">
                   ${category.displayValue()}
-                  </option>
+                  </option>	
                   </#list>
                 </select>
                 <select class="selectPredicate" name="searchPredicate" id="searchPredicate_new">
                 </select>
                 <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." />
-                <button class="btn remove">Remove</button>
-                <button class="btn add">Add</button>
+                 <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
+                <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>
-              <button class="btn btn-primary" type="button" id="search-go">Go</button>
-              <button class="btn" type="button" id="search-reset">Clear</button>
-              <button class="btn" id="storeFiltersBtn">Store</button>
-              <a class="btn" href="<@spring.url '/applications?reloadFilters=true'/>">Load</a> </div>
+                  <div class="btn-actions">
+                      <button class="btn btn-success" type="button" id="search-go">Apply</button>
+                      <div class="btn-group">
+                        <button id="search-reset" class="btn btn-info">Clear Filters</button>
+                        <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="<@spring.url '/applications?reloadFilters=true'/>">Load Default Filters</a></li>
+                            <li><a href="#" id="storeFiltersBtn">Set as Default </a></li>
+                            <li><a href="#" id="loadActiveAppl">Load Active Applications</a></li>
+              
+                        </ul>
+                      </div>
+                     
+                  </div>
+               </div>
+               <div class="actions">
+          	<!-- Download button. --> 
+            
+            <a target="_blank" name="downloadAll" id="downloadAll" class="btn btn-small"><i class="icon-download-alt"></i> Download slected as PDF</a>
+            <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
           </div>
+          </div>
+          
           <table class="data table table-striped table-condensed table-bordered table-hover" id="appliList" border="0">
             <colgroup>
             <col style="width: 46px" />

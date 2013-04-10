@@ -123,7 +123,7 @@ $(document).ready(
 			$("#search-reset").live('click', function() {
 				var filters = $("#search-box").find("div.filter");
 				for (var i = 1 ; i < filters.length; i++) {
-					filters[i].remove();
+					$(filters[i]).remove();
 				}
 
 				$(filters[0]).find(".selectCategory").val("");

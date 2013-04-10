@@ -14,7 +14,7 @@ table#appliList thead th:nth-child(5) {
 table#appliList th.sorting {
 	background: #59DAFF; /* Old browsers */ 
 }
-table#appliList th.sortable span { float: right; width: 10px; height: 16px; background:  url(../../images/icon_arrow_sort.png) no-repeat center; margin: 3px 2px 0 3px; }
+table#appliList th.sortable span { float: right; width: 10px; height: 16px; background:  url(../../images/icon_arrow_sort.png) no-repeat center; margin: 0px 2px 0 3px; }
 table#appliList th.sortable.asc span { background-image: url(../../images/icon_arrow_up.png); }
 table#appliList th.sortable.desc span { background-image: url(../../images/icon_arrow_down.png); }
 

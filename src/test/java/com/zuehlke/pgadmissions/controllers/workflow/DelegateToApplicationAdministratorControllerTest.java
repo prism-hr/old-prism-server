@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import java.util.Map;
-
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,9 +109,10 @@ public class DelegateToApplicationAdministratorControllerTest {
         EasyMock.expect(
                 userServiceMock.createNewUserInRole("Claudia", "Scanduro", "cs@zuhlke.com", Authority.INTERVIEWER,
                         DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm)).andReturn(applicationAdmin);
+        userServiceMock.sendEmailToDelegateAndRegisterReminder(applicationForm, applicationAdmin);
 
         EasyMock.replay(userServiceMock);
-        Map<String, String> map = controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
+        controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
         EasyMock.verify(userServiceMock);
 
         assertSame(applicationAdmin, applicationForm.getApplicationAdministrator());
@@ -130,6 +129,7 @@ public class DelegateToApplicationAdministratorControllerTest {
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("cs@zuhlke.com")).andReturn(applicationAdmin);
+        userServiceMock.sendEmailToDelegateAndRegisterReminder(applicationForm, applicationAdmin);
 
         EasyMock.replay(userServiceMock);
         controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
@@ -149,6 +149,7 @@ public class DelegateToApplicationAdministratorControllerTest {
         
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("cs@zuhlke.com")).andReturn(applicationAdmin);
+        userServiceMock.sendEmailToDelegateAndRegisterReminder(applicationForm, applicationAdmin);
         commentServiceMock.createDelegateComment(currentUser, applicationForm);
 
         EasyMock.replay(userServiceMock, commentServiceMock);

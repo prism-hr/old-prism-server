@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
@@ -69,6 +70,10 @@ public abstract class MailSender {
 
 	protected String resolveMessage(String code, Object... args) {
 		return messageSource.getMessage(code, args, null);
+	}
+	
+	protected String getMessage(String code, Object[] args, Locale locale) {
+		return messageSource.getMessage(code, args, locale);
 	}
 
 	protected String resolveMessage(String code, ApplicationForm form, ApplicationFormStatus previousStage) {

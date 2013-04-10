@@ -125,7 +125,7 @@
                                 
                                 <div class="buttons">
                                     <form>
-                                      <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</a>
+                                      <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</button>
                                     </form>
                                 </div>
                                 

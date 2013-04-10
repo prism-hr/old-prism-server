@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_ADMINISTRATION_REMINDER;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -107,6 +109,24 @@ public class InterviewServiceTest {
 		interviewService.moveApplicationToInterview(interview, applicationForm);	
 		EasyMock.verify(interviewDAOMock, applicationFormDAOMock);
 		
+	}
+	
+	@Test
+	public void shouldMoveToItnerviewAndRemoveReminderForInterviewAdministrationDelegate() throws ParseException{
+		Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
+		RegisteredUser delegate = new RegisteredUserBuilder().id(12).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationAdministrator(delegate )
+				.status(ApplicationFormStatus.REVIEW).id(1)
+				.notificationRecords(new NotificationRecordBuilder().notificationType(INTERVIEW_ADMINISTRATION_REMINDER).build())
+				.build();
+		interviewDAOMock.save(interview);
+		applicationFormDAOMock.save(applicationForm);
+		EasyMock.replay(interviewDAOMock, applicationFormDAOMock);		
+		interviewService.moveApplicationToInterview(interview, applicationForm);	
+		EasyMock.verify(interviewDAOMock, applicationFormDAOMock);
+		
+		assertNull(applicationForm.getApplicationAdministrator());
+		assertNull(applicationForm.getNotificationForType(INTERVIEW_ADMINISTRATION_REMINDER));
 	}
 	
 	

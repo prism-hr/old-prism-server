@@ -6,7 +6,7 @@ public enum EmailTemplateName {
 	REVIEWER_ASSIGNED_NOTIFICATION("Reviewer assigned notification"),//updated
 	REVIEWER_REMINDER("Reviewer reminder"),//updated
 	REFEREE_NOTIFICATION("Referee notification"),//updated
-	REFEREE_REMINDER("Rferee reminder"),//updated
+	REFEREE_REMINDER("Referee reminder"),//updated
 	INTERVIEWER_NOTIFICATION("Interviewer notification"),//updated
 	INTERVIEW_SUBMISSION_NOTIFICATION("Interview submission notification"),//update
 	INTERVIEWER_REMINDER("Interviewer reminder"),//updated
@@ -42,8 +42,9 @@ public enum EmailTemplateName {
 	APPLICATION_REVIEW_REMINDER_FIRST("Application review reminder first"),//updated
 	APPLICATION_REVIEW_REMINDER("Application review reminder"),//updated
 	APPLICATION_WITHDRAWN_NOTIFICATION("Application withdrawn notification"), //updated 
-	NEW_USER_SUGGESTION("New user suggestion"), //not found
-	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation");//ok
+	NEW_USER_SUGGESTION("New user suggestion"), //ok
+	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation"),//ok
+	INTERVIEW_ADMINISTRATION_REMINDER("Interview administration reminder");
 	
 	private final String displayValue;
 	

@@ -536,14 +536,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return getNotificationForType(NotificationType.valueOf(strType));
     }
 
-    public boolean addNotificationRecord(NotificationRecord record) {
-        // Kevin: This should resolve a mysterious issue we had on production. For
-        // some reason we had multiple email schedulers of the same class running in parallel
-        // which then created duplicate notification records for the same type
-        // such as UPDATED_NOTIFICATION. This then further lead to some of the SQL queries always
-        // returning the same records and thus sending thousands of emails in short intervals.
-        // This function just ensures that we are not creating duplicate entries in the
-        // notification_record table for the same type.
+    public boolean addNotificationRecord(NotificationRecord record) {        
         for (NotificationRecord existingRecord : notificationRecords) {
             if (existingRecord.getNotificationType() == record.getNotificationType()) {
                 existingRecord.setDate(record.getDate());

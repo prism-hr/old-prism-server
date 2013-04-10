@@ -1425,3 +1425,9 @@ form#removeForm {
 #badgeS {
 	margin-bottom: -10px;
 }
+#search-box .btn.remove, #search-box .btn.add{
+	border-radius: 15px;
+
+}
+#search-box .btn-inverse.remove{color:#ffffff;text-shadow:0 -1px 0 rgba(0, 0, 0, 0.25);background-color:#CFD0D1;background-image:-moz-linear-gradient(top, #ADAFB1, #BEBFC0);background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#ADAFB1), to(#BEBFC0));background-image:-webkit-linear-gradient(top, #ADAFB1, #BEBFC0);background-image:-o-linear-gradient(top, #ADAFB1, #BEBFC0);background-image:linear-gradient(to bottom, #ADAFB1, #BEBFC0);background-repeat:repeat-x;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffADAFB1', endColorstr='#ffBEBFC0', GradientType=0);border-color:#BEBFC0 #BEBFC0 #000000;border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);*background-color:#222222;filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);}
+#search-box .btn-inverse.remove:hover,#search-box .btn-inverse.remove:focus,#search-box .btn-inverse.remove:active,#search-box .btn-inverse.remove.active,#search-box .btn-inverse.disabled.remove,#search-box .btn-inverse[disabled].remove{color:#ffffff;background-color:#BEBFC0;*background-color:#DBDCDD;}

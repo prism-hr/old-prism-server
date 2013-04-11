@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.mail.refactor;
 
 import java.util.Map;
 
-public interface BuildModelBuilder {
+public interface EmailModelBuilder {
 
-    Map<String, Object> buildModel();
+    Map<String, Object> build();
 }

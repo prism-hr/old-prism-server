@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.mail.refactor;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -10,37 +11,45 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.core.io.InputStreamSource;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
 public final class PrismEmailMessage {
     
-    private RegisteredUser replyToAddress;
+    private ApplicationForm form;
+    
+    private String replyToAddress;
 
-    private RegisteredUser from;
+    private String fromAddress;
     
-    private String subject;
+    private List<Object> subjectArgs;
     
-    private Collection<RegisteredUser> to = new ArrayList<RegisteredUser>();
+    private String subjectCode;
     
-    private Collection<RegisteredUser> cc = new ArrayList<RegisteredUser>();
+    private List<RegisteredUser> to = new ArrayList<RegisteredUser>();
+    
+    private List<RegisteredUser> cc = new ArrayList<RegisteredUser>();
 
-    private Collection<RegisteredUser> bcc = new ArrayList<RegisteredUser>();
+    private List<RegisteredUser> bcc = new ArrayList<RegisteredUser>();
+    
+    private List<RegisteredUser> digestReceiver = new ArrayList<RegisteredUser>();
     
     private Map<String, Object> model;
     
     private EmailTemplateName templateName;
     
-    private Collection<InputStreamSource> attachments;
+    private List<PdfAttachmentInputSource> attachments;
     
     private static final String SPACE = " ";
 
     private static Transformer convertToInternetAddresses = new Transformer() {
         @Override
-        public Object transform(final Object object) {
-            RegisteredUser target = (RegisteredUser) object;
+        public Object transform(final Object input) {
+            RegisteredUser target = (RegisteredUser) input;
             try {
                 StringBuilder stringBuilder = new StringBuilder(target.getFirstName());
                 if (StringUtils.isEmpty(target.getFirstName2())) {
@@ -52,12 +61,12 @@ public final class PrismEmailMessage {
                 stringBuilder.append(SPACE).append(target.getLastName());
                 return new InternetAddress(target.getEmail(), stringBuilder.toString());
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+                throw new IllegalArgumentException(e);
             }
         }
     };
     
-    PrismEmailMessage() {
+    public PrismEmailMessage() {
     }
     
     @SuppressWarnings("unchecked")
@@ -75,44 +84,44 @@ public final class PrismEmailMessage {
         return CollectionUtils.collect(bcc, convertToInternetAddresses);
     }
     
-    public RegisteredUser getFrom() {
-        return from;
+    public String getFromAddress() {
+        return fromAddress;
     }
 
-    public void setFrom(final RegisteredUser from) {
-        this.from = from;
+    public void setFromAddress(final String from) {
+        this.fromAddress = from;
     }
 
-    public Collection<RegisteredUser> getTo() {
+    public List<RegisteredUser> getTo() {
         return to;
     }
 
-    public void setTo(final Collection<RegisteredUser> to) {
+    public void setTo(final List<RegisteredUser> to) {
         this.to = to;
     }
 
-    public Collection<RegisteredUser> getCc() {
+    public List<RegisteredUser> getCc() {
         return cc;
     }
 
-    public void setCc(final Collection<RegisteredUser> cc) {
+    public void setCc(final List<RegisteredUser> cc) {
         this.cc = cc;
     }
 
-    public Collection<RegisteredUser> getBcc() {
+    public List<RegisteredUser> getBcc() {
         return bcc;
     }
 
-    public void setBcc(final Collection<RegisteredUser> bcc) {
+    public void setBcc(final List<RegisteredUser> bcc) {
         this.bcc = bcc;
     }
     
-    public String getSubject() {
-        return subject;
+    public List<Object> getSubjectArgs() {
+        return subjectArgs;
     }
 
-    public void setSubject(final String subject) {
-        this.subject = subject;
+    public void setSubjectArgs(final List<Object> subjectArgs) {
+        this.subjectArgs = subjectArgs;
     }
 
     public void setModel(final Map<String, Object> model) {
@@ -131,19 +140,48 @@ public final class PrismEmailMessage {
         this.templateName = templateName;
     }
     
-    public Collection<InputStreamSource> getAttachments() {
+    public List<PdfAttachmentInputSource> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(final Collection<InputStreamSource> attachments) {
+    public void setAttachments(final List<PdfAttachmentInputSource> attachments) {
         this.attachments = attachments;
     }
     
-    public RegisteredUser getReplyToAddress() {
+    public String getReplyToAddress() {
         return replyToAddress;
     }
 
-    public void setReplyToAddress(final RegisteredUser replyToAddress) {
+    public void setReplyToAddress(final String replyToAddress) {
         this.replyToAddress = replyToAddress;
+    }
+
+    public List<RegisteredUser> getDigestReceiver() {
+        return digestReceiver;
+    }
+
+    public void setDigestReceiver(final List<RegisteredUser> digestReceiver) {
+        this.digestReceiver = digestReceiver;
+    }
+
+    public ApplicationForm getApplicationForm() {
+        return form;
+    }
+
+    public void setApplicationForm(final ApplicationForm form) {
+        this.form = form;
+    }
+    
+    public String getSubjectCode() {
+        return subjectCode;
+    }
+
+    public void setSubjectCode(final String subjectCode) {
+        this.subjectCode = subjectCode;
+    }
+    
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

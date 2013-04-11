@@ -163,7 +163,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     }
 
     @Test
-    public void shouldReturnAppsFilteredByApplicantNameAndDate() {
+    public void shouldReturnAppsFilteredByApplicantName() {
 
         RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
                 .password("franek123").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
@@ -312,6 +312,25 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
                 SortOrder.ASCENDING, 1, 50);
 
         assertContainsApplications(applications, app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
+    }
+    
+    @Test
+    public void shouldReturnAppsFilteredByApplicantFirstNameAndLastName() {
+
+        RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
+                .password("franek123").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+
+        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().program(program).applicant(otherUser).status(ApplicationFormStatus.APPROVAL)
+                .applicationNumber("other1").build();
+        save(otherUser, otherApplicationForm);
+        flushAndClearSession();
+
+        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("ciszek Pieczka").build();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(filter), SortCategory.APPLICATION_STATUS,
+                SortOrder.DESCENDING, 1, 50);
+
+        assertContainsApplications(applications, otherApplicationForm);
     }
 
     private String dateToString(Date date) {

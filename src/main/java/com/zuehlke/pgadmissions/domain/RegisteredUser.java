@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Formula;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -57,6 +58,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String lastName;
+
+    // non-portable - required when searching by applicant name
+    @Formula("CONCAT(firstname, ' ', lastname)")
+    private String fullName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
@@ -143,21 +148,21 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_SUPERVISOR_LINK", joinColumns = { @JoinColumn(name = "supervisor_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_VIEWER_LINK", joinColumns = { @JoinColumn(name = "viewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
-    
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<ApplicationsFilter> applicationsFilters = new ArrayList<ApplicationsFilter>();
 
     @Column(name = "ucl_user_id")
     private String uclUserId;
-    
+
     public boolean canSee(ApplicationForm applicationForm) {
         return canSeeApplication(applicationForm, this);
     }
-    
+
     public boolean canSeeReference(final ReferenceComment reference) {
         return canSeeReference(reference, this);
     }
@@ -234,14 +239,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public String getDirectToUrl() {
         return directToUrl;
-    }
-
-    public String getDisplayName() {
-        StringBuilder userNameBuilder = new StringBuilder(getFirstName());
-        userNameBuilder.append(StringUtils.trimToEmpty(" " + getFirstName2()));
-        userNameBuilder.append(StringUtils.trimToEmpty(" " + getFirstName3()));
-        userNameBuilder.append(StringUtils.trimToEmpty(" " + getLastName()));
-        return userNameBuilder.toString();
     }
 
     public String getEmail() {
@@ -355,8 +352,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         ReviewRound latestReviewRound = form.getLatestReviewRound();
 
         if (latestReviewRound == null) {
-            throw new IllegalStateException(String.format("latestReviewRound is null for application[applicationNumber=%s]",
-                    form.getApplicationNumber()));
+            throw new IllegalStateException(String.format("latestReviewRound is null for application[applicationNumber=%s]", form.getApplicationNumber()));
         }
 
         List<Reviewer> formReviewers = latestReviewRound.getReviewers();
@@ -396,7 +392,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         }
         return false;
     }
-    
+
     public boolean hasRefereesInApplicationForm(final ApplicationForm form) {
         return getRefereeForApplicationForm(form) != null;
     }
@@ -413,7 +409,8 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(final ApplicationForm form) {
         List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
         for (Interviewer interviewer : interviewers) {
-            if (interviewer.getInterview().getId().equals(form.getLatestInterview().getId()) && this.getId().equals(interviewer.getUser().getId()) && interviewer.getInterviewComment() != null) {
+            if (interviewer.getInterview().getId().equals(form.getLatestInterview().getId()) && this.getId().equals(interviewer.getUser().getId())
+                    && interviewer.getInterviewComment() != null) {
                 return true;
             }
         }
@@ -432,7 +429,8 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean hasRespondedToProvideReviewForApplicationLatestRound(final ApplicationForm form) {
         List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
         for (Reviewer reviewer : reviewers) {
-            if (reviewer.getReviewRound().getId().equals(form.getLatestReviewRound().getId()) && this.getId().equals(reviewer.getUser().getId()) && reviewer.getReview() != null) {
+            if (reviewer.getReviewRound().getId().equals(form.getLatestReviewRound().getId()) && this.getId().equals(reviewer.getUser().getId())
+                    && reviewer.getReview() != null) {
                 return true;
             }
         }
@@ -478,7 +476,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isInRole(final String strAuthority) {
         return isInRole(this, strAuthority);
     }
-    
+
     public boolean isNotInRole(final Authority authority) {
         return !isInRole(this, authority);
     }
@@ -506,11 +504,11 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isInterviewerOfProgram(final Program programme) {
         return isInterviewerOfProgram(programme, this);
     }
-    
+
     public boolean isViewerOfProgramme(final ApplicationForm form) {
         return isViewerOfProgramme(form, this);
     }
-    
+
     public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
         return isPastOrPresentInterviewerOfApplication(form, this);
     }
@@ -679,7 +677,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     @Override
     public String toString() {
-        return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName,
-                lastName, email, enabled);
+        return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName, lastName, email, enabled);
     }
 }

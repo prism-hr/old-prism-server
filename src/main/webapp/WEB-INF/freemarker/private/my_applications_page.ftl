@@ -88,6 +88,9 @@
           	<!-- Download button. --> 
             <a target="_blank" name="downloadAll" id="downloadAll" class="btn btn-small"><i class="icon-download-alt"></i> Download  PDF</a>
             <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
+            <input type="hidden" id="applicationStatusValues" name="applicationStatusValues" 
+              value='<#list applicationStatusValues as value>${value}<#if value_has_next>,</#if></#list>'
+            />
           </div>
             
             <#list filters as filter> 

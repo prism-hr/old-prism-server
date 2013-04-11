@@ -129,14 +129,13 @@
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>
                   <div class="btn-actions">
-                      
                       <div class="btn-group">
                         <button class="btn btn-success" id="search-go">Apply</button>
                         <button class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="#" id="storeFiltersBtn">Save as Default Filter</a></li>
                             <li><a href="<@spring.url '/applications?reloadFilters=true'/>">Load Default Filter</a></li>
-                            <li><a href="#" id="loadActiveAppl">Display my Active Applications</a></li>
+                            <li><a href="#" id="loadActiveApplication">Display my Active Applications</a></li>
               
                         </ul>
                       </div>

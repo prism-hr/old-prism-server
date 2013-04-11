@@ -1,182 +1,235 @@
 var loading = false;
 
-$(document).ready(
-		function() {
-			var searchPredicatesMap = JSON.parse($("#searchPredicatesMap")
-					.val());
-			// Modal window functionality.
-			setupModalBox();
+$(document)
+		.ready(
+				function() {
+					var searchPredicatesMap = JSON.parse($(
+							"#searchPredicatesMap").val());
 
-			populateApplicationList();
+					// Modal window functionality.
+					setupModalBox();
 
-			// --------------------------------------------------------------------------------
-			// TABLE SORTING
-			// --------------------------------------------------------------------------------
-			// Add a SPAN tag to table headers for the arrows.
-			$('table.data thead th.sortable').prepend('<span />');
+					populateApplicationList();
 
-			// --------------------------------------------------------------------------------
-			// SEARCH / FILTERING
-			// --------------------------------------------------------------------------------
-			$('#search-go').addClass('enabled').click(function() {
-				// if ($('#searchTerm').val().length == 0 ||
-				// $('#searchCategory').val() == '') {
-				// fixedTip($('#search-go'), 'You must specify your filter.');
-				// return;
-				// }
-				resetPageCount();
-				populateApplicationList();
-			});
+					// --------------------------------------------------------------------------------
+					// TABLE SORTING
+					// --------------------------------------------------------------------------------
+					// Add a SPAN tag to table headers for the arrows.
+					$('table.data thead th.sortable').prepend('<span />');
 
-			$('#storeFiltersBtn').click(function() {
-				filters = getFilters();
+					// --------------------------------------------------------------------------------
+					// SEARCH / FILTERING
+					// --------------------------------------------------------------------------------
+					$('#search-go').addClass('enabled').click(function() {
+						// if ($('#searchTerm').val().length == 0 ||
+						// $('#searchCategory').val() == '') {
+						// fixedTip($('#search-go'), 'You must specify your
+						// filter.');
+						// return;
+						// }
+						resetPageCount();
+						populateApplicationList();
+					});
 
-				data = {
-					filters : JSON.stringify(filters),
-				};
+					$('#storeFiltersBtn')
+							.click(
+									function() {
+										filters = getFilters();
 
-				$.ajax({
-					type : 'POST',
-					statusCode : {
-						401 : function() {
-							window.location.reload();
-						},
-						500 : function() {
-							window.location.href = "/pgadmissions/error";
-						},
-						404 : function() {
-							window.location.href = "/pgadmissions/404";
-						},
-						400 : function() {
-							window.location.href = "/pgadmissions/400";
-						},
-						403 : function() {
-							window.location.href = "/pgadmissions/404";
+										data = {
+											filters : JSON.stringify(filters),
+										};
+
+										$
+												.ajax({
+													type : 'POST',
+													statusCode : {
+														401 : function() {
+															window.location
+																	.reload();
+														},
+														500 : function() {
+															window.location.href = "/pgadmissions/error";
+														},
+														404 : function() {
+															window.location.href = "/pgadmissions/404";
+														},
+														400 : function() {
+															window.location.href = "/pgadmissions/400";
+														},
+														403 : function() {
+															window.location.href = "/pgadmissions/404";
+														}
+													},
+													url : "/pgadmissions/applications/saveFilters",
+													data : data,
+													success : function(data) {
+													},
+													complete : function() {
+													}
+												});
+
+									});
+
+					// $('#search-box').on('change keypress', '#searchTerm,
+					// #searchCategory', function() {
+					// var length = $('#searchTerm').val().length;
+					// var column = $('#searchCategory').val();
+					// $('#search-go').toggleClass('disabled', length == 0 ||
+					// column ==
+					// '');
+					// $('#search-reset').toggleClass('disabled', length == 0 &&
+					// column
+					// == '');
+					//			
+					// if ($('#search-go').not('.disabled')) {
+					// $('#search-go').removeData('qtip');
+					// }
+					// });
+
+					// ------------------------------------------------------------------------------
+					// SELECTION CHANGED FOR SELECT CATEGORY
+					// ------------------------------------------------------------------------------
+					$('.selectCategory')
+							.live(
+									"change",
+									function() {
+										var selected = $(this).val();
+										var predicateSelect = $(this).parent()
+												.find('.selectPredicate');
+										predicateSelect.empty();
+
+										if (selected != "") {
+											var predicates = searchPredicatesMap[selected];
+											for ( var i = 0; i < predicates.length; i++) {
+												predicateSelect
+														.append('<option value="'
+																+ predicates[i].name
+																+ '">'
+																+ predicates[i].displayName
+																+ '</option>');
+											}
+										}
+									});
+
+					// ------------------------------------------------------------------------------
+					// SELECT ALL/NO APPLICATIONS
+					// ------------------------------------------------------------------------------
+					$('#select-all').click(
+							function(event) {
+								var selectAllValue = this.checked;
+								var $appList = $('#appList');
+								var list = '';
+
+								$('#applicationListSection input:checkbox')
+										.each(function() {
+											this.checked = selectAllValue;
+											if (selectAllValue) {
+												list += $(this).val() + ";";
+											}
+										});
+
+								$appList.val(list);
+							});
+
+					// ------------------------------------------------------------------------------
+					// CLEAR ALL FILTERS
+					// ------------------------------------------------------------------------------
+					$("#search-reset").live('click', function() {
+						var filters = $("#search-box").find("div.filter");
+						for ( var i = 1; i < filters.length; i++) {
+							$(filters[i]).remove();
 						}
-					},
-					url : "/pgadmissions/applications/saveFilters",
-					data : data,
-					success : function(data) {
-					},
-					complete : function() {
-					}
-				});
 
-			});
+						$(filters[0]).find(".selectCategory").val("");
+						$(filters[0]).find(".selectPredicate").empty();
+						$(filters[0]).find(".filterInput").val("");
+						$('#search-go').click();
+					});
 
-			// $('#search-box').on('change keypress', '#searchTerm,
-			// #searchCategory', function() {
-			// var length = $('#searchTerm').val().length;
-			// var column = $('#searchCategory').val();
-			// $('#search-go').toggleClass('disabled', length == 0 || column ==
-			// '');
-			// $('#search-reset').toggleClass('disabled', length == 0 && column
-			// == '');
-			//			
-			// if ($('#search-go').not('.disabled')) {
-			// $('#search-go').removeData('qtip');
-			// }
-			// });
+					// --------------------------------------------------------------------------------
+					// SELECT APPLICATIONS
+					// --------------------------------------------------------------------------------
+					$(document).on(
+							'click',
+							"input[name*='appDownload']",
+							function() {
+								var id = $(this).val();
+								var currentAppList = $('#appList').val();
 
-			// ------------------------------------------------------------------------------
-			// SELECTION CHANGED FOR SELECT CATEGORY
-			// ------------------------------------------------------------------------------
-			$('.selectCategory').change(
-					function() {
-						var selected = $(this).val();
-						var predicateSelect = $(this).parent().find(
-								'.selectPredicate');
-						predicateSelect.empty();
+								if ($(this).is(':checked')) {
+									$('#appList')
+											.val(currentAppList + id + ";");
+								} else {
+									$('#appList').val(
+											currentAppList
+													.replace(id + ";", ''));
+								}
+							});
 
-						if (selected != "") {
-							var predicates = searchPredicatesMap[selected];
-							for ( var i = 0; i < predicates.length; i++) {
-								predicateSelect.append('<option value="'
-										+ predicates[i].name + '">'
-										+ predicates[i].displayName
-										+ '</option>');
-							}
+					// --------------------------------------------------------------------------------
+					// DOWNLOAD SELECTED APPLICATIONS
+					// --------------------------------------------------------------------------------
+					$('#downloadAll').click(
+							function() {
+								var appListValue = $('#appList').val();
+								if (appListValue != '') {
+									window.open(
+											"/pgadmissions/print/all?appList="
+													+ $('#appList').val(),
+											'_blank');
+								}
+							});
+
+					$("#loadMoreApplications").live('click', function() {
+						if (loading) {
+							return;
+						}
+						increasePageCount();
+						populateApplicationList();
+					});
+
+					// Load active applications
+					$("#loadActiveApplication")
+							.live(
+									'click',
+									function() {
+										var missingActiveApplications = getMissingActiveApplicationFilters();
+										var lastFilter = $(".filter").first();
+
+										for ( var i = 0; i < missingActiveApplications.length; i++) {
+											var newFilter = $(lastFilter)
+													.clone();
+											$(newFilter).insertBefore(
+													$(lastFilter));
+
+											$(newFilter)
+													.find(".selectCategory")
+													.val(missingActiveApplications[i].searchCategory);
+											$(newFilter)
+													.find(".selectPredicate")
+													.val(missingActiveApplications[i].searchPredicate);
+											$(newFilter)
+													.find(".filterInput")
+													.val(missingActiveApplications[i].searchTerm);
+											$('#search-go').click();
+										}
+									});
+
+					// To be extended
+					// Duplicate filters buttons
+					$(".add").live('click', function() {
+						$(this).parent().clone().insertAfter($(this).parent());
+					});
+					// Remover current filter
+					$(".remove").live('click', function() {
+						if ($("#search-box").find("div.filter").length > 1) {
+							$(this).parent().remove();
+							$('#search-go').click();
 						}
 					});
 
-			// ------------------------------------------------------------------------------
-			// SELECT ALL/NO APPLICATIONS
-			// ------------------------------------------------------------------------------
-			$('#select-all').click(function(event) {
-				var selectAllValue = this.checked;
-				var $appList = $('#appList');
-				var list = '';
-
-				$('#applicationListSection input:checkbox').each(function() {
-					this.checked = selectAllValue;
-					if (selectAllValue) {
-						list += $(this).val() + ";";
-					}
 				});
-
-				$appList.val(list);
-			});
-
-			// ------------------------------------------------------------------------------
-			// CLEAR ALL FILTERS
-			// ------------------------------------------------------------------------------
-			$("#search-reset").live('click', function() {
-				var filters = $("#search-box").find("div.filter");
-				for (var i = 1 ; i < filters.length; i++) {
-					$(filters[i]).remove();
-				}
-
-				$(filters[0]).find(".selectCategory").val("");
-				$(filters[0]).find(".selectPredicate").empty();
-				$(filters[0]).find(".filterInput").val("");
-			});
-
-			// --------------------------------------------------------------------------------
-			// SELECT APPLICATIONS
-			// --------------------------------------------------------------------------------
-			$(document).on('click', "input[name*='appDownload']", function() {
-				var id = $(this).val();
-				var currentAppList = $('#appList').val();
-
-				if ($(this).is(':checked')) {
-					$('#appList').val(currentAppList + id + ";");
-				} else {
-					$('#appList').val(currentAppList.replace(id + ";", ''));
-				}
-			});
-
-			// --------------------------------------------------------------------------------
-			// DOWNLOAD SELECTED APPLICATIONS
-			// --------------------------------------------------------------------------------
-			$('#downloadAll').click(
-					function() {
-						var appListValue = $('#appList').val();
-						if (appListValue != '') {
-							window.open("/pgadmissions/print/all?appList="
-									+ $('#appList').val(), '_blank');
-						}
-					});
-
-			$("#loadMoreApplications").live('click', function() {
-				if (loading) {
-					return;
-				}
-				increasePageCount();
-				populateApplicationList();
-			});
-
-			// To be extended
-			// Duplicate filters buttons
-			$(".add").live('click', function() {
-				$(this).parent().clone().insertAfter($(this).parent());
-			});
-			// Remover current filter
-			$(".remove").live('click', function() {
-				if ($("#search-box").find("div.filter").length > 1) {
-					$(this).parent().remove();
-				}
-			});
-		});
 
 function resetPageCount() {
 	$('#block-index').val("1");
@@ -302,4 +355,45 @@ function getFilters() {
 	});
 
 	return filters;
+}
+
+function getMissingActiveApplicationFilters() {
+	// active applications include applications which are NOT approved,
+	// rejected or withdrawn
+	var activeApplicationFilters = new Array();
+	activeApplicationFilters.push({
+		searchCategory : "APPLICATION_STATUS",
+		searchPredicate : "NOT_CONTAINING",
+		searchTerm : "Approved"
+	});
+	activeApplicationFilters.push({
+		searchCategory : "APPLICATION_STATUS",
+		searchPredicate : "NOT_CONTAINING",
+		searchTerm : "Rejected"
+	});
+	activeApplicationFilters.push({
+		searchCategory : "APPLICATION_STATUS",
+		searchPredicate : "NOT_CONTAINING",
+		searchTerm : "Withdrawn"
+	});
+
+	var result = activeApplicationFilters.slice();
+	var existingFilters = getFilters();
+
+	for ( var i = 0; i < activeApplicationFilters.length; i++) {
+		for ( var j = 0; j < existingFilters.length; j++) {
+			if (areFiltersEqual(existingFilters[j], activeApplicationFilters[i])) {
+				var startingIndex = result.indexOf(activeApplicationFilters[i]);
+				result.splice(startingIndex, 1);
+			}
+		}
+	}
+
+	return result;
+}
+
+function areFiltersEqual(filter, otherFilter) {
+	return (filter.searchCategory == otherFilter.searchCategory)
+			&& (filter.searchPredicate == otherFilter.searchPredicate)
+			&& (filter.searchTerm == otherFilter.searchTerm);
 }

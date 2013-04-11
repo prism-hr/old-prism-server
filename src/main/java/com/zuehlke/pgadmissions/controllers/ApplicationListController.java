@@ -140,6 +140,11 @@ public class ApplicationListController {
         System.out.println(new Gson().toJson(predicatesMap));
         return new Gson().toJson(predicatesMap);
     }
+    
+    @ModelAttribute("applicationStatusValues")
+    public ApplicationFormStatus[] getApplicationStatusValues() {
+        return ApplicationFormStatus.values();
+    }
 
     @ModelAttribute("applications")
     public List<ApplicationForm> getApplications() {

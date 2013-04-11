@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.mail.SupervisorMailSender;
 
@@ -22,6 +23,7 @@ public class SupervisorNotificationTask extends TimerTask {
     private final SupervisorMailSender mailSender;
 	
     private final SupervisorDAO supervisorDAO;
+    
 
     public SupervisorNotificationTask(final SessionFactory sessionFactory, final SupervisorMailSender mailSender,
             final SupervisorDAO supervisorDAO) {
@@ -46,7 +48,8 @@ public class SupervisorNotificationTask extends TimerTask {
                 transaction = sessionFactory.getCurrentSession().beginTransaction();
                 sessionFactory.getCurrentSession().refresh(supervisor);
                 try {
-                    mailSender.sendPrimarySupervisorConfirmationNotification(supervisor);
+                	ApplicationForm form = supervisor.getApprovalRound().getApplication();
+					mailSender.sendPrimarySupervisorConfirmationNotificationAndCopyAdmins(supervisor, form.getProgram().getAdministrators());
                     supervisor.setLastNotified(new Date());
                     supervisorDAO.save(supervisor);
                     transaction.commit();

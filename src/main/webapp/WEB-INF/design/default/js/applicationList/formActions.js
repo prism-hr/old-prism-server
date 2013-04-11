@@ -203,9 +203,11 @@ $(document)
 											$(newFilter).insertBefore(
 													$(lastFilter));
 
-											$(newFilter)
-													.find(".selectCategory")
+											var selectCategory=$(newFilter).find(".selectCategory");
+											$(selectCategory)
 													.val(missingActiveApplications[i].searchCategory);
+											$(selectCategory).change();
+											
 											$(newFilter)
 													.find(".selectPredicate")
 													.val(missingActiveApplications[i].searchPredicate);

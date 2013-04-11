@@ -98,6 +98,8 @@ public class DelegateToApplicationAdministratorController {
                     delegatedInterviewer.getEmail(), Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm);
         }
         applicationForm.setApplicationAdministrator(applicationAdmin);
+        
+        userService.sendEmailToDelegateAndRegisterReminder(applicationForm, applicationAdmin);
 
         NotificationRecord reviewReminderNotification = applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER);
         if (reviewReminderNotification != null) {

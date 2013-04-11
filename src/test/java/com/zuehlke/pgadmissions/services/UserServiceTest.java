@@ -1,6 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_ADMINISTRATION_REMINDER;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -14,6 +19,9 @@ import static org.junit.Assert.fail;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import javax.mail.internet.InternetAddress;
 
 import junit.framework.Assert;
 
@@ -24,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -33,12 +42,14 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -58,7 +69,7 @@ public class UserServiceTest {
     private RoleDAO roleDAOMock;
     private ApplicationsFilterDAO applicationsFilterDAOMock;
     private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
-    private JavaMailSender mailsenderMock;
+    private JavaMailSender mailSenderMock;
     private UserService userServiceWithCurrentUserOverride;
     private RegisteredUser currentUserMock;
     private UserFactory userFactoryMock;
@@ -653,7 +664,7 @@ public class UserServiceTest {
         final RegisteredUser currentUser = new RegisteredUserBuilder().firstName("f").lastName("l").id(7)
                 .password("12").email("em").username("em").build();
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock,
+                mimeMessagePreparatorFactoryMock, mailSenderMock, msgSourceMock, encryptionUtilsMock,
                 applicationsFilterDAOMock, templateServiceMock) {
 
             @Override
@@ -684,7 +695,7 @@ public class UserServiceTest {
         final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em")
                 .build();
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock,
+                mimeMessagePreparatorFactoryMock, mailSenderMock, msgSourceMock, encryptionUtilsMock,
                 applicationsFilterDAOMock, templateServiceMock) {
 
             @Override
@@ -712,7 +723,7 @@ public class UserServiceTest {
         secondAccount.setPrimaryAccount(currentAccount);
 
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock,
+                mimeMessagePreparatorFactoryMock, mailSenderMock, msgSourceMock, encryptionUtilsMock,
                 applicationsFilterDAOMock, templateServiceMock) {
 
             @Override
@@ -742,7 +753,7 @@ public class UserServiceTest {
                 .activationCode("abcd").email("A@B.com").password("password").build();
 
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock,
+                mimeMessagePreparatorFactoryMock, mailSenderMock, msgSourceMock, encryptionUtilsMock,
                 applicationsFilterDAOMock, templateServiceMock) {
 
             @Override
@@ -768,7 +779,7 @@ public class UserServiceTest {
                 .activationCode("abcd").email("A@B.com").password("password").build();
 
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock,
+                mimeMessagePreparatorFactoryMock, mailSenderMock, msgSourceMock, encryptionUtilsMock,
                 applicationsFilterDAOMock, templateServiceMock) {
 
             @Override
@@ -784,12 +795,32 @@ public class UserServiceTest {
 
         userServiceWithCurrentUserOverride.linkAccounts(secondAccount.getEmail());
     }
+    
+	@SuppressWarnings("unchecked")
+	@Test
+    public void shouldSendemailToDelegateForInterviewAdministration() {
+    	EmailTemplate template = new EmailTemplateBuilder().active(true).content("some content").name(INTERVIEW_ADMINISTRATION_REMINDER).build();
+    	ApplicationForm applicationForm = new ApplicationFormBuilder().build();
+    	RegisteredUser delegate = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
+    	MimeMessagePreparator messagePreparatorMock = createMock(MimeMessagePreparator.class);
+    	
+    	expect(msgSourceMock.getMessage("application.interview.delegation", null, null)).andReturn("mail subject");
+    	expect(templateServiceMock.getActiveEmailTemplate(INTERVIEW_ADMINISTRATION_REMINDER)).andReturn(template);
+    	expect(
+    			mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(isA(InternetAddress.class), eq("mail subject"), eq(INTERVIEW_ADMINISTRATION_REMINDER), eq("some content"), isA(Map.class), (InternetAddress)isNull(InternetAddress.class))
+    			).andReturn(messagePreparatorMock);
+    	mailSenderMock.send(messagePreparatorMock);
+    	
+    	replay(templateServiceMock, mailSenderMock, msgSourceMock, mimeMessagePreparatorFactoryMock);
+    	userService.sendEmailToDelegateAndRegisterReminder(applicationForm, delegate);
+    	verify(templateServiceMock, mailSenderMock, msgSourceMock, mimeMessagePreparatorFactoryMock);
+    }
 
     @Before
     public void setUp() {
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
         mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-        mailsenderMock = EasyMock.createMock(JavaMailSender.class);
+        mailSenderMock = EasyMock.createMock(JavaMailSender.class);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
         currentUser = new RegisteredUserBuilder().id(8).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
         currentUserMock = EasyMock.createMock(RegisteredUser.class);
@@ -806,9 +837,9 @@ public class UserServiceTest {
         templateServiceMock = createMock(EmailTemplateService.class);
 
         userService = new UserService(userDAOMock, roleDAOMock, userFactoryMock, mimeMessagePreparatorFactoryMock,
-                mailsenderMock, msgSourceMock, encryptionUtilsMock, applicationsFilterDAOMock, templateServiceMock);
+                mailSenderMock, msgSourceMock, encryptionUtilsMock, applicationsFilterDAOMock, templateServiceMock);
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock,
+                mimeMessagePreparatorFactoryMock, mailSenderMock, msgSourceMock, encryptionUtilsMock,
                 applicationsFilterDAOMock, templateServiceMock) {
 
             @Override

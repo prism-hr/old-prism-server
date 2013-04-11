@@ -60,6 +60,14 @@ public class InterviewService {
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
         NotificationRecord interviewReminderRecord = applicationForm
                 .getNotificationForType(NotificationType.INTERVIEW_REMINDER);
+        //Check if the interview administration was delegated
+        if (applicationForm.getApplicationAdministrator()!=null) {
+        	//We remove the notification record so that the delegate does not receive reminders any longer
+        	NotificationRecord interviewAdministrationReminderRecord = applicationForm
+        			.getNotificationForType(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+        	applicationForm.removeNotificationRecord(interviewAdministrationReminderRecord);
+        	applicationForm.setApplicationAdministrator(null);
+        }
         if (interviewReminderRecord != null) {
             applicationForm.removeNotificationRecord(interviewReminderRecord);
         }

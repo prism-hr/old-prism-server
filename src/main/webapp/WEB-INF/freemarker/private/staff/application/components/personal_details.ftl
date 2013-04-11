@@ -19,7 +19,7 @@
 <h2 id="personalDetails-H2" class="no-arrow tick">Personal Details</h2>
 
 <div id="personal-details-section" class="open">
-  <form method="post" method = "GET">
+  <form>
     <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>
     <input type="hidden" name="id" value="${applicationForm.applicationNumber}"/>
     <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>

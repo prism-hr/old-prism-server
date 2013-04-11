@@ -39,12 +39,8 @@
 			<!-- Middle. -->
 			<div id="middle">
 	  
-       	 		<div id="site-message" class="notice">
-		          <div class="header">
-		            	<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_app.png'/>" alt="" /></div>
-		            	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
-		          </div>
-		          <div class="error">
+		          <div id="site-message" class="notice" style="height:170px">
+					<div class="content">
 		            <p>The system was unable to process the activation request.</p>
 		          </div>
        		</div>

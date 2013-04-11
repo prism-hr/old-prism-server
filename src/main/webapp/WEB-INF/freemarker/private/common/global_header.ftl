@@ -10,3 +10,4 @@
 
 <!-- Modal window. -->
 <#include "/private/common/modal_window.ftl">
+<div id="freshwidget-button" style="display: none; top: 200px;" class="freshwidget-button right"><a href="http://www.prism.cs.ucl.ac.uk/help/" class="freshwidget-theme" target="_blank" >  Support  </a></div>

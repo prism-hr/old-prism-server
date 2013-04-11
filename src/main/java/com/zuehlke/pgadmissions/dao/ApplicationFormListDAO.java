@@ -126,8 +126,7 @@ public class ApplicationFormListDAO {
             if (searchCategory.getType() == CategoryType.TEXT) {
                 switch (searchCategory) {
                 case APPLICANT_NAME:
-                    newCriterion = Restrictions.disjunction().add(Restrictions.ilike("a.firstName", term, MatchMode.ANYWHERE))
-                            .add(Restrictions.ilike("a.lastName", term, MatchMode.ANYWHERE));
+                    newCriterion = Restrictions.ilike("a.fullName", term, MatchMode.ANYWHERE);
                     break;
                 case APPLICATION_NUMBER:
                     newCriterion = Restrictions.ilike("applicationNumber", term, MatchMode.ANYWHERE);

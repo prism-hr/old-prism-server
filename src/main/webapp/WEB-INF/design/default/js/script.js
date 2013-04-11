@@ -280,23 +280,24 @@ function bindDatePicker(selector) {
 }*/
 // Textarea Counter
 function addCounter() {
-
-    var $textArea = $("textarea[class='max']");
-    var maxlength = 2000;
+    var i = 1
+	var $textArea = $("textarea");
     $.each($textArea, function() {
         if ($(this).attr('id') == 'convictionsText') {
-			 maxlength = 400;
+			$(this).data("maxlength", 400);
 		} else if  ($(this).attr('id') == 'projectAbstract') {
-			maxlength = 1000;
+			$(this).data("maxlength", 1000);
+		} else if  ($(this).attr('id') == 'position_remit') {
+			$(this).data("maxlength", 250);
 		} else {
-			maxlength = 2000;
+			$(this).data("maxlength", 2000);
 		}
         // Create the span with all the content and characters left
-        $(this).after('<span class="badge count">' + ( maxlength - $(this).val().length) + ' Characters left</span>');
+        $(this).after('<span class="badge count">' + ( $(this).data("maxlength") - $(this).val().length) + ' Characters left</span>');
 
-         if ($(this).val().length > (maxlength-10)) {
+         if ($(this).val().length > ($(this).data("maxlength")-10)) {
             $(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
-            if ($(this).val().length > maxlength) {
+            if ($(this).val().length > $(this).data("maxlength")) {
                 $(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
             }
         }
@@ -304,7 +305,7 @@ function addCounter() {
         // Counting on keyup
         $(this).keyup(function count(){
             
-            var counter = maxlength - $(this).val().length;
+            var counter = $(this).data("maxlength") - $(this).val().length;
             if  (counter <= 10) {
 
                 if (counter < 1) {

@@ -56,6 +56,17 @@ public class SupervisorMailSender extends MailSender {
         EmailTemplate template = getDefaultEmailtemplate(SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION);
         javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION, template.getContent(), createModel(supervisor), null));
     }
+    
+    public void sendPrimarySupervisorConfirmationNotificationAndCopyAdmins(Supervisor supervisor, List<RegisteredUser> admins) {
+    	InternetAddress toAddress = createAddress(supervisor.getUser());
+    	InternetAddress[] ccAddresses = new InternetAddress[admins.size()];
+    	for (int i =0; i<admins.size(); i++) {
+    		ccAddresses[i] = createAddress(admins.get(i));
+    	}
+    	String subject = resolveMessage("supervisor.primary.notification", supervisor.getApprovalRound().getApplication());
+    	EmailTemplate template = getDefaultEmailtemplate(SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION);
+    	javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject, SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION, template.getContent(), createModel(supervisor), null));
+    }
 
     public void sendPrimarySupervisorConfirmationNotificationReminder(Supervisor supervisor) {
         InternetAddress toAddress = createAddress(supervisor.getUser());

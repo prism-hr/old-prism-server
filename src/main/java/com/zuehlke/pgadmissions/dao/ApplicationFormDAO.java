@@ -95,6 +95,7 @@ public class ApplicationFormDAO {
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.eq("suppressStateChangeNotifications", false))
 				.add(Restrictions.eq("status", status))
 				.add(Restrictions.lt("dueDate", today))
 				.add(Restrictions.or(Subqueries.exists(overDueRemindersCriteria.setProjection(Projections

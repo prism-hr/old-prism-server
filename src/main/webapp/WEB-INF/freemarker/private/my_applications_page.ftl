@@ -23,6 +23,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/scrollpagination.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
@@ -89,7 +90,7 @@
             <a target="_blank" name="downloadAll" id="downloadAll" class="btn btn-small"><i class="icon-download-alt"></i> Download  PDF</a>
             <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
             <input type="hidden" id="applicationStatusValues" name="applicationStatusValues" 
-              value='<#list applicationStatusValues as value>${value}<#if value_has_next>,</#if></#list>'
+              value='<#list applicationStatusValues as value>${value.displayValue()}<#if value_has_next>,</#if></#list>'
             />
           </div>
             
@@ -109,6 +110,7 @@
                   </option>
                   </#list>
                 </select>
+                
                 <input class="filterInput" type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
                 <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
@@ -128,7 +130,7 @@
                 </select>
                 <select class="selectPredicate" name="searchPredicate" id="searchPredicate_new">
                 </select>
-                <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." />
+                <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." />		
                  <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>
@@ -150,7 +152,6 @@
             </div>
                
           </div>
-          
           <table class="data table table-striped table-condensed table-bordered table-hover" id="appliList" border="0">
             <colgroup>
             <col style="width: 46px" />

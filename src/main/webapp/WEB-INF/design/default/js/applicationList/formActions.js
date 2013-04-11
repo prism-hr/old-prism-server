@@ -98,7 +98,7 @@ $(document)
 										var predicateSelect = $(this).parent()
 												.find('.selectPredicate');
 										predicateSelect.empty();
-
+										
 										if (selected != "") {
 											var predicates = searchPredicatesMap[selected];
 											for ( var i = 0; i < predicates.length; i++) {
@@ -109,9 +109,10 @@ $(document)
 																+ predicates[i].displayName
 																+ '</option>');
 											}
-										}
+										} 
+										fieldChange(selected, $(this));
 									});
-
+					
 					// ------------------------------------------------------------------------------
 					// SELECT ALL/NO APPLICATIONS
 					// ------------------------------------------------------------------------------
@@ -218,8 +219,9 @@ $(document)
 					// Duplicate filters buttons
 					$(".add").live('click', function() {
 						var existingFilter=$(this).parent();
-						var newFilter=$(existingFilter).clone();
+						var newFilter=$(existingFilter).clone(true);
 						newFilter.insertAfter($(this).parent());
+						inputBackNormal(newFilter);
 						clearFilter(newFilter);
 						if(existingFilter.find(".filterInput").val()!=""){
 							$('#search-go').click();
@@ -238,7 +240,52 @@ $(document)
 					});
 
 				});
+// ------------------------------------------------------------------------------
+// APPLY/REMOVE DATAPICKER AND SELECTOR
+// ------------------------------------------------------------------------------
+// input back to normal state
+function inputBackNormal(mainInput) {
+	var $inputSelected = mainInput.find('.filterInput')
+	
+	if ($inputSelected.is('input')) {
+	// Clear if input type
+	$inputSelected.datepicker("destroy")
+		   .removeClass('half date hasDatepicker')
+		   .removeAttr('readonly').val('');
+	} else {
+	// Replace field if select
+		idswich = $inputSelected.attr('id');
+		$inputSelected.remove();
+		$('<input type=\"text\" value=\"\" name=\"searchTerm\" placeholder=\"Filter by...\" class=\"filterInput\" style=\"margin-left: 3px;\" />').insertAfter(mainInput.find('.selectPredicate')).attr('id',idswich);
+	}
+}
+//field changer
+function fieldChange(selected, id) {
+	if (selected == "APPLICATION_STATUS") {
+		inputBackNormal(id.parent());
+		// Create select                                        
+		var myoptions = $("#applicationStatusValues").val();                                  
+		var data = myoptions.split(',');                                        
+		var selector = $("<select name=\"filterInput\"  style=\"margin-left: 3px;\" class=\"filterInput selector\" />");          
+		for(var val in data) {
+			$("<option />", {value: data[val], text: data[val]}).appendTo(selector);
+		}
+		idswich = id.parent().find('.filterInput').attr('id');
+		$("input#" + idswich).remove();
+		
+		$(selector).insertAfter(id.parent().find('.selectPredicate')).attr('id',idswich);
 
+		
+	} else if (selected == "LAST_EDITED_DATE" || selected == "SUBMISSION_DATE") {
+		inputBackNormal(id.parent());
+		// Find input and add classes
+		id.parent().find('.filterInput').addClass('half date').val('');
+		//bind datapicker
+		bindDatePicker(id.parent().find('.filterInput'));
+	} else {
+		inputBackNormal(id.parent());
+	}
+}
 function resetPageCount() {
 	$('#block-index').val("1");
 }
@@ -390,6 +437,7 @@ function getActiveApplicationFilters() {
 
 function clearCurrentFilters(shouldApplyChanges){
 	var filters = $("#search-box").find("div.filter");
+
 	for ( var i = 1; i < filters.length; i++) {
 		$(filters[i]).remove();
 	}
@@ -403,7 +451,8 @@ function clearCurrentFilters(shouldApplyChanges){
 function clearFilter(filter){
 	$(filter).find(".selectCategory").val("");
 	$(filter).find(".selectPredicate").empty();
-	$(filter).find(".filterInput").val("");
+	$(filter).find(".filterInput").val('');
+	inputBackNormal($(filter));
 }
 
 function cleanUpFilterIds(){

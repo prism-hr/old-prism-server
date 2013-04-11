@@ -41,7 +41,12 @@ td.status { text-align: center !important; }
   padding-left: 123px;
   float: left;
   padding-bottom: 10px;
-
+}
+#search-box .filter input.hasDatepicker {
+  margin-right: 148px;
+}
+#search-box .filter select.selector {
+  margin-right: 104px;
 }
 #search-box #searchTerm {margin-bottom: 5px; margin-top: 5px;}
 #search-box #searchCategory {padding: 4px; height: 28px;}

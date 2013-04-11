@@ -68,7 +68,7 @@ $(document)
 													complete : function() {
 													}
 												});
-
+										cleanUpFilterIds();
 									});
 
 					// $('#search-box').on('change keypress', '#searchTerm,
@@ -209,21 +209,31 @@ $(document)
 													.val(activeApplications[i].searchTerm);
 											$('#search-go').click();
 										}
+										
+										$(firstFilter).remove();
+										cleanUpFilterIds();
 									});
 
 					// To be extended
 					// Duplicate filters buttons
 					$(".add").live('click', function() {
-						var newFilter=$(this).parent().clone();
+						var existingFilter=$(this).parent();
+						var newFilter=$(existingFilter).clone();
 						newFilter.insertAfter($(this).parent());
 						clearFilter(newFilter);
-						$('#search-go').click();
+						if(existingFilter.find(".filterInput").val()!=""){
+							$('#search-go').click();
+						}
+						cleanUpFilterIds();
 					});
+					
 					// Remover current filter
 					$(".remove").live('click', function() {
 						if ($("#search-box").find("div.filter").length > 1) {
 							$(this).parent().remove();
-							$('#search-go').click();
+							if(existingFilter.find(".filterInput").val()!=""){
+								$('#search-go').click();
+							}
 						}
 					});
 
@@ -395,3 +405,14 @@ function clearFilter(filter){
 	$(filter).find(".selectPredicate").empty();
 	$(filter).find(".filterInput").val("");
 }
+
+function cleanUpFilterIds(){
+	var filters=$(".filter");
+	for(var i=0;i<filters.length;i++){
+		$(filters[i]).attr("id","filter_"+i);
+		$(filters[i]).find(".selectCategory").attr("id","searchCategory_"+i);
+		$(filters[i]).find(".selectPredicate").attr("id","searchPredicate_"+i);
+		$(filters[i]).find(".filterInput").attr("id","searchTerm_"+i);
+	}
+}
+

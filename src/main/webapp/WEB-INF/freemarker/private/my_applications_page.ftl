@@ -112,6 +112,7 @@
               </div>
               </#list> 
               
+              <#if filters?size==0>
               <!-- New search/filter box. -->
               <div class="filter" id="filter">
                 <select class="selectCategory" name="searchCategory" id="searchCategory">
@@ -128,6 +129,8 @@
                  <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>
+              </#if>
+              
                   <div class="btn-actions">
                       <div class="btn-group">
                         <button class="btn btn-success" id="search-go">Apply</button>

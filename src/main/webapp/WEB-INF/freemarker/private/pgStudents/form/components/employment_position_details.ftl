@@ -169,8 +169,7 @@
           <textarea cols="80" rows="5" maxlength="5000" class="max counter" id="position_remit" name="position_remit" placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}
 </textarea>
           <#else>
-          <textarea readonly cols="80" rows="5" class="max counter" id="position_remit" name="position_remit" placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}
-</textarea>
+          <textarea cols="80" rows="5" class="max" id="position_remit" name="position_remit" placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}</textarea>
           </#if>
           <@spring.bind "employmentPosition.remit" />
           <#list spring.status.errorMessages as error>

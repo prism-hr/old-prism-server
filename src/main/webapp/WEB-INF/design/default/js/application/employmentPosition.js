@@ -14,8 +14,6 @@
 		}
 	}
 $(document).ready(function(){
-	//Add Counter
-    addCounter();
 	
 	var empImgCount = 0;
 	var numberOfSavedPositions = 0;
@@ -233,7 +231,6 @@ $(document).ready(function(){
 	bindDatePicker('#position_startDate');
 	bindDatePicker('#position_endDate');
 	addToolTips();
-
 });
 
 

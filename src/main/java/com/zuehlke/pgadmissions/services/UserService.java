@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_ADMINISTRATION_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +30,13 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -60,10 +64,8 @@ public class UserService {
 	}
 
 	@Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory,
-            MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,
-            MessageSource msgSource, EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO,
-            EmailTemplateService emailTemplateService) {
+	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
+			JavaMailSender mailsender, MessageSource msgSource, EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO, EmailTemplateService emailTemplateService) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.userFactory = userFactory;
@@ -321,20 +323,6 @@ public class UserService {
         currentUser.setUsername(user.getEmail());
         save(currentUser);
     }
-    
-    public void setEmailNotificationStrategy(final EmailNotificationType type) {
-        RegisteredUser currentUser = getCurrentUser();
-        currentUser.setEmailNotificationType(type);
-        if (type == EmailNotificationType.INDIVIDUAL) {
-            currentUser.setDigestNotification(false);
-        }
-        save(currentUser);
-    }
-    
-    public void setNeedsDailyDigestNotification(final RegisteredUser user, final boolean value) {
-        user.setDigestNotification(value);
-        save(user);
-    }
 
     public void resetPassword(String email) {
         RegisteredUser storedUser = userDAO.getUserByEmail(email);
@@ -462,6 +450,30 @@ public class UserService {
             user.getApplicationsFilters().add(filter);
             applicationsFilterDAO.save(filter);
         }
+    }
+    
+    public void sendEmailToDelegateAndRegisterReminder(ApplicationForm applicationForm, RegisteredUser delegate) {
+    	NotificationRecord delegateReminder = new NotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+    	delegateReminder.setApplication(applicationForm);
+    	delegateReminder.setUser(delegate);
+    	delegateReminder.setDate(new Date());
+    	applicationForm.addNotificationRecord(delegateReminder);
+    	 try {
+             Map<String, Object> model = new HashMap<String, Object>();
+             model.put("user", delegate);
+             model.put("applicationForm", applicationForm);
+             model.put("host", Environment.getInstance().getApplicationHostName());
+             InternetAddress toAddress = createUserAddress(delegate);
+             String subject = msgSource.getMessage("application.interview.delegation", null, null);
+             EmailTemplate template = emailTemplateService.getActiveEmailTemplate(INTERVIEW_ADMINISTRATION_REMINDER);
+
+             MimeMessagePreparator messagePreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
+              		INTERVIEW_ADMINISTRATION_REMINDER, template.getContent(), model, null);
+             mailsender.send(messagePreparator);
+
+         } catch (Exception e) {
+             log.warn("error while sending email", e);
+         }
     }
 
     public List<ApplicationsFilter> getFiltersForUser(RegisteredUser user) {

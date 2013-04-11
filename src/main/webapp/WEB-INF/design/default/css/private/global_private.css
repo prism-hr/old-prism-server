@@ -1241,7 +1241,6 @@ section.form-rows .hint{
 	margin-bottom: 10px;
 }
 
-
 /* Application status icons. ------------------------------------------------------------------------- */
 span.icon-status {
   text-indent: 0px;
@@ -1424,4 +1423,91 @@ form#removeForm {
 }
 #badgeS {
 	margin-bottom: -10px;
+}
+#search-box .btn.remove, #search-box .btn.add{
+	border-radius: 15px;
+
+}
+#search-box .btn-inverse.remove{color:#ffffff;text-shadow:0 -1px 0 rgba(0, 0, 0, 0.25);background-color:#CFD0D1;background-image:-moz-linear-gradient(top, #ADAFB1, #BEBFC0);background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#ADAFB1), to(#BEBFC0));background-image:-webkit-linear-gradient(top, #ADAFB1, #BEBFC0);background-image:-o-linear-gradient(top, #ADAFB1, #BEBFC0);background-image:linear-gradient(to bottom, #ADAFB1, #BEBFC0);background-repeat:repeat-x;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffADAFB1', endColorstr='#ffBEBFC0', GradientType=0);border-color:#BEBFC0 #BEBFC0 #000000;border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);*background-color:#222222;filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);}
+#search-box .btn-inverse.remove:hover,#search-box .btn-inverse.remove:focus,#search-box .btn-inverse.remove:active,#search-box .btn-inverse.remove.active,#search-box .btn-inverse.disabled.remove,#search-box .btn-inverse[disabled].remove{color:#ffffff;background-color:#BEBFC0;*background-color:#DBDCDD;}
+
+/* support */
+
+
+.freshwidget-container, .widget-ovelay {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 90002;
+}
+.freshwidget-container {
+    position: absolute;
+}
+.right {
+    right: -2px;
+}
+.right:hover {
+    right: 0;
+}
+
+.freshwidget-theme {
+    background-color: #7EB600;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: bold;
+    outline: 0 none;
+    padding: 6px 16px 8px;
+    text-decoration: none;
+}
+.freshwidget-theme:hover {
+    color: #F3F3F3;
+    text-decoration: none;
+}
+.freshwidget-customimage {
+    overflow: visible;
+}
+.right .freshwidget-customimage {
+    right: 0;
+}
+.freshwidget-button {
+    display: block !important;
+    height: 0;
+    margin: 0;
+    outline: 0 none;
+    position: absolute;
+    width: 0;
+    z-index: 90000;
+}
+.freshwidget-button a {
+    outline: 0 none;
+    position: fixed;
+    white-space: nowrap;
+}
+.right a.freshwidget-theme {
+    transform: rotate(-90deg);
+    transform-origin: left bottom 0;
+}
+.freshwidget-dialog {
+    left: 50%;
+    margin-left: -260px;
+    padding: 8px 0;
+    position: absolute;
+    top: 100px;
+    z-index: 900010;
+}
+.freshwidget-dialog iframe {
+    height: 900px;
+    width: 612px;
+}
+.freshwidget-dialog .widget-close {
+    cursor: pointer;
+    height: 28px;
+    position: absolute;
+    right: 5px;
+    top: 6px;
+    width: 28px;
 }

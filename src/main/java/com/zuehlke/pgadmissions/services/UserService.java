@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
@@ -476,7 +477,16 @@ public class UserService {
          }
     }
 
-    public List<ApplicationsFilter> getFiltersForUser(RegisteredUser user) {
-        return user.getApplicationsFilters();
+    public void setEmailNotificationStrategy(final EmailNotificationType type) {
+        RegisteredUser currentUser = getCurrentUser();
+        currentUser.setEmailNotificationType(type);
+        if (type == EmailNotificationType.INDIVIDUAL) {
+            currentUser.setDigestNotification(false);
+        }
+        save(currentUser);
+    }
+
+    public void setNeedsDailyDigestNotification(final RegisteredUser user, final boolean value) {
+        user.setDigestNotification(value);
     }
 }

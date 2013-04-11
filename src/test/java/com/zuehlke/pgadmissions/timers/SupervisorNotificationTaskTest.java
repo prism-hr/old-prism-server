@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.timers;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -18,7 +19,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.mail.SupervisorMailSender;
@@ -54,8 +62,15 @@ public class SupervisorNotificationTaskTest {
         EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
         EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-        Supervisor supervisorOne = new SupervisorBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").build()).build();
-        Supervisor supervisorTwo = new SupervisorBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").build()).build();
+        RegisteredUser admin1=new RegisteredUserBuilder().id(1).build();
+        RegisteredUser admin2=new RegisteredUserBuilder().id(2).build();
+        Program program = new ProgramBuilder().id(20).administrators(admin1, admin2).build();
+        ApplicationForm appFormOne = new ApplicationFormBuilder().id(987).program(program).build();
+        ApplicationForm appFormTwo = new ApplicationFormBuilder().id(988).program(program).build();
+        ApprovalRound appRoundOne = new ApprovalRoundBuilder().id(54).application(appFormOne).build();
+        ApprovalRound appRoundTwo = new ApprovalRoundBuilder().id(55).application(appFormTwo).build();
+        Supervisor supervisorOne = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(1).approvalRound(appRoundOne).build();
+        Supervisor supervisorTwo = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(2).approvalRound(appRoundTwo).build();
         sessionMock.refresh(supervisorOne);
         sessionMock.refresh(supervisorTwo);
         List<Supervisor> supervisorList = Arrays.asList(supervisorOne, supervisorTwo);
@@ -63,11 +78,12 @@ public class SupervisorNotificationTaskTest {
         
         transactionOne.commit();
 
-        mailServiceMock.sendPrimarySupervisorConfirmationNotification(supervisorOne);
+        mailServiceMock.sendPrimarySupervisorConfirmationNotificationAndCopyAdmins(supervisorOne, asList(admin1, admin2));
+
         supervisorDAOMock.save(supervisorOne);
         transactionTwo.commit();
 
-        mailServiceMock.sendPrimarySupervisorConfirmationNotification(supervisorTwo);
+        mailServiceMock.sendPrimarySupervisorConfirmationNotificationAndCopyAdmins(supervisorTwo, asList(admin1, admin2));
         supervisorDAOMock.save(supervisorTwo);
         transactionThree.commit();
 
@@ -89,18 +105,26 @@ public class SupervisorNotificationTaskTest {
         EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
         EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
         EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-        Supervisor supervisorOne = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(1).build();
-        Supervisor supervisorTwo = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(2).build();
+        
+        RegisteredUser admin1=new RegisteredUserBuilder().id(1).build();
+        RegisteredUser admin2=new RegisteredUserBuilder().id(2).build();
+        Program program = new ProgramBuilder().id(20).administrators(admin1, admin2).build();
+        ApplicationForm appFormOne = new ApplicationFormBuilder().id(987).program(program).build();
+        ApplicationForm appFormTwo = new ApplicationFormBuilder().id(988).program(program).build();
+        ApprovalRound appRoundOne = new ApprovalRoundBuilder().id(54).application(appFormOne).build();
+        ApprovalRound appRoundTwo = new ApprovalRoundBuilder().id(55).application(appFormTwo).build();
+        Supervisor supervisorOne = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(1).approvalRound(appRoundOne).build();
+        Supervisor supervisorTwo = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(2).approvalRound(appRoundTwo).build();
         sessionMock.refresh(supervisorOne);
         sessionMock.refresh(supervisorTwo);
-        EasyMock.expect(supervisorDAOMock.getPrimarySupervisorsDueNotification()).andReturn(Arrays.asList(supervisorOne, supervisorTwo));
+        EasyMock.expect(supervisorDAOMock.getPrimarySupervisorsDueNotification()).andReturn(asList(supervisorOne, supervisorTwo));
         
         transactionOne.commit();
-        mailServiceMock.sendPrimarySupervisorConfirmationNotification(supervisorOne);
+        mailServiceMock.sendPrimarySupervisorConfirmationNotificationAndCopyAdmins(supervisorOne, asList(admin1, admin2));
 
         EasyMock.expectLastCall().andThrow(new RuntimeException());
         transactionTwo.rollback();
-        mailServiceMock.sendPrimarySupervisorConfirmationNotification(supervisorTwo);
+        mailServiceMock.sendPrimarySupervisorConfirmationNotificationAndCopyAdmins(supervisorTwo, asList(admin1, admin2));
         supervisorDAOMock.save(supervisorTwo);
         transactionThree.commit();
 

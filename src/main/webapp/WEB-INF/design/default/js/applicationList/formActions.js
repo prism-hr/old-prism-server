@@ -136,15 +136,7 @@ $(document)
 					// CLEAR ALL FILTERS
 					// ------------------------------------------------------------------------------
 					$("#search-reset").live('click', function() {
-						var filters = $("#search-box").find("div.filter");
-						for ( var i = 1; i < filters.length; i++) {
-							$(filters[i]).remove();
-						}
-
-						$(filters[0]).find(".selectCategory").val("");
-						$(filters[0]).find(".selectPredicate").empty();
-						$(filters[0]).find(".filterInput").val("");
-						$('#search-go').click();
+						clearCurrentFilters(true);
 					});
 
 					// --------------------------------------------------------------------------------
@@ -194,26 +186,27 @@ $(document)
 							.live(
 									'click',
 									function() {
-										var missingActiveApplications = getMissingActiveApplicationFilters();
-										var lastFilter = $(".filter").first();
+										clearCurrentFilters(false);
+										var activeApplications = getActiveApplicationFilters();
+										var firstFilter = $(".filter").first();
 
-										for ( var i = 0; i < missingActiveApplications.length; i++) {
-											var newFilter = $(lastFilter)
+										for ( var i = 0; i < activeApplications.length; i++) {
+											var newFilter = $(firstFilter)
 													.clone();
 											$(newFilter).insertBefore(
-													$(lastFilter));
+													$(firstFilter));
 
 											var selectCategory=$(newFilter).find(".selectCategory");
 											$(selectCategory)
-													.val(missingActiveApplications[i].searchCategory);
+													.val(activeApplications[i].searchCategory);
 											$(selectCategory).change();
 											
 											$(newFilter)
 													.find(".selectPredicate")
-													.val(missingActiveApplications[i].searchPredicate);
+													.val(activeApplications[i].searchPredicate);
 											$(newFilter)
 													.find(".filterInput")
-													.val(missingActiveApplications[i].searchTerm);
+													.val(activeApplications[i].searchTerm);
 											$('#search-go').click();
 										}
 									});
@@ -221,7 +214,10 @@ $(document)
 					// To be extended
 					// Duplicate filters buttons
 					$(".add").live('click', function() {
-						$(this).parent().clone().insertAfter($(this).parent());
+						var newFilter=$(this).parent().clone();
+						newFilter.insertAfter($(this).parent());
+						clearFilter(newFilter);
+						$('#search-go').click();
 					});
 					// Remover current filter
 					$(".remove").live('click', function() {
@@ -359,7 +355,7 @@ function getFilters() {
 	return filters;
 }
 
-function getMissingActiveApplicationFilters() {
+function getActiveApplicationFilters() {
 	// active applications include applications which are NOT approved,
 	// rejected or withdrawn
 	var activeApplicationFilters = new Array();
@@ -379,23 +375,23 @@ function getMissingActiveApplicationFilters() {
 		searchTerm : "Withdrawn"
 	});
 
-	var result = activeApplicationFilters.slice();
-	var existingFilters = getFilters();
-
-	for ( var i = 0; i < activeApplicationFilters.length; i++) {
-		for ( var j = 0; j < existingFilters.length; j++) {
-			if (areFiltersEqual(existingFilters[j], activeApplicationFilters[i])) {
-				var startingIndex = result.indexOf(activeApplicationFilters[i]);
-				result.splice(startingIndex, 1);
-			}
-		}
-	}
-
-	return result;
+	return activeApplicationFilters;
 }
 
-function areFiltersEqual(filter, otherFilter) {
-	return (filter.searchCategory == otherFilter.searchCategory)
-			&& (filter.searchPredicate == otherFilter.searchPredicate)
-			&& (filter.searchTerm == otherFilter.searchTerm);
+function clearCurrentFilters(shouldApplyChanges){
+	var filters = $("#search-box").find("div.filter");
+	for ( var i = 1; i < filters.length; i++) {
+		$(filters[i]).remove();
+	}
+
+	clearFilter(filters[0]);
+	if(shouldApplyChanges){
+		$('#search-go').click();
+	}
+}
+
+function clearFilter(filter){
+	$(filter).find(".selectCategory").val("");
+	$(filter).find(".selectPredicate").empty();
+	$(filter).find(".filterInput").val("");
 }

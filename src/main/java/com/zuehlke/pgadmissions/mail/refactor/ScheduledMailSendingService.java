@@ -196,10 +196,10 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * <b>Summary</b><br/>
      * Informs users that they are required to evaluate interview feedback.<br/>
      * Finds all applications in the system that require interview feedback evaluation, and;<br/> 
-     * Schedules their Administrators and Delegated Interview Adminstrators to be notified.
+     * Schedules their Administrators and Delegated Interview Administrators to be notified.
      * <p/><p>
      * <b>Recipients</b><br/>
-     * Admistrator<br/>
+     * Administrator<br/>
      * Delegated Interview Administrator
      * </p><p>
      * <b>Previous Email Template Name</b><br/>
@@ -233,10 +233,10 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * <b>Summary</b><br/>
      * Reminds users that they are required to evaluate interview feedback.<br/>
      * Finds all applications in the system that urgently require interview feedback evaluation, and;<br/> 
-     * Schedules their Administrators and Delegated Interview Adminstrators to be reminded.
+     * Schedules their Administrators and Delegated Interview Administrators to be reminded.
      * <p/><p>
      * <b>Recipients</b><br/>
-     * Admistrator<br/>
+     * Administrator<br/>
      * Delegated Interview Administrator
      * </p><p>
      * <b>Previous Email Template Name</b><br/>
@@ -374,7 +374,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * <b>Summary</b><br/>
      * Informs users when applications have been updated.<br/>
      * Finds all applications in the system that have recently been updated, and;<br/> 
-     * Schedules their Administators to be notified.
+     * Schedules their Administrators to be notified.
      * <p/><p>
      * <b>Recipients</b><br/>
      * Administrator
@@ -485,7 +485,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * <b>Summary</b><br/>
      * Informs users when applications have been withdrawn.<br/>
      * Finds all applications in the system that have recently been updated, and;<br/> 
-     * Schedules their Administators to be notified.
+     * Schedules their Administrators to be notified.
      * <p/><p>
      * <b>Recipients</b><br/>
      * Administrator<br/>
@@ -554,7 +554,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * <b>Summary</b><br/>
      * Reminds users that they are required to restart the approval of applications.<br/>
      * Finds all applications in the system that urgently require approval restarts, and;<br/> 
-     * Schedules their Administators to be reminded.
+     * Schedules their Administrators to be reminded.
      * <p/><p>
      * <b>Recipients</b><br/>
      * Administrator
@@ -1345,7 +1345,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p><p> 
      * <b>Business Rules</b>
      * <ol>
-     * <li>Administators can evaluate reviews, while:
+     * <li>Administrators can evaluate reviews, while:
      *    <ol>
      *    <li>Applications are in the current review state.</li>
      *    </ol></li>

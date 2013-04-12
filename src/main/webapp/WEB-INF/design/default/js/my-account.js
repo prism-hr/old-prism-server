@@ -2,26 +2,6 @@ $(document).ready(function() {
     
     getAccountDetailsSection();
     
-    $('#accountdetails').on('click', "#saveEmailSettings", function() {
-    	$('.content-box-inner').append('<div class="ajax" />');
-    	$.ajax({
-            type: 'GET',
-             statusCode: {
-                  401: function() { window.location.reload(); },
-                  500: function() { window.location.href = "/pgadmissions/error"; },
-                  404: function() { window.location.href = "/pgadmissions/404"; },
-                  400: function() { window.location.href = "/pgadmissions/400"; },                  
-                  403: function() { window.location.href = "/pgadmissions/404"; }
-             },
-             url:"/pgadmissions/myAccount/emailSettings/" + $("input:radio[name=emailNotificationStrategy]:checked").val(), 
-             success: function(data) {
-             },
-             complete: function() {
-                 $('.content-box-inner div.ajax').remove();
-             }
-        });
-    });
-    
     $(document).on('click', '.button-delete', function(event) {
         var postData ={ 
                 email : $(this).attr("email"),

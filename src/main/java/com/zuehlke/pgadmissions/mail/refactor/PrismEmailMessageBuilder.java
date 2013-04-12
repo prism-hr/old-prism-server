@@ -13,7 +13,6 @@ import org.apache.commons.collections.Transformer;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
@@ -35,8 +34,6 @@ public class PrismEmailMessageBuilder {
 
     protected HashMap<Integer, RegisteredUser> bcc = new HashMap<Integer, RegisteredUser>();
     
-    protected HashMap<Integer, RegisteredUser> digestReceivers = new HashMap<Integer, RegisteredUser>();
-    
     protected Map<String, Object> model = new HashMap<String, Object>();
     
     protected EmailTemplateName templateName;
@@ -53,10 +50,8 @@ public class PrismEmailMessageBuilder {
         @Override
         public void execute(final Object object) {
             RegisteredUser user = (RegisteredUser) object;
-            if (isNotDuplicate(user) && isNotDigestReceiver(user)) {
+            if (isNotDuplicate(user)) {
                 targetMap.put(user.getId(), user);
-            } else if (isDigestReceiver(user)) {
-                digestReceivers.put(user.getId(), user);
             }
         }
     } 
@@ -195,7 +190,6 @@ public class PrismEmailMessageBuilder {
         msg.setModel(model);
         msg.setTemplateName(templateName);
         msg.setAttachments(new ArrayList<PdfAttachmentInputSource>(attachments));
-        msg.setDigestReceiver(new ArrayList<RegisteredUser>(digestReceivers.values()));
         msg.setReplyToAddress(replyToAddress);
         msg.setApplicationForm(form);
         return msg;
@@ -206,7 +200,6 @@ public class PrismEmailMessageBuilder {
         newCopy.attachments = new ArrayList<PdfAttachmentInputSource>(builder.attachments);
         newCopy.bcc = new HashMap<Integer, RegisteredUser>(builder.bcc);
         newCopy.cc = new HashMap<Integer, RegisteredUser>(builder.cc);
-        newCopy.digestReceivers = new HashMap<Integer, RegisteredUser>(builder.digestReceivers);
         newCopy.form = builder.form;
         newCopy.fromAddress = String.valueOf(builder.fromAddress);
         newCopy.model = new HashMap<String, Object>(builder.model);
@@ -223,16 +216,5 @@ public class PrismEmailMessageBuilder {
             return false;
         }
         return true;
-    }
-    
-    protected boolean isNotDigestReceiver(final RegisteredUser user) {
-        if (user.getEmailNotificationType() == EmailNotificationType.DIGEST) {
-            return false;
-        }
-        return true;
-    }
-    
-    protected boolean isDigestReceiver(final RegisteredUser user) {
-        return !isDigestReceiver(user);
     }
 }

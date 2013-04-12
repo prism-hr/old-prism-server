@@ -17,14 +17,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
 import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.services.SwitchUserService;
@@ -95,7 +93,6 @@ public class AccountController {
         registeredUser.setLastName(currentUser.getLastName());
         registeredUser.setEmail(currentUser.getEmail());
         registeredUser.setPassword(currentUser.getPassword());
-        registeredUser.setEmailNotificationType(currentUser.getEmailNotificationType());
         return registeredUser;
     }
 
@@ -164,17 +161,6 @@ public class AccountController {
             return "OK";
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-        }
-        return "NOK";
-    }
-    
-    @RequestMapping(value = "/emailSettings/{type}", method = RequestMethod.GET)
-    @ResponseBody
-    public String updateEmailNotificationStrategy(@PathVariable String type) {
-        try {
-            userService.setEmailNotificationStrategy(EmailNotificationType.valueOf(type));
-            return "OK";
-        } catch (Exception e) {
         }
         return "NOK";
     }

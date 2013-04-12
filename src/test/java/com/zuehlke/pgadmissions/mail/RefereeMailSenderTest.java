@@ -41,7 +41,7 @@ public class RefereeMailSenderTest {
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
+		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").build();
 		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).build();
 		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
 		RegisteredUser applicant = new RegisteredUserBuilder().id(10).build();
@@ -66,7 +66,7 @@ public class RefereeMailSenderTest {
 				return model;
 			}
 		};
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
+		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").build();
 		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("fred").id(234).program(new ProgramBuilder().title("blabal").build()).build();
 		referee.setApplication(form);
 
@@ -103,7 +103,7 @@ public class RefereeMailSenderTest {
 
 		};
 		RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).email("jboggs@test.com").firstName("Jonathan").lastName("Boggs").build();
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).toReferee();
+		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).build();
 		ApplicationForm form = new ApplicationFormBuilder().id(934).applicationNumber("fred").program(new ProgramBuilder().title("sdfl").build()).build();
 		referee.setApplication(form);
 
@@ -140,7 +140,7 @@ public class RefereeMailSenderTest {
 			}
 
 		};
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
+		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").build();
 
 		RegisteredUser applicant = new RegisteredUserBuilder().id(22).firstName("hans").lastName("huber").build();
 		ApplicationForm form = new ApplicationFormBuilder().id(234).applicationNumber("fred").applicant(applicant).program(new ProgramBuilder().title("program").build()).build();
@@ -181,7 +181,7 @@ public class RefereeMailSenderTest {
 
 		};
 		RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).email("jboggs@test.com").firstName("Jonathan").lastName("Boggs").build();
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).toReferee();
+		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).build();
 		ApplicationForm form = new ApplicationFormBuilder().id(340).applicationNumber("fred").program(new ProgramBuilder().title("program").build()).build();
 		referee.setApplication(form);
 

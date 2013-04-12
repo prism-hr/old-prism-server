@@ -74,7 +74,7 @@ public class DeclineControllerTest {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
-		Referee referee = new RefereeBuilder().id(5).toReferee();
+		Referee referee = new RefereeBuilder().id(5).build();
 		EasyMock.expect(userMock.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
 		EasyMock.replay(userServiceMock, userMock);
 		Referee returnedReferee = controller.getReferee("5", applicationForm);
@@ -210,7 +210,7 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldReturnConfirmationDialogForReference() {
 	    final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).build();
-        final Referee referee = new RefereeBuilder().application(applicationForm).id(5).toReferee();
+        final Referee referee = new RefereeBuilder().application(applicationForm).id(5).build();
         controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
             @Override
             public Referee getReferee(String activationCode, ApplicationForm app) {
@@ -237,7 +237,7 @@ public class DeclineControllerTest {
 	public void shouldDeclineReferenceAndReturnMessageView() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).build();
 		final RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		final Referee referee = new RefereeBuilder().application(applicationForm).id(5).toReferee();
+		final Referee referee = new RefereeBuilder().application(applicationForm).id(5).build();
 		
 		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
 		

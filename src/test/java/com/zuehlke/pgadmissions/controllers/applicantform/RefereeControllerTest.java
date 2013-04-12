@@ -57,7 +57,7 @@ public class RefereeControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 		Referee referee = new RefereeBuilder().id(1)
-				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build()).toReferee();
+				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build()).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(refereeServiceMock, errors);
 		controller.editReferee(referee, errors);
@@ -139,7 +139,7 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldGetRefereeFromServiceIfIdProvided() {
-		Referee referee = new RefereeBuilder().id(1).toReferee();
+		Referee referee = new RefereeBuilder().id(1).build();
 
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
 		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
@@ -174,7 +174,7 @@ public class RefereeControllerTest {
 	@Test
 	public void shouldSaveRefereeAndRedirectIfNoErrors() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(5).build();
-		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(applicationForm).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		refereeServiceMock.save(referee);
@@ -189,7 +189,7 @@ public class RefereeControllerTest {
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInApprovalStageAndIfNoErrors() {
 		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.APPROVAL).build();
-		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(application).build();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -204,7 +204,7 @@ public class RefereeControllerTest {
     @Test
     public void shouldNotSendEmailIfApplicationInValidationStageAndIfNoErrors() {
         ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.VALIDATION).build();
-        Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
+        Referee referee = new RefereeBuilder().id(1).application(application).build();
         application.setReferees(Arrays.asList(referee));
         BindingResult errors = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -219,7 +219,7 @@ public class RefereeControllerTest {
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInReviewStageAndIfNoErrors() {
 		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.REVIEW).build();
-		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(application).build();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -234,7 +234,7 @@ public class RefereeControllerTest {
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInInterviewStageAndIfNoErrors() {
 		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.INTERVIEW).build();
-		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(application).build();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -249,7 +249,7 @@ public class RefereeControllerTest {
 	@Test
 	public void shouldNotSendEmailIfApplicationIsInValidationdAndIfNoErrors() {
 		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.VALIDATION).build();
-		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(application).build();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -263,7 +263,7 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		Referee referee = new RefereeBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 	

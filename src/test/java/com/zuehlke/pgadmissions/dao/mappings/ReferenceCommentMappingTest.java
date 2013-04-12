@@ -47,7 +47,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 		
 		Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob")
 				.lastname("smith").addressCountry(country).address1("london").jobEmployer("zuhlke").jobTitle("se")
-				.messenger("skypeAddress").phoneNumber("hallihallo").user(refereeUser).toReferee();
+				.messenger("skypeAddress").phoneNumber("hallihallo").user(refereeUser).build();
 		save(refereeUser, referee);
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();		

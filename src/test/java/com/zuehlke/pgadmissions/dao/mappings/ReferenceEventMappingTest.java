@@ -63,7 +63,7 @@ public class ReferenceEventMappingTest extends AutomaticRollbackTestCase {
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		 referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1))
 				.address1("loc").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
-				.phoneNumber("phoneNumber").toReferee();
+				.phoneNumber("phoneNumber").build();
 		
 		
 		save(user, program,  application, referee);

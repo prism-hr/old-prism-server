@@ -138,7 +138,7 @@ public class RefereeBuilder {
 		return this;
 	}
 
-	public Referee toReferee() {
+	public Referee build() {
 		Referee referee = new Referee();
 		Address address = new AddressBuilder().address1(address1).address2(address2).address3(address3).address4(address4).address5(address5).country(addressCountry).build();
 		referee.setAddressLocation(address);

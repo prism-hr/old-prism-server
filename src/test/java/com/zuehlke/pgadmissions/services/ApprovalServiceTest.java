@@ -596,8 +596,8 @@ public class ApprovalServiceTest {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
 
         user1.getReferees().add(referee1);
         user2.getReferees().add(referee2);

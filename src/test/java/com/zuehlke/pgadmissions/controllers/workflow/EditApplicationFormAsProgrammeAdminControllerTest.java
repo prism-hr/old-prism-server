@@ -94,7 +94,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
 
-        Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).id(8).build();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
@@ -167,7 +167,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
 
-        Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).id(8).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
         EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
@@ -200,7 +200,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
 
-        Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).id(8).build();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
@@ -235,7 +235,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         refereesAdminEditDTO.setSuitableForProgramme(true);
         refereesAdminEditDTO.setSuitableForUCL(false);
 
-        Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).id(8).build();
 
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         result.reject("error");

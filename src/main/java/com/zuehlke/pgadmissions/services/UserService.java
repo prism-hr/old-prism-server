@@ -36,10 +36,10 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.UserFactory;
@@ -477,16 +477,11 @@ public class UserService {
          }
     }
 
-    public void setEmailNotificationStrategy(final EmailNotificationType type) {
-        RegisteredUser currentUser = getCurrentUser();
-        currentUser.setEmailNotificationType(type);
-        if (type == EmailNotificationType.INDIVIDUAL) {
-            currentUser.setDigestNotification(false);
+    public void setNeedsDailyDigestNotification(final RegisteredUser user, final DigestNotificationType type) {
+        if (type != DigestNotificationType.NONE && user.getDigestNotificationType() == DigestNotificationType.REMINDER_DIGEST) {
+            return;
+        } else {
+            user.setDigestNotificationType(type);
         }
-        save(currentUser);
-    }
-
-    public void setNeedsDailyDigestNotification(final RegisteredUser user, final boolean value) {
-        user.setDigestNotification(value);
     }
 }

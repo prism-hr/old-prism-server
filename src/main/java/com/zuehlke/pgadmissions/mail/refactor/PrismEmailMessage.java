@@ -36,8 +36,6 @@ public final class PrismEmailMessage {
 
     private List<RegisteredUser> bcc = new ArrayList<RegisteredUser>();
     
-    private List<RegisteredUser> digestReceiver = new ArrayList<RegisteredUser>();
-    
     private Map<String, Object> model;
     
     private EmailTemplateName templateName;
@@ -154,14 +152,6 @@ public final class PrismEmailMessage {
 
     public void setReplyToAddress(final String replyToAddress) {
         this.replyToAddress = replyToAddress;
-    }
-
-    public List<RegisteredUser> getDigestReceiver() {
-        return digestReceiver;
-    }
-
-    public void setDigestReceiver(final List<RegisteredUser> digestReceiver) {
-        this.digestReceiver = digestReceiver;
     }
 
     public ApplicationForm getApplicationForm() {

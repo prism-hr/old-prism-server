@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -33,7 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.EmailNotificationType;
+import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
@@ -88,12 +87,9 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Column(name = "original_querystring")
     private String originalApplicationQueryString;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "email_notification_type")
-    private EmailNotificationType emailNotificationType;
-    
-    @Column(name = "digest_notification")
-    private boolean digestNotification;
+    @Column(name = "digest_notification_type")
+    @Enumerated
+    private DigestNotificationType digestNotificationType;
 
     private boolean enabled;
 
@@ -684,21 +680,13 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public void setUsername(final String username) {
         this.username = username;
     }
-    
-    public EmailNotificationType getEmailNotificationType() {
-        return emailNotificationType;
+
+    public DigestNotificationType getDigestNotificationType() {
+        return digestNotificationType;
     }
 
-    public void setEmailNotificationType(final EmailNotificationType type) {
-        this.emailNotificationType = type;
-    }
-    
-    public boolean isDigestNotification() {
-        return digestNotification;
-    }
-
-    public void setDigestNotification(final boolean flag) {
-        this.digestNotification = flag;
+    public void setDigestNotificationType(final DigestNotificationType type) {
+        this.digestNotificationType = type;
     }
 
     @Override

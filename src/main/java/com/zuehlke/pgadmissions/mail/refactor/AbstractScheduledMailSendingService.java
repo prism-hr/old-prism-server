@@ -89,7 +89,7 @@ public abstract class AbstractScheduledMailSendingService {
     
     @SuppressWarnings("unchecked")
 	protected Collection<RegisteredUser> getReviewersFromLatestReviewRound(final ApplicationForm form) {
-    	if (form.getLatestInterview() != null) {
+    	if (form.getLatestReviewRound() != null) {
     		return CollectionUtils.collect(form.getLatestReviewRound().getReviewers(), new Transformer() {
 				@Override
 				public Object transform(final Object input) {

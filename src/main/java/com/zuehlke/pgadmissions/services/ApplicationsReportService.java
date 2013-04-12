@@ -87,11 +87,11 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.NUMBER, "Positive Review Endorsements"));
         cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.NUMBER, "Negative Review Endorsements"));
         cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
-        cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time"));
+        cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
         cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
         cd.add(new ColumnDescription("positiveInterviewEndorsements", ValueType.NUMBER, "Positive Interview Endorsements"));
         cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.NUMBER, "Negative Interview Endorsements"));
-        cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time"));
+        cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time (hours)"));
         cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER, "Approval Stages"));
         cd.add(new ColumnDescription("primarySupervisor", ValueType.TEXT, "Primary Supervisor"));
         cd.add(new ColumnDescription("secondarySupervisor", ValueType.TEXT, "Secondary Supervisor"));
@@ -170,7 +170,7 @@ public class ApplicationsReportService {
         for (StateChangeEvent event : stateEvents) {
             if (stageBegin != null) {
                 Date stageEnd = event.getDate();
-                long millisDiff = (stageEnd.getTime() - stageBegin.getTime()) / 3600000; //hours
+                long millisDiff = stageEnd.getTime() - stageBegin.getTime(); //hours
                 millisSum += millisDiff;
                 stageBegin = null;
             }
@@ -187,7 +187,7 @@ public class ApplicationsReportService {
             stageBegin = null;
         }
 
-        return millisSum;
+        return millisSum / 3600000; // convert to hours
     }
 
     private ValidationComment getLatestvalidationComment(ApplicationForm app) {

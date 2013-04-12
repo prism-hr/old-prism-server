@@ -125,6 +125,11 @@ $(document).ready(function() {
 							.replace(id + ";", ''));
 		}
 	});
+	
+	$('#search-report').click(downloadReport);
+	$('#search-report-html').click({outputType: "html"}, downloadReport);
+	$('#search-report-json').click({outputType: "json"}, downloadReport);
+	$('#search-report-csv').click({outputType: "csv"}, downloadReport);
 
 	// --------------------------------------------------------------------------------
 	// DOWNLOAD SELECTED APPLICATIONS
@@ -316,6 +321,28 @@ function populateApplicationList() {
 			loading = false;
 		}
 	});
+}
+
+function downloadReport(event) {
+    filters = getFilters();
+
+    options = {
+        filters : JSON.stringify(filters),
+        sortCategory : $('#sort-column').val(),
+        order : $('#sort-order').val(),
+        blockCount : $('#block-index').val()
+    };
+    
+    var url = "/pgadmissions/applications/report?";
+    url += "filters=" + JSON.stringify(filters);
+    url += "&sortCategory=" + $('#sort-column').val();
+    url += "&order=" + $('#sort-order').val();
+    if(event.data.outputType){
+        url += "&tqx=out:" + event.data.outputType;
+    }
+    
+    var win = window.open(url,'_blank');
+    win.focus();
 }
 
 function sortList(column) {

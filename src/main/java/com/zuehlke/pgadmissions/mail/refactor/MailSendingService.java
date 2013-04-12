@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERR
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_ADMINISTRATION_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFERENCE_SUBMIT_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 
@@ -72,6 +71,28 @@ public class MailSendingService {
         }
 	}
 
+	/**
+    * <p>
+    * <b>Summary</b><br/>
+    * Informs users when a data export has failed.
+    * <p/><p>
+    * <b>Recipients</b>
+    * Super Administrator
+    * </p><p>
+    * <b>Previous Email Template Name</b><br/>
+    * Kevin to Insert
+    * </p><p> 
+    * <b>Business Rules</b><br/>
+    * <ol>
+    * <li>Super Administrators are notified, when:
+    *    <ol><li>A data export has failed.</li>
+    *    </ol></li>
+    * </ol>
+    * </p><p>
+    * <b>Notification Type</b>
+    * Immediate Notification
+    * </p>
+    */	
 	public void sendExportErrorMessage(List<RegisteredUser> users, String messageCode, Date timestamp) {
 		PrismEmailMessage message = null;
 		if (messageCode == null) {
@@ -91,21 +112,75 @@ public class MailSendingService {
 		}
 	}
 	
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when references have been provided.<br/>
+     * Finds all applications in the system for which references have recently been provided, and;<br/> 
+     * Schedules their Applicants and Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Applicant<br/>
+     * Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Referees can provide references, while:
+     *    <ol>
+     *    <li>Applications are not in the rejected, approved or withdrawn states.</li>
+     *    </ol></li>
+     * <li>Applicants and Administrators are scheduled to be notified, when:
+     *    <ol>
+     *    <li>References have been provided within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
 	public void sendReferenceSubmitConfirmationToAdministrators(Referee referee, List<RegisteredUser> admins, ApplicationForm applicationForm) {
-		PrismEmailMessage message = null;
-		String subject = resolveMessage("reference.provided.admin", applicationForm);
-		for (RegisteredUser admin : admins) {
-			try {
-				EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "admin", "application", "referee", "host" },
-						new Object[] { admin, applicationForm, referee, getInstance().getApplicationHostName() });
-				message = buildMessage(admin, subject, modelBuilder.build(), REFERENCE_SUBMIT_CONFIRMATION);
-				mailSender.sendEmail(message);
-			} catch (Exception e) {
-				throw new PrismMailMessageException("Error while sending reference submit confirmation to administrator: ", e.getCause(), message);
-			}
-		}
+//	    PrismEmailMessage message = null;
+//		String subject = resolveMessage("reference.provided.admin", applicationForm);
+//		for (RegisteredUser admin : admins) {
+//			try {
+//				EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "admin", "application", "referee", "host" },
+//						new Object[] { admin, applicationForm, referee, getInstance().getApplicationHostName() });
+//				message = buildMessage(admin, subject, modelBuilder.build(), REFERENCE_SUBMIT_CONFIRMATION);
+//				mailSender.sendEmail(message);
+//			} catch (Exception e) {
+//				throw new PrismMailMessageException("Error while sending reference submit confirmation to administrator: ", e.getCause(), message);
+//			}
+//		}
+	    
+	    // TODO: This needs a DIGEST now: see ScheduledMailSendingService.sendReferenceSubmittedConfirmation();
 	}
 
+	/**
+    * <p>
+    * <b>Summary</b><br/>
+    * Informs users when a data import has failed.
+    * <p/><p>
+    * <b>Recipients</b>
+    * Super Administrator
+    * </p><p>
+    * <b>Previous Email Template Name</b><br/>
+    * Kevin to Insert
+    * </p><p> 
+    * <b>Business Rules</b><br/>
+    * <ol>
+    * <li>Super Administrators are notified, when:
+    *    <ol><li>A data import has failed.</li>
+    *    </ol></li>
+    * </ol>
+    * </p><p>
+    * <b>Notification Type</b>
+    * Immediate Notification
+    * </p>
+    */
 	public void sendImportErrorMessage(List<RegisteredUser> users, String messageCode, Date timestamp) {
 		PrismEmailMessage message = null;
 		if (messageCode == null) {

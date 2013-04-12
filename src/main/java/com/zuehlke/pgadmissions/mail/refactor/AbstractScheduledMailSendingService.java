@@ -26,7 +26,7 @@ public abstract class AbstractScheduledMailSendingService {
     
     protected final UserService userService;
     
-    protected final ApplicationFormDAO applicationFormDAO;
+    protected final ApplicationFormDAO applicationDAO;
     
     public AbstractScheduledMailSendingService(
             final AbstractMailSender mailSender, 
@@ -34,7 +34,7 @@ public abstract class AbstractScheduledMailSendingService {
             final ApplicationFormDAO formDAO) {
         this.mailSender = mailSender;
         this.userService = userService;
-        this.applicationFormDAO = formDAO;
+        this.applicationDAO = formDAO;
     }
     
     public void sendEmail(final PrismEmailMessage emailMessage) {
@@ -53,7 +53,7 @@ public abstract class AbstractScheduledMailSendingService {
             form.addNotificationRecord(notificationRecord);
         }
         notificationRecord.setDate(new Date());
-        applicationFormDAO.save(form);
+        applicationDAO.save(form);
         return notificationRecord;
     }
     

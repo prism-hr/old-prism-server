@@ -256,6 +256,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public String getFirstName3() {
         return firstName3;
     }
+    
+    public String getFullName() {
+        return fullName;
+    }
 
     public Integer getId() {
         return id;

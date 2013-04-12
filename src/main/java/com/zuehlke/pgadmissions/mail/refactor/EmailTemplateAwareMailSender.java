@@ -25,7 +25,6 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.mail.HtmlToPlainText;
-import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
@@ -43,12 +42,11 @@ public class EmailTemplateAwareMailSender extends AbstractMailSender {
     private final FreeMarkerConfig freemarkerConfig;
     
     public EmailTemplateAwareMailSender() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
     
     @Autowired
     public EmailTemplateAwareMailSender(
-            final MimeMessagePreparatorFactory mimeMessagePreparatorFactory, 
             final JavaMailSender mailSender, 
             final MessageSource messageSource, 
             final EmailTemplateService emailTemplateService,
@@ -56,7 +54,7 @@ public class EmailTemplateAwareMailSender extends AbstractMailSender {
             @Value("${email.prod}") final String production,
             @Value("${email.address.from}") final String emailAddressFrom,  
             @Value("${email.address.to}") final String emailAddressTo) {
-        super(mailSender, mimeMessagePreparatorFactory, messageSource, production, emailAddressFrom, emailAddressTo);
+        super(mailSender, messageSource, production, emailAddressFrom, emailAddressTo);
         this.emailTemplateService = emailTemplateService;
         this.freemarkerConfig = freemarkerConfig;
     }

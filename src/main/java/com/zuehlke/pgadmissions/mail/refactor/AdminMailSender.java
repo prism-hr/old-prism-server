@@ -33,7 +33,6 @@ public class AdminMailSender {
             newCopy.attachments = new ArrayList<PdfAttachmentInputSource>(builder.attachments);
             newCopy.bcc = new HashMap<Integer, RegisteredUser>(builder.bcc);
             newCopy.cc = new HashMap<Integer, RegisteredUser>(builder.cc);
-            newCopy.digestReceivers = new HashMap<Integer, RegisteredUser>(builder.digestReceivers);
             newCopy.form = builder.form;
             newCopy.fromAddress = String.valueOf(builder.fromAddress);
             newCopy.model = new HashMap<String, Object>(builder.model);

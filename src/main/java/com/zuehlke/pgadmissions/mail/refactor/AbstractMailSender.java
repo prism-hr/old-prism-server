@@ -13,15 +13,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
-
 public abstract class AbstractMailSender {
 
     private final Logger log = LoggerFactory.getLogger(AbstractMailSender.class);
     
     protected final JavaMailSender javaMailSender;
-    
-    protected final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
     
     protected final MessageSource messageSource;
     
@@ -33,13 +29,11 @@ public abstract class AbstractMailSender {
     
     public AbstractMailSender(
             final JavaMailSender mailSender, 
-            final MimeMessagePreparatorFactory mimeMessagePreparatorFactory, 
             final MessageSource messageSource, 
             @Value("${email.prod}") final String production,
             @Value("${email.address.from}") final String emailAddressFrom,  
             @Value("${email.address.to}") final String emailAddressTo) {
         this.javaMailSender = mailSender;
-        this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
         this.messageSource = messageSource;
         this.emailProductionSwitch = BooleanUtils.toBoolean(production);
         this.emailAddressFrom = emailAddressFrom;

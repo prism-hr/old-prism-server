@@ -193,8 +193,8 @@ public class MailServiceTest {
 		
 		RegisteredUser refereeOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
 		RegisteredUser refereeTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").build();
-		Referee referee1 = new RefereeBuilder().application(form).id(2).user(refereeTwo).toReferee();
-		Referee referee2 = new RefereeBuilder().application(form).id(1).user(refereeOne).toReferee();
+		Referee referee1 = new RefereeBuilder().application(form).id(2).user(refereeTwo).build();
+		Referee referee2 = new RefereeBuilder().application(form).id(1).user(refereeOne).build();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -404,8 +404,8 @@ public class MailServiceTest {
 
         ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicationNumber("xyz").applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 
-        Referee referee1 = new RefereeBuilder().application(form).id(2).user(refereeTwo).toReferee();
-        Referee referee2 = new RefereeBuilder().application(form).id(1).user(refereeOne).toReferee();
+        Referee referee1 = new RefereeBuilder().application(form).id(2).user(refereeTwo).build();
+        Referee referee2 = new RefereeBuilder().application(form).id(1).user(refereeOne).build();
 
         MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
         MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);

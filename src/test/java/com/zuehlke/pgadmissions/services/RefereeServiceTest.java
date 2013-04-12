@@ -103,7 +103,7 @@ public class RefereeServiceTest {
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").build();
         RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").build();
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
         Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).build();
 
         ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).build();
@@ -176,7 +176,7 @@ public class RefereeServiceTest {
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").build();
         RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").build();
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
         Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).build();
 
         ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).build();
@@ -215,7 +215,7 @@ public class RefereeServiceTest {
         Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").build();
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
 
         Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
 
@@ -267,7 +267,7 @@ public class RefereeServiceTest {
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().comment("old comment").suitableForProgramme(false).suitableForUcl(false).document(null)
                 .build();
-        Referee referee = new RefereeBuilder().user(refereeUser).id(8).reference(referenceComment).toReferee();
+        Referee referee = new RefereeBuilder().user(refereeUser).id(8).reference(referenceComment).build();
 
         Document document = new DocumentBuilder().build();
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
@@ -300,7 +300,7 @@ public class RefereeServiceTest {
 
         RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
-        Referee referee = new RefereeBuilder().user(refereeUser).id(8).application(applicationForm).toReferee();
+        Referee referee = new RefereeBuilder().user(refereeUser).id(8).application(applicationForm).build();
 
         applicationForm.setReferees(Arrays.asList(referee));
 
@@ -347,7 +347,7 @@ public class RefereeServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
 
         RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
-        Referee referee = new RefereeBuilder().application(applicationForm).firstname("Franciszek").lastname("Pieczka").toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).firstname("Franciszek").lastname("Pieczka").build();
 
         Document document = new DocumentBuilder().build();
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
@@ -455,7 +455,7 @@ public class RefereeServiceTest {
         Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
         RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userServiceMock.save(reviewer);
-        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
+        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(reviewer);
         EasyMock.replay(userServiceMock);
         RegisteredUser existedReferee = refereeService.getRefereeIfAlreadyRegistered(referee);
@@ -467,7 +467,7 @@ public class RefereeServiceTest {
         Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
         RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userServiceMock.save(reviewer);
-        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("otherrefemail@test.com").toReferee();
+        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("otherrefemail@test.com").build();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("otherrefemail@test.com")).andReturn(null);
         EasyMock.replay(userServiceMock);
         RegisteredUser existedReferee = refereeService.getRefereeIfAlreadyRegistered(referee);
@@ -479,7 +479,7 @@ public class RefereeServiceTest {
         Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userServiceMock.save(user);
-        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
+        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
@@ -496,7 +496,7 @@ public class RefereeServiceTest {
         RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole, adminRole, approverRole).firstName("bob").lastName("bobson")
                 .email("email@test.com").build();
         userServiceMock.save(user);
-        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
+        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
@@ -510,7 +510,7 @@ public class RefereeServiceTest {
         Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).build();
         RegisteredUser user = new RegisteredUserBuilder().id(3).role(refereeRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userServiceMock.save(user);
-        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
+        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
@@ -524,7 +524,7 @@ public class RefereeServiceTest {
         final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
                 .enabled(true).build();
         Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com")
-                .application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).toReferee();
+                .application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
         refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock,
                 roleDAOMock, commentServiceMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper, templateServiceMock) {
             @Override
@@ -570,9 +570,9 @@ public class RefereeServiceTest {
     @Test
     public void shouldGetRefereeByUserAndApplication() {
         ApplicationForm form = new ApplicationFormBuilder().id(1).build();
-        Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").application(form).toReferee();
-        Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").toReferee();
-        Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").toReferee();
+        Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").application(form).build();
+        Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").build();
+        Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").build();
 
         RegisteredUser user = new RegisteredUserBuilder().referees(referee1, referee2, referee3).id(1).build();
 
@@ -583,7 +583,7 @@ public class RefereeServiceTest {
 
     @Test
     public void shouldDelegateDeleteToDAO() {
-        Referee referee = new RefereeBuilder().id(2).toReferee();
+        Referee referee = new RefereeBuilder().id(2).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee).build();
         referee.setUser(user);
         refereeDAOMock.delete(referee);
@@ -594,7 +594,7 @@ public class RefereeServiceTest {
 
     @Test
     public void shouldDelegateSaveToDAO() {
-        Referee referee = new RefereeBuilder().id(2).toReferee();
+        Referee referee = new RefereeBuilder().id(2).build();
         refereeDAOMock.save(referee);
         EasyMock.replay(refereeDAOMock);
         refereeService.save(referee);
@@ -607,7 +607,7 @@ public class RefereeServiceTest {
 
         RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
 
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
         ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant)
                 .program(new ProgramBuilder().title("klala").build()).build();
         referee.setApplication(form);
@@ -653,7 +653,7 @@ public class RefereeServiceTest {
     public void shouldSetDeclineAndSendDeclineNotificationToAdmin() throws UnsupportedEncodingException {
         RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
         RegisteredUser addmin = new RegisteredUserBuilder().id(43).firstName("bob").lastName("blogs").email("blogs@test.com").build();
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
 
         ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant)
                 .program(new ProgramBuilder().title("klala").administrators(addmin).build()).build();
@@ -723,7 +723,7 @@ public class RefereeServiceTest {
     public void shouldNotSendDeclineNotificationIfSaveFails() {
 
         RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
         ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).program(new Program()).build();
         referee.setApplication(form);
 
@@ -746,7 +746,7 @@ public class RefereeServiceTest {
     public void shouldTNotFailEmailNotificationFails() throws UnsupportedEncodingException {
 
         RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
         ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("xyz").applicant(applicant)
                 .program(new ProgramBuilder().title("klala").build()).build();
         referee.setApplication(form);
@@ -782,10 +782,10 @@ public class RefereeServiceTest {
     public void shouldSetFlagSendToUclOnSelectedQualifications() {
         ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
 
-        Referee referee1 = new RefereeBuilder().id(1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().id(2).sendToUCL(true).toReferee();
-        Referee referee3 = new RefereeBuilder().id(3).sendToUCL(false).toReferee();
-        Referee referee4 = new RefereeBuilder().id(4).sendToUCL(false).toReferee();
+        Referee referee1 = new RefereeBuilder().id(1).sendToUCL(true).build();
+        Referee referee2 = new RefereeBuilder().id(2).sendToUCL(true).build();
+        Referee referee3 = new RefereeBuilder().id(3).sendToUCL(false).build();
+        Referee referee4 = new RefereeBuilder().id(4).sendToUCL(false).build();
 
         EasyMock.expect(applicationFormMock.getReferees()).andReturn(Arrays.asList(referee1, referee2, referee3, referee4));
         EasyMock.expect(refereeDAOMock.getRefereeById(3)).andReturn(referee3);

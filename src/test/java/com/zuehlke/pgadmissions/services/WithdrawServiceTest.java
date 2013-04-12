@@ -29,8 +29,8 @@ public class WithdrawServiceTest {
 	public void shouldSaveFormAndSendEmails() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		applicationServiceMock.save(applicationForm);
-		Referee referee1 = new RefereeBuilder().id(1).toReferee();
-		Referee referee2 = new RefereeBuilder().id(2).toReferee();
+		Referee referee1 = new RefereeBuilder().id(1).build();
+		Referee referee2 = new RefereeBuilder().id(2).build();
 		List<Referee> referees = Arrays.asList(referee1, referee2 );
 		EasyMock.expect(refereeServiceMock.getRefereesWhoHaveNotProvidedReference(applicationForm)).andReturn(referees);
 	

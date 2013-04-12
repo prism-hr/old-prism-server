@@ -134,8 +134,8 @@ public class SendToPorticoDataDTOValidatorTest {
         qualification1 = new QualificationBuilder().proofOfAward(proofOfAward).build();
         qualification2 = new QualificationBuilder().proofOfAward(proofOfAward).build();
         ReferenceComment referenceComment = new ReferenceComment();
-        referee1 = new RefereeBuilder().reference(referenceComment).toReferee();
-        referee2 = new RefereeBuilder().reference(referenceComment).toReferee();
+        referee1 = new RefereeBuilder().reference(referenceComment).build();
+        referee2 = new RefereeBuilder().reference(referenceComment).build();
 
         mappingResult = new DirectFieldBindingResult(sendToPorticoDataDTO, "sendToPorticoData");
 

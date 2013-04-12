@@ -459,16 +459,21 @@ public class UserService {
     	delegateReminder.setUser(delegate);
     	delegateReminder.setDate(new Date());
     	applicationForm.addNotificationRecord(delegateReminder);
+    	List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
     	 try {
              Map<String, Object> model = new HashMap<String, Object>();
              model.put("user", delegate);
              model.put("applicationForm", applicationForm);
              model.put("host", Environment.getInstance().getApplicationHostName());
              InternetAddress toAddress = createUserAddress(delegate);
+             InternetAddress[] ccAddresses = new InternetAddress[admins.size()];
+                          for (int i=0; i<admins.size(); i++) {
+                         	 ccAddresses[i]=createUserAddress(admins.get(i));
+                          }
              String subject = msgSource.getMessage("application.interview.delegation", null, null);
              EmailTemplate template = emailTemplateService.getActiveEmailTemplate(INTERVIEW_ADMINISTRATION_REMINDER);
 
-             MimeMessagePreparator messagePreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
+             MimeMessagePreparator messagePreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject,//
               		INTERVIEW_ADMINISTRATION_REMINDER, template.getContent(), model, null);
              mailsender.send(messagePreparator);
 

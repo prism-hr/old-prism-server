@@ -21,7 +21,7 @@ public class RefereePropertyEditorTest {
 
 		@Test	
 		public void shouldLoadByIdAndSetAsValue(){
-			Referee referee = new RefereeBuilder().id(1).toReferee();
+			Referee referee = new RefereeBuilder().id(1).build();
 			EasyMock.expect(encryptionHelper.decrypt("1")).andReturn("1");
 			EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
 			EasyMock.replay(refereeServiceMock, encryptionHelper);
@@ -49,13 +49,13 @@ public class RefereePropertyEditorTest {
 		
 		@Test	
 		public void shouldReturnNullIfValueIdIsNull(){			
-			editor.setValue(new RefereeBuilder().toReferee());
+			editor.setValue(new RefereeBuilder().build());
 			assertNull(editor.getAsText());
 		}
 		
 		@Test	
 		public void shouldReturnIsAsString(){			
-			editor.setValue(new RefereeBuilder().id(5).toReferee());
+			editor.setValue(new RefereeBuilder().id(5).build());
 			assertEquals("5", editor.getAsText());
 		}
 		

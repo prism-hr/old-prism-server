@@ -83,7 +83,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsRefereeOfTheApplicationForm() {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-		Referee referee = new RefereeBuilder().id(1).user(refereeUser).toReferee();
+		Referee referee = new RefereeBuilder().id(1).user(refereeUser).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).build();
 		assertTrue(refereeUser.canSee(applicationForm));
 
@@ -92,7 +92,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsRefereeOfTheApplicationFormButHasDeclined() {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-		Referee referee = new RefereeBuilder().id(1).user(refereeUser).declined(true).toReferee();
+		Referee referee = new RefereeBuilder().id(1).user(refereeUser).declined(true).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).build();
 		assertFalse(refereeUser.canSee(applicationForm));
 
@@ -557,9 +557,9 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfHasRefereesInApplicationForm() {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).build();
-		Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").application(form).toReferee();
-		Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").toReferee();
-		Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").toReferee();
+		Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").application(form).build();
+		Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").build();
+		Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").build();
 
 		RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee1, referee2, referee3)
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).build()).build();
@@ -570,9 +570,9 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnFalseIfDoesntHaveRefereesInApplicationForm() {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).build();
-		Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").toReferee();
-		Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").toReferee();
-		Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").toReferee();
+		Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").build();
+		Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").build();
+		Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").build();
 
 		RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee1, referee2, referee3)
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).build()).build();
@@ -597,7 +597,7 @@ public class RegisteredUserTest {
 			}
 		};
 
-		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(applicationForm).build();
 		ReferenceComment reference = new ReferenceCommentBuilder().id(1).referee(referee).build();
 		assertFalse(user.canSeeReference(reference));
 	}
@@ -619,7 +619,7 @@ public class RegisteredUserTest {
 			}
 		};
 
-		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(applicationForm).build();
 		ReferenceComment reference = new ReferenceCommentBuilder().id(1).referee(referee).build();
 		assertTrue(user.canSeeReference(reference));
 	}
@@ -636,7 +636,7 @@ public class RegisteredUserTest {
 
 		};
 
-		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(new RegisteredUserBuilder().id(8).build()).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(new RegisteredUserBuilder().id(8).build()).build();
 		ReferenceComment reference = new ReferenceCommentBuilder().id(1).referee(referee).build();
 		assertFalse(user.canSeeReference(reference));
 	}
@@ -657,7 +657,7 @@ public class RegisteredUserTest {
 	         }
 		};
 		user.setId(1);
-		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(user).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(user).build();
 		ReferenceComment reference = new ReferenceCommentBuilder().id(1).referee(referee).build();
 		assertTrue(user.canSeeReference(reference));
 	}
@@ -666,9 +666,9 @@ public class RegisteredUserTest {
 	public void shouldReturnNullIfDeclinedToRefereeForApplicationForm() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).build();
-		Referee refereeOne = new RefereeBuilder().id(7).user(user).declined(true).application(applicationForm).toReferee();
+		Referee refereeOne = new RefereeBuilder().id(7).user(user).declined(true).application(applicationForm).build();
 		Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).build())
-				.application(new ApplicationFormBuilder().id(78).build()).toReferee();
+				.application(new ApplicationFormBuilder().id(78).build()).build();
 		user.setReferees(Arrays.asList(refereeOne, refereeTwo));
 		assertNull(user.getRefereeForApplicationForm(applicationForm));
 	}
@@ -996,7 +996,7 @@ public class RegisteredUserTest {
 	public void shouldNotHaveStaffRigstOnlyIfInRefereeRoleOnly() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().build()).status(ApplicationFormStatus.VALIDATION)
-				.referees(new RefereeBuilder().user(user).toReferee()).build();
+				.referees(new RefereeBuilder().user(user).build()).build();
 		assertFalse(user.hasStaffRightsOnApplicationForm(applicationForm));
 
 	}
@@ -1076,7 +1076,7 @@ public class RegisteredUserTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 		Reviewer reviewer = new ReviewerBuilder().id(1).user(user).build();
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).reviewers(reviewer).build();
-		Referee referee = new RefereeBuilder().id(7).user(user).toReferee();
+		Referee referee = new RefereeBuilder().id(7).user(user).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().build()).status(ApplicationFormStatus.VALIDATION)
 				.reviewRounds(reviewRound).referees(referee).build();
 		assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));

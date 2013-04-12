@@ -171,7 +171,7 @@ public class RegistrationServiceTest {
     @Test
     public void shouldClearNotificationDatesFromReferee() {
         RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
-        Referee referee = new RefereeBuilder().id(1).lastNotified(new Date()).user(databaseUser).toReferee();
+        Referee referee = new RefereeBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
         EasyMock.expect(refereeDAOMock.getRefereeByUser(databaseUser)).andReturn(referee);
         refereeDAOMock.save(referee);
         EasyMock.replay(refereeDAOMock);

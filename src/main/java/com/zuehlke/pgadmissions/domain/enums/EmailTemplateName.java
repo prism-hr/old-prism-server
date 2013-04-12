@@ -44,11 +44,11 @@ public enum EmailTemplateName {
 	APPLICATION_WITHDRAWN_NOTIFICATION("Application withdrawn notification"),  
 	NEW_USER_SUGGESTION("New user suggestion"),
 	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation"),
-	INTERVIEW_ADMINISTRATION_REMINDER("Interview administration reminder"), 
-	
-	DIGEST("Digest"), 
-	DIGEST_REMINDER("Digest Reminder");
-	
+	INTERVIEW_ADMINISTRATION_REMINDER("Interview administration reminder"), 	
+	DIGEST_UPDATE_NOTIFICATION("Digest Update Notification"), 
+	DIGEST_TASK_NOTIFICATION("Digest Task Notification"),
+	DIGEST_TASK_REMINDER("Digest Task Reminder");
+
 	private final String displayValue;
 	
 	private EmailTemplateName(String displayValue) {

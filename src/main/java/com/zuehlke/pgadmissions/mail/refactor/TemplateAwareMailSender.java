@@ -60,7 +60,7 @@ public class TemplateAwareMailSender extends AbstractMailSender {
     }
     
     @Override
-    public void sendEmail(final PrismEmailMessage emailMessage) {
+    public void sendEmail(final PrismEmailMessage emailMessage) throws Exception{
         sendEmail(Arrays.asList(emailMessage));
     }
 

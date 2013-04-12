@@ -62,7 +62,7 @@ public abstract class AbstractMailSender {
         return messageSource.getMessage(code, args, null);
     }
     
-    public abstract void sendEmail(final PrismEmailMessage emailMessage);
+    public abstract void sendEmail(final PrismEmailMessage emailMessage) throws Exception;
     
     public abstract void sendEmail(final Collection<PrismEmailMessage> emailMessages);
 }

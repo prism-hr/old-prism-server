@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.collections.Closure;
@@ -21,7 +20,6 @@ import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -655,56 +653,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     }
 
     /**
-    * <p>
-    * <b>Summary</b><br/>
-    * Informs users when a data export has failed.
-    * <p/><p>
-    * <b>Recipients</b>
-    * Super Administrator
-    * </p><p>
-    * <b>Previous Email Template Name</b><br/>
-    * Kevin to Insert
-    * </p><p> 
-    * <b>Business Rules</b><br/>
-    * <ol>
-    * <li>Super Administrators are notified, when:
-    *    <ol><li>A data export has failed.</li>
-    *    </ol></li>
-    * </ol>
-    * </p><p>
-    * <b>Notification Type</b>
-    * Immediate Notification
-    * </p>
-    */
-    public void sendDataExportError() {
-    }
-
-    /**
-    * <p>
-    * <b>Summary</b><br/>
-    * Informs users when a data import has failed.
-    * <p/><p>
-    * <b>Recipients</b>
-    * Super Administrator
-    * </p><p>
-    * <b>Previous Email Template Name</b><br/>
-    * Kevin to Insert
-    * </p><p> 
-    * <b>Business Rules</b><br/>
-    * <ol>
-    * <li>Super Administrators are notified, when:
-    *    <ol><li>A data import has failed.</li>
-    *    </ol></li>
-    * </ol>
-    * </p><p>
-    * <b>Notification Type</b>
-    * Immediate Notification
-    * </p>
-    */
-    public void sendDataImportError() {
-    }
-
-    /**
      * <p>
      * <b>Summary</b><br/>
      * Reminds users when they are required to administer interviews.<br/>
@@ -1114,43 +1062,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p>
      */
     public void sendReferenceReminder() {
-    }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when references have been provided.<br/>
-     * Finds all applications in the system for which references have recently been provided, and;<br/> 
-     * Schedules their Applicants and Administrators to be notified.
-     * <p/><p>
-     * <b>Recipients</b><br/>
-     * Applicant<br/>
-     * Administrator
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Referees can provide references, while:
-     *    <ol>
-     *    <li>Applications are not in the rejected, approved or withdrawn states.</li>
-     *    </ol></li>
-     * <li>Applicants and Administrators are scheduled to be notified, when:
-     *    <ol>
-     *    <li>References have been provided within the last 24 hours.</li>
-     *    </ol></li>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 1 (Update Notification)
-     * </p>
-     */
-    // We don't need the distinction between the applicant and staff here
-    public void sendReferenceSubmittedConfirmation(final Referee referee) {
-        ApplicationForm form = referee.getApplication();
-        CollectionUtils.forAllDo(Arrays.asList(form.getApplicant()), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
-        CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
 
     /**

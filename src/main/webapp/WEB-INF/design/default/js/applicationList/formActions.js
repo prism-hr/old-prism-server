@@ -337,7 +337,7 @@ function downloadReport(event) {
     url += "filters=" + JSON.stringify(filters);
     url += "&sortCategory=" + $('#sort-column').val();
     url += "&order=" + $('#sort-order').val();
-    if(event.data.outputType){
+    if(event.data && event.data.outputType){
         url += "&tqx=out:" + event.data.outputType;
     }
     

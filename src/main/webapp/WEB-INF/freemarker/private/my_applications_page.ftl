@@ -144,7 +144,7 @@
                         <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="#" id="search-report-html">HTML</a></li>
-                            <li><a href="#  id="search-report-json">JSON</a></li>
+                            <li><a href="#" id="search-report-json">JSON</a></li>
                             <li><a href="#" id="search-report-csv">CSV</a></li>
               
                         </ul>

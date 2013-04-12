@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.UserFactory;
 
@@ -814,7 +815,55 @@ public class UserServiceTest {
     	replay(templateServiceMock, mailSenderMock, msgSourceMock, mimeMessagePreparatorFactoryMock);
     	userService.sendEmailToDelegateAndRegisterReminder(applicationForm, delegate);
     	verify(templateServiceMock, mailSenderMock, msgSourceMock, mimeMessagePreparatorFactoryMock);
+	}
+	
+	@Test
+	public void shouldUpdateDigestNotificationTypeToTaskNotification() {
+	    RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
+	    scandura.setDigestNotificationType(DigestNotificationType.NONE);
+	    userService.setNeedsDailyDigestNotification(scandura, DigestNotificationType.TASK_NOTIFICATION);
+	    assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
+	}
+	
+	@Test
+    public void shouldUpdateDigestNotificationTypeToTaskReminder() {
+        RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
+        scandura.setDigestNotificationType(DigestNotificationType.NONE);
+        userService.setNeedsDailyDigestNotification(scandura, DigestNotificationType.TASK_REMINDER);
+        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
     }
+	
+	@Test
+    public void shouldUpdateDigestNotificationTypeToUpdateNotification() {
+        RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
+        scandura.setDigestNotificationType(DigestNotificationType.NONE);
+        userService.setNeedsDailyDigestNotification(scandura, DigestNotificationType.UPDATE_NOTIFICATION);
+        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+    }
+	
+	@Test
+    public void shouldNotUpdateDigestNotificationTypeToUTaskNotification() {
+        RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
+        scandura.setDigestNotificationType(DigestNotificationType.TASK_REMINDER);
+        userService.setNeedsDailyDigestNotification(scandura, DigestNotificationType.TASK_NOTIFICATION);
+        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
+    }
+	
+	@Test
+    public void shouldNotUpdateDigestNotificationTypeToUpdateNotification() {
+        RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
+        scandura.setDigestNotificationType(DigestNotificationType.TASK_REMINDER);
+        userService.setNeedsDailyDigestNotification(scandura, DigestNotificationType.UPDATE_NOTIFICATION);
+        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
+    }
+    
+	@Test
+	public void shouldUpdateDigestNotificationTypeToNone() {
+	    RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
+        scandura.setDigestNotificationType(DigestNotificationType.TASK_REMINDER);
+        userService.setNeedsDailyDigestNotification(scandura, DigestNotificationType.NONE);
+        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.NONE);
+	}
 
     @Before
     public void setUp() {

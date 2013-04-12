@@ -478,9 +478,10 @@ public class UserService {
     }
 
     public void setNeedsDailyDigestNotification(final RegisteredUser user, final DigestNotificationType type) {
-        if (type != DigestNotificationType.NONE && user.getDigestNotificationType() == DigestNotificationType.TASK_NOTIFICATION) {
-            return;
-        } else {
+        DigestNotificationType currentType = user.getDigestNotificationType();
+        if (currentType == null || type == DigestNotificationType.NONE) {
+            user.setDigestNotificationType(type);
+        } else if (currentType.getPriority() < type.getPriority()) {
             user.setDigestNotificationType(type);
         }
     }

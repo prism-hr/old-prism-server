@@ -670,7 +670,7 @@ public class PorticoWebServiceIT {
                 .address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
                 .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4])
                 .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress")
-                .phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).toReferee();
+                .phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).build();
         referenceComment1.setReferee(refereeOne);
         refereeOne.setReference(referenceComment1);
         randomApplicationForm.getReferees().add(refereeOne);

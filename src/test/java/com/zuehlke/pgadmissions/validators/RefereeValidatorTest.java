@@ -45,7 +45,7 @@ public class RefereeValidatorTest {
         referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).build())
                 .email("email@test.com").firstname("bob").lastname("smith").addressCountry(new Country())
                 .address1("london").address3("london3").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress")
-                .phoneNumber("+44 (0) 20 7911 5000").toReferee();        
+                .phoneNumber("+44 (0) 20 7911 5000").build();        
         refereeValidator = new RefereeValidator(userServiceMock);
         refereeValidator.setValidator((javax.validation.Validator) validator);
     }

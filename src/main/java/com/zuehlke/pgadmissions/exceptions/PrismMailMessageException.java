@@ -28,7 +28,7 @@ public class PrismMailMessageException extends RuntimeException {
         this.emailMessage = emailMessage;
     }
 
-    public PrismEmailMessage getEmailMessage() {
+	public PrismEmailMessage getEmailMessage() {
         return emailMessage;
     }
 }

@@ -137,6 +137,20 @@
               </#if>
               
                   <div class="btn-actions">
+                  
+
+                      <div class="btn-group">
+                        <button class="btn btn-danger" id="search-report">Report</button>
+                        <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" id="search-report-html">HTML</a></li>
+                            <li><a href="#  id="search-report-json">JSON</a></li>
+                            <li><a href="#" id="search-report-csv">CSV</a></li>
+              
+                        </ul>
+                      </div>
+
+                  
                       <div class="btn-group">
                         <button class="btn btn-success" id="search-go">Apply</button>
                         <button class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
@@ -147,7 +161,7 @@
               
                         </ul>
                       </div>
-                     <button class="btn btn-info" type="button" id="search-reset"  >Clear</button>
+                     <button class="btn btn-info" type="button" id="search-reset">Clear</button>
                   </div>
             </div>
                

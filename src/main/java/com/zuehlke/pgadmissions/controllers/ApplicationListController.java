@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.Collections;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.google.visualization.datasource.DataSourceHelper;
+import com.google.visualization.datasource.DataSourceRequest;
+import com.google.visualization.datasource.base.DataSourceException;
+import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -31,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationsReportService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -44,17 +51,21 @@ public class ApplicationListController {
 
     private final ApplicationsService applicationsService;
 
+    private final ApplicationsReportService applicationsReportService;
+
     private final UserService userService;
 
     private final ApplicationsFiltersPropertyEditor filtersPropertyEditor;
 
     ApplicationListController() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public ApplicationListController(ApplicationsService applicationsService, UserService userService, ApplicationsFiltersPropertyEditor filtersPropertyEditor) {
+    public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
+            ApplicationsFiltersPropertyEditor filtersPropertyEditor) {
         this.applicationsService = applicationsService;
+        this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
     }
@@ -107,6 +118,19 @@ public class ApplicationListController {
         return APPLICATION_LIST_SECTION_VIEW_NAME;
     }
 
+    @RequestMapping(value = "/report", method = RequestMethod.GET)
+    public void getApplicationsReport(@ModelAttribute("applicationSearchDTO") ApplicationSearchDTO dto, HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+        DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), dto.getFilters(), dto.getSortCategory(), dto.getOrder());
+        DataSourceRequest dsRequest;
+        try {
+            dsRequest = new DataSourceRequest(req);
+            DataSourceHelper.setServletResponse(reportTable, dsRequest, resp);
+        } catch (DataSourceException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @RequestMapping(value = "/saveFilters", method = RequestMethod.POST)
     @ResponseBody
     public String saveFiltersAsDefault(@ModelAttribute("applicationSearchDTO") ApplicationSearchDTO dto) {
@@ -137,7 +161,6 @@ public class ApplicationListController {
             }
             predicatesMap.put(searchCategory, availablePredicates);
         }
-        System.out.println(new Gson().toJson(predicatesMap));
         return new Gson().toJson(predicatesMap);
     }
     

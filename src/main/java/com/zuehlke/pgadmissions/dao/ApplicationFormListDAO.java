@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 @Repository
 public class ApplicationFormListDAO {
 
-    public static final  DateTimeFormatter USER_DATE_FORMAT = DateTimeFormat.forPattern("dd MMM yyyy");
+    public static final DateTimeFormatter USER_DATE_FORMAT = DateTimeFormat.forPattern("dd MMM yyyy");
 
     private final SessionFactory sessionFactory;
 
@@ -56,10 +56,12 @@ public class ApplicationFormListDAO {
 
     @SuppressWarnings("unchecked")
     public List<ApplicationForm> getVisibleApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sortCategory, SortOrder sortOrder,
-            int pageCount, int itemsPerPage) {
+            Integer pageCount, Integer itemsPerPage) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
-        criteria.setFirstResult((pageCount - 1) * itemsPerPage);
-        criteria.setMaxResults(itemsPerPage);
+        if (pageCount != null && itemsPerPage != null) {
+            criteria.setFirstResult((pageCount - 1) * itemsPerPage);
+            criteria.setMaxResults(itemsPerPage);
+        }
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
@@ -193,7 +195,7 @@ public class ApplicationFormListDAO {
     private Criterion createCriteriaForDate(final SearchPredicate searchPredicate, final String term, final Criteria criteria, final String field) {
         Criterion newCriterion = null;
         Date submissionDate = convertToSqlDate(term);
-        if(submissionDate == null){
+        if (submissionDate == null) {
             return null;
         }
         switch (searchPredicate) {

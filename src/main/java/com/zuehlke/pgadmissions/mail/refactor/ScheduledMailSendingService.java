@@ -50,7 +50,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
 
         @Override
         public void execute(final Object input) {
-            userService.setNeedsDailyDigestNotification((RegisteredUser) input, type);
+            userService.setDigestNotificationType((RegisteredUser) input, type);
         }
     }
 
@@ -189,7 +189,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void scheduleApprovalReminder() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL)) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
-            userService.setNeedsDailyDigestNotification(form.getApprover(), DigestNotificationType.TASK_REMINDER);
+            userService.setDigestNotificationType(form.getApprover(), DigestNotificationType.TASK_REMINDER);
         }
     }
 
@@ -230,7 +230,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
             CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
             RegisteredUser interviewer = form.getApplicationAdministrator();
             if (interviewer != null) {
-                userService.setNeedsDailyDigestNotification(interviewer, DigestNotificationType.TASK_NOTIFICATION);
+                userService.setDigestNotificationType(interviewer, DigestNotificationType.TASK_NOTIFICATION);
             }
         }
     }
@@ -276,7 +276,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
             CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
             RegisteredUser interviewer = form.getApplicationAdministrator();
             if (interviewer != null) {
-                userService.setNeedsDailyDigestNotification(interviewer, DigestNotificationType.TASK_REMINDER);
+                userService.setDigestNotificationType(interviewer, DigestNotificationType.TASK_REMINDER);
             }
         }
     }
@@ -647,7 +647,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
                 public void execute(final Object input) {
                     Supervisor supervisor = (Supervisor) input;
                     if (BooleanUtils.isTrue(supervisor.getIsPrimary())) {
-                        userService.setNeedsDailyDigestNotification(supervisor.getUser(), DigestNotificationType.UPDATE_NOTIFICATION);
+                        userService.setDigestNotificationType(supervisor.getUser(), DigestNotificationType.UPDATE_NOTIFICATION);
                     }
                 }
             });
@@ -749,7 +749,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
             notificationRecord.setDate(new Date());
             RegisteredUser delegate = notificationRecord.getApplication().getApplicationAdministrator();
             if (delegate != null) {
-                userService.setNeedsDailyDigestNotification(delegate, DigestNotificationType.TASK_REMINDER);
+                userService.setDigestNotificationType(delegate, DigestNotificationType.TASK_REMINDER);
             }
         }
     }
@@ -1293,7 +1293,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
                 public void execute(final Object input) {
                     Supervisor supervisor = (Supervisor) input;
                     if (BooleanUtils.isTrue(supervisor.getIsPrimary())) {
-                        userService.setNeedsDailyDigestNotification(supervisor.getUser(), DigestNotificationType.UPDATE_NOTIFICATION);
+                        userService.setDigestNotificationType(supervisor.getUser(), DigestNotificationType.UPDATE_NOTIFICATION);
                     }
                 }
             });
@@ -1439,7 +1439,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void scheduleConfirmSupervisionRequest() {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueNotification()) {
             supervisor.setLastNotified(new Date());
-            userService.setNeedsDailyDigestNotification(supervisor.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+            userService.setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_NOTIFICATION);
             supervisorDAO.save(supervisor);
         }
     }
@@ -1481,7 +1481,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void scheduleConfirmSupervisionReminder() {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueReminder()) {
             supervisor.setLastNotified(new Date());
-            userService.setNeedsDailyDigestNotification(supervisor.getUser(), DigestNotificationType.TASK_REMINDER);
+            userService.setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_REMINDER);
             supervisorDAO.save(supervisor);
         }
     }

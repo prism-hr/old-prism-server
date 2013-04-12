@@ -477,7 +477,7 @@ public class UserService {
          }
     }
 
-    public void setNeedsDailyDigestNotification(final RegisteredUser user, final DigestNotificationType type) {
+    public void setDigestNotificationType(final RegisteredUser user, final DigestNotificationType type) {
         DigestNotificationType currentType = user.getDigestNotificationType();
         if (currentType == null || type == DigestNotificationType.NONE) {
             user.setDigestNotificationType(type);

@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationsReportService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -46,6 +47,7 @@ public class ApplicationListControllerTest {
     private ApplicationListController controller;
     private RegisteredUser user;
     private ApplicationsService applicationsServiceMock;
+    private ApplicationsReportService applicationsReportServiceMock;
     private UserService userServiceMock;
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
 
@@ -245,7 +247,7 @@ public class ApplicationListControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         filtersPropertyEditorMock = EasyMock.createMock(ApplicationsFiltersPropertyEditor.class);
-        controller = new ApplicationListController(applicationsServiceMock, userServiceMock, filtersPropertyEditorMock);
+        controller = new ApplicationListController(applicationsServiceMock, applicationsReportServiceMock, userServiceMock, filtersPropertyEditorMock);
     }
 
     private List<ApplicationsFilter> getFiltersForActiveApplications(RegisteredUser user) {

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.collections.Closure;
@@ -32,43 +33,40 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class ScheduledMailSendingService extends AbstractScheduledMailSendingService {
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);
-    
+
     private final NotificationRecordDAO notificationRecordDAO;
-    
+
     private final CommentDAO commentDAO;
 
     private final SupervisorDAO supervisorDAO;
-    
+
     private class UpdateDigestNotificationClosure implements Closure {
         private final DigestNotificationType type;
+
         public UpdateDigestNotificationClosure(final DigestNotificationType type) {
             this.type = type;
         }
-        
+
         @Override
         public void execute(final Object input) {
             userService.setNeedsDailyDigestNotification((RegisteredUser) input, type);
         }
     }
-    
+
     @Autowired
-    public ScheduledMailSendingService(
-            final TemplateAwareMailSender mailSender, 
-            final UserService userService,
-            final ApplicationFormDAO applicationFormDAO,
-            final NotificationRecordDAO notificationRecordDAO,
-            final CommentDAO commentDAO,
-            final SupervisorDAO supervisorDAO) {
+    public ScheduledMailSendingService(final TemplateAwareMailSender mailSender, final UserService userService,
+            final ApplicationFormDAO applicationFormDAO, final NotificationRecordDAO notificationRecordDAO,
+            final CommentDAO commentDAO, final SupervisorDAO supervisorDAO) {
         super(mailSender, userService, applicationFormDAO);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
     }
-    
+
     public ScheduledMailSendingService() {
         this(null, null, null, null, null, null);
     }
-    
+
     @Scheduled(cron = "${email.digest.cron}")
     public void run() {
         scheduleApprovalRequest();
@@ -77,33 +75,37 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         scheduleInterviewFeedbackEvaluationReminder();
         scheduleReviewReminder();
         scheduleReviewRequest();
-        scheduleApplicationConfirmationToAdministrator();
-        scheduleUpdatedApplicationConfirmation();
-        scheduleApplicationValidationRequest();
-        scheduleApplicationValidationReminder();
+        scheduleUpdateConfirmation();
+        scheduleValidationRequest();
+        scheduleValidationReminder();
+        scheduleWithdrawalConfirmation();
         scheduleRestartApprovalRequest();
         scheduleRestartApprovalReminder();
-        scheduleApprovalConfirmation();
+        scheduleApprovedConfirmation();
         scheduleInterviewAdministrationReminder();
         scheduleInterviewAdministrationRequest();
         scheduleInterviewFeedbackConfirmation();
         scheduleInterviewFeedbackRequest();
         scheduleInterviewFeedbackReminder();
+        scheduleUnderApprovalNotification();
         scheduleRejectionConfirmationToAdministrator();
         scheduleReviewSubmittedConfirmation();
         scheduleReviewEvaluationRequest();
         scheduleReviewEvaluationReminder();
         scheduleConfirmSupervisionRequest();
         scheduleConfirmSupervisionReminder();
-        
+        scheduleSupervisionConfirmedNotification();
+
         sendDigestsToUsers();
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private void sendDigestsToUsers() {
+    public void sendDigestsToUsers() {
         for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
             RegisteredUser user = userService.getUser(userId);
-            PrismEmailMessageBuilder emailMessage = new PrismEmailMessageBuilder().to(user).subjectCode("Prism Digest Notification").emailTemplate(user.getDigestNotificationType().toString());
+            PrismEmailMessageBuilder emailMessage = new PrismEmailMessageBuilder().to(user)
+                    .subjectCode("Prism Digest Notification")
+                    .emailTemplate(user.getDigestNotificationType().toString());
             try {
                 mailSender.sendEmail(emailMessage.build());
             } catch (Exception e) {
@@ -112,336 +114,1369 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         }
         userService.resetDigestNotificationsForAllUsers();
     }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users that they are required to approve applications.<br/>
+     * Finds all applications in the system that require approval, and;<br/> 
+     * Schedules their Approvers to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Approver
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Approvers can approve applications, while:
+     *    <ol>
+     *    <li>They are in the approval state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>The Primary Supervisor has confirmed supervision within the last 24 hours, or;</li>
+     *    <li>The system defined maximum duration for the Approval stage has elapsed within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
+    // Business logic is currently incorrect
+    // Approver cannot approve as soon as the application is moved into the approval state
+    // Approver is notified to approve as soon as the application is moved into the approval state
+    public void scheduleApprovalRequest() {
+    }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users that they are required to approve applications.<br/>
+     * Finds all applications in the system that urgently require approval, and;<br/> 
+     * Schedules their Approvers to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Approver
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Approvers can approve applications, while:
+     *    <ol>
+     *    <li>They are in the approval state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
+    public void scheduleApprovalReminder() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL)) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
+        }
+    }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users that they are required to evaluate interview feedback.<br/>
+     * Finds all applications in the system that require interview feedback evaluation, and;<br/> 
+     * Schedules their Administrators and Delegated Interview Adminstrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Admistrator<br/>
+     * Delegated Interview Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators and Delegated Interview Administrators can evaluate interview feedback, while:
+     *    <ol>
+     *    <li>They are in the current interview state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>The final Interviewer has provided feedback within the last 24 hours, or;</li>
+     *    <li>The system defined maximum duration for the Interview stage has elapsed within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
+    public void scheduleInterviewFeedbackEvaluationRequest() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
+        }
+    }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users that they are required to evaluate interview feedback.<br/>
+     * Finds all applications in the system that urgently require interview feedback evaluation, and;<br/> 
+     * Schedules their Administrators and Delegated Interview Adminstrators to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Admistrator<br/>
+     * Delegated Interview Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators and Delegated Interview Administrators can evaluate interview feedback, while:
+     *    <ol>
+     *    <li>They are in the current interview state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
+    public void scheduleInterviewFeedbackEvaluationReminder() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
+        }
+    }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users that they are required to review applications.<br/>
+     * Finds all applications in the system that urgently require reviews, and;<br/> 
+     * Schedules their Reviewers to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Reviewer
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Reviewers can review applications, while:
+     *    <ol>
+     *    <li>They are in the current review state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
+    public void scheduleReviewReminder() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
+        }
+    }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users that they are required to review applications.<br/>
+     * Finds all applications in the system that require reviews, and;<br/> 
+     * Schedules their Reviewers to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Reviewer
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Reviewers can review applications, while:
+     *    <ol>
+     *    <li>They are in the current review state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>Applications have been moved into the review state in the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
+    public void scheduleReviewRequest() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
+        }
+    }
     
     /**
-     * Description:
-     * 
      * <p>
-     * 
-     * TO:
-     * <p>
-     * CC:
-     * <p>
-     * BCC:
-     * <p>
-     * Subject: 
-     * <p>
-     * Template Name:
-     * <p> 
-     * Sending Conditions: 
-     * <p>
-     * Sending Strategy: DIGEST
+     * <b>Summary</b><br/>
+     * Informs users that they have submitted applications.
+     * <p/><p>
+     * <b>Recipients</b>
+     * Applicant
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b><br/>
+     * <ol>
+     * <li>Applicants are notified, when:
+     *    <ol><li>They submit applications.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b>
+     * Immediate Notification
+     * </p>
      */
-    public void scheduleApprovalRequest() {
-       
+    public void sendSubmissionConfirmation() {
     }
     
-    // DIGEST FORCED
-    public void scheduleApprovalReminder() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
-            }
-        });
-    }
-    
-    // DIGEST
-    public void scheduleInterviewFeedbackEvaluationRequest() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-            }
-        });
-    }
-    
-    // DIGEST FORCED
-    public void scheduleInterviewFeedbackEvaluationReminder() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-            }
-        });
-    }
-    
-    // DIGEST FORCED
-    public void scheduleReviewReminder() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
-            }
-        });
-    }
-    
-    // DIGEST
-    public void scheduleReviewRequest() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
-            }
-        });
-    }
-    
-    // IMMEDIATELY
-    public void sendApplicationConfirmationToApplicant() {
-    }
-    
-    // DIGEST (submitConfirmationToAdmin)
-    public void scheduleApplicationConfirmationToAdministrator() {
-        // DUPLICATE see scheduleApplicationValidationRequest
-    }
-    
-    // DIGEST
-    public void scheduleUpdatedApplicationConfirmation() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUpdateNotification(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
-            }
-        });
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when applications have been updated.<br/>
+     * Finds all applications in the system that have recently been updated, and;<br/> 
+     * Schedules their Administators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Applicants can update applications:
+     *    <ol>
+     *    <li>As soon as they are submitted, and;</li>
+     *    <li>While they are not in the rejected, approved or approval states.</li>
+     *    </ol></li>
+     * <li>Administrators are scheduled to be notified of updates, when:
+     *    <ol>
+     *    <li>Applications have been updated within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
+    public void scheduleUpdateConfirmation() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUpdateNotification()) {
+            createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
+        }
     }
 
-    // DIGEST
-    public void scheduleApplicationValidationRequest() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.UPDATED_NOTIFICATION, ApplicationFormStatus.VALIDATION), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
-            }
-        });
-    }
-    
-    // DIGEST FORCED
-    public void scheduleApplicationValidationReminder() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.VALIDATION_REMINDER);
-            }
-        });
-    }
-    
-    // IMMEDIATELY
-    public void sendApplicationWithdrawnConfirmation() {
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users that they are required to validate applications.<br/>
+     * Finds all applications in the system that require validation, and;<br/> 
+     * Schedules their Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can validate applications, while:
+     *    <ol>
+     *    <li>They are in the validation state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>Applications have been moved into the validation state within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
+    public void scheduleValidationRequest() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.UPDATED_NOTIFICATION, ApplicationFormStatus.VALIDATION)) {
+            createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
+        }
     }
 
-    // DIGEST
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users that they are required to validate applications.<br/>
+     * Finds all applications in the system that urgently require validation, and;<br/> 
+     * Schedules their Administrators to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can validate applications, while:
+     *    <ol>
+     *    <li>They are in the validation state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
+    public void scheduleValidationReminder() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION)) {
+            createNotificationRecordIfNotExists(form, NotificationType.VALIDATION_REMINDER);
+        }
+    }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when applications have been withdrawn.<br/>
+     * Finds all applications in the system that have recently been updated, and;<br/> 
+     * Schedules their Administators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator<br/>
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Applicants can withdraw applications, while:
+     *    <ol>
+     *    <li>They are not in the rejected, approved or withdrawn states.</li>
+     *    </ol></li>
+     * <li>Administrators are scheduled to be notified of withdrawals, when:
+     *    <ol>
+     *    <li>Applications have been withdrawn within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
+    public void scheduleWithdrawalConfirmation() {
+    }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when they are required to restart the approval of applications.<br/>
+     * Finds all applications in the system that require approval restarts, and;<br/> 
+     * Schedules their Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can restart the approval of applications, while:
+     *    <ol>
+     *    <li>They are in the approval state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>Approvers have requested this within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
+    // Business logic is currently incorrect
+    // Administrator cannot restart the approval state until requested to do so by an Approver.
     public void scheduleRestartApprovalRequest() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueApprovalRequestNotification(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
-            }
-        });
-    }
-    
-    // DIGEST FORCED
-    public void scheduleRestartApprovalReminder() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationDueApprovalRestartRequestReminder(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
-            }
-        });
-    }
-    
-    // DIGEST (schedule to Admins)
-    public void scheduleApprovalConfirmation() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueApprovalNotifications(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_NOTIFICATION);
-            }
-        });
+        for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalRequestNotification()) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+        }
     }
 
-    // IMMEDIATELY
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users that they are required to restart the approval of applications.<br/>
+     * Finds all applications in the system that urgently require approval restarts, and;<br/> 
+     * Schedules their Administators to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can restart the approval of applications, while:
+     *    <ol>
+     *    <li>They are in the approval state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
+    public void scheduleRestartApprovalReminder() {
+        for (ApplicationForm form : applicationDAO.getApplicationDueApprovalRestartRequestReminder()) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
+        }
+    }
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when applications have been approved.<br/>
+     * Finds all applications in the system that have recently been approved, and;<br/> 
+     * Schedules their Primary Supervisors to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Primary Supervisor
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Approvers can approve applications, while:
+     *    <ol>
+     *    <li>They are in the approval state.</li>
+     *    </ol></li>
+     * <li>Primary Supervisors are scheduled to be notified of approvals, when:
+     *    <ol>
+     *    <li>Applications have been approved within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
+    // Current business logic is incorrect
+    // Should send to Primary Supervisor only - currently goes to a wider range of users.
+    public void scheduleApprovedConfirmation() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalNotifications()) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_NOTIFICATION);
+        }
+    }
+
+    /**
+    * <p>
+    * <b>Summary</b><br/>
+    * Informs users when a data export has failed.
+    * <p/><p>
+    * <b>Recipients</b>
+    * Super Administrator
+    * </p><p>
+    * <b>Previous Email Template Name</b><br/>
+    * Kevin to Insert
+    * </p><p> 
+    * <b>Business Rules</b><br/>
+    * <ol>
+    * <li>Super Administrators are notified, when:
+    *    <ol><li>A data export has failed.</li>
+    *    </ol></li>
+    * </ol>
+    * </p><p>
+    * <b>Notification Type</b>
+    * Immediate Notification
+    * </p>
+    */
     public void sendDataExportError() {
     }
 
-    // IMMEDIATELY
+    /**
+    * <p>
+    * <b>Summary</b><br/>
+    * Informs users when a data import has failed.
+    * <p/><p>
+    * <b>Recipients</b>
+    * Super Administrator
+    * </p><p>
+    * <b>Previous Email Template Name</b><br/>
+    * Kevin to Insert
+    * </p><p> 
+    * <b>Business Rules</b><br/>
+    * <ol>
+    * <li>Super Administrators are notified, when:
+    *    <ol><li>A data import has failed.</li>
+    *    </ol></li>
+    * </ol>
+    * </p><p>
+    * <b>Notification Type</b>
+    * Immediate Notification
+    * </p>
+    */
     public void sendDataImportError() {
     }
-    
-    // DIGEST
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users when they are required to administer interviews.<br/>
+     * Finds all applications in the system that urgently require interviews to be administered, and;<br/> 
+     * Schedules their Delegate Interview Administrators to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Delegate Interview Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can specify Delegate Interview Administrators, when:
+     *    <ol>
+     *    <li>They move applications into the interview state.</li>
+     *    </ol></li>
+     * <li>Delegate Interview Administrators can administer interviews, while:
+     *    <ol>
+     *    <li>They are in the current interview state, and;</li>
+     *    <li>An interview has not been scheduled.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
     public void scheduleInterviewAdministrationReminder() {
         DateTime yesterday = new DateTime().minusDays(1);
-        CollectionUtils.forAllDo(notificationRecordDAO.getNotificationsWithTimeStampGreaterThan(yesterday.toDate() , NotificationType.INTERVIEW_ADMINISTRATION_REMINDER), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                NotificationRecord notificationRecord = (NotificationRecord) input;
-                notificationRecord.setDate(new Date());
-                RegisteredUser delegate = notificationRecord.getUser();
-                delegate.setDigestNotificationType(DigestNotificationType.DIGEST);
-            }
-        });
+        for (NotificationRecord notificationRecord : notificationRecordDAO.getNotificationsWithTimeStampGreaterThan(yesterday.toDate(), NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
+            notificationRecord.setDate(new Date());
+            RegisteredUser delegate = notificationRecord.getUser();
+            delegate.setDigestNotificationType(DigestNotificationType.DIGEST);
+        }
     }
-    
-    // DIGEST (scheduling, etc.)
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when they are required to administer interviews.<br/>
+     * Finds all applications in the system that require interviews to be administered, and;<br/> 
+     * Schedules their Delegate Interview Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Delegate Interview Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can specify Delegate Interview Administrators, when:
+     *    <ol>
+     *    <li>They move applications into the interview state.</li>
+     *    </ol></li>
+     * <li>Delegate Interview Administrators can administer interviews, while:
+     *    <ol>
+     *    <li>They are in the current interview state, and;</li>
+     *    <li>An interview has not been scheduled.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>Applications have been delegated to them within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
     public void scheduleInterviewAdministrationRequest() {
     }
-    
-    // DIGEST
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when interview feedback has been provided.<br/>
+     * Finds all applications in the system for which interview feedback has recently been provided, and;<br/> 
+     * Schedules their Administrators and Delegate Interview Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator<br/>
+     * Delegate Interview Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Interviewers can provide interview feedback, while:
+     *    <ol>
+     *    <li>Applications are in the current interview state.</li>
+     *    </ol></li>
+     * <li>Administrators and Delegate Interview Administrators are scheduled to be notified of interview feedback, when:
+     *    <ol>
+     *    <li>Interview feedback has been provided within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
     public void scheduleInterviewFeedbackConfirmation() {
-//        NOT SURE
-//        CollectionUtils.forAllDo(commentDAO.getInterviewCommentsDueNotification(), new Closure() {
-//            @Override
-//            public void execute(final Object input) {
-//                InterviewComment comment = (InterviewComment) input;
-//                RegisteredUser user = comment.getUser();
-//                comment.setAdminsNotified(true);
-//            }
-//        });
     }
-    
-    // IMMEDIATELY 
+
+    /**
+    * <p>
+    * <b>Summary</b><br/>
+    * Informs users when interviews have been scheduled.
+    * <p/><p>
+    * <b>Recipients</b>
+    * Interviewer
+    * </p><p>
+    * <b>Previous Email Template Name</b><br/>
+    * Kevin to Insert
+    * </p><p> 
+    * <b>Business Rules</b><br/>
+    * <ol>
+    * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
+    *    <ol>
+    *    <li>Applications are in the current interview state, and;</li>
+    *    <li>Interviews have not been scheduled.</li>
+    *    </ol></li>
+    * <li>Interviewers are notified, when:
+    *    <ol>
+    *    <li>Interviews have been scheduled.</li>
+    *    </ol></li>
+    * </ol>
+    * </p><p>
+    * <b>Notification Type</b>
+    * Immediate Notification
+    * </p>
+    */
     public void sendInterviewConfirmationToInterviewer() {
     }
-    
-    // IMMEDIATELY 
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when interviews have been scheduled.
+     * <p/><p>
+     * <b>Recipients</b>
+     * Applicant
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b><br/>
+     * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
+     *    <ol>
+     *    <li>Applications are in the current interview state, and;</li>
+     *    <li>Interviews have not been scheduled.</li>
+     *    </ol></li>
+     * <ol>
+     * <li>Applicants are notified, when:
+     *    <ol>
+     *    <li>Interviews have been scheduled.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b>
+     * Immediate Notification
+     * </p>
+     */ 
     public void sendInterviewConfirmationToApplicant() {
     }
 
-    // DIGEST
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users that they are required to provide interview feedback.<br/>
+     * Finds all applications in the system that require interview feedback, and;<br/> 
+     * Schedules their Interviewers to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Interviewer
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Interviewers can provide interview feedback, while:
+     *    <ol>
+     *    <li>They are in the current interview state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>When interview have taken place within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
     public void scheduleInterviewFeedbackRequest() {
     }
-    
-    // DIGEST FORCED
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users that they are required to provide interview feedback.<br/>
+     * Finds all applications in the system that urgently require interview feedback, and;<br/> 
+     * Schedules their Interviewers to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Interviewer
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Interviewers can provide interview feedback, while:
+     *    <ol>
+     *    <li>They are in the current interview state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
     public void scheduleInterviewFeedbackReminder() {
     }
-    
-    // IMMEDIATELY (applicant)
-    public void sendApplicationUnderApprovalNotification() {
-        
-    }
-    
-    // IMMEDIATELY (applicant)
-    public void sendApplicationApprovedNotification() {
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when applications have been moved into the approval state.<br/>
+     * Finds all applications in the system that have recently been moved into the approval state, and;<br/> 
+     * Schedules their Applicants to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Applicant
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can move applications into the approval state, while:
+     *    <ol>
+     *    <li>They are not in the rejected, approved or withdrawn states.</li>
+     *    </ol></li>
+     * <li>Applicants are scheduled to be notified, when:
+     *    <ol>
+     *    <li>Applications have been moved into the approval state within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
+    public void scheduleUnderApprovalNotification() {
     }
 
-    // IMMEDIATELY (applicant)
-    public void sendApplicationUnderInterviewNotification() {
+    /**
+    * <p>
+    * <b>Summary</b><br/>
+    * Informs users when applications have been approved.
+    * <p/><p>
+    * <b>Recipients</b>
+    * Applicant
+    * </p><p>
+    * <b>Previous Email Template Name</b><br/>
+    * Kevin to Insert
+    * </p><p> 
+    * <b>Business Rules</b><br/>
+    * <ol>
+    * <li>Administrators can approve applications, while:
+    *    <ol>
+    *    <li>They are not in the rejected, approved or withdrawn states.</li>
+    *    </ol></li>
+    * <li>Approvers can approve applications, while:
+    *    <ol>
+    *    <li>They are in the approval state.</li>
+    *    </ol></li>
+    * <li>Applicants are notified, when:
+    *    <ol>
+    *    <li>Applications are approved.</li>
+    *    </ol></li>
+    * </ol>
+    * </p><p>
+    * <b>Notification Type</b>
+    * Immediate Notification
+    * </p>
+    */
+    public void sendApprovedNotification() {
     }
-    
-    // IMMEDIATELY (applicant)
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when applications have been moved into the review.<br/>
+     * Finds all applications in the system that have recently been moved into the review state, and;<br/> 
+     * Schedules their Applicants to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Applicant
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can move applications into the review state, while:
+     *    <ol>
+     *    <li>They are not in the rejected, approved or withdrawn states.</li>
+     *    </ol></li>
+     * <li>Applicants are scheduled to be notified, when:
+     *    <ol>
+     *    <li>Applications have been moved into the review state within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
     public void sendApplicationUnderReviewNotification() {
     }
 
-    // IMMEDIATELY
-    public void sendPasswordResetConfirmation() {
-    }
-    
-    // IMMEDIATELY
-    public void sendNewUserInvitation() {
-    }
-    
-    // IMMEDIATELY
+    /**
+    * <p>
+    * <b>Summary</b><br/>
+    * Informs users that they are required to provide references.
+    * <p/><p>
+    * <b>Recipients</b>
+    * Referees
+    * </p><p>
+    * <b>Previous Email Template Name</b><br/>
+    * Kevin to Insert
+    * </p><p> 
+    * <b>Business Rules</b><br/>
+    * <ol>
+    * <li>Referees are notified to provide references, when:
+    *    <ol>
+    *    <li>Administrators move applications from the validation state into a state, that:
+    *       <ol>
+    *       <li>Is not the rejected or approved state</li>
+    *       </ol></li>
+    *    </ol></li>
+    * </ol>
+    * </p><p>
+    * <b>Notification Type</b>
+    * Immediate Notification
+    * </p>
+    */
     public void sendReferenceRequest() {
     }
 
-    // IMMEDIATELY
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users that they are required to provide references.<br/>
+     * Finds all applications in the system that urgently require references, and;<br/> 
+     * Schedules their Referees to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Referee
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Referees are scheduled to be reminded to provide references, when;</li>
+     * <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Notification
+     * </p>
+     */
     public void sendReferenceReminder() {
     }
 
-    // IMMEDIATELY
-    public void sendReferenceSubmittedConfirmationToApplicant() {
-    }
-
-    // DIGEST
-    public void scheduleReferenceSubmittedConfirmationToAdministrator(final Referee referee) {
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when references have been provided.<br/>
+     * Finds all applications in the system for which references have recently been provided, and;<br/> 
+     * Schedules their Applicants and Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Applicant<br/>
+     * Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Referees can provide references, while:
+     *    <ol>
+     *    <li>Applications are not in the rejected, approved or withdrawn states.</li>
+     *    </ol></li>
+     * <li>Applicants and Administrators are scheduled to be notified, when:
+     *    <ol>
+     *    <li>References have been provided within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
+    // We don't need the distinction between the applicant and staff here
+    public void sendReferenceSubmittedConfirmation(final Referee referee) {
         ApplicationForm form = referee.getApplication();
+        CollectionUtils.forAllDo(Arrays.asList(form.getApplicant()), new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
         CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
     }
-    
-    // IMMEDIATELY
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users that they are required to confirm registrations.
+     * <p/><p>
+     * <b>Recipients</b>
+     * Users
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b><br/>
+     * <ol>
+     * <li>Users can register, when they are:
+     *    <ol>
+     *    <li>Invited to do so by Administrators, or;</li>
+     *    <li>In the process of initiating applications;</li>
+     *    </ol></li>
+     * <li>They are notified to confirm registrations, when:
+     *    <ol>
+     *    <li>Submitted registrations.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b>
+     * Immediate Notification
+     * </p>
+     */
     public void sendRegistrationConfirmation() {
     }
-    
-    // Register referee confirmation - DELETE
 
-    // IMMEDIATELY (Note: becomes redundant soon)
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs registry staff that they are required to confirm validation decisions.
+     * <p/><p>
+     * <b>Recipients</b>
+     * Registry Staff
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b><br/>
+     * <ol>
+     * <li>Administrators can ask Registry Staff to confirm validation decisions, while:
+     *    <ol>
+     *    <li>Applications are in the validation state.</li>
+     *    </ol></li>
+     * <li>Registry staff are notified to confirm validation decisions, when:
+     *    <ol>
+     *    <li>Requested to do so by Administrators.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b>
+     * Immediate Notification
+     * </p>
+     */
     public void sendValidationRequestToRegistry() {
     }
-    
-    // IMMEDIATELY 
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when applications have been rejected.
+     * <p/><p>
+     * <b>Recipients</b>
+     * Applicant
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b><br/>
+     * <ol>
+     * <li>Administrators can reject applications, when:
+     *    <ol>
+     *    <li>They are not in the rejected, approved or withdrawn states.</li>
+     *    </ol></li>
+     * <li>Approvers can reject applications, when:
+     *    <ol>
+     *    <li>They are in the approval state.</li>
+     *    </ol></li>
+     * <li>Applicants are notified of rejections, when:
+     *    <ol>
+     *    <li>Applications are rejected by Administrators or Approvers.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b>
+     * Immediate Notification
+     * </p>
+     */
+    // Current business logic is incorrect
+    // Administrator cannot reject application when it is in approval state.
     public void sendRejectionConfirmationToApplicant() {
     }
-    
-    // DIGEST 
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when applications have been rejected.<br/>
+     * Finds all applications in the system which have recently been rejected, and;<br/> 
+     * Schedules their Primary Supervisors to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Primary Supervisor
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <li>Administrators can reject applications, when:
+     *    <ol>
+     *    <li>They are not in the rejected, approved or withdrawn states.</li>
+     *    </ol></li>
+     * <li>Approvers can reject applications, when:
+     *    <ol>
+     *    <li>They are in the approval state.</li>
+     *    </ol></li>
+     * <li>Primary Supervisors are notified of rejections, when:
+     *    <ol>
+     *    <li>Applications have been rejected within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
+    // Current business logic is incorrect
+    // Update goes to administrator rather than primary supervisor
     public void scheduleRejectionConfirmationToAdministrator() {
-        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueRejectNotifications(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm application = (ApplicationForm) input;
-                application.setRejectNotificationDate(new Date());
-                applicationDAO.save(application);
-            }
-        });
+        for (ApplicationForm form : applicationDAO.getApplicationsDueRejectNotifications()) {
+            form.setRejectNotificationDate(new Date());
+            applicationDAO.save(form);
+        }
     }
 
-    // DIGEST
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when reviews have been provided.<br/>
+     * Finds all applications in the system for which reviews have recently been provided, and;<br/> 
+     * Schedules their Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Referees can provide reviews, while:
+     *    <ol>
+     *    <li>Applications in the current review state.</li>
+     *    </ol></li>
+     * <li>Administrators are scheduled to be notified, when:
+     *    <ol>
+     *    <li>Reviews have been provided within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
     public void scheduleReviewSubmittedConfirmation() {
-        CollectionUtils.forAllDo(commentDAO.getReviewCommentsDueNotification(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ReviewComment comment = (ReviewComment) input;
-                comment.setAdminsNotified(true);
-                comment.getUser().setDigestNotificationType(DigestNotificationType.DIGEST);
-            }
-        });
+        for (ReviewComment comment : commentDAO.getReviewCommentsDueNotification()) {
+            comment.setAdminsNotified(true);
+            comment.getUser().setDigestNotificationType(DigestNotificationType.DIGEST);
+        }
     }
-    
-    // Reviewer assigned notification - DELETE
-    
-    // DIGEST
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users that they are required to evaluate reviews.<br/>
+     * Finds all applications in the system that require review evaluation, and;<br/> 
+     * Schedules their Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Admistrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administators can evaluate reviews, while:
+     *    <ol>
+     *    <li>Applications are in the current review state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>The final Reviewer has provided feedback within the last 24 hours, or;</li>
+     *    <li>The system defined maximum duration for the Review stage has elapsed within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
     public void scheduleReviewEvaluationRequest() {
     }
-    
-    // DIGEST FORCED
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users that they are required to evaluate reviews.<br/>
+     * Finds all applications in the system that urgently require review evaluation, and;<br/> 
+     * Schedules their Reviewers to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Reviewer
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administators can evaluate reviews, while:
+     *    <ol>
+     *    <li>Applications are in the current review state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
     public void scheduleReviewEvaluationReminder() {
     }
-    
-    // DIGEST
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users that they are required to confirm supervision.<br/>
+     * Finds all applications in the system that require supervision confirmation, and;<br/> 
+     * Schedules their Primary Supervisors to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Primary Supervisor
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Primary Supervisors can confirm supervision, while:
+     *    <ol>
+     *    <li>Applications are in the current approval state.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>Administrators move applications into the current approval state.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
     public void scheduleConfirmSupervisionRequest() {
-        CollectionUtils.forAllDo(supervisorDAO.getPrimarySupervisorsDueNotification(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                Supervisor supervisor = (Supervisor) input;
-                supervisor.setLastNotified(new Date());
-                supervisor.getUser().setDigestNotificationType(DigestNotificationType.DIGEST);
-                supervisorDAO.save(supervisor);
-            }
-        });
+        for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueNotification()) {
+            supervisor.setLastNotified(new Date());
+            supervisor.getUser().setDigestNotificationType(DigestNotificationType.DIGEST);
+            supervisorDAO.save(supervisor);
+        }
     }
-    
-    // DIGEST FORCED
+
+    /**
+    * <p>
+    * <b>Summary</b><br/>
+    * Reminds users that they are required to confirm supervision.<br/>
+    * Finds all applications in the system that urgently require supervision confirmation, and;<br/> 
+    * Schedules their Primary Supervisors to be reminded.
+    * <p/><p>
+    * <b>Recipients</b><br/>
+    * Primary Supervisor
+    * </p><p>
+    * <b>Previous Email Template Name</b><br/>
+    * Kevin to Insert
+    * </p><p> 
+    * <b>Business Rules</b>
+    * <ol>
+    * <li>Primary Supervisors can confirm supervision, while:
+    *    <ol>
+    *    <li>Applications are in the current approval state.</li>
+    *    </ol></li>
+    * <li>They are scheduled to be reminded to do so, when:
+    *    <ol>
+    *    <li>They have previously been notified or reminded to do so, and;</li>
+    *    <li>The time elapsed since the previous notification or reminder:
+    *       <ol>
+    *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+    *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+    *       </ol></li>
+    *    </ol></li>
+    * </ol>
+    * </p><p>
+    * <b>Notification Type</b><br/>
+    * Scheduled Digest Priority 3 (Task Reminder)
+    * </p>
+    */
     public void scheduleConfirmSupervisionReminder() {
-        CollectionUtils.forAllDo(supervisorDAO.getPrimarySupervisorsDueReminder(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                Supervisor supervisor = (Supervisor) input;
-                supervisor.setLastNotified(new Date());
-                supervisor.getUser().setDigestNotificationType(DigestNotificationType.REMINDER_DIGEST);
-                supervisorDAO.save(supervisor);
-            }
-        });
+        for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueReminder()) {
+            supervisor.setLastNotified(new Date());
+            supervisor.getUser().setDigestNotificationType(DigestNotificationType.REMINDER_DIGEST);
+            supervisorDAO.save(supervisor);
+        }
     }
-    
-    // Supervisor notification - DELETE
+
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when supervision has been confirmed.<br/>
+     * Finds all applications in the system for which supervision has recently been confirmed, and;<br/> 
+     * Schedules their Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Administrator<br/>
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Primary Supervisors can confirm supervision, while:
+     *    <ol>
+     *    <li>Applications are in the current approval state.</li>
+     *    </ol></li>
+     * <li>Administrators are scheduled to be notified, when:
+     *    <ol>
+     *    <li>Supervision has been confirmed within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+     */
+    // Currently does not exist
+    public void scheduleSupervisionConfirmedNotification() {
+    }
     
 }

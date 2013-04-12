@@ -123,11 +123,11 @@ public class ApplicationsReportService {
             row.addCell(program.getCode());
             row.addCell(program.getTitle());
             row.addCell(getProjectTitle(app));
-            row.addCell(programmeDetails.getStudyOption());
+            row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : "");
             row.addCell(getSuggestedSupervisors(programmeDetails));
             row.addCell(getAcademicYear(app));
-            row.addCell(getDateValue(app.getSubmittedDate()));
-            row.addCell(getDateValue(app.getLastUpdated()));
+            row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
+            row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
             row.addCell(app.getStatus().displayValue());
             row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
             row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : "");
@@ -170,7 +170,7 @@ public class ApplicationsReportService {
         for (StateChangeEvent event : stateEvents) {
             if (stageBegin != null) {
                 Date stageEnd = event.getDate();
-                long millisDiff = stageEnd.getTime() - stageBegin.getTime(); //hours
+                long millisDiff = stageEnd.getTime() - stageBegin.getTime(); // hours
                 millisSum += millisDiff;
                 stageBegin = null;
             }

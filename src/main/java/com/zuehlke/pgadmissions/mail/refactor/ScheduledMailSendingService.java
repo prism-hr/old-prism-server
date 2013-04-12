@@ -720,7 +720,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         for (NotificationRecord notificationRecord : notificationRecordDAO.getNotificationsWithTimeStampGreaterThan(yesterday.toDate(), NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
             notificationRecord.setDate(new Date());
             RegisteredUser delegate = notificationRecord.getUser();
-            delegate.setDigestNotificationType(DigestNotificationType.DIGEST);
+            delegate.setDigestNotificationType(DigestNotificationType.UPDATE_NOTIFICATION);
         }
     }
 
@@ -1119,8 +1119,8 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     // We don't need the distinction between the applicant and staff here
     public void sendReferenceSubmittedConfirmation(final Referee referee) {
         ApplicationForm form = referee.getApplication();
-        CollectionUtils.forAllDo(Arrays.asList(form.getApplicant()), new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
-        CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
+        CollectionUtils.forAllDo(Arrays.asList(form.getApplicant()), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
+        CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
 
     /**
@@ -1293,7 +1293,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void scheduleReviewSubmittedConfirmation() {
         for (ReviewComment comment : commentDAO.getReviewCommentsDueNotification()) {
             comment.setAdminsNotified(true);
-            comment.getUser().setDigestNotificationType(DigestNotificationType.DIGEST);
+            comment.getUser().setDigestNotificationType(DigestNotificationType.UPDATE_NOTIFICATION);
         }
     }
 
@@ -1399,7 +1399,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void scheduleConfirmSupervisionRequest() {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueNotification()) {
             supervisor.setLastNotified(new Date());
-            supervisor.getUser().setDigestNotificationType(DigestNotificationType.DIGEST);
+            supervisor.getUser().setDigestNotificationType(DigestNotificationType.TASK_NOTIFICATION);
             supervisorDAO.save(supervisor);
         }
     }
@@ -1441,7 +1441,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void scheduleConfirmSupervisionReminder() {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueReminder()) {
             supervisor.setLastNotified(new Date());
-            supervisor.getUser().setDigestNotificationType(DigestNotificationType.REMINDER_DIGEST);
+            supervisor.getUser().setDigestNotificationType(DigestNotificationType.TASK_REMINDER);
             supervisorDAO.save(supervisor);
         }
     }

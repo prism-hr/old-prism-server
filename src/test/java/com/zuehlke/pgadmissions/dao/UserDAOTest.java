@@ -693,12 +693,12 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldReturnAllUserIdsWhichHaveTheDigestTypeSet() {
         RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
                 .email("somethingelse@test.com").username("somethingelse").password("password")
-                .digestNotificationType(DigestNotificationType.DIGEST)
+                .digestNotificationType(DigestNotificationType.UPDATE_NOTIFICATION)
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         
         RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("Jane2").lastName("Doe2")
                 .email("somethingelse2@test.com").username("somethingelse2").password("password")
-                .digestNotificationType(DigestNotificationType.REMINDER_DIGEST)
+                .digestNotificationType(DigestNotificationType.TASK_NOTIFICATION)
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         
         save(applicant1, applicant2);
@@ -727,12 +727,12 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldResetAllDigestNotificationsForAllUsers() {
         RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
                 .email("somethingelse@test.com").username("somethingelse").password("password")
-                .digestNotificationType(DigestNotificationType.DIGEST)
+                .digestNotificationType(DigestNotificationType.UPDATE_NOTIFICATION)
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         
         RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("Jane2").lastName("Doe2")
                 .email("somethingelse2@test.com").username("somethingelse2").password("password")
-                .digestNotificationType(DigestNotificationType.REMINDER_DIGEST)
+                .digestNotificationType(DigestNotificationType.TASK_NOTIFICATION)
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         
         save(applicant1, applicant2);

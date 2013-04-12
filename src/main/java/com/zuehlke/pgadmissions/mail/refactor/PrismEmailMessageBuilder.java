@@ -162,6 +162,11 @@ public class PrismEmailMessageBuilder {
         return this;
     }
     
+    public PrismEmailMessageBuilder emailTemplate(final String templateName) {
+        this.templateName = EmailTemplateName.valueOf(templateName);
+        return this;
+    }
+    
     public PrismEmailMessageBuilder attachments(final PdfAttachmentInputSource... sources) {
         for (PdfAttachmentInputSource source : sources) {
             this.attachments.add(source);

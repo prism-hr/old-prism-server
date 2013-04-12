@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
 
 public class UserDAOTest extends AutomaticRollbackTestCase {
     private UserDAO userDAO;
@@ -176,11 +177,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser superAdminOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
                 .email("email@test.com").username("username1").password("password").accountNonExpired(false)
                 .accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
-        
+
         RegisteredUser superAdminTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
                 .email("email@test.com").username("username2").password("password").accountNonExpired(false)
                 .accountNonLocked(false).credentialsNonExpired(false).enabled(true).roles(superAdminRole).build();
-        
+
         RegisteredUser superAdminThree = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
                 .email("email@test.com").username("username3").password("password").accountNonExpired(false)
                 .accountNonLocked(false).credentialsNonExpired(false).enabled(true).roles(superAdminRole).build();
@@ -188,11 +189,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser approverOne = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane")
                 .lastName("Doe").email("email@test.com").username("username4").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser approverTwo = new RegisteredUserBuilder().programsOfWhichApprover(programTwo).firstName("Jane")
                 .lastName("Doe").email("email@test.com").username("username5").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser approverThree = new RegisteredUserBuilder().programsOfWhichApprover(programOne)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username6").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
@@ -200,11 +201,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser reviewerOne = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane")
                 .lastName("Doe").email("email@test.com").username("username7").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser reviewerTwo = new RegisteredUserBuilder().programsOfWhichReviewer(programTwo).firstName("Jane")
                 .lastName("Doe").email("email@test.com").username("username8").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser reviewerThree = new RegisteredUserBuilder().programsOfWhichReviewer(programOne)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username9").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
@@ -212,11 +213,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser interviewerOne = new RegisteredUserBuilder().programsOfWhichInterviewer(programOne)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username14").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser interviewerTwo = new RegisteredUserBuilder().programsOfWhichInterviewer(programTwo)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username15").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser interviewerThree = new RegisteredUserBuilder().programsOfWhichInterviewer(programOne)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username16").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
@@ -224,11 +225,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser supervisorOne = new RegisteredUserBuilder().programsOfWhichSupervisor(programOne)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username17").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser supervisorTwo = new RegisteredUserBuilder().programsOfWhichSupervisor(programTwo)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username18").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser supervisorThree = new RegisteredUserBuilder().programsOfWhichSupervisor(programOne)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username19").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
@@ -236,11 +237,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser administratorOne = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username10").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser administratorTwo = new RegisteredUserBuilder().programsOfWhichAdministrator(programTwo)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username11").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser administratorThree = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne)
                 .firstName("Jane").lastName("Doe").email("email@test.com").username("username12").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
@@ -249,7 +250,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
                 .programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username13").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(true).build();
-        
+
         RegisteredUser viewer = new RegisteredUserBuilder().programsOfWhichViewer(programOne)
                 .programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username20").password("password").accountNonExpired(false).accountNonLocked(false)
@@ -257,7 +258,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
         save(superAdminOne, superAdminTwo, superAdminThree, administratorOne, administratorThree, administratorTwo,
                 approverOne, approverThree, approverTwo, reviewerOne, reviewerThree, reviewerTwo, interviewerOne,
-                interviewerTwo, interviewerThree, reviewerAndApprover, supervisorOne, supervisorTwo, supervisorThree, viewer);
+                interviewerTwo, interviewerThree, reviewerAndApprover, supervisorOne, supervisorTwo, supervisorThree,
+                viewer);
 
         flushAndClearSession();
 
@@ -685,6 +687,62 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<RegisteredUser> users = userDAO.getAllPreviousSupervisorsOfProgram(program);
         assertEquals(1, users.size());
         assertEquals(user.getId(), users.get(0).getId());
+    }
+    
+    @Test
+    public void shouldReturnAllUserIdsWhichHaveTheDigestTypeSet() {
+        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
+                .email("somethingelse@test.com").username("somethingelse").password("password")
+                .digestNotificationType(DigestNotificationType.DIGEST)
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        
+        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("Jane2").lastName("Doe2")
+                .email("somethingelse2@test.com").username("somethingelse2").password("password")
+                .digestNotificationType(DigestNotificationType.REMINDER_DIGEST)
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        
+        save(applicant1, applicant2);
+        flushAndClearSession();
+        
+        List<Integer> userIds = userDAO.getAllUserIdsInNeedOfADigestNotification();
+        
+        boolean foundApplicant1 = false;
+        boolean foundApplicant2 = false;
+        
+        for (Integer id : userIds) {
+            if (id.equals(applicant1.getId())) {
+                foundApplicant1 = true;
+            }
+            
+            if (id.equals(applicant2.getId())) {
+                foundApplicant2 = true;
+            }
+        }
+        
+        assertTrue("The userDAO should have returned our applicant which needs to receive a DIGEST", foundApplicant1);
+        assertTrue("The userDAO should have returned our applicant which needs to receive a REMINDER_DIGEST", foundApplicant2);
+    }
+    
+    @Test
+    public void shouldResetAllDigestNotificationsForAllUsers() {
+        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
+                .email("somethingelse@test.com").username("somethingelse").password("password")
+                .digestNotificationType(DigestNotificationType.DIGEST)
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        
+        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("Jane2").lastName("Doe2")
+                .email("somethingelse2@test.com").username("somethingelse2").password("password")
+                .digestNotificationType(DigestNotificationType.REMINDER_DIGEST)
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        
+        save(applicant1, applicant2);
+        flushAndClearSession();
+        
+        userDAO.resetDigestNotificationsForAllUsers();
+        
+        flushAndClearSession();
+        
+        assertEquals(0, userDAO.getAllUserIdsInNeedOfADigestNotification().size());
     }
 
     @Before

@@ -44,7 +44,10 @@ public enum EmailTemplateName {
 	APPLICATION_WITHDRAWN_NOTIFICATION("Application withdrawn notification"), //updated 
 	NEW_USER_SUGGESTION("New user suggestion"), //ok
 	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation"),//ok
-	INTERVIEW_ADMINISTRATION_REMINDER("Interview administration reminder");
+	INTERVIEW_ADMINISTRATION_REMINDER("Interview administration reminder"), 
+	
+	DIGEST("Digest"), 
+	DIGEST_REMINDER("Digest Reminder");
 	
 	private final String displayValue;
 	

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.exec.LogOutputStream;
@@ -62,7 +63,21 @@ public abstract class AbstractMailSender {
         return messageSource.getMessage(code, args, null);
     }
     
-    public abstract void sendEmail(final PrismEmailMessage emailMessage) throws Exception;
+    public void sendEmail(final PrismEmailMessage emailMessage) {
+        sendEmail(Arrays.asList(emailMessage));
+    }
+
+    public void sendEmail(final Collection<PrismEmailMessage> emailMessages) {
+        for (PrismEmailMessage message : emailMessages) {
+            if (emailProductionSwitch) {
+                sendEmailAsProductionMessage(message);
+            } else {
+                sendEmailAsDevelopmentMessage(message);
+            }
+        }
+    }
     
-    public abstract void sendEmail(final Collection<PrismEmailMessage> emailMessages);
+    abstract void sendEmailAsProductionMessage(final PrismEmailMessage message);
+    
+    abstract void sendEmailAsDevelopmentMessage(final PrismEmailMessage message);
 }

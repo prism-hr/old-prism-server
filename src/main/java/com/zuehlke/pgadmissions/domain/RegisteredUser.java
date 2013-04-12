@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -88,7 +89,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     private String originalApplicationQueryString;
 
     @Column(name = "digest_notification_type")
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private DigestNotificationType digestNotificationType;
 
     private boolean enabled;

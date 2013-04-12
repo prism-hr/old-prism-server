@@ -484,4 +484,12 @@ public class UserService {
             user.setDigestNotificationType(type);
         }
     }
+    
+    public void resetDigestNotificationsForAllUsers() {
+        userDAO.resetDigestNotificationsForAllUsers();
+    }
+    
+    public List<Integer> getAllUsersInNeedOfADigestNotification() {
+        return userDAO.getAllUserIdsInNeedOfADigestNotification();
+    }
 }

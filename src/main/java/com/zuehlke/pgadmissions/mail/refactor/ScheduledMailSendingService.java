@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -24,7 +25,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     
     private class UpdateDigestNotificationClosure implements Closure {
         private final DigestNotificationType type;
-        
         public UpdateDigestNotificationClosure(final DigestNotificationType type) {
             this.type = type;
         }
@@ -36,7 +36,8 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     }
     
     @Autowired
-    public ScheduledMailSendingService(final TemplateAwareMailSender mailSender, 
+    public ScheduledMailSendingService(
+            final TemplateAwareMailSender mailSender, 
             final UserService userService,
             final ApplicationFormDAO applicationFormDAO) {
         super(mailSender, userService, applicationFormDAO);
@@ -44,6 +45,28 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     
     public ScheduledMailSendingService() {
         this(null, null, null);
+    }
+    
+    @Scheduled(cron = "${email.digest.cron}")
+    public void sendDigestsToUsers() {
+        try {
+            for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
+                RegisteredUser user = userService.getUser(userId);
+                    PrismEmailMessageBuilder emailMessage = new PrismEmailMessageBuilder()
+                        .to(user)
+                        .subjectCode("Prism Digest Notification")
+                        .emailTemplate(user.getDigestNotificationType().toString());
+                    try {
+                        mailSender.sendEmail(emailMessage.build());
+                    } catch (Exception e) {
+                        log.warn(e.getMessage(), e);
+                    }
+            }
+        } catch (Exception e) {
+            log.warn(e.getMessage(), e);
+        } finally {
+            userService.resetDigestNotificationsForAllUsers();
+        }
     }
     
     /**

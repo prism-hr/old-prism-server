@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
@@ -32,31 +31,21 @@ public class MailSendingService {
 		
 	}
 	
-	public void sendResetPasswordMessage(final RegisteredUser user, final String newPassword) throws PrismMailMessageException {
-		try {
-			EmailModelBuilder modelBuilder = new EmailModelBuilder() {
-				
-				@Override
-				public Map<String, Object> build() {
-					Map<String, Object> model = new HashMap<String, Object>();
-		            model.put("user", user);
-		            model.put("newPassword", newPassword);
-		            model.put("host", Environment.getInstance().getApplicationHostName());
-		            return model;
-				}
-			};
-			String subject = mailSender.resolveMessage("user.password.reset", (Object [])null);
-			PrismEmailMessageBuilder messageBuilder=new PrismEmailMessageBuilder()
-			.to(user)
-			.subjectCode(subject)
-			.model(modelBuilder.build())
-			.emailTemplate(NEW_PASSWORD_CONFIRMATION);
-			PrismEmailMessage message=messageBuilder.build();
-			mailSender.sendEmail(message);
-		}
-		catch (Exception e) {
-			throw new PrismMailMessageException("Error while sending reset password email: "+e.getMessage());
-		}
+	public void sendResetPasswordMessage(final RegisteredUser user, final String newPassword) {
+        EmailModelBuilder modelBuilder = new EmailModelBuilder() {
+            @Override
+            public Map<String, Object> build() {
+                Map<String, Object> model = new HashMap<String, Object>();
+                model.put("user", user);
+                model.put("newPassword", newPassword);
+                model.put("host", Environment.getInstance().getApplicationHostName());
+                return model;
+            }
+        };
+        String subject = mailSender.resolveMessage("user.password.reset", (Object[]) null);
+        PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder()
+            .to(user).subjectCode(subject).model(modelBuilder.build()).emailTemplate(NEW_PASSWORD_CONFIRMATION);
+        PrismEmailMessage message = messageBuilder.build();
+        mailSender.sendEmail(message);
 	}
-
 }

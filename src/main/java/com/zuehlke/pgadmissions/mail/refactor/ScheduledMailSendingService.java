@@ -1,27 +1,43 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
+import java.util.Date;
+
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
+import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class ScheduledMailSendingService extends AbstractScheduledMailSendingService {
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);
+    
+    private final NotificationRecordDAO notificationRecordDAO;
+    
+    private final CommentDAO commentDAO;
+
+    private final SupervisorDAO supervisorDAO;
     
     private class UpdateDigestNotificationClosure implements Closure {
         private final DigestNotificationType type;
@@ -39,34 +55,62 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public ScheduledMailSendingService(
             final TemplateAwareMailSender mailSender, 
             final UserService userService,
-            final ApplicationFormDAO applicationFormDAO) {
+            final ApplicationFormDAO applicationFormDAO,
+            final NotificationRecordDAO notificationRecordDAO,
+            final CommentDAO commentDAO,
+            final SupervisorDAO supervisorDAO) {
         super(mailSender, userService, applicationFormDAO);
+        this.notificationRecordDAO = notificationRecordDAO;
+        this.commentDAO = commentDAO;
+        this.supervisorDAO = supervisorDAO;
     }
     
     public ScheduledMailSendingService() {
-        this(null, null, null);
+        this(null, null, null, null, null, null);
     }
     
     @Scheduled(cron = "${email.digest.cron}")
-    public void sendDigestsToUsers() {
-        try {
-            for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
-                RegisteredUser user = userService.getUser(userId);
-                    PrismEmailMessageBuilder emailMessage = new PrismEmailMessageBuilder()
-                        .to(user)
-                        .subjectCode("Prism Digest Notification")
-                        .emailTemplate(user.getDigestNotificationType().toString());
-                    try {
-                        mailSender.sendEmail(emailMessage.build());
-                    } catch (Exception e) {
-                        log.warn(e.getMessage(), e);
-                    }
+    public void run() {
+        scheduleApprovalRequest();
+        scheduleApprovalReminder();
+        scheduleInterviewFeedbackEvaluationRequest();
+        scheduleInterviewFeedbackEvaluationReminder();
+        scheduleReviewReminder();
+        scheduleReviewRequest();
+        scheduleApplicationConfirmationToAdministrator();
+        scheduleUpdatedApplicationConfirmation();
+        scheduleApplicationValidationRequest();
+        scheduleApplicationValidationReminder();
+        scheduleRestartApprovalRequest();
+        scheduleRestartApprovalReminder();
+        scheduleApprovalConfirmation();
+        scheduleInterviewAdministrationReminder();
+        scheduleInterviewAdministrationRequest();
+        scheduleInterviewFeedbackConfirmation();
+        scheduleInterviewFeedbackRequest();
+        scheduleInterviewFeedbackReminder();
+        scheduleRejectionConfirmationToAdministrator();
+        scheduleReviewSubmittedConfirmation();
+        scheduleReviewEvaluationRequest();
+        scheduleReviewEvaluationReminder();
+        scheduleConfirmSupervisionRequest();
+        scheduleConfirmSupervisionReminder();
+        
+        sendDigestsToUsers();
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    private void sendDigestsToUsers() {
+        for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
+            RegisteredUser user = userService.getUser(userId);
+            PrismEmailMessageBuilder emailMessage = new PrismEmailMessageBuilder().to(user).subjectCode("Prism Digest Notification").emailTemplate(user.getDigestNotificationType().toString());
+            try {
+                mailSender.sendEmail(emailMessage.build());
+            } catch (Exception e) {
+                log.warn(e.getMessage(), e);
             }
-        } catch (Exception e) {
-            log.warn(e.getMessage(), e);
-        } finally {
-            userService.resetDigestNotificationsForAllUsers();
         }
+        userService.resetDigestNotificationsForAllUsers();
     }
     
     /**
@@ -88,98 +132,61 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * <p>
      * Sending Strategy: DIGEST
      */
-    @Transactional
-    @Scheduled(fixedRate = 300000, fixedDelay = 4000)
     public void scheduleApprovalRequest() {
        
     }
     
     // DIGEST FORCED
     public void scheduleApprovalReminder() {
-        CollectionUtils.forAllDo(applicationFormDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL), new Closure() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL), new Closure() {
             @Override
             public void execute(final Object input) {
                 ApplicationForm form = (ApplicationForm) input;
-                
                 createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
-                
-                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(
-                        DigestNotificationType.REMINDER_DIGEST));
-                
-                CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form),
-                        new UpdateDigestNotificationClosure(DigestNotificationType.REMINDER_DIGEST));
             }
         });
     }
     
     // DIGEST
     public void scheduleInterviewFeedbackEvaluationRequest() {
-        CollectionUtils.forAllDo(applicationFormDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW), new Closure() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW), new Closure() {
             @Override
             public void execute(final Object input) {
                 ApplicationForm form = (ApplicationForm) input;
-                
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-                
-                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(
-                        DigestNotificationType.DIGEST));
-                
-                CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form),
-                        new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
             }
         });
     }
     
     // DIGEST FORCED
     public void scheduleInterviewFeedbackEvaluationReminder() {
-        CollectionUtils.forAllDo(applicationFormDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW), new Closure() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW), new Closure() {
             @Override
             public void execute(final Object input) {
                 ApplicationForm form = (ApplicationForm) input;
-                
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-                
-                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(
-                        DigestNotificationType.REMINDER_DIGEST));
-                
-                CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form),
-                        new UpdateDigestNotificationClosure(DigestNotificationType.REMINDER_DIGEST));
             }
         });
     }
     
     // DIGEST FORCED
     public void scheduleReviewReminder() {
-        CollectionUtils.forAllDo(applicationFormDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW), new Closure() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW), new Closure() {
             @Override
             public void execute(final Object input) {
                 ApplicationForm form = (ApplicationForm) input;
-                
                 createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
-                
-                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(
-                        DigestNotificationType.REMINDER_DIGEST));
-                
-                CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form),
-                        new UpdateDigestNotificationClosure(DigestNotificationType.REMINDER_DIGEST));
             }
         });
     }
     
     // DIGEST
     public void scheduleReviewRequest() {
-        CollectionUtils.forAllDo(applicationFormDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW), new Closure() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW), new Closure() {
             @Override
             public void execute(final Object input) {
                 ApplicationForm form = (ApplicationForm) input;
-                
                 createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
-                
-                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(
-                        DigestNotificationType.DIGEST));
-                
-                CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form),
-                        new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
             }
         });
     }
@@ -190,57 +197,40 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     
     // DIGEST (submitConfirmationToAdmin)
     public void scheduleApplicationConfirmationToAdministrator() {
-        CollectionUtils.forAllDo(applicationFormDAO.getApplicationsDueUserReminder(NotificationType.UPDATED_NOTIFICATION, ApplicationFormStatus.VALIDATION), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                
-                createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
-                
-                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(
-                        DigestNotificationType.DIGEST));
-                
-                CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form),
-                        new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
-            }
-        });
+        // DUPLICATE see scheduleApplicationValidationRequest
     }
     
     // DIGEST
     public void scheduleUpdatedApplicationConfirmation() {
-        CollectionUtils.forAllDo(applicationFormDAO..getApplicationsDueUpdateNotification(), new Closure() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUpdateNotification(), new Closure() {
             @Override
             public void execute(final Object input) {
                 ApplicationForm form = (ApplicationForm) input;
-                
                 createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
-                
-                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(
-                        DigestNotificationType.DIGEST));
-                
-                if (form.getStatus() == ApplicationFormStatus.INTERVIEW) {
-                    if (form.getLatestInterview() != null) {
-                        CollectionUtils.forAllDo(form.getLatestInterview().getInterviewers()
-                        }
-                    }
-                        }
-                }
-                else if (form.getStatus() == ApplicationFormStatus.APPROVAL) {
-                    
-                }
-                
-                CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form),
-                        new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
             }
         });
     }
 
     // DIGEST
     public void scheduleApplicationValidationRequest() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.UPDATED_NOTIFICATION, ApplicationFormStatus.VALIDATION), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                ApplicationForm form = (ApplicationForm) input;
+                createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
+            }
+        });
     }
     
     // DIGEST FORCED
     public void scheduleApplicationValidationReminder() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                ApplicationForm form = (ApplicationForm) input;
+                createNotificationRecordIfNotExists(form, NotificationType.VALIDATION_REMINDER);
+            }
+        });
     }
     
     // IMMEDIATELY
@@ -249,14 +239,35 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
 
     // DIGEST
     public void scheduleRestartApprovalRequest() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueApprovalRequestNotification(), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                ApplicationForm form = (ApplicationForm) input;
+                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+            }
+        });
     }
     
     // DIGEST FORCED
     public void scheduleRestartApprovalReminder() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationDueApprovalRestartRequestReminder(), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                ApplicationForm form = (ApplicationForm) input;
+                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
+            }
+        });
     }
     
     // DIGEST (schedule to Admins)
     public void scheduleApprovalConfirmation() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueApprovalNotifications(), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                ApplicationForm form = (ApplicationForm) input;
+                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_NOTIFICATION);
+            }
+        });
     }
 
     // IMMEDIATELY
@@ -269,6 +280,16 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     
     // DIGEST
     public void scheduleInterviewAdministrationReminder() {
+        DateTime yesterday = new DateTime().minusDays(1);
+        CollectionUtils.forAllDo(notificationRecordDAO.getNotificationsWithTimeStampGreaterThan(yesterday.toDate() , NotificationType.INTERVIEW_ADMINISTRATION_REMINDER), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                NotificationRecord notificationRecord = (NotificationRecord) input;
+                notificationRecord.setDate(new Date());
+                RegisteredUser delegate = notificationRecord.getUser();
+                delegate.setDigestNotificationType(DigestNotificationType.DIGEST);
+            }
+        });
     }
     
     // DIGEST (scheduling, etc.)
@@ -277,6 +298,15 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     
     // DIGEST
     public void scheduleInterviewFeedbackConfirmation() {
+//        NOT SURE
+//        CollectionUtils.forAllDo(commentDAO.getInterviewCommentsDueNotification(), new Closure() {
+//            @Override
+//            public void execute(final Object input) {
+//                InterviewComment comment = (InterviewComment) input;
+//                RegisteredUser user = comment.getUser();
+//                comment.setAdminsNotified(true);
+//            }
+//        });
     }
     
     // IMMEDIATELY 
@@ -297,29 +327,11 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     
     // IMMEDIATELY (applicant)
     public void sendApplicationUnderApprovalNotification() {
+        
     }
     
     // IMMEDIATELY (applicant)
     public void sendApplicationApprovedNotification() {
-        
-        
-        CollectionUtils.forAllDo(applicationFormDAO.getApplicationsDueApprovedNotifications(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                ApplicationForm form = (ApplicationForm) input;
-                
-                createNotificationRecordIfNotExists(form, NotificationType.APPROVED_NOTIFICATION);
-                
-                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(
-                        DigestNotificationType.DIGEST));
-                
-                CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form),
-                        new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
-            }
-        });
-        
-        
-        
     }
 
     // IMMEDIATELY (applicant)
@@ -351,7 +363,9 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     }
 
     // DIGEST
-    public void scheduleReferenceSubmittedConfirmationToAdministrator() {
+    public void scheduleReferenceSubmittedConfirmationToAdministrator(final Referee referee) {
+        ApplicationForm form = referee.getApplication();
+        CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.DIGEST));
     }
     
     // IMMEDIATELY
@@ -370,10 +384,26 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     
     // DIGEST 
     public void scheduleRejectionConfirmationToAdministrator() {
+        CollectionUtils.forAllDo(applicationDAO.getApplicationsDueRejectNotifications(), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                ApplicationForm application = (ApplicationForm) input;
+                application.setRejectNotificationDate(new Date());
+                applicationDAO.save(application);
+            }
+        });
     }
 
     // DIGEST
     public void scheduleReviewSubmittedConfirmation() {
+        CollectionUtils.forAllDo(commentDAO.getReviewCommentsDueNotification(), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                ReviewComment comment = (ReviewComment) input;
+                comment.setAdminsNotified(true);
+                comment.getUser().setDigestNotificationType(DigestNotificationType.DIGEST);
+            }
+        });
     }
     
     // Reviewer assigned notification - DELETE
@@ -388,10 +418,28 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     
     // DIGEST
     public void scheduleConfirmSupervisionRequest() {
+        CollectionUtils.forAllDo(supervisorDAO.getPrimarySupervisorsDueNotification(), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                Supervisor supervisor = (Supervisor) input;
+                supervisor.setLastNotified(new Date());
+                supervisor.getUser().setDigestNotificationType(DigestNotificationType.DIGEST);
+                supervisorDAO.save(supervisor);
+            }
+        });
     }
     
     // DIGEST FORCED
     public void scheduleConfirmSupervisionReminder() {
+        CollectionUtils.forAllDo(supervisorDAO.getPrimarySupervisorsDueReminder(), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                Supervisor supervisor = (Supervisor) input;
+                supervisor.setLastNotified(new Date());
+                supervisor.getUser().setDigestNotificationType(DigestNotificationType.REMINDER_DIGEST);
+                supervisorDAO.save(supervisor);
+            }
+        });
     }
     
     // Supervisor notification - DELETE

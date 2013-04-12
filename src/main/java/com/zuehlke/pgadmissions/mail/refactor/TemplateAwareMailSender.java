@@ -2,12 +2,9 @@ package com.zuehlke.pgadmissions.mail.refactor;
 
 import java.io.StringReader;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.collections.Closure;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,38 +64,17 @@ public class TemplateAwareMailSender extends AbstractMailSender {
                 public void prepare(final MimeMessage mimeMessage) throws Exception {
                     final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
                     
-                    CollectionUtils.forAllDo(message.getToAsInternetAddresses(), new Closure() {
-                        @Override
-                        public void execute(final Object input) {
-                            try {
-                                messageHelper.addTo((InternetAddress) input);
-                            } catch (MessagingException e) {
-                                log.error(e.getMessage(), e);
-                            }
-                        }
-                    });
+                    for (InternetAddress addresses : message.getToAsInternetAddresses()) {
+                        messageHelper.addTo(addresses);
+                    }
                     
-                    CollectionUtils.forAllDo(message.getCcAsInternetAddresses(), new Closure() {
-                        @Override
-                        public void execute(final Object input) {
-                            try {
-                                messageHelper.addCc((InternetAddress) input);
-                            } catch (MessagingException e) {
-                                log.error(e.getMessage(), e);
-                            }
-                        }
-                    });
+                    for (InternetAddress addresses : message.getCcAsInternetAddresses()) {
+                        messageHelper.addCc(addresses);
+                    }
                     
-                    CollectionUtils.forAllDo(message.getBccAsInternetAddresses(), new Closure() {
-                        @Override
-                        public void execute(final Object input) {
-                            try {
-                                messageHelper.addBcc((InternetAddress) input);
-                            } catch (MessagingException e) {
-                                log.error(e.getMessage(), e);
-                            }
-                        }
-                    });
+                    for (InternetAddress addresses : message.getBccAsInternetAddresses()) {
+                        messageHelper.addBcc(addresses);
+                    }
                     
                     if (StringUtils.isNotBlank(message.getReplyToAddress())) {
                         messageHelper.setReplyTo(message.getReplyToAddress());

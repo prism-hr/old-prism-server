@@ -31,22 +31,22 @@ import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import freemarker.template.Template;
 
 @Service
-public class EmailTemplateAwareMailSender extends AbstractMailSender {
+public class TemplateAwareMailSender extends AbstractMailSender {
 
     private static final String PLAIN_TEXT_NOTE = "\n\nIf the links do not work in your email client copy and paste them into your browser.";
 
-    private final Logger log = LoggerFactory.getLogger(EmailTemplateAwareMailSender.class);
+    private final Logger log = LoggerFactory.getLogger(TemplateAwareMailSender.class);
     
     private final EmailTemplateService emailTemplateService;
     
     private final FreeMarkerConfig freemarkerConfig;
     
-    public EmailTemplateAwareMailSender() {
+    public TemplateAwareMailSender() {
         this(null, null, null, null, null, null, null);
     }
     
     @Autowired
-    public EmailTemplateAwareMailSender(
+    public TemplateAwareMailSender(
             final JavaMailSender mailSender, 
             final MessageSource messageSource, 
             final EmailTemplateService emailTemplateService,

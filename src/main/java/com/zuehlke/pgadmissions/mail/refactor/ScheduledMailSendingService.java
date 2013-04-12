@@ -22,8 +22,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);
     
-    private final EmailDigestService emailDigestService;
-    
     private class UpdateDigestNotificationClosure implements Closure {
         private final DigestNotificationType type;
         
@@ -38,16 +36,14 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     }
     
     @Autowired
-    public ScheduledMailSendingService(final EmailTemplateAwareMailSender mailSender, 
+    public ScheduledMailSendingService(final TemplateAwareMailSender mailSender, 
             final UserService userService,
-            final EmailDigestService emailDigestService,
             final ApplicationFormDAO applicationFormDAO) {
         super(mailSender, userService, applicationFormDAO);
-        this.emailDigestService = emailDigestService;
     }
     
     public ScheduledMailSendingService() {
-        this(null, null, null, null);
+        this(null, null, null);
     }
     
     /**

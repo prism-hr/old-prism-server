@@ -25,7 +25,7 @@ public class AdminMailSender {
 
     private final ConfigurationService configurationService;
     
-    private final EmailTemplateAwareMailSender mailSender;
+    private final TemplateAwareMailSender mailSender;
     
     private class AdminPrismEmailMessageBuilder extends PrismEmailMessageBuilder {
         public AdminPrismEmailMessageBuilder copyOf(AdminPrismEmailMessageBuilder builder) {
@@ -76,7 +76,7 @@ public class AdminMailSender {
     }
     
     @Autowired
-    public AdminMailSender(final ConfigurationService configurationService, final EmailTemplateAwareMailSender mailSender) {
+    public AdminMailSender(final ConfigurationService configurationService, final TemplateAwareMailSender mailSender) {
         this.configurationService = configurationService;
         this.mailSender = mailSender;
     }

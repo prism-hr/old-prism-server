@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public interface EmailRecipientsBuilder {
 
-    Collection<RegisteredUser> build();
+    List<RegisteredUser> build();
 }

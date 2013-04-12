@@ -79,8 +79,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldLoadRegisteredUserWithReferees() {
 		
-		Referee referee1 = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").phoneNumber("hallihallo").toReferee();
-		Referee referee2 = new RefereeBuilder().id(5).firstname("ref1").lastname("erre1").email("ref1@test.com").phoneNumber("hallihallo").toReferee();
+		Referee referee1 = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").phoneNumber("hallihallo").build();
+		Referee referee2 = new RefereeBuilder().id(5).firstname("ref1").lastname("erre1").email("ref1@test.com").phoneNumber("hallihallo").build();
 		
 
 		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
@@ -109,7 +109,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 		sessionFactory.getCurrentSession().save(admin1);
 
-		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("ref@test.com").user(admin1).phoneNumber("hallihallo").toReferee();
+		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("ref@test.com").user(admin1).phoneNumber("hallihallo").build();
 		save(referee);
 		assertNotNull(admin1.getId());
 		Integer id = admin1.getId();

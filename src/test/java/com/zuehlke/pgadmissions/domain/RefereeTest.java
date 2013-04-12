@@ -13,7 +13,7 @@ public class RefereeTest {
 
 	@Test
 	public void shouldReturnTrueIfReferenceProvided(){
-		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build()).toReferee();
+		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build()).build();
 		assertFalse(referee.hasProvidedReference());
 		referee.setReference(new ReferenceComment());		
 		assertTrue(referee.hasProvidedReference());
@@ -21,7 +21,7 @@ public class RefereeTest {
 	
 	@Test
 	public void shouldReturnEditableTrueIfReferenceNotProvided(){
-		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build()).toReferee();		
+		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build()).build();		
 		assertTrue(referee.isEditable());
 		referee.setReference(new ReferenceComment());		
 		assertFalse(referee.isEditable());
@@ -29,38 +29,38 @@ public class RefereeTest {
 	
 	@Test
 	public void shouldReturnEditableTrueIfRefereeHasNotDeclined(){
-		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build()).toReferee();
+		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build()).build();
 		assertTrue(referee.isEditable());
 		referee.setDeclined(true);
 		assertFalse(referee.isEditable());
 	}
 	@Test
 	public void shouldReturnEditableFalseIfApplicationFormNotModifiable(){
-		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).build()).toReferee();		
+		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).build()).build();		
 		assertFalse(referee.isEditable());
 	}
 	@Test
 	public void shouldReturnEditableTrueIfApplicationFormIsNull(){
-		Referee referee = new RefereeBuilder().toReferee();		
+		Referee referee = new RefereeBuilder().build();		
 		assertTrue(referee.isEditable());
 	}
 
 	@Test
 	public void shouldReturnRespondedTrueIfDeclined(){
-		Referee referee = new RefereeBuilder().declined(true).toReferee();		
+		Referee referee = new RefereeBuilder().declined(true).build();		
 		assertTrue(referee.hasResponded());
 	
 	}
 	@Test
 	public void shouldReturnRespondedTrueIfReferenceProcided(){
-		Referee referee = new RefereeBuilder().declined(true).toReferee();	
+		Referee referee = new RefereeBuilder().declined(true).build();	
 		referee.setReference(new ReferenceComment());		
 		assertTrue(referee.hasResponded());
 	
 	}
 	@Test
 	public void shouldReturnFalseIfNeitherDeclineNorProvidedReference(){
-		Referee referee = new RefereeBuilder().declined(false).toReferee();
+		Referee referee = new RefereeBuilder().declined(false).build();
 		
 		assertFalse(referee.hasResponded());
 	

@@ -42,8 +42,8 @@ public class RefereeNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		Referee refereeOne = new RefereeBuilder().id(1).toReferee();
-		Referee refereeTwo = new RefereeBuilder().id(2).toReferee();
+		Referee refereeOne = new RefereeBuilder().id(1).build();
+		Referee refereeTwo = new RefereeBuilder().id(2).build();
 		sessionMock.refresh(refereeOne);
 		sessionMock.refresh(refereeTwo);
 		List<Referee> refereeList = Arrays.asList(refereeOne, refereeTwo);
@@ -77,8 +77,8 @@ public class RefereeNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		Referee refereeOne = new RefereeBuilder().id(1).toReferee();
-		Referee refereeTwo = new RefereeBuilder().id(2).toReferee();
+		Referee refereeOne = new RefereeBuilder().id(1).build();
+		Referee refereeTwo = new RefereeBuilder().id(2).build();
 		sessionMock.refresh(refereeOne);
 		sessionMock.refresh(refereeTwo);
 		EasyMock.expect(refereeDAOMock.getRefereesDueNotification()).andReturn(Arrays.asList(refereeOne, refereeTwo));

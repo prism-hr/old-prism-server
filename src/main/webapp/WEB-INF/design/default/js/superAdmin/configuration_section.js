@@ -6,16 +6,7 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------
 	
 	// Delete buttons
-	
-	
-	function checkTableForm() {
-		var rowCount = $('#registryUsers tr').length;
-		if (rowCount == 0) {
-			$('#registryUsers').css('display', 'none');
-		} else {
-			$('#registryUsers').css('display', 'table');
-		}
-	}
+
 	checkTableForm();
 
 	function displaytableForm() {
@@ -158,7 +149,14 @@ $(document).ready(function()
 	});
 });
 
-
+function checkTableForm() {
+		var rowCount = $('#registryUsers tr').length;
+		if (rowCount == 0) {
+			$('#registryUsers').css('display', 'none');
+		} else {
+			$('#registryUsers').css('display', 'table');
+		}
+	}
 function updateRegistryForm()
 {
 	var user_count = $('#registryUsers tr').length;

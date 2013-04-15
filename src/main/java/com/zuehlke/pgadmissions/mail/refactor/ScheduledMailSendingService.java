@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -27,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -62,6 +66,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
 
     @Scheduled(cron = "${email.digest.cron}")
     public void run() {
+        log.info("Running ScheduledMailSendingService Task");
         scheduleApprovalRequest();
         scheduleApprovalReminder();
         scheduleInterviewFeedbackEvaluationRequest();
@@ -85,24 +90,44 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         scheduleReviewEvaluationRequest();
         scheduleReviewEvaluationReminder();
         scheduleConfirmSupervisionRequest();
-        scheduleConfirmSupervisionReminder();
-        
+        scheduleConfirmSupervisionReminder();        
         sendDigestsToUsers();
+        log.info("Finished ScheduledMailSendingService Task");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendDigestsToUsers() {
+        log.info("Sending daily digests to users");
+        
+        PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subjectCode("Prism Digest Notification").emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
+        PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subjectCode("Prism Digest Task Reminder").emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
+        PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subjectCode("Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
+        
         for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
             RegisteredUser user = userService.getUser(userId);
-            PrismEmailMessageBuilder emailMessage = new PrismEmailMessageBuilder().to(user)
-                    .subjectCode("Prism Digest Notification")
-                    .emailTemplate(user.getDigestNotificationType().toString());
-            try {
-                mailSender.sendEmail(emailMessage.build());
-            } catch (Exception e) {
-                log.warn(e.getMessage(), e);
+            switch (user.getDigestNotificationType()) {
+            case TASK_NOTIFICATION:
+                digestTaskNotification.bcc(user);
+                break;
+            case TASK_REMINDER:
+                digestTaskReminder.bcc(user);
+                break;
+            case UPDATE_NOTIFICATION:
+                digestUpdateNotification.bcc(user);
+                break;
+            case NONE:
+            default:
+                break;
             }
         }
+        
+        try {
+            mailSender.sendEmail(digestTaskNotification.build(), digestTaskReminder.build(), digestUpdateNotification.build());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        
+        log.info("Reseting daily digests to users");
         userService.resetDigestNotificationsForAllUsers();
     }
 
@@ -607,15 +632,23 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void scheduleApprovedConfirmation() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalNotifications()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_NOTIFICATION);
-            CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form), new Closure() {
-                @Override
-                public void execute(final Object input) {
-                    Supervisor supervisor = (Supervisor) input;
-                    if (BooleanUtils.isTrue(supervisor.getIsPrimary())) {
-                        userService.setDigestNotificationType(supervisor.getUser(), DigestNotificationType.UPDATE_NOTIFICATION);
+            if (form.getLatestApprovalRound() != null) {
+                ArrayList<Supervisor> supervisors = new ArrayList<Supervisor>(form.getLatestApprovalRound().getSupervisors());
+                CollectionUtils.filter(supervisors, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object object) {
+                        Supervisor supervisor = (Supervisor) object;
+                        return BooleanUtils.isTrue(supervisor.getIsPrimary());
                     }
-                }
-            });
+                });
+                CollectionUtils.forAllDo(CollectionUtils.collect(supervisors, new Transformer() {
+                    @Override
+                    public Object transform(final Object input) {
+                        Supervisor supervisor = (Supervisor) input;
+                        return supervisor.getUser();
+                    }
+                }), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
+            }
         }
     }
 

@@ -63,7 +63,7 @@ public abstract class AbstractMailSender {
         return messageSource.getMessage(code, args, null);
     }
     
-    public void sendEmail(final PrismEmailMessage emailMessage) {
+    public void sendEmail(final PrismEmailMessage... emailMessage) {
         sendEmail(Arrays.asList(emailMessage));
     }
 

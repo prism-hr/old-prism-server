@@ -93,8 +93,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         scheduleReviewEvaluationReminder();
         scheduleConfirmSupervisionRequest();
         scheduleConfirmSupervisionReminder();
-        scheduleSupervisionConfirmedNotification();
-
+        
         sendDigestsToUsers();
     }
 
@@ -1193,8 +1192,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    // Current business logic is incorrect
-    // Update goes to administrator rather than primary supervisor
     public void scheduleRejectionConfirmationToAdministrator() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueRejectNotifications()) {
             form.setRejectNotificationDate(new Date());
@@ -1426,8 +1423,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    // Currently does not exist
-    public void scheduleSupervisionConfirmedNotification() {
+    public void scheduleSupervisionConfirmedNotification(final ApplicationForm form) {
+        CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
-    
 }

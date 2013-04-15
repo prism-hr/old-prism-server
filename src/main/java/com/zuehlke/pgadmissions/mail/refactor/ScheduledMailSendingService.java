@@ -1393,37 +1393,4 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
             supervisorDAO.save(supervisor);
         }
     }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when supervision has been confirmed.<br/>
-     * Finds all applications in the system for which supervision has recently been confirmed, and;<br/> 
-     * Schedules their Administrators to be notified.
-     * <p/><p>
-     * <b>Recipients</b><br/>
-     * Administrator<br/>
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Primary Supervisors can confirm supervision, while:
-     *    <ol>
-     *    <li>Applications are in the current approval state.</li>
-     *    </ol></li>
-     * <li>Administrators are scheduled to be notified, when:
-     *    <ol>
-     *    <li>Supervision has been confirmed within the last 24 hours.</li>
-     *    </ol></li>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 1 (Update Notification)
-     * </p>
-     */
-    public void scheduleSupervisionConfirmedNotification(final ApplicationForm form) {
-        CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
-    }
 }

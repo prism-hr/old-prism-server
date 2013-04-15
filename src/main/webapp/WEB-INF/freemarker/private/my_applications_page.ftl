@@ -110,15 +110,15 @@
                 </select>
 
                 <#if filter.searchCategory == "APPLICATION_STATUS">
-                  <select name="filterInput"  style="margin-left: 3px;" class="filterInput selector">
+                  <select id="searchTerm_${filter_index}" class="filterInput selector" name="filterInput" style="margin-left: 3px;" >
                     <#list applicationStatusValues as value>
                       <option value="${value.displayValue()}">${value.displayValue()}</option>
                     </#list>
                   </select>
                 <#elseif filter.searchCategory == "LAST_EDITED_DATE" || filter.searchCategory == "SUBMISSION_DATE">
-                  <input class="filterInput half date" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
+                  <input id="searchTerm_${filter_index}" class="filterInput half date" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
                 <#else>
-                  <input class="filterInput" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
+                  <input id="searchTerm_${filter_index}" class="filterInput" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
                 </#if>
                 <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>

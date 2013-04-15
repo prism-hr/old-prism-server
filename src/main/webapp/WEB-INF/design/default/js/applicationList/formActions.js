@@ -179,6 +179,7 @@ $(document).ready(function() {
 			$(newFilter)
 					.find(".filterInput")
 					.val(activeApplications[i].searchTerm);
+			$(newFilter).find('input.filterInput').remove();
 			$('#search-go').click();
 		}
 		

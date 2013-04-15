@@ -12,11 +12,11 @@
 	<form>
         <#include "/private/staff/supervisors/components/qualifications_table.ftl"/>
         
-        <@spring.bind "sendToPorticoData.emptyQualificationsExplanation" />
+        <@spring.bind "sendToPorticoData.qualificationsSendToPortico" />
 
-        <input type="hidden" name="showExplanationText" id="showExplanationText" value="${spring.status.errorCodes?seq_contains("portico.submit.explanation.empty")?string("yes", "no")}" />
+        <input type="hidden" name="showExplanationText" id="showExplanationText" value="${spring.status.errorCodes?seq_contains("portico.submit.explanation.required")?string("yes", "no")}" />
         
-        <#if spring.status.errorCodes?seq_contains("portico.submit.explanation.empty")>
+        <#if spring.status.errorCodes?seq_contains("portico.submit.explanation.required")>
             <div class="alert alert-error">
                 <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
                     <#if anyQualificationEnabled>
@@ -51,15 +51,25 @@
             
         </#if>
         
+        
         <div class="row-group" id="explanationArea" style="display:none">
             <div class="row">
                 <label for="explanationText" class="plain-label">Explanation<em>*</em></label> 
                 <span class="hint" data-desc="Explain why you wish to submit this application for offer processing without any accompanying transcript."></span>
                 <div class="field">
                     <textarea cols="80" rows="5" class="max" id="explanationText" name="explanationText">${(sendToPorticoData.emptyQualificationsExplanation?html)!""}</textarea>
+                    <@spring.bind "sendToPorticoData.emptyQualificationsExplanation" />
+                    <#list spring.status.errorMessages as error>
+                      <div class="alert alert-error"> 
+                        <i class="icon-warning-sign"></i>
+                        ${error}
+                      </div>
+                    </#list>
                 </div>
             </div>
         </div>
+
+        
 
         <#if hasQualifications> 
 

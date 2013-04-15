@@ -256,7 +256,6 @@ public class ApprovalController {
     public void registerSendToPorticoDataBinder(WebDataBinder binder) {
         binder.setValidator(sendToPorticoDataDTOValidator);
         binder.registerCustomEditor(List.class, sendToPorticoDataDTOEditor);
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
     @ModelAttribute("sendToPorticoData")

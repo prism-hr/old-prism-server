@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERR
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_ADMINISTRATION_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFERENCE_RESPOND_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 
@@ -237,28 +238,48 @@ public class MailSendingService extends AbstractMailSendingService {
         CollectionUtils.forAllDo(usersToNotify.values(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
 
-    /**
-    * <p>
-    * <b>Summary</b><br/>
-    * Informs users when a data import has failed.
-    * <p/><p>
-    * <b>Recipients</b>
-    * Super Administrator
-    * </p><p>
-    * <b>Previous Email Template Name</b><br/>
-    * Kevin to Insert
-    * </p><p> 
-    * <b>Business Rules</b><br/>
-    * <ol>
-    * <li>Super Administrators are notified, when:
-    *    <ol><li>A data import has failed.</li>
-    *    </ol></li>
-    * </ol>
-    * </p><p>
-    * <b>Notification Type</b>
-    * Immediate Notification
-    * </p>
-    */
+	public void sendReferenceSubmittedConfirmationToApplicant(Referee referee, String adminsEmails) {
+		PrismEmailMessage message = null;
+		try {
+			ApplicationForm form = referee.getApplication();
+			RegisteredUser applicant = form.getApplicant();
+			EmailModelBuilder modelBuilder = getModelBuilder(new String[] {"adminsEmails", "referee", "application", "host" }, new Object[] {
+					adminsEmails, referee, form, getInstance().getApplicationHostName() });
+			String subject = resolveMessage("reference.provided.applicant", form);
+			message = buildMessage(applicant, subject, modelBuilder.build(), REFERENCE_RESPOND_CONFIRMATION);
+			mailSender.sendEmail(message);
+		}
+		catch (Exception e) {
+			throw new PrismMailMessageException("Error while sending reference submitted confirmation to applicant: ", e.getCause(), message);
+		}
+	}
+
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users when a data import has failed.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Super Administrator
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Super Administrators are notified, when:
+	 * <ol>
+	 * <li>A data import has failed.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
     public void sendImportErrorMessage(List<RegisteredUser> users, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
         if (messageCode == null) {

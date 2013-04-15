@@ -1,23 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFERENCE_RESPOND_CONFIRMATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFERENCE_SUBMIT_CONFIRMATION;
-
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +16,6 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -36,48 +25,41 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 @Transactional
 public class RefereeService {
 
-    private final JavaMailSender mailsender;
-    private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
     private final Logger log = LoggerFactory.getLogger(RefereeService.class);
     private final RefereeDAO refereeDAO;
     private final UserService userService;
     private final RoleDAO roleDAO;
     private final CommentService commentService;
-    private final MessageSource messageSource;
     private final EventFactory eventFactory;
     private final ApplicationFormDAO applicationFormDAO;
     private final EncryptionUtils encryptionUtils;
     private final EncryptionHelper encryptionHelper;
-    private final EmailTemplateService emailTemplateService;
+    private final MailSendingService mailService;
 
     public RefereeService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-            JavaMailSender mailsender, UserService userService, RoleDAO roleDAO, CommentService commentService, MessageSource messageSource,
-            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, EmailTemplateService emailTemplateService) {
+    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils,
+           UserService userService, RoleDAO roleDAO, CommentService commentService,
+            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper,            MailSendingService mailservice) {
         this.refereeDAO = refereeDAO;
         this.encryptionUtils = encryptionUtils;
-        this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
-        this.mailsender = mailsender;
         this.userService = userService;
         this.roleDAO = roleDAO;
         this.commentService = commentService;
-        this.messageSource = messageSource;
         this.eventFactory = eventFactory;
         this.applicationFormDAO = applicationFormDAO;
         this.encryptionHelper = encryptionHelper;
-        this.emailTemplateService=emailTemplateService;
+		this.mailService = mailservice;
     }
 
     public Referee getRefereeById(Integer id) {
@@ -105,43 +87,15 @@ public class RefereeService {
     private void sendMailToAdministrators(Referee referee) {
         ApplicationForm form = referee.getApplication();
         List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-        String subject = resolveMessage("reference.provided.admin", form);
-
-        for (RegisteredUser admin : administrators) {
-            try {
-                Map<String, Object> model = new HashMap<String, Object>();
-                model.put("admin", admin);
-                model.put("application", form);
-                model.put("referee", referee);
-                model.put("host", Environment.getInstance().getApplicationHostName());
-                InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
-                EmailTemplate template = emailTemplateService.getActiveEmailTemplate(REFERENCE_SUBMIT_CONFIRMATION);
-                mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, REFERENCE_SUBMIT_CONFIRMATION,
-                        template.getContent(), model, null));
-            } catch (Exception e) {
-                log.warn("error while sending email", e);
-            }
-        }
+        mailService.sendReferenceSubmitConfirmationToAdministrators(administrators);
 
     }
 
     private void sendMailToApplicant(Referee referee) {
         try {
             ApplicationForm form = referee.getApplication();
-            RegisteredUser applicant = form.getApplicant();
-            List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-            Map<String, Object> model = new HashMap<String, Object>();
-            model.put("adminsEmails", adminsEmails);
-            model.put("referee", referee);
-            model.put("application", form);
-            model.put("host", Environment.getInstance().getApplicationHostName());
-            InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
-
-            String subject = resolveMessage("reference.provided.applicant", form);
-            EmailTemplate template = emailTemplateService.getActiveEmailTemplate(REFERENCE_RESPOND_CONFIRMATION);
-            mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, REFERENCE_RESPOND_CONFIRMATION,
-                    template.getContent(), model, null));
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
+            mailService.sendReferenceSubmittedConfirmationToApplicant(referee, adminsEmails);
         } catch (Exception e) {
             log.warn("error while sending email", e);
         }
@@ -339,34 +293,10 @@ public class RefereeService {
         try {
             ApplicationForm form = referee.getApplication();
             List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-            Map<String, Object> model = new HashMap<String, Object>();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-            model.put("referee", referee);
-            model.put("adminsEmails", adminsEmails);
-            model.put("applicant", form.getApplicant());
-            model.put("application", form);
-            model.put("programme", form.getProgrammeDetails());
-            model.put("host", Environment.getInstance().getApplicationHostName());
-            InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-            String subject = resolveMessage("reference.request", form);
-            EmailTemplate template = emailTemplateService.getActiveEmailTemplate(REFEREE_NOTIFICATION);
-            
-            mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, REFEREE_NOTIFICATION, template.getContent(),
-                    model, null));
+            mailService.sendRefereeMailNotification(referee, form, adminsEmails);
         } catch (Exception e) {
             log.warn("error while sending email", e);
         }
-    }
-
-    private String resolveMessage(String code, ApplicationForm form) {
-        RegisteredUser applicant = form.getApplicant();
-        Object[] args;
-        if (applicant == null) {
-            args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle() };
-        } else {
-            args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(),//
-                    applicant.getFirstName(), applicant.getLastName() };
-        }
-        return messageSource.getMessage(code, args, null);
     }
 }

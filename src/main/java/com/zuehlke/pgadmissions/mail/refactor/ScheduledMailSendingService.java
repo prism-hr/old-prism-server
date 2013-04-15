@@ -45,19 +45,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
 
     private final StageDurationDAO stageDurationDAO;
 
-    private class UpdateDigestNotificationClosure implements Closure {
-        private final DigestNotificationType type;
-
-        public UpdateDigestNotificationClosure(final DigestNotificationType type) {
-            this.type = type;
-        }
-
-        @Override
-        public void execute(final Object input) {
-            userService.setDigestNotificationType((RegisteredUser) input, type);
-        }
-    }
-
     @Autowired
     public ScheduledMailSendingService(final TemplateAwareMailSender mailSender, final UserService userService,
             final ApplicationFormDAO applicationFormDAO, final NotificationRecordDAO notificationRecordDAO,
@@ -84,7 +71,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         scheduleUpdateConfirmation();
         scheduleValidationRequest();
         scheduleValidationReminder();
-        scheduleWithdrawalConfirmation();
         scheduleRestartApprovalRequest();
         scheduleRestartApprovalReminder();
         scheduleApprovedConfirmation();
@@ -514,38 +500,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     /**
      * <p>
      * <b>Summary</b><br/>
-     * Informs users when applications have been withdrawn.<br/>
-     * Finds all applications in the system that have recently been updated, and;<br/> 
-     * Schedules their Administrators to be notified.
-     * <p/><p>
-     * <b>Recipients</b><br/>
-     * Administrator<br/>
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Applicants can withdraw applications, while:
-     *    <ol>
-     *    <li>They are not in the rejected, approved or withdrawn states.</li>
-     *    </ol></li>
-     * <li>Administrators are scheduled to be notified of withdrawals, when:
-     *    <ol>
-     *    <li>Applications have been withdrawn within the last 24 hours.</li>
-     *    </ol></li>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 1 (Update Notification)
-     * </p>
-     */
-    public void scheduleWithdrawalConfirmation() {
-    }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
      * Informs users when they are required to restart the approval of applications.<br/>
      * Finds all applications in the system that require approval restarts, and;<br/> 
      * Schedules their Administrators to be notified.
@@ -572,8 +526,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
-    // Business logic is currently incorrect
-    // Administrator cannot restart the approval state until requested to do so by an Approver.
+    // TODO: Business logic is currently incorrect. Administrator cannot restart the approval state until requested to do so by an Approver.
     public void scheduleRestartApprovalRequest() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalRequestNotification()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
@@ -651,8 +604,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    // Current business logic is incorrect
-    // Should send to Primary Supervisor only - currently goes to a wider range of users.
     public void scheduleApprovedConfirmation() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalNotifications()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_NOTIFICATION);
@@ -1172,8 +1123,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Immediate Notification
      * </p>
      */
-    // Current business logic is incorrect
-    // Administrator cannot reject application when it is in approval state.
+    // TODO: Current business logic is incorrect. Administrator cannot reject application when it is in approval state.
     public void sendRejectionConfirmationToApplicant() {
     }
 

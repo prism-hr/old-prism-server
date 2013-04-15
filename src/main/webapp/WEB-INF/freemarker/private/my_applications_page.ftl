@@ -121,7 +121,7 @@
                 </select>
 
                 <#if filter.searchCategory == "APPLICATION_STATUS">
-                  <select id="searchTerm_${filter_index}" class="filterInput selector" name="filterInput" style="margin-left: 3px;" >
+                  <select id="searchTerm_${filter_index}" class="filterInput selector" name="filterInput" >
                     <#list applicationStatusValues as value>
                       <option value="${value.displayValue()}"
                         <#if filter.searchTerm = value.displayValue()>selected</#if>                      

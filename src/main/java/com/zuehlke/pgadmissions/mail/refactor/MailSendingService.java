@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
+import static com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType.UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 
 import java.util.Date;
@@ -13,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.Closure;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 public class MailSendingService {
@@ -29,13 +33,16 @@ public class MailSendingService {
 	private static final Logger log = LoggerFactory.getLogger(MailSendingService.class);
 
 	private final TemplateAwareMailSender mailSender;
+	
+	private final UserService userService;
 
 	public MailSendingService() {
-		this(null);
+		this(null, null);
 	}
 
-	public MailSendingService(TemplateAwareMailSender mailSender) {
+	public MailSendingService(TemplateAwareMailSender mailSender, UserService userSerivce) {
 		this.mailSender = mailSender;
+		this.userService = userSerivce;
 	}
 
 	public void sendRefereeMailNotification(Referee referee, ApplicationForm applicationForm, String adminMails) {
@@ -124,7 +131,7 @@ public class MailSendingService {
      * Administrator
      * </p><p>
      * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
+     * REFERENCE_SUBMIT_CONFIRMATION
      * </p><p> 
      * <b>Business Rules</b>
      * <ol>
@@ -142,21 +149,14 @@ public class MailSendingService {
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-	public void sendReferenceSubmitConfirmationToAdministrators(Referee referee, List<RegisteredUser> admins, ApplicationForm applicationForm) {
-//	    PrismEmailMessage message = null;
-//		String subject = resolveMessage("reference.provided.admin", applicationForm);
-//		for (RegisteredUser admin : admins) {
-//			try {
-//				EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "admin", "application", "referee", "host" },
-//						new Object[] { admin, applicationForm, referee, getInstance().getApplicationHostName() });
-//				message = buildMessage(admin, subject, modelBuilder.build(), REFERENCE_SUBMIT_CONFIRMATION);
-//				mailSender.sendEmail(message);
-//			} catch (Exception e) {
-//				throw new PrismMailMessageException("Error while sending reference submit confirmation to administrator: ", e.getCause(), message);
-//			}
-//		}
-	    
-	    // TODO: This needs a DIGEST now: see ScheduledMailSendingService.sendReferenceSubmittedConfirmation();
+	public void sendReferenceSubmitConfirmationToAdministrators(List<RegisteredUser> admins) {
+			CollectionUtils.forAllDo(admins, new Closure() {
+				@Override
+				public void execute(Object input) {
+					RegisteredUser admin = (RegisteredUser)input;
+					userService.setDigestNotificationType(admin, UPDATE_NOTIFICATION);
+				}
+			});
 	}
 
 	/**

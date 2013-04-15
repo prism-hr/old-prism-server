@@ -197,9 +197,9 @@ function saveComment()
 				'<input type="hidden" name="documents" value="' + $(this).val() + '"/>');
 	});
 	
-	$('#firstName').val($('#newInterviewerFirstName').val());
-	$('#lastName').val($('#newInterviewerLastName').val());
-	$('#email').val($('#newInterviewerEmail').val());
+	$('#firstName').val($('#delegateFirstName').val());
+	$('#lastName').val($('#delegateLastName').val());
+	$('#email').val($('#delegateEmail').val());
 	
 	$('#stateChangeForm').submit();
 }
@@ -275,22 +275,22 @@ function changeState()
 				url:"/pgadmissions/delegate",
 				data:{
 					applicationId : $('#applicationId').val(),
-					firstName : $('#newInterviewerFirstName').val(),
-					lastName : $('#newInterviewerLastName').val(),
-					email : $('#newInterviewerEmail').val(),
+					firstName : $('#delegateFirstName').val(),
+					lastName : $('#delegateLastName').val(),
+					email : $('#delegateEmail').val(),
 				},
 				success:function(data)
 				{
 				    $("#interviewDelegation").find("div.alert").remove();
 		            if(data.success == "false"){
 	                    if (data.firstName != null) {
-	                        $('#newInterviewerFirstName').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.firstName + '</div>');
+	                        $('#delegateFirstName').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.firstName + '</div>');
 	                    } 
 	                    if (data.lastName != null) {
-                            $('#newInterviewerLastName').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.lastName + '</div>');
+                            $('#delegateLastName').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.lastName + '</div>');
                         }
 	                    if (data.email != null) {
-                            $('#newInterviewerEmail').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.email + '</div>');
+                            $('#delegateEmail').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.email + '</div>');
                         }
 		            } else {
     					$('#delegate').val('true');

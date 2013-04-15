@@ -12,32 +12,32 @@
 </div>
 
 <div class="row">
-  <label id="delegateFirstNameLabel" class="plain-label normal" for="newInterviewerFirstName">Delegate First Name<em>*</em></label>
+  <label id="delegateFirstNameLabel" class="plain-label normal" for="delegateFirstName">Delegate First Name<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateFirstName'/>"></span>
   <div class="field">
-    <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  
+    <input class="full" type="text" name="delegateFirstName" id="delegateFirstName"  
     <#if delegatedInterviewer?? && delegatedInterviewer.firstName??>value="${delegatedInterviewer.firstName}"</#if>/>
   </div>
 </div>
 <div class="row">
-  <label id="delegateLastNameLabel" class="plain-label normal" for="newInterviewerLastName">Delegate Last Name<em>*</em></label>
+  <label id="delegateLastNameLabel" class="plain-label normal" for="delegateLastName">Delegate Last Name<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateLastName'/>"></span>
   <div class="field">
-    <input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName" 
+    <input class="full" type="text" name="delegateLastName" id="delegateLastName" 
     <#if delegatedInterviewer?? && delegatedInterviewer.lastName??>value="${delegatedInterviewer.lastName}"</#if>/>
   </div>
 </div>
 <div class="row">
-  <label id="delegateEmailLabel" class="plain-label normal" for="newInterviewerEmail">Delegate Email Address<em>*</em></label>
+  <label id="delegateEmailLabel" class="plain-label normal" for="delegateEmail">Delegate Email Address<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateEmail'/>"></span>
   <div class="field">
-    <input class="full" type="email"  name="newInterviewerEmail" id="newInterviewerEmail" 
+    <input class="full" type="email"  name="delegateEmail" id="delegateEmail" 
     <#if delegatedInterviewer?? && delegatedInterviewer.email??>value="${delegatedInterviewer.email}"</#if>/>
   </div>
 </div>
 <script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
 <script type="text/javascript">
   $(document).ready(function() {
-        autosuggest($("#newInterviewerFirstName"), $("#newInterviewerLastName"), $("#newInterviewerEmail"));
+        autosuggest($("#delegateFirstName"), $("#delegateLastName"), $("#delegateEmail"));
   });
 </script>

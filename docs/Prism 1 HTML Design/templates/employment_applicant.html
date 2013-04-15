@@ -1,0 +1,121 @@
+<!--
+ ------------------------------------------------------------
+| EMPLOYMENT section
+ ------------------------------------------------------------
+   - Date fields have been changed to text fields with a "date" class.
+-->
+           <section class="folding yellow">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Employment
+            </h2>
+            <div>
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col />
+                  <col style="width: 140px" />
+                  <col style="width: 140px" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colspan="2">Title</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>Job Title</td>
+                    <td>21/07/11</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <form method="post" action="woooop">
+                <div>
+                
+                  <!-- Employer (company name) -->
+                  <div class="row">
+                    <span class="label">Employer</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="Provider of employment" />
+                    </div>
+                  </div>
+                
+                  <!-- Position -->
+                  <div class="row">
+                    <span class="label">Position</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="Title of position" />
+                    </div>
+                  </div>
+                
+                  <!-- Remit (job description) -->
+                  <div class="row">
+                    <span class="label">Remit</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <textarea cols="70" rows="3" class="max" placeholder="Summary of responsibilities"></textarea>
+                    </div>
+                  </div>
+                
+                  <!-- Start date -->
+                  <div class="row">
+                    <span class="label">Start Date</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="half date" type="text" value="" />
+                    </div>
+                  </div>
+                
+                  <!-- End date -->
+                  <div class="row">
+                    <span class="label">End date</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="half date" type="text" value="" />
+                    </div>
+                  </div>
+                
+                  <!-- Language -->
+                  <div class="row">
+                    <span class="label">Language of work</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>English</option>
+                      </select>
+                    </div>
+                  </div>
+                
+                  <!-- Document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>  
+                  </div>
+
+                </div>
+
+                <div class="buttons">
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit" value="close">Save and Close</button>
+                  <button class="blue" type="submit" value="add">Save and Add</button>
+                </div>
+
+              </form>
+            </div>
+          </section>

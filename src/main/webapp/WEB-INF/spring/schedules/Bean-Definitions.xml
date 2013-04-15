@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+    <bean id="registryMailSender" class="com.zuehlke.pgadmissions.mail.RegistryMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailPdfDocumentBuilder" />
+        <constructor-arg index="4" ref="mailEmailTemplateService" />
+        <constructor-arg index="5" ref="mailPdfAttachmentInputSourceFactory" />
+    </bean>
+
+    <bean id="mailPdfAttachmentInputSourceFactory"
+        class="com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory"
+        autowire-candidate="false">
+    </bean>
+
+    <bean id="mailPdfDocumentBuilder" class="com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder"
+        autowire-candidate="false">
+    </bean>
+
+    <bean id="mailRegistryUserDAO" class="com.zuehlke.pgadmissions.dao.PersonDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailStageDurationDAO" class="com.zuehlke.pgadmissions.dao.StageDurationDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailReminderIntervalDAO" class="com.zuehlke.pgadmissions.dao.ReminderIntervalDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailConfigurationService"
+        class="com.zuehlke.pgadmissions.services.ConfigurationService"
+        autowire-candidate="false">
+        <constructor-arg ref="mailStageDurationDAO" />
+        <constructor-arg ref="mailReminderIntervalDAO" />
+        <constructor-arg ref="mailRegistryUserDAO" />
+    </bean>
+
+    <bean id="mailServiceForTimers" class="com.zuehlke.pgadmissions.services.MailService"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="refereeMailSender" class="com.zuehlke.pgadmissions.mail.RefereeMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="reviewerMailSender" class="com.zuehlke.pgadmissions.mail.ReviewerMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="supervisorMailSender" class="com.zuehlke.pgadmissions.mail.SupervisorMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="interviewerMailSender" class="com.zuehlke.pgadmissions.mail.InterviewerMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="applicantMailSender" class="com.zuehlke.pgadmissions.mail.ApplicantMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailConfigurationService" />
+        <constructor-arg index="4" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="adminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailConfigurationService" />
+        <constructor-arg index="4" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="approverMailSender"
+        class="com.zuehlke.pgadmissions.mail.ApproverAdminMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="newUserMailSender" class="com.zuehlke.pgadmissions.mail.NewUserMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="dataImporterMailSender" class="com.zuehlke.pgadmissions.mail.DataImporterMailSender">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailUserService" />
+        <constructor-arg index="4" ref="sessionFactoryMail" />
+        <constructor-arg index="5" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="mailEmailTemplateDAO" class="com.zuehlke.pgadmissions.dao.EmailTemplateDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailEmailTemplateService"
+        class="com.zuehlke.pgadmissions.services.EmailTemplateService"
+        autowire-candidate="false">
+        <constructor-arg ref="mailEmailTemplateDAO" />
+    </bean>
+
+    <bean id="mailApplicationDAO" class="com.zuehlke.pgadmissions.dao.ApplicationFormDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+
+    <bean id="mainRefereeDAO" class="com.zuehlke.pgadmissions.dao.RefereeDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailReviewerDAO" class="com.zuehlke.pgadmissions.dao.ReviewerDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailInterviewerDAO" class="com.zuehlke.pgadmissions.dao.InterviewerDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailSupervisorDAO" class="com.zuehlke.pgadmissions.dao.SupervisorDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailRoleDAO" class="com.zuehlke.pgadmissions.dao.RoleDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailCommentDAO" class="com.zuehlke.pgadmissions.dao.CommentDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailUserFactory" class="com.zuehlke.pgadmissions.utils.UserFactory"
+        autowire-candidate="false">
+        <constructor-arg ref="mailRoleDAO" />
+    </bean>
+
+    <bean id="mailUserDAO" class="com.zuehlke.pgadmissions.dao.UserDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailApplicationsFilterDAO" class="com.zuehlke.pgadmissions.dao.ApplicationsFilterDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailUserService" class="com.zuehlke.pgadmissions.services.UserService"
+        autowire-candidate="false">
+        <constructor-arg index="0" ref="mailUserDAO" />
+        <constructor-arg index="1" ref="mailRoleDAO" />
+        <constructor-arg index="2" ref="mailUserFactory" />
+        <constructor-arg index="3"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="4" ref="mailSender" />
+        <constructor-arg index="5" ref="messageSource" />
+        <constructor-arg index="6" ref="mailEncryptionUtils" />
+        <constructor-arg index="7"
+            ref="mailApplicationsFilterDAO" />
+        <constructor-arg index="8" ref="mailEmailTemplateService" />
+    </bean>
+
+    <bean id="mailCommentService" class="com.zuehlke.pgadmissions.services.CommentService"
+        autowire-candidate="false">
+        <constructor-arg index="0" ref="mailCommentDAO" />
+    </bean>
+
+    <bean id="mailRefereeService" class="com.zuehlke.pgadmissions.services.RefereeService"
+        autowire-candidate="false">
+        <constructor-arg index="0" ref="mainRefereeDAO" />
+        <constructor-arg index="1" ref="mailEncryptionUtils" />
+        <constructor-arg index="2"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="3" ref="mailSender" />
+        <constructor-arg index="4" ref="mailUserService" />
+        <constructor-arg index="5" ref="mailRoleDAO" />
+    </bean>
+
+    <bean id="mailApplicationsService"
+        class="com.zuehlke.pgadmissions.services.ApplicationsService"
+        autowire-candidate="false">
+        <constructor-arg ref="mailApplicationDAO" />
+    </bean>
+
+    <bean id="mailEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils"
+        autowire-candidate="false" />
+
+    <bean id="mailPersonDAO" class="com.zuehlke.pgadmissions.dao.PersonDAO"
+        autowire-candidate="false">
+        <constructor-arg ref="sessionFactoryMail" />
+    </bean>
+
+    <bean id="mailCommentFactory" class="com.zuehlke.pgadmissions.utils.CommentFactory"
+        autowire-candidate="false" />
+
+    <bean id="approvalRestartRequestMailSender"
+        class="com.zuehlke.pgadmissions.mail.ApprovalRestartRequestMailSender"
+        autowire-candidate="false">
+        <constructor-arg index="0"
+            ref="mimeMessagePreparatorFactory" />
+        <constructor-arg index="1" ref="mailSender" />
+        <constructor-arg index="2" ref="messageSource" />
+        <constructor-arg index="3" ref="mailEmailTemplateService" />
+    </bean>
+
+</beans>

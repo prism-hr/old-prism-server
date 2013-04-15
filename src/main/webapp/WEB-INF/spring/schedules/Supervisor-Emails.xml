@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<!-- supervisor notification -->
+	<bean id="supervisorNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.SupervisorNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="supervisorMailSender" />
+		<constructor-arg index="2" ref="mailSupervisorDAO" />		
+	</bean>
+    
+    <!-- supervisor reminder notification -->
+    <bean id="supervisorReminderTask" class="com.zuehlke.pgadmissions.timers.SupervisorReminderTask">
+        <constructor-arg index="0" ref="sessionFactoryMail" />
+        <constructor-arg index="1" ref="supervisorMailSender" />
+        <constructor-arg index="2" ref="mailSupervisorDAO" />       
+    </bean>
+
+	<bean id="supervisorNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="${delay.28}" />
+		<property name="period" value="${email.schedule.period.milliseconds}" />
+		<property name="timerTask" ref="supervisorNotificationTimerTask" />
+	</bean>
+    
+    <bean id="supervisorNotificationReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="delay" value="${delay.29}" />
+        <property name="period" value="${email.schedule.period.milliseconds}" />
+        <property name="timerTask" ref="supervisorReminderTask" />
+    </bean>
+
+</beans>

@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.hibernate.ConcatenableIlikeCriterion;
 
 @Repository
 public class ApplicationFormListDAO {
@@ -129,7 +130,7 @@ public class ApplicationFormListDAO {
             if (searchCategory.getType() == CategoryType.TEXT) {
                 switch (searchCategory) {
                 case APPLICANT_NAME:
-                    newCriterion = Restrictions.ilike("a.fullName", term, MatchMode.ANYWHERE);
+                    newCriterion = ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "a.firstName", "a.lastName");
                     break;
                 case APPLICATION_NUMBER:
                     newCriterion = Restrictions.ilike("applicationNumber", term, MatchMode.ANYWHERE);

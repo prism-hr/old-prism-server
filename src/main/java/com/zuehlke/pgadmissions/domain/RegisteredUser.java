@@ -21,7 +21,6 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Formula;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -58,10 +57,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String lastName;
-
-    // non-portable - required when searching by applicant name
-    @Formula("CONCAT(firstname, ' ', lastname)")
-    private String fullName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
@@ -255,10 +250,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public String getFirstName3() {
         return firstName3;
-    }
-
-    public String getFullName() {
-        return fullName;
     }
 
     public String getDisplayName() {

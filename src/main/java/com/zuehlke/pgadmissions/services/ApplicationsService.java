@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICANT_SUBMISSION_NOTIFICATION;
+
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -7,6 +9,8 @@ import java.util.List;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.BooleanUtils;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -25,25 +30,31 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 @Service("applicationsService")
 @Transactional
 public class ApplicationsService {
+	
+	private final static Logger log = LoggerFactory.getLogger(ApplicationsService.class);
 
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
     private final ApplicationFormDAO applicationFormDAO;
 
     private final ApplicationFormListDAO applicationFormListDAO;
+    
+    private final MailSendingService mailService;
 
     public ApplicationsService() {
-        this(null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public ApplicationsService(ApplicationFormDAO applicationFormDAO, ApplicationFormListDAO applicationFormListDAO) {
+    public ApplicationsService(ApplicationFormDAO applicationFormDAO, ApplicationFormListDAO applicationFormListDAO, MailSendingService mailService) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
+		this.mailService = mailService;
     }
 
     public ApplicationForm getApplicationById(Integer id) {
@@ -195,6 +206,23 @@ public class ApplicationsService {
 
         return actions;
     }
+    
+    public void sendSubmissionConfirmationToApplicant(ApplicationForm applicationForm) {
+    	try {
+    		mailService.sendSubmissionConfirmationToApplicant(applicationForm);
+    		NotificationRecord notificationRecord = applicationForm.getNotificationForType(APPLICANT_SUBMISSION_NOTIFICATION);
+    		if (notificationRecord == null) {
+    			notificationRecord = new NotificationRecord(APPLICANT_SUBMISSION_NOTIFICATION);
+    			applicationForm.addNotificationRecord(notificationRecord);
+    		}
+    		notificationRecord.setDate(new Date());
+    		applicationFormDAO.save(applicationForm);
+    	}
+    	catch (Exception e) {
+    		log.warn("Error while sending application submission confirmation to applicant: {}", e);
+    	}
+	}
+
 
     public void refresh(ApplicationForm applicationForm) {
         applicationFormDAO.refresh(applicationForm);

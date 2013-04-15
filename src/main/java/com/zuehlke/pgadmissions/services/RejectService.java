@@ -1,7 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICATION_MOVED_TO_REJECT_NOTIFICATION;
+
+import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,15 +14,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 @Service
 @Transactional
 public class RejectService {
+	
+	private final Logger log = LoggerFactory.getLogger(RejectService.class);
 
 	private final ApplicationFormDAO applicationDao;
 	
@@ -26,17 +35,21 @@ public class RejectService {
 	private final EventFactory eventFactory;
 	
 	private final PorticoQueueService porticoQueueService;
+	
+	private final MailSendingService mailService;
 
 	public RejectService() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-    public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao, EventFactory eventFactory, PorticoQueueService rejectedSenderService) {
+    public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao, EventFactory eventFactory,
+    		PorticoQueueService rejectedSenderService, MailSendingService mailService) {
 		this.applicationDao = applicationDAO;
 		this.rejectDao = rejectDao;
 		this.eventFactory = eventFactory;
 		this.porticoQueueService = rejectedSenderService;
+		this.mailService = mailService;
 	}
 
 	public List<RejectReason> getAllRejectionReasons() {
@@ -61,7 +74,25 @@ public class RejectService {
 		form.setStatus(ApplicationFormStatus.REJECTED);		
 		form.setRejection(rejection);
 		form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));
+		
+		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);
+		
+	}
+	
+	private void sendRejectNotificationToApplicant(ApplicationForm form) {
+		try {
+			mailService.sendRejectionConfirmationToApplicant(form);
+			NotificationRecord notificationRecord = form.getNotificationForType(APPLICATION_MOVED_TO_REJECT_NOTIFICATION);
+			if (notificationRecord == null) {
+				notificationRecord = new NotificationRecord(APPLICATION_MOVED_TO_REJECT_NOTIFICATION);
+				form.addNotificationRecord(notificationRecord);
+			}
+			notificationRecord.setDate(new Date());
+		}
+		catch (Exception e) {
+    		log.warn("{}", e);
+		}
 	}
 	
 	public void sendToPortico(ApplicationForm form) {

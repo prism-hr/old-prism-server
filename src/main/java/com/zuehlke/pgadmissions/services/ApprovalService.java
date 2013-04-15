@@ -1,11 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICATION_MOVED_TO_APPROVED_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICATION_MOVED_TO_REJECT_NOTIFICATION;
+
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +43,9 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 @Transactional
 public class ApprovalService {
 
-    private final ApplicationFormDAO applicationDAO;
+	private Logger log = LoggerFactory.getLogger(ApprovalService.class);
+
+	private final ApplicationFormDAO applicationDAO;
 
     private final ApprovalRoundDAO approvalRoundDAO;
 
@@ -57,6 +64,7 @@ public class ApprovalService {
     private final SupervisorDAO supervisorDAO;
 
     private final MailSendingService mailSendingService;
+
 
     public ApprovalService() {
         this(null, null, null, null, null, null, null, null, null, null);
@@ -271,11 +279,27 @@ public class ApprovalService {
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApprover(userService.getCurrentUser());
         application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
+        sendNotificationToApplicant(application);
         applicationDAO.save(application);
         return true;
     }
     
-    public void sendToPortico(ApplicationForm application) {
+    private void sendNotificationToApplicant(ApplicationForm application) {
+    	try {
+    		mailSendingService.sendApprovedNotification(application);
+    		NotificationRecord notificationRecord = application.getNotificationForType(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
+			if (notificationRecord == null) {
+				notificationRecord = new NotificationRecord(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
+				application.addNotificationRecord(notificationRecord);
+			}
+			notificationRecord.setDate(new Date());
+    	}
+    	catch (Exception e) {
+    		log.warn("{}", e);
+    	}
+	}
+
+	public void sendToPortico(ApplicationForm application) {
         approvedSenderService.sendToPortico(application);
     }
     

@@ -2,12 +2,15 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 public class SendToPorticoDataDTO {
 
     private List<Integer> refereesSendToPortico;
     
     private List<Integer> qualificationsSendToPortico;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
     private String emptyQualificationsExplanation;
     
     public List<Integer> getRefereesSendToPortico() {

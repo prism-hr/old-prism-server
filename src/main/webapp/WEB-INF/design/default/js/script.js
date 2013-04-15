@@ -289,6 +289,8 @@ function addCounter() {
 			$(this).data("maxlength", 1000);
 		} else if  ($(this).attr('id') == 'position_remit') {
 			$(this).data("maxlength", 250);
+		} else if ($(this).attr('id') == 'templateContentId') {
+			return false;
 		} else {
 			$(this).data("maxlength", 2000);
 		}

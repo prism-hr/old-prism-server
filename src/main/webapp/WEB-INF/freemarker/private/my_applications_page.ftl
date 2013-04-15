@@ -87,7 +87,18 @@
             <div id="search-box" class="clearfix"> 
             <div class="actions">
           	<!-- Download button. --> 
-            <a target="_blank" name="downloadAll" id="downloadAll" class="btn btn-small"><i class="icon-download-alt"></i> Download  PDF</a>
+    		<div class="btn-group">
+                <button class="btn" id="search-report">Downloads</button>
+                <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <!--li><a href="#" id="search-report-html">Report in HTML</a></li>
+                    <li><a href="#" id="search-report-json">JSON</a></li-->
+                    <li><a href="#" id="search-report-csv">CSV Report</a></li>
+      				<li class="divider"></li>
+                    <li><a target="_blank" href="#" name="downloadAll" id="downloadAll"><i class="icon-download-alt"></i> Download  PDF</a></li>
+                </ul>
+              </div>
+            
             <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
             <input type="hidden" id="applicationStatusValues" name="applicationStatusValues" 
               value='<#list applicationStatusValues as value>${value.displayValue()}<#if value_has_next>,</#if></#list>'
@@ -147,20 +158,6 @@
               </#if>
               
                   <div class="btn-actions">
-                  
-
-                      <div class="btn-group">
-                        <button class="btn btn-danger" id="search-report">Report</button>
-                        <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" id="search-report-html">HTML</a></li>
-                            <li><a href="#" id="search-report-json">JSON</a></li>
-                            <li><a href="#" id="search-report-csv">CSV</a></li>
-              
-                        </ul>
-                      </div>
-
-                  
                       <div class="btn-group">
                         <button class="btn btn-success" id="search-go">Apply</button>
                         <button class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>

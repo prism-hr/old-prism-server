@@ -62,6 +62,7 @@ public class ApplicationFormListDAO {
             criteria.setFirstResult((pageCount - 1) * itemsPerPage);
             criteria.setMaxResults(itemsPerPage);
         }
+        criteria.setReadOnly(true);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {

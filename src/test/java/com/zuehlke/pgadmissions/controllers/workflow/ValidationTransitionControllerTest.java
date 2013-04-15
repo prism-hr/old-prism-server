@@ -234,8 +234,10 @@ public class ValidationTransitionControllerTest {
 		applicationServiceMock.save(applicationForm);
 		applicationServiceMock.makeApplicationNotEditable(applicationForm);
 		EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
-		controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap(), true, delegatedInterviewer);
+		String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap(), true, delegatedInterviewer);
 		EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+		
+		assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
 	}
 	
 	@Test

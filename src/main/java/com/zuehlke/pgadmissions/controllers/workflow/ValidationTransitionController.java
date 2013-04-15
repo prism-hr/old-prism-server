@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,11 +85,11 @@ public class ValidationTransitionController extends StateTransitionController {
     public String addComment(@RequestParam String applicationId, @RequestParam String closingDate, @RequestParam String projectTitle,
             @Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap modelMap,
             @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
-    	
-    	 modelMap.put("delegate", delegate);
+
+        modelMap.put("delegate", delegate);
+        ApplicationForm application = getApplicationForm(applicationId);
         try {
-            ApplicationForm form = getApplicationForm(applicationId);
-            Program programme = form.getProgram();
+            Program programme = application.getProgram();
             Date newClosingDate = null;
 
             if (StringUtils.isNotBlank(closingDate)) {
@@ -113,14 +114,14 @@ public class ValidationTransitionController extends StateTransitionController {
                 }
 
                 if (!modelMap.containsKey("closingDate_error")) {
-                    form.setBatchDeadline(newClosingDate);
+                    application.setBatchDeadline(newClosingDate);
                 }
             }
 
             if (!StringUtils.isBlank(projectTitle)) {
                 modelMap.put("projectTitle", projectTitle);
                 if (ESAPI.validator().isValidInput("input", projectTitle, "ExtendedAscii", 500, false)) {
-                    form.setProjectTitle(projectTitle);
+                    application.setProjectTitle(projectTitle);
                 } else {
                     modelMap.put("projectTitle_error", messageSource.getMessage("text.field.nonextendedascii", null, null));
                 }
@@ -136,16 +137,20 @@ public class ValidationTransitionController extends StateTransitionController {
                 newBadge.setProjectTitle(projectTitle);
                 newBadge.setProgram(programme);
                 badgeService.save(newBadge);
-                applicationsService.save(form);
+                applicationsService.save(application);
             }
 
             commentService.save(validationComment);
 
             if (validationComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
-                applicationsService.makeApplicationNotEditable(form);
+                applicationsService.makeApplicationNotEditable(application);
             }
         } catch (Exception e) {
             return STATE_TRANSITION_VIEW;
+        }
+        
+        if (BooleanUtils.isTrue(delegate)) {
+            return "redirect:/applications?messageCode=delegate.success&application="+ application.getApplicationNumber();
         }
 
         return stateTransitionViewResolver.resolveView(getApplicationForm(applicationId));

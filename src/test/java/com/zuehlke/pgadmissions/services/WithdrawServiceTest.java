@@ -1,25 +1,23 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Date;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 public class WithdrawServiceTest {
 
 	private ApplicationsService applicationServiceMock;
 	
-	private MailService mailServiceMock;
-	
-	private RefereeService refereeServiceMock;
+	private MailSendingService mailServiceMock;
 	
 	private WithdrawService service;
 	
@@ -29,23 +27,26 @@ public class WithdrawServiceTest {
 	public void shouldSaveFormAndSendEmails() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		applicationServiceMock.save(applicationForm);
-		Referee referee1 = new RefereeBuilder().id(1).build();
-		Referee referee2 = new RefereeBuilder().id(2).build();
-		List<Referee> referees = Arrays.asList(referee1, referee2 );
-		EasyMock.expect(refereeServiceMock.getRefereesWhoHaveNotProvidedReference(applicationForm)).andReturn(referees);
-	
-		mailServiceMock.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(referees, applicationForm);
-		EasyMock.replay(applicationServiceMock, refereeServiceMock, mailServiceMock);
+		mailServiceMock.scheduleWithdrawalConfirmation(applicationForm);
+		EasyMock.replay(applicationServiceMock, mailServiceMock, porticoQueueServiceMock);
 		service.saveApplicationFormAndSendMailNotifications(applicationForm);
-		EasyMock.verify(applicationServiceMock, refereeServiceMock, mailServiceMock);
+		EasyMock.verify(applicationServiceMock, mailServiceMock, porticoQueueServiceMock);
+	}
+	
+	@Test
+	public void shouldSendFormToPortico() {
+	    ApplicationForm form = new ApplicationFormBuilder().id(1).submittedDate(new Date()).status(ApplicationFormStatus.VALIDATION).build();
+	    EasyMock.expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationFormTransfer());
+	    EasyMock.replay(applicationServiceMock, mailServiceMock, porticoQueueServiceMock);
+	    service.sendToPortico(form);
+        EasyMock.verify(applicationServiceMock, mailServiceMock, porticoQueueServiceMock);
 	}
 	
 	@Before
 	public void setup(){
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-		mailServiceMock = EasyMock.createMock(MailService.class);
-		refereeServiceMock = EasyMock.createMock(RefereeService.class);
+		mailServiceMock = EasyMock.createMock(MailSendingService.class);
 		porticoQueueServiceMock = EasyMock.createMock(PorticoQueueService.class);
-		service = new WithdrawService(applicationServiceMock, mailServiceMock, refereeServiceMock, porticoQueueServiceMock);
+		service = new WithdrawService(applicationServiceMock, mailServiceMock, porticoQueueServiceMock);
 	}
 }

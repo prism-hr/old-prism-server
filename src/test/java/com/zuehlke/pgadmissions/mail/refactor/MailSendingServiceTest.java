@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.easymock.Capture;
 import org.easymock.CaptureType;
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -49,11 +49,14 @@ public class MailSendingServiceTest {
 
 	private UserService mockUserService;
 	
+	private RefereeService refereeServiceMock;
+	
 	@Before
 	public void setup() {
 		mockMailSender = createMock(TemplateAwareMailSender.class);
 		mockUserService = createMock(UserService.class);
-		service = new MailSendingService(mockMailSender, mockUserService);
+		refereeServiceMock = createMock(RefereeService.class);
+		service = new MailSendingService(mockMailSender, mockUserService, refereeServiceMock);
 	}
 	
 	@Test

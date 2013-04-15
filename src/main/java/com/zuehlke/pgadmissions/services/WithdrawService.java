@@ -6,40 +6,36 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 @Service
 public class WithdrawService {
 
 	private final ApplicationsService applicationService;
 	
-	private final MailService mailService;
-	
-	private final RefereeService refereeService;
-	
 	private final PorticoQueueService porticoQueueService;
 
+    private final MailSendingService mailSendingService;
+
 	public WithdrawService() {
-		this(null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-    public WithdrawService(ApplicationsService applicationService, MailService mailService,
-            RefereeService refereeService, PorticoQueueService porticoQueueService) {
-		this.mailService = mailService;
+    public WithdrawService(final ApplicationsService applicationService, final MailSendingService mailSendingService, final PorticoQueueService porticoQueueService) {
 		this.applicationService = applicationService;
-		this.refereeService = refereeService;
 		this.porticoQueueService = porticoQueueService;
+        this.mailSendingService = mailSendingService;
 	}
 	
 	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(final ApplicationForm form) {
 		applicationService.save(form);
-		mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(refereeService.getRefereesWhoHaveNotProvidedReference(form), form);
+		mailSendingService.scheduleWithdrawalConfirmation(form);
 	}
 	
     @Transactional
     public void sendToPortico(final ApplicationForm form) {
-        // TODO: Enable when ready for production
         if (form.isSubmitted()) {
             porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
         }

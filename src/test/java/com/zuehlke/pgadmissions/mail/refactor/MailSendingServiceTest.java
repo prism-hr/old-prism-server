@@ -8,6 +8,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
@@ -17,10 +18,12 @@ import static org.easymock.EasyMock.verify;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.easymock.Capture;
 import org.easymock.CaptureType;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class MailSendingServiceTest {
@@ -42,11 +46,14 @@ public class MailSendingServiceTest {
 	private MailSendingService service;
 	
 	private TemplateAwareMailSender mockMailSender;
+
+	private UserService mockUserService;
 	
 	@Before
 	public void setup() {
 		mockMailSender = createMock(TemplateAwareMailSender.class);
-		service = new MailSendingService(mockMailSender);
+		mockUserService = createMock(UserService.class);
+		service = new MailSendingService(mockMailSender, mockUserService);
 	}
 	
 	@Test
@@ -204,51 +211,21 @@ public class MailSendingServiceTest {
 	
 	@Test
 	public void sendReferenceSubmitConfirmationToAdministratorsShouldSuccessfullySendMessage() throws Exception {
-		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("Maccio").
-				lastName("Capatonda").build();
-		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		RegisteredUser admin1 = new RegisteredUserBuilder().id(3).build();
 		RegisteredUser admin2 = new RegisteredUserBuilder().id(4).build();
-		Referee referee = new RefereeBuilder().id(0).user(user).build();
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(12).build();
-		Program programme = new ProgramBuilder().id(75).title("programme_title").build();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(programme).
-				applicationNumber("form_number").programmeDetails(programmeDetails).applicant(applicant).build();
-		Map<String, Object> model1 = new HashMap<String, Object>();
-		model1.put("admin", admin1);
-		model1.put("application", form);
-		model1.put("referee", referee);
-		model1.put("host", Environment.getInstance().getApplicationHostName());
-	
-		Map<String, Object> model2 = new HashMap<String, Object>();
-		model2.putAll(model1);
-		model2.put("admin", admin2);
 		
-		expect(mockMailSender.resolveMessage("reference.provided.admin", "form_number", "programme_title", "Maccio", "Capatonda"))
-		.andReturn("Maccio Capatonda Application form_number for UCL programme_title - Reference Request");
-		
-		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
-		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		Capture<RegisteredUser> adminsCaptor = new Capture<RegisteredUser>(CaptureType.ALL);
+		mockUserService.setDigestNotificationType(and(isA(RegisteredUser.class), capture(adminsCaptor)),
+				eq(DigestNotificationType.UPDATE_NOTIFICATION));
 		expectLastCall().times(2);
 		
+		replay(mockUserService);
+		service.sendReferenceSubmitConfirmationToAdministrators(asList(admin1, admin2));
+		verify(mockUserService);
 		
-		replay(mockMailSender);
-		service.sendReferenceSubmitConfirmationToAdministrators(referee, asList(admin1, admin2), form);
-		verify(mockMailSender);
-		
-		PrismEmailMessage message = messageCaptor.getValues().get(0);
-		assertNotNull(message.getTo());
-		assertEquals(1, message.getTo().size());
-		assertEquals((Integer)3, message.getTo().get(0).getId());
-		assertEquals("Maccio Capatonda Application form_number for UCL programme_title - Reference Request", message.getSubjectCode());
-		assertModelEquals(model1, message.getModel());
-		
-		message = messageCaptor.getValues().get(1);
-		assertNotNull(message.getTo());
-		assertEquals(1, message.getTo().size());
-		assertEquals((Integer)4, message.getTo().get(0).getId());
-		assertEquals("Maccio Capatonda Application form_number for UCL programme_title - Reference Request", message.getSubjectCode());
-		assertModelEquals(model2, message.getModel());
+		List<RegisteredUser> admins = adminsCaptor.getValues();
+		assertEquals((Integer)3, admins.get(0).getId());
+		assertEquals((Integer)4, admins.get(1).getId());
 	}
 	
 	@Test

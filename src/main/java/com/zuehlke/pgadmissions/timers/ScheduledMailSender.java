@@ -60,7 +60,7 @@ public class ScheduledMailSender extends MailSender {
 	 */
     @Scheduled(cron = "0 0 12 * * ?")
     public void sendInterviewReminderNotifications() {
-    	log.info("Running \"sendInterviewReminderNotifications\" task");
+    	log.info("Running sendInterviewReminderNotifications task");
     	
     	Date timestamp = new Date();
     	DateTime from = new DateTime(timestamp).minusDays(1);

@@ -101,6 +101,38 @@ public class MailSendingServiceTest {
 	}
 	
 	@Test
+	public void sendReferenceSubmittedConfirmationToApplicantShouldSuccessfullySendMessage() throws Exception {
+		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("Ivo").lastName("Avido").build();
+		Program program = new ProgramBuilder().id(687).title("program_title").build();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicationNumber("application_number").id(45).applicant(applicant).build();
+		Referee referee = new RefereeBuilder().id(2).application(application).build();
+		String adminsEmails = "admins_emails";
+		Map<String, Object> model1 = new HashMap<String, Object>();
+		model1.put("adminsEmails", adminsEmails);
+		model1.put("referee", referee);
+		model1.put("application", application);
+		model1.put("host", getInstance().getApplicationHostName());
+		
+		expect(mockMailSender.resolveMessage("reference.provided.applicant", application.getApplicationNumber(),
+				program.getTitle(), applicant.getFirstName(), applicant.getLastName()))
+		.andReturn("Ivo Avido Application application_number for UCL program_title - Reference Provided");
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender);
+		service.sendReferenceSubmittedConfirmationToApplicant(referee, adminsEmails);
+		verify(mockMailSender);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals("Ivo Avido Application application_number for UCL program_title - Reference Provided", message.getSubjectCode());
+		assertModelEquals(model1, message.getModel());
+	}
+	
+	@Test
 	public void sendImportErrorMessageShouldSuccessfullySendMessage() throws Exception {
 		RegisteredUser user1 = new RegisteredUserBuilder().id(1).build();
 		RegisteredUser user2 = new RegisteredUserBuilder().id(2).build();

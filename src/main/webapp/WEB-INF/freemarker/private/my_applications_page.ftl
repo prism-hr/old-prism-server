@@ -112,7 +112,9 @@
                 <#if filter.searchCategory == "APPLICATION_STATUS">
                   <select id="searchTerm_${filter_index}" class="filterInput selector" name="filterInput" style="margin-left: 3px;" >
                     <#list applicationStatusValues as value>
-                      <option value="${value.displayValue()}">${value.displayValue()}</option>
+                      <option value="${value.displayValue()}"
+                        <#if filter.searchTerm = value.displayValue()>selected</#if>                      
+                      >${value.displayValue()}</option>
                     </#list>
                   </select>
                 <#elseif filter.searchCategory == "LAST_EDITED_DATE" || filter.searchCategory == "SUBMISSION_DATE">

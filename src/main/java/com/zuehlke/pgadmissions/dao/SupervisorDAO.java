@@ -92,11 +92,9 @@ public class SupervisorDAO {
     
     @SuppressWarnings("unchecked")
     public List<Supervisor> getPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours() {
-        DateTime today = new DateTime();
-        DateTime aDayAgo = today.minusDays(1);
         return sessionFactory.getCurrentSession()
                 .createCriteria(Supervisor.class, "supervisor")
-                .add(Restrictions.between("lastNotified", aDayAgo, today))
+                .add(Restrictions.ge("confirmedSupervisionDate", new DateTime().minusDays(1).toDate()))
                 .add(Restrictions.eq("confirmedSupervision", true))
                 .add(Restrictions.eq("isPrimary", true))
                 .createAlias("approvalRound.application", "application")

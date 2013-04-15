@@ -17,15 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
+import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -38,6 +42,8 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     private final CommentDAO commentDAO;
 
     private final SupervisorDAO supervisorDAO;
+
+    private final StageDurationDAO stageDurationDAO;
 
     private class UpdateDigestNotificationClosure implements Closure {
         private final DigestNotificationType type;
@@ -55,15 +61,16 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     @Autowired
     public ScheduledMailSendingService(final TemplateAwareMailSender mailSender, final UserService userService,
             final ApplicationFormDAO applicationFormDAO, final NotificationRecordDAO notificationRecordDAO,
-            final CommentDAO commentDAO, final SupervisorDAO supervisorDAO) {
+            final CommentDAO commentDAO, final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO) {
         super(mailSender, userService, applicationFormDAO);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
+        this.stageDurationDAO = stageDurationDAO;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Scheduled(cron = "${email.digest.cron}")
@@ -143,10 +150,20 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
-    // Business logic is currently incorrect
-    // Approver cannot approve as soon as the application is moved into the approval state
-    // Approver is notified to approve as soon as the application is moved into the approval state
     public void scheduleApprovalRequest() {
+        final StageDuration approvalDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
+        CollectionUtils.forAllDo(supervisorDAO.getPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours(), new Closure() {
+            @Override
+            public void execute(final Object input) {
+                Supervisor supervisor = (Supervisor) input;
+                ApprovalRound approvalRound = supervisor.getApprovalRound();
+                DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
+                if (approvalRoundExpiryDate.isAfterNow()) {
+                    ApplicationForm form = approvalRound.getApplication();
+                    CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+                }
+            }
+        });
     }
 
     /**

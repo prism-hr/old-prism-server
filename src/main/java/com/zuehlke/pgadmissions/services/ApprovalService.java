@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
-import com.zuehlke.pgadmissions.mail.refactor.ScheduledMailSendingService;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
@@ -56,7 +56,7 @@ public class ApprovalService {
 
     private final SupervisorDAO supervisorDAO;
 
-    private final ScheduledMailSendingService scheduledMailSendingService;
+    private final MailSendingService mailSendingService;
 
     public ApprovalService() {
         this(null, null, null, null, null, null, null, null, null, null);
@@ -66,7 +66,7 @@ public class ApprovalService {
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO,
             ApprovalRoundDAO approvalRoundDAO, StageDurationService stageDurationService, EventFactory eventFactory,
             CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,
-            PorticoQueueService approvedSenderService, ScheduledMailSendingService scheduledMailSendingService) {
+            PorticoQueueService approvedSenderService, MailSendingService mailSendingService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
@@ -76,7 +76,7 @@ public class ApprovalService {
         this.supervisorDAO = supervisorDAO;
         this.programmeDetailDAO = programmeDetailDAO;
         this.approvedSenderService = approvedSenderService;
-        this.scheduledMailSendingService = scheduledMailSendingService;
+        this.mailSendingService = mailSendingService;
     }
 
     public void confirmSupervision(ApplicationForm application, ConfirmSupervisionDTO confirmSupervisionDTO) {
@@ -93,7 +93,7 @@ public class ApprovalService {
             approvalRound.setRecommendedConditionsAvailable(confirmSupervisionDTO.getRecommendedConditionsAvailable());
             approvalRound.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
             approvalRound.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
-            scheduledMailSendingService.scheduleSupervisionConfirmedNotification(application);
+            mailSendingService.scheduleSupervisionConfirmedNotification(application);
         }
 
         if (BooleanUtils.isFalse(confirmed)) {

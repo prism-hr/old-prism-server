@@ -865,6 +865,10 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p>
      */
     public void scheduleInterviewFeedbackRequest() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
+            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+        }
     }
 
     /**

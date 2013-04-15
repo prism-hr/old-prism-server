@@ -93,6 +93,7 @@ public class ApprovalService {
             approvalRound.setRecommendedConditionsAvailable(confirmSupervisionDTO.getRecommendedConditionsAvailable());
             approvalRound.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
             approvalRound.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
+            supervisor.setConfirmedSupervisionDate(new Date());
             mailSendingService.scheduleSupervisionConfirmedNotification(application);
         }
 

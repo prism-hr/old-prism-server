@@ -11,6 +11,7 @@ public class SupervisorBuilder {
 	private Integer id;
 	private RegisteredUser user;
 	private Date lastNotified;
+	private Date confirmedSupervisionDate;
 	private ApprovalRound approvalRound;
 	private Boolean isPrimary;
 	private Boolean confirmedSupervision;
@@ -19,6 +20,11 @@ public class SupervisorBuilder {
 	public SupervisorBuilder id(Integer id) {
 		this.id = id;
 		return this;
+	}
+	
+	public SupervisorBuilder confirmedSupervisionDate(final Date date) {
+	    this.confirmedSupervisionDate = date;
+	    return this;
 	}
 
 	public SupervisorBuilder declinedSupervisionReason(String reason) {
@@ -60,6 +66,7 @@ public class SupervisorBuilder {
 		supervisor.setIsPrimary(isPrimary);
 		supervisor.setConfirmedSupervision(confirmedSupervision);
 		supervisor.setDeclinedSupervisionReason(declinedSupervisionReason);
+		supervisor.setConfirmedSupervisionDate(confirmedSupervisionDate);
 		return supervisor;
 	}
 }

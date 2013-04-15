@@ -78,10 +78,14 @@ function showFirstQualificationEntryOrExplanationArea() {
 function postQualificationsData() {
     $('#qualificationsSection > div').append('<div class="ajax" />');
     var qualificationsSendToPortico = collectQualificationsSendToPortico();
-    var explanation = $("#explanationText").val();
-    if(qualificationsSendToPortico.length > 0){
-    	// explanation doesn't matter when at least one qualification is selected
-    	explanation = "";
+    data = {
+        applicationId : $('#applicationId').val(),
+        qualificationsSendToPortico: JSON.stringify(qualificationsSendToPortico),
+        cacheBreaker: new Date().getTime()
+    };
+    
+    if($('#explanationArea').is(':visible')){
+    	data.emptyQualificationsExplanation = $("#explanationText").val();
     }
     $.ajax({
         type : 'POST',
@@ -93,12 +97,7 @@ function postQualificationsData() {
             403 : function() { window.location.href = "/pgadmissions/404"; }
         },
         url : "/pgadmissions/approval/postQualificationsData",
-        data :  {
-            applicationId : $('#applicationId').val(),
-            qualificationsSendToPortico: JSON.stringify(qualificationsSendToPortico),
-            emptyQualificationsExplanation: explanation,
-            cacheBreaker: new Date().getTime()
-        },
+        data :  data,
         success : function(data) {
         	$("#qualificationsSection").html(data);
         },

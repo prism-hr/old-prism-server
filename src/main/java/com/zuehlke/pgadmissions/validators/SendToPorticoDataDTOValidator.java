@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -17,7 +16,7 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 public class SendToPorticoDataDTOValidator extends AbstractValidator {
 
     private final QualificationService qualificationService;
-    
+
     private final RefereeService refereeService;
 
     @Autowired
@@ -41,14 +40,15 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
         String explanation = dto.getEmptyQualificationsExplanation();
 
         if (qualifications != null) {
-            if (qualifications.isEmpty() && StringUtils.isBlank(explanation)) {
-                errors.rejectValue("emptyQualificationsExplanation", "portico.submit.explanation.empty");
+
+            if (qualifications.isEmpty()) {
+                errors.rejectValue("qualificationsSendToPortico", "portico.submit.explanation.required");
+                if (explanation != null && explanation.isEmpty()) {
+                    // "explanation is not null" means that explanation field was visible when user submitted form 
+                    errors.rejectValue("emptyQualificationsExplanation", "portico.submit.explanation.empty");
+                }
             }
-            
-            if(!qualifications.isEmpty() && explanation != null){
-                errors.rejectValue("emptyQualificationsExplanation", "portico.submit.explanation.notnull");
-            }
-            
+
             if (qualifications.size() > 2) {
                 errors.rejectValue("qualificationsSendToPortico", "portico.submit.qualifications.exceed");
             }
@@ -65,10 +65,10 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
             if (referees.size() != 2) {
                 errors.rejectValue("refereesSendToPortico", "portico.submit.referees.invalid");
             }
-            
-            for(Integer refereeId : referees){
+
+            for (Integer refereeId : referees) {
                 Referee referee = refereeService.getRefereeById(refereeId);
-                if(!referee.hasResponded()){
+                if (!referee.hasResponded()) {
                     errors.rejectValue("refereesSendToPortico", "portico.submit.referees.hasNotResponded");
                 }
             }

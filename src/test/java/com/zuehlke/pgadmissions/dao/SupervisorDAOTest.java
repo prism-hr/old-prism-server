@@ -311,7 +311,7 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
         List<Supervisor> supervisors = dao.getPrimarySupervisorsDueReminder();
         assertFalse(listContainsSupervisor(supervisor, supervisors));
     }
-    
+
     private boolean listContainsSupervisor(Supervisor supervisor, List<Supervisor> supervisors) {
         for (Supervisor entry : supervisors) {
             if (supervisor.getId().equals(entry.getId())) {

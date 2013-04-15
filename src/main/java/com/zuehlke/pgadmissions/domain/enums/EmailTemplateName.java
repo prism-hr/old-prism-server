@@ -18,7 +18,7 @@ public enum EmailTemplateName {
 	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION("Supervisor confirm supervision notification"),//sent by timer
 	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION_REMINDER("Supervisor confirm supervision notification reminder"),//sent by timer
 	SUPERVISOR_NOTIFICATION("Supervisor notification"),//sent by timer
-	APPROVED_NOTIFICATION("Approved notification"),//sent by timer
+	APPROVED_NOTIFICATION("Approved notification"),//sent on event
 	APPLICATION_UPDATED_CONFIRMATION("Application updated confirmation"),//sent by timer
 	APPROVAL_RESTART_REQUEST_REMINDER("Approval restart request reminder"),//sent by timer
 	RESTART_APPROVAL_REQUEST("Restart approval request"),//sent by timer
@@ -28,12 +28,12 @@ public enum EmailTemplateName {
 	REGISTRATION_CONFIRMATION("Registration confirmation"), //sent on event
 	EXPORT_ERROR("Export error"), //sent on event
 	IMPORT_ERROR("Import error"), //sent on event
-	REJECTED_NOTIFICATION("Rejected notification"),//sent by timer
+	REJECTED_NOTIFICATION("Rejected notification"),//sent on event
 	APPLICATION_APPROVAL_REMINDER("Application approval reminder"),//sent by timer
 	APPLICATION_VALIDATION_REMINDER("Application validation reminder"),//sent by timer
 	MOVED_TO_APPROVED_NOTIFICATION("Moved to approved notification"),//sent by timer
 	MOVED_TO_REVIEW_NOTIFICATION("Moved to review notification"),//sent by timer
-	APPLICATION_SUBMIT_CONFIRMATION("Application submit confirmation"),//sent by timer
+	APPLICATION_SUBMIT_CONFIRMATION("Application submit confirmation"),//sent on event
 	APPLICATION_SUBMIT_CONFIRMATION_ADMIN("Application submit confirmation admin"),//sent by timer
 	MOVED_TO_APPROVAL_NOTIFICATION("Moved to approval notification"),//sent by timer
 	MOVED_TO_INTERVIEW_NOTIFICATION("Moved to interview notification"),//sent by timer

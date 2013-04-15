@@ -93,25 +93,10 @@ public class RefereeService {
 
     private void sendMailToApplicant(Referee referee) {
         try {
-            ApplicationForm form = referee.getApplication();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
-            mailService.sendReferenceSubmittedConfirmationToApplicant(referee, adminsEmails);
+            mailService.sendReferenceSubmittedConfirmationToApplicant(referee);
         } catch (Exception e) {
             log.warn("error while sending email", e);
         }
-    }
-
-    private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
-        StringBuilder adminsMails = new StringBuilder();
-        for (RegisteredUser admin : administrators) {
-            adminsMails.append(admin.getEmail());
-            adminsMails.append(", ");
-        }
-        String result = adminsMails.toString();
-        if (!result.isEmpty()) {
-            result = result.substring(0, result.length() - 1);
-        }
-        return result;
     }
 
     public RegisteredUser getRefereeIfAlreadyRegistered(Referee referee) {
@@ -292,9 +277,7 @@ public class RefereeService {
     private void sendMailToReferee(Referee referee) {
         try {
             ApplicationForm form = referee.getApplication();
-            List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-            mailService.sendRefereeMailNotification(referee, form, adminsEmails);
+            mailService.sendReferenceRequest(referee, form);
         } catch (Exception e) {
             log.warn("error while sending email", e);
         }

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
+import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -27,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -48,20 +50,24 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     private final SupervisorDAO supervisorDAO;
 
     private final StageDurationDAO stageDurationDAO;
+    
+    private final ReviewerDAO reviewerDAO;
 
     @Autowired
     public ScheduledMailSendingService(final TemplateAwareMailSender mailSender, final UserService userService,
             final ApplicationFormDAO applicationFormDAO, final NotificationRecordDAO notificationRecordDAO,
-            final CommentDAO commentDAO, final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO) {
+            final CommentDAO commentDAO, final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO,
+            final ReviewerDAO reviewerDAO) {
         super(mailSender, userService, applicationFormDAO);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
         this.stageDurationDAO = stageDurationDAO;
+        this.reviewerDAO = reviewerDAO;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Scheduled(cron = "${email.digest.cron}")
@@ -90,7 +96,8 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         scheduleReviewEvaluationRequest();
         scheduleReviewEvaluationReminder();
         scheduleConfirmSupervisionRequest();
-        scheduleConfirmSupervisionReminder();        
+        scheduleConfirmSupervisionReminder();
+        scheduleApplicationUnderReviewNotification();
         sendDigestsToUsers();
         log.info("Finished ScheduledMailSendingService Task");
     }
@@ -99,9 +106,14 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void sendDigestsToUsers() {
         log.info("Sending daily digests to users");
         
-        PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subjectCode("Prism Digest Notification").emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
-        PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subjectCode("Prism Digest Task Reminder").emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
-        PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subjectCode("Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
+        PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subjectCode(
+                "Prism Digest Notification").emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
+        
+        PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subjectCode(
+                "Prism Digest Task Reminder").emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
+        
+        PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subjectCode(
+                "Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
         
         for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
             RegisteredUser user = userService.getUser(userId);
@@ -1011,7 +1023,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    public void sendApplicationUnderReviewNotification() {
+    public void scheduleApplicationUnderReviewNotification() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION, ApplicationFormStatus.REVIEW)) {
             createNotificationRecordIfNotExists(form, NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION);
             userService.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
@@ -1292,6 +1304,11 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p>
      */
     public void scheduleReviewEvaluationRequest() {
+        for (Reviewer reviewer : reviewerDAO.getReviewersDueNotification()) {
+            reviewer.setLastNotified(new Date());
+            reviewerDAO.save(reviewer);
+            userService.setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+        }
     }
 
     /**
@@ -1329,6 +1346,11 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p>
      */
     public void scheduleReviewEvaluationReminder() {
+        for (Reviewer reviewer : reviewerDAO.getReviewersDueReminder()) {
+            reviewer.setLastNotified(new Date());
+            reviewerDAO.save(reviewer);
+            userService.setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+        }
     }
 
     /**

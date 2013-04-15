@@ -8,6 +8,9 @@
           <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
         </div>
             <p class="project_title"><span/><b>Project Title:</b> ${(comment.projectTitle?html)!}</p>
+            <p><span/>
+                <i>${(comment.projectAbstract?html)!}</i>
+            </p>
       </div>
     </li>
 </#if>

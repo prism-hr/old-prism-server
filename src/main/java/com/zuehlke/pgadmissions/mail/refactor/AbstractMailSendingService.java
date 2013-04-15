@@ -2,10 +2,14 @@ package com.zuehlke.pgadmissions.mail.refactor;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringUtils;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -51,6 +55,14 @@ public class AbstractMailSendingService {
     protected Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm form) {
         return form.getProgram().getAdministrators();
     }
+    
+    protected String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
+		Set<String> administratorMails = new LinkedHashSet<String>();
+		for (RegisteredUser admin : administrators) {
+			administratorMails.add(admin.getEmail());
+		}
+		return StringUtils.join(administratorMails.toArray(new String[] {}), ";");
+	}
     
     @SuppressWarnings("unchecked")
     protected Collection<RegisteredUser> getInterviewersFromLatestInterviewRound(final ApplicationForm form) {

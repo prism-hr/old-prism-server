@@ -340,7 +340,7 @@ public class MailSendingServiceTest {
 		expect(mockMailSender.resolveMessage("registration.confirmation", (Object[])null)).andReturn("Your Registration for UCL Prism");
 		
 		replay(mockMailSender);
-		service.sendConfirmationEmailToRegisteringUser(user, action);
+		service.sendRegistrationConfirmation(user, action);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
@@ -360,7 +360,7 @@ public class MailSendingServiceTest {
 		expect(mockMailSender.resolveMessage("registration.confirmation", (Object[])null)).andReturn("Your Registration for UCL Prism");
 		
 		replay(mockMailSender);
-		service.sendConfirmationEmailToRegisteringUser(user, null);
+		service.sendRegistrationConfirmation(user, null);
 		verify(mockMailSender);
 	}
 	

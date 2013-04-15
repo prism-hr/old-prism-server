@@ -1090,6 +1090,7 @@ span.count {
 .applicantinfo {
   font-size: 18px;
   line-height: 30px;
+  padding-right: 235px;
 }
 .rsbox {
   position: absolute;

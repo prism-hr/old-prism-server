@@ -902,6 +902,10 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p>
      */
     public void scheduleInterviewFeedbackReminder() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
+            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+        }
     }
 
     /**
@@ -934,6 +938,10 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p>
      */
     public void scheduleUnderApprovalNotification() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueMovedToApprovalNotifications()) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
+            userService.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
+        }
     }
 
     /**
@@ -1000,6 +1008,10 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p>
      */
     public void sendApplicationUnderReviewNotification() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION, ApplicationFormStatus.REVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION);
+            userService.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
+        }
     }
 
     /**

@@ -57,6 +57,10 @@ public class TemplateAwareMailSender extends AbstractMailSender {
    
     @Override
     void sendEmailAsProductionMessage(final PrismEmailMessage message) {
+        if (isNotValidEmailMessage(message)) {
+            return;
+        }
+        
         log.info(String.format("Sending PRODUCTION Email: %s", message.toString()));
         try {
             javaMailSender.send(new MimeMessagePreparator() {
@@ -107,6 +111,10 @@ public class TemplateAwareMailSender extends AbstractMailSender {
     
     @Override
     void sendEmailAsDevelopmentMessage(final PrismEmailMessage message) {
+        if (isNotValidEmailMessage(message)) {
+            return;
+        }
+        
         log.info(String.format("Sending DEVELOPMENT Email: %s", message.toString()));
         try {
             javaMailSender.send(new MimeMessagePreparator() {
@@ -148,5 +156,12 @@ public class TemplateAwareMailSender extends AbstractMailSender {
             log.error(String.format("Failed to send email message %s", message.toString()), e);
             throw new PrismMailMessageException(message);
         }
+    }
+    
+    private boolean isNotValidEmailMessage(final PrismEmailMessage message) {
+        if (message.getTo().isEmpty() && message.getCc().isEmpty() && message.getBcc().isEmpty()) {
+            return true;
+        }
+        return false;
     }
 }

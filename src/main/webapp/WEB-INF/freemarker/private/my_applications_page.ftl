@@ -99,19 +99,27 @@
               <div class="filter" id="filter_${filter_index}">
                 <select class="selectCategory" name="searchCategory" id="searchCategory_${filter_index}">
                   <option value="">Column...</option>
-                  <#list searchCategories as category> <option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">
-                  ${category.displayValue()}
-                  </option>
+                  <#list searchCategories as category>
+                    <option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}</option>
                   </#list>
                 </select>
                 <select class="selectPredicate" name="searchPredicate" id="searchPredicate_${filter_index}">
-                  <#list filter.searchCategory.availablePredicates as predicate> <option <#if filter.searchPredicate = predicate>selected="selected"</#if> value="${predicate}">
-                  ${predicate.displayValue()}
-                  </option>
+                  <#list filter.searchCategory.availablePredicates as predicate>
+                    <option <#if filter.searchPredicate = predicate>selected="selected"</#if> value="${predicate}">${predicate.displayValue()}</option>
                   </#list>
                 </select>
-                
-                <input class="filterInput" type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
+
+                <#if filter.searchCategory == "APPLICATION_STATUS">
+                  <select name="filterInput"  style="margin-left: 3px;" class="filterInput selector">
+                    <#list applicationStatusValues as value>
+                      <option value="${value.displayValue()}">${value.displayValue()}</option>
+                    </#list>
+                  </select>
+                <#elseif filter.searchCategory == "LAST_EDITED_DATE" || filter.searchCategory == "SUBMISSION_DATE">
+                  <input class="filterInput half date" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
+                <#else>
+                  <input class="filterInput" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
+                </#if>
                 <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>

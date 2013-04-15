@@ -6,6 +6,10 @@ $(document).ready(function() {
 
 	// Modal window functionality.
 	setupModalBox();
+	
+	$('#search-box').find('.date').each(function() {
+	    bindDatePicker($(this));
+    });
 
 	populateApplicationList();
 
@@ -228,8 +232,8 @@ function inputBackNormal(mainInput) {
 }
 //field changer
 function fieldChange(selected, id) {
+    inputBackNormal(id.parent());
 	if (selected == "APPLICATION_STATUS") {
-		inputBackNormal(id.parent());
 		// Create select                                        
 		var myoptions = $("#applicationStatusValues").val();                                  
 		var data = myoptions.split(',');                                        
@@ -244,13 +248,10 @@ function fieldChange(selected, id) {
 
 		
 	} else if (selected == "LAST_EDITED_DATE" || selected == "SUBMISSION_DATE") {
-		inputBackNormal(id.parent());
 		// Find input and add classes
 		id.parent().find('.filterInput').addClass('half date').val('');
 		//bind datapicker
 		bindDatePicker(id.parent().find('.filterInput'));
-	} else {
-		inputBackNormal(id.parent());
 	}
 }
 function resetPageCount() {

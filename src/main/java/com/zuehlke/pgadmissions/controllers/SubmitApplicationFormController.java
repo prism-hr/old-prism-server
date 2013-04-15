@@ -90,7 +90,7 @@ public class SubmitApplicationFormController {
         applicationForm.setSubmittedDate(new Date());
         applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
-        applicationService.save(applicationForm);
+        applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 

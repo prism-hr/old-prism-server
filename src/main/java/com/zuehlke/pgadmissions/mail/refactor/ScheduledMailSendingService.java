@@ -362,62 +362,42 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     /**
      * <p>
      * <b>Summary</b><br/>
-     * Informs users that they are required to review applications.<br/>
+        * Informs users that they are required to review applications.<br/>
      * Finds all applications in the system that require reviews, and;<br/> 
      * Schedules their Reviewers to be notified.
-     * <p/><p>
+        * <p/><p>
      * <b>Recipients</b><br/>
      * Reviewer
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
+        * </p><p>
+        * <b>Previous Email Template Name</b><br/>
      * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b>
+        * </p><p> 
+        * <b>Business Rules</b>
      * <ol>
      * <li>Reviewers can review applications, while:
      *    <ol>
-     *    <li>They are in the current review state.</li>
+        *    <li>They are in the current review state.</li>
      *    </ol></li>
      * <li>They are scheduled to be notified to do so, when:
      *    <ol>
-     *    <li>Applications have been moved into the review state in the last 24 hours.</li>
+     *    <li>Applications have been moved into the review state in the last 24 hours, and;
+     *       <ol>
+     *       <li>No closing dates have been specified, or;/li>
+     *       </ol></li>
+     *    </ol></li>
+     *    <li>Application closing dates have expired in the last 24 hours, and.</li>
      *    </ol></li>
      * </ol>
-     * </p><p>
+        * </p><p>
      * <b>Notification Type</b><br/>
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
-     */
+        */
     public void scheduleReviewRequest() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
             createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
             CollectionUtils.forAllDo(getReviewersFromLatestReviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
         }
-    }
-    
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they have submitted applications.
-     * <p/><p>
-     * <b>Recipients</b>
-     * Applicant
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Applicants are notified, when:
-     *    <ol><li>They submit applications.</li>
-     *    </ol></li>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b>
-     * Immediate Notification
-     * </p>
-     */
-    public void sendSubmissionConfirmation() {
     }
     
     /**
@@ -960,40 +940,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         }
     }
 
-    /**
-    * <p>
-    * <b>Summary</b><br/>
-    * Informs users when applications have been approved.
-    * <p/><p>
-    * <b>Recipients</b>
-    * Applicant
-    * </p><p>
-    * <b>Previous Email Template Name</b><br/>
-    * Kevin to Insert
-    * </p><p> 
-    * <b>Business Rules</b><br/>
-    * <ol>
-    * <li>Administrators can approve applications, while:
-    *    <ol>
-    *    <li>They are not in the rejected, approved or withdrawn states.</li>
-    *    </ol></li>
-    * <li>Approvers can approve applications, while:
-    *    <ol>
-    *    <li>They are in the approval state.</li>
-    *    </ol></li>
-    * <li>Applicants are notified, when:
-    *    <ol>
-    *    <li>Applications are approved.</li>
-    *    </ol></li>
-    * </ol>
-    * </p><p>
-    * <b>Notification Type</b>
-    * Immediate Notification
-    * </p>
-    */
-    public void sendApprovedNotification() {
-    }
-
+    
     /**
      * <p>
      * <b>Summary</b><br/>
@@ -1030,34 +977,6 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         }
     }
 
-    /**
-    * <p>
-    * <b>Summary</b><br/>
-    * Informs users that they are required to provide references.
-    * <p/><p>
-    * <b>Recipients</b>
-    * Referees
-    * </p><p>
-    * <b>Previous Email Template Name</b><br/>
-    * Kevin to Insert
-    * </p><p> 
-    * <b>Business Rules</b><br/>
-    * <ol>
-    * <li>Referees are notified to provide references, when:
-    *    <ol>
-    *    <li>Administrators move applications from the validation state into a state, that:
-    *       <ol>
-    *       <li>Is not the rejected or approved state</li>
-    *       </ol></li>
-    *    </ol></li>
-    * </ol>
-    * </p><p>
-    * <b>Notification Type</b>
-    * Immediate Notification
-    * </p>
-    */
-    public void sendReferenceRequest() {
-    }
 
     /**
      * <p>
@@ -1089,40 +1008,10 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Scheduled Notification
      * </p>
      */
+    //@Scheduled
     public void sendReferenceReminder() {
     }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they are required to confirm registrations.
-     * <p/><p>
-     * <b>Recipients</b>
-     * Users
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Users can register, when they are:
-     *    <ol>
-     *    <li>Invited to do so by Administrators, or;</li>
-     *    <li>In the process of initiating applications;</li>
-     *    </ol></li>
-     * <li>They are notified to confirm registrations, when:
-     *    <ol>
-     *    <li>Submitted registrations.</li>
-     *    </ol></li>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b>
-     * Immediate Notification
-     * </p>
-     */
-    public void sendRegistrationConfirmation() {
-    }
-
+    
     /**
      * <p>
      * <b>Summary</b><br/>
@@ -1150,42 +1039,8 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Immediate Notification
      * </p>
      */
+    //@Scheduled (see RegistryNotificationTimerTask)
     public void sendValidationRequestToRegistry() {
-    }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when applications have been rejected.
-     * <p/><p>
-     * <b>Recipients</b>
-     * Applicant
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Administrators can reject applications, when:
-     *    <ol>
-     *    <li>They are not in the rejected, approved or withdrawn states.</li>
-     *    </ol></li>
-     * <li>Approvers can reject applications, when:
-     *    <ol>
-     *    <li>They are in the approval state.</li>
-     *    </ol></li>
-     * <li>Applicants are notified of rejections, when:
-     *    <ol>
-     *    <li>Applications are rejected by Administrators or Approvers.</li>
-     *    </ol></li>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b>
-     * Immediate Notification
-     * </p>
-     */
-    // TODO: Current business logic is incorrect. Administrator cannot reject application when it is in approval state.
-    public void sendRejectionConfirmationToApplicant() {
     }
 
     /**
@@ -1431,4 +1286,35 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
             supervisorDAO.save(supervisor);
         }
     }
+    
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+        * Informs users when applications have been moved into the interview state.<br/>
+     * Finds all applications in the system that have recently been moved into the interview state, and;<br/> 
+     * Schedules their Applicants to be notified.
+        * <p/><p>
+     * <b>Recipients</b><br/>
+     * Applicant
+        * </p><p>
+        * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+        * </p><p> 
+        * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can move applications into the interview state, while:
+     *    <ol>
+        *    <li>They are not in the rejected, approved or withdrawn states.</li>
+     *    </ol></li>
+     * <li>Applicants are scheduled to be notified, when:
+     *    <ol>
+     *    <li>Applications have been moved into the interview state within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+        * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 1 (Update Notification)
+     * </p>
+        */
+       public void scheduleApplicationUnderInterviewNotification() { }
 }

@@ -291,7 +291,7 @@ public class ApplicationsReportService {
         if (approvalRound != null) {
             Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
             if (primarySupervisor != null) {
-                return primarySupervisor.getUser().getFullName();
+                return primarySupervisor.getUser().getDisplayName();
             }
         }
         return "";
@@ -302,7 +302,7 @@ public class ApplicationsReportService {
         if (approvalRound != null) {
             Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
             if (secondarySupervisor != null) {
-                return secondarySupervisor.getUser().getFullName();
+                return secondarySupervisor.getUser().getDisplayName();
             }
         }
         return "";

@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 @Service
 @Transactional
@@ -25,18 +26,20 @@ public class InterviewService {
     private final ApplicationFormDAO applicationFormDAO;
     private final EventFactory eventFactory;
     private final InterviewerDAO interviewerDAO;
+    private final MailSendingService mailService;
 
     public InterviewService() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
     public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO,
-            EventFactory eventFactory, InterviewerDAO interviewerDAO) {
+            EventFactory eventFactory, InterviewerDAO interviewerDAO, final MailSendingService mailService) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;
         this.interviewerDAO = interviewerDAO;
+		this.mailService = mailService;
     }
 
     public Interview getInterviewById(Integer id) {
@@ -54,6 +57,7 @@ public class InterviewService {
         calendar.setTime(interview.getInterviewDueDate());
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         applicationForm.setDueDate(calendar.getTime());
+        mailService.sendInterviewConfirmationToInterviewer(interview.getInterviewers());
         interviewDAO.save(interview);
         applicationForm.setLatestInterview(interview);
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);

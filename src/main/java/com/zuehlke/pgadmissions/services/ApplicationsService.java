@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 @Transactional
 public class ApplicationsService {
 	
-	private final static Logger log = LoggerFactory.getLogger(ApplicationsService.class);
+	private final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
 
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
@@ -219,7 +219,7 @@ public class ApplicationsService {
     		applicationFormDAO.save(applicationForm);
     	}
     	catch (Exception e) {
-    		log.warn("Error while sending application submission confirmation to applicant: {}", e);
+    		log.warn("{}", e);
     	}
 	}
 

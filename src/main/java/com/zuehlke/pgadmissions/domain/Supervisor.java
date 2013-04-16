@@ -13,6 +13,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
+
 @Entity(name = "SUPERVISOR")
 public class Supervisor implements Serializable {
 
@@ -98,5 +100,13 @@ public class Supervisor implements Serializable {
 
     public void setDeclinedSupervisionReason(String declinedSupervisionReason) {
         this.declinedSupervisionReason = declinedSupervisionReason;
+    }
+    
+    public boolean hasDeclinedSupervision(){
+        return declinedSupervisionReason != null;
+    }
+    
+    public boolean hasResponded(){
+        return BooleanUtils.isTrue(getConfirmedSupervision()) || hasDeclinedSupervision();
     }
 }

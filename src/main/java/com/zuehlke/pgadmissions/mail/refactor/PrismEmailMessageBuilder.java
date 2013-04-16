@@ -24,9 +24,7 @@ public class PrismEmailMessageBuilder {
     
     protected String replyToAddress;
     
-    protected String subjectCode;
-    
-    protected List<Object> subjectArgs;
+    protected String subject;
     
     protected HashMap<Integer, RegisteredUser> to = new HashMap<Integer, RegisteredUser>();
     
@@ -122,18 +120,9 @@ public class PrismEmailMessageBuilder {
         return this;
     }
     
-    public PrismEmailMessageBuilder subjectArgs(final List<Object> subjectArgs) {
-        this.subjectArgs = subjectArgs;
-        return this;
-    }
     
-    public PrismEmailMessageBuilder subjectArgs(final EmailSubjectBuilder subjectBuilder) {
-        this.subjectArgs = subjectBuilder.build();
-        return this;
-    }
-    
-    public PrismEmailMessageBuilder subjectCode(final String subjectCode) {
-        this.subjectCode = subjectCode;
+    public PrismEmailMessageBuilder subject(final String subjectCode) {
+        this.subject = subjectCode;
         return this;
     }
     
@@ -189,8 +178,7 @@ public class PrismEmailMessageBuilder {
         msg.setBcc(new ArrayList<RegisteredUser>(bcc.values()));
         msg.setCc(new ArrayList<RegisteredUser>(cc.values()));
         msg.setFromAddress(fromAddress);
-        msg.setSubjectArgs(subjectArgs);
-        msg.setSubjectCode(subjectCode);
+        msg.setSubjectCode(subject);
         msg.setTo(new ArrayList<RegisteredUser>(to.values()));
         msg.setModel(model);
         msg.setTemplateName(templateName);
@@ -208,8 +196,7 @@ public class PrismEmailMessageBuilder {
         newCopy.form = builder.form;
         newCopy.fromAddress = String.valueOf(builder.fromAddress);
         newCopy.model = new HashMap<String, Object>(builder.model);
-        newCopy.subjectArgs = new ArrayList<Object>(builder.subjectArgs);
-        newCopy.subjectCode = String.valueOf(builder.subjectCode);
+        newCopy.subject = String.valueOf(builder.subject);
         newCopy.templateName = builder.templateName;
         newCopy.replyToAddress = String.valueOf(builder.replyToAddress);
         newCopy.to = new HashMap<Integer, RegisteredUser>(builder.to);

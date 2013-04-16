@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
+import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_REMINDER;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
@@ -25,21 +28,33 @@ import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
+import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.DateUtils;
+import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public class ScheduledMailSendingService extends AbstractScheduledMailSendingService {
+public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);
 
@@ -52,22 +67,42 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     private final StageDurationDAO stageDurationDAO;
     
     private final ReviewerDAO reviewerDAO;
+    
+    private final ApplicationsService applicationsService;
+    
+    private final ConfigurationService configurationService;
+    
+    private final CommentFactory commentFactory;
+
+    private final CommentService commentService;
+    
+    private final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory;
+    
+    private final PdfDocumentBuilder pdfDocumentBuilder;
 
     @Autowired
-    public ScheduledMailSendingService(final TemplateAwareMailSender mailSender, final UserService userService,
+    public ScheduledMailSendingService(final MailSender mailSender, final UserService userService,
             final ApplicationFormDAO applicationFormDAO, final NotificationRecordDAO notificationRecordDAO,
             final CommentDAO commentDAO, final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO,
-            final ReviewerDAO reviewerDAO) {
-        super(mailSender, userService, applicationFormDAO);
+            final ReviewerDAO reviewerDAO, final ApplicationsService applicationsService, final ConfigurationService configurationService,
+            final CommentFactory commentFactory, final CommentService commentService,
+            final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, final PdfDocumentBuilder pdfDocumentBuilder) {
+        super(userService, mailSender, applicationFormDAO);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
         this.stageDurationDAO = stageDurationDAO;
         this.reviewerDAO = reviewerDAO;
+		this.applicationsService = applicationsService;
+		this.configurationService = configurationService;
+		this.commentService = commentService;
+		this.commentFactory = commentFactory;
+		this.pdfAttachmentInputSourceFactory = pdfAttachmentInputSourceFactory;
+		this.pdfDocumentBuilder = pdfDocumentBuilder;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Scheduled(cron = "${email.digest.cron}")
@@ -106,13 +141,13 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
     public void sendDigestsToUsers() {
         log.info("Sending daily digests to users");
         
-        PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subjectCode(
+        PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subject(
                 "Prism Digest Notification").emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
         
-        PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subjectCode(
+        PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subject(
                 "Prism Digest Task Reminder").emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
         
-        PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subjectCode(
+        PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subject(
                 "Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
         
         for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
@@ -134,7 +169,7 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
         }
         
         try {
-            mailSender.sendEmail(digestTaskNotification.build(), digestTaskReminder.build(), digestUpdateNotification.build());
+            sendEmail(digestTaskNotification.build(), digestTaskReminder.build(), digestUpdateNotification.build());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -729,6 +764,10 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
+    //Not sure about this. what's the difference with 'scheduleInterviewAdministrationReminder'?
+    //if we set the digest flag for the delegated user the request will be sent when the main timer runs
+    //time at which 'scheduleInterviewAdministrationReminder' will execute as well (sending again the same mail)
+    //This method as been implemented in the MailSendingservice as an on-event sent mail (when the admin delegates a user for the interview organisation)
     public void scheduleInterviewAdministrationRequest() {
     }
 
@@ -763,38 +802,12 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      * </p>
      */
     public void scheduleInterviewFeedbackConfirmation() {
+    	for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+            createNotificationRecordIfNotExists(form, INTERVIEW_REMINDER);
+            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
+        }
     }
 
-    /**
-    * <p>
-    * <b>Summary</b><br/>
-    * Informs users when interviews have been scheduled.
-    * <p/><p>
-    * <b>Recipients</b>
-    * Interviewer
-    * </p><p>
-    * <b>Previous Email Template Name</b><br/>
-    * Kevin to Insert
-    * </p><p> 
-    * <b>Business Rules</b><br/>
-    * <ol>
-    * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
-    *    <ol>
-    *    <li>Applications are in the current interview state, and;</li>
-    *    <li>Interviews have not been scheduled.</li>
-    *    </ol></li>
-    * <li>Interviewers are notified, when:
-    *    <ol>
-    *    <li>Interviews have been scheduled.</li>
-    *    </ol></li>
-    * </ol>
-    * </p><p>
-    * <b>Notification Type</b>
-    * Immediate Notification
-    * </p>
-    */
-    public void sendInterviewConfirmationToInterviewer() {
-    }
 
     /**
      * <p>
@@ -1041,6 +1054,61 @@ public class ScheduledMailSendingService extends AbstractScheduledMailSendingSer
      */
     //@Scheduled (see RegistryNotificationTimerTask)
     public void sendValidationRequestToRegistry() {
+    	PrismEmailMessage message = null;
+    	try {
+    		List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
+    		List<Person> registryContacts = configurationService.getAllRegistryUsers();
+    		for (ApplicationForm applicationForm : applications) {
+    			PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
+    			
+    			String subject = resolveMessage("validation.request.registry.contacts", applicationForm);
+    			messageBuilder.subject(subject);
+    			
+    			RegisteredUser currentUser = applicationForm.getAdminRequestedRegistry();
+    			
+    			messageBuilder.to(registryContacts, new Transformer() {
+					
+					@Override
+					public Object transform(final Object input) {
+						RegisteredUser user = new RegisteredUser();
+						Person person = (Person)input;
+						user.setEmail(person.getEmail());
+						user.setFirstName(person.getFirstname());
+						user.setLastName(person.getLastname());
+						return user;
+					}
+				});
+    			
+    			messageBuilder.cc(currentUser);
+    			
+    			messageBuilder.templateName=EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
+    			
+    			String recipientList = createRecipientString(registryContacts);
+    			EmailModelBuilder modelBuilder = getModelBuilder(
+    					new String[] {"application", "sender", "host", "recipients", "admissionsValidationServiceLevel"},
+    					new Object[] {applicationForm, currentUser, Environment.getInstance().getApplicationHostName(), recipientList, Environment.getInstance().getAdmissionsValidationServiceLevel()}
+    					);
+    			
+    			messageBuilder.model(modelBuilder);
+    			
+    			PdfAttachmentInputSource pdfAttachement = pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber() + ".pdf",
+						pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), applicationForm));
+    			messageBuilder.attachments(pdfAttachement);
+    			
+    			message = messageBuilder.build();
+    			sendEmail(message);
+    			
+    			
+    			applicationForm.setRegistryUsersDueNotification(false);
+    			Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts), CommentType.GENERIC, null);
+    			commentService.save(comment);
+    			applicationsService.save(applicationForm);
+   				log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
+    		}
+    	}
+    	catch (Exception e) {
+    		log.warn("Error while sending validation request email to registry: {}", e);
+    	}
     }
 
     /**

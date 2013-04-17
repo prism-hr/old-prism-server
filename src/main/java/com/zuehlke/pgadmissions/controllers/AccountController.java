@@ -141,6 +141,9 @@ public class AccountController {
         try {
             RegisteredUser desiredAccount = userService.getUserByEmail(email);
             RegisteredUser currentAccount = userService.getCurrentUser();
+            
+            request.getSession().removeAttribute("applicationSearchDTO");
+            
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, desiredAccount);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = switchUserService.authenticate(token);

@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertSame;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.*;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.mock.MockHttpSession;
 import org.easymock.EasyMock;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -26,6 +29,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
@@ -270,6 +274,12 @@ public class ApplicationListControllerTest {
         assertEquals(
                 "{\"APPLICATION_NUMBER\":[{\"name\":\"CONTAINING\",\"displayName\":\"containing\"},{\"name\":\"NOT_CONTAINING\",\"displayName\":\"not containing\"}],\"APPLICANT_NAME\":[{\"name\":\"CONTAINING\",\"displayName\":\"containing\"},{\"name\":\"NOT_CONTAINING\",\"displayName\":\"not containing\"}],\"PROGRAMME_NAME\":[{\"name\":\"CONTAINING\",\"displayName\":\"containing\"},{\"name\":\"NOT_CONTAINING\",\"displayName\":\"not containing\"}],\"APPLICATION_STATUS\":[{\"name\":\"CONTAINING\",\"displayName\":\"containing\"},{\"name\":\"NOT_CONTAINING\",\"displayName\":\"not containing\"}],\"SUBMISSION_DATE\":[{\"name\":\"FROM_DATE\",\"displayName\":\"from\"},{\"name\":\"ON_DATE\",\"displayName\":\"on\"},{\"name\":\"TO_DATE\",\"displayName\":\"to\"}],\"LAST_EDITED_DATE\":[{\"name\":\"FROM_DATE\",\"displayName\":\"from\"},{\"name\":\"ON_DATE\",\"displayName\":\"on\"},{\"name\":\"TO_DATE\",\"displayName\":\"to\"}]}",
                 predicatesMap);
+    }
+
+    @Test
+    public void shouldReturnRelevantApplicationStatusValues() {
+        List<ApplicationFormStatus> values = controller.getApplicationStatusValues();
+        assertEquals(values, Lists.newArrayList(VALIDATION, REVIEW, INTERVIEW, APPROVAL, APPROVED, WITHDRAWN, REJECTED));
     }
 
     @Before

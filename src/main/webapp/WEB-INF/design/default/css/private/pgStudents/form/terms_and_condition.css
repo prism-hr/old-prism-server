@@ -28,7 +28,7 @@ section.form-rows.lightgrey div.add a.button {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#97bfdf', endColorstr='#97bfdf',GradientType=0 ); /* IE6-8 */
 }
 
-.terms-label { margin-left: 22px; float: right; font-weight: normal; line-height: 1.2; text-align: justify; font-size:14px; margin-bottom:0px; }
+.terms-label { margin-left: 22px; float: left; font-weight: normal; line-height: 1.2; text-align: justify; font-size:14px; margin-bottom:0px; }
 .terms-field { line-height: 1.5; position: absolute; }
 
 

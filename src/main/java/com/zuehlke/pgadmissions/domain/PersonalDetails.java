@@ -14,8 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -75,9 +73,13 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @OneToOne(orphanRemoval = true, mappedBy = "personalDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private PassportInformation passportInformation;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_language_id") })
-    private List<Language> candidateNationalities = new ArrayList<Language>();
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "first_nationality")
+    private Language firstNationality = null;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "second_nationality")
+    private Language secondNationality = null;
 
     @Column(name = "title")
     @Enumerated(EnumType.STRING)
@@ -116,6 +118,22 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     public Integer getId() {
         return id;
+    }
+
+    public Language getFirstNationality() {
+        return firstNationality;
+    }
+
+    public void setFirstNationality(Language firstNationality) {
+        this.firstNationality = firstNationality;
+    }
+
+    public Language getSecondNationality() {
+        return secondNationality;
+    }
+
+    public void setSecondNationality(Language secondNationality) {
+        this.secondNationality = secondNationality;
     }
 
     public Title getTitle() {
@@ -180,19 +198,6 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     public Disability getDisability() {
         return disability;
-    }
-
-    public List<Language> getCandidateNationalities() {
-        return candidateNationalities;
-    }
-
-    public void setCandidateNationalities(List<Language> candiateNationalities) {
-        this.candidateNationalities.clear();
-        for (Language nationality : candiateNationalities) {
-            if (nationality != null) {
-                this.candidateNationalities.add(nationality);
-            }
-        }
     }
 
     public String getMessenger() {
@@ -319,4 +324,5 @@ public class PersonalDetails implements FormSectionObject, Serializable {
         }
         return result;
     }
+
 }

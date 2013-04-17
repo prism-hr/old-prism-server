@@ -80,23 +80,8 @@ public class RefereeService {
 
     public void saveReferenceAndSendMailNotifications(Referee referee) {
         addReferenceEventToApplication(referee);
-        sendMailToApplicant(referee);
-        sendMailToAdministrators(referee);
-    }
-
-    private void sendMailToAdministrators(Referee referee) {
         ApplicationForm form = referee.getApplication();
-        List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-        mailService.sendReferenceSubmitConfirmationToAdministrators(administrators);
-
-    }
-
-    private void sendMailToApplicant(Referee referee) {
-        try {
-            mailService.sendReferenceSubmittedConfirmationToApplicant(referee);
-        } catch (Exception e) {
-            log.warn("error while sending email", e);
-        }
+        mailService.scheduleReferenceSubmitConfirmation(form);
     }
 
     public RegisteredUser getRefereeIfAlreadyRegistered(Referee referee) {
@@ -174,8 +159,8 @@ public class RefereeService {
         referee.setDeclined(true);
         refereeDAO.save(referee);
         addReferenceEventToApplication(referee);
-        sendMailToApplicant(referee);
-        sendMailToAdministrators(referee);
+        ApplicationForm form = referee.getApplication();
+        mailService.scheduleReferenceSubmitConfirmation(form);
     }
 
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {

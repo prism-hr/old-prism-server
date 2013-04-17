@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.timers;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
-import com.zuehlke.pgadmissions.mail.DataImporterMailSender;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.services.importers.Importer;
 
 public class XMLDataImportTask {
@@ -19,18 +20,20 @@ public class XMLDataImportTask {
     private final Logger log = LoggerFactory.getLogger(XMLDataImportTask.class);
 
     private final List<Importer> importers;
-    private final DataImporterMailSender mailSender;
 
     private Authenticator authenticator;
 
     private final String maxRedirects;
+    
+    private final MailSendingService mailService;
 
     @Autowired
-    public XMLDataImportTask(List<Importer> importers, DataImporterMailSender mailSender,
+    public XMLDataImportTask(List<Importer> importers,
             @Value("${xml.data.import.user}") final String user,
-            @Value("${xml.data.import.password}") final String password) {
+            @Value("${xml.data.import.password}") final String password,
+            final MailSendingService mailService) {
         this.importers = importers;
-        this.mailSender = mailSender;
+		this.mailService = mailService;
         this.authenticator = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(user, password.toCharArray());
@@ -40,7 +43,7 @@ public class XMLDataImportTask {
     }
 
     @Scheduled(cron = "${xml.data.import.cron}")
-    public void imoprtData() {
+    public void importData() {
         for (Importer importer : importers) {
             try {
                 System.setProperty("http.maxRedirects", "5");
@@ -53,7 +56,7 @@ public class XMLDataImportTask {
                 if (cause != null) {
                     message += "\n" + cause.toString();
                 }
-                mailSender.sendErrorMessage(message);
+                mailService.sendImportErrorMessage(message, new Date());
             } finally {
                 Authenticator.setDefault(null);
                 if (maxRedirects != null) {

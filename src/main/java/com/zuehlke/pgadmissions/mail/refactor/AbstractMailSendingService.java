@@ -86,7 +86,7 @@ public abstract class AbstractMailSendingService {
 		for (RegisteredUser admin : administrators) {
 			administratorMails.add(admin.getEmail());
 		}
-		return StringUtils.join(administratorMails.toArray(new String[] {}), ";");
+		return StringUtils.join(administratorMails.toArray(new String[] {}), ", ");
 	}
     
     @SuppressWarnings("unchecked")

@@ -49,7 +49,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", EMPTY_FIELD_ERROR_MESSAGE);
-        validateCandidateNationalities(target, errors);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstNationality", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
@@ -98,12 +98,6 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     errors.popNestedPath();
                 }
             }
-        }
-    }
-
-    private void validateCandidateNationalities(Object target, Errors errors) {
-        if (((PersonalDetails) target).getCandidateNationalities().isEmpty()) {
-            errors.rejectValue("candidateNationalities", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
     }
 }

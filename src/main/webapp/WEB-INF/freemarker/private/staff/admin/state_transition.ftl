@@ -14,6 +14,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
 
 <!-- Styles for Application List Page -->
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
@@ -231,6 +232,23 @@
 								
 								<div class="row-group" id="interviewDelegation" style="display:none">
 								  <#include "/private/staff/admin/interview_delegation.ftl"/>
+								</div>
+								
+							    <@spring.bind "applicationForm.acceptedTerms" />
+							    <#if spring.status.errorMessages?size &gt; 0>
+						     		<div class="alert alert-error tac" >
+							    <#else>
+							        <div class="alert tac" >
+							    </#if>
+									<div class="row">
+										<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
+											Confirm you want to move this application to the next stage.				
+										</label>
+										<div class="terms-field">
+											<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+										</div>
+										<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
+									</div>
 								</div>
 	
 								<div class="buttons">

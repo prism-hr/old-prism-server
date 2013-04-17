@@ -745,3 +745,27 @@ function numbersOnly(event) {
         }
     }
 }
+
+function s4() {
+	return Math.floor((1 + Math.random()) * 0x10000)
+             .toString(16)
+             .substring(1);
+};
+
+function guid() {
+	return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+         s4() + '-' + s4() + s4() + s4();
+}
+	
+$('button.btn.btn-primary').live('click', function() {
+	var section = $(this).closest('section.form-rows');
+	
+	if (section.length == 1) {
+		
+		if (section[0].id == "") {
+			section[0].id = guid();
+		}
+		
+		$.scrollTo('#' + section[0].id, 500);
+	}
+});

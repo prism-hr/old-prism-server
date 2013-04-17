@@ -252,6 +252,8 @@ public class PersonalDetailsControllerTest {
         binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.eq("firstNationality"),EasyMock.anyObject(StringTrimmerEditor.class));
+        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.eq("secondNationality"),EasyMock.anyObject(StringTrimmerEditor.class));
         EasyMock.replay(binderMock);
         controller.registerPropertyEditorsForPersonalDetails(binderMock);
         EasyMock.verify(binderMock);

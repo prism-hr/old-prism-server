@@ -6,23 +6,12 @@
     <#assign hasPersonalDetails = false>
 </#if>
 
-<#if personalDetails.candidateNationalities?has_content>
-    <#assign nationalityExist = true/>
-<#else>
-    <#assign nationalityExist = false>
-</#if>
-
 <#if personalDetails.languageProficiencies?has_content>
     <#assign proficiencyExist = true/>
 <#else>
     <#assign proficiencyExist = false>
 </#if>
 
-<#if personalDetails.candidateNationalities?has_content>
-    <#assign candidateNationalitiesExist = true/>
-<#else>
-    <#assign candidateNationalitiesExist = false>
-</#if>
 
 <#if personalDetails.languageQualifications?has_content>
   <#assign hasLanguageQualifications = true>
@@ -192,17 +181,25 @@
             <div class="row">  
                 <div class="field">
                  <div id="my-nationality-div">
-                    <#list personalDetails.candidateNationalities as nationality >                              
+                    <#if personalDetails.getFirstNationality()??>                         
                         <div class="nationality-item">
-                            <label class="full">${nationality.name}</label>  
-                            <input type="hidden" name="candidateNationalities" value='${encrypter.encrypt(nationality.id)}'/>
+                            <label class="full">${personalDetails.firstNationality.name}</label>  
+                            <input type="hidden" id="candidateNationalities" name="candidateNationalities" value='${encrypter.encrypt(personalDetails.firstNationality.id)}'/>
+                            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><button type="button" class="button-delete" data-desc="Delete">Delete</button></#if>
+                        </div> 
+                    </#if>                         
+                    <#if personalDetails.getSecondNationality()??>                         
+                        <div class="nationality-item">
+                            <label class="full">${personalDetails.secondNationality.name}</label>  
+                            <input type="hidden" id="candidateNationalities" name="candidateNationalities" value='${encrypter.encrypt(personalDetails.secondNationality.id)}'/>
                             <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><button type="button" class="button-delete" data-desc="Delete">Delete</button></#if>
                         </div>                          
-                    </#list>
+                    </#if>
                 </div>
             </div>
-            <div class="row">                       
-                <label class="plain-label" id="my-nationality" for="candidateNationalityCountry">Add Nationality<#if !nationalityExist><em id="nationality-em">*</em></#if></label>      
+            
+            <div class="row" id="addNewNationality">                       
+                <label class="plain-label" id="my-nationality" for="candidateNationalityCountry">Add Nationality<#if personalDetails.getSecondNationality()??><em id="nationality-em">*</em></#if></label>      
                 <span id="my-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
                     <div class="field">
                    
@@ -212,13 +209,13 @@
                             <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
                         </#list>
                     </select>   
-                    <@spring.bind "personalDetails.candidateNationalities" />
+                    <@spring.bind "personalDetails.firstNationality" /> 
                     <#list spring.status.errorMessages as error>
                          <div class="alert alert-error">
                             <i class="icon-warning-sign"></i> ${error} 
                         </div>
                     </#list>             
-                </div>
+                    </div>
             </div>
 
                  
@@ -228,6 +225,8 @@
                 </div>
             </#if>
         </div>
+        
+        
          </div>
         <div class="row-group">
             <h3>Language</h3>                  

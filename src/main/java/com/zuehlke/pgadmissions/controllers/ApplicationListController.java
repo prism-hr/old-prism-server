@@ -87,9 +87,11 @@ public class ApplicationListController {
         ApplicationSearchDTO applicationSearchDTO = (ApplicationSearchDTO) model.asMap().get("applicationSearchDTO");
         if (applicationSearchDTO.getFilters() == null || reloadFilters) {
             // filters not initialized in session or filter reload requested
-            applicationsFilters = getUser().getApplicationsFilters();
-            if (applicationsFilters.isEmpty()) {
-                addFiltersForActiveApplications(applicationsFilters);
+            RegisteredUser user = getUser();
+            if(!user.isStoredFilters()){
+                applicationsFilters = getActiveApplicationFilters();
+            } else {
+                applicationsFilters = user.getApplicationsFilters();
             }
         } else {
             applicationsFilters = applicationSearchDTO.getFilters();
@@ -163,10 +165,16 @@ public class ApplicationListController {
         }
         return new Gson().toJson(predicatesMap);
     }
-    
+
     @ModelAttribute("applicationStatusValues")
-    public ApplicationFormStatus[] getApplicationStatusValues() {
-        return ApplicationFormStatus.values();
+    public List<ApplicationFormStatus> getApplicationStatusValues() {
+        List<ApplicationFormStatus> statuses = Lists.newArrayListWithCapacity(ApplicationFormStatus.values().length);
+        for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
+            if (status != ApplicationFormStatus.UNSUBMITTED && status != ApplicationFormStatus.REQUEST_RESTART_APPROVAL) {
+                statuses.add(status);
+            }
+        }
+        return statuses;
     }
 
     @ModelAttribute("applications")
@@ -193,20 +201,20 @@ public class ApplicationListController {
     public ApplicationForm getApplicationForm(@RequestParam(required = false) String application) {
         return applicationsService.getApplicationByApplicationNumber(application);
     }
-
-    private void addFiltersForActiveApplications(List<ApplicationsFilter> applicationsFilters) {
-        RegisteredUser user = getUser();
-        applicationsFilters.add(getFilterForNonStatus(user, ApplicationFormStatus.APPROVED));
-        applicationsFilters.add(getFilterForNonStatus(user, ApplicationFormStatus.REJECTED));
-        applicationsFilters.add(getFilterForNonStatus(user, ApplicationFormStatus.WITHDRAWN));
+    
+    private List<ApplicationsFilter> getActiveApplicationFilters() {
+        List<ApplicationsFilter> filters = Lists.newArrayListWithExpectedSize(3);
+        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPROVED));
+        filters.add(getFilterForNonStatus(ApplicationFormStatus.REJECTED));
+        filters.add(getFilterForNonStatus(ApplicationFormStatus.WITHDRAWN));
+        return filters;
     }
 
-    private ApplicationsFilter getFilterForNonStatus(RegisteredUser user, ApplicationFormStatus status) {
-        ApplicationsFilter notApprovedFilter = new ApplicationsFilter();
-        notApprovedFilter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
-        notApprovedFilter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
-        notApprovedFilter.setUser(user);
-        notApprovedFilter.setSearchTerm(status.displayValue());
-        return notApprovedFilter;
+    private ApplicationsFilter getFilterForNonStatus(ApplicationFormStatus status) {
+        ApplicationsFilter filter = new ApplicationsFilter();
+        filter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
+        filter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
+        filter.setSearchTerm(status.displayValue());
+        return filter;
     }
 }

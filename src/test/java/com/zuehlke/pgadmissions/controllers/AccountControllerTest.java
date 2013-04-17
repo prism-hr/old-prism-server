@@ -2,10 +2,9 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 
 import javax.servlet.http.HttpServletRequest;
-
-import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -75,7 +74,7 @@ public class AccountControllerTest {
     public void shouldReturnToAccountPageAndNotSaveIfErrors() {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
         EasyMock.replay(bindingResultMock);
-        Assert.assertEquals("/private/my_account_section", accountController.saveAccountDetails(student, bindingResultMock));
+        assertEquals("/private/my_account_section", accountController.saveAccountDetails(student, bindingResultMock));
     }
 
     @Test
@@ -83,7 +82,7 @@ public class AccountControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         userServiceMock.updateCurrentUser(student);
         EasyMock.replay(bindingResultMock, userServiceMock);
-        Assert.assertEquals("/private/common/ajax_OK", accountController.saveAccountDetails(student, bindingResultMock));
+        assertEquals("/private/common/ajax_OK", accountController.saveAccountDetails(student, bindingResultMock));
         EasyMock.verify(bindingResultMock, userServiceMock);
     }
 
@@ -118,6 +117,7 @@ public class AccountControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentAccount);
 
         HttpServletRequest requestMock = new MockHttpServletRequest();
+        requestMock.getSession().setAttribute("applicationSearchDTO", "fake");
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, desiredAccount);
         token.setDetails(new WebAuthenticationDetails(requestMock));
@@ -134,6 +134,9 @@ public class AccountControllerTest {
 
         EasyMock.verify(userServiceMock, mockSecurityContextHolder, mockSecurityContext, switchUserService);
         PowerMock.verifyAll();
+
+        assertNull(requestMock.getSession().getAttribute("applicationSearchDTO"));
+
     }
 
     @Before

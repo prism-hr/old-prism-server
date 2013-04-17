@@ -3,18 +3,15 @@ package com.zuehlke.pgadmissions.mail.refactor;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_SUBMIT_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_ADMINISTRATION_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFERENCE_RESPOND_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
@@ -127,7 +125,7 @@ public class MailSendingService extends AbstractMailSendingService {
         	   String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
                EmailModelBuilder modelBuilder = getModelBuilder(
                        new String[] {"adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" }, 
-                       new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getInstance().getApplicationHostName(),
+                       new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
                     		   Environment.getInstance().getAdmissionsOfferServiceLevel(), form.getOutcomeOfStage()});
                
                Map<String, Object> model = modelBuilder.build();
@@ -139,14 +137,7 @@ public class MailSendingService extends AbstractMailSendingService {
 
        			}
                
-               Object[] args;
-               if (form.getOutcomeOfStage()==null) {
-            	   args = new Object[]{form.getApplicationNumber(), form.getProgram().getTitle()};
-               }
-               else {
-            	   args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
-            			   form.getOutcomeOfStage().displayValue() };
-               }
+               Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle()};
                String subject = resolveMessage("validation.submission.applicant", args);
                
                message = buildMessage(applicant, subject, model, APPLICATION_SUBMIT_CONFIRMATION);
@@ -207,14 +198,8 @@ public class MailSendingService extends AbstractMailSendingService {
 
     			}
             
-            Object[] args;
-            if (form.getOutcomeOfStage()==null) {
-         	   args = new Object[]{form.getApplicationNumber(), form.getProgram().getTitle()};
-            }
-            else {
-         	   args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
+            Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
          			   form.getOutcomeOfStage().displayValue() };
-            }
             String subject = resolveMessage("rejection.notification", args);
             
             message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
@@ -410,13 +395,14 @@ public class MailSendingService extends AbstractMailSendingService {
     * Immediate Notification
     * </p>
     */    
-    public void sendExportErrorMessage(List<RegisteredUser> users, String messageCode, Date timestamp) {
+    public void sendExportErrorMessage(String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
+        List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
         if (messageCode == null) {
             throw new PrismMailMessageException("Error while sending export error message: messageCode is null", message);
         }
         String subject = resolveMessage("reference.data.export.error", (Object[]) null);
-        for (RegisteredUser user : users) {
+        for (RegisteredUser user : superadmins) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(
                         new String[] { "user", "message", "time", "host" }, 
@@ -459,9 +445,14 @@ public class MailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    public void sendReferenceSubmitConfirmationToAdministrators(List<RegisteredUser> admins) {
-        CollectionUtils.forAllDo(admins, new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
+    public void scheduleReferenceSubmitConfirmation(ApplicationForm form) {
+    	List<RegisteredUser> admins = form.getProgram().getAdministrators();
+    	List<RegisteredUser> users = new ArrayList<RegisteredUser>(admins.size()+1);
+    	users.add(form.getApplicant());
+    	users.addAll(admins);
+        CollectionUtils.forAllDo(users, new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
+    
     
     /**
      * <p>
@@ -522,9 +513,8 @@ public class MailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    // TODO: Write a test for this
     public void scheduleWithdrawalConfirmation(final ApplicationForm form) {
-        HashMap<Integer, RegisteredUser> usersToNotify = new HashMap<Integer, RegisteredUser>();
+        Map<Integer, RegisteredUser> usersToNotify = new HashMap<Integer, RegisteredUser>();
         for (Referee referee : refereeService.getRefereesWhoHaveNotProvidedReference(form)) {
             usersToNotify.put(referee.getUser().getId(), referee.getUser());
         }
@@ -553,23 +543,7 @@ public class MailSendingService extends AbstractMailSendingService {
         CollectionUtils.forAllDo(usersToNotify.values(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
 
-    //integrate this as digest in 'sendReferenceSubmitConfirmationToAdministrators'
-	public void sendReferenceSubmittedConfirmationToApplicant(Referee referee) {
-		PrismEmailMessage message = null;
-		try {
-			ApplicationForm form = referee.getApplication();
-			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
-			RegisteredUser applicant = form.getApplicant();
-			EmailModelBuilder modelBuilder = getModelBuilder(new String[] {"adminsEmails", "referee", "application", "host" }, new Object[] {
-					adminsEmails, referee, form, getInstance().getApplicationHostName() });
-			String subject = resolveMessage("reference.provided.applicant", form);
-			message = buildMessage(applicant, subject, modelBuilder.build(), REFERENCE_RESPOND_CONFIRMATION);
-			sendEmail(message);
-		}
-		catch (Exception e) {
-			throw new PrismMailMessageException("Error while sending reference submitted confirmation to applicant: ", e.getCause(), message);
-		}
-	}
+   
 
 	/**
 	 * <p>
@@ -597,13 +571,14 @@ public class MailSendingService extends AbstractMailSendingService {
 	 * <b>Notification Type</b> Immediate Notification
 	 * </p>
 	 */
-    public void sendImportErrorMessage(List<RegisteredUser> users, String messageCode, Date timestamp) {
+    public void sendImportErrorMessage(String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
+        List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
         if (messageCode == null) {
             throw new PrismMailMessageException("Error while sending import error message: messageCode is null", message);
         }
         String subject = resolveMessage("reference.data.import.error", (Object[]) null);
-        for (RegisteredUser user : users) {
+        for (RegisteredUser user : superadmins) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(
                         new String[] { "user", "message", "time", "host" },
@@ -697,10 +672,10 @@ public class MailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
-    public void scheduleInterviewAdministrationRequest(RegisteredUser user, ApplicationForm form) {
+    public void scheduleInterviewAdministrationRequest(RegisteredUser delegatedUser, ApplicationForm form) {
     	List<RegisteredUser> admins = form.getProgram().getAdministrators();
     	List<RegisteredUser> users = new ArrayList<RegisteredUser>(admins.size()+1);
-    	users.add(user);
+    	users.add(delegatedUser);
     	users.addAll(admins);
     	CollectionUtils.forAllDo(users, new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
     }

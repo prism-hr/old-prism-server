@@ -8,14 +8,12 @@ import static junit.framework.Assert.assertTrue;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,15 +26,32 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -45,6 +60,22 @@ import com.zuehlke.pgadmissions.utils.Environment;
 
 public class MailSendingServiceTest {
 	
+	private static final String SAMPLE_REJECTION_REASON = "You ain't goog enough";
+
+	private static final String SAMPLE_PROGRAM_TITLE = "MRes Security Science";
+
+	private static final String SAMPLE_APPLICATION_NUMBER = "TMRSECSING01-2013-000004";
+
+	private static final String SAMPLE_ADMIN2_EMAIL_ADDRESS = "admin2@mail.com";
+
+	private static final String SAMPLE_ADMIN1_EMAIL_ADDRESS = "admin1@mail.com";
+
+	private static final String SAMPLE_APPLICANT_SURNAME = "Capatonda";
+
+	private static final String SAMPLE_APPLICANT_NAME = "Maccio";
+
+	private static final String SAMPLE_APPLICANT_EMAIL_ADDRESS = "capatonda@mail.com";
+
 	private MailSendingService service;
 	
 	private MailSender mockMailSender;
@@ -79,19 +110,22 @@ public class MailSendingServiceTest {
 		model1.put("time", timestamp);
 		model1.put("host", getInstance().getApplicationHostName());
 		Map<String, Object> model2 =  new HashMap<String, Object>();
-		model1.putAll(model1);
+		model2.putAll(model1);
 		model2.put("user", user2);
 		
 		expect(mockMailSender.resolveMessage("reference.data.export.error", (Object[])null))
 		.andReturn("UCL Prism to Portico Export Error");
 		
+		expect(mockUserService.getUsersInRole(Authority.SUPERADMINISTRATOR))
+		.andReturn(asList(user1, user2));
+		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		expectLastCall().times(2);
 		
-		replay(mockMailSender);
-		service.sendExportErrorMessage(asList(user1, user2), messageCode, timestamp);
-		verify(mockMailSender);
+		replay(mockMailSender, mockUserService);
+		service.sendExportErrorMessage(messageCode, timestamp);
+		verify(mockMailSender, mockUserService);
 		
 		PrismEmailMessage message = messageCaptor.getValues().get(0);
 		assertNotNull(message.getTo());
@@ -106,38 +140,6 @@ public class MailSendingServiceTest {
 		assertEquals((Integer)2, message.getTo().get(0).getId());
 		assertEquals("UCL Prism to Portico Export Error", message.getSubjectCode());
 		assertModelEquals(model2, message.getModel());
-	}
-	
-	@Test
-	public void sendReferenceSubmittedConfirmationToApplicantShouldSuccessfullySendMessage() throws Exception {
-		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("Ivo").lastName("Avido").build();
-		Program program = new ProgramBuilder().id(687).title("program_title").build();
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicationNumber("application_number").id(45).applicant(applicant).build();
-		Referee referee = new RefereeBuilder().id(2).application(application).build();
-		String adminsEmails = "admins_emails";
-		Map<String, Object> model1 = new HashMap<String, Object>();
-		model1.put("adminsEmails", adminsEmails);
-		model1.put("referee", referee);
-		model1.put("application", application);
-		model1.put("host", getInstance().getApplicationHostName());
-		
-		expect(mockMailSender.resolveMessage("reference.provided.applicant", application.getApplicationNumber(),
-				program.getTitle(), applicant.getFirstName(), applicant.getLastName()))
-		.andReturn("Ivo Avido Application application_number for UCL program_title - Reference Provided");
-		
-		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
-		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
-		
-		replay(mockMailSender);
-		service.sendReferenceSubmittedConfirmationToApplicant(referee);
-		verify(mockMailSender);
-		
-		PrismEmailMessage message = messageCaptor.getValue();
-		assertNotNull(message.getTo());
-		assertEquals(1, message.getTo().size());
-		assertEquals((Integer)1, message.getTo().get(0).getId());
-		assertEquals("Ivo Avido Application application_number for UCL program_title - Reference Provided", message.getSubjectCode());
-		assertModelEquals(model1, message.getModel());
 	}
 	
 	@Test
@@ -152,19 +154,21 @@ public class MailSendingServiceTest {
 		model1.put("time", timestamp);
 		model1.put("host", getInstance().getApplicationHostName());
 		Map<String, Object> model2 =  new HashMap<String, Object>();
-		model1.putAll(model1);
+		model2.putAll(model1);
 		model2.put("user", user2);
 		
 		expect(mockMailSender.resolveMessage("reference.data.import.error", (Object[])null))
 		.andReturn("UCL Prism to Portico Import Error");
 		
+		expect(mockUserService.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(asList(user1, user2));
+		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		expectLastCall().times(2);
 		
-		replay(mockMailSender);
-		service.sendImportErrorMessage(asList(user1, user2), messageCode, timestamp);
-		verify(mockMailSender);
+		replay(mockMailSender, mockUserService);
+		service.sendImportErrorMessage(messageCode, timestamp);
+		verify(mockMailSender, mockUserService);
 		
 		PrismEmailMessage message = messageCaptor.getValues().get(0);
 		assertNotNull(message.getTo());
@@ -182,77 +186,122 @@ public class MailSendingServiceTest {
 	}
 	
 	@Test
-	public void sendInterviewAdministrationReminderShouldSuccessfullySendMessage() throws Exception {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(2).build();
-		RegisteredUser admin2  = new RegisteredUserBuilder().id(3).build();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).build();
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("user", user);
-		model.put("applicationForm", form);
-		model.put("host", Environment.getInstance().getApplicationHostName());
+	public void shouldScheduleInterviewAdministrationRequest() {
+		ApplicationForm form = getSampleApplicationForm();
+		RegisteredUser delegate = new RegisteredUserBuilder().id(1).build();
 		
-		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
-		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		List<RegisteredUser> admins = form.getProgram().getAdministrators();
 		
-		expect(mockMailSender.resolveMessage("application.interview.delegation", (Object[])null)).andReturn("Application interview administration delegation");
+		mockUserService.setDigestNotificationType(delegate, DigestNotificationType.TASK_NOTIFICATION);
+		mockUserService.setDigestNotificationType(admins.get(0), DigestNotificationType.TASK_NOTIFICATION);
+		mockUserService.setDigestNotificationType(admins.get(1), DigestNotificationType.TASK_NOTIFICATION);
 		
-		replay(mockMailSender);
-		service.scheduleInterviewAdministrationRequest(user, form);
-		verify(mockMailSender);
-		
-		PrismEmailMessage message = messageCaptor.getValue();
-		assertNotNull(message.getTo());
-		assertEquals(1, message.getTo().size());
-		assertEquals((Integer)1, message.getTo().get(0).getId());
-		assertNotNull(message.getCc());
-		assertEquals(2, message.getCc().size());
-		assertEquals((Integer)2, message.getCc().get(0).getId());
-		assertEquals((Integer)3, message.getCc().get(1).getId());
-		
-		assertEquals("Application interview administration delegation", message.getSubjectCode());
-		assertModelEquals(model, message.getModel());
+		replay(mockUserService);
+		service.scheduleInterviewAdministrationRequest(delegate, form);
+		verify(mockUserService);
 	}
 	
 	@Test
-	public void sendReferenceSubmitConfirmationToAdministratorsShouldSuccessfullySendMessage() throws Exception {
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(3).build();
-		RegisteredUser admin2 = new RegisteredUserBuilder().id(4).build();
+	public void shouldScheduleReferenceSubmitConfirmation() {
+		ApplicationForm form = getSampleApplicationForm();
 		
-		Capture<RegisteredUser> adminsCaptor = new Capture<RegisteredUser>(CaptureType.ALL);
-		mockUserService.setDigestNotificationType(and(isA(RegisteredUser.class), capture(adminsCaptor)),
-				eq(DigestNotificationType.UPDATE_NOTIFICATION));
-		expectLastCall().times(2);
+		List<RegisteredUser> admins = form.getProgram().getAdministrators();
+		
+		mockUserService.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
+		mockUserService.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
+		mockUserService.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
 		
 		replay(mockUserService);
-		service.sendReferenceSubmitConfirmationToAdministrators(asList(admin1, admin2));
+		service.scheduleReferenceSubmitConfirmation(form);
 		verify(mockUserService);
+	}
+	
+	@Test
+	public void shouldScheduleSupervisorConfirmedSupervision() {
+		ApplicationForm form = getSampleApplicationForm();
 		
-		List<RegisteredUser> admins = adminsCaptor.getValues();
-		assertEquals((Integer)3, admins.get(0).getId());
-		assertEquals((Integer)4, admins.get(1).getId());
+		List<RegisteredUser> admins = form.getProgram().getAdministrators();
+		
+		mockUserService.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
+		mockUserService.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
+		
+		replay(mockUserService);
+		service.scheduleSupervisionConfirmedNotification(form);
+		verify(mockUserService);
+	}
+	
+	@Test
+	public void shouldScheduleWithdrawalConfirmation() {
+		ApplicationForm form = getSampleApplicationForm();
+
+		RegisteredUser refereeUser1 = new RegisteredUserBuilder().id(10).build();
+		RegisteredUser refereeUser2 = new RegisteredUserBuilder().id(11).build();
+		Referee referee1 = new RefereeBuilder().user(refereeUser1).build();
+		Referee referee2 = new RefereeBuilder().user(refereeUser2).build();
+		
+		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(12).build();
+		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(13).build();
+		Reviewer reviewer1 = new ReviewerBuilder().user(reviewerUser1).build();
+		Reviewer reviewer2 = new ReviewerBuilder().user(reviewerUser2).build();
+		form.setLatestReviewRound(new ReviewRoundBuilder().reviewers(reviewer1, reviewer2).build());
+		
+		RegisteredUser interviewerUser1 = new RegisteredUserBuilder().id(14).build();
+		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(15).build();
+		Interviewer interviewer1 = new InterviewerBuilder().user(interviewerUser1).build();
+		Interviewer interviewer2 = new InterviewerBuilder().user(interviewerUser2).build();
+		form.setLatestInterview(new InterviewBuilder().interviewers(interviewer1, interviewer2).build());
+		
+		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(16).build();
+		RegisteredUser supervisorUser2 = new RegisteredUserBuilder().id(17).build();
+		Supervisor supervisor1 = new SupervisorBuilder().user(supervisorUser1).build();
+		Supervisor supervisor2 = new SupervisorBuilder().user(supervisorUser2).build();
+		form.setLatestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisor1, supervisor2).build());
+		
+		expect(refereeServiceMock.getRefereesWhoHaveNotProvidedReference(form))
+			.andReturn(asList(referee1, referee2));
+		
+		
+		List<RegisteredUser> admins = form.getProgram().getAdministrators();
+		
+		mockUserService.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
+		mockUserService.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
+		
+		mockUserService.setDigestNotificationType(refereeUser1, DigestNotificationType.UPDATE_NOTIFICATION);
+		mockUserService.setDigestNotificationType(refereeUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		
+		mockUserService.setDigestNotificationType(reviewerUser1, DigestNotificationType.UPDATE_NOTIFICATION);
+		mockUserService.setDigestNotificationType(reviewerUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		
+		mockUserService.setDigestNotificationType(interviewerUser1, DigestNotificationType.UPDATE_NOTIFICATION);
+		mockUserService.setDigestNotificationType(interviewerUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		
+		mockUserService.setDigestNotificationType(supervisorUser1, DigestNotificationType.UPDATE_NOTIFICATION);
+		mockUserService.setDigestNotificationType(supervisorUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		
+		replay(mockUserService, refereeServiceMock);
+		service.scheduleWithdrawalConfirmation(form);
+		verify(mockUserService, refereeServiceMock);
 	}
 	
 	@Test
 	public void sendRefereeRequestShouldSuccessfullySendMessage() throws Exception {
-		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("Maccio").
-				lastName("Capatonda").build();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		Referee referee = new RefereeBuilder().id(0).user(user).build();
-		String adminMails = "admin_mail1, admin_mail2";
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(12).build();
-		Program programme = new ProgramBuilder().id(75).title("programme_title").build();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(programme).
-				applicationNumber("form_number").programmeDetails(programmeDetails).applicant(applicant).build();
+		String adminMails = SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS;
+		ApplicationForm form = getSampleApplicationForm();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("referee", referee);
-		model.put("adminEmails", adminMails);
-		model.put("applicant", applicant);
-		model.put("programme", programmeDetails);
+		model.put("adminsEmails", adminMails);
+		model.put("applicant", form.getApplicant());
+		model.put("application", form);
+		model.put("programme", form.getProgrammeDetails());
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		
-		expect(mockMailSender.resolveMessage("reference.request", "form_number", "programme_title", "Maccio", "Capatonda"))
-				.andReturn("Maccio Capatonda Application form_number for UCL programme_title - Reference Request");
+		String subjectToReturn=SAMPLE_APPLICANT_NAME+" "+SAMPLE_APPLICANT_SURNAME+" "
+		+"Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request";
+		
+		expect(mockMailSender.resolveMessage("reference.request", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
+				.andReturn(subjectToReturn);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
@@ -267,7 +316,7 @@ public class MailSendingServiceTest {
 		assertEquals(1, message.getTo().size());
 		assertEquals((Integer)1, message.getTo().get(0).getId());
 		
-		assertEquals("Maccio Capatonda Application form_number for UCL programme_title - Reference Request", message.getSubjectCode());
+		assertEquals(subjectToReturn, message.getSubjectCode());
 		assertModelEquals(model, message.getModel());
 	}
 	
@@ -275,20 +324,19 @@ public class MailSendingServiceTest {
 	public void sendRefereeRequestShouldSuccessfullySendMessageWithNoApplicant() throws Exception {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		Referee referee = new RefereeBuilder().id(0).user(user).build();
-		String adminMails = "admin_mail1, admin_mail2";
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(12).build();
-		Program programme = new ProgramBuilder().id(75).title("programme_title").build();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(programme).
-				applicationNumber("form_number").programmeDetails(programmeDetails).build();
+		String adminMails = SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS;
+		ApplicationForm form = getSampleApplicationForm();
+		form.setApplicant(null);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("referee", referee);
-		model.put("adminEmails", adminMails);
-		model.put("applicant", null);
-		model.put("programme", programmeDetails);
+		model.put("adminsEmails", adminMails);
+		model.put("applicant", form.getApplicant());
+		model.put("application", form);
+		model.put("programme", form.getProgrammeDetails());
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		
-		expect(mockMailSender.resolveMessage("reference.request", "form_number", "programme_title"))
-		.andReturn("[2] [3] Application form_number for UCL programme_title - Reference Request");
+		expect(mockMailSender.resolveMessage("reference.request", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
+		.andReturn("[2] [3] Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request");
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
@@ -303,7 +351,7 @@ public class MailSendingServiceTest {
 		assertEquals(1, message.getTo().size());
 		assertEquals((Integer)1, message.getTo().get(0).getId());
 		
-		assertEquals("[2] [3] Application form_number for UCL programme_title - Reference Request", message.getSubjectCode());
+		assertEquals("[2] [3] Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request", message.getSubjectCode());
 		assertModelEquals(model, message.getModel());
 	}
 	
@@ -400,27 +448,655 @@ public class MailSendingServiceTest {
 		verify(mockMailSender);
 	}
 	
+	@Test
+	public void shouldSendSubmissionConfirmationToApplicant() {
+		Person person1 = new PersonBuilder()
+			.email("person1@mail.com")
+			.firstname("Ivo")
+			.lastname("avido")
+			.build();
+		Person person2 = new PersonBuilder()
+			.email("person2@mail.com")
+			.firstname("Ektor")
+			.lastname("Baboden")
+			.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(null);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn="Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE;
+		expect(mockMailSender.resolveMessage("validation.submission.applicant", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
+						.andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendSubmissionConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendSubmissionConfirmationToApplicantAndAddReasonToModel() {
+		Person person1 = new PersonBuilder()
+		.email("person1@mail.com")
+		.firstname("Ivo")
+		.lastname("avido")
+		.build();
+		Person person2 = new PersonBuilder()
+		.email("person2@mail.com")
+		.firstname("Ektor")
+		.lastname("Baboden")
+		.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(ApplicationFormStatus.REJECTED);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+		model.put("reason", form.getRejection().getRejectionReason());
+		
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn="Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE;
+		expect(mockMailSender.resolveMessage("validation.submission.applicant", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
+						.andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendSubmissionConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendSubmissionConfirmationToApplicantAndAddProspectusLinkToModel() {
+		Person person1 = new PersonBuilder()
+		.email("person1@mail.com")
+		.firstname("Ivo")
+		.lastname("avido")
+		.build();
+		Person person2 = new PersonBuilder()
+		.email("person2@mail.com")
+		.firstname("Ektor")
+		.lastname("Baboden")
+		.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(ApplicationFormStatus.REJECTED);
+		form.getRejection().setIncludeProspectusLink(true);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+		model.put("reason", form.getRejection().getRejectionReason());
+		model.put("prospectusLink",  Environment.getInstance().getUCLProspectusLink());
+		
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn="Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE;
+		expect(mockMailSender.resolveMessage("validation.submission.applicant", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
+						.andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendSubmissionConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendRejectionConfirmationToUser() {
+		Person person1 = new PersonBuilder().email("person1@mail.com").firstname("Ivo").lastname("avido").build();
+		Person person2 = new PersonBuilder().email("person2@mail.com").firstname("Ektor").lastname("Baboden").build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(null);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS + ", " + SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - " + form.getOutcomeOfStage().displayValue() + " Outcome";
+		expect(
+				mockMailSender.resolveMessage("rejection.notification", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+
+		replay(mockMailSender, configurationServiceMock);
+		service.sendRejectionConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer) 1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendRejectionConfirmationToUserAndAddReasonToModel() {
+		Person person1 = new PersonBuilder()
+		.email("person1@mail.com")
+		.firstname("Ivo")
+		.lastname("avido")
+		.build();
+		Person person2 = new PersonBuilder()
+		.email("person2@mail.com")
+		.firstname("Ektor")
+		.lastname("Baboden")
+		.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(ApplicationFormStatus.REJECTED);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+		model.put("reason", form.getRejection().getRejectionReason());
+		
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - " + form.getOutcomeOfStage().displayValue() + " Outcome";
+		expect(
+				mockMailSender.resolveMessage("rejection.notification", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendRejectionConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendRejectionConfirmationToUserAndAddProspectusLinkToModel() {
+		Person person1 = new PersonBuilder()
+		.email("person1@mail.com")
+		.firstname("Ivo")
+		.lastname("avido")
+		.build();
+		Person person2 = new PersonBuilder()
+		.email("person2@mail.com")
+		.firstname("Ektor")
+		.lastname("Baboden")
+		.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(ApplicationFormStatus.REJECTED);
+		form.getRejection().setIncludeProspectusLink(true);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+		model.put("reason", form.getRejection().getRejectionReason());
+		model.put("prospectusLink",  Environment.getInstance().getUCLProspectusLink());
+		
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - " + form.getOutcomeOfStage().displayValue() + " Outcome";
+		expect(
+				mockMailSender.resolveMessage("rejection.notification", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendRejectionConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendApprovedNotification() {
+		Person person1 = new PersonBuilder().email("person1@mail.com").firstname("Ivo").lastname("avido").build();
+		Person person2 = new PersonBuilder().email("person2@mail.com").firstname("Ektor").lastname("Baboden").build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(null);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS + ", " + SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - Approval Outcome";
+		expect(
+				mockMailSender.resolveMessage("approved.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+
+		replay(mockMailSender, configurationServiceMock);
+		service.sendApprovedNotification(form);
+		verify(mockMailSender, configurationServiceMock);
+
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer) 1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendApprovedNotificationAndAddReasonToModel() {
+		Person person1 = new PersonBuilder()
+		.email("person1@mail.com")
+		.firstname("Ivo")
+		.lastname("avido")
+		.build();
+		Person person2 = new PersonBuilder()
+		.email("person2@mail.com")
+		.firstname("Ektor")
+		.lastname("Baboden")
+		.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(ApplicationFormStatus.REJECTED);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+		model.put("reason", form.getRejection().getRejectionReason());
+		
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - Approval Outcome";
+		expect(
+				mockMailSender.resolveMessage("approved.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendApprovedNotification(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendApprovedNotificationAndAddProspectusLinkToModel() {
+		Person person1 = new PersonBuilder()
+		.email("person1@mail.com")
+		.firstname("Ivo")
+		.lastname("avido")
+		.build();
+		Person person2 = new PersonBuilder()
+		.email("person2@mail.com")
+		.firstname("Ektor")
+		.lastname("Baboden")
+		.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(ApplicationFormStatus.REJECTED);
+		form.getRejection().setIncludeProspectusLink(true);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+		model.put("reason", form.getRejection().getRejectionReason());
+		model.put("prospectusLink",  Environment.getInstance().getUCLProspectusLink());
+		
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - Approval Outcome";
+		expect(
+				mockMailSender.resolveMessage("approved.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendApprovedNotification(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendInterviewConfirmationToInterviewers() {
+		ApplicationForm form = getSampleApplicationForm();
+		Interview interview = new InterviewBuilder().application(form).build();
+		RegisteredUser user1 = new RegisteredUserBuilder().id(1).build();
+		RegisteredUser user2 = new RegisteredUserBuilder().id(2).build();
+		Interviewer interviewer1 = new InterviewerBuilder().user(user1).interview(interview).build();
+		Interviewer interviewer2 = new InterviewerBuilder().user(user2).interview(interview).build();
+		
+		Map<String, Object> model1 = new HashMap<String, Object>();
+		model1.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model1.put("interviewer", interviewer1);
+		model1.put("application", form);
+		model1.put("applicant", form.getApplicant());
+		model1.put("host", getInstance().getApplicationHostName());
+		Map<String, Object> model2 =  new HashMap<String, Object>();
+		model2.putAll(model1);
+		model2.put("interviewer", interviewer2);
+		
+		String subjectToReturn = SAMPLE_APPLICANT_NAME+" " +SAMPLE_APPLICANT_SURNAME+
+				" Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Interview Confirmation";
+		expect(mockMailSender.resolveMessage("interview.notification.interviewer", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
+		.andReturn(subjectToReturn).times(2);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		expectLastCall().times(2);
+		
+		replay(mockMailSender);
+		service.sendInterviewConfirmationToInterviewers(asList(interviewer1, interviewer2));
+		verify(mockMailSender);
+		
+		PrismEmailMessage message = messageCaptor.getValues().get(0);
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model1, message.getModel());
+		
+		message = messageCaptor.getValues().get(1);
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)2, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model2, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendInterviewConfirmationToApplicant() {
+		Person person1 = new PersonBuilder().email("person1@mail.com").firstname("Ivo").lastname("avido").build();
+		Person person2 = new PersonBuilder().email("person2@mail.com").firstname("Ektor").lastname("Baboden").build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(null);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS + ", " + SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - Interview Confirmation";
+		expect(
+				mockMailSender.resolveMessage("interview.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+
+		replay(mockMailSender, configurationServiceMock);
+		service.sendInterviewConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer) 1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendInterviewConfirmationToApplicantAndAddReasonToModel() {
+		Person person1 = new PersonBuilder()
+		.email("person1@mail.com")
+		.firstname("Ivo")
+		.lastname("avido")
+		.build();
+		Person person2 = new PersonBuilder()
+		.email("person2@mail.com")
+		.firstname("Ektor")
+		.lastname("Baboden")
+		.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(ApplicationFormStatus.REJECTED);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+		model.put("reason", form.getRejection().getRejectionReason());
+		
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - Interview Confirmation";
+		expect(
+				mockMailSender.resolveMessage("interview.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendInterviewConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
+	@Test
+	public void shouldSendInterviewConfirmationToApplicantAndAddProspectusLinkToModel() {
+		Person person1 = new PersonBuilder()
+		.email("person1@mail.com")
+		.firstname("Ivo")
+		.lastname("avido")
+		.build();
+		Person person2 = new PersonBuilder()
+		.email("person2@mail.com")
+		.firstname("Ektor")
+		.lastname("Baboden")
+		.build();
+		List<Person> registryUsers = asList(person1, person2);
+		ApplicationForm form = getSampleApplicationForm();
+		form.setStatus(ApplicationFormStatus.REJECTED);
+		form.getRejection().setIncludeProspectusLink(true);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS);
+		model.put("application", form);
+		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", registryUsers);
+		model.put("host", getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("previousStage", form.getOutcomeOfStage());
+		model.put("reason", form.getRejection().getRejectionReason());
+		model.put("prospectusLink",  Environment.getInstance().getUCLProspectusLink());
+		
+		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		
+		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
+				+ " - Interview Confirmation";
+		expect(
+				mockMailSender.resolveMessage("interview.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
+								.displayValue())).andReturn(subjectToReturn);
+		
+		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+		
+		replay(mockMailSender, configurationServiceMock);
+		service.sendInterviewConfirmationToApplicant(form);
+		verify(mockMailSender, configurationServiceMock);
+		
+		PrismEmailMessage message = messageCaptor.getValue();
+		assertNotNull(message.getTo());
+		assertEquals(1, message.getTo().size());
+		assertEquals((Integer)1, message.getTo().get(0).getId());
+		assertEquals(subjectToReturn, message.getSubjectCode());
+		assertModelEquals(model, message.getModel());
+	}
+	
 	private void assertModelEquals(Map<String, Object> expected, Map<String, Object> actual) {
+		assertEquals("The size of the expected and actual models don't match",
+				expected.size(), actual.size());
 		for (Map.Entry<String, Object> entry: expected.entrySet()) {
-			assertTrue(actual.containsKey(entry.getKey()));
-			assertEquals(entry.getValue(), actual.get(entry.getKey()));
+			assertTrue("Model doesn't contain key: "+entry.getKey(), actual.containsKey(entry.getKey()));
+			assertEquals("Expected: "+entry.getValue()+" but was: "+actual.get(entry.getKey()),
+					entry.getValue(), actual.get(entry.getKey()));
 		}
 	}
 	
 	private ApplicationForm getSampleApplicationForm() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1)
-				.email("capatonda@mail.com")
-				.firstName("Maccio")
-				.lastName("Capatonda")
+				.email(SAMPLE_APPLICANT_EMAIL_ADDRESS)
+				.firstName(SAMPLE_APPLICANT_NAME)
+				.lastName(SAMPLE_APPLICANT_SURNAME)
 				.build();
 		RegisteredUser applicant1 = new RegisteredUserBuilder().id(2)
-				.email("admin1@mail.com")
+				.email(SAMPLE_ADMIN1_EMAIL_ADDRESS)
 				.build();
 		RegisteredUser applicant2 = new RegisteredUserBuilder().id(3)
-				.email("admin2@mail.com")
+				.email(SAMPLE_ADMIN2_EMAIL_ADDRESS)
 				.build();
-		
-		
+		Program program = new ProgramBuilder().id(4)
+				.title(SAMPLE_PROGRAM_TITLE)
+				.administrators(applicant1, applicant2)
+				.build();
+		ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(5)
+				.build();
+		RejectReason reason = new RejectReasonBuilder()
+				.text(SAMPLE_REJECTION_REASON)
+				.build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
+				.status(ApplicationFormStatus.APPROVED)
+				.rejection(new RejectionBuilder()
+						.rejectionReason(reason)
+						.includeProspectusLink(false)
+						.build())
+				.applicant(applicant)
+				.programmeDetails(programDetails)
+				.applicationNumber(SAMPLE_APPLICATION_NUMBER)
+				.program(program)
+				.build();
+		return applicationForm;
 		
 	}
 	

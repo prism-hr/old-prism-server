@@ -267,7 +267,8 @@ public class UserDAO {
                 .setProjection(Projections.property("id"))
                 .add(Restrictions.or(
                         Restrictions.eq("digestNotificationType", DigestNotificationType.UPDATE_NOTIFICATION),
-                        Restrictions.eq("digestNotificationType", DigestNotificationType.TASK_NOTIFICATION)))
+                        Restrictions.eq("digestNotificationType", DigestNotificationType.TASK_NOTIFICATION),
+                        Restrictions.eq("digestNotificationType", DigestNotificationType.TASK_REMINDER)))
                         .list();
     }
     

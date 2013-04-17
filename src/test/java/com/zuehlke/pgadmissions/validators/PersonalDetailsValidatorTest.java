@@ -128,11 +128,12 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfNoCandidateNationality() {
-        personalDetails.getCandidateNationalities().clear();
+        personalDetails.setFirstNationality(null);
+        personalDetails.setSecondNationality(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("candidateNationalities").getCode());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("firstNationality").getCode());
     }
 
     @Test
@@ -672,8 +673,7 @@ public class PersonalDetailsValidatorTest {
     @Before
     public void setup() {
         Language nationality = new Language();
-        personalDetails = new PersonalDetailsBuilder()
-                .candiateNationalities(nationality)
+        personalDetails = new PersonalDetailsBuilder().firstNationality(nationality)
                 .applicationForm(new ApplicationFormBuilder().id(2).build())
                 .country(new CountryBuilder().build())
                 .dateOfBirth(DateUtils.addYears(new Date(), -28))

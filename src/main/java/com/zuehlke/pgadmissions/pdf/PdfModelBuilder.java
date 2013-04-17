@@ -378,12 +378,16 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
         table.addCell(newTableCell("Nationality", SMALL_BOLD_FONT));
         StringBuilder sb = new StringBuilder();
-        for (Language languageCountry : form.getPersonalDetails().getCandidateNationalities()) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append(languageCountry.getName());
+
+        Language firstNationality = form.getPersonalDetails().getFirstNationality();
+        if (firstNationality != null) {
+            sb.append(firstNationality.getName());
         }
+        Language secondNationality = form.getPersonalDetails().getSecondNationality();
+        if (secondNationality != null) {
+            sb.append(", " + secondNationality.getName());
+        }
+
         table.addCell(newTableCell(sb.toString(), SMALL_FONT));
 
         table.addCell(newTableCell("Is English your first language?", SMALL_BOLD_FONT));

@@ -163,10 +163,16 @@ public class ApplicationListController {
         }
         return new Gson().toJson(predicatesMap);
     }
-    
+
     @ModelAttribute("applicationStatusValues")
-    public ApplicationFormStatus[] getApplicationStatusValues() {
-        return ApplicationFormStatus.values();
+    public List<ApplicationFormStatus> getApplicationStatusValues() {
+        List<ApplicationFormStatus> statuses = Lists.newArrayListWithCapacity(ApplicationFormStatus.values().length);
+        for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
+            if (status != ApplicationFormStatus.UNSUBMITTED && status != ApplicationFormStatus.REQUEST_RESTART_APPROVAL) {
+                statuses.add(status);
+            }
+        }
+        return statuses;
     }
 
     @ModelAttribute("applications")

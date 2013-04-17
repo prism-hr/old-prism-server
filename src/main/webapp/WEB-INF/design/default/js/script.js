@@ -695,11 +695,11 @@ function modalPosition() {
 }
 
 function modalPrompt(message, okay, cancel) {
-    if (okay == 'undefined') {
+    if (typeof(okay) == 'undefined') {
         okay = function() {
         };
     }
-    if (cancel == 'undefined') {
+    if (typeof(cancel) == 'undefined') {
         cancel = function() {
         };
     }

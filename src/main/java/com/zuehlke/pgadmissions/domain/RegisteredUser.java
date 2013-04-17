@@ -88,6 +88,9 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     private boolean credentialsNonExpired;
 
+    @Column(name = "stored_filters")
+    private boolean storedFilters;
+
     private String activationCode;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
@@ -672,6 +675,14 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public void setUsername(final String username) {
         this.username = username;
+    }
+
+    public boolean isStoredFilters() {
+        return storedFilters;
+    }
+
+    public void setStoredFilters(boolean storedFilters) {
+        this.storedFilters = storedFilters;
     }
 
     @Override

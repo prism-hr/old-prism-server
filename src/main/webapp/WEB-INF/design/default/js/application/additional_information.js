@@ -60,7 +60,21 @@ $(document).ready(function(){
 
 			addImgCount = 0;
 		}
-		});
+	});
+	
+	$("input[name*='confirmNextStage']").click(function()
+			{
+				if ($("#confirmNextStageValue").val() =='YES')
+				{
+					$("#confirmNextStageValue").val("NO");
+				}
+				else
+				{
+					$("#confirmNextStageValue").val("YES");
+
+					addImgCount = 0;
+				}
+			});
 	
 	
 	$('#informationSaveButton').click(function()

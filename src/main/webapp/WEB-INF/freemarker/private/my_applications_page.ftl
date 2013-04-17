@@ -88,8 +88,7 @@
             <div class="actions">
           	<!-- Download button. --> 
     		<div class="btn-group">
-                <button class="btn" id="search-report">Downloads</button>
-                <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                <button class="btn dropdown-toggle" data-toggle="dropdown"> Downloads <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     <!--li><a href="#" id="search-report-html">Report in HTML</a></li>
                     <li><a href="#" id="search-report-json">JSON</a></li-->

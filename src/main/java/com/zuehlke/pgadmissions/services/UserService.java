@@ -443,6 +443,7 @@ public class UserService {
         for (ApplicationsFilter existingFilter : user.getApplicationsFilters()) {
             applicationsFilterDAO.removeFilter(existingFilter);
         }
+        user.setStoredFilters(true);
         user.getApplicationsFilters().clear();
 
         for (ApplicationsFilter filter : filters) {

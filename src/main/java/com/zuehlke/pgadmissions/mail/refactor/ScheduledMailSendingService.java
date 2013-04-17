@@ -1,10 +1,13 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_REMINDER;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
@@ -31,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
@@ -40,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -70,8 +76,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     
     private final ApplicationsService applicationsService;
     
-    private final ConfigurationService configurationService;
-    
     private final CommentFactory commentFactory;
 
     private final CommentService commentService;
@@ -80,29 +84,32 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     
     private final PdfDocumentBuilder pdfDocumentBuilder;
 
+	private final RefereeDAO refereeDAO;
+
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final UserService userService,
             final ApplicationFormDAO applicationFormDAO, final NotificationRecordDAO notificationRecordDAO,
             final CommentDAO commentDAO, final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO,
             final ReviewerDAO reviewerDAO, final ApplicationsService applicationsService, final ConfigurationService configurationService,
             final CommentFactory commentFactory, final CommentService commentService,
-            final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, final PdfDocumentBuilder pdfDocumentBuilder) {
-        super(userService, mailSender, applicationFormDAO);
+            final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, final PdfDocumentBuilder pdfDocumentBuilder,
+            final RefereeDAO refereeDAO) {
+        super(userService, mailSender, applicationFormDAO, configurationService);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
         this.stageDurationDAO = stageDurationDAO;
         this.reviewerDAO = reviewerDAO;
 		this.applicationsService = applicationsService;
-		this.configurationService = configurationService;
 		this.commentService = commentService;
 		this.commentFactory = commentFactory;
 		this.pdfAttachmentInputSourceFactory = pdfAttachmentInputSourceFactory;
 		this.pdfDocumentBuilder = pdfDocumentBuilder;
+		this.refereeDAO = refereeDAO;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Scheduled(cron = "${email.digest.cron}")
@@ -121,11 +128,10 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         scheduleRestartApprovalReminder();
         scheduleApprovedConfirmation();
         scheduleInterviewAdministrationReminder();
-        scheduleInterviewAdministrationRequest();
         scheduleInterviewFeedbackConfirmation();
         scheduleInterviewFeedbackRequest();
         scheduleInterviewFeedbackReminder();
-        scheduleUnderApprovalNotification();
+        scheduleApplicationUnderApprovalNotification();
         scheduleRejectionConfirmationToAdministrator();
         scheduleReviewSubmittedConfirmation();
         scheduleReviewEvaluationRequest();
@@ -151,28 +157,43 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 "Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
         
         for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
-            RegisteredUser user = userService.getUser(userId);
+            final RegisteredUser user = userService.getUser(userId);
+            EmailModelBuilder modelBuilder = new EmailModelBuilder() {
+				
+				@Override
+				public Map<String, Object> build() {
+					Map<String, Object> model = new HashMap<String, Object>();
+					model.put("user", user);
+					model.put("host", getHostName());
+					return model;
+				}
+			};
+			
+			digestTaskNotification.model(modelBuilder);
+			digestTaskReminder.model(modelBuilder);
+			digestUpdateNotification.model(modelBuilder);
+			
             switch (user.getDigestNotificationType()) {
             case TASK_NOTIFICATION:
-                digestTaskNotification.bcc(user);
+                digestTaskNotification.to(user);
                 break;
             case TASK_REMINDER:
-                digestTaskReminder.bcc(user);
+                digestTaskReminder.to(user);
                 break;
             case UPDATE_NOTIFICATION:
-                digestUpdateNotification.bcc(user);
+                digestUpdateNotification.to(user);
                 break;
             case NONE:
             default:
                 break;
             }
+            try {
+            	sendEmail(digestTaskNotification.build(), digestTaskReminder.build(), digestUpdateNotification.build());
+            } catch (Exception e) {
+            	log.error(e.getMessage(), e);
+            }
         }
         
-        try {
-            sendEmail(digestTaskNotification.build(), digestTaskReminder.build(), digestUpdateNotification.build());
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
         
         log.info("Reseting daily digests to users");
         userService.resetDigestNotificationsForAllUsers();
@@ -732,48 +753,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     /**
      * <p>
      * <b>Summary</b><br/>
-     * Informs users when they are required to administer interviews.<br/>
-     * Finds all applications in the system that require interviews to be administered, and;<br/> 
-     * Schedules their Delegate Interview Administrators to be notified.
-     * <p/><p>
-     * <b>Recipients</b><br/>
-     * Delegate Interview Administrator
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Administrators can specify Delegate Interview Administrators, when:
-     *    <ol>
-     *    <li>They move applications into the interview state.</li>
-     *    </ol></li>
-     * <li>Delegate Interview Administrators can administer interviews, while:
-     *    <ol>
-     *    <li>They are in the current interview state, and;</li>
-     *    <li>An interview has not been scheduled.</li>
-     *    </ol></li>
-     * <li>They are scheduled to be notified to do so, when:
-     *    <ol>
-     *    <li>Applications have been delegated to them within the last 24 hours.</li>
-     *    </ol></li>
-     * </ol>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 2 (Task Notification)
-     * </p>
-     */
-    //Not sure about this. what's the difference with 'scheduleInterviewAdministrationReminder'?
-    //if we set the digest flag for the delegated user the request will be sent when the main timer runs
-    //time at which 'scheduleInterviewAdministrationReminder' will execute as well (sending again the same mail)
-    //This method as been implemented in the MailSendingservice as an on-event sent mail (when the admin delegates a user for the interview organisation)
-    public void scheduleInterviewAdministrationRequest() {
-    }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
      * Informs users when interview feedback has been provided.<br/>
      * Finds all applications in the system for which interview feedback has recently been provided, and;<br/> 
      * Schedules their Administrators and Delegate Interview Administrators to be notified.
@@ -808,37 +787,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
     }
 
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when interviews have been scheduled.
-     * <p/><p>
-     * <b>Recipients</b>
-     * Applicant
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b><br/>
-     * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
-     *    <ol>
-     *    <li>Applications are in the current interview state, and;</li>
-     *    <li>Interviews have not been scheduled.</li>
-     *    </ol></li>
-     * <ol>
-     * <li>Applicants are notified, when:
-     *    <ol>
-     *    <li>Interviews have been scheduled.</li>
-     *    </ol></li>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b>
-     * Immediate Notification
-     * </p>
-     */ 
-    public void sendInterviewConfirmationToApplicant() {
-    }
 
     /**
      * <p>
@@ -946,7 +894,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    public void scheduleUnderApprovalNotification() {
+    public void scheduleApplicationUnderApprovalNotification() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueMovedToApprovalNotifications()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
             userService.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
@@ -1021,9 +969,31 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Notification
      * </p>
      */
-    //@Scheduled
-    public void sendReferenceReminder() {
-    }
+    @Scheduled(fixedRate = 600000)//every 10 minutes
+	public void sendReferenceReminder() {
+		PrismEmailMessage message = null;
+		try {
+    		List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
+    		for (Referee referee : refereesDueAReminder) {
+    			String subject = resolveMessage("reference.request.reminder", referee.getApplication());
+    			
+    			ApplicationForm applicationForm = referee.getApplication();
+    			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
+    			EmailModelBuilder modelBuilder = getModelBuilder(
+    					new String[] {"adminsEmails", "referee", "application", "applicant", "host"},
+    					new Object[] {adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName()}
+    					);
+    			
+    			message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
+    			sendEmail(message);
+    			referee.setLastNotified(new Date());
+				refereeDAO.save(referee);
+    		}
+		} catch (Exception e) {
+			throw new PrismMailMessageException("Error while sending reference reminder email to referee: ",
+					e.getCause(), message);
+		}
+	}
     
     /**
      * <p>
@@ -1052,7 +1022,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Immediate Notification
      * </p>
      */
-    //@Scheduled (see RegistryNotificationTimerTask)
+    @Scheduled(fixedRate = 600000)//every 10 minutes
     public void sendValidationRequestToRegistry() {
     	PrismEmailMessage message = null;
     	try {
@@ -1384,5 +1354,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
         */
-       public void scheduleApplicationUnderInterviewNotification() { }
+    // TODO: check if 'getApplicationsDueNotificationForStateChangeEvent' picks applications that have been moved
+    // to interview but interview needs to be scheduled yet
+    public void scheduleApplicationUnderInterviewNotification() { 
+    	for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION, ApplicationFormStatus.INTERVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION);
+            userService.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
+        }
+       }
+    
+   
 }

@@ -25,9 +25,12 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 public abstract class AbstractMailSendingService {
@@ -37,6 +40,8 @@ public abstract class AbstractMailSendingService {
     private final MailSender mailSender;
     
     protected final ApplicationFormDAO applicationDAO;
+    
+    protected final ConfigurationService configurationService;
     
     protected class UpdateDigestNotificationClosure implements Closure {
         private final DigestNotificationType type;
@@ -52,10 +57,11 @@ public abstract class AbstractMailSendingService {
     }
     
     public AbstractMailSendingService(final UserService userService,
-    		final MailSender mailSender,  final ApplicationFormDAO formDAO) {
+    		final MailSender mailSender,  final ApplicationFormDAO formDAO, final ConfigurationService configurationService) {
         this.userService = userService;
 		this.mailSender = mailSender;
 		applicationDAO = formDAO;
+		this.configurationService = configurationService;
     }
     
     @SuppressWarnings("unchecked")
@@ -146,6 +152,20 @@ public abstract class AbstractMailSendingService {
         };
     }
     
+    protected String resolveMessage(String code, ApplicationForm form, ApplicationFormStatus previousStage) {
+		if (previousStage == null) {
+			return resolveMessage(code, form);
+		}
+		RegisteredUser applicant = form.getApplicant();
+		if (applicant == null) {
+			throw new IllegalArgumentException("applicant must be provided!");
+		}
+		Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
+				previousStage.displayValue() };
+
+		return resolveMessage(code, args);
+	}
+    
     protected String resolveMessage(String subjectCode, ApplicationForm applicationForm) {
         RegisteredUser applicant = applicationForm.getApplicant();
         if (applicant == null) {
@@ -197,4 +217,8 @@ public abstract class AbstractMailSendingService {
 		sb.append(".");
 		return sb.toString();
 	}
+    
+    protected String getHostName() {
+    	return Environment.getInstance().getApplicationHostName();
+    }
 }

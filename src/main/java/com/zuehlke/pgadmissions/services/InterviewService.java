@@ -57,7 +57,8 @@ public class InterviewService {
         calendar.setTime(interview.getInterviewDueDate());
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         applicationForm.setDueDate(calendar.getTime());
-        mailService.sendInterviewConfirmationToInterviewer(interview.getInterviewers());
+        mailService.sendInterviewConfirmationToApplicant(applicationForm);
+        mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
         interviewDAO.save(interview);
         applicationForm.setLatestInterview(interview);
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);

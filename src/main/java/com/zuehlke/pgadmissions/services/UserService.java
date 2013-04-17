@@ -425,9 +425,8 @@ public class UserService {
     	delegateReminder.setUser(delegate);
     	delegateReminder.setDate(new Date());
     	applicationForm.addNotificationRecord(delegateReminder);
-    	List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
     	 try {
-    		 mailService.sendInterviewAdministrationReminder(delegate, admins, applicationForm);
+    		 mailService.scheduleInterviewAdministrationRequest(delegate, applicationForm);
          } catch (Exception e) {
              log.warn("error while sending email", e);
          }

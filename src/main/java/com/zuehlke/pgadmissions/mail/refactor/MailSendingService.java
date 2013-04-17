@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERR
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_ADMINISTRATION_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFERENCE_RESPOND_CONFIRMATION;
@@ -12,6 +13,8 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATI
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +42,6 @@ public class MailSendingService extends AbstractMailSendingService {
     
     private final RefereeService refereeService;
     
-    private final ConfigurationService configurationService;
 
     public MailSendingService() {
         this(null, null, null, null, null);
@@ -48,9 +50,8 @@ public class MailSendingService extends AbstractMailSendingService {
     public MailSendingService(final MailSender mailSender, final UserService userSerivce,
     		final RefereeService refereeService, ConfigurationService configurationService,
     		final ApplicationFormDAO formDAO) {
-        super(userSerivce, mailSender, formDAO);
+        super(userSerivce, mailSender, formDAO, configurationService);
         this.refereeService = refereeService;
-		this.configurationService = configurationService;
     }
 
     /**
@@ -273,15 +274,7 @@ public class MailSendingService extends AbstractMailSendingService {
 
      			}
              
-             Object[] args;
-             if (form.getOutcomeOfStage()==null) {
-          	   args = new Object[]{form.getApplicationNumber(), form.getProgram().getTitle()};
-             }
-             else {
-          	   args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
-          			   form.getOutcomeOfStage().displayValue() };
-             }
-             String subject =resolveMessage("approved.notification.applicant", args);
+             String subject =resolveMessage("approved.notification.applicant", form, form.getOutcomeOfStage());
              
              message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
              sendEmail(message);
@@ -318,7 +311,7 @@ public class MailSendingService extends AbstractMailSendingService {
       * Immediate Notification
       * </p>
       */
-      public void sendInterviewConfirmationToInterviewer(List<Interviewer> interviewers) {
+      public void sendInterviewConfirmationToInterviewers(List<Interviewer> interviewers) {
     	  PrismEmailMessage message =null;
     	  for (Interviewer interviewer : interviewers) {
     		  try {
@@ -333,9 +326,66 @@ public class MailSendingService extends AbstractMailSendingService {
     			  sendEmail(message);
     		  }
     		  catch (Exception e) {
-    	             throw new PrismMailMessageException("Error while sending interview confirmation email: ", e.getCause(), message);
-    	         }
+    			  throw new PrismMailMessageException("Error while sending interview confirmation email to interviewer: ", e.getCause(), message);
+    	      }
     	  }
+      }
+      
+      /**
+       * <p>
+       * <b>Summary</b><br/>
+       * Informs users when interviews have been scheduled.
+       * <p/><p>
+       * <b>Recipients</b>
+       * Applicant
+       * </p><p>
+       * <b>Previous Email Template Name</b><br/>
+       * Kevin to Insert
+       * </p><p> 
+       * <b>Business Rules</b><br/>
+       * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
+       *    <ol>
+       *    <li>Applications are in the current interview state, and;</li>
+       *    <li>Interviews have not been scheduled.</li>
+       *    </ol></li>
+       * <ol>
+       * <li>Applicants are notified, when:
+       *    <ol>
+       *    <li>Interviews have been scheduled.</li>
+       *    </ol></li>
+       * </ol>
+       * </p><p>
+       * <b>Notification Type</b>
+       * Immediate Notification
+       * </p>
+       * @param applicationForm 
+       */ 
+      public void sendInterviewConfirmationToApplicant(ApplicationForm applicationForm) {
+    	  PrismEmailMessage message = null;
+    	  try {
+    		  String subject = resolveMessage("interview.notification.applicant", applicationForm, applicationForm.getOutcomeOfStage());
+			  List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
+			  EmailModelBuilder modelBuilder = getModelBuilder(
+					  new String[] {"adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage"},
+					  new Object[] {getAdminsEmailsCommaSeparatedAsString(admins), applicationForm, applicationForm.getApplicant(),
+							  		configurationService.getAllRegistryUsers(), getHostName(), Environment.getInstance().getAdmissionsOfferServiceLevel(), applicationForm.getOutcomeOfStage()}
+					  );
+			  
+			  Map<String, Object> model = modelBuilder.build();
+			  if (ApplicationFormStatus.REJECTED.equals(applicationForm.getStatus())) {
+					model.put("reason", applicationForm.getRejection().getRejectionReason());
+					if (applicationForm.getRejection().isIncludeProspectusLink()) {
+						model.put("prospectusLink", Environment.getInstance().getUCLProspectusLink());
+					}
+
+			  }
+			  
+			  message = buildMessage(applicationForm.getApplicant(), subject, model, MOVED_TO_INTERVIEW_NOTIFICATION);
+			  sendEmail(message);
+    	  }
+    	  catch (Exception e) {
+    		  throw new PrismMailMessageException("Error while sending interview confirmation email to applicant: ", e.getCause(), message);
+	      }
       }
 
     /**
@@ -503,6 +553,7 @@ public class MailSendingService extends AbstractMailSendingService {
         CollectionUtils.forAllDo(usersToNotify.values(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
 
+    //integrate this as digest in 'sendReferenceSubmitConfirmationToAdministrators'
 	public void sendReferenceSubmittedConfirmationToApplicant(Referee referee) {
 		PrismEmailMessage message = null;
 		try {
@@ -611,18 +662,47 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewAdministrationReminder(RegisteredUser user, List<RegisteredUser> admins, ApplicationForm form) {
-        PrismEmailMessage message = null;
-        try {
-            EmailModelBuilder modelBuilder = getModelBuilder(
-                    new String[] { "user", "applicationForm", "host" }, 
-                    new Object[] { user, form, getInstance().getApplicationHostName() });
-            String subject = resolveMessage("application.interview.delegation", (Object[]) null);
-            message = buildMessage(user, admins, subject, modelBuilder.build(), INTERVIEW_ADMINISTRATION_REMINDER);
-            sendEmail(message);
-        } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending interview administration reminder email: ", e.getCause(), message);
-        }
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Informs users when they are required to administer interviews.<br/>
+     * Finds all applications in the system that require interviews to be administered, and;<br/> 
+     * Schedules their Delegate Interview Administrators to be notified.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Delegate Interview Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can specify Delegate Interview Administrators, when:
+     *    <ol>
+     *    <li>They move applications into the interview state.</li>
+     *    </ol></li>
+     * <li>Delegate Interview Administrators can administer interviews, while:
+     *    <ol>
+     *    <li>They are in the current interview state, and;</li>
+     *    <li>An interview has not been scheduled.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be notified to do so, when:
+     *    <ol>
+     *    <li>Applications have been delegated to them within the last 24 hours.</li>
+     *    </ol></li>
+     * </ol>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 2 (Task Notification)
+     * </p>
+     */
+    public void scheduleInterviewAdministrationRequest(RegisteredUser user, ApplicationForm form) {
+    	List<RegisteredUser> admins = form.getProgram().getAdministrators();
+    	List<RegisteredUser> users = new ArrayList<RegisteredUser>(admins.size()+1);
+    	users.add(user);
+    	users.addAll(admins);
+    	CollectionUtils.forAllDo(users, new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
     }
 
     /**

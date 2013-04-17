@@ -26,6 +26,7 @@ import org.easymock.CaptureType;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -37,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -45,18 +47,24 @@ public class MailSendingServiceTest {
 	
 	private MailSendingService service;
 	
-	private TemplateAwareMailSender mockMailSender;
+	private MailSender mockMailSender;
 
 	private UserService mockUserService;
 	
 	private RefereeService refereeServiceMock;
 	
+	private ConfigurationService configurationServiceMock;
+	
+	private ApplicationFormDAO applicationFormDAOMock;
+
 	@Before
 	public void setup() {
-		mockMailSender = createMock(TemplateAwareMailSender.class);
+		mockMailSender = createMock(MailSender.class);
 		mockUserService = createMock(UserService.class);
 		refereeServiceMock = createMock(RefereeService.class);
-		service = new MailSendingService(mockMailSender, mockUserService, refereeServiceMock);
+		configurationServiceMock = createMock(ConfigurationService.class);
+		applicationFormDAOMock = createMock(ApplicationFormDAO.class);
+		service = new MailSendingService(mockMailSender, mockUserService, refereeServiceMock, configurationServiceMock, applicationFormDAOMock);
 	}
 	
 	@Test
@@ -121,7 +129,7 @@ public class MailSendingServiceTest {
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		
 		replay(mockMailSender);
-		service.sendReferenceSubmittedConfirmationToApplicant(referee, adminsEmails);
+		service.sendReferenceSubmittedConfirmationToApplicant(referee);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
@@ -190,7 +198,7 @@ public class MailSendingServiceTest {
 		expect(mockMailSender.resolveMessage("application.interview.delegation", (Object[])null)).andReturn("Application interview administration delegation");
 		
 		replay(mockMailSender);
-		service.sendInterviewAdministrationReminder(user, Arrays.asList(admin1, admin2), form);
+		service.scheduleInterviewAdministrationRequest(user, form);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
@@ -207,7 +215,26 @@ public class MailSendingServiceTest {
 	}
 	
 	@Test
-	public void sendRefereeMailNotificationShouldSuccessfullySendMessage() throws Exception {
+	public void sendReferenceSubmitConfirmationToAdministratorsShouldSuccessfullySendMessage() throws Exception {
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(3).build();
+		RegisteredUser admin2 = new RegisteredUserBuilder().id(4).build();
+		
+		Capture<RegisteredUser> adminsCaptor = new Capture<RegisteredUser>(CaptureType.ALL);
+		mockUserService.setDigestNotificationType(and(isA(RegisteredUser.class), capture(adminsCaptor)),
+				eq(DigestNotificationType.UPDATE_NOTIFICATION));
+		expectLastCall().times(2);
+		
+		replay(mockUserService);
+		service.sendReferenceSubmitConfirmationToAdministrators(asList(admin1, admin2));
+		verify(mockUserService);
+		
+		List<RegisteredUser> admins = adminsCaptor.getValues();
+		assertEquals((Integer)3, admins.get(0).getId());
+		assertEquals((Integer)4, admins.get(1).getId());
+	}
+	
+	@Test
+	public void sendRefereeRequestShouldSuccessfullySendMessage() throws Exception {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("Maccio").
 				lastName("Capatonda").build();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
@@ -232,7 +259,7 @@ public class MailSendingServiceTest {
 		
 		
 		replay(mockMailSender);
-		service.sendRefereeMailNotification(referee, form, adminMails);
+		service.sendReferenceRequest(referee, form);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
@@ -245,26 +272,7 @@ public class MailSendingServiceTest {
 	}
 	
 	@Test
-	public void sendReferenceSubmitConfirmationToAdministratorsShouldSuccessfullySendMessage() throws Exception {
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(3).build();
-		RegisteredUser admin2 = new RegisteredUserBuilder().id(4).build();
-		
-		Capture<RegisteredUser> adminsCaptor = new Capture<RegisteredUser>(CaptureType.ALL);
-		mockUserService.setDigestNotificationType(and(isA(RegisteredUser.class), capture(adminsCaptor)),
-				eq(DigestNotificationType.UPDATE_NOTIFICATION));
-		expectLastCall().times(2);
-		
-		replay(mockUserService);
-		service.sendReferenceSubmitConfirmationToAdministrators(asList(admin1, admin2));
-		verify(mockUserService);
-		
-		List<RegisteredUser> admins = adminsCaptor.getValues();
-		assertEquals((Integer)3, admins.get(0).getId());
-		assertEquals((Integer)4, admins.get(1).getId());
-	}
-	
-	@Test
-	public void sendRefereeMailNotificationShouldSuccessfullySendMessageWithNoApplicant() throws Exception {
+	public void sendRefereeRequestShouldSuccessfullySendMessageWithNoApplicant() throws Exception {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		Referee referee = new RefereeBuilder().id(0).user(user).build();
 		String adminMails = "admin_mail1, admin_mail2";
@@ -287,7 +295,7 @@ public class MailSendingServiceTest {
 		
 		
 		replay(mockMailSender);
-		service.sendRefereeMailNotification(referee, form, adminMails);
+		service.sendReferenceRequest(referee, form);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
@@ -397,6 +405,23 @@ public class MailSendingServiceTest {
 			assertTrue(actual.containsKey(entry.getKey()));
 			assertEquals(entry.getValue(), actual.get(entry.getKey()));
 		}
+	}
+	
+	private ApplicationForm getSampleApplicationForm() {
+		RegisteredUser applicant = new RegisteredUserBuilder().id(1)
+				.email("capatonda@mail.com")
+				.firstName("Maccio")
+				.lastName("Capatonda")
+				.build();
+		RegisteredUser applicant1 = new RegisteredUserBuilder().id(2)
+				.email("admin1@mail.com")
+				.build();
+		RegisteredUser applicant2 = new RegisteredUserBuilder().id(3)
+				.email("admin2@mail.com")
+				.build();
+		
+		
+		
 	}
 	
 }

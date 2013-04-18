@@ -63,7 +63,7 @@ public class SupervisorDAO {
     public List<Supervisor> getPrimarySupervisorsDueNotification() {
         return sessionFactory.getCurrentSession()
                 .createCriteria(Supervisor.class, "supervisor")
-                .add(Restrictions.isNull("lastNotified"))
+                .add(Restrictions.isNull("lastNotified"))//A supervisor who hasn't confirmed supervision will not be reminded because of this restriction...seems to be wrong!
                 .add(Restrictions.isNull("confirmedSupervision"))
                 .add(Restrictions.eq("isPrimary", true))
                 .createAlias("approvalRound.application", "application")

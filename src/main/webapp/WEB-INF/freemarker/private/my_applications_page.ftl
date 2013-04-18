@@ -23,6 +23,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/scrollpagination.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
@@ -86,8 +87,22 @@
             <div id="search-box" class="clearfix"> 
             <div class="actions">
           	<!-- Download button. --> 
-            <a target="_blank" name="downloadAll" id="downloadAll" class="btn btn-small"><i class="icon-download-alt"></i> Download  PDF</a>
+    		<div class="btn-group">
+                <button class="btn" id="search-report">Downloads</button>
+                <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <!--li><a href="#" id="search-report-html">Report in HTML</a></li>
+                    <li><a href="#" id="search-report-json">JSON</a></li-->
+                    <li><a href="#" id="search-report-csv">CSV Report</a></li>
+      				<li class="divider"></li>
+                    <li><a target="_blank" href="#" name="downloadAll" id="downloadAll"><i class="icon-download-alt"></i> Download  PDF</a></li>
+                </ul>
+              </div>
+            
             <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
+            <input type="hidden" id="applicationStatusValues" name="applicationStatusValues" 
+              value='<#list applicationStatusValues as value>${value.displayValue()}<#if value_has_next>,</#if></#list>'
+            />
           </div>
             
             <#list filters as filter> 
@@ -95,23 +110,35 @@
               <div class="filter" id="filter_${filter_index}">
                 <select class="selectCategory" name="searchCategory" id="searchCategory_${filter_index}">
                   <option value="">Column...</option>
-                  <#list searchCategories as category> <option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">
-                  ${category.displayValue()}
-                  </option>
+                  <#list searchCategories as category>
+                    <option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}</option>
                   </#list>
                 </select>
                 <select class="selectPredicate" name="searchPredicate" id="searchPredicate_${filter_index}">
-                  <#list filter.searchCategory.availablePredicates as predicate> <option <#if filter.searchPredicate = predicate>selected="selected"</#if> value="${predicate}">
-                  ${predicate.displayValue()}
-                  </option>
+                  <#list filter.searchCategory.availablePredicates as predicate>
+                    <option <#if filter.searchPredicate = predicate>selected="selected"</#if> value="${predicate}">${predicate.displayValue()}</option>
                   </#list>
                 </select>
-                <input class="filterInput" type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
+
+                <#if filter.searchCategory == "APPLICATION_STATUS">
+                  <select id="searchTerm_${filter_index}" class="filterInput selector" name="filterInput" >
+                    <#list applicationStatusValues as value>
+                      <option value="${value.displayValue()}"
+                        <#if filter.searchTerm = value.displayValue()>selected</#if>                      
+                      >${value.displayValue()}</option>
+                    </#list>
+                  </select>
+                <#elseif filter.searchCategory == "LAST_EDITED_DATE" || filter.searchCategory == "SUBMISSION_DATE">
+                  <input id="searchTerm_${filter_index}" class="filterInput half date" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
+                <#else>
+                  <input id="searchTerm_${filter_index}" class="filterInput" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
+                </#if>
                 <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>
               </#list> 
               
+              <#if filters?size==0>
               <!-- New search/filter box. -->
               <div class="filter" id="filter">
                 <select class="selectCategory" name="searchCategory" id="searchCategory">
@@ -124,10 +151,12 @@
                 </select>
                 <select class="selectPredicate" name="searchPredicate" id="searchPredicate_new">
                 </select>
-                <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." />
+                <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." />		
                  <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
               </div>
+              </#if>
+              
                   <div class="btn-actions">
                       <div class="btn-group">
                         <button class="btn btn-success" id="search-go">Apply</button>
@@ -139,12 +168,11 @@
               
                         </ul>
                       </div>
-                     <button class="btn btn-info" type="button" id="search-reset"  >Clear</button>
+                     <button class="btn btn-info" type="button" id="search-reset">Clear</button>
                   </div>
             </div>
                
           </div>
-          
           <table class="data table table-striped table-condensed table-bordered table-hover" id="appliList" border="0">
             <colgroup>
             <col style="width: 46px" />

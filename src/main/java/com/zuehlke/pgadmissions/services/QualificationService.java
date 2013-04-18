@@ -42,6 +42,7 @@ public class QualificationService {
             final List<Integer> qualificationsSendToPortico) {
 
         for (Qualification qualification : applicationForm.getQualifications()) {
+            qualification = qualificationDAO.getQualificationById(qualification.getId());
             qualification.setSendToUCL(false);
         }
 

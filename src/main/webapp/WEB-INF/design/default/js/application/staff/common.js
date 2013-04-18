@@ -7,4 +7,3 @@ function bindDatePickers(){
     yearRange:    '1900:+20'
   });
 }
-

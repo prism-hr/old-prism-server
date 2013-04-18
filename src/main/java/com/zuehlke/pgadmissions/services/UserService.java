@@ -424,7 +424,9 @@ public class UserService {
     	delegateReminder.setApplication(applicationForm);
     	delegateReminder.setUser(delegate);
     	delegateReminder.setDate(new Date());
+    	applicationForm.setSuppressStateChangeNotifications(true);
     	applicationForm.addNotificationRecord(delegateReminder);
+    	List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
     	 try {
     		 mailService.scheduleInterviewAdministrationRequest(delegate, applicationForm);
          } catch (Exception e) {

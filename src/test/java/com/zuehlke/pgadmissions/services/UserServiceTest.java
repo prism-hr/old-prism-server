@@ -215,10 +215,12 @@ public class UserServiceTest {
 
 		applicationsFilterDAOMock.save(filter);
 		applicationsFilterDAOMock.save(filter2);
+		
+		userDAOMock.save(selectedUser);
 
-		replay(applicationsFilterDAOMock);
+		replay(applicationsFilterDAOMock, userDAOMock);
 		userService.setFilters(selectedUser, Arrays.asList(filter, filter2));
-		verify(applicationsFilterDAOMock);
+		verify(applicationsFilterDAOMock, userDAOMock);
 
 		assertSame(selectedUser, filter.getUser());
 		assertSame(selectedUser, filter2.getUser());

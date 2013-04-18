@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.mail.DataExportMailSender;
 import com.zuehlke.pgadmissions.services.ThrottleService;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @Service
 public class PorticoQueueListener implements MessageListener {
@@ -32,11 +32,11 @@ public class PorticoQueueListener implements MessageListener {
     
     private final Logger log = LoggerFactory.getLogger(PorticoQueueListener.class);
     
-    private UclExportService exportService;
+    private PorticoExportService exportService;
 
     private final ApplicationFormDAO formDAO;
 
-    private final ApplicationFormTransferDAO formTransferDAO;
+    private final ApplicationFormTransferService applicationFormTransferService;
     
     private final DataExportMailSender exportMailSender;
     
@@ -47,12 +47,12 @@ public class PorticoQueueListener implements MessageListener {
     }
     
     @Autowired
-    public PorticoQueueListener(final UclExportService exportService, final ApplicationFormDAO formDAO,
-            final ApplicationFormTransferDAO formTransferDAO, final DataExportMailSender exportMailSender,
+    public PorticoQueueListener(final PorticoExportService exportService, final ApplicationFormDAO formDAO,
+            final ApplicationFormTransferService applicationFormTransferService, final DataExportMailSender exportMailSender,
             ThrottleService throttleService) {
         this.exportService = exportService;
         this.formDAO = formDAO;
-        this.formTransferDAO = formTransferDAO;
+        this.applicationFormTransferService = applicationFormTransferService;
         this.exportMailSender = exportMailSender;
         this.throttleService = throttleService;
     }
@@ -81,14 +81,9 @@ public class PorticoQueueListener implements MessageListener {
         ApplicationForm form = getApplicationForm(applicationNumber);
         ApplicationFormTransfer transfer = getApplicationFormTransfer(form);
         
-        if (form == null || transfer == null) {
-            log.warn("The applicationForm or the applicationTransfer object is NULL! applicationForm: {} applicationTransfer: {}", form, transfer);
-            return;
-        }
-        
         try {
             exportService.sendToPortico(form, transfer);
-        } catch (UclExportServiceException e) {
+        } catch (PorticoExportServiceException e) {
             sendEmailWithErrorMessage(e);
             errorHandlingStrategyResolver(e);
         } catch (Exception e) {
@@ -101,9 +96,8 @@ public class PorticoQueueListener implements MessageListener {
         return formDAO.getApplicationByApplicationNumber(applicationNumber);
     }
     
-    @Transactional(readOnly = true)
-    public ApplicationFormTransfer getApplicationFormTransfer(final ApplicationForm form) {
-        return formTransferDAO.getByApplicationForm(form);
+    private ApplicationFormTransfer getApplicationFormTransfer(final ApplicationForm form) {
+        return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
     
     private void sendEmailWithErrorMessage(final Exception e) {
@@ -114,7 +108,7 @@ public class PorticoQueueListener implements MessageListener {
         }
     }
     
-    private void errorHandlingStrategyResolver(UclExportServiceException e) {
+    private void errorHandlingStrategyResolver(PorticoExportServiceException e) {
         switch (e.getErrorHandlingStrategy()) {
         case RETRY:
             throw new TriggerJmsRetryException(e.getMessage(), e);

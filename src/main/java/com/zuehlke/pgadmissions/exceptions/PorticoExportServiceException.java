@@ -3,28 +3,28 @@ package com.zuehlke.pgadmissions.exceptions;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 
-public class UclExportServiceException extends Exception {
+public class PorticoExportServiceException extends Exception {
 
     private static final long serialVersionUID = 6463518543774917277L;
 
     private final ApplicationFormTransferError transferError;
     
-    public UclExportServiceException(ApplicationFormTransferError errorHandlingStrategy) {
+    public PorticoExportServiceException(ApplicationFormTransferError errorHandlingStrategy) {
         super();
         this.transferError = errorHandlingStrategy;
     }
 
-    public UclExportServiceException(final String message, final ApplicationFormTransferError errorHandlingStrategy) {
+    public PorticoExportServiceException(final String message, final ApplicationFormTransferError errorHandlingStrategy) {
         super(message);
         this.transferError = errorHandlingStrategy;
     }
 
-    public UclExportServiceException(final Throwable cause, final ApplicationFormTransferError errorHandlingStrategy) {
+    public PorticoExportServiceException(final Throwable cause, final ApplicationFormTransferError errorHandlingStrategy) {
         super(cause);
         this.transferError = errorHandlingStrategy;
     }
 
-    public UclExportServiceException(final String message, final Throwable cause, final ApplicationFormTransferError errorHandlingStrategy) {
+    public PorticoExportServiceException(final String message, final Throwable cause, final ApplicationFormTransferError errorHandlingStrategy) {
         super(message, cause);
         this.transferError = errorHandlingStrategy;
     }

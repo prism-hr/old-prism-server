@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
@@ -30,36 +31,47 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class StateTransitionController {
 
     protected static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
+    
     protected final ApplicationsService applicationsService;
+    
     protected final UserService userService;
+    
     protected final CommentService commentService;
+    
     protected final CommentFactory commentFactory;
-    protected final StateTransitionViewResolver stateTransitionViewResolver;
+    
     protected final EncryptionHelper encryptionHelper;
+    
     protected final DocumentService documentService;
+    
     protected final ApprovalService approvalService;
+    
     protected final StateChangeValidator stateChangeValidator;
+    
     protected final DocumentPropertyEditor documentPropertyEditor;
 
-    StateTransitionController() {
+    protected final StateTransitionService stateTransitionService;
+    
+    public StateTransitionController() {
         this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver, EncryptionHelper encryptionHelper,
-            DocumentService documentService, ApprovalService approvalService, StateChangeValidator stateChangeValidator,
-            DocumentPropertyEditor documentPropertyEditor) {
+    public StateTransitionController(ApplicationsService applicationsService, UserService userService,
+            CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
+            DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
+            StateTransitionService stateTransitionService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
         this.commentFactory = commentFactory;
-        this.stateTransitionViewResolver = stateTransitionViewResolver;
         this.encryptionHelper = encryptionHelper;
         this.documentService = documentService;
         this.approvalService = approvalService;
         this.stateChangeValidator = stateChangeValidator;
         this.documentPropertyEditor = documentPropertyEditor;
+        this.stateTransitionService = stateTransitionService;
     }
 
     @InitBinder(value = "comment")
@@ -99,8 +111,7 @@ public class StateTransitionController {
 
     @ModelAttribute("stati")
     public ApplicationFormStatus[] getAvailableNextStati(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        return ApplicationFormStatus.getAvailableNextStati(applicationForm.getStatus());
+        return stateTransitionService.getAvailableNextStati(getApplicationForm(applicationId).getStatus());
     }
 
     @ModelAttribute("user")

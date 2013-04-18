@@ -1,18 +1,21 @@
-package com.zuehlke.pgadmissions.controllers.workflow;
+package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
-@Component
+@Service
 public class StateTransitionViewResolver {
 
     private static final String REJECTION_VIEW = "redirect:/rejectApplication?applicationId=";
@@ -49,14 +52,20 @@ public class StateTransitionViewResolver {
             return STATE_TRANSITION_VIEW;
         }
         
-        if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus()
-                && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+        if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
             return MY_APPLICATIONS_VIEW;
         }
         
-        if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus()
-                && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
+        if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
             return STATE_TRANSITION_VIEW;
+        }
+        
+        if (ApplicationFormStatus.REVIEW == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
+            return REVIEW_VIEW + applicationForm.getApplicationNumber();
+        }
+        
+        if (ApplicationFormStatus.INTERVIEW == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
+            return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
         }
         
         return REJECTION_VIEW + applicationForm.getApplicationNumber();
@@ -70,6 +79,8 @@ public class StateTransitionViewResolver {
         }
         
         switch(evaluationCommentForLatestInterview.getNextStatus()) {
+        case REVIEW:
+            return REVIEW_VIEW + applicationForm.getApplicationNumber();
         case INTERVIEW:
             return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
         case APPROVAL:
@@ -81,7 +92,6 @@ public class StateTransitionViewResolver {
 
     private String resolveViewForReviewState(ApplicationForm applicationForm) {
         ReviewEvaluationComment evaluationCommentForLatestRoundOfReview = getEvaluationCommentForLatestRoundOfReview(applicationForm);
-        
         if (evaluationCommentForLatestRoundOfReview == null) {
             return STATE_TRANSITION_VIEW;
         }
@@ -118,13 +128,16 @@ public class StateTransitionViewResolver {
     }
     
     private ReviewEvaluationComment getEvaluationCommentForLatestRoundOfReview(final ApplicationForm applicationForm) {
-        Integer latestReviewRoundId = applicationForm.getLatestReviewRound().getId();
-        for (Comment comment : applicationForm.getApplicationComments()) {
-            if (comment instanceof ReviewEvaluationComment) {
-                ReviewEvaluationComment reviewEvaluationComment = (ReviewEvaluationComment) comment;
-                Integer reviewEvaluationCommentId = reviewEvaluationComment.getReviewRound().getId();
-                if (latestReviewRoundId.equals(reviewEvaluationCommentId)) {
-                    return reviewEvaluationComment;
+        ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
+        if (latestReviewRound != null) {
+            Integer latestReviewRoundId = latestReviewRound.getId();
+            for (Comment comment : applicationForm.getApplicationComments()) {
+                if (comment instanceof ReviewEvaluationComment) {
+                    ReviewEvaluationComment reviewEvaluationComment = (ReviewEvaluationComment) comment;
+                    Integer reviewEvaluationCommentId = reviewEvaluationComment.getReviewRound().getId();
+                    if (latestReviewRoundId.equals(reviewEvaluationCommentId)) {
+                        return reviewEvaluationComment;
+                    }
                 }
             }
         }
@@ -132,13 +145,16 @@ public class StateTransitionViewResolver {
     }
     
     private ApprovalEvaluationComment getEvaluationCommentForLatestApprovalRound(final ApplicationForm applicationForm) {
-        Integer latestApprovalRoundId = applicationForm.getLatestApprovalRound().getId();
-        for (Comment comment : applicationForm.getApplicationComments()) {
-            if (comment instanceof ApprovalEvaluationComment) {
-                ApprovalEvaluationComment approvalEvaluationComment = (ApprovalEvaluationComment) comment;
-                Integer approvalEvaluationCommentId = approvalEvaluationComment.getApprovalRound().getId();
-                if (latestApprovalRoundId.equals(approvalEvaluationCommentId)) {
-                    return approvalEvaluationComment;
+        ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+        if (latestApprovalRound != null) {
+            Integer latestApprovalRoundId = latestApprovalRound.getId();
+            for (Comment comment : applicationForm.getApplicationComments()) {
+                if (comment instanceof ApprovalEvaluationComment) {
+                    ApprovalEvaluationComment approvalEvaluationComment = (ApprovalEvaluationComment) comment;
+                    Integer approvalEvaluationCommentId = approvalEvaluationComment.getApprovalRound().getId();
+                    if (latestApprovalRoundId.equals(approvalEvaluationCommentId)) {
+                        return approvalEvaluationComment;
+                    }
                 }
             }
         }
@@ -146,13 +162,16 @@ public class StateTransitionViewResolver {
     }
     
     private InterviewEvaluationComment getEvaluationCommentForLatestInterview(final ApplicationForm applicationForm) {
-        Integer latestInterviewId = applicationForm.getLatestInterview().getId();
-        for (Comment comment : applicationForm.getApplicationComments()) {
-            if (comment instanceof InterviewEvaluationComment) {
-                InterviewEvaluationComment interviewEvaluationComment = (InterviewEvaluationComment) comment;
-                Integer interviewEvaluationCommentId = interviewEvaluationComment.getInterview().getId();
-                if (latestInterviewId.equals(interviewEvaluationCommentId)) {
-                    return interviewEvaluationComment;
+        Interview latestInterview = applicationForm.getLatestInterview();
+        if (latestInterview != null) {
+            Integer latestInterviewId = latestInterview.getId();
+            for (Comment comment : applicationForm.getApplicationComments()) {
+                if (comment instanceof InterviewEvaluationComment) {
+                    InterviewEvaluationComment interviewEvaluationComment = (InterviewEvaluationComment) comment;
+                    Integer interviewEvaluationCommentId = interviewEvaluationComment.getInterview().getId();
+                    if (latestInterviewId.equals(interviewEvaluationCommentId)) {
+                        return interviewEvaluationComment;
+                    }
                 }
             }
         }

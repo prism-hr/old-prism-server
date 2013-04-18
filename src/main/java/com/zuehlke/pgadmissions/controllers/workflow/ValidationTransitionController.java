@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.BadgeService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -57,19 +58,20 @@ public class ValidationTransitionController extends StateTransitionController {
     }
 
     @Autowired
-    public ValidationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver, EncryptionHelper encryptionHelper,
-            DocumentService documentService, ApprovalService approvalService, StateChangeValidator stateChangeValidator,
-            DocumentPropertyEditor documentPropertyEditor, BadgeService badgeService, MessageSource messageSource) {
-        super(applicationsService, userService, commentService, commentFactory, stateTransitionViewResolver, encryptionHelper, documentService,
-                approvalService, stateChangeValidator, documentPropertyEditor);
+    public ValidationTransitionController(ApplicationsService applicationsService, UserService userService,
+            CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
+            DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
+            BadgeService badgeService, MessageSource messageSource, StateTransitionService stateTransitionService) {
+        super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService,
+                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService);
         this.messageSource = messageSource;
         this.badgeService = badgeService;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
     public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm) {
-        return stateTransitionViewResolver.resolveView(applicationForm);
+        return stateTransitionService.resolveView(applicationForm);
     }
 
     @ModelAttribute("comment")
@@ -152,7 +154,7 @@ public class ValidationTransitionController extends StateTransitionController {
             return "redirect:/applications?messageCode=delegate.success&application="+ application.getApplicationNumber();
         }
 
-        return stateTransitionViewResolver.resolveView(getApplicationForm(applicationId));
+        return stateTransitionService.resolveView(getApplicationForm(applicationId));
     }
 
     @RequestMapping(value = "/getProjectTitles", method = RequestMethod.GET)

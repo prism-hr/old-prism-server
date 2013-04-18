@@ -185,6 +185,37 @@
                                 </div>
                             </section>
                         </div>
+
+            <div id="scoring_template_configuration">
+                <section class="form-rows">
+                    <h2>Scoring Template Configuration</h2>
+  
+                      <div class="row-group">
+                      <div class="row">
+                        <label class="plain-label" for="program">Program <em>*</em></label> <span data-desc="Select a program" class="hint"></span>
+                        <div class="field">
+                          <select name="program" id="program">
+							<option value="">Please select a program</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <label class="plain-label" for="phase">Phase</label> <span data-desc="Select a phase" class="hint"></span>
+                        <div class="field">
+                          <select name="phase" id="phase"></select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <label class="plain-label" for="scoringConfiguration">Edit scoring configuration</label> <span data-desc="HTML template" class="hint"></span>
+                        <div class="field">
+                          <textarea name="scoringConfiguration" id="scoringConfiguration" class="input-xxlarge" rows="15" cols="150">
+                          </textarea>
+                        </div>
+                      </div>
+                </section>
+            </div>  
+                        
                     </div>
                     <!-- .content-box-inner -->
                 </div>

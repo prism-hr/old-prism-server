@@ -11,7 +11,24 @@ $(document).ready(function() {
 	    bindDatePicker($(this));
     });
 
+	$.fn.jExpand = function(){
+        var element = this;
+
+		//$(element.selector + " tr:nth-child(3n + 2)").addClass('item');
+        //$(element.selector + " tr:nth-child(3n + 3)").find('div').addClass('details');
+        //$(element.selector + " tr:nth-child(3n + 4)").addClass('placeholder');
+        // $(element).find("tr:first-child").show();
+
+		$(element).find('.application-details:odd').addClass('odd');
+        $(element).find('.applicationRow').click(function() {
+			var applicationDetails = $(this).next();
+			$(element).find('.application-details').not(applicationDetails).hide();
+			applicationDetails.toggle();
+        });
+    };    
+	
 	populateApplicationList();
+	
 
 	// --------------------------------------------------------------------------------
 	// TABLE SORTING
@@ -315,6 +332,8 @@ function populateApplicationList() {
 			}
 
 			$('#applicationListSection').append(data);
+			
+			$('#appliList').jExpand();
 		},
 		complete : function() {
 			$('.content-box-inner div.fetching, .content-box-inner div.ajax')

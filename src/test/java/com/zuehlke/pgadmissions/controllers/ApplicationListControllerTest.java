@@ -8,6 +8,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,10 +20,13 @@ import org.apache.struts.mock.MockHttpSession;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -38,6 +42,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationsReportService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -46,6 +51,7 @@ public class ApplicationListControllerTest {
     private ApplicationListController controller;
     private RegisteredUser user;
     private ApplicationsService applicationsServiceMock;
+    private ApplicationsReportService applicationsReportServiceMock;
     private UserService userServiceMock;
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
 
@@ -127,7 +133,7 @@ public class ApplicationListControllerTest {
     }
 
     @Test
-    public void shouldReturnApplicationListSection() {
+    public void shouldReturnVisibleAndMatchedApplicationsWithLimitedSize() {
 
         // GIVEN
         Model model = new ExtendedModelMap();
@@ -152,6 +158,33 @@ public class ApplicationListControllerTest {
 
         // THEN
         assertSame(applications, model.asMap().get("applications"));
+    }
+
+    @Test
+    public void shouldReturnApplicationReport() throws IOException {
+
+        // GIVEN
+        ApplicationSearchDTO dto = new ApplicationSearchDTO();
+        ArrayList<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
+        dto.setFilters(filters);
+        dto.setOrder(SortOrder.DESCENDING);
+        dto.setSortCategory(SortCategory.APPLICATION_DATE);
+
+        MockHttpServletRequest requestMock = new MockHttpServletRequest();
+        requestMock.setParameter("tqx", "out:html");
+        MockHttpServletResponse responseMock = new MockHttpServletResponse();
+
+        DataTable dataTable = new DataTable();
+        expect(applicationsReportServiceMock.getApplicationsReport(user, filters, SortCategory.APPLICATION_DATE, SortOrder.DESCENDING)).andReturn(dataTable);
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+
+        // WHEN
+        EasyMock.replay(userServiceMock, applicationsReportServiceMock);
+        controller.getApplicationsReport(dto, requestMock, responseMock);
+        EasyMock.verify(userServiceMock, applicationsReportServiceMock);
+
+        assertEquals("text/html; charset=UTF-8", responseMock.getContentType());
     }
 
     @Test
@@ -244,8 +277,9 @@ public class ApplicationListControllerTest {
         user = new RegisteredUserBuilder().id(1).build();
         userServiceMock = EasyMock.createMock(UserService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsReportServiceMock = EasyMock.createMock(ApplicationsReportService.class);
         filtersPropertyEditorMock = EasyMock.createMock(ApplicationsFiltersPropertyEditor.class);
-        controller = new ApplicationListController(applicationsServiceMock, userServiceMock, filtersPropertyEditorMock);
+        controller = new ApplicationListController(applicationsServiceMock, applicationsReportServiceMock, userServiceMock, filtersPropertyEditorMock);
     }
 
     private List<ApplicationsFilter> getFiltersForActiveApplications(RegisteredUser user) {

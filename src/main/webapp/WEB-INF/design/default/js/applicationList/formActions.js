@@ -1,238 +1,260 @@
 var loading = false;
 
-$(document)
-		.ready(
-				function() {
-					var searchPredicatesMap = JSON.parse($(
-							"#searchPredicatesMap").val());
+$(document).ready(function() {
+	var searchPredicatesMap = JSON.parse($(
+			"#searchPredicatesMap").val());
 
-					// Modal window functionality.
-					setupModalBox();
+	// Modal window functionality.
+	setupModalBox();
+	
+	$('#search-box').find('.date').each(function() {
+	    bindDatePicker($(this));
+    });
 
-					populateApplicationList();
+	populateApplicationList();
 
-					// --------------------------------------------------------------------------------
-					// TABLE SORTING
-					// --------------------------------------------------------------------------------
-					// Add a SPAN tag to table headers for the arrows.
-					$('table.data thead th.sortable').prepend('<span />');
+	// --------------------------------------------------------------------------------
+	// TABLE SORTING
+	// --------------------------------------------------------------------------------
+	// Add a SPAN tag to table headers for the arrows.
+	$('table.data thead th.sortable').prepend('<span />');
 
-					// --------------------------------------------------------------------------------
-					// SEARCH / FILTERING
-					// --------------------------------------------------------------------------------
-					$('#search-go').addClass('enabled').click(function() {
-						// if ($('#searchTerm').val().length == 0 ||
-						// $('#searchCategory').val() == '') {
-						// fixedTip($('#search-go'), 'You must specify your
-						// filter.');
-						// return;
-						// }
-						resetPageCount();
-						populateApplicationList();
-					});
+	// --------------------------------------------------------------------------------
+	// SEARCH / FILTERING
+	// --------------------------------------------------------------------------------
+	$('#search-go').addClass('enabled').click(function() {
+		resetPageCount();
+		populateApplicationList();
+	});
 
-					$('#storeFiltersBtn')
-							.click(
-									function() {
-										filters = getFilters();
+	$('#storeFiltersBtn').click(function() {
+		filters = getFilters();
 
-										data = {
-											filters : JSON.stringify(filters),
-										};
+		data = {
+			filters : JSON.stringify(filters),
+		};
 
-										$
-												.ajax({
-													type : 'POST',
-													statusCode : {
-														401 : function() {
-															window.location
-																	.reload();
-														},
-														500 : function() {
-															window.location.href = "/pgadmissions/error";
-														},
-														404 : function() {
-															window.location.href = "/pgadmissions/404";
-														},
-														400 : function() {
-															window.location.href = "/pgadmissions/400";
-														},
-														403 : function() {
-															window.location.href = "/pgadmissions/404";
-														}
-													},
-													url : "/pgadmissions/applications/saveFilters",
-													data : data,
-													success : function(data) {
-													},
-													complete : function() {
-													}
-												});
+		$.ajax({
+			type : 'POST',
+			statusCode : {
+				401 : function() {
+					window.location
+							.reload();
+				},
+				500 : function() {
+					window.location.href = "/pgadmissions/error";
+				},
+				404 : function() {
+					window.location.href = "/pgadmissions/404";
+				},
+				400 : function() {
+					window.location.href = "/pgadmissions/400";
+				},
+				403 : function() {
+					window.location.href = "/pgadmissions/404";
+				}
+			},
+			url : "/pgadmissions/applications/saveFilters",
+			data : data,
+			success : function(data) {
+			},
+			complete : function() {
+			}
+		});
+		cleanUpFilterIds();
+	});
 
-									});
+	// ------------------------------------------------------------------------------
+	// SELECTION CHANGED FOR SELECT CATEGORY
+	// ------------------------------------------------------------------------------
+	$('.selectCategory').live("change",	function() {
+		var selected = $(this).val();
+		var predicateSelect = $(this).parent()
+				.find('.selectPredicate');
+		predicateSelect.empty();
+		
+		if (selected != "") {
+			var predicates = searchPredicatesMap[selected];
+			for ( var i = 0; i < predicates.length; i++) {
+				predicateSelect
+						.append('<option value="'
+								+ predicates[i].name
+								+ '">'
+								+ predicates[i].displayName
+								+ '</option>');
+			}
+		} 
+		fieldChange(selected, $(this));
+	});
+	
+	// ------------------------------------------------------------------------------
+	// SELECT ALL/NO APPLICATIONS
+	// ------------------------------------------------------------------------------
+	$('#select-all').click(function(event) {
+		var selectAllValue = this.checked;
+		var $appList = $('#appList');
+		var list = '';
 
-					// $('#search-box').on('change keypress', '#searchTerm,
-					// #searchCategory', function() {
-					// var length = $('#searchTerm').val().length;
-					// var column = $('#searchCategory').val();
-					// $('#search-go').toggleClass('disabled', length == 0 ||
-					// column ==
-					// '');
-					// $('#search-reset').toggleClass('disabled', length == 0 &&
-					// column
-					// == '');
-					//			
-					// if ($('#search-go').not('.disabled')) {
-					// $('#search-go').removeData('qtip');
-					// }
-					// });
-
-					// ------------------------------------------------------------------------------
-					// SELECTION CHANGED FOR SELECT CATEGORY
-					// ------------------------------------------------------------------------------
-					$('.selectCategory')
-							.live(
-									"change",
-									function() {
-										var selected = $(this).val();
-										var predicateSelect = $(this).parent()
-												.find('.selectPredicate');
-										predicateSelect.empty();
-
-										if (selected != "") {
-											var predicates = searchPredicatesMap[selected];
-											for ( var i = 0; i < predicates.length; i++) {
-												predicateSelect
-														.append('<option value="'
-																+ predicates[i].name
-																+ '">'
-																+ predicates[i].displayName
-																+ '</option>');
-											}
-										}
-									});
-
-					// ------------------------------------------------------------------------------
-					// SELECT ALL/NO APPLICATIONS
-					// ------------------------------------------------------------------------------
-					$('#select-all').click(
-							function(event) {
-								var selectAllValue = this.checked;
-								var $appList = $('#appList');
-								var list = '';
-
-								$('#applicationListSection input:checkbox')
-										.each(function() {
-											this.checked = selectAllValue;
-											if (selectAllValue) {
-												list += $(this).val() + ";";
-											}
-										});
-
-								$appList.val(list);
-							});
-
-					// ------------------------------------------------------------------------------
-					// CLEAR ALL FILTERS
-					// ------------------------------------------------------------------------------
-					$("#search-reset").live('click', function() {
-						var filters = $("#search-box").find("div.filter");
-						for ( var i = 1; i < filters.length; i++) {
-							$(filters[i]).remove();
-						}
-
-						$(filters[0]).find(".selectCategory").val("");
-						$(filters[0]).find(".selectPredicate").empty();
-						$(filters[0]).find(".filterInput").val("");
-						$('#search-go').click();
-					});
-
-					// --------------------------------------------------------------------------------
-					// SELECT APPLICATIONS
-					// --------------------------------------------------------------------------------
-					$(document).on(
-							'click',
-							"input[name*='appDownload']",
-							function() {
-								var id = $(this).val();
-								var currentAppList = $('#appList').val();
-
-								if ($(this).is(':checked')) {
-									$('#appList')
-											.val(currentAppList + id + ";");
-								} else {
-									$('#appList').val(
-											currentAppList
-													.replace(id + ";", ''));
-								}
-							});
-
-					// --------------------------------------------------------------------------------
-					// DOWNLOAD SELECTED APPLICATIONS
-					// --------------------------------------------------------------------------------
-					$('#downloadAll').click(
-							function() {
-								var appListValue = $('#appList').val();
-								if (appListValue != '') {
-									window.open(
-											"/pgadmissions/print/all?appList="
-													+ $('#appList').val(),
-											'_blank');
-								}
-							});
-
-					$("#loadMoreApplications").live('click', function() {
-						if (loading) {
-							return;
-						}
-						increasePageCount();
-						populateApplicationList();
-					});
-
-					// Load active applications
-					$("#loadActiveApplication")
-							.live(
-									'click',
-									function() {
-										var missingActiveApplications = getMissingActiveApplicationFilters();
-										var lastFilter = $(".filter").first();
-
-										for ( var i = 0; i < missingActiveApplications.length; i++) {
-											var newFilter = $(lastFilter)
-													.clone();
-											$(newFilter).insertBefore(
-													$(lastFilter));
-
-											var selectCategory=$(newFilter).find(".selectCategory");
-											$(selectCategory)
-													.val(missingActiveApplications[i].searchCategory);
-											$(selectCategory).change();
-											
-											$(newFilter)
-													.find(".selectPredicate")
-													.val(missingActiveApplications[i].searchPredicate);
-											$(newFilter)
-													.find(".filterInput")
-													.val(missingActiveApplications[i].searchTerm);
-											$('#search-go').click();
-										}
-									});
-
-					// To be extended
-					// Duplicate filters buttons
-					$(".add").live('click', function() {
-						$(this).parent().clone().insertAfter($(this).parent());
-					});
-					// Remover current filter
-					$(".remove").live('click', function() {
-						if ($("#search-box").find("div.filter").length > 1) {
-							$(this).parent().remove();
-							$('#search-go').click();
-						}
-					});
-
+		$('#applicationListSection input:checkbox')
+				.each(function() {
+					this.checked = selectAllValue;
+					if (selectAllValue) {
+						list += $(this).val() + ";";
+					}
 				});
 
+		$appList.val(list);
+	});
+
+	// ------------------------------------------------------------------------------
+	// CLEAR ALL FILTERS
+	// ------------------------------------------------------------------------------
+	$("#search-reset").live('click', function() {
+		clearCurrentFilters(true);
+	});
+
+	// --------------------------------------------------------------------------------
+	// SELECT APPLICATIONS
+	// --------------------------------------------------------------------------------
+	$(document).on('click', "input[name*='appDownload']", function() {
+		var id = $(this).val();
+		var currentAppList = $('#appList').val();
+
+		if ($(this).is(':checked')) {
+			$('#appList')
+					.val(currentAppList + id + ";");
+		} else {
+			$('#appList').val(
+					currentAppList
+							.replace(id + ";", ''));
+		}
+	});
+	
+	$('#search-report').click(downloadReport);
+	$('#search-report-html').click({outputType: "html"}, downloadReport);
+	$('#search-report-json').click({outputType: "json"}, downloadReport);
+	$('#search-report-csv').click({outputType: "csv"}, downloadReport);
+
+	// --------------------------------------------------------------------------------
+	// DOWNLOAD SELECTED APPLICATIONS
+	// --------------------------------------------------------------------------------
+	$('#downloadAll').click(function() {
+		var appListValue = $('#appList').val();
+		if (appListValue != '') {
+			window.open(
+					"/pgadmissions/print/all?appList="
+							+ $('#appList').val(),
+					'_blank');
+		}
+	});
+
+	$("#loadMoreApplications").live('click', function() {
+		if (loading) {
+			return;
+		}
+		increasePageCount();
+		populateApplicationList();
+	});
+
+	// Load active applications
+	$("#loadActiveApplication").live('click', function() {
+		clearCurrentFilters(false);
+		var activeApplications = getActiveApplicationFilters();
+		var firstFilter = $(".filter").first();
+
+		for ( var i = 0; i < activeApplications.length; i++) {
+			var newFilter = $(firstFilter)
+					.clone();
+			$(newFilter).insertBefore(
+					$(firstFilter));
+
+			var selectCategory=$(newFilter).find(".selectCategory");
+			$(selectCategory)
+					.val(activeApplications[i].searchCategory);
+			$(selectCategory).change();
+			
+			$(newFilter)
+					.find(".selectPredicate")
+					.val(activeApplications[i].searchPredicate);
+			$(newFilter)
+					.find(".filterInput")
+					.val(activeApplications[i].searchTerm);
+			$(newFilter).find('input.filterInput').remove();
+			$('#search-go').click();
+		}
+		
+		$(firstFilter).remove();
+		cleanUpFilterIds();
+	});
+
+	// To be extended
+	// Duplicate filters buttons
+	$(".add").live('click', function() {
+		var existingFilter=$(this).parent();
+		var newFilter=$(existingFilter).clone(true);
+		newFilter.insertAfter($(this).parent());
+		inputBackNormal(newFilter);
+		clearFilter(newFilter);
+		if(existingFilter.find(".filterInput").val()!=""){
+			$('#search-go').click();
+		}
+		cleanUpFilterIds();
+	});
+	
+	// Remover current filter
+	$(".remove").live('click', function() {
+		if ($("#search-box").find("div.filter").length > 1) {
+			$(this).parent().remove();
+			if(existingFilter.find(".filterInput").val()!=""){
+				$('#search-go').click();
+			}
+		}
+	});
+
+});
+// ------------------------------------------------------------------------------
+// APPLY/REMOVE DATAPICKER AND SELECTOR
+// ------------------------------------------------------------------------------
+// input back to normal state
+function inputBackNormal(mainInput) {
+	var $inputSelected = mainInput.find('.filterInput');
+	
+	if ($inputSelected.is('input')) {
+	// Clear if input type
+	$inputSelected.datepicker("destroy")
+		   .removeClass('half date hasDatepicker')
+		   .removeAttr('readonly').val('');
+	} else {
+	// Replace field if select
+		idswich = $inputSelected.attr('id');
+		$inputSelected.remove();
+		$('<input type=\"text\" value=\"\" name=\"searchTerm\" placeholder=\"Filter by...\" class=\"filterInput\" style=\"margin-left: 3px;\" />').insertAfter(mainInput.find('.selectPredicate')).attr('id',idswich);
+	}
+}
+//field changer
+function fieldChange(selected, id) {
+    inputBackNormal(id.parent());
+	if (selected == "APPLICATION_STATUS") {
+		// Create select                                        
+		var myoptions = $("#applicationStatusValues").val();                                  
+		var data = myoptions.split(',');                                        
+		var selector = $("<select name=\"filterInput\"  style=\"margin-left: 3px;\" class=\"filterInput selector\" />");          
+		for(var val in data) {
+			$("<option />", {value: data[val], text: data[val]}).appendTo(selector);
+		}
+		idswich = id.parent().find('.filterInput').attr('id');
+		$("input#" + idswich).remove();
+		
+		$(selector).insertAfter(id.parent().find('.selectPredicate')).attr('id',idswich);
+
+		
+	} else if (selected == "LAST_EDITED_DATE" || selected == "SUBMISSION_DATE") {
+		// Find input and add classes
+		id.parent().find('.filterInput').addClass('half date').val('');
+		//bind datapicker
+		bindDatePicker(id.parent().find('.filterInput'));
+	}
+}
 function resetPageCount() {
 	$('#block-index').val("1");
 }
@@ -303,6 +325,28 @@ function populateApplicationList() {
 	});
 }
 
+function downloadReport(event) {
+    filters = getFilters();
+
+    options = {
+        filters : JSON.stringify(filters),
+        sortCategory : $('#sort-column').val(),
+        order : $('#sort-order').val(),
+        blockCount : $('#block-index').val()
+    };
+    
+    var url = "/pgadmissions/applications/report?";
+    url += "filters=" + JSON.stringify(filters);
+    url += "&sortCategory=" + $('#sort-column').val();
+    url += "&order=" + $('#sort-order').val();
+    if(event.data && event.data.outputType){
+        url += "&tqx=out:" + event.data.outputType;
+    }
+    
+    var win = window.open(url,'_blank');
+    win.focus();
+}
+
 function sortList(column) {
 	oldValue = $('#sort-column').val();
 	newValue = column.id;
@@ -359,7 +403,7 @@ function getFilters() {
 	return filters;
 }
 
-function getMissingActiveApplicationFilters() {
+function getActiveApplicationFilters() {
 	// active applications include applications which are NOT approved,
 	// rejected or withdrawn
 	var activeApplicationFilters = new Array();
@@ -379,23 +423,36 @@ function getMissingActiveApplicationFilters() {
 		searchTerm : "Withdrawn"
 	});
 
-	var result = activeApplicationFilters.slice();
-	var existingFilters = getFilters();
+	return activeApplicationFilters;
+}
 
-	for ( var i = 0; i < activeApplicationFilters.length; i++) {
-		for ( var j = 0; j < existingFilters.length; j++) {
-			if (areFiltersEqual(existingFilters[j], activeApplicationFilters[i])) {
-				var startingIndex = result.indexOf(activeApplicationFilters[i]);
-				result.splice(startingIndex, 1);
-			}
-		}
+function clearCurrentFilters(shouldApplyChanges){
+	var filters = $("#search-box").find("div.filter");
+
+	for ( var i = 1; i < filters.length; i++) {
+		$(filters[i]).remove();
 	}
 
-	return result;
+	clearFilter(filters[0]);
+	if(shouldApplyChanges){
+		$('#search-go').click();
+	}
 }
 
-function areFiltersEqual(filter, otherFilter) {
-	return (filter.searchCategory == otherFilter.searchCategory)
-			&& (filter.searchPredicate == otherFilter.searchPredicate)
-			&& (filter.searchTerm == otherFilter.searchTerm);
+function clearFilter(filter){
+	$(filter).find(".selectCategory").val("");
+	$(filter).find(".selectPredicate").empty();
+	$(filter).find(".filterInput").val('');
+	inputBackNormal($(filter));
 }
+
+function cleanUpFilterIds(){
+	var filters=$(".filter");
+	for(var i=0;i<filters.length;i++){
+		$(filters[i]).attr("id","filter_"+i);
+		$(filters[i]).find(".selectCategory").attr("id","searchCategory_"+i);
+		$(filters[i]).find(".selectPredicate").attr("id","searchPredicate_"+i);
+		$(filters[i]).find(".filterInput").attr("id","searchTerm_"+i);
+	}
+}
+

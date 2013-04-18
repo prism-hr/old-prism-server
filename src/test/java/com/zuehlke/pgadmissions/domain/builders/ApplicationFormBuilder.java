@@ -73,10 +73,16 @@ public class ApplicationFormBuilder {
 	private RegisteredUser approverRequestedRestart = null;
 	private String uclBookingReferenceNumber;
     private String ipAddress;
+    private Boolean suppressChangeStateNotifications;
 	
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
         return this;
+    }
+    
+    public ApplicationFormBuilder suppressChangeStateNotifications(Boolean value) {
+    	this.suppressChangeStateNotifications=value;
+    	return this;
     }
     
 	public ApplicationFormBuilder uclBookingReferenceNumber(String number) {
@@ -377,6 +383,7 @@ public class ApplicationFormBuilder {
 		application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
 		
 		application.getEmploymentPositions().addAll(employmentPositions);
+		application.setSuppressStateChangeNotifications(this.suppressChangeStateNotifications);
 		
 		try {
 		    application.setIpAddressAsString(ipAddress);

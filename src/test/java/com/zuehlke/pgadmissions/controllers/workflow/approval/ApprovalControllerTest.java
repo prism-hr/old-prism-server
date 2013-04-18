@@ -458,7 +458,6 @@ public class ApprovalControllerTest {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.setValidator(sendToPorticoDataDTOValidatorMock);
         binderMock.registerCustomEditor(List.class, sendToPorticoDataDTOEditorMock);
-        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 
         EasyMock.replay(binderMock);
         controller.registerSendToPorticoDataBinder(binderMock);

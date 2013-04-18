@@ -146,6 +146,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.program(program)
 				.applicant(user)
 				.status(ApplicationFormStatus.VALIDATION)
+				.suppressChangeStateNotifications(false)
 				.dueDate(oneMonthAgo)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER)
@@ -171,7 +172,9 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date oneMonthAgo = DateUtils.addMonths(today, -1);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program)
+				.applicant(user)
+				.suppressChangeStateNotifications(false)
 				.status(ApplicationFormStatus.VALIDATION).dueDate(oneMonthAgo).build();
 		save(applicationForm);
 
@@ -195,7 +198,9 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date oneMonthAgo = DateUtils.addMonths(today, -1);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program)
+				.applicant(user)
+				.suppressChangeStateNotifications(false)
 				.status(ApplicationFormStatus.APPROVAL).dueDate(oneMonthAgo).build();
 		save(applicationForm);
 
@@ -432,6 +437,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.program(program)
 				.applicant(user)
+				.suppressChangeStateNotifications(false)
 				.status(ApplicationFormStatus.VALIDATION)
 				.dueDate(oneMonthAgo)
 				.notificationRecords(
@@ -462,6 +468,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.program(program)
 				.applicant(user)
+				.suppressChangeStateNotifications(false)
 				.status(ApplicationFormStatus.VALIDATION)
 				.dueDate(oneMonthAgo)
 				.notificationRecords(
@@ -582,6 +589,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.program(program)
 				.applicant(user)
 				.status(ApplicationFormStatus.VALIDATION)
+				.suppressChangeStateNotifications(false)
 				.dueDate(oneMonthAgo)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER)
@@ -612,6 +620,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.applicant(user)
 				.status(ApplicationFormStatus.VALIDATION)
 				.dueDate(oneMonthAgo)
+				.suppressChangeStateNotifications(false)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER)
 								.notificationDate(oneDayAgo).build()).build();
@@ -641,6 +650,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.program(program)
 				.applicant(user)
 				.status(ApplicationFormStatus.VALIDATION)
+				.suppressChangeStateNotifications(false)
 				.dueDate(oneMonthAgo)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER)

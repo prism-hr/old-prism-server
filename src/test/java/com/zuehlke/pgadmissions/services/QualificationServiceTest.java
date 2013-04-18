@@ -62,6 +62,11 @@ public class QualificationServiceTest {
         EasyMock.expect(qualificationDAOMock.getQualificationById(3)).andReturn(qualification3);
         EasyMock.expect(qualificationDAOMock.getQualificationById(4)).andReturn(qualification4);
 
+        EasyMock.expect(qualificationDAOMock.getQualificationById(1)).andReturn(qualification1);
+        EasyMock.expect(qualificationDAOMock.getQualificationById(2)).andReturn(qualification2);
+        EasyMock.expect(qualificationDAOMock.getQualificationById(3)).andReturn(qualification3);
+        EasyMock.expect(qualificationDAOMock.getQualificationById(4)).andReturn(qualification4);
+        
         EasyMock.replay(applicationFormMock, qualificationDAOMock);
 
         qualificationService.selectForSendingToPortico(applicationFormMock, Arrays.asList(new Integer[] { 3, 4 }));
@@ -84,7 +89,10 @@ public class QualificationServiceTest {
         Qualification qualification4 = new QualificationBuilder().id(4).sendToUCL(false).build();
 
         EasyMock.expect(applicationFormMock.getQualifications()).andReturn(Arrays.asList(qualification1, qualification2, qualification3, qualification4));
-
+        EasyMock.expect(qualificationDAOMock.getQualificationById(1)).andReturn(qualification1);
+        EasyMock.expect(qualificationDAOMock.getQualificationById(2)).andReturn(qualification2);
+        EasyMock.expect(qualificationDAOMock.getQualificationById(3)).andReturn(qualification3);
+        EasyMock.expect(qualificationDAOMock.getQualificationById(4)).andReturn(qualification4);
         EasyMock.replay(applicationFormMock, qualificationDAOMock);
 
         qualificationService.selectForSendingToPortico(applicationFormMock, Collections.<Integer> emptyList());

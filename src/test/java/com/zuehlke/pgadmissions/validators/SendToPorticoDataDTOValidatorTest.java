@@ -60,13 +60,26 @@ public class SendToPorticoDataDTOValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfNoQualificationAndEmptyComment() {
+    public void shouldRejectIfNoQualificationAndEmptyExplanation() {
         sendToPorticoDataDTO.setQualificationsSendToPortico(Collections.<Integer> emptyList());
+        sendToPorticoDataDTO.setEmptyQualificationsExplanation("");
+
+        EasyMock.replay(qualificationServiceMock, refereeServiceMock);
+        sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
+        assertEquals(2, mappingResult.getErrorCount());
+        assertEquals("portico.submit.explanation.empty", mappingResult.getFieldError("emptyQualificationsExplanation").getCode());
+        assertEquals("portico.submit.explanation.required", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfNoQualificationAndNullExplanation() {
+        sendToPorticoDataDTO.setQualificationsSendToPortico(Collections.<Integer> emptyList());
+        sendToPorticoDataDTO.setEmptyQualificationsExplanation(null);
 
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
         assertEquals(1, mappingResult.getErrorCount());
-        assertEquals("portico.submit.explanation.empty", mappingResult.getFieldError("emptyQualificationsExplanation").getCode());
+        assertEquals("portico.submit.explanation.required", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
     }
     
     @Test
@@ -114,16 +127,6 @@ public class SendToPorticoDataDTOValidatorTest {
         assertEquals("portico.submit.referees.hasNotResponded", mappingResult.getFieldError("refereesSendToPortico").getCode());
     }
     
-    @Test
-    public void shouldRejectIfProvidedBothQualificationsAndExplanation() {
-        sendToPorticoDataDTO.setEmptyQualificationsExplanation("explanation");
-        
-        EasyMock.replay(qualificationServiceMock, refereeServiceMock);
-        sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
-        assertEquals(1, mappingResult.getErrorCount());
-        assertEquals("portico.submit.explanation.notnull", mappingResult.getFieldError("emptyQualificationsExplanation").getCode());
-    }
-
     @Before
     public void setup() {
         sendToPorticoDataDTO = new SendToPorticoDataDTO();

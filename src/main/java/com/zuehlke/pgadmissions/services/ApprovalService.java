@@ -91,7 +91,7 @@ public class ApprovalService {
         ApprovalRound approvalRound = application.getLatestApprovalRound();
         Supervisor supervisor = approvalRound.getPrimarySupervisor();
         Boolean confirmed = confirmSupervisionDTO.getConfirmedSupervision();
-
+        application.setSuppressStateChangeNotifications(false);
         supervisor.setConfirmedSupervision(confirmed);
 
         if (BooleanUtils.isTrue(confirmed)) {
@@ -156,7 +156,7 @@ public class ApprovalService {
         checkSendToPorticoStatus(application, approvalRound);
         copyLastNotifiedForRepeatSupervisors(application, approvalRound);
         application.setLatestApprovalRound(approvalRound);
-
+        application.setSuppressStateChangeNotifications(true);
         approvalRound.setApplication(application);
         approvalRoundDAO.save(approvalRound);
         

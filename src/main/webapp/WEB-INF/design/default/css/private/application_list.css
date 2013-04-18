@@ -41,7 +41,12 @@ td.status { text-align: center !important; }
   padding-left: 123px;
   float: left;
   padding-bottom: 10px;
-
+}
+#search-box .filter input.hasDatepicker {
+  margin-right: 148px;
+}
+#search-box .filter select.selector {
+  margin-right: 104px;
 }
 #search-box #searchTerm {margin-bottom: 5px; margin-top: 5px;}
 #search-box #searchCategory {padding: 4px; height: 28px;}
@@ -66,4 +71,19 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 .btn-actions {
   margin-top: 2px;
   float: right;
+}
+.applicant-name {
+  padding-left: 23px !important;
+}
+.applicant-name i{
+  margin-left: -18px;
+  float: left;
+  font-size: 14px;
+  margin-top: 1px;
+}
+.applicant-name.flagred i{
+  color: #F83929;
+}
+.applicant-name.flaggreen i{
+  color: #5BB75B;
 }

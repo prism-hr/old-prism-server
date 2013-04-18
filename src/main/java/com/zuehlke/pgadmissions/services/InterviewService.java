@@ -72,6 +72,7 @@ public class InterviewService {
         			.getNotificationForType(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
         	applicationForm.removeNotificationRecord(interviewAdministrationReminderRecord);
         	applicationForm.setApplicationAdministrator(null);
+        	applicationForm.setSuppressStateChangeNotifications(false);
         }
         if (interviewReminderRecord != null) {
             applicationForm.removeNotificationRecord(interviewReminderRecord);

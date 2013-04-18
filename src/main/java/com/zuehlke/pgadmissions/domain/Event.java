@@ -17,55 +17,60 @@ import javax.persistence.TemporalType;
 
 @Entity(name = "EVENT")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Event implements Serializable {
-	
-	private static final long serialVersionUID = -3417291018172094109L;
+public abstract class Event implements Comparable<Event>, Serializable {
 
-	@Id
+    private static final long serialVersionUID = -3417291018172094109L;
+
+    @Id
     @GeneratedValue
-	private Integer id;
+    private Integer id;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "event_date")
-	protected Date date;
-	
-	@ManyToOne(fetch = FetchType.LAZY) 
-	@JoinColumn(name = "application_form_id")
-	protected ApplicationForm application;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "registered_user_id")
-	protected RegisteredUser user;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "event_date")
+    protected Date date;
 
-	public Date getDate() {
-		return date;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_id")
+    protected ApplicationForm application;
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registered_user_id")
+    protected RegisteredUser user;
 
-	public ApplicationForm getApplication() {
-		return application;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public void setApplication(ApplicationForm application) {
-		this.application = application;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public RegisteredUser getUser() {
-		return user;
-	}
+    public ApplicationForm getApplication() {
+        return application;
+    }
 
-	public void setUser(RegisteredUser user) {
-		this.user = user;
-	}
+    public void setApplication(ApplicationForm application) {
+        this.application = application;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public RegisteredUser getUser() {
+        return user;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public void setUser(RegisteredUser user) {
+        this.user = user;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    @Override
+    public int compareTo(Event otherEvent) {
+        return date.compareTo(otherEvent.getDate());
+    }
 }

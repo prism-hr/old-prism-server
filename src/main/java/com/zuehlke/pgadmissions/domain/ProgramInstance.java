@@ -17,73 +17,73 @@ import javax.persistence.Transient;
 @Entity(name = "PROGRAM_INSTANCE")
 public class ProgramInstance implements ProgramInstanceInterface, ImportedObject, Serializable {
 
-	private static final long serialVersionUID = -5414750352686318033L;
+    private static final long serialVersionUID = -5414750352686318033L;
 
     @Id
     @GeneratedValue
     private Integer id;
-	
-	@Column(name="deadline")
-	@Temporal(value = TemporalType.DATE)
-	private Date applicationDeadline;
-	
-	@Column(name="start_date")
+
+    @Column(name = "deadline")
+    @Temporal(value = TemporalType.DATE)
+    private Date applicationDeadline;
+
+    @Column(name = "start_date")
     @Temporal(value = TemporalType.DATE)
     private Date applicationStartDate;
-    
-	@Column(name="academic_year")
+
+    @Column(name = "academic_year")
     private String academicYear;
-    
-	@Column(name = "study_option")
-	private String studyOption;
-	
-	@Column(name = "identifier")
+
+    @Column(name = "study_option")
+    private String studyOption;
+
+    @Column(name = "identifier")
     private String identifier;
-	
-	@Column(name = "study_code")
+
+    @Column(name = "study_code")
     private String studyOptionCode;
-	
-	@Column(name = "enabled")
+
+    @Column(name = "enabled")
     private Boolean enabled;
-    
-	@Transient
-	private int sequence;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "program_id")
-	private Program program;
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
-	public Integer getId() {
-		return id;
-	}
+    @Transient
+    private int sequence;
 
-	public Date getApplicationDeadline() {
-		return applicationDeadline;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_id")
+    private Program program;
 
-	public void setApplicationDeadline(Date applicationDeadline) {
-		this.applicationDeadline = applicationDeadline;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public int getSequence() {
-		return sequence;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
+    public Date getApplicationDeadline() {
+        return applicationDeadline;
+    }
 
-	public Program getProgram() {
-		return program;
-	}
+    public void setApplicationDeadline(Date applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
+    }
 
-	public void setProgram(Program program) {
-		this.program = program;
-	}
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
+
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
 
     public Date getApplicationStartDate() {
         return applicationStartDate;
@@ -117,32 +117,38 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         this.studyOptionCode = studyCode;
     }
 
-	@Override
-	public String getStringCode() {
-		return program.getCode();
-	}
+    @Override
+    public String getStringCode() {
+        return program.getCode();
+    }
 
-	@Override
-	public String getName() {
-		return program.getTitle();
-	}
+    @Override
+    public String getName() {
+        return program.getTitle();
+    }
 
-	@Override
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
+    @Override
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	@Override
-	public Boolean getEnabled() {
-		return this.enabled;
-	}
+    @Override
+    public Boolean getEnabled() {
+        return this.enabled;
+    }
 
-	@Override
-	public String getIdentifier() {
-		return identifier;
-	}
-	
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public boolean isDateWithinBounds(Date date) {
+        boolean afterStartDate = !date.before(getApplicationStartDate());
+        boolean beforeEndDate = date.before(getApplicationDeadline());
+        return afterStartDate && beforeEndDate;
+    }
 }

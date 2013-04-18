@@ -62,6 +62,7 @@ public class ReviewService {
 	private void checkApplicationStatus(ApplicationForm application) {
 		ApplicationFormStatus status = application.getStatus();
 		switch (status) {
+		case INTERVIEW:
 		case VALIDATION:
 		case REVIEW:
 			break;

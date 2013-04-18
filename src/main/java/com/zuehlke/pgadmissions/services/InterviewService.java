@@ -78,6 +78,7 @@ public class InterviewService {
     private void checkApplicationStatus(ApplicationForm application) {
         ApplicationFormStatus status = application.getStatus();
         switch (status) {
+        case APPROVAL:
         case VALIDATION:
         case REVIEW:
         case INTERVIEW:

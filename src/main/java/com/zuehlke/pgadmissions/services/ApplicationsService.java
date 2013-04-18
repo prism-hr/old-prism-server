@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -12,22 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.google.visualization.datasource.base.TypeMismatchException;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.DataTable;
-import com.google.visualization.datasource.datatable.TableRow;
-import com.google.visualization.datasource.datatable.value.ValueType;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -156,7 +147,7 @@ public class ApplicationsService {
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState("VALIDATION")) {
-            actions.addAction("validate", "Validation");
+            actions.addAction("validate", "Validate");
         }
         if (user.hasAdminRightsOnApplication(application) && application.isInState("REVIEW")) {
             actions.addAction("validate", "Evaluate reviews");

@@ -78,7 +78,7 @@ public class ApplicationsServiceActionsTest {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, "VALIDATION");
         ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Validation", "Comment" });
+        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Validate", "Comment" });
     }
 
     @Test

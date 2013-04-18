@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
@@ -35,58 +36,61 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 @RequestMapping("/progress")
 public class EvaluationTransitionController extends StateTransitionController {
 
-	public EvaluationTransitionController() {
-		this(null, null, null, null, null, null, null, null, null, null);
-	}
+    private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
+    
+    public EvaluationTransitionController() {
+        this(null, null, null, null, null, null, null, null, null, null);
+    }
 
-	@Autowired
-	public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver, EncryptionHelper encryptionHelper,
-			DocumentService documentService, ApprovalService approvalService, StateChangeValidator stateChangeValidator,
-			DocumentPropertyEditor documentPropertyEditor) {
-		super(applicationsService, userService, commentService, commentFactory, stateTransitionViewResolver, encryptionHelper, documentService,
-				approvalService, stateChangeValidator, documentPropertyEditor);
-	}
+    @Autowired
+    public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService,
+            CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
+            DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
+            StateTransitionService stateTransitionService) {
+        super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService,
+                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService);
+    }
 
-	@ModelAttribute("comment")
-	public StateChangeComment getComment(@RequestParam String applicationId) {
-		return new StateChangeComment();
-	}
+    @ModelAttribute("comment")
+    public StateChangeComment getComment(@RequestParam String applicationId) {
+        return new StateChangeComment();
+    }
 
-	@RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
-	public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
-			ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
-		
-	    modelMap.put("delegate", delegate);
-	    
-	    if (result.hasErrors()) {
-			return STATE_TRANSITION_VIEW;
-		}
-		
-	    ApplicationForm applicationForm = getApplicationForm(applicationId);
-		RegisteredUser user = getCurrentUser();
+    @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
+    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+        modelMap.put("delegate", delegate);
 
-		Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getType(), stateChangeComment.getNextStatus());
-        
-		if (newComment instanceof ReviewEvaluationComment) {
-			((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
-		}
-		
-		if (newComment instanceof InterviewEvaluationComment) {
-			((InterviewEvaluationComment) newComment).setInterview(applicationForm.getLatestInterview());
-		}
-		
-		if (newComment instanceof ApprovalEvaluationComment) {
-			((ApprovalEvaluationComment) newComment).setApprovalRound(applicationForm.getLatestApprovalRound());
-		}
-		
-		newComment.setDocuments(stateChangeComment.getDocuments());
-		
-		if (newComment instanceof ApprovalEvaluationComment) {
-			ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
+        if (result.hasErrors()) {
+            return STATE_TRANSITION_VIEW;
+        }
+
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getCurrentUser();
+
+        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getType(), stateChangeComment.getNextStatus());
+
+        if (newComment instanceof ReviewEvaluationComment) {
+            ((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
+        }
+
+        if (newComment instanceof InterviewEvaluationComment) {
+            ((InterviewEvaluationComment) newComment).setInterview(applicationForm.getLatestInterview());
+        }
+
+        if (newComment instanceof ApprovalEvaluationComment) {
+            ((ApprovalEvaluationComment) newComment).setApprovalRound(applicationForm.getLatestApprovalRound());
+        }
+
+        newComment.setDocuments(stateChangeComment.getDocuments());
+
+        if (newComment instanceof ApprovalEvaluationComment) {
+            
+            ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
+            
             if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
                 if (approvalService.moveToApproved(applicationForm)) {
-                    approvalService.sendToPortico(applicationForm);                    
+                    approvalService.sendToPortico(applicationForm);
                     modelMap.put("messageCode", "move.approved");
                     modelMap.put("application", applicationForm.getApplicationNumber());
                 } else {
@@ -96,18 +100,18 @@ public class EvaluationTransitionController extends StateTransitionController {
                     return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7";
                 }
             }
-		}
-		
-		commentService.save(newComment);
-		
-		if(stateChangeComment.getNextStatus() == ApplicationFormStatus.APPROVAL){
-		    applicationsService.makeApplicationNotEditable(applicationForm);
-		}
-		
-        if (BooleanUtils.isTrue(delegate)) {
-            return "redirect:/applications?messageCode=delegate.success&application="+ applicationForm.getApplicationNumber();
         }
-        
-		return stateTransitionViewResolver.resolveView(applicationForm);
-	}
+
+        commentService.save(newComment);
+
+        if (stateChangeComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
+            applicationsService.makeApplicationNotEditable(applicationForm);
+        }
+
+        if (BooleanUtils.isTrue(delegate)) {
+            return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
+        }
+
+        return stateTransitionService.resolveView(applicationForm);
+    }
 }

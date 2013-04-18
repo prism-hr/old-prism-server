@@ -143,7 +143,7 @@ public class ReviewServiceTest {
 	public void shouldFailIfApplicationInInvalidState() {
 		ApplicationFormStatus[] values = ApplicationFormStatus.values();
 		for (ApplicationFormStatus status : values) {
-			if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.REVIEW) {
+			if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.REVIEW && status != ApplicationFormStatus.INTERVIEW) {
 				ApplicationForm application = new ApplicationFormBuilder().id(3).status(status).build();
 				boolean threwException = false;
 				try {

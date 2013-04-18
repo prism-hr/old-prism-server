@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @Service
 public class PorticoQueueService {
@@ -38,7 +38,7 @@ public class PorticoQueueService {
     private ThrottleService throttleService;
     
     @Autowired
-    private UclExportService exportService;
+    private PorticoExportService exportService;
     
     @Autowired
     private ApplicationFormTransferService formTransferService;       
@@ -95,7 +95,7 @@ public class PorticoQueueService {
         this.throttleService = throttleService;
     }
 
-    public void setExportService(UclExportService exportService) {
+    public void setExportService(PorticoExportService exportService) {
         this.exportService = exportService;
     }
 
@@ -123,7 +123,7 @@ public class PorticoQueueService {
         return throttleService;
     }
     
-    public UclExportService getExportService() {
+    public PorticoExportService getExportService() {
         return exportService;
     }
 

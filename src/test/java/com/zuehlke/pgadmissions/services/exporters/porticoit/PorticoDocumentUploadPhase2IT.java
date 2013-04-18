@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/testPorticoIntegrationContext.xml"})
@@ -67,7 +67,7 @@ public class PorticoDocumentUploadPhase2IT {
     private ApplicationsService applicationsService;
     
     @Autowired
-    private UclExportService uclExportService;
+    private PorticoExportService uclExportService;
     
     @Autowired
     private PdfDocumentBuilder pdfDocumentBuilder;
@@ -104,7 +104,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void missingResearchProposal1ApplicationFilenameForValidResearchProposal() throws UclExportServiceException {
+    public void missingResearchProposal1ApplicationFilenameForValidResearchProposal() throws PorticoExportServiceException {
         csvEntries.add("Missing researchProposal.1.applicationFilename for valid research proposal document in the document upload package.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000111");
         addReferres(applicationForm);
@@ -152,7 +152,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void missingtranscript2applicationFilename() throws UclExportServiceException {
+    public void missingtranscript2applicationFilename() throws PorticoExportServiceException {
         csvEntries.add("Missing transcript.2.applicationFilename with valid corresponding document in the upload package.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000329");
         addReferres(applicationForm);
@@ -219,7 +219,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void noEnglishLanguageTestCertificate1InDocumentUpload() throws UclExportServiceException {
+    public void noEnglishLanguageTestCertificate1InDocumentUpload() throws PorticoExportServiceException {
         csvEntries.add("No englishLanguageTestCertificate.1 in document upload.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000329");
         addReferres(applicationForm);
@@ -259,7 +259,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void corruptedApplicationForm1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() throws UclExportServiceException {
+    public void corruptedApplicationForm1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() throws PorticoExportServiceException {
         csvEntries.add("Corrupted applicationForm.1 in document upload with valid corresponding entry in document upload contents file (optional document).");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDSECSING01-2012-000202");
         addReferres(applicationForm);
@@ -306,7 +306,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------    
     @Test
     @Transactional
-    public void validApplicationFormWithBogusInstitutionCode() throws UclExportServiceException {
+    public void validApplicationFormWithBogusInstitutionCode() throws PorticoExportServiceException {
         csvEntries.add("Bogus institution code");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000282");
         addReferres(applicationForm);

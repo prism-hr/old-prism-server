@@ -12,24 +12,24 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
-import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.mail.DataExportMailSender;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferErrorBuilder;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 public class PorticoQueueListenerTest {
 
-    private UclExportService uclExportServiceMock;
+    private PorticoExportService uclExportServiceMock;
     
     private ApplicationFormDAO formDAOMock;
     
-    private ApplicationFormTransferDAO formTransferDAOMock;
+    private ApplicationFormTransferService formTransferServiceMock;
     
     private DataExportMailSender exportMailSenderMock;
     
@@ -39,9 +39,9 @@ public class PorticoQueueListenerTest {
     
     @Before
     public void prepare() {
-        uclExportServiceMock = EasyMock.createMock(UclExportService.class);
+        uclExportServiceMock = EasyMock.createMock(PorticoExportService.class);
         formDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-        formTransferDAOMock = EasyMock.createMock(ApplicationFormTransferDAO.class);
+        formTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
         exportMailSenderMock = EasyMock.createMock(DataExportMailSender.class);
         messageMock = EasyMock.createMock(TextMessage.class);
         throttleServiceMock = EasyMock.createMock(ThrottleService.class);
@@ -55,7 +55,7 @@ public class PorticoQueueListenerTest {
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
         EasyMock.expect(formDAOMock.getApplicationByApplicationNumber("XX")).andReturn(form);
-        EasyMock.expect(formTransferDAOMock.getByApplicationForm(form)).andReturn(formTransferMock);
+        EasyMock.expect(formTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(formTransferMock);
         
         EasyMock.expect(messageMock.getJMSMessageID()).andReturn("1");
         EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getStatus().toString());
@@ -63,33 +63,33 @@ public class PorticoQueueListenerTest {
         
         try {
             uclExportServiceMock.sendToPortico(form, formTransferMock);
-        } catch (UclExportServiceException e) {
+        } catch (PorticoExportServiceException e) {
             fail("The exception should not have been thrown");
         }
         
-        EasyMock.replay(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, messageMock, throttleServiceMock);
+        EasyMock.replay(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, messageMock, throttleServiceMock);
         
-        PorticoQueueListener listener = new PorticoQueueListener(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, throttleServiceMock);
+        PorticoQueueListener listener = new PorticoQueueListener(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, throttleServiceMock);
         listener.onMessage(messageMock);
         
-        EasyMock.verify(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, messageMock, throttleServiceMock);
+        EasyMock.verify(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, messageMock, throttleServiceMock);
     }
     
     @Test
-    public void shouldTriggerARetryIfThereWasAnIssueWithTheNetwork() throws JMSException, UclExportServiceException {
+    public void shouldTriggerARetryIfThereWasAnIssueWithTheNetwork() throws JMSException, PorticoExportServiceException {
         ApplicationFormTransfer formTransferMock = EasyMock.createMock(ApplicationFormTransfer.class);
         
         ApplicationForm form = new ValidApplicationFormBuilder().build();
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
         EasyMock.expect(formDAOMock.getApplicationByApplicationNumber("XX")).andReturn(form);
-        EasyMock.expect(formTransferDAOMock.getByApplicationForm(form)).andReturn(formTransferMock);
+        EasyMock.expect(formTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(formTransferMock);
         
         EasyMock.expect(messageMock.getJMSMessageID()).andReturn("1");
         EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getStatus().toString());
         EasyMock.expect(messageMock.getStringProperty("Added")).andReturn("xx");
         
-        UclExportServiceException uclExportServiceException = new UclExportServiceException("error",
+        PorticoExportServiceException uclExportServiceException = new PorticoExportServiceException("error",
                 new ApplicationFormTransferErrorBuilder().errorHandlingStrategy(
                         ApplicationFormTransferErrorHandlingDecision.RETRY).build());
         
@@ -98,34 +98,34 @@ public class PorticoQueueListenerTest {
         
         exportMailSenderMock.sendErrorMessage(uclExportServiceException.getMessage(), uclExportServiceException);
         
-        EasyMock.replay(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, messageMock, throttleServiceMock);
+        EasyMock.replay(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, messageMock, throttleServiceMock);
         
         try {
-            PorticoQueueListener listener = new PorticoQueueListener(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, throttleServiceMock);
+            PorticoQueueListener listener = new PorticoQueueListener(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, throttleServiceMock);
             listener.onMessage(messageMock);
             Assert.fail("A TriggerJmsRetryException should have been thrown");
         }  catch (PorticoQueueListener.TriggerJmsRetryException e) {
             assertEquals(uclExportServiceException.getMessage(), e.getMessage());
         }
         
-        EasyMock.verify(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, messageMock, throttleServiceMock);
+        EasyMock.verify(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, messageMock, throttleServiceMock);
     }
     
     @Test
-    public void shouldStopThePorticoInterfaceIfThereWasAConfigurationIssue() throws JMSException, UclExportServiceException {
+    public void shouldStopThePorticoInterfaceIfThereWasAConfigurationIssue() throws JMSException, PorticoExportServiceException {
         ApplicationFormTransfer formTransferMock = EasyMock.createMock(ApplicationFormTransfer.class);
         
         ApplicationForm form = new ValidApplicationFormBuilder().build();
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
         EasyMock.expect(formDAOMock.getApplicationByApplicationNumber("XX")).andReturn(form);
-        EasyMock.expect(formTransferDAOMock.getByApplicationForm(form)).andReturn(formTransferMock);
+        EasyMock.expect(formTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(formTransferMock);
         
         EasyMock.expect(messageMock.getJMSMessageID()).andReturn("1");
         EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getStatus().toString());
         EasyMock.expect(messageMock.getStringProperty("Added")).andReturn("xx");
         
-        UclExportServiceException uclExportServiceException = new UclExportServiceException("error",
+        PorticoExportServiceException uclExportServiceException = new PorticoExportServiceException("error",
                 new ApplicationFormTransferErrorBuilder().errorHandlingStrategy(
                         ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION).build());
         
@@ -137,11 +137,11 @@ public class PorticoQueueListenerTest {
         
         throttleServiceMock.disablePorticoInterface();
         
-        EasyMock.replay(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, messageMock, throttleServiceMock);
+        EasyMock.replay(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, messageMock, throttleServiceMock);
         
-        PorticoQueueListener listener = new PorticoQueueListener(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, throttleServiceMock);        
+        PorticoQueueListener listener = new PorticoQueueListener(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, throttleServiceMock);        
         listener.onMessage(messageMock);
         
-        EasyMock.verify(uclExportServiceMock, formDAOMock, formTransferDAOMock, exportMailSenderMock, messageMock, throttleServiceMock);
+        EasyMock.verify(uclExportServiceMock, formDAOMock, formTransferServiceMock, exportMailSenderMock, messageMock, throttleServiceMock);
     }
 }

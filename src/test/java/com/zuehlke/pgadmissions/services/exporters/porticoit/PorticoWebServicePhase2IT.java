@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/testPorticoIntegrationContext.xml"})
@@ -46,7 +46,7 @@ public class PorticoWebServicePhase2IT {
     private static final String TEST_REPORT_FILENAME = "PorticoWebServicePhase2IT.csv";
     
     @Autowired
-    private UclExportService uclExportService;
+    private PorticoExportService uclExportService;
     
     @Autowired
     private ApplicationsService applicationsService;

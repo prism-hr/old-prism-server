@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 public class PorticoQueueServiceTest {
     
@@ -29,7 +29,7 @@ public class PorticoQueueServiceTest {
     
     private ThrottleService throttleServiceMock;
     
-    private UclExportService exportServiceMock;
+    private PorticoExportService exportServiceMock;
     
     private ApplicationFormTransferService formTransferServiceMock;
 
@@ -45,7 +45,7 @@ public class PorticoQueueServiceTest {
         queueMock = EasyMock.createMock(Queue.class);
         templateMock = EasyMock.createMock(JmsTemplate.class);
         throttleServiceMock = EasyMock.createMock(ThrottleService.class);
-        exportServiceMock = EasyMock.createMock(UclExportService.class);
+        exportServiceMock = EasyMock.createMock(PorticoExportService.class);
         formTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
         porticoQueueService = new PorticoQueueService();
         porticoQueueService.setExportService(exportServiceMock);

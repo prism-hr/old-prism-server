@@ -50,7 +50,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
@@ -64,7 +64,7 @@ import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/testPorticoIntegrationContext.xml"})
@@ -81,7 +81,7 @@ public class PorticoDocumentUploadIT {
     private ApplicationsService applicationsService;
     
     @Autowired
-    private UclExportService uclExportService;
+    private PorticoExportService uclExportService;
     
     @Autowired
     private PdfDocumentBuilder pdfDocumentBuilder;
@@ -1827,7 +1827,7 @@ public class PorticoDocumentUploadIT {
         try {
             uclExportService.sendToPortico(applicationForm, applicationFormTransfer, new CsvTransferListener());
             sentApps++;
-        } catch (UclExportServiceException e) {
+        } catch (PorticoExportServiceException e) {
             e.printStackTrace();
         }
     }

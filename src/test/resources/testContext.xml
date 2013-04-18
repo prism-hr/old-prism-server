@@ -14,8 +14,4 @@
         <constructor-arg value="org.springframework.transaction.support.TransactionTemplate" />
     </bean>
     
-    <bean id="uclExportServiceApplicationInitializer" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
-        <constructor-arg value="com.zuehlke.pgadmissions.lifecycle.UclExportServiceApplicationInitializer" />
-    </bean>
-    
 </beans>

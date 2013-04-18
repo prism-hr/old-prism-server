@@ -1,8 +1,6 @@
 $(document)
 		.ready(
 				function() {
-
-					showOrHideNationalityButton();
 					if ($("input[name='passportAvailable']:checked").val() == "true") {
 						enablePassportInformation();
 					} else {
@@ -57,26 +55,6 @@ $(document)
 					$("#acceptTermsPEDValue").val("NO");
 
 					// -------------------------------------------------------------------------------
-					// Hide or show the national
-					// -------------------------------------------------------------------------------
-					function showOrHideNationalityButton() {
-						numberOfNationalities = $(
-								"#my-nationality-div .nationality-item").size();
-						if(numberOfNationalities<1){
-							var html="<em id='nationality-em'>*</em>";
-							$('#my-nationality').append(html);
-						}
-						
-						if (numberOfNationalities >= 2) {
-							$('#addCandidateNationalityButton').hide();
-							$('#addNewNationality').hide();
-						} else {
-							$('#addCandidateNationalityButton').show();
-							$('#addNewNationality').show();
-						}
-					}
-
-					// -------------------------------------------------------------------------------
 					// Close button.
 					// -------------------------------------------------------------------------------
 					$('#personalDetailsCloseButton').click(function() {
@@ -92,84 +70,6 @@ $(document)
 								$('#personalDetailsSection > div').append(
 										'<div class="ajax" />');
 								loadPersonalDetails(true);
-							});
-
-					// -------------------------------------------------------------------------------
-					// Add a nationality (candidate).
-					// -------------------------------------------------------------------------------
-					$('#addCandidateNationalityButton')
-							.on(
-									"click",
-									function() {
-										var selected = $(
-												'#candidateNationalityCountry option:selected')
-												.val();
-										if (selected != '') {
-											// Find duplicate nationalities.
-											var duplicate = false;
-											$(
-													'#my-nationality-div input[type="hidden"]')
-													.each(
-															function() {
-																if ($(this)
-																		.val() == selected) {
-																	duplicate = true;
-																	return false;
-																}
-															});
-
-											if (!duplicate) {
-												var html = '	<div class="nationality-item">'
-														+ '		<label class="full">'
-														+ $(
-																'#candidateNationalityCountry option:selected')
-																.text()
-														+ '</label>'
-														+ "		<input type='hidden' id='candidateNationalities' name='candidateNationalities' value='"
-														+ $(
-																'#candidateNationalityCountry option:selected')
-																.val()
-														+ "'/>"
-														+ '		<button class="button-delete" data-desc="Delete">Delete</button><br/>'
-														+ '	</div>';
-												$('#my-nationality-div')
-														.append(html);
-												$('#nationality-em').remove();
-												addToolTips();
-
-												// Reset field.
-												$(
-														'#candidateNationalityCountry')
-														.val('');
-											}
-
-											showOrHideNationalityButton();
-										}
-									});
-
-					// -------------------------------------------------------------------------------
-					// Remove a nationality (all sections).
-					// -------------------------------------------------------------------------------
-					$(document).on(
-							'click',
-							'.nationality-item button.button-delete',
-							function() {
-								// Clear the corresponding dropdown box if the
-								// deleted
-								// nationality is the same
-								// as the one currently selected.
-								var $select = $(this).parent().parent().next(
-										'select');
-								var $field = $(this).parent().find(
-										'input:hidden');
-								if ($select.val() == $field.val()) {
-									$select.val('');
-								}
-								$(this).parent().remove();
-
-								showOrHideNationalityButton();
-
-								return false;
 							});
 
 					// -------------------------------------------------------------------------------
@@ -665,26 +565,10 @@ function isRequireVisa() {
 }
 
 function postPersonalDetailsData(message) {
-	// candidate nationalities
-	if ($('#candidateNationalityCountry option:selected').val() != '') {
-		var html = "<span><input type='hidden' name='candidateNationalities' value='"
-				+ $('#candidateNationalityCountry option:selected').val()
-				+ "'/>" + '</span>';
-		$('#existingCandidateNationalities').append(html);
-	}
-
-	var nationalities = $('.nationality-item');
-	var first_nationality = "";
-	if (nationalities.length > 0) {
-		first_nationality=$(nationalities[0]).find('#candidateNationalities')
-			.val();
-	}
-	var second_nationality = "";
-	if (nationalities.length > 1) {
-		second_nationality = $(nationalities[1])
-				.find('#candidateNationalities').val();
-	}
-
+	
+	var first_nationality = $('#primaryNationality').val();
+	var second_nationality  = $('#secondaryNationality').val();
+	
 	var acceptedTheTerms;
 	if ($("#acceptTermsPEDValue").val() == 'NO') {
 		acceptedTheTerms = false;
@@ -791,8 +675,6 @@ function postPersonalDetailsData(message) {
 				},
 				url : "/pgadmissions/update/editPersonalDetails",
 				data : $.param(postData),
-				// + "&" +
-				// $('input[name="candidateNationalities"]').serialize(),
 				cacheBreaker : new Date().getTime(),
 				success : function(data) {
 					$('#personalDetailsSection').html(data);
@@ -824,5 +706,4 @@ function deleteQualificationDocumentFile() {
 
 	$hidden.val(''); // clear field value.
 	$container.removeClass('uploaded');
-
 }

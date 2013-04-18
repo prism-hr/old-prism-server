@@ -76,7 +76,6 @@
             </div>
             
             <div class="row">
-                <label class="plain-label"></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
                 <div class="field">
                     <input class="full" type="text" id="firstName2" value="${(updatedUser.firstName2?html)!}" />
                     <@spring.bind "updatedUser.firstName2" /> <#list spring.status.errorMessages as error>
@@ -88,7 +87,6 @@
             </div>
             
             <div class="row">
-                <label class="plain-label"></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
                 <div class="field">
                     <input class="full" type="text" id="firstName3" value="${(updatedUser.firstName3?html)!}" />
                     <@spring.bind "updatedUser.firstName3" /> <#list spring.status.errorMessages as error>
@@ -178,56 +176,50 @@
         
         <div class="row-group">
             <h3>Nationalities</h3>
-            <div class="row">  
-                <div class="field">
-                 <div id="my-nationality-div">
-                    <#if personalDetails.getFirstNationality()??>                         
-                        <div class="nationality-item">
-                            <label class="full">${personalDetails.firstNationality.name}</label>  
-                            <input type="hidden" id="candidateNationalities" name="candidateNationalities" value='${encrypter.encrypt(personalDetails.firstNationality.id)}'/>
-                            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><button type="button" class="button-delete" data-desc="Delete">Delete</button></#if>
-                        </div> 
-                    </#if>                         
-                    <#if personalDetails.getSecondNationality()??>                         
-                        <div class="nationality-item">
-                            <label class="full">${personalDetails.secondNationality.name}</label>  
-                            <input type="hidden" id="candidateNationalities" name="candidateNationalities" value='${encrypter.encrypt(personalDetails.secondNationality.id)}'/>
-                            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><button type="button" class="button-delete" data-desc="Delete">Delete</button></#if>
-                        </div>                          
-                    </#if>
-                </div>
-            </div>
-            
-            <div class="row" id="addNewNationality">                       
-                <label class="plain-label" id="my-nationality" for="candidateNationalityCountry">Add Nationality<#if personalDetails.getSecondNationality()??><em id="nationality-em">*</em></#if></label>      
-                <span id="my-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
-                    <div class="field">
-                   
-                    <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
-                        <option value="">Select...</option>
+             <div class="row"> 
+                <div class="nationality-item">
+                    <label class="plain-label" for="nationality">Primary Nationality <em>*</em></label>
+                     <span class="hint" data-desc="<@spring.message 'myaccount.primaryNationality'/>"></span>
+                     <div class="field">
+                      <select class="full" id="primaryNationality" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
+                        <option value="" >Select...</option>
                         <#list languages as country>
-                            <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
+                            <option value="${encrypter.encrypt(country.id)}" <#if (personalDetails.getFirstNationality()??)&&(personalDetails.getFirstNationality().getId()==country.getId())>selected</#if>>${country.name?html}</option>               
                         </#list>
-                    </select>   
+                    </select>
+                    <input type="hidden" id="candidateNationalities" name="candidateNationalities" value=<#if personalDetails.getFirstNationality()??>''${encrypter.encrypt(personalDetails.firstNationality.id)}'<#else>''</#if>/>
                     <@spring.bind "personalDetails.firstNationality" /> 
                     <#list spring.status.errorMessages as error>
                          <div class="alert alert-error">
                             <i class="icon-warning-sign"></i> ${error} 
                         </div>
-                    </#list>             
+                    </#list> 
                     </div>
+                </div> 
+                
+                <div class="nationality-item">
+                    <label class="plain-label" for="nationality">Secondary Nationality</label>
+                     <span class="hint" data-desc="<@spring.message 'myaccount.secondaryNationality'/>"></span>
+                     <div class="field">
+                        <select class="full" id="secondaryNationality" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
+                        <option value="" >Select...</option>
+                        <#list languages as country>
+                            <option value="${encrypter.encrypt(country.id)}" <#if (personalDetails.getSecondNationality()??)&&(personalDetails.getSecondNationality().getId()==country.getId())>selected</#if>>${country.name?html}</option>               
+                        </#list>
+                    </select>
+                    <input type="hidden" id="candidateNationalities" name="candidateNationalities" value=<#if personalDetails.getSecondNationality()??>'${encrypter.encrypt(personalDetails.secondNationality.id)}'<#else>''</#if>/>
+                    <@spring.bind "personalDetails.secondNationality" /> 
+                        <#list spring.status.errorMessages as error>
+                             <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error} 
+                            </div>
+                        </#list>   
+                    </div>
+                </div> 
+                                       
             </div>
-
-                 
-            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-                <div class="row">
-                    <div class="field"><button type="button" class="btn" id="addCandidateNationalityButton">Add</button></div>
-                </div>
-            </#if>
-        </div>
-        
-        
          </div>
+         
         <div class="row-group">
             <h3>Language</h3>                  
             <div class="row">

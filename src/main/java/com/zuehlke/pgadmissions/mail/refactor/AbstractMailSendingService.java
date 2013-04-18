@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -13,7 +15,6 @@ import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,6 @@ import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
-@Service
 public abstract class AbstractMailSendingService {
 
     protected final UserService userService;
@@ -65,7 +65,7 @@ public abstract class AbstractMailSendingService {
     }
     
     @SuppressWarnings("unchecked")
-    protected Collection<RegisteredUser> getSupervisorsFromLatestApprovalRound(final ApplicationForm form) {
+    protected Collection<RegisteredUser> getSupervisorsAsUsersFromLatestApprovalRound(final ApplicationForm form) {
         if (form.getLatestApprovalRound() != null) {
             return CollectionUtils.collect(form.getLatestApprovalRound().getSupervisors(), new Transformer() {
                 @Override
@@ -75,6 +75,17 @@ public abstract class AbstractMailSendingService {
             });
         }
         return Collections.emptyList();
+    }
+    
+    protected RegisteredUser getPrimarySupervisorsAsUserFromLatestApprovalRound(final ApplicationForm form) {
+    	if (form.getLatestApprovalRound() != null) {
+    		for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {
+    			if (isTrue(supervisor.getIsPrimary())) {
+    				return supervisor.getUser();
+    			}
+    		}
+    	}
+    	return null;
     }
     
     protected Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm form) {

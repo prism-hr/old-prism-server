@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.mail.refactor;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_REMINDER;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,61 +140,63 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         log.info("Finished ScheduledMailSendingService Task");
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void sendDigestsToUsers() {
-        log.info("Sending daily digests to users");
-        
-        PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subject(
-                "Prism Digest Notification").emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
-        
-        PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subject(
-                "Prism Digest Task Reminder").emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
-        
-        PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subject(
-                "Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
-        
-        for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
-            final RegisteredUser user = userService.getUser(userId);
-            EmailModelBuilder modelBuilder = new EmailModelBuilder() {
-				
-				@Override
-				public Map<String, Object> build() {
-					Map<String, Object> model = new HashMap<String, Object>();
-					model.put("user", user);
-					model.put("host", getHostName());
-					return model;
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void sendDigestsToUsers() {
+		log.info("Sending daily digests to users");
+
+		PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subject(
+				"Prism Digest Notification").emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
+
+		PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subject(
+				"Prism Digest Task Reminder").emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
+
+		PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subject(
+				"Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
+
+		for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
+			try {
+				final RegisteredUser user = userService.getUser(userId);
+				EmailModelBuilder modelBuilder = new EmailModelBuilder() {
+
+					@Override
+					public Map<String, Object> build() {
+						Map<String, Object> model = new HashMap<String, Object>();
+						model.put("user", user);
+						model.put("host", getHostName());
+						return model;
+					}
+				};
+
+				digestTaskNotification.model(modelBuilder);
+				digestTaskReminder.model(modelBuilder);
+				digestUpdateNotification.model(modelBuilder);
+
+				switch (user.getDigestNotificationType()) {
+				case TASK_NOTIFICATION:
+					digestTaskNotification.to(user);
+					sendEmail(digestTaskNotification.build());
+					break;
+				case TASK_REMINDER:
+					digestTaskReminder.to(user);
+					sendEmail(digestTaskReminder.build());
+					break;
+				case UPDATE_NOTIFICATION:
+					digestUpdateNotification.to(user);
+					sendEmail(digestUpdateNotification.build());
+					break;
+				case NONE:
+				default:
+					break;
 				}
-			};
-			
-			digestTaskNotification.model(modelBuilder);
-			digestTaskReminder.model(modelBuilder);
-			digestUpdateNotification.model(modelBuilder);
-			
-            switch (user.getDigestNotificationType()) {
-            case TASK_NOTIFICATION:
-                digestTaskNotification.to(user);
-                break;
-            case TASK_REMINDER:
-                digestTaskReminder.to(user);
-                break;
-            case UPDATE_NOTIFICATION:
-                digestUpdateNotification.to(user);
-                break;
-            case NONE:
-            default:
-                break;
-            }
-            try {
-            	sendEmail(digestTaskNotification.build(), digestTaskReminder.build(), digestUpdateNotification.build());
-            } catch (Exception e) {
-            	log.error(e.getMessage(), e);
-            }
-        }
-        
-        
-        log.info("Reseting daily digests to users");
-        userService.resetDigestNotificationsForAllUsers();
-    }
+
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+
+		log.info("Reseting daily digests to users");
+		userService.resetDigestNotificationsForAllUsers();
+	}
 
     /**
      * <p>
@@ -680,22 +679,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleApprovedConfirmation() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalNotifications()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_NOTIFICATION);
-            if (form.getLatestApprovalRound() != null) {
-                ArrayList<Supervisor> supervisors = new ArrayList<Supervisor>(form.getLatestApprovalRound().getSupervisors());
-                CollectionUtils.filter(supervisors, new Predicate() {
-                    @Override
-                    public boolean evaluate(Object object) {
-                        Supervisor supervisor = (Supervisor) object;
-                        return BooleanUtils.isTrue(supervisor.getIsPrimary());
-                    }
-                });
-                CollectionUtils.forAllDo(CollectionUtils.collect(supervisors, new Transformer() {
-                    @Override
-                    public Object transform(final Object input) {
-                        Supervisor supervisor = (Supervisor) input;
-                        return supervisor.getUser();
-                    }
-                }), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
+            RegisteredUser primarySupervisor = getPrimarySupervisorsAsUserFromLatestApprovalRound(form);
+            if (null!=primarySupervisor) {
+            	userService.setDigestNotificationType(primarySupervisor, DigestNotificationType.UPDATE_NOTIFICATION);
             }
         }
     }
@@ -820,7 +806,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleInterviewFeedbackRequest() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
             createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
         }
     }
 
@@ -969,7 +955,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Notification
      * </p>
      */
-    @Scheduled(fixedRate = 600000)//every 10 minutes
+    @Scheduled(cron = "${email.schedule.period.chron}")
 	public void sendReferenceReminder() {
 		PrismEmailMessage message = null;
 		try {
@@ -1022,7 +1008,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Immediate Notification
      * </p>
      */
-    @Scheduled(fixedRate = 600000)//every 10 minutes
+    @Scheduled(cron = "${email.schedule.period.chron}")
     public void sendValidationRequestToRegistry() {
     	PrismEmailMessage message = null;
     	try {
@@ -1042,6 +1028,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 					public Object transform(final Object input) {
 						RegisteredUser user = new RegisteredUser();
 						Person person = (Person)input;
+						user.setId(person.getId());
 						user.setEmail(person.getEmail());
 						user.setFirstName(person.getFirstname());
 						user.setLastName(person.getLastname());
@@ -1056,7 +1043,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     			String recipientList = createRecipientString(registryContacts);
     			EmailModelBuilder modelBuilder = getModelBuilder(
     					new String[] {"application", "sender", "host", "recipients", "admissionsValidationServiceLevel"},
-    					new Object[] {applicationForm, currentUser, Environment.getInstance().getApplicationHostName(), recipientList, Environment.getInstance().getAdmissionsValidationServiceLevel()}
+    					new Object[] {applicationForm, currentUser, getHostName(), recipientList, Environment.getInstance().getAdmissionsValidationServiceLevel()}
     					);
     			
     			messageBuilder.model(modelBuilder);
@@ -1116,16 +1103,10 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleRejectionConfirmationToAdministrator() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueRejectNotifications()) {
             form.setRejectNotificationDate(new Date());
-            applicationDAO.save(form);
-            CollectionUtils.forAllDo(getSupervisorsFromLatestApprovalRound(form), new Closure() {
-                @Override
-                public void execute(final Object input) {
-                    Supervisor supervisor = (Supervisor) input;
-                    if (BooleanUtils.isTrue(supervisor.getIsPrimary())) {
-                        userService.setDigestNotificationType(supervisor.getUser(), DigestNotificationType.UPDATE_NOTIFICATION);
-                    }
-                }
-            });
+            RegisteredUser supervisor = getPrimarySupervisorsAsUserFromLatestApprovalRound(form);
+            if (supervisor!=null) {
+            	userService.setDigestNotificationType(supervisor, DigestNotificationType.UPDATE_NOTIFICATION);
+            }
         }
     }
 
@@ -1161,7 +1142,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleReviewSubmittedConfirmation() {
         for (ReviewComment comment : commentDAO.getReviewCommentsDueNotification()) {
             comment.setAdminsNotified(true);
-            comment.getUser().setDigestNotificationType(DigestNotificationType.UPDATE_NOTIFICATION);
+            userService.setDigestNotificationType(comment.getUser(), DigestNotificationType.UPDATE_NOTIFICATION);
             CollectionUtils.forAllDo(getProgramAdministrators(comment.getApplication()), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
         }
     }
@@ -1199,7 +1180,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleReviewEvaluationRequest() {
         for (Reviewer reviewer : reviewerDAO.getReviewersDueNotification()) {
             reviewer.setLastNotified(new Date());
-            reviewerDAO.save(reviewer);
             userService.setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
         }
     }
@@ -1241,7 +1221,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleReviewEvaluationReminder() {
         for (Reviewer reviewer : reviewerDAO.getReviewersDueReminder()) {
             reviewer.setLastNotified(new Date());
-            reviewerDAO.save(reviewer);
             userService.setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
         }
     }
@@ -1279,7 +1258,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueNotification()) {
             supervisor.setLastNotified(new Date());
             userService.setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_NOTIFICATION);
-            supervisorDAO.save(supervisor);
         }
     }
 
@@ -1321,7 +1299,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueReminder()) {
             supervisor.setLastNotified(new Date());
             userService.setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_REMINDER);
-            supervisorDAO.save(supervisor);
         }
     }
     
@@ -1358,7 +1335,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     // to interview but interview needs to be scheduled yet
     public void scheduleApplicationUnderInterviewNotification() { 
     	for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION, ApplicationFormStatus.INTERVIEW)) {
-            createNotificationRecordIfNotExists(form, NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION);
+            createNotificationRecordIfNotExists(form, NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION);
             userService.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
         }
        }

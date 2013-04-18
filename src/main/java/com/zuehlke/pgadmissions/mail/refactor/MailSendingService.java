@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -45,6 +46,7 @@ public class MailSendingService extends AbstractMailSendingService {
         this(null, null, null, null, null);
     }
 
+    @Autowired
     public MailSendingService(final MailSender mailSender, final UserService userSerivce,
     		final RefereeService refereeService, ConfigurationService configurationService,
     		final ApplicationFormDAO formDAO) {
@@ -536,7 +538,7 @@ public class MailSendingService extends AbstractMailSendingService {
             usersToNotify.put(interviewer.getId(), interviewer);
         }
         
-        for (RegisteredUser supervisor : getSupervisorsFromLatestApprovalRound(form)) {
+        for (RegisteredUser supervisor : getSupervisorsAsUsersFromLatestApprovalRound(form)) {
             usersToNotify.put(supervisor.getId(), supervisor);
         }
         

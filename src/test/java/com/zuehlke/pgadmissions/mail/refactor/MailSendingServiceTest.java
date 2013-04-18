@@ -60,42 +60,42 @@ import com.zuehlke.pgadmissions.utils.Environment;
 
 public class MailSendingServiceTest {
 	
-	private static final String SAMPLE_REJECTION_REASON = "You ain't goog enough";
+	protected static final String SAMPLE_REJECTION_REASON = "You ain't goog enough";
 
-	private static final String SAMPLE_PROGRAM_TITLE = "MRes Security Science";
+	protected static final String SAMPLE_PROGRAM_TITLE = "MRes Security Science";
 
-	private static final String SAMPLE_APPLICATION_NUMBER = "TMRSECSING01-2013-000004";
+	protected static final String SAMPLE_APPLICATION_NUMBER = "TMRSECSING01-2013-000004";
 
-	private static final String SAMPLE_ADMIN2_EMAIL_ADDRESS = "admin2@mail.com";
+	protected static final String SAMPLE_ADMIN2_EMAIL_ADDRESS = "admin2@mail.com";
 
-	private static final String SAMPLE_ADMIN1_EMAIL_ADDRESS = "admin1@mail.com";
+	protected static final String SAMPLE_ADMIN1_EMAIL_ADDRESS = "admin1@mail.com";
 
-	private static final String SAMPLE_APPLICANT_SURNAME = "Capatonda";
+	protected static final String SAMPLE_APPLICANT_SURNAME = "Capatonda";
 
-	private static final String SAMPLE_APPLICANT_NAME = "Maccio";
+	protected static final String SAMPLE_APPLICANT_NAME = "Maccio";
 
-	private static final String SAMPLE_APPLICANT_EMAIL_ADDRESS = "capatonda@mail.com";
+	protected static final String SAMPLE_APPLICANT_EMAIL_ADDRESS = "capatonda@mail.com";
 
-	private MailSendingService service;
+	protected MailSendingService service;
 	
-	private MailSender mockMailSender;
+	protected MailSender mockMailSender;
 
-	private UserService mockUserService;
+	protected UserService userServiceMock;
 	
-	private RefereeService refereeServiceMock;
+	protected RefereeService refereeServiceMock;
 	
-	private ConfigurationService configurationServiceMock;
+	protected ConfigurationService configurationServiceMock;
 	
-	private ApplicationFormDAO applicationFormDAOMock;
+	protected ApplicationFormDAO applicationFormDAOMock;
 
 	@Before
 	public void setup() {
 		mockMailSender = createMock(MailSender.class);
-		mockUserService = createMock(UserService.class);
+		userServiceMock = createMock(UserService.class);
 		refereeServiceMock = createMock(RefereeService.class);
 		configurationServiceMock = createMock(ConfigurationService.class);
 		applicationFormDAOMock = createMock(ApplicationFormDAO.class);
-		service = new MailSendingService(mockMailSender, mockUserService, refereeServiceMock, configurationServiceMock, applicationFormDAOMock);
+		service = new MailSendingService(mockMailSender, userServiceMock, refereeServiceMock, configurationServiceMock, applicationFormDAOMock);
 	}
 	
 	@Test
@@ -116,16 +116,16 @@ public class MailSendingServiceTest {
 		expect(mockMailSender.resolveMessage("reference.data.export.error", (Object[])null))
 		.andReturn("UCL Prism to Portico Export Error");
 		
-		expect(mockUserService.getUsersInRole(Authority.SUPERADMINISTRATOR))
+		expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR))
 		.andReturn(asList(user1, user2));
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		expectLastCall().times(2);
 		
-		replay(mockMailSender, mockUserService);
+		replay(mockMailSender, userServiceMock);
 		service.sendExportErrorMessage(messageCode, timestamp);
-		verify(mockMailSender, mockUserService);
+		verify(mockMailSender, userServiceMock);
 		
 		PrismEmailMessage message = messageCaptor.getValues().get(0);
 		assertNotNull(message.getTo());
@@ -160,15 +160,15 @@ public class MailSendingServiceTest {
 		expect(mockMailSender.resolveMessage("reference.data.import.error", (Object[])null))
 		.andReturn("UCL Prism to Portico Import Error");
 		
-		expect(mockUserService.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(asList(user1, user2));
+		expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(asList(user1, user2));
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		expectLastCall().times(2);
 		
-		replay(mockMailSender, mockUserService);
+		replay(mockMailSender, userServiceMock);
 		service.sendImportErrorMessage(messageCode, timestamp);
-		verify(mockMailSender, mockUserService);
+		verify(mockMailSender, userServiceMock);
 		
 		PrismEmailMessage message = messageCaptor.getValues().get(0);
 		assertNotNull(message.getTo());
@@ -192,13 +192,13 @@ public class MailSendingServiceTest {
 		
 		List<RegisteredUser> admins = form.getProgram().getAdministrators();
 		
-		mockUserService.setDigestNotificationType(delegate, DigestNotificationType.TASK_NOTIFICATION);
-		mockUserService.setDigestNotificationType(admins.get(0), DigestNotificationType.TASK_NOTIFICATION);
-		mockUserService.setDigestNotificationType(admins.get(1), DigestNotificationType.TASK_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(delegate, DigestNotificationType.TASK_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(admins.get(0), DigestNotificationType.TASK_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(admins.get(1), DigestNotificationType.TASK_NOTIFICATION);
 		
-		replay(mockUserService);
+		replay(userServiceMock);
 		service.scheduleInterviewAdministrationRequest(delegate, form);
-		verify(mockUserService);
+		verify(userServiceMock);
 	}
 	
 	@Test
@@ -207,13 +207,13 @@ public class MailSendingServiceTest {
 		
 		List<RegisteredUser> admins = form.getProgram().getAdministrators();
 		
-		mockUserService.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
-		mockUserService.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
-		mockUserService.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		replay(mockUserService);
+		replay(userServiceMock);
 		service.scheduleReferenceSubmitConfirmation(form);
-		verify(mockUserService);
+		verify(userServiceMock);
 	}
 	
 	@Test
@@ -222,12 +222,12 @@ public class MailSendingServiceTest {
 		
 		List<RegisteredUser> admins = form.getProgram().getAdministrators();
 		
-		mockUserService.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
-		mockUserService.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		replay(mockUserService);
+		replay(userServiceMock);
 		service.scheduleSupervisionConfirmedNotification(form);
-		verify(mockUserService);
+		verify(userServiceMock);
 	}
 	
 	@Test
@@ -263,24 +263,24 @@ public class MailSendingServiceTest {
 		
 		List<RegisteredUser> admins = form.getProgram().getAdministrators();
 		
-		mockUserService.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
-		mockUserService.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		mockUserService.setDigestNotificationType(refereeUser1, DigestNotificationType.UPDATE_NOTIFICATION);
-		mockUserService.setDigestNotificationType(refereeUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(refereeUser1, DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(refereeUser2, DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		mockUserService.setDigestNotificationType(reviewerUser1, DigestNotificationType.UPDATE_NOTIFICATION);
-		mockUserService.setDigestNotificationType(reviewerUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(reviewerUser1, DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(reviewerUser2, DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		mockUserService.setDigestNotificationType(interviewerUser1, DigestNotificationType.UPDATE_NOTIFICATION);
-		mockUserService.setDigestNotificationType(interviewerUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(interviewerUser1, DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(interviewerUser2, DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		mockUserService.setDigestNotificationType(supervisorUser1, DigestNotificationType.UPDATE_NOTIFICATION);
-		mockUserService.setDigestNotificationType(supervisorUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(supervisorUser1, DigestNotificationType.UPDATE_NOTIFICATION);
+		userServiceMock.setDigestNotificationType(supervisorUser2, DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		replay(mockUserService, refereeServiceMock);
+		replay(userServiceMock, refereeServiceMock);
 		service.scheduleWithdrawalConfirmation(form);
-		verify(mockUserService, refereeServiceMock);
+		verify(userServiceMock, refereeServiceMock);
 	}
 	
 	@Test
@@ -1054,7 +1054,7 @@ public class MailSendingServiceTest {
 		assertModelEquals(model, message.getModel());
 	}
 	
-	private void assertModelEquals(Map<String, Object> expected, Map<String, Object> actual) {
+	protected void assertModelEquals(Map<String, Object> expected, Map<String, Object> actual) {
 		assertEquals("The size of the expected and actual models don't match",
 				expected.size(), actual.size());
 		for (Map.Entry<String, Object> entry: expected.entrySet()) {
@@ -1064,7 +1064,7 @@ public class MailSendingServiceTest {
 		}
 	}
 	
-	private ApplicationForm getSampleApplicationForm() {
+	protected ApplicationForm getSampleApplicationForm() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1)
 				.email(SAMPLE_APPLICANT_EMAIL_ADDRESS)
 				.firstName(SAMPLE_APPLICANT_NAME)
@@ -1085,7 +1085,7 @@ public class MailSendingServiceTest {
 		RejectReason reason = new RejectReasonBuilder()
 				.text(SAMPLE_REJECTION_REASON)
 				.build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(6)
 				.status(ApplicationFormStatus.APPROVED)
 				.rejection(new RejectionBuilder()
 						.rejectionReason(reason)

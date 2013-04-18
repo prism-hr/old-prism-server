@@ -451,6 +451,7 @@ public class UserService {
             user.getApplicationsFilters().add(filter);
             applicationsFilterDAO.save(filter);
         }
+        userDAO.save(user);
     }
     
     public void sendEmailToDelegateAndRegisterReminder(ApplicationForm applicationForm, RegisteredUser delegate) {

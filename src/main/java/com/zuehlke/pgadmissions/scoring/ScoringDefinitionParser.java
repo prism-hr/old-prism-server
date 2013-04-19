@@ -18,22 +18,32 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 @Component
 public class ScoringDefinitionParser {
 
-    private Unmarshaller u;
+	private Unmarshaller u;
 
-    public ScoringDefinitionParser() throws Exception {
-        File file = new DefaultResourceLoader().getResource("classpath:scoringConfig.xsd").getFile();
+	public ScoringDefinitionParser() throws Exception {
+		File file = new DefaultResourceLoader().getResource(
+				"classpath:scoringConfig.xsd").getFile();
 
-        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = sf.newSchema(file);
+		SchemaFactory sf = SchemaFactory
+				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		Schema schema = sf.newSchema(file);
 
-        JAXBContext jc = JAXBContext.newInstance(CustomQuestions.class);
-        u = jc.createUnmarshaller();
-        u.setSchema(schema);
-    }
+		JAXBContext jc = JAXBContext.newInstance(CustomQuestions.class);
+		u = jc.createUnmarshaller();
+		u.setSchema(schema);
+	}
 
-    public CustomQuestions parseScoringDefinition(String definitionXml) throws JAXBException {
-        CustomQuestions scoringDefinition = (CustomQuestions) u.unmarshal(new StringReader(definitionXml));
-        return scoringDefinition;
-    }
+	public CustomQuestions parseScoringDefinition(String definitionXml)
+			throws ScoringDefinitionParseException {
+		CustomQuestions scoringDefinition;
+		try {
+			scoringDefinition = (CustomQuestions) u.unmarshal(new StringReader(
+					definitionXml));
+		} catch (JAXBException e) {
+			throw new ScoringDefinitionParseException(e.getLinkedException()
+					.getLocalizedMessage(), e);
+		}
+		return scoringDefinition;
+	}
 
 }

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
@@ -93,10 +94,7 @@ public class ConfigurationServiceTest {
 		EasyMock.verify(stageDurationDAOMock, personDAOMock, reminderIntervalDAOMock);
 		assertEquals((Integer) 1, oldValidationDuration.getDuration());
 		assertEquals(DurationUnitEnum.HOURS, oldValidationDuration.getUnit());
-		
 	}
-	
-	
 
 	@Test
 	public void shouldReturnMapOfStageDurations(){
@@ -126,6 +124,11 @@ public class ConfigurationServiceTest {
 		assertEquals(reminderInterval, service.getReminderInterval());
 	}
 	
+    @Test
+    public void shouldGetConfigurableStages() {
+        ApplicationFormStatus[] configurableStages = service.getConfigurableStages();
+        assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,ApplicationFormStatus.INTERVIEW,  ApplicationFormStatus.APPROVAL, },configurableStages);
+    }
 	
 	@Before
 	public void setUp(){

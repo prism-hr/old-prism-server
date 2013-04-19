@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.controllers.workflow.StateTransitionViewResolver;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -18,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.StateTransitionViewResolver;
 
 public class StateTransitionViewResolverTest {
 
@@ -262,5 +262,66 @@ public class StateTransitionViewResolverTest {
                                 .approvalRound(latestApprovalRound).build())
                 .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
         assertEquals("private/staff/admin/state_transition", new StateTransitionViewResolver().resolveView(applicationForm));
+    }
+    
+    @Test
+    public void shouldReturnToReviewTransitionViewIfApprovalAndReviewNextStatus() {
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(3).build();
+        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
+        ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
+        validApplicationFormBuilder.build();
+        ApplicationForm applicationForm = validApplicationFormBuilder
+                .getApplicationFormBuilder()
+                .applicationNumber("ABC")
+                .id(1)
+                .status(ApplicationFormStatus.APPROVAL)
+                .comments(
+                        new ApprovalEvaluationCommentBuilder().id(1).approvalRound(latestApprovalRound)
+                                .nextStatus(ApplicationFormStatus.REVIEW).build(),
+                        new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REVIEW)
+                                .approvalRound(latestApprovalRound).build())
+                .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
+        assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+    }
+    
+    @Test
+    public void shouldReturnToInterviewTransitionViewIfApprovalAndReviewNextStatus() {
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(3).build();
+        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
+        ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
+        validApplicationFormBuilder.build();
+        ApplicationForm applicationForm = validApplicationFormBuilder
+                .getApplicationFormBuilder()
+                .applicationNumber("ABC")
+                .id(1)
+                .status(ApplicationFormStatus.APPROVAL)
+                .comments(
+                        new ApprovalEvaluationCommentBuilder().id(1).approvalRound(latestApprovalRound)
+                                .nextStatus(ApplicationFormStatus.INTERVIEW).build(),
+                        new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW)
+                                .approvalRound(latestApprovalRound).build())
+                .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
+        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+    }
+    
+    @Test
+    public void shouldReturnRedirectToReviewIfInterviewAndReviewNextStatus() {
+        Interview previousInterview = new InterviewBuilder().id(3).build();
+        Interview latestInterview = new InterviewBuilder().id(4).build();
+        ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
+        validApplicationFormBuilder.build();
+        ApplicationForm applicationForm = validApplicationFormBuilder
+                .getApplicationFormBuilder()
+                .applicationNumber("ABC")
+                .status(ApplicationFormStatus.INTERVIEW)
+                .id(1)
+                .comments(
+                        new InterviewEvaluationCommentBuilder().id(1).interview(previousInterview)
+                                .nextStatus(ApplicationFormStatus.REVIEW).build(),
+                        new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REVIEW)
+                                .interview(latestInterview).build()).status(ApplicationFormStatus.REVIEW)
+                .interviews(previousInterview, latestInterview).latestInterview(latestInterview).build();
+        applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
+        assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
     }
 }

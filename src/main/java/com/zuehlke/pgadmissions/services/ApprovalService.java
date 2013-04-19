@@ -1,11 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICATION_MOVED_TO_APPROVED_NOTIFICATION;
+
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +35,16 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional
 public class ApprovalService {
 
-    private final ApplicationFormDAO applicationDAO;
+	private Logger log = LoggerFactory.getLogger(ApprovalService.class);
+
+	private final ApplicationFormDAO applicationDAO;
 
     private final ApprovalRoundDAO approvalRoundDAO;
 
@@ -55,15 +62,17 @@ public class ApprovalService {
 
     private final SupervisorDAO supervisorDAO;
 
+    private final MailSendingService mailSendingService;
+
     public ApprovalService() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO,
             ApprovalRoundDAO approvalRoundDAO, StageDurationService stageDurationService, EventFactory eventFactory,
             CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,
-            PorticoQueueService approvedSenderService) {
+            PorticoQueueService approvedSenderService, MailSendingService mailSendingService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
@@ -73,13 +82,14 @@ public class ApprovalService {
         this.supervisorDAO = supervisorDAO;
         this.programmeDetailDAO = programmeDetailDAO;
         this.approvedSenderService = approvedSenderService;
+        this.mailSendingService = mailSendingService;
     }
 
     public void confirmSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
         ApprovalRound approvalRound = form.getLatestApprovalRound();
         Supervisor supervisor = approvalRound.getPrimarySupervisor();
         Boolean confirmed = confirmSupervisionDTO.getConfirmedSupervision();
-        form.setSuppressStateChangeNotifications(false);
+
         supervisor.setConfirmedSupervision(confirmed);
 
         if (BooleanUtils.isTrue(confirmed)) {
@@ -89,6 +99,8 @@ public class ApprovalService {
             approvalRound.setRecommendedConditionsAvailable(confirmSupervisionDTO.getRecommendedConditionsAvailable());
             approvalRound.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
             approvalRound.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
+            supervisor.setConfirmedSupervisionDate(new Date());
+            mailSendingService.scheduleSupervisionConfirmedNotification(form);
         }
 
         if (BooleanUtils.isFalse(confirmed)) {
@@ -106,13 +118,14 @@ public class ApprovalService {
         restartComment.setApplication(form);
         restartComment.setDate(new Date());
         restartComment.setUser(supervisor.getUser());
-        restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser().getFirstName(), supervisor.getUser().getLastName()));
+        restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser()
+                .getFirstName(), supervisor.getUser().getLastName()));
         return restartComment;
     }
 
-    private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm form, Supervisor supervisor) {
+    private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm application, Supervisor supervisor) {
         SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
-        supervisionConfirmationComment.setApplication(form);
+        supervisionConfirmationComment.setApplication(application);
         supervisionConfirmationComment.setDate(new Date());
         supervisionConfirmationComment.setSupervisor(supervisor);
         supervisionConfirmationComment.setType(CommentType.SUPERVISION_CONFIRMATION);
@@ -140,7 +153,7 @@ public class ApprovalService {
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
-        form.setSuppressStateChangeNotifications(true);
+
         approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
         
@@ -201,29 +214,29 @@ public class ApprovalService {
         }
     }
 
-    public void requestApprovalRestart(ApplicationForm form, RegisteredUser approver, Comment comment) {
+    public void requestApprovalRestart(ApplicationForm application, RegisteredUser approver, Comment comment) {
         if (!approver.isInRole(Authority.APPROVER)) {
             throw new IllegalArgumentException(String.format("User %s is not an approver!", approver.getUsername()));
         }
-        if (!approver.isInRoleInProgram(Authority.APPROVER, form.getProgram())) {
+        if (!approver.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
             throw new IllegalArgumentException(String.format("User %s is not an approver in program %s!",//
-                    approver.getUsername(), form.getProgram().getTitle()));
+                    approver.getUsername(), application.getProgram().getTitle()));
         }
-        if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
-            throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", form.getApplicationNumber()));
+        if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
+            throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
         }
-        restartApprovalStage(form, approver, comment);
+        restartApprovalStage(application, approver, comment);
     }
 
-    private void restartApprovalStage(ApplicationForm form, RegisteredUser approver, Comment comment) {
+    private void restartApprovalStage(ApplicationForm application, RegisteredUser approver, Comment comment) {
         commentDAO.save(comment);
-        form.setPendingApprovalRestart(true);
-        form.setApproverRequestedRestart(approver);
-        applicationDAO.save(form);
+        application.setPendingApprovalRestart(true);
+        application.setApproverRequestedRestart(approver);
+        applicationDAO.save(application);
     }
 
-    private void checkApplicationStatus(ApplicationForm application) {
-        ApplicationFormStatus status = application.getStatus();
+    private void checkApplicationStatus(ApplicationForm form) {
+        ApplicationFormStatus status = form.getStatus();
         switch (status) {
         case VALIDATION:
         case REVIEW:
@@ -263,11 +276,27 @@ public class ApprovalService {
         form.setStatus(ApplicationFormStatus.APPROVED);
         form.setApprover(userService.getCurrentUser());
         form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
+        sendNotificationToApplicant(form);
         applicationDAO.save(form);
         return true;
     }
     
-    public void sendToPortico(ApplicationForm form) {
+    private void sendNotificationToApplicant(ApplicationForm form) {
+    	try {
+    		mailSendingService.sendApprovedNotification(form);
+    		NotificationRecord notificationRecord = form.getNotificationForType(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
+			if (notificationRecord == null) {
+				notificationRecord = new NotificationRecord(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
+				form.addNotificationRecord(notificationRecord);
+			}
+			notificationRecord.setDate(new Date());
+    	}
+    	catch (Exception e) {
+    		log.warn("{}", e);
+    	}
+	}
+
+	public void sendToPortico(ApplicationForm form) {
         approvedSenderService.sendToPortico(form);
     }
     
@@ -286,7 +315,6 @@ public class ApprovalService {
             latestApprovalRound.getSupervisors().add(supervisor);
             save(latestApprovalRound);
         }
-
     }
 
     public Supervisor newSupervisor() {

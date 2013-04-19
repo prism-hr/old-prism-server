@@ -27,6 +27,13 @@ $(document).ready(function() {
 		    	scoringContent : $('#scoringConfigurationContent').val()
 	    	},
 		    success : function(data) {
+		    	$("#scoringConfiguration").parent().find('.alert-error').remove();
+		    	if (data.scoringContent != null) {
+		    		$("#scoringConfigurationContent").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> ' + data.scoringContent + ' </div>');
+				}
+		    	if (data.programCode != null) {
+		    		$("#programSelect").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> ' + data.programCode + ' </div>');
+				}
 	   		},
 	   		complete : function() {
 	   			$('div.ajax').remove();

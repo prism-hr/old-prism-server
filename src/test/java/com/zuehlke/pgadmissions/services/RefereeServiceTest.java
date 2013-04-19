@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -92,16 +91,14 @@ public class RefereeServiceTest {
         EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
         applicationFormDAOMock.save(form);
         
-        mailServiceMock.sendReferenceSubmittedConfirmationToApplicant(referee, "email@test.com, email2@test.com,");
+        mailServiceMock.scheduleReferenceSubmitConfirmation(form);
         
-        mailServiceMock.sendReferenceSubmitConfirmationToAdministrators(Arrays.asList(admin1, admin2));
-
         EasyMock.replay(refereeDAOMock, eventFactoryMock, applicationFormDAOMock, mailServiceMock);
-
         refereeService.saveReferenceAndSendMailNotifications(referee);
+        EasyMock.verify(refereeDAOMock, eventFactoryMock, applicationFormDAOMock, mailServiceMock);
+
         assertEquals(1, form.getEvents().size());
         assertEquals(event, form.getEvents().get(0));
-        EasyMock.verify(refereeDAOMock, eventFactoryMock, applicationFormDAOMock, mailServiceMock);
     }
 
     @Test
@@ -121,7 +118,7 @@ public class RefereeServiceTest {
         programmeDetails.setId(1);
         form.setProgrammeDetails(programmeDetails);
         
-        mailServiceMock.sendRefereeMailNotification(referee, form, "email@test.com, email2@test.com,");
+        mailServiceMock.sendReferenceRequest(referee, form);
 
         EasyMock.replay(mailServiceMock);
 
@@ -487,8 +484,7 @@ public class RefereeServiceTest {
         EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
         applicationFormDAOMock.save(form);
         
-        mailServiceMock.sendReferenceSubmittedConfirmationToApplicant(referee, "email@test.com, email@test.com,");
-        mailServiceMock.sendReferenceSubmitConfirmationToAdministrators(asList(admin1, admin2));
+        mailServiceMock.scheduleReferenceSubmitConfirmation(form);
 
         EasyMock.replay(refereeDAOMock, eventFactoryMock, applicationFormDAOMock, mailServiceMock);
 

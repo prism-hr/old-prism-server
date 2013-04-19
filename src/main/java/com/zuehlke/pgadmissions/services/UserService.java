@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
 import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.UserFactory;
@@ -426,7 +425,6 @@ public class UserService {
     	delegateReminder.setDate(new Date());
     	applicationForm.setSuppressStateChangeNotifications(true);
     	applicationForm.addNotificationRecord(delegateReminder);
-    	List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
     	 try {
     		 mailService.scheduleInterviewAdministrationRequest(delegate, applicationForm);
          } catch (Exception e) {
@@ -434,15 +432,6 @@ public class UserService {
          }
     }
 
-    public void setDigestNotificationType(final RegisteredUser user, final DigestNotificationType type) {
-        DigestNotificationType currentType = user.getDigestNotificationType();
-        if (currentType == null || type == DigestNotificationType.NONE) {
-            user.setDigestNotificationType(type);
-        } else if (currentType.getPriority() < type.getPriority()) {
-            user.setDigestNotificationType(type);
-        }
-    }
-    
     public void resetDigestNotificationsForAllUsers() {
         userDAO.resetDigestNotificationsForAllUsers();
     }

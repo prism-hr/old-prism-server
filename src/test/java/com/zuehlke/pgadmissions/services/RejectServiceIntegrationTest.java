@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testIntegrationContext.xml")
@@ -45,8 +46,12 @@ public class RejectServiceIntegrationTest {
 
 	@Autowired
 	private RoleDAO roleDAO;
+	
 	@Autowired
 	private ProgramDAO programDao;
+	
+	@Autowired
+	private MailSendingService mailSendingService;
 
 	@Autowired
 	private SessionFactory sessionFactory;

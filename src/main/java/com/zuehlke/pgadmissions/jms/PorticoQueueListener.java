@@ -17,9 +17,11 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
 import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 
 @Service
@@ -44,19 +46,22 @@ public class PorticoQueueListener implements MessageListener {
     
     private final MailSendingService mailService;
     
+    private final UserService userService;
+    
     public PorticoQueueListener() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
     
     @Autowired
     public PorticoQueueListener(final UclExportService exportService, final ApplicationFormDAO formDAO,
             final ApplicationFormTransferDAO formTransferDAO, 
-            ThrottleService throttleService, final MailSendingService mailService) {
+            ThrottleService throttleService, final MailSendingService mailService, final UserService userService) {
         this.exportService = exportService;
         this.formDAO = formDAO;
         this.formTransferDAO = formTransferDAO;
         this.throttleService = throttleService;
 		this.mailService = mailService;
+		this.userService = userService;
     }
     
     @Override
@@ -110,7 +115,7 @@ public class PorticoQueueListener implements MessageListener {
     
     private void sendEmailWithErrorMessage(final Exception e) {
         try {
-        	mailService.sendExportErrorMessage(e.getMessage(), new Date());
+        	mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), e.getMessage(), new Date());
         } catch (Exception ex) {
             log.warn(ex.getMessage(), ex);
         }
@@ -134,6 +139,6 @@ public class PorticoQueueListener implements MessageListener {
         throttleService.disablePorticoInterface();
         String messageCode = "There was an issue with the PORTICO interfaces which needs attention by an administrator. " +
         		"PRISM is now not sending any more applications to PORTICO until this issue has been resolved";
-        mailService.sendExportErrorMessage(messageCode, new Date());
+        mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), messageCode, new Date());
     }
 }

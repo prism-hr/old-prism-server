@@ -44,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
 import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.UserFactory;
@@ -835,101 +834,40 @@ public class UserServiceTest {
     	RegisteredUser admin2 = new RegisteredUserBuilder().email("admin2@zuhlke.com").id(3).firstName("Claudio").lastName("Scandura").build();
     	ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().administrators(admin1, admin2).build()).build();
     	
-    	mailServiceMock.sendInterviewAdministrationReminder(delegate, applicationForm.getProgram().getAdministrators(), applicationForm);
+    	mailServiceMock.scheduleInterviewAdministrationRequest(delegate, applicationForm);
     	
     	replay(mailServiceMock);
     	userService.sendEmailToDelegateAndRegisterReminder(applicationForm, delegate);
     	verify(mailServiceMock);
 	}
 	
-	@Test
-	public void shouldUpdateDigestNotificationTypeToTaskNotification() {
-	    RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
-	    scandura.setDigestNotificationType(DigestNotificationType.NONE);
-	    userService.setDigestNotificationType(scandura, DigestNotificationType.TASK_NOTIFICATION);
-	    assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-	}
-	
-	@Test
-    public void shouldUpdateDigestNotificationTypeToTaskReminder() {
-        RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
-        scandura.setDigestNotificationType(DigestNotificationType.NONE);
-        userService.setDigestNotificationType(scandura, DigestNotificationType.TASK_REMINDER);
-        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
-    }
-	
-	@Test
-    public void shouldUpdateDigestNotificationTypeToUpdateNotification() {
-        RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
-        scandura.setDigestNotificationType(DigestNotificationType.NONE);
-        userService.setDigestNotificationType(scandura, DigestNotificationType.UPDATE_NOTIFICATION);
-        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
-    }
-	
-	@Test
-    public void shouldNotUpdateDigestNotificationTypeToUTaskNotification() {
-        RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
-        scandura.setDigestNotificationType(DigestNotificationType.TASK_REMINDER);
-        userService.setDigestNotificationType(scandura, DigestNotificationType.TASK_NOTIFICATION);
-        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
-    }
-	
-	@Test
-    public void shouldNotUpdateDigestNotificationTypeToUpdateNotification() {
-        RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
-        scandura.setDigestNotificationType(DigestNotificationType.TASK_REMINDER);
-        userService.setDigestNotificationType(scandura, DigestNotificationType.UPDATE_NOTIFICATION);
-        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
-    }
-    
-	@Test
-	public void shouldUpdateDigestNotificationTypeToNone() {
-	    RegisteredUser scandura = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
-        scandura.setDigestNotificationType(DigestNotificationType.TASK_REMINDER);
-        userService.setDigestNotificationType(scandura, DigestNotificationType.NONE);
-        assertEquals(scandura.getDigestNotificationType(), DigestNotificationType.NONE);
-	}
+	 @Before
+	    public void setUp() {
+	        encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
+	        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+	        currentUser = new RegisteredUserBuilder().id(8).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+	        currentUserMock = EasyMock.createMock(RegisteredUser.class);
+	        authenticationToken.setDetails(currentUser);
+	        SecurityContextImpl secContext = new SecurityContextImpl();
+	        secContext.setAuthentication(authenticationToken);
+	        SecurityContextHolder.setContext(secContext);
 
-    @Before
-    public void setUp() {
-        encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-        currentUser = new RegisteredUserBuilder().id(8).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-        currentUserMock = EasyMock.createMock(RegisteredUser.class);
-        authenticationToken.setDetails(currentUser);
-        SecurityContextImpl secContext = new SecurityContextImpl();
-        secContext.setAuthentication(authenticationToken);
-        SecurityContextHolder.setContext(secContext);
+	        userDAOMock = EasyMock.createMock(UserDAO.class);
+	        roleDAOMock = EasyMock.createMock(RoleDAO.class);
+	        applicationsFilterDAOMock = EasyMock.createMock(ApplicationsFilterDAO.class);
+	        userFactoryMock = EasyMock.createMock(UserFactory.class);
+	        mailServiceMock = createMock(MailSendingService.class);
+	        userService = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
+	                encryptionUtilsMock, applicationsFilterDAOMock, mailServiceMock);
+	        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
+	                encryptionUtilsMock, applicationsFilterDAOMock, mailServiceMock) {
 
-        userDAOMock = EasyMock.createMock(UserDAO.class);
-        roleDAOMock = EasyMock.createMock(RoleDAO.class);
-        applicationsFilterDAOMock = EasyMock.createMock(ApplicationsFilterDAO.class);
-        userFactoryMock = EasyMock.createMock(UserFactory.class);
-        mailServiceMock = createMock(MailSendingService.class);
-        userService = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-                encryptionUtilsMock, applicationsFilterDAOMock, mailServiceMock);
-        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-                encryptionUtilsMock, applicationsFilterDAOMock, mailServiceMock) {
-
-		userDAOMock = EasyMock.createMock(UserDAO.class);
-		roleDAOMock = EasyMock.createMock(RoleDAO.class);
-		applicationsFilterDAOMock = EasyMock.createMock(ApplicationsFilterDAO.class);
-		userFactoryMock = EasyMock.createMock(UserFactory.class);
-		msgSourceMock = createMock(MessageSource.class);
-		templateServiceMock = createMock(EmailTemplateService.class);
-
-		userService = new UserService(userDAOMock, roleDAOMock, userFactoryMock, mimeMessagePreparatorFactoryMock,
-				mailSenderMock, msgSourceMock, encryptionUtilsMock, applicationsFilterDAOMock, templateServiceMock);
-		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, userFactoryMock,
-				mimeMessagePreparatorFactoryMock, mailSenderMock, msgSourceMock, encryptionUtilsMock,
-				applicationsFilterDAOMock, templateServiceMock) {
-
-			@Override
-			public RegisteredUser getCurrentUser() {
-				return currentUserMock;
-			}
-		};
-	}
+	            @Override
+	            public RegisteredUser getCurrentUser() {
+	                return currentUserMock;
+	            }
+	        };
+	    }
 
 	@After
 	public void tearDown() {

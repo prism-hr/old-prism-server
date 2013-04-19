@@ -85,7 +85,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     @Column(name = "digest_notification_type")
     @Enumerated(EnumType.STRING)
-    private DigestNotificationType digestNotificationType;
+    private DigestNotificationType digestNotificationType = DigestNotificationType.NONE;
 
     private boolean enabled;
 

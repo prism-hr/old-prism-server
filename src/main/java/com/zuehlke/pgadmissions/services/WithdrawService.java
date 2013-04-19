@@ -16,22 +16,28 @@ public class WithdrawService {
 	private final PorticoQueueService porticoQueueService;
 
     private final MailSendingService mailSendingService;
+    
+    private final RefereeService refereeService;
 
 	public WithdrawService() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-    public WithdrawService(final ApplicationsService applicationService, final MailSendingService mailSendingService, final PorticoQueueService porticoQueueService) {
+    public WithdrawService(final ApplicationsService applicationService,
+    		final MailSendingService mailSendingService,
+    		final PorticoQueueService porticoQueueService,
+    		final RefereeService refereeService) {
 		this.applicationService = applicationService;
 		this.porticoQueueService = porticoQueueService;
         this.mailSendingService = mailSendingService;
+		this.refereeService = refereeService;
 	}
 	
 	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(final ApplicationForm form) {
 		applicationService.save(form);
-		mailSendingService.scheduleWithdrawalConfirmation(form);
+		mailSendingService.scheduleWithdrawalConfirmation(refereeService.getRefereesWhoHaveNotProvidedReference(form), form);
 	}
 	
     @Transactional

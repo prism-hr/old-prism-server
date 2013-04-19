@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
@@ -30,11 +31,11 @@ public class ApplicationsServiceActionsTest {
     private RegisteredUser userMock;
     private ApplicationForm applicationMock;
     private Program programMock;
-
+    
     @Before
     public void setup() {
-        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-        applicationsService = new ApplicationsService(applicationFormDAOMock, null);
+        applicationFormDAOMock = createMock(ApplicationFormDAO.class);
+        applicationsService = new ApplicationsService(applicationFormDAOMock, null, null);
 
         userMock = EasyMock.createMock(RegisteredUser.class);
         applicationMock = EasyMock.createMock(ApplicationForm.class);

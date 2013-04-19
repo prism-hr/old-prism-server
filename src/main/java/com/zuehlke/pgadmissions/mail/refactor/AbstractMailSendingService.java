@@ -1,10 +1,7 @@
 package com.zuehlke.pgadmissions.mail.refactor;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,28 +12,20 @@ import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
-import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public abstract class AbstractMailSendingService {
+	
 
-    protected final UserService userService;
-    
     private final MailSender mailSender;
     
     protected final ApplicationFormDAO applicationDAO;
@@ -52,45 +41,26 @@ public abstract class AbstractMailSendingService {
 
         @Override
         public void execute(final Object input) {
-            userService.setDigestNotificationType((RegisteredUser) input, type);
+           setDigestNotificationType((RegisteredUser) input, type);
         }
     }
     
-    public AbstractMailSendingService(final UserService userService,
-    		final MailSender mailSender,  final ApplicationFormDAO formDAO, final ConfigurationService configurationService) {
-        this.userService = userService;
+    protected void setDigestNotificationType(final RegisteredUser user, final DigestNotificationType type) {
+        DigestNotificationType currentType = user.getDigestNotificationType();
+        if (currentType == null || type == DigestNotificationType.NONE) {
+            user.setDigestNotificationType(type);
+        } else if (currentType.getPriority() < type.getPriority()) {
+            user.setDigestNotificationType(type);
+        }
+    }
+    
+    
+    public AbstractMailSendingService(final MailSender mailSender,  final ApplicationFormDAO formDAO, final ConfigurationService configurationService) {
 		this.mailSender = mailSender;
 		applicationDAO = formDAO;
 		this.configurationService = configurationService;
     }
     
-    @SuppressWarnings("unchecked")
-    protected Collection<RegisteredUser> getSupervisorsAsUsersFromLatestApprovalRound(final ApplicationForm form) {
-        if (form.getLatestApprovalRound() != null) {
-            return CollectionUtils.collect(form.getLatestApprovalRound().getSupervisors(), new Transformer() {
-                @Override
-                public Object transform(final Object input) {
-                    return ((Supervisor) input).getUser();
-                }
-            });
-        }
-        return Collections.emptyList();
-    }
-    
-    protected RegisteredUser getPrimarySupervisorsAsUserFromLatestApprovalRound(final ApplicationForm form) {
-    	if (form.getLatestApprovalRound() != null) {
-    		for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {
-    			if (isTrue(supervisor.getIsPrimary())) {
-    				return supervisor.getUser();
-    			}
-    		}
-    	}
-    	return null;
-    }
-    
-    protected Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm form) {
-        return form.getProgram().getAdministrators();
-    }
     
     protected String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
 		Set<String> administratorMails = new LinkedHashSet<String>();
@@ -124,18 +94,6 @@ public abstract class AbstractMailSendingService {
             });
         }
         return Collections.emptyList();
-    }
-    
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    protected NotificationRecord createNotificationRecordIfNotExists(final ApplicationForm form, final NotificationType type) {
-        NotificationRecord notificationRecord = form.getNotificationForType(type);
-        if (notificationRecord == null) {
-            notificationRecord = new NotificationRecord(type);
-            form.addNotificationRecord(notificationRecord);
-        }
-        notificationRecord.setDate(new Date());
-        applicationDAO.save(form);
-        return notificationRecord;
     }
     
     protected PrismEmailMessage buildMessage(RegisteredUser recipient, String subject, Map<String, Object> model, EmailTemplateName templateName) {
@@ -198,36 +156,6 @@ public abstract class AbstractMailSendingService {
     protected void sendEmail(PrismEmailMessage... messages) {
     	mailSender.sendEmail(messages);
     }
-    
-    protected String createRecipientString(List<Person> registryContacts) {
-		StringBuilder sb = new StringBuilder();
-		boolean first = true;
-		for (Person person : registryContacts) {
-			if( !first) {
-				sb.append(", ");
-			}
-			sb.append(person.getFirstname());
-			first = false;
-		}
-		return sb.toString();
-	}
-    
-    protected String getCommentText(List<Person> registryContacts) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Referred to UCL Admissions for advice on eligibility and fees status. Referral send to ");
-		for (int i = 0; i < registryContacts.size(); i++) {
-			Person contact = registryContacts.get(i);
-			if (i > 0 && i < registryContacts.size() - 1) {
-				sb.append(", ");
-			}
-			if (registryContacts.size() > 1 && i == (registryContacts.size() - 1)) {
-				sb.append(" and ");
-			}
-			sb.append(contact.getFirstname() + " " + contact.getLastname() + " (" + contact.getEmail() + ")");
-		}
-		sb.append(".");
-		return sb.toString();
-	}
     
     protected String getHostName() {
     	return Environment.getInstance().getApplicationHostName();

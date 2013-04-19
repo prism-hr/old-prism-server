@@ -13,85 +13,9 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
         http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd">
 
-    <import resource="Applicant-Emails.xml" />
-    <import resource="Reviewers-Emails.xml" />
-    <import resource="Interviewers-Emails.xml" />
-    <import resource="Referee-Emails.xml" />
-    <import resource="Admin-Emails.xml" />
-    <import resource="Approver-Emails.xml" />
-    <import resource="Supervisor-Emails.xml" />
-    <import resource="Bean-Definitions.xml" />
-    <import resource="Person-Emails.xml" />
     
     <task:executor id="executor" pool-size="5"/>
     <task:scheduler id="scheduler" pool-size="5"/>
     <task:annotation-driven scheduler="scheduler" executor="executor"/>
     
-    <bean id="xmlDataImportTask" class="com.zuehlke.pgadmissions.timers.XMLDataImportTask" />
-
-    <bean id="porticoThrottleTask" class="com.zuehlke.pgadmissions.timers.PorticoThrottleTask" />
-
-    <!-- new user notifications -->
-    <bean id="newUserNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.NewUserNotificationTask">
-        <constructor-arg index="0" ref="sessionFactoryMail" />
-        <constructor-arg index="1" ref="newUserMailSender" />
-        <constructor-arg index="2" ref="mailUserDAO" />
-    </bean>
-
-    <bean id="newUserNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-        <property name="delay" value="4000" />
-        <property name="period" value="${email.schedule.period.milliseconds}" />
-        <property name="timerTask" ref="newUserNotificationTimerTask" />
-    </bean>
-
-    <!-- The main schedule -->
-    <bean class="org.springframework.scheduling.timer.TimerFactoryBean">
-        <property name="scheduledTimerTasks">
-            <list>
-                <ref bean="adminValidationReminderSchedule" />
-                <ref bean="adminRejectNotificationSchedule" />
-                <ref bean="adminReviewReminderSchedule" />
-                <ref bean="refereeReminderSchedule" />
-                <ref bean="refereeNotificationSchedule" />
-                <ref bean="updateNotificationSchedule" />
-                <ref bean="moveToReviewNotificationSchedule" />
-                <ref bean="applicantSubmissionNotificationSchedule" />
-                <ref bean="adminReviewFeedbackNotificationSchedule" />
-                <ref bean="adminSubmissionNotificationSchedule" />
-                <ref bean="reviewerNotificationSchedule" />
-                <ref bean="reviewerReminderSchedule" />
-                <ref bean="newUserNotificationSchedule" />
-                <ref bean="moveToInterviewNotificationSchedule" />
-                <ref bean="moveToRejectNotificationSchedule" />
-                <ref bean="interviewerNotificationSchedule" />
-                <ref bean="interviewerReminderSchedule" />
-                <ref bean="adminInterviewFeedbackNotificationSchedule" />
-                <ref bean="adminInterviewReminderSchedule" />
-                <ref bean="adminAssignedReviewerNotificationSchedule" />
-                <ref bean="moveToApprovalNotificationSchedule" />
-                <ref bean="approverAdminApprovalNotificationSchedule" />
-                <ref bean="supervisorNotificationSchedule" />
-                <ref bean="adminApprovedNotificationSchedule" />
-                <ref bean="approverApprovalReminderSchedule" />
-                <ref bean="moveToApprovedNotificationSchedule" />
-                <ref bean="registryNotificationSchedule" />
-                <ref bean="approvalRestartRequestNotificationSchedule" />
-                <ref bean="approvalRestartRequestReminderSchedule" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="sessionFactoryMail" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" autowire-candidate="false">
-        <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="com.zuehlke.pgadmissions.domain"/>
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
-                <prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.format_sql">true</prop>
-                <prop key="hibernate.current_session_context_class">thread</prop>
-                <prop key="javax.persistence.validation.mode">NONE</prop>
-            </props>
-        </property>
-    </bean>
 </beans>

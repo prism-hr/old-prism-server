@@ -91,7 +91,13 @@ public class RegistrationService {
 		} else {
 			user = processPendingApplicantUser(pendingUser, queryString);
 		}
-		userDAO.save(user);
+		try {
+			userDAO.save(user);
+		}
+		catch (Exception e) {
+			log.error("Could not save user: {}", user.getEmail());
+			return;
+		}
 
 		sendConfirmationEmail(user);
 	}

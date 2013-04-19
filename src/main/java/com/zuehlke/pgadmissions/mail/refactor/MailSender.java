@@ -13,12 +13,14 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
@@ -30,6 +32,7 @@ import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 import freemarker.template.Template;
 
+@Service
 public class MailSender {
 	
 	 private static final String PLAIN_TEXT_NOTE = "\n\nIf the links do not work in your email client copy and paste them into your browser.";
@@ -50,15 +53,16 @@ public class MailSender {
     
     private final FreeMarkerConfig freemarkerConfig;
     
+    @Autowired
     public MailSender(
-            final JavaMailSender mailSender, 
+            final JavaMailSender javaMailSender, 
             final MessageSource messageSource, 
             @Value("${email.prod}") final String production,
             @Value("${email.address.from}") final String emailAddressFrom,  
             @Value("${email.address.to}") final String emailAddressTo,
             final EmailTemplateService emailTemplateService,
             final FreeMarkerConfig freemarkerConfig) {
-        this.javaMailSender = mailSender;
+        this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
         this.emailProductionSwitch = BooleanUtils.toBoolean(production);
         this.emailAddressFrom = emailAddressFrom;
@@ -133,7 +137,7 @@ public class MailSender {
                      
                      messageHelper.setFrom(message.getFromAddress());
                      
-                     messageHelper.setSubject(resolveMessage(message.getSubjectCode(), message.getSubjectArgs().toArray(new Object[]{})));
+                     messageHelper.setSubject(message.getSubjectCode());
                      
                      for (PdfAttachmentInputSource attachment : message.getAttachments()) {
                          messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
@@ -176,7 +180,8 @@ public class MailSender {
                      }
                      
                      StringBuilder subjectBuilder = new StringBuilder();
-                     subjectBuilder.append(String.format(message.getSubjectCode(), message.getSubjectArgs().toArray(new Object[]{})));
+                     //the subject should be built anywhere else even with the new editable subject!!
+                     subjectBuilder.append(message.getSubjectCode());
                      subjectBuilder.append("<NON-PROD-Message: TO: ").append(message.getToAsInternetAddresses().toString());
                      subjectBuilder.append(" CC: ").append(message.getCcAsInternetAddresses().toString());
                      subjectBuilder.append(" BCC: ").append(message.getBccAsInternetAddresses().toString());

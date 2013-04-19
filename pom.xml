@@ -424,7 +424,7 @@
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.scoring.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/xsd/scoringConfig</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
                             <staleFile>${project.build.directory}/jaxb2/.schema3XjcStaleFlag</staleFile>
                             <clearOutputDir>false</clearOutputDir>
                         </configuration>

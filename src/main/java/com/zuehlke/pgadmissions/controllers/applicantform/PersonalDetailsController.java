@@ -125,6 +125,8 @@ public class PersonalDetailsController {
     public void registerPropertyEditorsForPersonalDetails(WebDataBinder binder) {
         binder.setValidator(personalDetailsValidator);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(String.class,"firstNationality", new StringTrimmerEditor(true));
+        binder.registerCustomEditor(String.class,"secondNationality", new StringTrimmerEditor(true));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(Language.class, languagePropertyEditor);
         binder.registerCustomEditor(Country.class, countryPropertyEditor);

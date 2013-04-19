@@ -84,9 +84,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private static final String PHONE_NUMBER_NOT_PROVIDED_VALUE = "+44 (0) 0000 000 000";
 
-    private static final String LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE = 
-            "Application predates mandatory language qualification. Please check qualifications for potential language certificates.";
-    
+    private static final String LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE = "Application predates mandatory language qualification. Please check qualifications for potential language certificates.";
+
     private final ObjectFactory xmlFactory;
 
     protected final DatatypeFactory datatypeFactory;
@@ -96,7 +95,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private boolean printLanguageQualificationAdmissionsNote = false;
 
     private Boolean isOverseasStudent;
-    
+
     private static class NoActiveProgrameInstanceFoundException extends RuntimeException {
         private final ProgrammeOccurrenceTp occurrenceTp;
         private static final long serialVersionUID = 8359986556018188704L;
@@ -142,7 +141,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         this.applicationForm = applicationForm;
         return this;
     }
-    
+
     public SubmitAdmissionsApplicationRequestBuilder isOverseasStudent(Boolean isOverseasStudent) {
         this.isOverseasStudent = isOverseasStudent;
         return this;
@@ -168,8 +167,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setFullName(buildFullName());
         applicant.setSex(buildSex());
         applicant.setDateOfBirth(buildDateOfBirth());
-        applicant.setNationality(buildNationality(0));
-        applicant.setSecondaryNationality(buildNationality(1));
+        applicant.setNationality(buildFirstNationality());
+        applicant.setSecondaryNationality(buildSecondNationality());
         applicant.setCountryOfBirth(buildCountry());
         applicant.setCountryOfDomicile(buildDomicile());
         applicant.setVisaRequired(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getRequiresVisa()));
@@ -187,13 +186,14 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
         applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getEnglishFirstLanguage()));
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
-        
-        if (BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getEnglishFirstLanguage()) && BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
+
+        if (BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getEnglishFirstLanguage())
+                && BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
             printLanguageQualificationAdmissionsNote = true;
         }
-        
+
         applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
-        
+
         return applicant;
     }
 
@@ -234,21 +234,30 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         return buildXmlDate(personalDetails.getDateOfBirth());
     }
 
-    private NationalityTp buildNationality(int idx) {
+    private NationalityTp buildFirstNationality() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        List<Language> candidateNationalities = personalDetails.getCandidateNationalities();
+        Language firstNationality = personalDetails.getFirstNationality();
 
         NationalityTp nationalityTp = xmlFactory.createNationalityTp();
-        if (candidateNationalities.isEmpty()) {
-            throw new IllegalArgumentException("Nationality is empty");
+        if (firstNationality == null) {
+            throw new IllegalArgumentException("Candidate should have at least one nationality.");
         }
 
-        if (idx < candidateNationalities.size()) {
-            nationalityTp.setCode(candidateNationalities.get(idx).getCode());
-            nationalityTp.setName(candidateNationalities.get(idx).getName());
-            return nationalityTp;
-        } else {
+        nationalityTp.setCode(firstNationality.getCode());
+        nationalityTp.setName(firstNationality.getName());
+        return nationalityTp;
+    }
+
+    private NationalityTp buildSecondNationality() {
+        Language secondNationality = applicationForm.getPersonalDetails().getSecondNationality();
+
+        NationalityTp nationalityTp = xmlFactory.createNationalityTp();
+        if (secondNationality == null) {
             return null;
+        } else {
+            nationalityTp.setCode(secondNationality.getCode());
+            nationalityTp.setName(secondNationality.getName());
+            return nationalityTp;
         }
     }
 
@@ -320,7 +329,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         if (StringUtils.isBlank(addressTp.getAddressLine3())) {
             addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
         }
-        
+
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(applicationForm.getApplicant().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(personalDetails.getPhoneNumber()));
@@ -349,7 +358,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         if (StringUtils.isBlank(addressTp.getAddressLine3())) {
             addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
         }
-        
+
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(applicationForm.getApplicant().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(applicationForm.getPersonalDetails().getPhoneNumber()));
@@ -366,19 +375,19 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             applicationTp.setSupervisorName(buildSupervisorName(0));
         }
         applicationTp.setPersonalStatement(REFER_TO_ATTACHED_DOCUMENT);
-        
+
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
         applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
-        
+
         if (StringUtils.isBlank(applicationForm.getIpAddressAsString())) {
             applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
         }
-        
+
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setRefereeList(buildReferee());
-        
+
         switch (applicationForm.getStatus()) {
         case WITHDRAWN:
             applicationTp.setApplicationStatus("WITHDRAWN");
@@ -394,7 +403,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         default:
             throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getStatus().displayValue());
         }
-        
+
         try {
             applicationTp.setProgramme(buildProgrammeOccurence());
         } catch (NoActiveProgrameInstanceFoundException exp) {
@@ -402,18 +411,18 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         } catch (NoIdentifierForProgrameInstanceFoundException exp) {
             throw new IllegalArgumentException(exp.getMessage(), exp);
         }
-        
+
         if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
-        
+
         ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
         if (latestApprovalRound != null) {
             if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired())) {
                 applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
             }
         }
-        
+
         if (latestApprovalRound != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
             if (BooleanUtils.isTrue(latestApprovalRound.getRecommendedConditionsAvailable())) {
                 applicationTp.setDepartmentalOfferConditions("Conditional Offer: " + latestApprovalRound.getRecommendedConditions());
@@ -434,8 +443,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
         ProgramInstance activeInstance = null;
         for (ProgramInstance instance : program.getInstances()) {
-            if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate())
-                    || instance.getApplicationStartDate().after(new Date())) {
+            if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(new Date())) {
                 if (instance.getStudyOption().equalsIgnoreCase(programmeDetails.getStudyOption())) {
                     activeInstance = instance;
                     break;
@@ -449,8 +457,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             occurrenceTp.setStartDate(buildXmlDate(programmeDetails.getStartDate()));
             occurrenceTp.setEndDate(buildXmlDate(DateUtils.addYears(programmeDetails.getStartDate(), 1)));
             throw new NoActiveProgrameInstanceFoundException(occurrenceTp, String.format(
-                    "No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]",
-                    program.getCode(), programmeDetails.getStudyOption()));
+                    "No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(), programmeDetails.getStudyOption()));
         }
 
         occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademic_year()));
@@ -460,8 +467,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
         if (StringUtils.isBlank(activeInstance.getIdentifier())) {
             occurrenceTp.setIdentifier(NOT_PROVIDED_VALUE);
-            throw new NoIdentifierForProgrameInstanceFoundException(occurrenceTp, String.format(
-                    "No identifier for program instance found. Program[code=%s]", program.getCode()));
+            throw new NoIdentifierForProgrameInstanceFoundException(occurrenceTp, String.format("No identifier for program instance found. Program[code=%s]",
+                    program.getCode()));
         }
 
         return occurrenceTp;
@@ -511,12 +518,12 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
 
                 qualificationsTp.setStartDate(buildXmlDate(qualification.getQualificationStartDate()));
-                
+
                 // TODO: This might be null because we've changed this to a mandatory field in mid flight.
                 // Talk to Alastair about this when we go live!
                 // Sending a null value will be rejected by the web service.
                 qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
-                
+
                 qualificationsTp.setGrade(qualification.getQualificationGrade());
                 qualificationsTp.setLanguageOfInstruction(qualification.getQualificationLanguage());
                 qualificationsTp.setMainSubject(qualification.getQualificationSubject());
@@ -530,7 +537,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
                 institutionTp.setCode(qualification.getQualificationInstitutionCode());
                 institutionTp.setName(qualification.getQualificationInstitution());
-                
+
                 CountryTp countryTp = xmlFactory.createCountryTp();
                 countryTp.setCode(qualification.getInstitutionCountry().getCode());
                 countryTp.setName(qualification.getInstitutionCountry().getName());
@@ -642,8 +649,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory
-                .createEnglishLanguageQualificationDetailsTp();
+        EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
 
         for (LanguageQualification languageQualifications : personalDetails.getLanguageQualifications()) {
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
@@ -694,12 +700,13 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
             listeningScoreTp.setScore(languageQualifications.getListeningScore().replace(".0", ""));
 
-            englishLanguageTp.getLanguageScore().addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));
+            englishLanguageTp.getLanguageScore()
+                    .addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));
             englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         }
         return englishLanguageQualificationDetailsTp;
     }
-    
+
     private String cleanString(String text) {
         if (text != null) {
             return text.replaceAll("[^\\x20-\\x7F|\\x80-\\xFD|\\n|\\r]", "");
@@ -740,6 +747,4 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         return null;
     }
 
-
-    
 }

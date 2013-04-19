@@ -14,6 +14,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
 
 <!-- Styles for Application List Page -->
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
@@ -232,7 +233,24 @@
 								<div class="row-group" id="interviewDelegation" style="display:none">
 								  <#include "/private/staff/admin/interview_delegation.ftl"/>
 								</div>
-	
+								
+							    <@spring.bind "comment.confirmNextStage" />
+							    <#if spring.status.errorMessages?size &gt; 0>
+						     		<div class="alert alert-error" >
+							    <#else>
+							        <div class="alert" >
+							    </#if>
+									<div class="row">
+										<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
+											Confirm you want to move this application to the next stage.				
+										</label>
+										<div class="terms-field">
+											<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+										</div>
+										<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
+									</div>
+								</div>
+                              		
 								<div class="buttons">
 								    <button class="btn btn-primary" type="button" id="changeStateButton" value="save">Submit</button>
 								</div>
@@ -260,6 +278,7 @@
 								<input type="hidden" id="firstName" name ="firstName"/>
 								<input type="hidden" id="lastName" name ="lastName"/>
 								<input type="hidden" id="email" name ="email"/>
+								<input type="hidden" id="confirmNextStageField" name="confirmNextStage" />
 						 	</form>
 						</div>
 					</section>

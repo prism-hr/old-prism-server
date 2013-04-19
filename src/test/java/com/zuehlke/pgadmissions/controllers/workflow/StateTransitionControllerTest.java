@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
-import com.zuehlke.pgadmissions.utils.StateTransitionViewResolver;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 
 public class StateTransitionControllerTest {

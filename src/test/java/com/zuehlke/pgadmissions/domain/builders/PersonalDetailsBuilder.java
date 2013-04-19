@@ -19,143 +19,150 @@ import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class PersonalDetailsBuilder {
 
-	private Integer id;
-	private Title title;
-	private Gender gender;
-	private Date dateOfBirth;
-	private Country country;
-	private Domicile residenceCountry;
-	private Ethnicity ethnicity;
-	private Disability disability;
-	private ApplicationForm applicationForm;
+    private Integer id;
+    private Title title;
+    private Gender gender;
+    private Date dateOfBirth;
+    private Country country;
+    private Domicile residenceCountry;
+    private Ethnicity ethnicity;
+    private Disability disability;
+    private ApplicationForm applicationForm;
 
-	private String messenger;
-	private List<Language> candiateNationalities = new ArrayList<Language>();
-	private String phoneNumber;
+    private String messenger;
+    private Language firstNationality;
+    private Language secondNationality;
+    private String phoneNumber;
 
-	private Boolean englishFirstLanguage;
-	private Boolean languageQualificationAvailable;
-	private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
-	
-	private Boolean passportAvailable;
-	private Boolean requiresVisa;
-	private PassportInformation passportInformation;
-    
-	public PersonalDetailsBuilder passportAvailable(Boolean passportAvailable) {
+    private Boolean englishFirstLanguage;
+    private Boolean languageQualificationAvailable;
+    private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
+
+    private Boolean passportAvailable;
+    private Boolean requiresVisa;
+    private PassportInformation passportInformation;
+
+    public PersonalDetailsBuilder passportAvailable(Boolean passportAvailable) {
         this.passportAvailable = passportAvailable;
         return this;
     }
-	
-	public PersonalDetailsBuilder languageQualifications(List<LanguageQualification> languageQualifications) {
-	    this.languageQualifications = languageQualifications;
-	    return this;
-	}
-	
-	public PersonalDetailsBuilder languageQualifications(LanguageQualification... languageQualifications) {
+
+    public PersonalDetailsBuilder languageQualifications(List<LanguageQualification> languageQualifications) {
+        this.languageQualifications = languageQualifications;
+        return this;
+    }
+
+    public PersonalDetailsBuilder languageQualifications(LanguageQualification... languageQualifications) {
         this.languageQualifications = new ArrayList<LanguageQualification>(Arrays.asList(languageQualifications));
         return this;
     }
-	
-	public PersonalDetailsBuilder languageQualificationAvailable(Boolean flag) {
-	    this.languageQualificationAvailable = flag;
-	    return this;
-	}
-	
+
+    public PersonalDetailsBuilder languageQualificationAvailable(Boolean flag) {
+        this.languageQualificationAvailable = flag;
+        return this;
+    }
+
     public PersonalDetailsBuilder passportInformation(PassportInformation passportInformation) {
         this.passportInformation = passportInformation;
         return this;
     }
-    
-	public PersonalDetailsBuilder title(Title title) {
-	    this.title = title;
-	    return this;
-	}
-	
-	public PersonalDetailsBuilder phoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-		return this;
-	}
 
-	public PersonalDetailsBuilder id(Integer id) {
-		this.id = id;
-		return this;
-	}
+    public PersonalDetailsBuilder title(Title title) {
+        this.title = title;
+        return this;
+    }
 
-	public PersonalDetailsBuilder englishFirstLanguage(Boolean englishFirstLanguage) {
-		this.englishFirstLanguage = englishFirstLanguage;
-		return this;
-	}
+    public PersonalDetailsBuilder phoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        return this;
+    }
 
-	public PersonalDetailsBuilder requiresVisa(Boolean requiresVisa) {
-		this.requiresVisa = requiresVisa;
-		return this;
-	}
+    public PersonalDetailsBuilder id(Integer id) {
+        this.id = id;
+        return this;
+    }
 
-	public PersonalDetailsBuilder candiateNationalities(Language... nationalities) {
-		this.candiateNationalities.addAll(Arrays.asList(nationalities));
-		return this;
-	}
+    public PersonalDetailsBuilder englishFirstLanguage(Boolean englishFirstLanguage) {
+        this.englishFirstLanguage = englishFirstLanguage;
+        return this;
+    }
 
-	public PersonalDetailsBuilder messengers(String messenger) {
-		this.messenger = messenger;
-		return this;
-	}
+    public PersonalDetailsBuilder requiresVisa(Boolean requiresVisa) {
+        this.requiresVisa = requiresVisa;
+        return this;
+    }
 
-	public PersonalDetailsBuilder gender(Gender gender) {
-		this.gender = gender;
-		return this;
-	}
+    public PersonalDetailsBuilder firstNationality(Language firstNationality) {
+        this.firstNationality = firstNationality;
+        return this;
+    }
 
-	public PersonalDetailsBuilder dateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-		return this;
-	}
+    public PersonalDetailsBuilder secondNationality(Language secondNationality) {
+        this.secondNationality = secondNationality;
+        return this;
+    }
 
-	public PersonalDetailsBuilder country(Country country) {
-		this.country = country;
-		return this;
-	}
+    public PersonalDetailsBuilder messengers(String messenger) {
+        this.messenger = messenger;
+        return this;
+    }
 
-	public PersonalDetailsBuilder ethnicity(Ethnicity eth) {
-		ethnicity = eth;
-		return this;
-	}
-	
-	public PersonalDetailsBuilder disability(Disability dis) {
-		this.disability = dis;
-		return this;
-	}
+    public PersonalDetailsBuilder gender(Gender gender) {
+        this.gender = gender;
+        return this;
+    }
 
-	public PersonalDetailsBuilder residenceDomicile(Domicile residenceCountry) {
-		this.residenceCountry = residenceCountry;
-		return this;
-	}
+    public PersonalDetailsBuilder dateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+        return this;
+    }
 
-	public PersonalDetailsBuilder applicationForm(ApplicationForm applicationForm) {
-		this.applicationForm = applicationForm;
-		return this;
-	}
+    public PersonalDetailsBuilder country(Country country) {
+        this.country = country;
+        return this;
+    }
 
-	public PersonalDetails build() {
-		PersonalDetails personalDetails = new PersonalDetails();
-		personalDetails.setId(id);
-		personalDetails.setTitle(title);
-		personalDetails.setApplication(applicationForm);
-		personalDetails.setCountry(country);
-		personalDetails.setDateOfBirth(dateOfBirth);
-		personalDetails.setGender(gender);
-		personalDetails.setResidenceCountry(residenceCountry);
-		personalDetails.setEthnicity(ethnicity);
-		personalDetails.setDisability(disability);
-		personalDetails.setCandidateNationalities(candiateNationalities);
-		personalDetails.setMessenger(messenger);
-		personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
-		personalDetails.setRequiresVisa(requiresVisa);
-		personalDetails.setPhoneNumber(phoneNumber);
-		personalDetails.setLanguageQualifications(languageQualifications);
-		personalDetails.setPassportInformation(passportInformation);
-		personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
-		personalDetails.setPassportAvailable(passportAvailable);
-		return personalDetails;
-	}
+    public PersonalDetailsBuilder ethnicity(Ethnicity eth) {
+        ethnicity = eth;
+        return this;
+    }
+
+    public PersonalDetailsBuilder disability(Disability dis) {
+        this.disability = dis;
+        return this;
+    }
+
+    public PersonalDetailsBuilder residenceDomicile(Domicile residenceCountry) {
+        this.residenceCountry = residenceCountry;
+        return this;
+    }
+
+    public PersonalDetailsBuilder applicationForm(ApplicationForm applicationForm) {
+        this.applicationForm = applicationForm;
+        return this;
+    }
+
+    public PersonalDetails build() {
+        PersonalDetails personalDetails = new PersonalDetails();
+        personalDetails.setId(id);
+        personalDetails.setTitle(title);
+        personalDetails.setApplication(applicationForm);
+        personalDetails.setCountry(country);
+        personalDetails.setDateOfBirth(dateOfBirth);
+        personalDetails.setGender(gender);
+        personalDetails.setResidenceCountry(residenceCountry);
+        personalDetails.setEthnicity(ethnicity);
+        personalDetails.setDisability(disability);
+        personalDetails.setFirstNationality(firstNationality);
+        personalDetails.setSecondNationality(secondNationality);
+        personalDetails.setMessenger(messenger);
+        personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
+        personalDetails.setRequiresVisa(requiresVisa);
+        personalDetails.setPhoneNumber(phoneNumber);
+        personalDetails.setLanguageQualifications(languageQualifications);
+        personalDetails.setPassportInformation(passportInformation);
+        personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
+        personalDetails.setPassportAvailable(passportAvailable);
+        return personalDetails;
+    }
 }

@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 
@@ -85,38 +86,31 @@ public class ApplicationsFilter implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((searchCategory == null) ? 0 : searchCategory.hashCode());
-        result = prime * result + ((searchPredicate == null) ? 0 : searchPredicate.hashCode());
-        result = prime * result + ((searchTerm == null) ? 0 : searchTerm.hashCode());
-        result = prime * result + ((user == null) ? 0 : user.hashCode());
-        return result;
+        return Objects.hashCode(searchCategory, searchPredicate, searchTerm);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        ApplicationsFilter other = (ApplicationsFilter) obj;
-        if (searchCategory != other.searchCategory)
-            return false;
-        if (searchPredicate != other.searchPredicate)
-            return false;
-        if (searchTerm == null) {
-            if (other.searchTerm != null)
-                return false;
-        } else if (!searchTerm.equals(other.searchTerm))
-            return false;
-        if (user == null) {
-            if (other.user != null)
-                return false;
-        } else if (!user.equals(other.user))
-            return false;
-        return true;
+        }
+        final ApplicationsFilter other = (ApplicationsFilter) obj;
+
+        return Objects.equal(this.searchCategory, other.searchCategory) && Objects.equal(this.searchPredicate, other.searchPredicate)
+                && Objects.equal(this.searchTerm, other.searchTerm);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(searchCategory != null ? searchCategory.displayValue() : "<empty>");
+        sb.append(" ");
+        sb.append(searchPredicate != null ? searchPredicate.displayValue() : "<empty>");
+        sb.append(" ");
+        sb.append(searchTerm != null ? "\"" + searchTerm + "\"" : "<empty>");
+        return sb.toString();
     }
 }

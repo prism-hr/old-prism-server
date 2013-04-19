@@ -42,6 +42,7 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoCommentInValidationComment() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "comment");
 		validationComment.setComment("");
+		validationComment.setConfirmNextStage(true);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
@@ -51,6 +52,7 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoEnglishCompetencyInValidationComment() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "englishCompentencyOk");
 		validationComment.setEnglishCompentencyOk(null);
+        validationComment.setConfirmNextStage(true);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("englishCompentencyOk").getCode());
@@ -60,6 +62,7 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoHomeOrOverseasInValidationComment() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "homeOrOverseas");
 		validationComment.setHomeOrOverseas(null);
+        validationComment.setConfirmNextStage(true);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("homeOrOverseas").getCode());
@@ -69,6 +72,7 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoQualifiedForPhdInValidationComment() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "qualifiedForPhd");
 		validationComment.setQualifiedForPhd(null);
+        validationComment.setConfirmNextStage(true);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("qualifiedForPhd").getCode());
@@ -78,6 +82,7 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoNextStatusInValidationComment() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "nextStatus");
 		validationComment.setNextStatus(null);
+        validationComment.setConfirmNextStage(true);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("nextStatus").getCode());
@@ -87,6 +92,7 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoCommentInStateChangeComment() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeComment, "comment");
 		stateChangeComment.setComment("");
+		stateChangeComment.setConfirmNextStage(true);
 		stateChangeValidator.validate(stateChangeComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
@@ -96,10 +102,29 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoNextStatusInStateChangeComment() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeComment, "nextStatus");
 		stateChangeComment.setNextStatus(null);
+        stateChangeComment.setConfirmNextStage(true);
 		stateChangeValidator.validate(stateChangeComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("nextStatus").getCode());
 	}
+	
+	@Test
+	public void shouldRejectIfNoConfirmationFieldWasSubmitted() {
+	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeComment, "confirmNextStage");
+	    stateChangeComment.setConfirmNextStage(null);
+	    stateChangeValidator.validate(stateChangeComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+	}
+	
+	@Test
+    public void shouldRejectIfNoConfirmationWasSelected() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeComment, "confirmNextStage");
+        stateChangeComment.setConfirmNextStage(false);
+        stateChangeValidator.validate(stateChangeComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
 	
 	@Before
 	public void setup() {

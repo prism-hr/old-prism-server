@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong;
@@ -61,7 +61,7 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
-public class UclExportServiceTest extends AutomaticRollbackTestCase {
+public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
     private String uclUserId = "ucl-user-AX78101";
 
@@ -85,7 +85,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
     private ApplicationForm applicationForm;
 
-    private UclExportService exportService;
+    private PorticoExportService exportService;
 
     private SftpAttachmentsSendingService attachmentsSendingService;
 
@@ -161,13 +161,13 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         EasyMock.replay(webServiceTemplateMock, applicationFormTransferServiceMock, commentDAOMock, applicationFormDAOMock);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, attachmentsSendingService, applicationFormTransferService);
 
         try {
             exportService.sendWebServiceRequest(applicationForm, applicationFormTransfer, listener);
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException e) {
+        } catch (PorticoExportServiceException e) {
             assertEquals("The web service is unreachable because of network issues [applicationNumber=TMRMBISING01-2012-999999]", e.getMessage());
         }
 
@@ -241,13 +241,13 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         EasyMock.replay(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, attachmentsSendingService, applicationFormTransferService);
 
         try {
             exportService.sendWebServiceRequest(applicationForm, applicationFormTransfer, listener);
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException ex) {
+        } catch (PorticoExportServiceException ex) {
             assertEquals("The web service refused our request [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
         
@@ -260,7 +260,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     public void shouldReportWebServiceSoapFaultAndGiveUpCompletelyAfterConfiguredRetries() throws IOException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock,
                 attachmentsSendingService, applicationFormTransferService);
 
         SoapFault mockFault = EasyMock.createMock(SoapFault.class);
@@ -292,7 +292,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         try {
             exportService.sendWebServiceRequest(applicationForm, applicationFormTransfer, new DeafListener());
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException ex) {
+        } catch (PorticoExportServiceException ex) {
             assertEquals("The web service refused our request [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
         
@@ -300,7 +300,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldSuccessfullyCallWebServiceAndRetrieveAResponse() throws UclExportServiceException {
+    public void shouldSuccessfullyCallWebServiceAndRetrieveAResponse() throws PorticoExportServiceException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
 
@@ -350,10 +350,10 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         EasyMock.replay(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, attachmentsSendingService, applicationFormTransferService) {
             @Override
-            public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener) throws UclExportServiceException {
+            public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener) throws PorticoExportServiceException {
                 hasBeenCalled = true;
             }
         };
@@ -372,7 +372,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     }
     
     @Test
-    public void shouldSuccessfullyCallWebServiceWithOverseasStudent() throws UclExportServiceException {
+    public void shouldSuccessfullyCallWebServiceWithOverseasStudent() throws PorticoExportServiceException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         applicationFormTransfer.getApplicationForm().setLatestApprovalRound(new ApprovalRoundBuilder().id(4).projectAbstract("abstract").build());
         applicationFormTransfer.getApplicationForm().getProgram().setAtasRequired(true);
@@ -424,10 +424,10 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         EasyMock.replay(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
         
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, attachmentsSendingService, applicationFormTransferService) {
             @Override
-            public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener) throws UclExportServiceException {
+            public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener) throws PorticoExportServiceException {
                 hasBeenCalled = true;
             }
         };
@@ -446,7 +446,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldGiveUpSendingDocumentsBecauseOfFailureInLocalConfigurationAndRescheduleForLater() throws ResourceNotFoundException, JSchException, UclExportServiceException {
+    public void shouldGiveUpSendingDocumentsBecauseOfFailureInLocalConfigurationAndRescheduleForLater() throws ResourceNotFoundException, JSchException, PorticoExportServiceException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
@@ -488,7 +488,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
 
         EasyMock.replay(jschfactoryMock);
@@ -496,7 +496,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         try {
             exportService.uploadDocuments(applicationForm, applicationFormTransfer, listener);
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException ex) {
+        } catch (PorticoExportServiceException ex) {
             assertEquals("There was an error speaking to the SFTP service due to a misconfiguration in PRISM [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
@@ -561,7 +561,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
 
         EasyMock.replay(jschfactoryMock, sessionMock);
@@ -569,7 +569,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         try {
             exportService.uploadDocuments(applicationForm, applicationFormTransfer, listener);
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException ex) {
+        } catch (PorticoExportServiceException ex) {
             assertEquals("The SFTP service is unreachable because of network issues [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
         
@@ -645,7 +645,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
@@ -653,7 +653,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         try {
             exportService.uploadDocuments(applicationForm, applicationFormTransfer, listener);
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException ex) {
+        } catch (PorticoExportServiceException ex) {
             assertEquals("The SFTP service is unreachable because of network issues [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
@@ -731,7 +731,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
@@ -739,7 +739,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         try {
             exportService.uploadDocuments(applicationForm, applicationFormTransfer, listener);
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException ex) {
+        } catch (PorticoExportServiceException ex) {
             assertEquals("The SFTP target directory is not accessible [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
         
@@ -749,7 +749,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldPauseAndRescheduleSendingDocumentsBecauseThereWasAProblemWithTheUpload() throws ResourceNotFoundException, JSchException, SftpException, UclExportServiceException {
+    public void shouldPauseAndRescheduleSendingDocumentsBecauseThereWasAProblemWithTheUpload() throws ResourceNotFoundException, JSchException, SftpException, PorticoExportServiceException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         TransferListener listener = new TransferListener() {
@@ -820,7 +820,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
@@ -828,7 +828,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         try {
             exportService.uploadDocuments(applicationForm, applicationFormTransfer, listener);
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException ex) {
+        } catch (PorticoExportServiceException ex) {
             assertEquals("The SFTP service is unreachable because of network issues [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
@@ -880,7 +880,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, sftpAttachmentsSendingServiceMock, applicationFormTransferService);
 
         sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
@@ -897,7 +897,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         try {
             exportService.uploadDocuments(applicationForm, applicationFormTransfer, listener);
             fail("UclExportServiceException has not been thrown");
-        } catch (UclExportServiceException ex) {
+        } catch (PorticoExportServiceException ex) {
             assertEquals("There was an error creating the ZIP file for PORTICO [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
@@ -908,7 +908,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSuccessfullyTransmitDocumentPackOverSftp() throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
-            CouldNotOpenSshConnectionToRemoteHost, SftpTargetDirectoryNotAccessible, SftpTransmissionFailedOrProtocolError, UclExportServiceException {
+            CouldNotOpenSshConnectionToRemoteHost, SftpTargetDirectoryNotAccessible, SftpTransmissionFailedOrProtocolError, PorticoExportServiceException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         applicationFormTransfer.setUclBookingReferenceReceived(uclBookingReferenceNumber);
         applicationFormTransfer.setUclUserIdReceived(uclUserId);
@@ -948,7 +948,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
 
-        exportService = new UclExportService(webServiceTemplateMock, applicationFormDAOMock,
+        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
                 commentDAOMock, sftpAttachmentsSendingServiceMock, applicationFormTransferService);
 
         EasyMock.expect(sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener)).andReturn("abc.zip");
@@ -963,16 +963,16 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     }
     
     @Test
-    public void shouldPrepareApplicationIfItIsRejectedOrWithdrawn() throws UclExportServiceException {
+    public void shouldPrepareApplicationIfItIsRejectedOrWithdrawn() throws PorticoExportServiceException {
         applicationForm = new ValidApplicationFormBuilder().build();
-        exportService = new UclExportService(
+        exportService = new PorticoExportService(
                 webServiceTemplateMock, 
                 applicationFormDAOMock,
                 commentDAOMock, 
                 attachmentsSendingService, 
                 applicationFormTransferService) {
             @Override
-            public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws UclExportServiceException {
+            public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws PorticoExportServiceException {
                 prepareApplicationForm(applicationForm);
             }
         };
@@ -992,16 +992,16 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     }
     
     @Test
-    public void shouldPrepareApplicationIfItIsRejectedOrWithdrawnAndRefereeHasNotProvidedReference() throws UclExportServiceException {
+    public void shouldPrepareApplicationIfItIsRejectedOrWithdrawnAndRefereeHasNotProvidedReference() throws PorticoExportServiceException {
         applicationForm = new ValidApplicationFormBuilder().build();
-        exportService = new UclExportService(
+        exportService = new PorticoExportService(
                 webServiceTemplateMock, 
                 applicationFormDAOMock,
                 commentDAOMock, 
                 attachmentsSendingService, 
                 applicationFormTransferService) {
             @Override
-            public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws UclExportServiceException {
+            public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws PorticoExportServiceException {
                 prepareApplicationForm(applicationForm);
             }
         };
@@ -1046,7 +1046,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         
-        exportService = new UclExportService(
+        exportService = new PorticoExportService(
                 webServiceTemplateMock, 
                 applicationFormDAOMock, 
                 commentDAOMock, 

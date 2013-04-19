@@ -1,4 +1,4 @@
-<div class="row-group"> 
+<div class="row-group aSDisplay"> 
   
   <!-- First name -->
   <div class="row">

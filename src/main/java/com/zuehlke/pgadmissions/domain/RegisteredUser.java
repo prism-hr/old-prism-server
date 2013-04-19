@@ -95,6 +95,9 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     private boolean credentialsNonExpired;
 
+    @Column(name = "stored_filters")
+    private boolean storedFilters;
+
     private String activationCode;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
@@ -514,6 +517,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isViewerOfProgramme(final ApplicationForm form) {
         return isViewerOfProgramme(form, this);
     }
+    
+    public boolean isProgrammeAdministrator(final ApplicationForm form) {
+        return isProgrammeAdministrator(form, this);
+    }
 
     public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
         return isPastOrPresentInterviewerOfApplication(form, this);
@@ -681,6 +688,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         this.username = username;
     }
 
+
     public DigestNotificationType getDigestNotificationType() {
         return digestNotificationType;
     }
@@ -688,7 +696,13 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public void setDigestNotificationType(final DigestNotificationType type) {
         this.digestNotificationType = type;
     }
+    public boolean isStoredFilters() {
+        return storedFilters;
+    }
 
+    public void setStoredFilters(boolean storedFilters) {
+        this.storedFilters = storedFilters;
+    }
     @Override
     public String toString() {
         return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName, lastName, email, enabled);

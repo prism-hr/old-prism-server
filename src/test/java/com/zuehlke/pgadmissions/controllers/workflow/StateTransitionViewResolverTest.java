@@ -1,9 +1,10 @@
-package com.zuehlke.pgadmissions.utils;
+package com.zuehlke.pgadmissions.controllers.workflow;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.controllers.workflow.StateTransitionViewResolver;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;

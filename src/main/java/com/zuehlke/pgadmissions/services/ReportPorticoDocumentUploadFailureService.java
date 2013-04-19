@@ -15,13 +15,13 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
-import com.zuehlke.pgadmissions.mail.DataExportMailSender;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 @Service
 @Transactional
 public class ReportPorticoDocumentUploadFailureService {
 
-    private final DataExportMailSender dataExportMailSender;
     
     private final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
     
@@ -29,16 +29,23 @@ public class ReportPorticoDocumentUploadFailureService {
     
     private final Logger log = LoggerFactory.getLogger(ReportPorticoDocumentUploadFailureService.class);
     
+    private final MailSendingService mailService;
+    
+    private final UserService userService;
+    
     public ReportPorticoDocumentUploadFailureService() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
     
     @Autowired
-    public ReportPorticoDocumentUploadFailureService(DataExportMailSender dataExportMailSender,
-            ApplicationFormTransferDAO applicationFormTransferDAO, ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO) {
-        this.dataExportMailSender = dataExportMailSender;
+    public ReportPorticoDocumentUploadFailureService(
+            ApplicationFormTransferDAO applicationFormTransferDAO, 
+            ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
+            final MailSendingService mailService, final UserService userService) {
         this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
         this.applicationFormTransferDAO = applicationFormTransferDAO;
+		this.mailService = mailService;
+		this.userService = userService;
     }
     
     public void reportPorticoUploadError(final String bookingReference, final String errorCode, final String message) {
@@ -57,7 +64,7 @@ public class ReportPorticoDocumentUploadFailureService {
     }
 
     private void sendErrorMessageToSuperAdministrators(final String message) {
-        this.dataExportMailSender.sendErrorMessage(message);
+    	mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
     }
     
     private ApplicationFormTransferError saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {

@@ -21,7 +21,7 @@
     <bean id="simplerHandlerMapping" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
     
     <!-- Mail configuration -->
-    <bean id="mailSender" class="${email.sender}">
+    <bean id="javaMailSender" class="${email.sender}">
         <property name="host">
             <value>${email.server}</value>
         </property>
@@ -48,8 +48,6 @@
             </props>
         </property>
     </bean>
-
-    <bean id="mailService" class="com.zuehlke.pgadmissions.services.MailService" />
 
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
 

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -27,16 +28,19 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 public class ApplicationsServiceTest {
 
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
+	private MailSendingService mailServiceMock;
 
 	@Before
 	public void setup() {
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		applicationsService = new ApplicationsService(applicationFormDAOMock, null);
+		mailServiceMock = createMock(MailSendingService.class);
+		applicationsService = new ApplicationsService(applicationFormDAOMock, null, mailServiceMock);
 	}
 
 	@Test
@@ -86,6 +90,19 @@ public class ApplicationsServiceTest {
 				.getApplicationsDueApprovalRestartRequestReminder();
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(applicationsList, appsDueNotification);
+	}
+	
+	@Test
+	public void shouldSendSubmissionsConfirmationToApplicant() {
+		ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+		
+		mailServiceMock.sendSubmissionConfirmationToApplicant(application);
+		
+		applicationFormDAOMock.save(application);
+		
+		EasyMock.replay(applicationFormDAOMock, mailServiceMock);
+		applicationsService.sendSubmissionConfirmationToApplicant(application);
+		EasyMock.verify(applicationFormDAOMock, mailServiceMock);
 	}
 
 	@Test

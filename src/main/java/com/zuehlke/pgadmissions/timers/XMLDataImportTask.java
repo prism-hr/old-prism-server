@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.Importer;
 
 public class XMLDataImportTask {
@@ -26,14 +28,18 @@ public class XMLDataImportTask {
     private final String maxRedirects;
     
     private final MailSendingService mailService;
+    
+    private final UserService userService;
 
     @Autowired
     public XMLDataImportTask(List<Importer> importers,
             @Value("${xml.data.import.user}") final String user,
             @Value("${xml.data.import.password}") final String password,
-            final MailSendingService mailService) {
+            final MailSendingService mailService,
+            final UserService userService) {
         this.importers = importers;
 		this.mailService = mailService;
+		this.userService = userService;
         this.authenticator = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(user, password.toCharArray());
@@ -56,7 +62,7 @@ public class XMLDataImportTask {
                 if (cause != null) {
                     message += "\n" + cause.toString();
                 }
-                mailService.sendImportErrorMessage(message, new Date());
+                mailService.sendImportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
             } finally {
                 Authenticator.setDefault(null);
                 if (maxRedirects != null) {

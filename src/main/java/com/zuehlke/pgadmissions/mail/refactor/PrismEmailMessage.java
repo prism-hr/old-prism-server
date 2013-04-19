@@ -50,10 +50,10 @@ public final class PrismEmailMessage {
             RegisteredUser target = (RegisteredUser) input;
             try {
                 StringBuilder stringBuilder = new StringBuilder(target.getFirstName());
-                if (StringUtils.isEmpty(target.getFirstName2())) {
+                if (!StringUtils.isEmpty(target.getFirstName2())) {
                     stringBuilder.append(SPACE).append(target.getFirstName2());
                 }
-                if (StringUtils.isEmpty(target.getFirstName3())) {
+                if (!StringUtils.isEmpty(target.getFirstName3())) {
                     stringBuilder.append(SPACE).append(target.getFirstName3());
                 }
                 stringBuilder.append(SPACE).append(target.getLastName());

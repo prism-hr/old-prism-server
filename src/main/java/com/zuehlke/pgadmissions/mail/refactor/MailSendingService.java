@@ -12,12 +12,15 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_N
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,32 +29,25 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
 
-    
-    private final RefereeService refereeService;
-    
-
     public MailSendingService() {
-        this(null, null, null, null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public MailSendingService(final MailSender mailSender, final UserService userSerivce,
-    		final RefereeService refereeService, ConfigurationService configurationService,
+    public MailSendingService(final MailSender mailSender,
+    		final ConfigurationService configurationService,
     		final ApplicationFormDAO formDAO) {
-        super(userSerivce, mailSender, formDAO, configurationService);
-        this.refereeService = refereeService;
+        super(mailSender, formDAO, configurationService);
     }
 
     /**
@@ -396,10 +392,9 @@ public class MailSendingService extends AbstractMailSendingService {
     * <b>Notification Type</b>
     * Immediate Notification
     * </p>
-    */    
-    public void sendExportErrorMessage(String messageCode, Date timestamp) {
+    */   
+    public void sendExportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
-        List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
         if (messageCode == null) {
             throw new PrismMailMessageException("Error while sending export error message: messageCode is null", message);
         }
@@ -515,9 +510,9 @@ public class MailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    public void scheduleWithdrawalConfirmation(final ApplicationForm form) {
+    public void scheduleWithdrawalConfirmation(List<Referee> referees, final ApplicationForm form) {
         Map<Integer, RegisteredUser> usersToNotify = new HashMap<Integer, RegisteredUser>();
-        for (Referee referee : refereeService.getRefereesWhoHaveNotProvidedReference(form)) {
+        for (Referee referee : referees) {
             usersToNotify.put(referee.getUser().getId(), referee.getUser());
         }
         
@@ -573,9 +568,8 @@ public class MailSendingService extends AbstractMailSendingService {
 	 * <b>Notification Type</b> Immediate Notification
 	 * </p>
 	 */
-    public void sendImportErrorMessage(String messageCode, Date timestamp) {
+    public void sendImportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
-        List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
         if (messageCode == null) {
             throw new PrismMailMessageException("Error while sending import error message: messageCode is null", message);
         }
@@ -726,4 +720,19 @@ public class MailSendingService extends AbstractMailSendingService {
             throw new PrismMailMessageException("Error while sending reset password email: ", e.getCause(), message);
         }
     }
+    
+    @SuppressWarnings("unchecked")
+    private Collection<RegisteredUser> getSupervisorsAsUsersFromLatestApprovalRound(final ApplicationForm form) {
+        if (form.getLatestApprovalRound() != null) {
+            return CollectionUtils.collect(form.getLatestApprovalRound().getSupervisors(), new Transformer() {
+                @Override
+                public Object transform(final Object input) {
+                    return ((Supervisor) input).getUser();
+                }
+            });
+        }
+        return Collections.emptyList();
+    }
+    
+    
 }

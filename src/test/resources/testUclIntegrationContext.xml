@@ -21,9 +21,6 @@
 
     <bean id="transcript1PdfBuilder" class="com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder" />
     
-    <bean id="dataExportMailSender" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
-        <constructor-arg value="com.zuehlke.pgadmissions.mail.DataExportMailSender" />
-    </bean>
 
     <context:component-scan base-package="com.zuehlke.pgadmissions.dao" />
     <context:component-scan base-package="com.zuehlke.pgadmissions.services.exporters" />

@@ -51,11 +51,8 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class MailSendingServiceTest {
@@ -80,10 +77,6 @@ public class MailSendingServiceTest {
 	
 	protected MailSender mockMailSender;
 
-	protected UserService userServiceMock;
-	
-	protected RefereeService refereeServiceMock;
-	
 	protected ConfigurationService configurationServiceMock;
 	
 	protected ApplicationFormDAO applicationFormDAOMock;
@@ -91,11 +84,9 @@ public class MailSendingServiceTest {
 	@Before
 	public void setup() {
 		mockMailSender = createMock(MailSender.class);
-		userServiceMock = createMock(UserService.class);
-		refereeServiceMock = createMock(RefereeService.class);
 		configurationServiceMock = createMock(ConfigurationService.class);
 		applicationFormDAOMock = createMock(ApplicationFormDAO.class);
-		service = new MailSendingService(mockMailSender, userServiceMock, refereeServiceMock, configurationServiceMock, applicationFormDAOMock);
+		service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock);
 	}
 	
 	@Test
@@ -116,16 +107,13 @@ public class MailSendingServiceTest {
 		expect(mockMailSender.resolveMessage("reference.data.export.error", (Object[])null))
 		.andReturn("UCL Prism to Portico Export Error");
 		
-		expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR))
-		.andReturn(asList(user1, user2));
-		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		expectLastCall().times(2);
 		
-		replay(mockMailSender, userServiceMock);
-		service.sendExportErrorMessage(messageCode, timestamp);
-		verify(mockMailSender, userServiceMock);
+		replay(mockMailSender);
+		service.sendExportErrorMessage(asList(user1, user2), messageCode, timestamp);
+		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValues().get(0);
 		assertNotNull(message.getTo());
@@ -160,15 +148,14 @@ public class MailSendingServiceTest {
 		expect(mockMailSender.resolveMessage("reference.data.import.error", (Object[])null))
 		.andReturn("UCL Prism to Portico Import Error");
 		
-		expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(asList(user1, user2));
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		expectLastCall().times(2);
 		
-		replay(mockMailSender, userServiceMock);
-		service.sendImportErrorMessage(messageCode, timestamp);
-		verify(mockMailSender, userServiceMock);
+		replay(mockMailSender);
+		service.sendImportErrorMessage(asList(user1, user2),messageCode, timestamp);
+		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValues().get(0);
 		assertNotNull(message.getTo());
@@ -190,44 +177,34 @@ public class MailSendingServiceTest {
 		ApplicationForm form = getSampleApplicationForm();
 		RegisteredUser delegate = new RegisteredUserBuilder().id(1).build();
 		
-		List<RegisteredUser> admins = form.getProgram().getAdministrators();
-		
-		userServiceMock.setDigestNotificationType(delegate, DigestNotificationType.TASK_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(admins.get(0), DigestNotificationType.TASK_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(admins.get(1), DigestNotificationType.TASK_NOTIFICATION);
-		
-		replay(userServiceMock);
 		service.scheduleInterviewAdministrationRequest(delegate, form);
-		verify(userServiceMock);
+		
+		List<RegisteredUser> admins = form.getProgram().getAdministrators();
+		assertEquals(delegate.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
+		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
+		assertEquals(admins.get(1).getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
 	}
 	
 	@Test
 	public void shouldScheduleReferenceSubmitConfirmation() {
 		ApplicationForm form = getSampleApplicationForm();
 		
-		List<RegisteredUser> admins = form.getProgram().getAdministrators();
-		
-		userServiceMock.setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
-		
-		replay(userServiceMock);
 		service.scheduleReferenceSubmitConfirmation(form);
-		verify(userServiceMock);
+		
+		List<RegisteredUser> admins = form.getProgram().getAdministrators();
+		assertEquals(form.getApplicant().getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(admins.get(1).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 	}
 	
 	@Test
 	public void shouldScheduleSupervisorConfirmedSupervision() {
 		ApplicationForm form = getSampleApplicationForm();
 		
-		List<RegisteredUser> admins = form.getProgram().getAdministrators();
-		
-		userServiceMock.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
-		
-		replay(userServiceMock);
 		service.scheduleSupervisionConfirmedNotification(form);
-		verify(userServiceMock);
+		List<RegisteredUser> admins = form.getProgram().getAdministrators();
+		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(admins.get(1).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 	}
 	
 	@Test
@@ -256,31 +233,24 @@ public class MailSendingServiceTest {
 		Supervisor supervisor1 = new SupervisorBuilder().user(supervisorUser1).build();
 		Supervisor supervisor2 = new SupervisorBuilder().user(supervisorUser2).build();
 		form.setLatestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisor1, supervisor2).build());
-		
-		expect(refereeServiceMock.getRefereesWhoHaveNotProvidedReference(form))
-			.andReturn(asList(referee1, referee2));
-		
+	
+		service.scheduleWithdrawalConfirmation(asList(referee1, referee2), form);
 		
 		List<RegisteredUser> admins = form.getProgram().getAdministrators();
+		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(admins.get(1).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		userServiceMock.setDigestNotificationType(admins.get(0), DigestNotificationType.UPDATE_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(admins.get(1), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(refereeUser1.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(refereeUser2.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		userServiceMock.setDigestNotificationType(refereeUser1, DigestNotificationType.UPDATE_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(refereeUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(reviewerUser1.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(reviewerUser2.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		userServiceMock.setDigestNotificationType(reviewerUser1, DigestNotificationType.UPDATE_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(reviewerUser2, DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(interviewerUser1.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(interviewerUser2.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 		
-		userServiceMock.setDigestNotificationType(interviewerUser1, DigestNotificationType.UPDATE_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(interviewerUser2, DigestNotificationType.UPDATE_NOTIFICATION);
-		
-		userServiceMock.setDigestNotificationType(supervisorUser1, DigestNotificationType.UPDATE_NOTIFICATION);
-		userServiceMock.setDigestNotificationType(supervisorUser2, DigestNotificationType.UPDATE_NOTIFICATION);
-		
-		replay(userServiceMock, refereeServiceMock);
-		service.scheduleWithdrawalConfirmation(form);
-		verify(userServiceMock, refereeServiceMock);
+		assertEquals(supervisorUser1.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(supervisorUser2.getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 	}
 	
 	@Test

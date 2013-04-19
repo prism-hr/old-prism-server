@@ -16,10 +16,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
@@ -48,6 +51,8 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -70,6 +75,7 @@ public class ConfigurationControllerTest {
     private RegisteredUser admin;
     private PorticoQueueService queueServiceMock;
     private ProgramsService programsServiceMock;
+    private ScoringDefinitionParser scoringDefinitionParserMock;
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
@@ -447,13 +453,39 @@ public class ConfigurationControllerTest {
     @Test
     public void shouldEditScoringDefinition() {
         Program program = new ProgramBuilder().build();
-
+        HttpServletResponse response = new MockHttpServletResponse(); 
+        
         EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(program);
         programsServiceMock.applyScoringDefinition("any_code", ScoringStage.INTERVIEW, "content");
 
         EasyMock.replay(programsServiceMock);
-        assertEquals(Collections.emptyMap(), controller.editScoringDefinition("any_code", ScoringStage.INTERVIEW, "content"));
+        assertEquals(Collections.emptyMap(), controller.editScoringDefinition("any_code", ScoringStage.INTERVIEW, "content", response));
         EasyMock.verify(programsServiceMock);
+    }
+    
+    @Test
+    public void shouldFailToEditScoringDefinitionDueToIncorrectProgramCode() {
+        HttpServletResponse response = new MockHttpServletResponse(); 
+        
+        EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(null);
+
+        EasyMock.replay(programsServiceMock);
+        assertEquals(Collections.singletonMap("programCode", "Given program code is not valid"), controller.editScoringDefinition("any_code", ScoringStage.INTERVIEW, "content", response));
+        EasyMock.verify(programsServiceMock);
+    }
+    
+    @Test
+    public void shouldFailToEditScoringDefinitionDueToIncorrectXmlContent() throws Exception {
+        Program program = new ProgramBuilder().build();
+        HttpServletResponse response = new MockHttpServletResponse(); 
+        
+        EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(program);
+        scoringDefinitionParserMock.parseScoringDefinition("content");
+        EasyMock.expectLastCall().andThrow(new ScoringDefinitionParseException("ex message", null));
+
+        EasyMock.replay(programsServiceMock, scoringDefinitionParserMock);
+        assertEquals(Collections.singletonMap("scoringContent", "ex message"), controller.editScoringDefinition("any_code", ScoringStage.INTERVIEW, "content", response));
+        EasyMock.verify(programsServiceMock, scoringDefinitionParserMock);
     }
 
     @Test
@@ -495,9 +527,11 @@ public class ConfigurationControllerTest {
         queueServiceMock = EasyMock.createMock(PorticoQueueService.class);
 
         programsServiceMock = EasyMock.createMock(ProgramsService.class);
+        
+        scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
 
         controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock,
-                emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock);
+                emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock, scoringDefinitionParserMock);
 
         superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
                 .role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();

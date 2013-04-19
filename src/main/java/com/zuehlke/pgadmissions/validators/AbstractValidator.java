@@ -20,6 +20,8 @@ public abstract class AbstractValidator implements org.springframework.validatio
     
     protected static final String EMPTY_DROPDOWN_ERROR_MESSAGE = "dropdown.radio.select.none";
     
+    protected static final String MANDATORY_CHECKBOX = "checkbox.mandatory";
+    
     @Autowired
     private Validator validator;
 

@@ -14,14 +14,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @Service
 public class PorticoQueueListener implements MessageListener {
@@ -52,9 +54,13 @@ public class PorticoQueueListener implements MessageListener {
     }
     
     @Autowired
-    public PorticoQueueListener(final UclExportService exportService, final ApplicationFormDAO formDAO,
-            final ApplicationFormTransferDAO formTransferDAO, 
-            ThrottleService throttleService, final MailSendingService mailService, final UserService userService) {
+    public PorticoQueueListener(
+            final PorticoExportService exportService, 
+            final ApplicationFormDAO formDAO, 
+            final ApplicationFormTransferService applicationFormTransferService,
+            final ThrottleService throttleService, 
+            final MailSendingService mailService, 
+            final UserService userService) {
         this.exportService = exportService;
         this.formDAO = formDAO;
         this.applicationFormTransferService = applicationFormTransferService;

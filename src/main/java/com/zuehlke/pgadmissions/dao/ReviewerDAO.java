@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -58,12 +59,9 @@ public class ReviewerDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Reviewer> getReviewersDueReminder() {
-		List<Reviewer> reviewersDueReminder = new ArrayList<Reviewer>();
-		
 		Date today = Calendar.getInstance().getTime();
 		ReminderInterval reminderInterval = (ReminderInterval)sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
 		Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-	
 		List<Reviewer> reviewers = sessionFactory.getCurrentSession()
 				.createCriteria(Reviewer.class, "reviewer")
 				.add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
@@ -71,13 +69,17 @@ public class ReviewerDAO {
 				.add(Restrictions.eqProperty("application.latestReviewRound", "reviewRound"))
 				.add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
-		
-		for (Reviewer reviewer : reviewers) {
-			if(reviewer.getReview() == null){
-				reviewersDueReminder.add(reviewer);
-			}
-		}
-		return reviewersDueReminder;
+		CollectionUtils.filter(reviewers, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                Reviewer reviewer = (Reviewer) object;
+                if (reviewer.getReview() == null) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        return reviewers;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -89,5 +91,4 @@ public class ReviewerDAO {
 				.add(Restrictions.eq("requiresAdminNotification", CheckedStatus.YES))
 				.add(Restrictions.isNull("dateAdminsNotified")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
-
 }

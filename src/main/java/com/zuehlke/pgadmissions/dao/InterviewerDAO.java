@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -60,23 +61,24 @@ public class InterviewerDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Interviewer> getInterviewersDueReminder() {
-		List<Interviewer> interviewersDueReminder = new ArrayList<Interviewer>();
-		
 		Date today = Calendar.getInstance().getTime();
 		ReminderInterval reminderInterval = (ReminderInterval)sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
 		Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-
 		List<Interviewer> interviewers = sessionFactory.getCurrentSession().createCriteria(Interviewer.class).createAlias("interview.application", "application")
 				.add(Restrictions.eqProperty("interview", "application.latestInterview"))
 				.add(Restrictions.eq("application.status", ApplicationFormStatus.INTERVIEW)).add(Restrictions.lt("application.dueDate", dateWithSubtractedInterval))
 				.add(Restrictions.lt("lastNotified", dateWithSubtractedInterval)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-
-		for (Interviewer interviewer : interviewers) {
-			if (interviewer.getInterviewComment() == null) {
-				interviewersDueReminder.add(interviewer);
-			}
-		}
-		return interviewersDueReminder;
+		CollectionUtils.filter(interviewers, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                Interviewer interviewer = (Interviewer) object;
+                if (interviewer.getInterviewComment() == null) {
+                    return true;
+                }
+                return false;
+            }
+        });
+		return interviewers;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,5 +90,4 @@ public class InterviewerDAO {
 				.add(Restrictions.eq("requiresAdminNotification", true))
 				.add(Restrictions.isNull("dateAdminsNotified")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
-
 }

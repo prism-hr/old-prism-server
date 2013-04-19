@@ -334,6 +334,14 @@ function populateApplicationList() {
 			$('#applicationListSection').append(data);
 			
 			$('#appliList').jExpand();
+			
+			$('#appliList .actionType').click(function (e) {
+				e.stopPropagation();
+			});
+			
+			$('#appliList .btn').click(function (e) {
+				e.stopPropagation();
+			});
 		},
 		complete : function() {
 			$('.content-box-inner div.fetching, .content-box-inner div.ajax')

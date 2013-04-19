@@ -227,6 +227,11 @@ function saveComment()
 	$('#lastName').val($('#delegateLastName').val());
 	$('#email').val($('#delegateEmail').val());
 	
+	if ($('#confirmNextStage').length > 0) {
+		$('#confirmNextStageField').val($('#confirmNextStage')[0].checked);
+	}
+	
+	
 	$('#stateChangeForm').submit();
 }
 
@@ -304,6 +309,7 @@ function changeState()
 					firstName : $('#delegateFirstName').val(),
 					lastName : $('#delegateLastName').val(),
 					email : $('#delegateEmail').val(),
+					confirmNextStage : $('#confirmNextStage').val()
 				},
 				success:function(data)
 				{

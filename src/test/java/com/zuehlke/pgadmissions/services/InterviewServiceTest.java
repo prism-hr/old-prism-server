@@ -136,15 +136,6 @@ public class InterviewServiceTest {
 		assertNull(applicationForm.getNotificationForType(INTERVIEW_ADMINISTRATION_REMINDER));
 	}
 	
-	
-	@Test(expected=IllegalStateException.class)
-	public void shouldThrowIllegalStateExceptionIfApplicatioNotInReviewInterviewOrValidation() {		
-		Interview interview = new InterviewBuilder().id(1).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).build();		
-		
-		interviewService.moveApplicationToInterview(interview, applicationForm);
-	}
-	
 	@Test
 	public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull(){
 		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
@@ -169,7 +160,6 @@ public class InterviewServiceTest {
 		interviewService.addInterviewerInPreviousInterview(application, interviewerUser);
 		Assert.assertEquals(interviewerUser, interviewer.getUser());
 		Assert.assertTrue(latestInterview.getInterviewers().contains(interviewer));
-		
 	}
 	
 	@Before

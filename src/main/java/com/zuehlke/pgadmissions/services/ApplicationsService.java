@@ -158,7 +158,7 @@ public class ApplicationsService {
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState("VALIDATION")) {
-            actions.addAction("validate", "Validation");
+            actions.addAction("validate", "Validate");
         }
         if (user.hasAdminRightsOnApplication(application) && application.isInState("REVIEW")) {
             actions.addAction("validate", "Evaluate reviews");

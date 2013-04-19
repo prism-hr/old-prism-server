@@ -245,7 +245,7 @@ public class ConfigurationController {
 	
 	@ModelAttribute("stages")
 	public ApplicationFormStatus[] getConfigurableStages() {
-		return ApplicationFormStatus.getConfigurableStages();
+	    return configurationService.getConfigurableStages();
 	}
 
 	@ModelAttribute("user")

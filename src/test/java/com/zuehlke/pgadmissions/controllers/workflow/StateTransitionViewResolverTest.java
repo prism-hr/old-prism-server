@@ -301,16 +301,19 @@ public class StateTransitionViewResolverTest {
                         new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW)
                                 .approvalRound(latestApprovalRound).build())
                 .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
-        assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnRedirectToReviewIfInterviewAndReviewNextStatus() {
         Interview previousInterview = new InterviewBuilder().id(3).build();
         Interview latestInterview = new InterviewBuilder().id(4).build();
-        ApplicationForm applicationForm = new ValidApplicationFormBuilder()
+        ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
+        validApplicationFormBuilder.build();
+        ApplicationForm applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
+                .status(ApplicationFormStatus.INTERVIEW)
                 .id(1)
                 .comments(
                         new InterviewEvaluationCommentBuilder().id(1).interview(previousInterview)
@@ -319,6 +322,6 @@ public class StateTransitionViewResolverTest {
                                 .interview(latestInterview).build()).status(ApplicationFormStatus.REVIEW)
                 .interviews(previousInterview, latestInterview).latestInterview(latestInterview).build();
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
-        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
     }
 }

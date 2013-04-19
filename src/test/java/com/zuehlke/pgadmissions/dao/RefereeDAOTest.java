@@ -152,10 +152,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
-	
-	
 	
 	@Test
 	public void shouldNotReturnRefereesWhoHaveBeenRemindedInLastWeek() {
@@ -173,7 +170,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
 	
 	@Test
@@ -308,7 +304,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
 	
 	@Test
@@ -346,7 +341,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertFalse(referees.contains(referee));		
-		
 	}
 	
 	@Test
@@ -437,8 +431,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
+	
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfDeclined() {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).build();
@@ -454,7 +448,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
 	
 	@Test
@@ -481,7 +474,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
 	
 	@Test
@@ -499,9 +491,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
-	
 	
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfAPplicationInValidation() {
@@ -518,7 +508,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
 	
 	@Test
@@ -536,7 +525,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
 	
 	@Test
@@ -554,7 +542,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
 	
 	@Test
@@ -571,7 +558,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));		
-
 	}
 	
 	@Before

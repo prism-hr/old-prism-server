@@ -48,7 +48,6 @@ public class InterviewService {
     }
 
     public void moveApplicationToInterview(Interview interview, ApplicationForm applicationForm) {
-        checkApplicationStatus(applicationForm);
         interview.setApplication(applicationForm);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(interview.getInterviewDueDate());
@@ -73,19 +72,6 @@ public class InterviewService {
             applicationForm.removeNotificationRecord(interviewReminderRecord);
         }
         applicationFormDAO.save(applicationForm);
-    }
-
-    private void checkApplicationStatus(ApplicationForm application) {
-        ApplicationFormStatus status = application.getStatus();
-        switch (status) {
-        case APPROVAL:
-        case VALIDATION:
-        case REVIEW:
-        case INTERVIEW:
-            break;
-        default:
-            throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
-        }
     }
 
     public void addInterviewerInPreviousInterview(ApplicationForm applicationForm, RegisteredUser newUser) {

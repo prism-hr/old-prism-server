@@ -43,7 +43,6 @@ public class ReviewService {
 	}
 
 	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound) {
-		checkApplicationStatus(application);
 		application.setLatestReviewRound(reviewRound);
 		reviewRound.setApplication(application);
 		reviewRoundDAO.save(reviewRound);
@@ -57,18 +56,6 @@ public class ReviewService {
             application.removeNotificationRecord(reviewReminderNotificationRevord);
         }
 		applicationDAO.save(application);
-	}
-
-	private void checkApplicationStatus(ApplicationForm application) {
-		ApplicationFormStatus status = application.getStatus();
-		switch (status) {
-		case INTERVIEW:
-		case VALIDATION:
-		case REVIEW:
-			break;
-		default:
-			throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
-		}
 	}
 
 	public void save(ReviewRound reviewRound) {

@@ -79,16 +79,42 @@ $(document).ready(function()
 	        add(suggestions);
 	    }
 	});
-
+	
 	// ------------------------------------------------------------------------------
-	// Submit button.
+	// Submit button to change the status of the application.
+	// Looks for the checkbox in the section to confirm. If it can't find,
+	// then falls back to old behaviour. 
 	// ------------------------------------------------------------------------------
-	$('#changeStateButton').click(function()
+	$('#changeStateButton').click(function(e)
 	{
-		var state = $('#status option:selected').text().toLowerCase().capitalize();
-		var message = 'Confirm you want to move this application to the ' + state + ' stage. <b>You will not be able to reverse this decision!</b>';
-		modalPrompt(message, changeState);
+		var section = $(this).closest('section.form-rows');
+		if (section.length == 1 && section.find('#confirmNextStage').length > 0 && section.find('#status').length > 0) {
+			changeState();
+		}
+		else {
+			var state = $('#status option:selected').text().toLowerCase().capitalize();
+			var message = 'Confirm you want to move this application to the ' + state + ' stage.';
+			modalPrompt(message, changeState);
+		}
 	});
+	
+	// ------------------------------------------------------------------------------
+	// Update the checkbox confirmation label status value.
+	// ------------------------------------------------------------------------------
+	$('#status').change(function () {
+		if ($('#confirmNextStageLabel').length > 0) {
+			var state = $('#status option:selected').text().toLowerCase().capitalize();
+			if (state.length == 0 || state == 'Select...') {
+				state = 'next';
+			}
+			
+			var message = 'Confirm you want to move this application to the ' + state + ' stage.';
+		
+			$('#confirmNextStageLabel').html(message);
+		}
+	});
+	
+	$('#status').change();
 
 
     // ------------------------------------------------------------------------------
@@ -201,6 +227,11 @@ function saveComment()
 	$('#lastName').val($('#delegateLastName').val());
 	$('#email').val($('#delegateEmail').val());
 	
+	if ($('#confirmNextStage').length > 0) {
+		$('#confirmNextStageField').val($('#confirmNextStage')[0].checked);
+	}
+	
+	
 	$('#stateChangeForm').submit();
 }
 
@@ -278,6 +309,7 @@ function changeState()
 					firstName : $('#delegateFirstName').val(),
 					lastName : $('#delegateLastName').val(),
 					email : $('#delegateEmail').val(),
+					confirmNextStage : $('#confirmNextStage').val()
 				},
 				success:function(data)
 				{

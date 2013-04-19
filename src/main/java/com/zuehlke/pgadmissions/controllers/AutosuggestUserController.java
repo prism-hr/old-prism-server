@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,9 +59,9 @@ public class AutosuggestUserController {
             @Override
             public JsonElement serialize(final RegisteredUser src, final Type typeOfSrc, final JsonSerializationContext context) {
                 JsonObject wrapper = new JsonObject();
-                wrapper.add("k", new JsonPrimitive(src.getFirstName()));
-                wrapper.add("v", new JsonPrimitive(src.getLastName()));
-                wrapper.add("d", new JsonPrimitive(src.getEmail()));
+                wrapper.add("k", new JsonPrimitive(StringEscapeUtils.escapeHtml(src.getFirstName())));
+                wrapper.add("v", new JsonPrimitive(StringEscapeUtils.escapeHtml(src.getLastName())));
+                wrapper.add("d", new JsonPrimitive(StringEscapeUtils.escapeHtml(src.getEmail())));
                 return wrapper;
             }
         });

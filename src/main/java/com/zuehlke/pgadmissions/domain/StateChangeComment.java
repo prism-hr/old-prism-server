@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -21,6 +22,9 @@ public class StateChangeComment extends Comment {
 	@Column(name="next_status")
 	private ApplicationFormStatus nextStatus = null;
 	
+	@Transient
+	private Boolean confirmNextStage;
+	
 	public CommentType getType() {
 		return type;
 	}
@@ -36,4 +40,14 @@ public class StateChangeComment extends Comment {
 	public void setNextStatus(ApplicationFormStatus nextStatus) {
 		this.nextStatus = nextStatus;
 	}
+
+	public Boolean getConfirmNextStage() {
+		return confirmNextStage;
+	}
+
+	public void setConfirmNextStage(Boolean confirmNextStage) {
+		this.confirmNextStage = confirmNextStage;
+	}
+	
+	
 }

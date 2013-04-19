@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -36,11 +35,11 @@ public class PorticoQueueListener implements MessageListener {
     
     private final Logger log = LoggerFactory.getLogger(PorticoQueueListener.class);
     
-    private UclExportService exportService;
+    private PorticoExportService exportService;
 
     private final ApplicationFormDAO formDAO;
 
-    private final ApplicationFormTransferDAO formTransferDAO;
+    private final ApplicationFormTransferService applicationFormTransferService;
     
     private final ThrottleService throttleService;
     
@@ -58,7 +57,7 @@ public class PorticoQueueListener implements MessageListener {
             ThrottleService throttleService, final MailSendingService mailService, final UserService userService) {
         this.exportService = exportService;
         this.formDAO = formDAO;
-        this.formTransferDAO = formTransferDAO;
+        this.applicationFormTransferService = applicationFormTransferService;
         this.throttleService = throttleService;
 		this.mailService = mailService;
 		this.userService = userService;
@@ -88,14 +87,9 @@ public class PorticoQueueListener implements MessageListener {
         ApplicationForm form = getApplicationForm(applicationNumber);
         ApplicationFormTransfer transfer = getApplicationFormTransfer(form);
         
-        if (form == null || transfer == null) {
-            log.warn("The applicationForm or the applicationTransfer object is NULL! applicationForm: {} applicationTransfer: {}", form, transfer);
-            return;
-        }
-        
         try {
             exportService.sendToPortico(form, transfer);
-        } catch (UclExportServiceException e) {
+        } catch (PorticoExportServiceException e) {
             sendEmailWithErrorMessage(e);
             errorHandlingStrategyResolver(e);
         } catch (Exception e) {
@@ -108,9 +102,8 @@ public class PorticoQueueListener implements MessageListener {
         return formDAO.getApplicationByApplicationNumber(applicationNumber);
     }
     
-    @Transactional(readOnly = true)
-    public ApplicationFormTransfer getApplicationFormTransfer(final ApplicationForm form) {
-        return formTransferDAO.getByApplicationForm(form);
+    private ApplicationFormTransfer getApplicationFormTransfer(final ApplicationForm form) {
+        return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
     
     private void sendEmailWithErrorMessage(final Exception e) {
@@ -121,7 +114,7 @@ public class PorticoQueueListener implements MessageListener {
         }
     }
     
-    private void errorHandlingStrategyResolver(UclExportServiceException e) {
+    private void errorHandlingStrategyResolver(PorticoExportServiceException e) {
         switch (e.getErrorHandlingStrategy()) {
         case RETRY:
             throw new TriggerJmsRetryException(e.getMessage(), e);

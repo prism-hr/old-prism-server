@@ -72,15 +72,8 @@
       <div class="admin_row">
         <label class="admin_row_label">Nationality</label>
         <div class="field">
-          <#assign size_cn = applicationForm.personalDetails.candidateNationalities?size>
-          <#if ( size_cn > 0)>
-          <#list applicationForm.personalDetails.candidateNationalities as nationality>
-          <#assign index_i = nationality_index>
-          ${nationality.name!"Not Provided"}<#if (index_i < (size_cn - 1))>,</#if>
-          </#list>
-          <#else>
-          Not Provided
-          </#if>
+            <#if applicationForm.personalDetails.firstNationality??>${applicationForm.personalDetails.firstNationality.name}</#if>
+            <#if applicationForm.personalDetails.secondNationality??>, ${applicationForm.personalDetails.secondNationality.name}</#if>          
         </div>
       </div>
       

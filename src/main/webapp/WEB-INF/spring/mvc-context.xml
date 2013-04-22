@@ -68,13 +68,6 @@
         <property name="allowSessionOverride" value="true" />
     </bean>
 
-    <bean id="mimeMessagePreparatorFactory" class="com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory">
-        <constructor-arg index="0">
-            <ref bean="freemarkerConfig" />
-        </constructor-arg>
-        <constructor-arg index="1" value="${email.prod}" />
-    </bean>
-
     <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver">
         <property name="defaultThemeName" value="default" />
     </bean>

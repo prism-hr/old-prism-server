@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_ADMINISTRATION_REMINDER;
+import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertNull;
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -31,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 public class InterviewServiceTest {
 
@@ -39,6 +42,7 @@ public class InterviewServiceTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private EventFactory eventFactoryMock;
 	private InterviewerDAO interviewerDAO;
+	private MailSendingService mailServiceMock;
 	private Interview interview;
 	private Interviewer interviewer;
 
@@ -64,7 +68,8 @@ public class InterviewServiceTest {
 	@Test
 	public void shouldSetDueDateOnInterviewUpdateFormAndSaveBoth() throws ParseException{
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
-		Interview interview = new InterviewBuilder().dueDate(dateFormat.parse("01 04 2012")).id(1).build();
+		Interviewer interviewer = new InterviewerBuilder().build();
+		Interview interview = new InterviewBuilder().interviewers(interviewer).dueDate(dateFormat.parse("01 04 2012")).id(1).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).build();
 		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_REMINDER).build());
 	
@@ -72,7 +77,9 @@ public class InterviewServiceTest {
 		applicationFormDAOMock.save(applicationForm);
 		InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
-		EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock);
+		mailServiceMock.sendInterviewConfirmationToApplicant(applicationForm);
+		mailServiceMock.sendInterviewConfirmationToInterviewers(asList(interviewer));
+		EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
 		
 		interviewService.moveApplicationToInterview(interview, applicationForm);
 		
@@ -80,7 +87,7 @@ public class InterviewServiceTest {
 		assertEquals(applicationForm, interview.getApplication());
 		assertEquals(interview, applicationForm.getLatestInterview());
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
-		EasyMock.verify(interviewDAOMock, applicationFormDAOMock);
+		EasyMock.verify(interviewDAOMock, applicationFormDAOMock, mailServiceMock);
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));
@@ -129,15 +136,6 @@ public class InterviewServiceTest {
 		assertNull(applicationForm.getNotificationForType(INTERVIEW_ADMINISTRATION_REMINDER));
 	}
 	
-	
-	@Test(expected=IllegalStateException.class)
-	public void shouldThrowIllegalStateExceptionIfApplicatioNotInReviewInterviewOrValidation() {		
-		Interview interview = new InterviewBuilder().id(1).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).build();		
-		
-		interviewService.moveApplicationToInterview(interview, applicationForm);
-	}
-	
 	@Test
 	public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull(){
 		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
@@ -162,7 +160,6 @@ public class InterviewServiceTest {
 		interviewService.addInterviewerInPreviousInterview(application, interviewerUser);
 		Assert.assertEquals(interviewerUser, interviewer.getUser());
 		Assert.assertTrue(latestInterview.getInterviewers().contains(interviewer));
-		
 	}
 	
 	@Before
@@ -172,8 +169,9 @@ public class InterviewServiceTest {
 		interviewerDAO = EasyMock.createMock(InterviewerDAO.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		interviewDAOMock = EasyMock.createMock(InterviewDAO.class);
-		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, interviewerDAO){
+		eventFactoryMock = createMock(EventFactory.class);
+		mailServiceMock = createMock(MailSendingService.class);
+		interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, interviewerDAO, mailServiceMock){
 			@Override
 			public Interview newInterview() {
 				return interview;

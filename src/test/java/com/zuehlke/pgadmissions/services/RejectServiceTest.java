@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 public class RejectServiceTest {
 
@@ -50,6 +52,8 @@ public class RejectServiceTest {
 
 	private EventFactory eventFactoryMock;
 
+	private MailSendingService mailServiceMock;
+	
 	private PorticoQueueService porticoQueueService;
 	
 	@Before
@@ -57,7 +61,8 @@ public class RejectServiceTest {
 		applicationDaoMock = EasyMock.createMock(ApplicationFormDAO.class);		
 		rejectDaoMock = EasyMock.createMock(RejectReasonDAO.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		porticoQueueService = EasyMock.createMock(PorticoQueueService.class);
+		porticoQueueService = createMock(PorticoQueueService.class);
+		mailServiceMock = createMock(MailSendingService.class);
 
 		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
@@ -67,7 +72,7 @@ public class RejectServiceTest {
 		reason1 = new RejectReasonBuilder().id(1).text("idk").build();
 		reason2 = new RejectReasonBuilder().id(2).text("idc").build();
 		
-		rejectService = new RejectService(applicationDaoMock, rejectDaoMock, eventFactoryMock, porticoQueueService);
+		rejectService = new RejectService(applicationDaoMock, rejectDaoMock, eventFactoryMock, porticoQueueService, mailServiceMock);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

@@ -147,7 +147,7 @@ public class ApplicationFormTest {
     public void shouldSeeOwnCommentOnlyfRefereeOnly() {
         Comment comment = new CommentBuilder().id(4).build();
         RegisteredUser user = new RegisteredUserBuilder().id(6).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        Referee referee = new RefereeBuilder().user(user).toReferee();
+        Referee referee = new RefereeBuilder().user(user).build();
         user.getReferees().add(referee);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(comment).referees(referee).build();
         referee.setApplication(applicationForm);
@@ -173,7 +173,7 @@ public class ApplicationFormTest {
                 new ReviewerBuilder().user(reviewerUserTwo).build()).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree).build();
-        Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).build();
         reviewerUserTwo.getReferees().add(referee);
         List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
         assertEquals(3, visibleComments.size());
@@ -196,7 +196,7 @@ public class ApplicationFormTest {
                 new ReviewerBuilder().user(reviewerUserTwo).build()).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree).build();
-        Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).build();
         reviewerUserTwo.getReferees().add(referee);
         List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
         assertEquals(3, visibleComments.size());
@@ -228,7 +228,7 @@ public class ApplicationFormTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5)
                 .comments(commentOne, commentTwo, commentThree).program(program).build();
         
-        Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).build();
         reviewerUserTwo.getReferees().add(referee);
         
         List<Comment> visibleComments = applicationForm.getVisibleComments(viewer);
@@ -443,8 +443,8 @@ public class ApplicationFormTest {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
 
         user1.getReferees().add(referee1);
         user2.getReferees().add(referee2);
@@ -471,8 +471,8 @@ public class ApplicationFormTest {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
 
         user1.getReferees().add(referee1);
         user2.getReferees().add(referee2);
@@ -495,8 +495,8 @@ public class ApplicationFormTest {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(false).toReferee();
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(false).build();
 
         user1.getReferees().add(referee1);
         user2.getReferees().add(referee2);
@@ -522,8 +522,8 @@ public class ApplicationFormTest {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
 
         user1.getReferees().add(referee1);
         user2.getReferees().add(referee2);
@@ -545,8 +545,8 @@ public class ApplicationFormTest {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
 
         user1.getReferees().add(referee1);
         user2.getReferees().add(referee2);

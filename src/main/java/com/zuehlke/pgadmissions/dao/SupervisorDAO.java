@@ -8,6 +8,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -87,5 +88,19 @@ public class SupervisorDAO {
                 .add(Restrictions.eqProperty("approvalRound", "application.latestApprovalRound"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .list();
-        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Supervisor> getPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours() {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(Supervisor.class, "supervisor")
+                .add(Restrictions.ge("confirmedSupervisionDate", new DateTime().minusDays(1).toDate()))
+                .add(Restrictions.eq("confirmedSupervision", true))
+                .add(Restrictions.eq("isPrimary", true))
+                .createAlias("approvalRound.application", "application")
+                .add(Restrictions.eq("application.status", ApplicationFormStatus.APPROVAL))
+                .add(Restrictions.eqProperty("approvalRound", "application.latestApprovalRound"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .list();
+    }
 }

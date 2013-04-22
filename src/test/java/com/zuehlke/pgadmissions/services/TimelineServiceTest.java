@@ -69,7 +69,7 @@ public class TimelineServiceTest {
 		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1).build();
 		Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo).build();
 		Event rejectedPhaseEnteredEvent = new StateChangeEventBuilder().date(rejectedDate).newStatus(ApplicationFormStatus.REJECTED).id(3).user(userThree).build();
-		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).toReferee()).id(4).user(userFour).build();
+		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).build()).id(4).user(userFour).build();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
 		applicationForm.getEvents().clear();
@@ -138,7 +138,7 @@ public class TimelineServiceTest {
 		Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2)
 				.build();
 
-		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).toReferee()).id(4).build();
+		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).build()).id(4).build();
 
 		Comment comment = new CommentBuilder().date(commentDate).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(reviewPhaseEnteredEvent, referenceEvent).comments(comment).program(new ProgramBuilder().build()).build();
@@ -204,7 +204,7 @@ public class TimelineServiceTest {
 	@Test
 	public void shouldAddRefereeToTimelineReference() throws ParseException {
 
-		Referee referee = new RefereeBuilder().id(4).toReferee();
+		Referee referee = new RefereeBuilder().id(4).build();
 		Event event = new ReferenceEventBuilder().referee(referee).build();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();

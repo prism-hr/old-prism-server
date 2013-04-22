@@ -120,6 +120,8 @@
 			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
+			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>
+			           		    <#assign role = "administrator"/>     
 			           		<#else>
 			           			<#assign role = "viewer"/>
 			           		</#if>

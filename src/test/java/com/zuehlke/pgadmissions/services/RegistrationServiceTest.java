@@ -1,28 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.mail.internet.InternetAddress;
 
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
@@ -30,7 +22,6 @@ import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -38,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -48,9 +38,8 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 public class RegistrationServiceTest {
 
@@ -62,12 +51,8 @@ public class RegistrationServiceTest {
     private ReviewerDAO reviewerDAOMock;
     private SupervisorDAO supervisorDAOMock;
     private RefereeDAO refereeDAOMock;
-	private JavaMailSender javaMailSenderMock;
-	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
-	private EmailTemplateService templateServiceMock;
+    private MailSendingService mailServiceMock;
 	
-	private MessageSource msgSourceMock;
-
 	@Test
 	public void shouldHashPasswordsAndSetAccountDataAndAndQueryString() {
 		String queryString = "queryString";
@@ -135,8 +120,7 @@ public class RegistrationServiceTest {
                         new PendingRoleNotificationBuilder().id(2).notificationDate(new Date())
                                 .build()).build();
         registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
-                mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, interviewerDAOMock,
-                reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock);
+                 interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock);
         registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
         Assert.assertTrue(databaseUser.getPendingRoleNotifications().size() > 0);
         for (PendingRoleNotification roleNotification : databaseUser.getPendingRoleNotifications()) {
@@ -171,7 +155,7 @@ public class RegistrationServiceTest {
     @Test
     public void shouldClearNotificationDatesFromReferee() {
         RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
-        Referee referee = new RefereeBuilder().id(1).lastNotified(new Date()).user(databaseUser).toReferee();
+        Referee referee = new RefereeBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
         EasyMock.expect(refereeDAOMock.getRefereeByUser(databaseUser)).andReturn(referee);
         refereeDAOMock.save(referee);
         EasyMock.replay(refereeDAOMock);
@@ -195,51 +179,30 @@ public class RegistrationServiceTest {
 	@Test
 	public void shouldSavePendingApplicantUserAndSendEmail() throws UnsupportedEncodingException {
 		final RegisteredUser expectedRecord = new RegisteredUser();
-		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
 
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").build();
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock) {
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, 
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
-				if (expectedRecord == record && "queryString" == queryString) {
+				if (expectedRecord == record && "queryString".equals(queryString)) {
 					return newUser;
 				}
 				return null;
 			}
-
-			@Override
-			public Map<String, Object> modelMap() {
-				return modelMap;
-			}
-
 		};
 
 		userDAOMock.save(newUser);
-
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		
-		EmailTemplate template = new EmailTemplateBuilder().active(true)
-				.content("Registration confirmation template").name(REGISTRATION_CONFIRMATION).build();
-		expect(templateServiceMock.getActiveEmailTemplate(REGISTRATION_CONFIRMATION)).andReturn(template);
+		mailServiceMock.sendRegistrationConfirmation(eq(newUser), isA(String.class));
 
-		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("registration subject");
-
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "registration subject", REGISTRATION_CONFIRMATION,
-						template.getContent(), modelMap, null)).andReturn(preparatorMock);
-
-		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
+		EasyMock.replay(userDAOMock, mailServiceMock);
 
 		registrationService.updateOrSaveUser(expectedRecord, "queryString");
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
-		assertEquals(newUser, modelMap.get("user"));
-		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
+		EasyMock.verify(userDAOMock, mailServiceMock);
 		
 
 	}
@@ -247,12 +210,11 @@ public class RegistrationServiceTest {
 	@Test
 	public void shouldSavePendingSuggestedUserAndSendEmail() throws UnsupportedEncodingException {
 		final RegisteredUser expectedRecord = new RegisteredUserBuilder().id(1).build();
-		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
 
 		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock) {
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, 
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock) {
 
 			@Override
 			public RegisteredUser processPendingSuggestedUser(RegisteredUser pendingSuggestedUser ) {
@@ -262,47 +224,27 @@ public class RegistrationServiceTest {
 				return null;
 			}
 
-			@Override
-			public Map<String, Object> modelMap() {
-				return modelMap;
-			}
 
 		};
 
 		userDAOMock.save(suggestedUser);
-
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		
-		EmailTemplate template = new EmailTemplateBuilder().active(true)
-				.content("Registration confirmation template").name(REGISTRATION_CONFIRMATION).build();
-		expect(templateServiceMock.getActiveEmailTemplate(REGISTRATION_CONFIRMATION)).andReturn(template);
+		mailServiceMock.sendRegistrationConfirmation(eq(suggestedUser), eq("complete your application"));
 
-		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("registration subject");
-
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "registration subject",
-						 REGISTRATION_CONFIRMATION,
-							template.getContent(), modelMap, null)).andReturn(preparatorMock);
-
-		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
+		EasyMock.replay(userDAOMock, mailServiceMock);
 
 		registrationService.updateOrSaveUser(expectedRecord, "queryString");
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
-		assertEquals(suggestedUser, modelMap.get("user"));
-		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
-		assertEquals("complete your application", modelMap.get("action"));
+		EasyMock.verify(userDAOMock, mailServiceMock);
 	}
 
 	@Test
-	public void shouldNotSendEmailIdSaveFails() {
+	public void shouldNotSendEmailIfSaveFails() {
 		final RegisteredUser expectedRecord = new RegisteredUser();
 		expectedRecord.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).build();
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock) {
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, 
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -317,26 +259,25 @@ public class RegistrationServiceTest {
 		userDAOMock.save(newUser);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaaaaaaaaargh"));
 
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(userDAOMock, mailServiceMock);
 		try {
 			registrationService.updateOrSaveUser(expectedRecord, "queryString");
 		} catch (RuntimeException e) {
 			// expected...ignore
 		}
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.verify(userDAOMock, mailServiceMock);
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		final RegisteredUser expectedRecord = new RegisteredUser();
 
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").build();
 
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock) {
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -349,26 +290,12 @@ public class RegistrationServiceTest {
 
 		userDAOMock.save(newUser);
 
-		EmailTemplate template = new EmailTemplateBuilder().active(true)
-				.content("Registration confirmation template").name(REGISTRATION_CONFIRMATION).build();
-		expect(templateServiceMock.getActiveEmailTemplate(REGISTRATION_CONFIRMATION)).andReturn(template);
 		
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
-		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("reg subject");
-
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), eq("reg subject"),
-						eq(REGISTRATION_CONFIRMATION),
-						eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull()))
-				.andReturn(preparatorMock);
-
-		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
+		EasyMock.replay(userDAOMock, mailServiceMock);
 		registrationService.updateOrSaveUser(expectedRecord,  "queryString");
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
+		EasyMock.verify(userDAOMock, mailServiceMock);
 
 	}
 
@@ -408,13 +335,10 @@ public class RegistrationServiceTest {
 	    supervisorDAOMock = EasyMock.createMock(SupervisorDAO.class);
 	    refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
 	    
-		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
-		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
-		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		msgSourceMock = EasyMock.createMock(MessageSource.class);
-		templateServiceMock = createMock(EmailTemplateService.class);
+		encryptionUtilsMock = createMock(EncryptionUtils.class);
+		mailServiceMock = createMock(MailSendingService.class);
 		
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock);
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock);
 	}
 }

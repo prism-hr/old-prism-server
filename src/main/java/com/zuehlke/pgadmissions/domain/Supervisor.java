@@ -33,6 +33,10 @@ public class Supervisor implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastNotified;
 
+    @Column(name = "confirmed_supervision_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date confirmedSupervisionDate;
+
     @ManyToOne
     @JoinColumn(name = "approval_round_id", insertable = false, updatable = false)
     private ApprovalRound approvalRound;
@@ -101,7 +105,15 @@ public class Supervisor implements Serializable {
     public void setDeclinedSupervisionReason(String declinedSupervisionReason) {
         this.declinedSupervisionReason = declinedSupervisionReason;
     }
-    
+
+    public Date getConfirmedSupervisionDate() {
+        return confirmedSupervisionDate;
+    }
+
+    public void setConfirmedSupervisionDate(Date confirmedSupervisionDate) {
+        this.confirmedSupervisionDate = confirmedSupervisionDate;
+    }
+
     public boolean hasDeclinedSupervision(){
         return declinedSupervisionReason != null;
     }

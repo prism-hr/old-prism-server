@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
@@ -30,11 +31,11 @@ public class ApplicationsServiceActionsTest {
     private RegisteredUser userMock;
     private ApplicationForm applicationMock;
     private Program programMock;
-
+    
     @Before
     public void setup() {
-        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-        applicationsService = new ApplicationsService(applicationFormDAOMock, null);
+        applicationFormDAOMock = createMock(ApplicationFormDAO.class);
+        applicationsService = new ApplicationsService(applicationFormDAOMock, null, null);
 
         userMock = EasyMock.createMock(RegisteredUser.class);
         applicationMock = EasyMock.createMock(ApplicationForm.class);
@@ -78,7 +79,7 @@ public class ApplicationsServiceActionsTest {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, "VALIDATION");
         ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Validation", "Comment" });
+        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Validate", "Comment" });
     }
 
     @Test
@@ -214,7 +215,7 @@ public class ApplicationsServiceActionsTest {
         EasyMock.expect(userMock.hasRespondedToProvideReviewForApplicationLatestRound(applicationMock)).andReturn(hasProvidedReview).anyTimes();
         EasyMock.expect(userMock.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationMock)).andReturn(hasProvidedInterviewFeedback)
                 .anyTimes();
-        EasyMock.expect(userMock.getRefereeForApplicationForm(applicationMock)).andReturn(new RefereeBuilder().declined(hasProvidedReference).toReferee())
+        EasyMock.expect(userMock.getRefereeForApplicationForm(applicationMock)).andReturn(new RefereeBuilder().declined(hasProvidedReference).build())
                 .anyTimes();
 
         EasyMock.expect(applicationMock.getApplicant()).andReturn(isApplicant ? userMock : null).anyTimes();

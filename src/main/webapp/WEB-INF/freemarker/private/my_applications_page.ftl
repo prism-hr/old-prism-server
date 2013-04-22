@@ -92,7 +92,7 @@
                 <ul class="dropdown-menu">
                     <!--li><a href="#" id="search-report-html">Report in HTML</a></li>
                     <li><a href="#" id="search-report-json">JSON</a></li-->
-                    <li><a href="#" id="search-report-csv">CSV Report</a></li>
+                    <li><a href="#" id="search-report-csv">Spreadsheet Report</a></li>
       				<li class="divider"></li>
                     <li><a target="_blank" href="#" name="downloadAll" id="downloadAll"><i class="icon-download-alt"></i> Download  PDF</a></li>
                 </ul>

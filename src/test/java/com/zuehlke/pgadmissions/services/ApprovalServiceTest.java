@@ -66,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 
 public class ApprovalServiceTest {
 
@@ -92,6 +93,8 @@ public class ApprovalServiceTest {
     private Supervisor supervisor;
 
     private PorticoQueueService porticoQueueServiceMock;
+    
+    private MailSendingService mailSendingServiceMock;
 
     @Before
     public void setUp() {
@@ -106,9 +109,10 @@ public class ApprovalServiceTest {
         porticoQueueServiceMock = EasyMock.createMock(PorticoQueueService.class);
         commentDAOMock = EasyMock.createMock(CommentDAO.class);
         userServiceMock = EasyMock.createMock(UserService.class);
+        mailSendingServiceMock = EasyMock.createMock(MailSendingService.class);
 
         approvalService = new ApprovalService(userServiceMock, applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, eventFactoryMock,
-                commentDAOMock, supervisorDAOMock, programmeDetailDAOMock, porticoQueueServiceMock) {
+                commentDAOMock, supervisorDAOMock, programmeDetailDAOMock, porticoQueueServiceMock, mailSendingServiceMock) {
             @Override
             public ApprovalRound newApprovalRound() {
                 return approvalRound;
@@ -362,9 +366,11 @@ public class ApprovalServiceTest {
         commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        EasyMock.replay(commentDAOMock, userServiceMock);
+        mailSendingServiceMock.scheduleSupervisionConfirmedNotification(applicationForm);
+        
+        EasyMock.replay(commentDAOMock, userServiceMock, mailSendingServiceMock);
         approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
-        EasyMock.verify(commentDAOMock, userServiceMock);
+        EasyMock.verify(commentDAOMock, userServiceMock, mailSendingServiceMock);
 
         assertTrue(primarySupervisor.getConfirmedSupervision());
         SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();
@@ -596,8 +602,8 @@ public class ApprovalServiceTest {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
 
         user1.getReferees().add(referee1);
         user2.getReferees().add(referee2);

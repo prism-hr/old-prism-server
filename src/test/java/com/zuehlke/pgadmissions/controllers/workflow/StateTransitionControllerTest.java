@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
@@ -46,7 +47,7 @@ public class StateTransitionControllerTest {
 	private UserService userServiceMock;
 	private CommentFactory commentFactoryMock;
 	private CommentService commentServiceMock;
-	private StateTransitionViewResolver stateTransitionViewResolverMock;
+	private StateTransitionService stateTransitionServiceMock;
 	private EncryptionHelper encryptionHelperMock;
 	private DocumentService documentServiceMock;
 	private ApprovalService approvalServiceMock;
@@ -137,8 +138,17 @@ public class StateTransitionControllerTest {
 		final String applicationNumber = "5";
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicationNumber(applicationNumber).status(ApplicationFormStatus.REVIEW)
 				.build();
-		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock) {
+		controller = new StateTransitionController(
+		        applicationServiceMock, 
+		        userServiceMock, 
+		        commentServiceMock, 
+		        commentFactoryMock,
+				encryptionHelperMock, 
+				documentServiceMock, 
+				approvalServiceMock, 
+				stateChangeValidatorMock, 
+				documentPropertyEditorMock,
+				stateTransitionServiceMock) {
 
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
@@ -166,9 +176,17 @@ public class StateTransitionControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber(applicationNumber).id(5)
                 .status(ApplicationFormStatus.VALIDATION).build();
         
-        controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock,
-                commentFactoryMock, stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock,
-                approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock) {
+        controller = new StateTransitionController(
+                applicationServiceMock, 
+                userServiceMock, 
+                commentServiceMock,
+                commentFactoryMock, 
+                encryptionHelperMock, 
+                documentServiceMock,
+                approvalServiceMock, 
+                stateChangeValidatorMock, 
+                documentPropertyEditorMock,
+                stateTransitionServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -189,16 +207,24 @@ public class StateTransitionControllerTest {
 	@Test
 	public void shouldReturnAvaialableNextStati() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
-		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock) {
+		controller = new StateTransitionController(
+		        applicationServiceMock, 
+		        userServiceMock, 
+		        commentServiceMock, 
+		        commentFactoryMock,
+				encryptionHelperMock, 
+				documentServiceMock, 
+				approvalServiceMock, 
+				stateChangeValidatorMock, 
+				documentPropertyEditorMock,
+				new StateTransitionService()) {
 
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
 				return applicationForm;
 			}
-
 		};
-		assertArrayEquals(ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION), controller.getAvailableNextStati("5"));
+		assertArrayEquals(new StateTransitionService().getAvailableNextStati(ApplicationFormStatus.VALIDATION), controller.getAvailableNextStati("5"));
 	}
 
 	@Before
@@ -210,12 +236,20 @@ public class StateTransitionControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		commentFactoryMock = EasyMock.createMock(CommentFactory.class);
 		commentServiceMock = EasyMock.createMock(CommentService.class);
-		stateTransitionViewResolverMock = EasyMock.createMock(StateTransitionViewResolver.class);
+		stateTransitionServiceMock = EasyMock.createMock(StateTransitionService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
-		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock);
-
+		controller = new StateTransitionController(
+		        applicationServiceMock, 
+		        userServiceMock, 
+		        commentServiceMock, 
+		        commentFactoryMock,
+				encryptionHelperMock,
+				documentServiceMock, 
+				approvalServiceMock, 
+				stateChangeValidatorMock, 
+				documentPropertyEditorMock,
+				stateTransitionServiceMock);
 	}
 
 	@After

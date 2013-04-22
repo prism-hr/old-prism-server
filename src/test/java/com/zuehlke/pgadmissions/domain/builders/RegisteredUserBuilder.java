@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
 
 public class RegisteredUserBuilder {
     private String firstName;
@@ -30,6 +31,7 @@ public class RegisteredUserBuilder {
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
     private String activationCode;
+    private DigestNotificationType digestNotificationType = DigestNotificationType.NONE;
 
     private List<Referee> referees = new ArrayList<Referee>();
     private List<Comment> comments = new ArrayList<Comment>();
@@ -48,6 +50,11 @@ public class RegisteredUserBuilder {
 
     private String originalApplicationQueryString;
 
+    public RegisteredUserBuilder digestNotificationType(final DigestNotificationType flag) {
+        this.digestNotificationType = flag;
+        return this;
+    }
+    
     public RegisteredUserBuilder pendingRoleNotifications(PendingRoleNotification... pendingRoleNotifications) {
         this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
         return this;
@@ -219,7 +226,8 @@ public class RegisteredUserBuilder {
         user.setCredentialsNonExpired(credentialsNonExpired);
         user.setActivationCode(activationCode);
         user.getRoles().addAll(roles);
-
+        user.setDigestNotificationType(digestNotificationType);
+        
         user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
         user.setProgramsOfWhichApprover(programsOfWhichApprover);
         user.setProgramsOfWhichReviewer(programsOfWhichReviewer);

@@ -1,17 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.mail.internet.InternetAddress;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +15,6 @@ import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -30,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -46,34 +39,28 @@ public class RegistrationService {
 	private final ReviewerDAO reviewerDAO;
 	private final SupervisorDAO supervisorDAO;
 	private final RefereeDAO refereeDAO;
+	
+	private final MailSendingService mailService;
 
-	private final JavaMailSender mailsender;
-	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
 
-	private final MessageSource msgSource;
-	private final EmailTemplateService emailTemplateService;
 
 	public RegistrationService() {
-		this(null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO,
-			MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,
-			MessageSource msgSource, InterviewerDAO interviewerDAO, ReviewerDAO reviewerDAO,
-			SupervisorDAO supervisorDAO, RefereeDAO refereeDAO, EmailTemplateService emailTemplateService) {
+			InterviewerDAO interviewerDAO, ReviewerDAO reviewerDAO, SupervisorDAO supervisorDAO, RefereeDAO refereeDAO,
+			final MailSendingService mailService) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
-		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
-		this.mailsender = mailsender;
-		this.msgSource = msgSource;
 		this.interviewerDAO = interviewerDAO;
 		this.reviewerDAO = reviewerDAO;
+		this.mailService = mailService;
 		this.supervisorDAO = supervisorDAO;
 		this.refereeDAO = refereeDAO;
-		this.emailTemplateService = emailTemplateService;
 	}
 
 	public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, String queryString) {
@@ -104,7 +91,13 @@ public class RegistrationService {
 		} else {
 			user = processPendingApplicantUser(pendingUser, queryString);
 		}
-		userDAO.save(user);
+		try {
+			userDAO.save(user);
+		}
+		catch (Exception e) {
+			log.error("Could not save user: {}", user.getEmail());
+			return;
+		}
 
 		sendConfirmationEmail(user);
 	}
@@ -137,15 +130,9 @@ public class RegistrationService {
 
 	public void sendConfirmationEmail(RegisteredUser newUser) {
 		try {
-			Map<String, Object> model = populateModelForRegistrationConfirmation(newUser);
-			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " "
-					+ newUser.getLastName());
-			String subject = msgSource.getMessage("registration.confirmation", null, null);
-			EmailTemplate template = emailTemplateService.getActiveEmailTemplate(REGISTRATION_CONFIRMATION);
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, REGISTRATION_CONFIRMATION,
-					template.getContent(), model, null));
+			mailService.sendRegistrationConfirmation(newUser, getRegistrationConfirmationAction(newUser));
 		} catch (Exception e) {
-			log.warn("Error while sending email", e);
+			log.warn("{}", e);
 		}
 	}
 

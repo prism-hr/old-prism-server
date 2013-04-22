@@ -107,7 +107,7 @@ public class EventFactoryTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 	
-		Referee referee = new RefereeBuilder().id(1).user(refereeUser).toReferee();
+		Referee referee = new RefereeBuilder().id(1).user(refereeUser).build();
 		Event event = eventFactory.createEvent( referee);
 		assertTrue(event instanceof ReferenceEvent);
 		ReferenceEvent referenceEvent = (ReferenceEvent) event;

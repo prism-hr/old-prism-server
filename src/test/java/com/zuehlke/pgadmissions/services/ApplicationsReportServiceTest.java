@@ -163,9 +163,9 @@ public class ApplicationsReportServiceTest {
         StateChangeEvent approveEvent = new StateChangeEventBuilder().date(today).newStatus(ApplicationFormStatus.APPROVED).build();
         ValidationComment validationComment = new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.OVERSEAS).qualifiedForPhd(ValidationQuestionOptions.UNSURE).englishCompentencyOk(ValidationQuestionOptions.UNSURE).build();
         
-        Referee referee1 = new RefereeBuilder().reference(new ReferenceCommentBuilder().suitableForProgramme(true).suitableForUcl(true).build()).toReferee();
-        Referee referee2 = new RefereeBuilder().reference(new ReferenceCommentBuilder().suitableForProgramme(true).suitableForUcl(false).build()).toReferee();
-        Referee referee3 = new RefereeBuilder().declined(true).toReferee();
+        Referee referee1 = new RefereeBuilder().reference(new ReferenceCommentBuilder().suitableForProgramme(true).suitableForUcl(true).build()).build();
+        Referee referee2 = new RefereeBuilder().reference(new ReferenceCommentBuilder().suitableForProgramme(true).suitableForUcl(false).build()).build();
+        Referee referee3 = new RefereeBuilder().declined(true).build();
         
         Interviewer interviewer1 = new InterviewerBuilder().interviewComment(new InterviewCommentBuilder().suitableCandidateForProgramme(true).suitableCandidateForUcl(true).build()).build();
         Interviewer interviewer2 = new InterviewerBuilder().interviewComment(new InterviewCommentBuilder().suitableCandidateForProgramme(true).suitableCandidateForUcl(false).build()).build();

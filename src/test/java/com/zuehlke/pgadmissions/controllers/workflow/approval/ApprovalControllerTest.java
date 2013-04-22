@@ -612,7 +612,7 @@ public class ApprovalControllerTest {
         refereesAdminEditDTO.setSuitableForProgramme(true);
         refereesAdminEditDTO.setSuitableForUCL(false);
 
-        Referee referee = new RefereeBuilder().application(applicationForm).id(12).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).id(12).build();
 
         BindingResult referenceResult = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
@@ -662,7 +662,7 @@ public class ApprovalControllerTest {
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
 
-        Referee referee = new RefereeBuilder().application(applicationForm).id(12).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).id(12).build();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(12);

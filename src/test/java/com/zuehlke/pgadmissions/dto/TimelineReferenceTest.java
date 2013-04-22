@@ -22,7 +22,7 @@ public class TimelineReferenceTest {
 	@Test
 	public void shouldReurnCorrectMessageCode() {
 		ReferenceComment reference = new ReferenceCommentBuilder().id(4).build();
-		Referee referee = new RefereeBuilder().reference(reference).toReferee();
+		Referee referee = new RefereeBuilder().reference(reference).build();
 
 		TimelineReference timelineReference = new TimelineReference();
 		timelineReference.setReferee(referee);

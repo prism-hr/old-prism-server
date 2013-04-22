@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -177,10 +176,11 @@ public class SubmitApplicationFormControllerTest {
         stageDuration.setDuration(8);
         stageDuration.setUnit(DurationUnitEnum.DAYS);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
-        applicationsServiceMock.save(applicationForm);
 
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.VALIDATION)).andReturn(event);
+        
+        applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
 
         EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock);
 
@@ -203,7 +203,7 @@ public class SubmitApplicationFormControllerTest {
         stageDuration.setDuration(1);
         stageDuration.setUnit(DurationUnitEnum.DAYS);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
-        applicationsServiceMock.save(applicationForm);
+        applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock);
         String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         assertEquals("redirect:/applications?messageCode=application.submitted&application=abc", view);
@@ -218,7 +218,7 @@ public class SubmitApplicationFormControllerTest {
         stageDuration.setDuration(1);
         stageDuration.setUnit(DurationUnitEnum.DAYS);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
-        applicationsServiceMock.save(applicationForm);
+        applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock);
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         assertEquals(httpServletRequestMock.getRemoteAddr(), applicationForm.getIpAddressAsString());

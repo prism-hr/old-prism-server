@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,7 +30,6 @@ import javax.validation.Valid;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 

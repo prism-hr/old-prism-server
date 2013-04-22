@@ -1,11 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICATION_MOVED_TO_APPROVED_NOTIFICATION;
+
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +35,16 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional
 public class ApprovalService {
 
-    private final ApplicationFormDAO applicationDAO;
+	private Logger log = LoggerFactory.getLogger(ApprovalService.class);
+
+	private final ApplicationFormDAO applicationDAO;
 
     private final ApprovalRoundDAO approvalRoundDAO;
 
@@ -55,15 +62,17 @@ public class ApprovalService {
 
     private final SupervisorDAO supervisorDAO;
 
+    private final MailSendingService mailSendingService;
+
     public ApprovalService() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO,
             ApprovalRoundDAO approvalRoundDAO, StageDurationService stageDurationService, EventFactory eventFactory,
             CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,
-            PorticoQueueService approvedSenderService) {
+            PorticoQueueService approvedSenderService, MailSendingService mailSendingService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
@@ -73,13 +82,14 @@ public class ApprovalService {
         this.supervisorDAO = supervisorDAO;
         this.programmeDetailDAO = programmeDetailDAO;
         this.approvedSenderService = approvedSenderService;
+        this.mailSendingService = mailSendingService;
     }
 
-    public void confirmSupervision(ApplicationForm application, ConfirmSupervisionDTO confirmSupervisionDTO) {
-        ApprovalRound approvalRound = application.getLatestApprovalRound();
+    public void confirmSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
+        ApprovalRound approvalRound = form.getLatestApprovalRound();
         Supervisor supervisor = approvalRound.getPrimarySupervisor();
         Boolean confirmed = confirmSupervisionDTO.getConfirmedSupervision();
-        application.setSuppressStateChangeNotifications(false);
+
         supervisor.setConfirmedSupervision(confirmed);
 
         if (BooleanUtils.isTrue(confirmed)) {
@@ -89,21 +99,23 @@ public class ApprovalService {
             approvalRound.setRecommendedConditionsAvailable(confirmSupervisionDTO.getRecommendedConditionsAvailable());
             approvalRound.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
             approvalRound.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
+            supervisor.setConfirmedSupervisionDate(new Date());
+            mailSendingService.scheduleSupervisionConfirmedNotification(form);
         }
 
         if (BooleanUtils.isFalse(confirmed)) {
             supervisor.setDeclinedSupervisionReason(confirmSupervisionDTO.getDeclinedSupervisionReason());
-            RequestRestartComment restartComment = createRequestRestartComment(application, supervisor);
-            restartApprovalStage(application, supervisor.getUser(), restartComment);
+            RequestRestartComment restartComment = createRequestRestartComment(form, supervisor);
+            restartApprovalStage(form, supervisor.getUser(), restartComment);
         }
 
-        SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, application, supervisor);
+        SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, form, supervisor);
         commentDAO.save(supervisionConfirmationComment);
     }
 
-    private RequestRestartComment createRequestRestartComment(ApplicationForm application, Supervisor supervisor) {
+    private RequestRestartComment createRequestRestartComment(ApplicationForm form, Supervisor supervisor) {
         RequestRestartComment restartComment = new RequestRestartComment();
-        restartComment.setApplication(application);
+        restartComment.setApplication(form);
         restartComment.setDate(new Date());
         restartComment.setUser(supervisor.getUser());
         restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser()
@@ -111,8 +123,7 @@ public class ApprovalService {
         return restartComment;
     }
 
-    private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm application,
-            Supervisor supervisor) {
+    private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm application, Supervisor supervisor) {
         SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
         supervisionConfirmationComment.setApplication(application);
         supervisionConfirmationComment.setDate(new Date());
@@ -137,29 +148,29 @@ public class ApprovalService {
         return supervisionConfirmationComment;
     }
 
-    public void moveApplicationToApproval(ApplicationForm application, ApprovalRound approvalRound) {
-        checkApplicationStatus(application);
-        checkSendToPorticoStatus(application, approvalRound);
-        copyLastNotifiedForRepeatSupervisors(application, approvalRound);
-        application.setLatestApprovalRound(approvalRound);
-        application.setSuppressStateChangeNotifications(true);
-        approvalRound.setApplication(application);
+    public void moveApplicationToApproval(ApplicationForm form, ApprovalRound approvalRound) {
+        checkApplicationStatus(form);
+        checkSendToPorticoStatus(form, approvalRound);
+        copyLastNotifiedForRepeatSupervisors(form, approvalRound);
+        form.setLatestApprovalRound(approvalRound);
+
+        approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
         
         StageDuration approveStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.APPROVAL);
         DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), approveStageDuration.getDurationInMinutes());
-        application.setDueDate(dueDate.toDate());
+        form.setDueDate(dueDate.toDate());
         
-        application.getEvents().add(eventFactory.createEvent(approvalRound));
+        form.getEvents().add(eventFactory.createEvent(approvalRound));
 
-        application.setStatus(ApplicationFormStatus.APPROVAL);
-        application.setPendingApprovalRestart(false);
-        resetNotificationRecords(application);
+        form.setStatus(ApplicationFormStatus.APPROVAL);
+        form.setPendingApprovalRestart(false);
+        resetNotificationRecords(form);
 
-        applicationDAO.save(application);
+        applicationDAO.save(form);
 
         ApprovalComment approvalComment = new ApprovalComment();
-        approvalComment.setApplication(application);
+        approvalComment.setApplication(form);
         approvalComment.setComment("");
         approvalComment.setType(CommentType.APPROVAL);
         approvalComment.setProjectAbstract(approvalRound.getProjectAbstract());
@@ -173,8 +184,8 @@ public class ApprovalService {
         commentDAO.save(approvalComment);
     }
 
-    private void copyLastNotifiedForRepeatSupervisors(ApplicationForm application, ApprovalRound approvalRound) {
-        ApprovalRound latestApprovalRound = application.getLatestApprovalRound();
+    private void copyLastNotifiedForRepeatSupervisors(ApplicationForm form, ApprovalRound approvalRound) {
+        ApprovalRound latestApprovalRound = form.getLatestApprovalRound();
         if (latestApprovalRound != null) {
             List<Supervisor> supervisors = latestApprovalRound.getSupervisors();
             for (Supervisor supervisor : supervisors) {
@@ -188,18 +199,18 @@ public class ApprovalService {
         }
     }
 
-    private void resetNotificationRecords(ApplicationForm application) {
-        NotificationRecord restartRequestNotification = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+    private void resetNotificationRecords(ApplicationForm form) {
+        NotificationRecord restartRequestNotification = form.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
         if (restartRequestNotification != null) {
-            application.removeNotificationRecord(restartRequestNotification);
+            form.removeNotificationRecord(restartRequestNotification);
         }
-        NotificationRecord restartRequestReminder = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
+        NotificationRecord restartRequestReminder = form.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
         if (restartRequestReminder != null) {
-            application.removeNotificationRecord(restartRequestReminder);
+            form.removeNotificationRecord(restartRequestReminder);
         }
-        NotificationRecord adminAndAproverNotificationRecord = application.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
+        NotificationRecord adminAndAproverNotificationRecord = form.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
         if (adminAndAproverNotificationRecord != null) {
-            application.removeNotificationRecord(adminAndAproverNotificationRecord);
+            form.removeNotificationRecord(adminAndAproverNotificationRecord);
         }
     }
 
@@ -224,8 +235,8 @@ public class ApprovalService {
         applicationDAO.save(application);
     }
 
-    private void checkApplicationStatus(ApplicationForm application) {
-        ApplicationFormStatus status = application.getStatus();
+    private void checkApplicationStatus(ApplicationForm form) {
+        ApplicationFormStatus status = form.getStatus();
         switch (status) {
         case VALIDATION:
         case REVIEW:
@@ -237,9 +248,9 @@ public class ApprovalService {
         }
     }
 
-    private void checkSendToPorticoStatus(ApplicationForm application, ApprovalRound approvalRound) {
+    private void checkSendToPorticoStatus(ApplicationForm form, ApprovalRound approvalRound) {
         boolean explanationProvided = !StringUtils.isBlank(approvalRound.getMissingQualificationExplanation());
-        if (!application.isCompleteForSendingToPortico(explanationProvided)) {
+        if (!form.isCompleteForSendingToPortico(explanationProvided)) {
             throw new IllegalStateException("Send to portico data is not valid");
         }
     }
@@ -248,47 +259,62 @@ public class ApprovalService {
         approvalRoundDAO.save(approvalRound);
     }
 
-    public boolean moveToApproved(ApplicationForm application) {
-        if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
+    public boolean moveToApproved(ApplicationForm form) {
+        if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
             throw new IllegalStateException();
         }
         
-        if (!application.isPrefferedStartDateWithinBounds()) {
-            Date earliestPossibleStartDate = application.getEarliestPossibleStartDate();
+        if (!form.isPrefferedStartDateWithinBounds()) {
+            Date earliestPossibleStartDate = form.getEarliestPossibleStartDate();
             if (earliestPossibleStartDate == null) {
                 return false;
             }
-            application.getProgrammeDetails().setStartDate(earliestPossibleStartDate);
-            programmeDetailDAO.save(application.getProgrammeDetails());
+            form.getProgrammeDetails().setStartDate(earliestPossibleStartDate);
+            programmeDetailDAO.save(form.getProgrammeDetails());
         }
         
-        application.setStatus(ApplicationFormStatus.APPROVED);
-        application.setApprover(userService.getCurrentUser());
-        application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
-        applicationDAO.save(application);
+        form.setStatus(ApplicationFormStatus.APPROVED);
+        form.setApprover(userService.getCurrentUser());
+        form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
+        sendNotificationToApplicant(form);
+        applicationDAO.save(form);
         return true;
     }
     
-    public void sendToPortico(ApplicationForm application) {
-        approvedSenderService.sendToPortico(application);
+    private void sendNotificationToApplicant(ApplicationForm form) {
+    	try {
+    		mailSendingService.sendApprovedNotification(form);
+    		NotificationRecord notificationRecord = form.getNotificationForType(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
+			if (notificationRecord == null) {
+				notificationRecord = new NotificationRecord(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
+				form.addNotificationRecord(notificationRecord);
+			}
+			notificationRecord.setDate(new Date());
+    	}
+    	catch (Exception e) {
+    		log.warn("{}", e);
+    	}
+	}
+
+	public void sendToPortico(ApplicationForm form) {
+        approvedSenderService.sendToPortico(form);
     }
     
-    public void addSupervisorInPreviousApprovalRound(ApplicationForm applicationForm, RegisteredUser newUser) {
+    public void addSupervisorInPreviousApprovalRound(ApplicationForm form, RegisteredUser newUser) {
         Supervisor supervisor = newSupervisor();
         supervisor.setUser(newUser);
         supervisorDAO.save(supervisor);
-        ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+        ApprovalRound latestApprovalRound = form.getLatestApprovalRound();
         if (latestApprovalRound == null) {
             ApprovalRound approvalRound = newApprovalRound();
             approvalRound.getSupervisors().add(supervisor);
-            approvalRound.setApplication(applicationForm);
+            approvalRound.setApplication(form);
             save(approvalRound);
-            applicationForm.setLatestApprovalRound(approvalRound);
+            form.setLatestApprovalRound(approvalRound);
         } else {
             latestApprovalRound.getSupervisors().add(supervisor);
             save(latestApprovalRound);
         }
-
     }
 
     public Supervisor newSupervisor() {

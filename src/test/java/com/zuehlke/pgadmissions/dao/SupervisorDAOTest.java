@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -312,6 +313,32 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
         assertFalse(listContainsSupervisor(supervisor, supervisors));
     }
     
+    @Test
+    public void shouldReturnPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours() {
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        Supervisor supervisor = new SupervisorBuilder().user(user).isPrimary(true).confirmedSupervision(true).lastNotified(new Date()).confirmedSupervisionDate(new DateTime().minusHours(10).toDate()).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
+        application.setLatestApprovalRound(approvalRound);
+        save(application, supervisor, approvalRound);
+        flushAndClearSession();
+        
+        List<Supervisor> supervisors = dao.getPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours();
+        assertTrue(listContainsSupervisor(supervisor, supervisors));
+    }
+
+    @Test
+    public void shouldNotReturnPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours() {
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        Supervisor supervisor = new SupervisorBuilder().user(user).isPrimary(true).confirmedSupervision(true).lastNotified(new Date()).confirmedSupervisionDate(new DateTime().minusHours(48).toDate()).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
+        application.setLatestApprovalRound(approvalRound);
+        save(application, supervisor, approvalRound);
+        flushAndClearSession();
+        
+        List<Supervisor> supervisors = dao.getPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours();
+        assertFalse(listContainsSupervisor(supervisor, supervisors));
+    }
+
     private boolean listContainsSupervisor(Supervisor supervisor, List<Supervisor> supervisors) {
         for (Supervisor entry : supervisors) {
             if (supervisor.getId().equals(entry.getId())) {

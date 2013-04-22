@@ -26,8 +26,8 @@ public class AcceptTermsController {
 	}
 
 	@Autowired
-	public AcceptTermsController(ApplicationsService applicationsServiceMock, UserService userService) {
-		this.applicationsService = applicationsServiceMock;
+	public AcceptTermsController(ApplicationsService applicationsService, UserService userService) {
+		this.applicationsService = applicationsService;
 		this.userService = userService;
 	}
 

@@ -22,7 +22,9 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 public class ConfigurationService {
 
     private final StageDurationDAO stageDurationDAO;
+    
     private final ReminderIntervalDAO reminderIntervalDAO;
+    
     private final PersonDAO personDAO;
 
     public ConfigurationService() {
@@ -30,8 +32,7 @@ public class ConfigurationService {
     }
 
     @Autowired
-    public ConfigurationService(StageDurationDAO stageDurationDAO, ReminderIntervalDAO reminderIntervalDAO,
-            PersonDAO personDAO) {
+    public ConfigurationService(StageDurationDAO stageDurationDAO, ReminderIntervalDAO reminderIntervalDAO, PersonDAO personDAO) {
         this.stageDurationDAO = stageDurationDAO;
         this.reminderIntervalDAO = reminderIntervalDAO;
         this.personDAO = personDAO;
@@ -83,7 +84,7 @@ public class ConfigurationService {
     @Transactional
     public Map<ApplicationFormStatus, StageDuration> getStageDurations() {
         Map<ApplicationFormStatus, StageDuration> stageDurations = new HashMap<ApplicationFormStatus, StageDuration>();
-        ApplicationFormStatus[] configurableStages = ApplicationFormStatus.getConfigurableStages();
+        ApplicationFormStatus[] configurableStages = getConfigurableStages();
         for (ApplicationFormStatus applicationFormStatus : configurableStages) {
             stageDurations.put(applicationFormStatus, stageDurationDAO.getByStatus(applicationFormStatus));
         }
@@ -102,5 +103,11 @@ public class ConfigurationService {
             }
         }
         return false;
+    }
+
+    public ApplicationFormStatus[] getConfigurableStages() {
+        return new ApplicationFormStatus[] { 
+                ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
+                ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL };
     }
 }

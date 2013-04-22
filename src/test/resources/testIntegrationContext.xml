@@ -52,23 +52,20 @@
 		</property>
 	</bean>
 
-	<bean id="mimeMessagePreparatorFactory" class="com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory">
-		<constructor-arg index="0">
-			<ref bean="freemarkerConfig" />
-		</constructor-arg>
-		<constructor-arg index="1" value="${email.prod}" />
-	</bean>
-
+	
 	<!-- freemarker config -->
 	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
 		<property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
 	</bean>
 
-	<!-- Mail configuration -->
-	<bean id="mailSender" class="com.zuehlke.pgadmissions.services.FakeMailSender" />
-
-	<bean id="mailService" class="com.zuehlke.pgadmissions.services.MailService" />
+	<bean id="mailSender" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
+        <constructor-arg value="com.zuehlke.pgadmissions.mail.refactor.MailSender" />
+    </bean>
     
+	<bean id="mailSendingService" class="com.zuehlke.pgadmissions.mail.refactor.MailSendingService">
+       <constructor-arg index = "0" ref="mailSender" />
+    </bean>
+
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
     
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />

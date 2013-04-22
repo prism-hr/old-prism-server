@@ -2,49 +2,52 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum EmailTemplateName {
 
-	REVIEWER_NOTIFICATION("Reviewer notification"),//updated
-	REVIEWER_ASSIGNED_NOTIFICATION("Reviewer assigned notification"),//updated
-	REVIEWER_REMINDER("Reviewer reminder"),//updated
-	REFEREE_NOTIFICATION("Referee notification"),//updated
-	REFEREE_REMINDER("Referee reminder"),//updated
-	INTERVIEWER_NOTIFICATION("Interviewer notification"),//updated
-	INTERVIEW_SUBMISSION_NOTIFICATION("Interview submission notification"),//update
-	INTERVIEWER_REMINDER("Interviewer reminder"),//updated
-	INTERVIEWER_REMINDER_FIRST("Interviewer reminder first"),//updated
-	APPROVAL_NOTIFICATION("Approval notification"),//updated
-	REJECTED_NOTIFICATION_ADMIN("Rejected notification admin"),//updated
-	REVIEW_SUBMISSION_NOTIFICATION("Review submission notification"),//updated
-	NEW_PASSWORD_CONFIRMATION("New password confirmation"),//updated
-	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION("Supervisor confirm supervision notification"),//updated
-	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION_REMINDER("Supervisor confirm supervision notification reminder"),//updated
-	SUPERVISOR_NOTIFICATION("Supervisor notification"),//updated
-	APPROVED_NOTIFICATION("Approved notification"),//updated
-	APPLICATION_UPDATED_CONFIRMATION("Application updated confirmation"),//updated
-	APPROVAL_RESTART_REQUEST_REMINDER("Approval restart request reminder"),//updated
-	RESTART_APPROVAL_REQUEST("Restart approval request"),//updated
-	REFERENCE_SUBMIT_CONFIRMATION("Reference submit confirmation"),//updated
-	REFERENCE_RESPOND_CONFIRMATION("Reference respond confirmation"),//updated
-	REGISTRY_VALIDATION_REQUEST("Registry vlaidation request"),//updated
-	REGISTRATION_CONFIRMATION("Registration confirmation"),//updated
-	EXPORT_ERROR("Export error"),//updated
-	IMPORT_ERROR("Import error"),//updated
-	REJECTED_NOTIFICATION("Rejected notification"),//updated
-	APPLICATION_APPROVAL_REMINDER("Application approval reminder"),//updated
-	APPLICATION_VALIDATION_REMINDER("Application validation reminder"),//updated
-	MOVED_TO_APPROVED_NOTIFICATION("Moved to approved notification"),//updated
-	MOVED_TO_REVIEW_NOTIFICATION("Moved to review notification"),//updated
-	APPLICATION_SUBMIT_CONFIRMATION("Application submit confirmation"),//updated
-	APPLICATION_SUBMIT_CONFIRMATION_ADMIN("Application submit confirmation admin"),//updated
-	MOVED_TO_APPROVAL_NOTIFICATION("Moved to approval notification"),//updated
-	MOVED_TO_INTERVIEW_NOTIFICATION("Moved to interview notification"),//updated
-	APPLICATION_INTERVIEW_REMINDER_FIRST("Application interview reminder first"),//updated
-	APPLICATION_INTERVIEW_REMINDER("Application interview reminder"),//updated
-	APPLICATION_REVIEW_REMINDER_FIRST("Application review reminder first"),//updated
-	APPLICATION_REVIEW_REMINDER("Application review reminder"),//updated
-	APPLICATION_WITHDRAWN_NOTIFICATION("Application withdrawn notification"), //updated 
-	NEW_USER_SUGGESTION("New user suggestion"), //ok
-	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation"),//ok
-	INTERVIEW_ADMINISTRATION_REMINDER("Interview administration reminder");
+	REVIEWER_NOTIFICATION("Reviewer notification"),//sent by timer
+	REVIEWER_ASSIGNED_NOTIFICATION("Reviewer assigned notification"),//sent by timer
+	REVIEWER_REMINDER("Reviewer reminder"),//sent by timer
+	REFEREE_NOTIFICATION("Referee notification"), //sent by timer and on event
+	REFEREE_REMINDER("Referee reminder"),//sent by timer
+	INTERVIEWER_NOTIFICATION("Interviewer notification"),//sent by timer
+	INTERVIEW_SUBMISSION_NOTIFICATION("Interview submission notification"),//sent by timer
+	INTERVIEWER_REMINDER("Interviewer reminder"),//sent by timer
+	INTERVIEWER_REMINDER_FIRST("Interviewer reminder first"),//sent by timer
+	APPROVAL_NOTIFICATION("Approval notification"),//sent by timer
+	REJECTED_NOTIFICATION_ADMIN("Rejected notification admin"),//sent by timer
+	REVIEW_SUBMISSION_NOTIFICATION("Review submission notification"),//sent by timer
+	NEW_PASSWORD_CONFIRMATION("New password confirmation"),//send on event
+	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION("Supervisor confirm supervision notification"),//sent by timer
+	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION_REMINDER("Supervisor confirm supervision notification reminder"),//sent by timer
+	SUPERVISOR_NOTIFICATION("Supervisor notification"),//sent by timer
+	APPROVED_NOTIFICATION("Approved notification"),//sent on event
+	APPLICATION_UPDATED_CONFIRMATION("Application updated confirmation"),//sent by timer
+	APPROVAL_RESTART_REQUEST_REMINDER("Approval restart request reminder"),//sent by timer
+	RESTART_APPROVAL_REQUEST("Restart approval request"),//sent by timer
+	REFERENCE_SUBMIT_CONFIRMATION("Reference submit confirmation"),//sent on event
+	REFERENCE_RESPOND_CONFIRMATION("Reference respond confirmation"),
+	REGISTRY_VALIDATION_REQUEST("Registry vlaidation request"),
+	REGISTRATION_CONFIRMATION("Registration confirmation"), //sent on event
+	EXPORT_ERROR("Export error"), //sent on event
+	IMPORT_ERROR("Import error"), //sent on event
+	REJECTED_NOTIFICATION("Rejected notification"),//sent on event
+	APPLICATION_APPROVAL_REMINDER("Application approval reminder"),//sent by timer
+	APPLICATION_VALIDATION_REMINDER("Application validation reminder"),//sent by timer
+	MOVED_TO_APPROVED_NOTIFICATION("Moved to approved notification"),//sent by timer
+	MOVED_TO_REVIEW_NOTIFICATION("Moved to review notification"),//sent by timer
+	APPLICATION_SUBMIT_CONFIRMATION("Application submit confirmation"),//sent on event
+	APPLICATION_SUBMIT_CONFIRMATION_ADMIN("Application submit confirmation admin"),//sent by timer
+	MOVED_TO_APPROVAL_NOTIFICATION("Moved to approval notification"),//sent by timer
+	MOVED_TO_INTERVIEW_NOTIFICATION("Moved to interview notification"),//sent by timer
+	APPLICATION_INTERVIEW_REMINDER_FIRST("Application interview reminder first"),
+	APPLICATION_INTERVIEW_REMINDER("Application interview reminder"),//sent by timer
+	APPLICATION_REVIEW_REMINDER_FIRST("Application review reminder first"),//sent by timer
+	APPLICATION_REVIEW_REMINDER("Application review reminder"),//sent by timer
+	APPLICATION_WITHDRAWN_NOTIFICATION("Application withdrawn notification"), //deprecated 
+	NEW_USER_SUGGESTION("New user suggestion"),//sent by timer
+	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation"),//sent by timer
+	INTERVIEW_ADMINISTRATION_REMINDER("Interview administration reminder"), //sent on event
+	DIGEST_UPDATE_NOTIFICATION("Digest Update Notification"), 
+	DIGEST_TASK_NOTIFICATION("Digest Task Notification"),
+	DIGEST_TASK_REMINDER("Digest Task Reminder");
 	
 	private final String displayValue;
 	

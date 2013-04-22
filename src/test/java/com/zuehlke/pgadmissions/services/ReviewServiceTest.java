@@ -140,25 +140,6 @@ public class ReviewServiceTest {
 	}
 
 	@Test
-	public void shouldFailIfApplicationInInvalidState() {
-		ApplicationFormStatus[] values = ApplicationFormStatus.values();
-		for (ApplicationFormStatus status : values) {
-			if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.REVIEW) {
-				ApplicationForm application = new ApplicationFormBuilder().id(3).status(status).build();
-				boolean threwException = false;
-				try {
-					reviewService.moveApplicationToReview(application, new ReviewRoundBuilder().id(1).build());
-				} catch (IllegalStateException ise) {
-					if (ise.getMessage().equals("Application in invalid status: '" + status + "'!")) {
-						threwException = true;
-					}
-				}
-				Assert.assertTrue(threwException);
-			}
-		}
-	}
-	
-	@Test
 	public void shouldSaveReviewRound(){
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(5).build();
 		reviewRoundDAOMock.save(reviewRound);

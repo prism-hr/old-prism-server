@@ -45,7 +45,7 @@ public class ReferenceControllerTest {
     @Test
     public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        Referee referee = new RefereeBuilder().toReferee();
+        Referee referee = new RefereeBuilder().build();
         
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
@@ -98,7 +98,7 @@ public class ReferenceControllerTest {
     @Test(expected = ActionNoLongerRequiredException.class)
     public void shoulThrowExceptionIfRefereeHasAlreadyProvidedReferecne() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
-        Referee referee = new RefereeBuilder().reference(new ReferenceComment()).toReferee();
+        Referee referee = new RefereeBuilder().reference(new ReferenceComment()).build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
@@ -113,7 +113,7 @@ public class ReferenceControllerTest {
     @Test
     public void shouldReturnNewReferenceComment() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        Referee referee = new RefereeBuilder().id(8).toReferee();
+        Referee referee = new RefereeBuilder().id(8).build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
@@ -153,7 +153,7 @@ public class ReferenceControllerTest {
 
     @Test
     public void shouldSaveReferenceAndRedirectToSaveViewIfNoErrors() {
-        Referee referee = new RefereeBuilder().id(1).toReferee();
+        Referee referee = new RefereeBuilder().id(1).build();
         ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").build();
         ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
@@ -167,7 +167,7 @@ public class ReferenceControllerTest {
 
     @Test
     public void shouldPreventFromSavingDuplicateReferences() {
-        Referee referee = new RefereeBuilder().id(1).toReferee();
+        Referee referee = new RefereeBuilder().id(1).build();
         ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").build();
         ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();
         referee.setReference(reference);

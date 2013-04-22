@@ -1,25 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_ADMINISTRATION_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
-
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +18,6 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
-import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -38,9 +26,8 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.UserFactory;
 
 @Service("userService")
@@ -51,30 +38,25 @@ public class UserService {
     
 	private final UserDAO userDAO;
     private final RoleDAO roleDAO;
-    private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
-    private final JavaMailSender mailsender;
     private final UserFactory userFactory;
-    private final MessageSource msgSource;
     private final EncryptionUtils encryptionUtils;
     private final ApplicationsFilterDAO applicationsFilterDAO;
-    private final EmailTemplateService emailTemplateService;
+    private final MailSendingService mailService;
 
 	public UserService() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-			JavaMailSender mailsender, MessageSource msgSource, EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO, EmailTemplateService emailTemplateService) {
+	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory,
+			EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO,
+			MailSendingService mailService) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.userFactory = userFactory;
-		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
-		this.mailsender = mailsender;
-		this.msgSource = msgSource;
 		this.encryptionUtils = encryptionUtils;
 		this.applicationsFilterDAO=applicationsFilterDAO;
-		this.emailTemplateService = emailTemplateService;
+		this.mailService = mailService;
 	}
 
     public RegisteredUser getUser(Integer id) {
@@ -332,17 +314,9 @@ public class UserService {
         }
         try {
             String newPassword = encryptionUtils.generateUserPassword();
-            Map<String, Object> model = new HashMap<String, Object>();
-            model.put("user", storedUser);
-            model.put("newPassword", newPassword);
-            model.put("host", Environment.getInstance().getApplicationHostName());
-            InternetAddress toAddress = createUserAddress(storedUser);
-            String subject = msgSource.getMessage("user.password.reset", null, null);
-            EmailTemplate template = emailTemplateService.getActiveEmailTemplate(NEW_PASSWORD_CONFIRMATION);
-
-            mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
-            		NEW_PASSWORD_CONFIRMATION, template.getContent(), model, null));
-
+            
+            mailService.sendResetPasswordMessage(storedUser, newPassword);
+            
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);
             storedUser.setPassword(hashPassword);
             userDAO.save(storedUser);
@@ -418,14 +392,6 @@ public class UserService {
         return false;
     }
 
-    private InternetAddress createUserAddress(RegisteredUser user) {
-        try {
-            return new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
-        } catch (UnsupportedEncodingException e) { // this shouldn't happen...
-            throw new RuntimeException(e);
-        }
-    }
-
     public RegisteredUser getUserByActivationCode(String activationCode) {
         return userDAO.getUserByActivationCode(activationCode);
     }
@@ -451,6 +417,7 @@ public class UserService {
             user.getApplicationsFilters().add(filter);
             applicationsFilterDAO.save(filter);
         }
+        userDAO.save(user);
     }
     
     public void sendEmailToDelegateAndRegisterReminder(ApplicationForm applicationForm, RegisteredUser delegate) {
@@ -460,30 +427,18 @@ public class UserService {
     	delegateReminder.setDate(new Date());
     	applicationForm.setSuppressStateChangeNotifications(true);
     	applicationForm.addNotificationRecord(delegateReminder);
-    	List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
     	 try {
-             Map<String, Object> model = new HashMap<String, Object>();
-             model.put("user", delegate);
-             model.put("applicationForm", applicationForm);
-             model.put("host", Environment.getInstance().getApplicationHostName());
-             InternetAddress toAddress = createUserAddress(delegate);
-             InternetAddress[] ccAddresses = new InternetAddress[admins.size()];
-             for (int i=0; i<admins.size(); i++) {
-            	 ccAddresses[i]=createUserAddress(admins.get(i));
-             }
-             String subject = msgSource.getMessage("application.interview.delegation", null, null);
-             EmailTemplate template = emailTemplateService.getActiveEmailTemplate(INTERVIEW_ADMINISTRATION_REMINDER);
-
-             MimeMessagePreparator messagePreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject,//
-              		INTERVIEW_ADMINISTRATION_REMINDER, template.getContent(), model, null);
-             mailsender.send(messagePreparator);
-
+    		 mailService.scheduleInterviewAdministrationRequest(delegate, applicationForm);
          } catch (Exception e) {
              log.warn("error while sending email", e);
          }
     }
 
-    public List<ApplicationsFilter> getFiltersForUser(RegisteredUser user) {
-        return user.getApplicationsFilters();
+    public void resetDigestNotificationsForAllUsers() {
+        userDAO.resetDigestNotificationsForAllUsers();
+    }
+    
+    public List<Integer> getAllUsersInNeedOfADigestNotification() {
+        return userDAO.getAllUserIdsInNeedOfADigestNotification();
     }
 }

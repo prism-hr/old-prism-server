@@ -93,7 +93,7 @@ $(document).ready(function()
 		}
 		else {
 			var state = $('#status option:selected').text().toLowerCase().capitalize();
-			var message = 'Confirm you want to move this application to the ' + state + ' stage. <b>You will not be able to reverse this decision!</b>';
+			var message = 'Confirm you want to move this application to the ' + state + ' stage.';
 			modalPrompt(message, changeState);
 		}
 	});
@@ -108,7 +108,7 @@ $(document).ready(function()
 				state = 'next';
 			}
 			
-			var message = 'Confirm you want to move this application to the ' + state + ' stage. <b>You will not be able to reverse this decision!</b>';
+			var message = 'Confirm you want to move this application to the ' + state + ' stage.';
 		
 			$('#confirmNextStageLabel').html(message);
 		}
@@ -227,6 +227,11 @@ function saveComment()
 	$('#lastName').val($('#delegateLastName').val());
 	$('#email').val($('#delegateEmail').val());
 	
+	if ($('#confirmNextStage').length > 0) {
+		$('#confirmNextStageField').val($('#confirmNextStage')[0].checked);
+	}
+	
+	
 	$('#stateChangeForm').submit();
 }
 
@@ -304,6 +309,7 @@ function changeState()
 					firstName : $('#delegateFirstName').val(),
 					lastName : $('#delegateLastName').val(),
 					email : $('#delegateEmail').val(),
+					confirmNextStage : $('#confirmNextStage').val()
 				},
 				success:function(data)
 				{

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.mail.refactor;
+package com.zuehlke.pgadmissions.mail;
 
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_SUBMIT_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERROR;

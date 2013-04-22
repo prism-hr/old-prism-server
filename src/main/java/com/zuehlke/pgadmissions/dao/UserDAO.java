@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
+import com.zuehlke.pgadmissions.mail.DigestNotificationType;
 
 @Repository
 public class UserDAO {

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.mail.refactor;
+package com.zuehlke.pgadmissions.mail;
 
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 import static java.util.Arrays.asList;
@@ -52,6 +52,10 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
+import com.zuehlke.pgadmissions.mail.DigestNotificationType;
+import com.zuehlke.pgadmissions.mail.MailSender;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.PrismEmailMessage;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
 

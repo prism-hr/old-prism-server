@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.mail.refactor.DigestNotificationType;
+import com.zuehlke.pgadmissions.mail.DigestNotificationType;
 
 public class UserDAOTest extends AutomaticRollbackTestCase {
     private UserDAO userDAO;

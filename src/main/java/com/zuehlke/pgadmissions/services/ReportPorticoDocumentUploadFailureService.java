@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
 @Transactional

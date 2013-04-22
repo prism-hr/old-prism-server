@@ -59,10 +59,10 @@
 	</bean>
 
 	<bean id="mailSender" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
-        <constructor-arg value="com.zuehlke.pgadmissions.mail.refactor.MailSender" />
+        <constructor-arg value="com.zuehlke.pgadmissions.mail.MailSender" />
     </bean>
     
-	<bean id="mailSendingService" class="com.zuehlke.pgadmissions.mail.refactor.MailSendingService">
+	<bean id="mailSendingService" class="com.zuehlke.pgadmissions.mail.MailSendingService">
        <constructor-arg index = "0" ref="mailSender" />
     </bean>
 

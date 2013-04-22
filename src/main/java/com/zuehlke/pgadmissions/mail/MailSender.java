@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.mail.refactor;
+package com.zuehlke.pgadmissions.mail;
 
 import java.io.PrintStream;
 import java.io.StringReader;
@@ -26,7 +26,6 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
-import com.zuehlke.pgadmissions.mail.HtmlToPlainText;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
 

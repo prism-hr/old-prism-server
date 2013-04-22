@@ -286,7 +286,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleApprovalReminder() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL)) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
-            setDigestNotificationType(form.getApprover(), DigestNotificationType.TASK_REMINDER);
+            CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
         }
     }
 

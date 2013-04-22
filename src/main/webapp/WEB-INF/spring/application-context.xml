@@ -57,6 +57,7 @@
     <import resource="schedules/Spring-Scheduler.xml" />
     <import resource="ucl-context.xml" />
     <import resource="jms-context.xml" />
+    <import resource="scheduler-context.xml" />
     <!-- <import resource="profiling-context.xml"/> -->
 
 </beans>

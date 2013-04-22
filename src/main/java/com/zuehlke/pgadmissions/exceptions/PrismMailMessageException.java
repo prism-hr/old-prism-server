@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.exceptions;
 
-import com.zuehlke.pgadmissions.mail.refactor.PrismEmailMessage;
+import com.zuehlke.pgadmissions.mail.PrismEmailMessage;
 
 public class PrismMailMessageException extends RuntimeException {
 

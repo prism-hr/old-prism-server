@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.mail.refactor.MailSendingService;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 public class InterviewServiceTest {
 

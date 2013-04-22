@@ -140,13 +140,6 @@ public class ApplicationsService {
         return applicationFormListDAO.getVisibleApplications(user, filters, sortCategory, sortOrder, pageCount, APPLICATION_BLOCK_SIZE);
     }
 
-    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sort, SortOrder order) {
-        // default values
-        SortCategory sortCategory = sort == null ? SortCategory.APPLICATION_DATE : sort;
-        SortOrder sortOrder = order == null ? SortOrder.ASCENDING : order;
-        return applicationFormListDAO.getVisibleApplications(user, filters, sortCategory, sortOrder, null, null);
-    }
-
     public ApplicationActionsDefinition getActionsDefinition(RegisteredUser user, ApplicationForm application) {
         ApplicationActionsDefinition actions = new ApplicationActionsDefinition();
         if (user.canSee(application)) {

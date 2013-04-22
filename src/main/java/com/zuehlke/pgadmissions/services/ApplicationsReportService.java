@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,9 +63,10 @@ public class ApplicationsReportService {
     }
 
     public DataTable getApplicationsReport(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sort, SortOrder order) {
-        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filters, sort, order);
-
+        Integer pageCount = 0;
+        
         DataTable data = new DataTable();
+        
         ArrayList<ColumnDescription> cd = Lists.newArrayList();
         cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
         cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
@@ -100,62 +102,68 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
         cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
         data.addColumns(cd);
+        
+        List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
+        do {
+            applications = applicationsService.getAllVisibleAndMatchedApplications(user, filters, sort, order, pageCount);
+            pageCount++;
 
-        // Fill the data table.
-        for (ApplicationForm app : applications) {
-            RegisteredUser applicant = app.getApplicant();
-            String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
-            Program program = app.getProgram();
-            ProgrammeDetails programmeDetails = app.getProgrammeDetails();
-            ValidationComment validationComment = getLatestvalidationComment(app);
-            int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
-            int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);
-            int[] interviewEndorsements = getNumberOfPositiveAndNegativeInterviewEndorsements(app);
-
-            Date approveDate = getApproveDate(app);
-
-            TableRow row = new TableRow();
-
-            row.addCell(app.getApplicationNumber());
-            row.addCell(firstNames);
-            row.addCell(applicant.getLastName());
-            row.addCell(applicant.getEmail());
-            row.addCell(program.getCode());
-            row.addCell(program.getTitle());
-            row.addCell(getProjectTitle(app));
-            row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : "");
-            row.addCell(getSuggestedSupervisors(programmeDetails));
-            row.addCell(getAcademicYear(app));
-            row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
-            row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
-            row.addCell(app.getStatus().displayValue());
-            row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
-            row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : "");
-            row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : "");
-            row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : "");
-            row.addCell(new NumberValue(receivedAndDeclinedReferences[0]));
-            row.addCell(new NumberValue(reviewEndorsements[0]));
-            row.addCell(new NumberValue(reviewEndorsements[1]));
-            row.addCell(new NumberValue(receivedAndDeclinedReferences[1]));
-            row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
-            row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
-            row.addCell(new NumberValue(interviewEndorsements[0]));
-            row.addCell(new NumberValue(interviewEndorsements[1]));
-            row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
-            row.addCell(new NumberValue(app.getApprovalRounds().size()));
-            row.addCell(getPrintablePrimarySupervisor(app));
-            row.addCell(getPrintableSecondarySupervisor(app));
-            row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
-            row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
-            row.addCell(approveDate != null ? getConditionalType(app) : "");
-            row.addCell(approveDate != null ? getOfferConditions(app) : "");
-
-            try {
-                data.addRow(row);
-            } catch (TypeMismatchException e) {
-                throw new RuntimeException(e);
+            // Fill the data table.
+            for (ApplicationForm app : applications) {
+                RegisteredUser applicant = app.getApplicant();
+                String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
+                Program program = app.getProgram();
+                ProgrammeDetails programmeDetails = app.getProgrammeDetails();
+                ValidationComment validationComment = getLatestvalidationComment(app);
+                int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
+                int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);
+                int[] interviewEndorsements = getNumberOfPositiveAndNegativeInterviewEndorsements(app);
+    
+                Date approveDate = getApproveDate(app);
+    
+                TableRow row = new TableRow();
+    
+                row.addCell(app.getApplicationNumber());
+                row.addCell(firstNames);
+                row.addCell(applicant.getLastName());
+                row.addCell(applicant.getEmail());
+                row.addCell(program.getCode());
+                row.addCell(program.getTitle());
+                row.addCell(getProjectTitle(app));
+                row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : "");
+                row.addCell(getSuggestedSupervisors(programmeDetails));
+                row.addCell(getAcademicYear(app));
+                row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
+                row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
+                row.addCell(app.getStatus().displayValue());
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
+                row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : "");
+                row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : "");
+                row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : "");
+                row.addCell(new NumberValue(receivedAndDeclinedReferences[0]));
+                row.addCell(new NumberValue(reviewEndorsements[0]));
+                row.addCell(new NumberValue(reviewEndorsements[1]));
+                row.addCell(new NumberValue(receivedAndDeclinedReferences[1]));
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
+                row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
+                row.addCell(new NumberValue(interviewEndorsements[0]));
+                row.addCell(new NumberValue(interviewEndorsements[1]));
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
+                row.addCell(new NumberValue(app.getApprovalRounds().size()));
+                row.addCell(getPrintablePrimarySupervisor(app));
+                row.addCell(getPrintableSecondarySupervisor(app));
+                row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
+                row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
+                row.addCell(approveDate != null ? getConditionalType(app) : "");
+                row.addCell(approveDate != null ? getOfferConditions(app) : "");
+    
+                try {
+                    data.addRow(row);
+                } catch (TypeMismatchException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
+        } while (!applications.isEmpty());
         return data;
     }
 
@@ -294,7 +302,7 @@ public class ApplicationsReportService {
                 return primarySupervisor.getUser().getDisplayName();
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private String getPrintableSecondarySupervisor(ApplicationForm app) {
@@ -305,7 +313,7 @@ public class ApplicationsReportService {
                 return secondarySupervisor.getUser().getDisplayName();
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private Date getApproveDate(ApplicationForm app) {
@@ -330,7 +338,7 @@ public class ApplicationsReportService {
                 return "Unconditional";
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private String getOfferConditions(ApplicationForm app) {
@@ -340,7 +348,7 @@ public class ApplicationsReportService {
                 return approvalRound.getRecommendedConditions();
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private String getProjectTitle(ApplicationForm app) {
@@ -350,7 +358,7 @@ public class ApplicationsReportService {
                 return approvalRound.getProjectTitle();
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private String getAcademicYear(ApplicationForm app) {
@@ -362,7 +370,7 @@ public class ApplicationsReportService {
                 }
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
 }

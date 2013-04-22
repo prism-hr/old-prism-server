@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.scoring.ScoresPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
@@ -57,7 +57,8 @@ public class ReviewCommentController {
 
     @Autowired
     public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor) {
+            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
+            ScoresPropertyEditor scoresPropertyEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -111,10 +112,12 @@ public class ReviewCommentController {
         reviewComment.setReviewer(user.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
 
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
-        CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-        List<Score> scores = createScores(customQuestion.getQuestion());
+        if (scoringDefinition != null) {
+            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+            List<Score> scores = createScores(customQuestion.getQuestion());
+            reviewComment.getScores().addAll(scores);
+        }
 
-        reviewComment.getScores().addAll(scores);
         return reviewComment;
     }
 
@@ -122,8 +125,11 @@ public class ReviewCommentController {
     public List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
-        CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-        return customQuestion.getQuestion();
+        if (scoringDefinition != null) {
+            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+            return customQuestion.getQuestion();
+        }
+        return null;
     }
 
     @InitBinder(value = "comment")

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.scoring;
+package com.zuehlke.pgadmissions.propertyeditors;
 
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.Type;

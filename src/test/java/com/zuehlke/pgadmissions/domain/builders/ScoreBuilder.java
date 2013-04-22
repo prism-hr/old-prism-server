@@ -20,6 +20,8 @@ public class ScoreBuilder {
     private Date secondDateResponse;
 
     private Integer ratingResponse;
+    
+    private Boolean required;
 
     public ScoreBuilder id(Integer id) {
         this.id = id;
@@ -41,16 +43,24 @@ public class ScoreBuilder {
         this.textResponse = textResponse;
         return this;
     }
+    
     public ScoreBuilder dateResponse(Date dateResponse) {
         this.dateResponse = dateResponse;
         return this;
     }
+    
     public ScoreBuilder secondDateResponse(Date secondDateResponse) {
         this.secondDateResponse = secondDateResponse;
         return this;
     }
+    
     public ScoreBuilder ratingResponse(Integer ratingResponse) {
         this.ratingResponse = ratingResponse;
+        return this;
+    }
+
+    public ScoreBuilder required(Boolean required) {
+        this.required = required;
         return this;
     }
 
@@ -63,6 +73,7 @@ public class ScoreBuilder {
         score.setDateResponse(dateResponse);
         score.setSecondDateResponse(secondDateResponse);
         score.setRatingResponse(ratingResponse);
+        score.setRequired(required);
         return score;
     }
 }

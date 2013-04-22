@@ -4,10 +4,12 @@ function getScores(container) {
 	container.find("div.score-row").each(function(){
 		var questionType = $(this).find("input.question-type").val();
 		var question = $(this).find("input.question").val();
+		var required = $(this).find("input.question-required").val();
 		
 		var score = { 
 				questionType : questionType,
-				question : question
+				question : question,
+				required : required
 		};
 
 		if(questionType == "TEXT"){

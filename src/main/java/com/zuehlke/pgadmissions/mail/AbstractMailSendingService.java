@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.mail.refactor;
+package com.zuehlke.pgadmissions.mail;
 
 import java.util.Collection;
 import java.util.Collections;

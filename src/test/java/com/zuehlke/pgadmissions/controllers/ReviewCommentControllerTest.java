@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.scoring.ScoresPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;

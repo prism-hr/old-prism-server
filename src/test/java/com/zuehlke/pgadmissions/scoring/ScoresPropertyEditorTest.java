@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.scoring;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
+
 public class ScoresPropertyEditorTest {
 
     private ScoresPropertyEditor editor;

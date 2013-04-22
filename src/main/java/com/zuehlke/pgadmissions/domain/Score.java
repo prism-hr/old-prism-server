@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
@@ -23,7 +24,7 @@ public class Score implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @Basic
     @Column(name = "question_type")
     @Enumerated(EnumType.STRING)
@@ -50,6 +51,9 @@ public class Score implements Serializable {
     @Basic
     @Column(name = "rating_response")
     private Integer ratingResponse;
+
+    @Transient
+    private Boolean required;
 
     public Integer getId() {
         return id;
@@ -107,6 +111,12 @@ public class Score implements Serializable {
         this.ratingResponse = ratingResponse;
     }
 
-    
-    
+    public Boolean getRequired() {
+        return required;
+    }
+
+    public void setRequired(Boolean required) {
+        this.required = required;
+    }
+
 }

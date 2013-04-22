@@ -1,8 +1,7 @@
 var loading = false;
 
 $(document).ready(function() {
-	var searchPredicatesMap = JSON.parse($(
-			"#searchPredicatesMap").val());
+	var searchPredicatesMap = JSON.parse($("#searchPredicatesMap").val());
 
 	// Modal window functionality.
 	setupModalBox();
@@ -14,14 +13,13 @@ $(document).ready(function() {
 	$.fn.jExpand = function(){
         var element = this;
 
-		//$(element.selector + " tr:nth-child(3n + 2)").addClass('item');
-        //$(element.selector + " tr:nth-child(3n + 3)").find('div').addClass('details');
-        //$(element.selector + " tr:nth-child(3n + 4)").addClass('placeholder');
-        // $(element).find("tr:first-child").show();
-
 		$(element).find('.application-details:odd').addClass('odd');
         $(element).find('.applicationRow').click(function() {
 			var applicationDetails = $(this).next();
+			
+			if (applicationDetails.attr('data-application-status') == 'UNSUBMITTED' || applicationDetails.attr('data-application-status') == 'WITHDRAWN') {
+				return;
+			} 
 			
 			// Load data if not already.
 			if (applicationDetails.attr('data-loaded') != 'true') {
@@ -30,22 +28,11 @@ $(document).ready(function() {
 				$.ajax({
 					type : 'GET',
 					statusCode : {
-						401 : function() {
-							window.location
-									.reload();
-						},
-						500 : function() {
-							window.location.href = "/pgadmissions/error";
-						},
-						404 : function() {
-							window.location.href = "/pgadmissions/404";
-						},
-						400 : function() {
-							window.location.href = "/pgadmissions/400";
-						},
-						403 : function() {
-							window.location.href = "/pgadmissions/404";
-						}
+						401 : function() { window.location.reload(); },
+						500 : function() { window.location.href = "/pgadmissions/error"; },
+						404 : function() { window.location.href = "/pgadmissions/404"; },
+						400 : function() { window.location.href = "/pgadmissions/400"; },
+						403 : function() { window.location.href = "/pgadmissions/404"; }
 					},
 					url : "/pgadmissions/getApplicationDetails",
 					data : {
@@ -55,7 +42,10 @@ $(document).ready(function() {
 						
 						var applicant = JSON.parse(data.applicant);
 						
-						applicationDetails.find('[data-field=message]').text('***************************');
+						if (data.requiresAttention == 'true') {
+							applicationDetails.find('[data-field=message]').text('This application requires your attention');							
+						} 
+						
 						applicationDetails.find('[data-field=applicant-name]').text(applicant.name);
 						applicationDetails.find('[data-field=submitted-date]').text(data.applicationUpdateDate);
 						applicationDetails.find('[data-field=last-edited-date]').text(data.applicationSubmissionDate);
@@ -70,18 +60,23 @@ $(document).ready(function() {
 						
 						applicationDetails.find('[data-field=references-responded]').text(data.numberOfReferences);
 						
-						applicationDetails.find('[data-field=personal-statement-link]').text(data.personalStatement);
+						applicationDetails.find('[data-field=personal-statement-link]').text("Personal Statement");
+						applicationDetails.find('[data-field=personal-statement-link]').attr('href', '/pgadmissions/download?documentId=' + data.personalStatementId);
 						
-						applicationDetails.find('[data-field=active-applications-link]').text(data.numberOfActiveApplications + ' active applications >>');
-						applicationDetails.find('[data-field=active-applications-link]').attr('href','#');
+						if (data.cvProvided == 'true') {
+							applicationDetails.find('[data-field=cv-statement-link]').text("CV / resume");
+							applicationDetails.find('[data-field=cv-statement-link]').attr('href', '/pgadmissions/download?documentId=' + data.cvId);
+						}
 						
-						// $(this).find('[data-field=gravatar]').attr('src', '');
+						//applicationDetails.find('[data-field=active-applications-link]').text(data.numberOfActiveApplications + ' active applications >>');
+						//applicationDetails.find('[data-field=active-applications-link]').attr('href', '/pgadmissions/download?documentId=' + data.personalStatement);
+						
 						applicationDetails.find('[data-field=email]').text(applicant.email);
 						applicationDetails.find('[data-field=email]').attr('href', 'mailto:' + applicant.email);
 						applicationDetails.find('[data-field=phone-number]').text(applicant.phoneNumber);
 						
 						applicationDetails.find('[data-field=application-status]').text(data.applicationStatus);
-						applicationDetails.find('[data-field=application-status-symbol]').addClass(data.applicationStatus.toLowerCase());
+						//applicationDetails.find('[data-field=application-status-symbol]').addClass(data.applicationStatus.toLowerCase());
 					},
 					complete : function() {
 					}

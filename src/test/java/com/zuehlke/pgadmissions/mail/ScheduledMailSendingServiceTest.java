@@ -65,9 +65,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.mail.DigestNotificationType;
-import com.zuehlke.pgadmissions.mail.PrismEmailMessage;
-import com.zuehlke.pgadmissions.mail.ScheduledMailSendingService;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
@@ -247,7 +244,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	public void shouldScheduleApprovalReminder() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(564).build();
 		ApplicationForm form = getSampleApplicationForm();
-		form.setApprover(approver);
+		form.getProgram().setApprovers(asList(approver));
 		EasyMock.expect(
 				applicationFormDAOMock.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL))
 				.andReturn(asList(form));

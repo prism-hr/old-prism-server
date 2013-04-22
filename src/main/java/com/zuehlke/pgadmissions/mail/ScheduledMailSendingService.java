@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.mail.refactor;
+package com.zuehlke.pgadmissions.mail;
 
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_REMINDER;

@@ -52,10 +52,6 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
-import com.zuehlke.pgadmissions.mail.DigestNotificationType;
-import com.zuehlke.pgadmissions.mail.MailSender;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.mail.PrismEmailMessage;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -133,6 +129,19 @@ public class MailSendingServiceTest {
 		assertEquals("UCL Prism to Portico Export Error", message.getSubjectCode());
 		assertModelEquals(model2, message.getModel());
 	}
+	
+	@Test
+    public void shouldScheduleApprovalRequest() {
+        RegisteredUser approver1 = new RegisteredUserBuilder().build();
+        RegisteredUser approver2 = new RegisteredUserBuilder().build();
+        ApplicationForm form = getSampleApplicationForm();
+        form.getProgram().setApprovers(asList(approver1, approver2));
+        
+        service.scheduleApprovalRequest(form);
+        
+        assertEquals(approver1.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
+        assertEquals(approver2.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
+    }
 	
 	@Test
 	public void sendImportErrorMessageShouldSuccessfullySendMessage() throws Exception {

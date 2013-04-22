@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,7 +189,7 @@ public class ApplicationsService {
 
         if (user.isInRoleInProgram("APPROVER", application.getProgram()) && application.isInState("APPROVAL") && !application.isPendingApprovalRestart()) {
             Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-            if (primarySupervisor != null && BooleanUtils.isTrue(primarySupervisor.getConfirmedSupervision())) {
+            if (primarySupervisor != null) {
                 actions.addAction("validate", "Approve");
                 actions.setRequiresAttention(true);
             }
@@ -198,8 +197,7 @@ public class ApplicationsService {
 
         if (application.isInState("APPROVAL")) {
             Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-            if (primarySupervisor != null && user == primarySupervisor.getUser()
-                    && !primarySupervisor.hasResponded()) {
+            if (primarySupervisor != null && user == primarySupervisor.getUser() && !primarySupervisor.hasResponded()) {
                 actions.addAction("confirmSupervision", "Confirm supervision");
                 actions.setRequiresAttention(true);
             }

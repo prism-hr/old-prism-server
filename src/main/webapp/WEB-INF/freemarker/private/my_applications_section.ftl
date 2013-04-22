@@ -44,64 +44,43 @@
     		</#if>
     	</td>
     </tr>
-    <tr class="application-details">
+    <tr class="application-details" data-application-id="${application.applicationNumber}">
     	<td colspan="6">
     		<div class="application-lhs">
-    			<p class="message info">
-    				<i class="icon-info-sign"></i>
-    				This application requires your action.
-				</p>
-    			<p class="applicant-name">Mr Gibril {Firstname 2} {Firstname 3} Kallon</p>
+				<div class="alert alert-info"> <i class="icon-info-sign"></i>
+					<span data-field="message"></span>
+				</div>
+    			<p class="applicant-name" data-field="applicant-name"></p>
     			<p class="detail-status">
     				<span class="dates">
-    					<span>Submitted 10/02/2013</span>
-	    				<span>Last edited 26/03/2013</span>
+    					<span>Submitted <span data-field="submitted-date"></span></span>
+	    				<span>Last edited <span data-field="last-edited-date"></span></span>
     				</span>
     			</p>
     			<p class="detail-status">
     				<b>Most Recent Qualification:</b><br />
-					Bachelors degree with UK honours grading scheme
-					<i class="icon-circle icon-2x green"></i>
+					<span data-field="most-recent-qualification"></span>
     			</p>
     			<p class="detail-status">
     				<b>Most Recent Employment:</b><br />
-					None provided
-					<i class="icon-circle icon-2x yellow"></i>
+					<span data-field="most-recent-employment">None provided</span>
     			</p>
     			<p class="detail-status">
     				<b>Specific Funding Requirements:</b><br />
-					None Provided
-					<i class="icon-circle icon-2x red"></i>
+					<span data-field="funding-requirements">None provided</span>
     			</p>
     			<p class="detail-status">
-    				No. of References Responded: 3<br />
-					Personal Statement and CV provided
-					<i class="icon-circle icon-2x green"></i>
+    				No. of References Responded: <span data-field="references-responded"></span><br />
+					<a data-field="personal-statement-link" href="javascript:void(0);">Personal Statement and CV provided</a>
     			</p>
     		</div>
     		<div class="application-rhs">
-    			<a href="javascript:void(0);">6 Active Applications >></a>
-    			<img src="http://www.hdwallpaperspk.com/wp-content/uploads/2013/02/Tintin-cartoon-falls-foul-001-150x150.jpg" alt="Application photo" width="160" height="160" />
-    			<a href="mailto:useremail@domain.com">gibril.kallon@hotmail.co.uk</a>
-    			<span class="phone-number">07900 000 000</span>
-    			<span class="skype">kallong</span>
+    			<a data-field="active-applications-link" href="javascript:void(0);">... Active Applications >></a>
+    			<img data-field="gravatar" src="http://www.hdwallpaperspk.com/wp-content/uploads/2013/02/Tintin-cartoon-falls-foul-001-150x150.jpg" alt="Application photo" width="160" height="160" />
+    			<a data-field="email" href="javascript:void(0);"></a>
+    			<span data-field="phone-number" class="phone-number"></span>
+    			<span data-field="skype" class="skype"></span>
     		</div>
-    		<div class="application-actions">
-				<div class="status-wrapper">
-					<div class="bs-status">
-						<span class="label label-info">Status</span>
-				     
-						<div class="icon">
-			      			Validation
-			        		<span class="icon-status validation"></span>
-		      			</div>				    
-			   		</div>
-				</div>
-				<div class="review-buttons">
-					<button class="btn" id="declineReview" name="declineReview" type="button" value="Submit">Decline Review</button>
-					<button class="btn btn-primary" id="provideReview" name="provideReview" type="button" value="Submit">Provide Review</button>
-				</div>
-			</div>
     	</td>
 	</tr>
     <tr class="placeholder"><td colspan="6">***PLACEHOLDER***</td></tr>

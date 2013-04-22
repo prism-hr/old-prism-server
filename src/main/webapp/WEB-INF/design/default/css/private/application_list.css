@@ -103,20 +103,6 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 	margin-bottom:15px;
 }
 
-.application-details .message {
-	padding:4px;
-	line-height:18px;
-}
-.application-details .message.info {
-	background-color:#DCEDF5;
-	border:1px solid #157FC9;
-}
-
-.application-details .message .icon-info-sign {
-	color:#053C8E;
-	font-size:18px;
-}
-
 .application-details .applicant-name {
 	font-weight:bold;
 	padding:0 !important;
@@ -132,6 +118,7 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 
 .application-details .detail-status {
 	position:relative;
+	padding-right:20px;
 }
 
 .application-details .detail-status i {

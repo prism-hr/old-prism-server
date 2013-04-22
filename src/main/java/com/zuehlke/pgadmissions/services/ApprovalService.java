@@ -85,12 +85,13 @@ public class ApprovalService {
         this.mailSendingService = mailSendingService;
     }
 
-    public void confirmSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
+    public void confirmOrDeclineSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
         ApprovalRound approvalRound = form.getLatestApprovalRound();
         Supervisor supervisor = approvalRound.getPrimarySupervisor();
         Boolean confirmed = confirmSupervisionDTO.getConfirmedSupervision();
 
         supervisor.setConfirmedSupervision(confirmed);
+        mailSendingService.scheduleApprovalRequest(form);
 
         if (BooleanUtils.isTrue(confirmed)) {
             approvalRound.setProjectDescriptionAvailable(true);
@@ -154,6 +155,9 @@ public class ApprovalService {
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
 
+        NotificationRecord reminder = new NotificationRecord(NotificationType.APPROVAL_REMINDER);
+        form.addNotificationRecord(reminder);
+        
         approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
         
@@ -277,6 +281,7 @@ public class ApprovalService {
         form.setApprover(userService.getCurrentUser());
         form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         sendNotificationToApplicant(form);
+        form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER);
         applicationDAO.save(form);
         return true;
     }

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.joda.time.DateTime;
@@ -117,7 +116,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Scheduled(cron = "${email.digest.cron}")
     public void run() {
         log.info("Running ScheduledMailSendingService Task");
-        scheduleApprovalRequest();
         scheduleApprovalReminder();
         scheduleInterviewFeedbackEvaluationRequest();
         scheduleInterviewFeedbackEvaluationReminder();
@@ -203,51 +201,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		userService.resetDigestNotificationsForAllUsers();
 	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they are required to approve applications.<br/>
-     * Finds all applications in the system that require approval, and;<br/> 
-     * Schedules their Approvers to be notified.
-     * <p/><p>
-     * <b>Recipients</b><br/>
-     * Approver
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Approvers can approve applications, while:
-     *    <ol>
-     *    <li>They are in the approval state.</li>
-     *    </ol></li>
-     * <li>They are scheduled to be notified to do so, when:
-     *    <ol>
-     *    <li>The Primary Supervisor has confirmed supervision within the last 24 hours, or;</li>
-     *    <li>The system defined maximum duration for the Approval stage has elapsed within the last 24 hours.</li>
-     *    </ol></li>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 2 (Task Notification)
-     * </p>
-     */
-    public void scheduleApprovalRequest() {
-        final StageDuration approvalDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
-        CollectionUtils.forAllDo(supervisorDAO.getPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours(), new Closure() {
-            @Override
-            public void execute(final Object input) {
-                Supervisor supervisor = (Supervisor) input;
-                ApprovalRound approvalRound = supervisor.getApprovalRound();
-                DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
-                if (approvalRoundExpiryDate.isAfterNow()) {
-                    ApplicationForm form = approvalRound.getApplication();
-                    CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
-                }
-            }
-        });
-    }
 
     /**
      * <p>
@@ -284,9 +237,18 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * </p>
      */
     public void scheduleApprovalReminder() {
-        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL)) {
-            createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
-            CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+        final StageDuration approvalDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
+        for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalReminder()) {
+            
+            ApprovalRound approvalRound = form.getLatestApprovalRound();
+            if (approvalRound != null) {
+
+                DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
+                if (approvalRoundExpiryDate.isAfterNow()) {
+                    createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
+                    CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+                }
+            }
         }
     }
 
@@ -682,8 +644,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * </p>
      */
     public void scheduleApprovedConfirmation() {
-        for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalNotifications()) {
-            createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_NOTIFICATION);
+        for (ApplicationForm form : applicationDAO.getApplicationsDueApprovedNotifications()) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPROVED_NOTIFICATION);
             RegisteredUser primarySupervisor = getPrimarySupervisorsAsUserFromLatestApprovalRound(form);
             if (null!=primarySupervisor) {
             	setDigestNotificationType(primarySupervisor, DigestNotificationType.UPDATE_NOTIFICATION);

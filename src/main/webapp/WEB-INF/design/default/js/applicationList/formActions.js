@@ -22,6 +22,72 @@ $(document).ready(function() {
 		$(element).find('.application-details:odd').addClass('odd');
         $(element).find('.applicationRow').click(function() {
 			var applicationDetails = $(this).next();
+			
+			// Load data if not already.
+			if (applicationDetails.attr('data-loaded') != 'true') {
+				applicationDetails.attr('data-loaded', 'true');
+				
+				$.ajax({
+					type : 'GET',
+					statusCode : {
+						401 : function() {
+							window.location
+									.reload();
+						},
+						500 : function() {
+							window.location.href = "/pgadmissions/error";
+						},
+						404 : function() {
+							window.location.href = "/pgadmissions/404";
+						},
+						400 : function() {
+							window.location.href = "/pgadmissions/400";
+						},
+						403 : function() {
+							window.location.href = "/pgadmissions/404";
+						}
+					},
+					url : "/pgadmissions/getApplicationDetails",
+					data : {
+						applicationId : applicationDetails.attr('data-application-id')
+					},
+					success : function(data) {
+						
+						var applicant = JSON.parse(data.applicant);
+						
+						applicationDetails.find('[data-field=message]').text('***************************');
+						applicationDetails.find('[data-field=applicant-name]').text(applicant.name);
+						applicationDetails.find('[data-field=submitted-date]').text(data.applicationUpdateDate);
+						applicationDetails.find('[data-field=last-edited-date]').text(data.applicationSubmissionDate);
+						
+						applicationDetails.find('[data-field=most-recent-qualification]').text(applicant.mostRecentQualification);
+						
+						applicationDetails.find('[data-field=most-recent-employment]').text(applicant.mostRecentEmployment);
+						
+						var fundings = JSON.parse(applicant.fundingRequirements);
+						
+						applicationDetails.find('[data-field=funding-requirements]').text(fundings.join(', '));
+						
+						applicationDetails.find('[data-field=references-responded]').text(data.numberOfReferences);
+						
+						applicationDetails.find('[data-field=personal-statement-link]').text(data.personalStatement);
+						
+						applicationDetails.find('[data-field=active-applications-link]').text(data.numberOfActiveApplications + ' active applications >>');
+						applicationDetails.find('[data-field=active-applications-link]').attr('href','#');
+						
+						// $(this).find('[data-field=gravatar]').attr('src', '');
+						applicationDetails.find('[data-field=email]').text(applicant.email);
+						applicationDetails.find('[data-field=email]').attr('href', 'mailto:' + applicant.email);
+						applicationDetails.find('[data-field=phone-number]').text(applicant.phoneNumber);
+						
+						applicationDetails.find('[data-field=application-status]').text(data.applicationStatus);
+						applicationDetails.find('[data-field=application-status-symbol]').addClass(data.applicationStatus.toLowerCase());
+					},
+					complete : function() {
+					}
+				});
+			}
+			
 			$(element).find('.application-details').not(applicationDetails).hide();
 			applicationDetails.toggle();
         });

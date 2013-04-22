@@ -126,7 +126,7 @@ public class ConfirmSupervisionController {
             return CONFIRM_SUPERVISION_PAGE;
         }
         
-        approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
+        approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
         
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();

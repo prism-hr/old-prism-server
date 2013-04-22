@@ -20,6 +20,8 @@ $(document).ready(function(){
 			{
 				$('#reviewForm').append("<input type='hidden' name='decline' value='true'/>");
 			}
+			var scores = getScores($('#scoring-questions'));
+			$('#reviewForm').append("<input type='hidden' name='scores' value=\'" + scores + "\'/>");
 			$('#reviewForm').submit();
 		};
 		var onCancel = function(){};

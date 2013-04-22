@@ -5,8 +5,8 @@ CREATE TABLE SCORE (
   question_type VARCHAR(15) NOT NULL,
   question VARCHAR(200) NOT NULL,
   text_response VARCHAR(200),
-  date_response TIMESTAMP,
-  second_date_response TIMESTAMP,
+  date_response DATE DEFAULT NULL,
+  second_date_response DATE DEFAULT NULL,
   rating_response INTEGER UNSIGNED,
 
   CONSTRAINT comment_fk FOREIGN KEY (comment_id) REFERENCES COMMENT(id),

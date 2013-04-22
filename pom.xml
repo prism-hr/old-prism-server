@@ -47,7 +47,7 @@
             <artifactId>hibernate-search-analyzers</artifactId>
             <version>4.2.0.Final</version>
         </dependency>
-        
+
         <!-- Spring -->
         <dependency>
             <groupId>cglib</groupId>
@@ -413,6 +413,19 @@
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
                             <schemaDirectory>${project.basedir}/src/main/xsd/export</schemaDirectory>
                             <staleFile>${project.build.directory}/jaxb2/.schema2XjcStaleFlag</staleFile>
+                            <clearOutputDir>false</clearOutputDir>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-3</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>com.zuehlke.pgadmissions.scoring.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
+                            <staleFile>${project.build.directory}/jaxb2/.schema3XjcStaleFlag</staleFile>
                             <clearOutputDir>false</clearOutputDir>
                         </configuration>
                     </execution>

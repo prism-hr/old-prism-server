@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Service
 @Transactional
@@ -39,4 +41,13 @@ public class ProgramsService {
     public Program getProgramByCode(String code) {
         return programDAO.getProgramByCode(code);
     }
+    
+    public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent){
+    	Program program = programDAO.getProgramByCode(programCode);
+    	ScoringDefinition scoringDefinition = new ScoringDefinition();
+    	scoringDefinition.setContent(scoringContent);
+    	scoringDefinition.setStage(scoringStage);
+    	program.getScoringDefinitions().put(scoringStage, scoringDefinition);
+    }
+    
 }

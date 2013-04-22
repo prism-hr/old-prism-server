@@ -279,7 +279,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         Integer commentId = comment.getId();
 
         ReferenceComment returnedComment = (ReferenceComment) commentDAO.get(commentId);
-        assertNull(returnedComment);
+        assertNotNull(returnedComment);
         assertEquals(2, returnedComment.getScores().size());
     }
 

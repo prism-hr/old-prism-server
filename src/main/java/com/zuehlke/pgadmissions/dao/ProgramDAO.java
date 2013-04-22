@@ -14,35 +14,34 @@ import com.zuehlke.pgadmissions.domain.Program;
 @Repository
 public class ProgramDAO {
 
-	
-	private final SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
-	ProgramDAO() {
-		this(null);
-	}
+    ProgramDAO() {
+        this(null);
+    }
 
-	@Autowired
-	public ProgramDAO(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
+    @Autowired
+    public ProgramDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
 
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Program> getAllPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).addOrder(Order.asc("title")).list();
-	}
+    @SuppressWarnings("unchecked")
+    public List<Program> getAllPrograms() {
+        return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .addOrder(Order.asc("title")).list();
+    }
 
-	public Program getProgramById(Integer programId) {
-		return (Program) sessionFactory.getCurrentSession().get(Program.class, programId);
-	}
+    public Program getProgramById(Integer programId) {
+        return (Program) sessionFactory.getCurrentSession().get(Program.class, programId);
+    }
 
-	public void save(Program program) {
-		sessionFactory.getCurrentSession().saveOrUpdate(program);
-	}
+    public void save(Program program) {
+        sessionFactory.getCurrentSession().saveOrUpdate(program);
+    }
 
-	public Program getProgramByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .add(Restrictions.eq("code", code)).uniqueResult();
-	}
+    public Program getProgramByCode(String code) {
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
+    }
+
 }

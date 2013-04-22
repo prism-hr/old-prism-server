@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -68,8 +69,7 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList();
 
         List<ApplicationsFilter> filters = Lists.newLinkedList();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING))
-                .andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 0)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
@@ -91,8 +91,8 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         List<ApplicationsFilter> filters = Lists.newLinkedList();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING))
-                .andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 0)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1)).andReturn(new ArrayList<ApplicationForm>());
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
@@ -180,8 +180,8 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         List<ApplicationsFilter> filters = Lists.newLinkedList();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING))
-                .andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 0)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1)).andReturn(new ArrayList<ApplicationForm>());
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);

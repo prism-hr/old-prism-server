@@ -54,7 +54,6 @@
     <import resource="mvc-context.xml" />
     <import resource="security-context.xml" />
     <import resource="data-context.xml" />
-    <import resource="schedules/Spring-Scheduler.xml" />
     <import resource="ucl-context.xml" />
     <import resource="jms-context.xml" />
     <import resource="scheduler-context.xml" />

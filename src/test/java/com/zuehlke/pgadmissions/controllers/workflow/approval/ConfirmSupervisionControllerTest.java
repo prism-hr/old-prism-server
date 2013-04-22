@@ -56,7 +56,7 @@ public class ConfirmSupervisionControllerTest {
         confirmSupervisionDTO.setConfirmedSupervision(true);
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
 
-        approvalServiceMock.confirmSupervision(applicationForm, confirmSupervisionDTO);
+        approvalServiceMock.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
         EasyMock.expectLastCall().once();
 
         EasyMock.replay(approvalServiceMock);

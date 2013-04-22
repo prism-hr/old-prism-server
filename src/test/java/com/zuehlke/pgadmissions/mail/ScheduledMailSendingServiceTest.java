@@ -207,56 +207,31 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		assertModelEquals(model3, messages.get(2).getModel());
 	}
 	
-	@Test
-	public void shouldScheduleApprovalRequest() {
-		DateTime date =new DateTime(2100, 1, 2, 3, 4);
-		StageDuration stageDuration = new StageDurationBuilder().unit(DurationUnitEnum.HOURS).duration(1000).build();
-		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().build();
-		RegisteredUser supervisorUser2 = new RegisteredUserBuilder().build();
-		ApplicationForm form = getSampleApplicationForm();
-		ApprovalRound round1 = new ApprovalRoundBuilder().application(form).createdDate(date.toDate()).build();
-		ApprovalRound round2 = new ApprovalRoundBuilder().application(form).createdDate(date.toDate()).build();
-		Supervisor supervisor1 = new SupervisorBuilder().id(1).isPrimary(true).approvalRound(round1).user(supervisorUser1).build();
-		Supervisor supervisor2 = new SupervisorBuilder().isPrimary(true).approvalRound(round2).user(supervisorUser2).id(1).build();
-		
-		
-		expect(
-				stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)
-				).andReturn(stageDuration);
-		
-		expect(
-				supervisorDAOMock.getPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours()
-				).andReturn(asList(supervisor1, supervisor2));
-		
-		
+    @Test
+    public void shouldScheduleApprovalReminder() {
 
-		applicationFormDAOMock.save(form);
-		replay(stageDurationDAOMock, supervisorDAOMock);
-		service.scheduleApprovalRequest();
-		verify(stageDurationDAOMock, supervisorDAOMock);
-		
-		List<RegisteredUser> admins = form.getProgram().getAdministrators();
-		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-		assertEquals(admins.get(1).getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-	}
-	
-	@Test
-	public void shouldScheduleApprovalReminder() {
-		RegisteredUser approver = new RegisteredUserBuilder().id(564).build();
-		ApplicationForm form = getSampleApplicationForm();
-		form.getProgram().setApprovers(asList(approver));
-		EasyMock.expect(
-				applicationFormDAOMock.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL))
-				.andReturn(asList(form));
-		
-		applicationFormDAOMock.save(form);
-		replay(applicationFormDAOMock);
-		service.scheduleApprovalReminder();
-		verify(applicationFormDAOMock);
-		
-		assertEquals(approver.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
-	}
-	
+        DateTime date = new DateTime(2100, 1, 2, 3, 4);
+        StageDuration stageDuration = new StageDurationBuilder().unit(DurationUnitEnum.HOURS).duration(1000).build();
+        RegisteredUser approver1 = new RegisteredUserBuilder().build();
+        RegisteredUser approver2 = new RegisteredUserBuilder().build();
+        ApplicationForm form = getSampleApplicationForm();
+        ApprovalRound round1 = new ApprovalRoundBuilder().application(form).createdDate(date.toDate()).build();
+        form.getProgram().setApprovers(asList(approver1, approver2));
+        form.setLatestApprovalRound(round1);
+
+        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(stageDuration);
+
+        EasyMock.expect(applicationFormDAOMock.getApplicationsDueApprovalReminder()).andReturn(asList(form));
+
+        applicationFormDAOMock.save(form);
+        replay(stageDurationDAOMock, applicationFormDAOMock);
+        service.scheduleApprovalReminder();
+        verify(stageDurationDAOMock, applicationFormDAOMock);
+
+        assertEquals(approver1.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
+        assertEquals(approver2.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
+    }
+
 	@Test
 	public void shouldScheduleInterviewFeedbackEvaluationRequest() {
 		RegisteredUser delegate = new RegisteredUserBuilder().id(564).build();
@@ -479,12 +454,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		ApplicationForm form = getSampleApplicationForm();
 		form.setLatestApprovalRound(round);
 		NotificationRecord record = new NotificationRecordBuilder().id(1)
-				.notificationType(NotificationType.APPROVAL_NOTIFICATION)
+				.notificationType(NotificationType.APPROVED_NOTIFICATION)
 				.build();
 		form.setNotificationRecords(asList(record));
 		EasyMock.expect(
 				applicationFormDAOMock.
-				getApplicationsDueApprovalNotifications())
+				getApplicationsDueApprovedNotifications())
 				.andReturn(asList(form));
 		
 		applicationFormDAOMock.save(form);

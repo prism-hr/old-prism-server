@@ -27,6 +27,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -560,6 +562,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean removeNotificationRecord(NotificationRecord record) {
         return notificationRecords.remove(record);
+    }
+    
+    public void removeNotificationRecord(final NotificationType recordType) {
+        CollectionUtils.filter(notificationRecords, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                NotificationRecord existingRecord  = (NotificationRecord) object;
+                if (existingRecord.getNotificationType() == recordType) {
+                    return false;
+                }
+                return true;
+            }
+        });
     }
 
     public boolean hasAcceptedTheTerms() {

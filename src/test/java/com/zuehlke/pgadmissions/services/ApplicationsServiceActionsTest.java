@@ -179,11 +179,10 @@ public class ApplicationsServiceActionsTest {
     }
 
     @Test
-    public void shouldBeNotAbleToApproveIfSupervisorHasNotConfirmedSupervision() {
-        configureUserAndApplicationExpectations(false, false, false, false, false, false, true, false, false, false, false, false, false, true, true, false,
-                false, false, false, "APPROVAL");
+    public void shouldBeAbleToApproveIfSupervisorHasNotConfirmedSupervision() {
+        configureUserAndApplicationExpectations(false, false, false, false, false, false, true, false, false, false, false, false, false, true, true, false, false, false, false, "APPROVAL");
         ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] {}, new String[] {});
+        assertActionsDefinition(actionsDefinition, true, new String[] {"validate"}, new String[] {"Approve"});
     }
 
     @Test

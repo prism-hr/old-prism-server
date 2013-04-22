@@ -367,9 +367,10 @@ public class ApprovalServiceTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
         mailSendingServiceMock.scheduleSupervisionConfirmedNotification(applicationForm);
+        mailSendingServiceMock.scheduleApprovalRequest(applicationForm);
         
         EasyMock.replay(commentDAOMock, userServiceMock, mailSendingServiceMock);
-        approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
+        approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
         EasyMock.verify(commentDAOMock, userServiceMock, mailSendingServiceMock);
 
         assertTrue(primarySupervisor.getConfirmedSupervision());
@@ -416,7 +417,7 @@ public class ApprovalServiceTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
         EasyMock.replay(commentDAOMock, userServiceMock);
-        approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
+        approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
         EasyMock.verify(commentDAOMock, userServiceMock);
 
         assertFalse(primarySupervisor.getConfirmedSupervision());

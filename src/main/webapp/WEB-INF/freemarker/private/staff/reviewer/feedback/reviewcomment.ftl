@@ -23,6 +23,7 @@
   
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/reviewer/comment/reviewComment.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
@@ -75,8 +76,7 @@
                     <label for="review-comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
                     <div class="field">
-                      <textarea name="comment" id="review-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}
-</textarea>
+                      <textarea name="comment" id="review-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}</textarea>
                       <@spring.bind "comment.comment" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -136,6 +136,15 @@
                       </#list> </div>
                   </div>
                 </div>
+                
+                <div id="scoring-questions" class="row-group">
+                  <h3>Scoring questions</h3>
+                  
+                  <#assign scores = comment.scores>
+                  <#include "/private/staff/scores.ftl"/>
+                  
+                </div>
+                
                 <div class="buttons">
                   <button class="btn btn-primary" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>
                 </div>

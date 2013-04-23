@@ -38,6 +38,7 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />" />
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />" />
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/underscore-min.js' />"></script>
 
 </head>
 
@@ -116,6 +117,14 @@
                       </div>
                     </div>
                     <div class="row-group">
+                      <div class="row">
+                        <label class="plain-label" for="templateSubjectId">Edit subject</label> <span data-desc="HTML template" class="hint"></span>
+                        <div class="field">
+                          <input type="text" disabled name="templateSubject" id="templateSubjectId" class="input-xxlarge" rows="5" cols="150">
+    	                    <#if template??>${template.subject}</#if>
+    	                    </textarea>
+                        </div>
+                      </div>
                       <div class="row">
                         <label class="plain-label" for="templateContentId">Edit template</label> <span data-desc="HTML template" class="hint"></span>
                         <div class="field">

@@ -124,6 +124,7 @@ public class ConfigurationController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("content", template.getContent());
 		result.put("version", template.getVersion());
+		result.put("subject", template.getSubject());
 		return result;
 	}
 	
@@ -167,6 +168,7 @@ public class ConfigurationController {
 		Map<Object, Object> result = new HashMap<Object, Object>();
 		result.put("content", template.getContent());
 		result.put("versions", versions);
+		result.put("subject", template.getSubject());
 		result.put("activeVersion", template.getId());
 		result.putAll(versions);
 		return result;
@@ -175,26 +177,30 @@ public class ConfigurationController {
 	@RequestMapping(method = RequestMethod.POST, value = {"saveEmailTemplate/{templateName:[a-zA-Z_]+}"})
 	@ResponseBody
 	public Map<String, Object> saveTemplate(@PathVariable EmailTemplateName templateName,
-			@RequestParam String content) {
-		return saveNewTemplate(templateName, content);
+			@RequestParam String content, @RequestParam String subject) {
+		return saveNewTemplate(templateName, content, subject);
 	}
 
-	private Map<String, Object> saveNewTemplate(EmailTemplateName templateName, String content) {
-		EmailTemplate template = templateService.saveNewEmailTemplate(templateName, content);
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("id", template.getId());
-		result.put("version", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(template.getVersion()));
-		return result;
-	}
+    private Map<String, Object> saveNewTemplate(EmailTemplateName templateName, String content, String subject) {
+        EmailTemplate template = templateService.saveNewEmailTemplate(templateName, content, subject);
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("id", template.getId());
+        result.put("version", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(template.getVersion()));
+        return result;
+    }
 	
 	@RequestMapping(method = RequestMethod.POST, value = {"activateEmailTemplate/{templateName:[a-zA-Z_]+}/{id:\\d+}"})
 	@ResponseBody
 	public Map<String, Object> activateTemplate(@PathVariable String templateName, @PathVariable Long id,
-			@RequestParam Boolean saveCopy, @RequestParam(required = false) String newContent) {
+			@RequestParam Boolean saveCopy, @RequestParam(required = false) String newContent,
+			@RequestParam(required = false) String newSubject) {
 		Map<String, Object> result=new HashMap<String, Object>();
 		if (saveCopy != null && saveCopy) {
-			result = saveNewTemplate(valueOf(templateName), newContent);
+			result = saveNewTemplate(valueOf(templateName), newContent, newSubject);
 			id = (Long) result.get("id");
+		}
+		if (result.containsKey("error")) {
+		    return result;
 		}
 		Long previousId = templateService.getActiveEmailTemplate(valueOf(templateName)).getId();
 		try {
@@ -215,6 +221,7 @@ public class ConfigurationController {
 		EmailTemplate activeTemplate = templateService.getActiveEmailTemplate(templateName);
 		result.put("activeTemplateId", activeTemplate.getId());
 		result.put("activeTemplateContent", activeTemplate.getContent());
+		result.put("activeTemplateSubject", activeTemplate.getSubject());
 		try {
 			templateService.deleteTemplateVersion(toDeleteTemplate);
 		}

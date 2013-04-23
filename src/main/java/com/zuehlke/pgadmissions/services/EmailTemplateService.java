@@ -121,15 +121,28 @@ public class EmailTemplateService {
 		emailTemplateDAO.remove(template);
 	}
 
-	public EmailTemplate saveNewEmailTemplate(EmailTemplateName templateName, String content) {
+	public EmailTemplate saveNewEmailTemplate(EmailTemplateName templateName, String content, String subject) {
 		EmailTemplate template = new EmailTemplate();
 		template.setContent(content);
 		template.setName(templateName);
+		template.setSubject(subject);
 		saveNewEmailTemplate(template);
 		return template;
 	}
 
-	//Not used now, may be in the future
+	protected boolean newSubjectCompliesToDefaultSubject(String defaultSubject, String newSubject) {
+	    Pattern pattern = Pattern.compile("\\%(\\d+)\\$\\s");
+	    Matcher newMatcher = pattern.matcher(newSubject);
+	    Matcher defaultMatcher = pattern.matcher(newSubject);
+	    if (newMatcher.groupCount()!=defaultMatcher.groupCount()){
+	        return false;
+	    }
+	        
+        return true;
+    }
+
+    //Not used now, may be in the future
+	@Deprecated
 	public String processTemplateContent(String templateContent) {
 		Pattern pattern = Pattern.compile("\\$\\{(.*?)\\}");  
 	    Matcher matcher = pattern.matcher(templateContent);
@@ -147,4 +160,8 @@ public class EmailTemplateService {
 	    }
 	    return result;
 	}
+
+    public String getSubjectForTemplate(EmailTemplateName templateName) {
+        return getActiveEmailTemplate(templateName).getSubject();
+    }
 }

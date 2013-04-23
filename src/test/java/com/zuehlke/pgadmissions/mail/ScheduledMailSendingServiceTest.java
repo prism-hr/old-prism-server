@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
@@ -163,9 +168,16 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		model4.putAll(model1);
 		model4.put("user", user4);
 		
-		String subjectToReturn1 = "Prism Digest Notification";
+		String subjectToReturn1 = "Prism Digest Task Notification";
 		String subjectToReturn2 = "Prism Digest Task Reminder";
-		String subjectToReturn3 = "Prism Digest Update Reminder";
+		String subjectToReturn3 = "Prism Digest Update Notification";
+		
+		expect(mockMailSender.resolveSubject(DIGEST_TASK_NOTIFICATION, (Object[])null))
+		.andReturn(subjectToReturn1);
+		expect(mockMailSender.resolveSubject(DIGEST_TASK_REMINDER, (Object[])null))
+		.andReturn(subjectToReturn2);
+		expect(mockMailSender.resolveSubject(DIGEST_UPDATE_NOTIFICATION, (Object[])null))
+		.andReturn(subjectToReturn3);
 		
 		expect(userServiceMock.getAllUsersInNeedOfADigestNotification())
 		.andReturn(asList(1, 2, 3, 4));
@@ -632,7 +644,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		
 		expect(refereeDAOMock.getRefereesDueAReminder()).andReturn(asList(referee));
 		
-		expect(mockMailSender.resolveMessage("reference.request.reminder", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
+		expect(mockMailSender.resolveSubject(REFEREE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
 				.andReturn(subjectToReturn);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
@@ -690,7 +702,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Validation Request";
 		expect(
-				mockMailSender.resolveMessage("validation.request.registry.contacts", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(REGISTRY_VALIDATION_REQUEST, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME)).andReturn(subjectToReturn);
 
 		byte[] document =new byte[] {'a', 'b', 'c'};

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_REMINDER_FIRST;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -39,13 +39,13 @@ public class EmailTemplateServiceTest {
 	public void shouldReturnEmailTemplates() {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
 		EmailTemplate template1 = new EmailTemplateBuilder().id(1L).content("Template content")
-				.name(INTERVIEWER_REMINDER_FIRST).build();
+				.name(REFEREE_NOTIFICATION).build();
 		EmailTemplate template2 = new EmailTemplateBuilder().id(2L).content("Template content 2")
-				.name(INTERVIEWER_REMINDER_FIRST).version(version.toDate()).build();
-		expect(daoMock.getByName(INTERVIEWER_REMINDER_FIRST)).andReturn(asList(template1, template2));
+				.name(REFEREE_NOTIFICATION).version(version.toDate()).build();
+		expect(daoMock.getByName(REFEREE_NOTIFICATION)).andReturn(asList(template1, template2));
 		replay(daoMock);
 		
-		List<EmailTemplate> result = service.getEmailTemplates(INTERVIEWER_REMINDER_FIRST);
+		List<EmailTemplate> result = service.getEmailTemplates(REFEREE_NOTIFICATION);
 		
 		assertNotNull(result);
 		assertEquals(2, result.size());
@@ -65,9 +65,9 @@ public class EmailTemplateServiceTest {
 	@Test
 	public void shouldReturnNoEmailTemplateList() {
 		EmailTemplate template1 = new EmailTemplateBuilder().id(1L).content("Template1 content")
-				.name(INTERVIEWER_REMINDER_FIRST).build();
+				.name(REFEREE_NOTIFICATION).build();
 		EmailTemplate template2 = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(EmailTemplateName.APPROVAL_NOTIFICATION).build();
+				.name(EmailTemplateName.NEW_PASSWORD_CONFIRMATION).build();
 		expect(daoMock.getAll()).andReturn(asList(template1, template2));
 		replay(daoMock);
 		
@@ -89,10 +89,10 @@ public class EmailTemplateServiceTest {
 		mapReturnedByMock.put(1L, null);
 		mapReturnedByMock.put(2L, version1.toDate());
 		mapReturnedByMock.put(3L, version2.toDate());
-		expect(daoMock.getVersionsByName(INTERVIEWER_REMINDER_FIRST)).andReturn(mapReturnedByMock);
+		expect(daoMock.getVersionsByName(REFEREE_NOTIFICATION)).andReturn(mapReturnedByMock);
 		replay(daoMock);
 		
-		Map<Long, String> result = service.getEmailTemplateVersions(INTERVIEWER_REMINDER_FIRST);
+		Map<Long, String> result = service.getEmailTemplateVersions(REFEREE_NOTIFICATION);
 		
 		assertEquals("original template", result.get(1L));
 		assertEquals("2013/4/25 - 00:00:00", result.get(2L));
@@ -104,11 +104,11 @@ public class EmailTemplateServiceTest {
 	public void shouldActivateEmailTemplateAndDisableTheOldOne() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
 		EmailTemplate oldTtemplate = new EmailTemplateBuilder().id(1L).content("Template1 content")
-				.name(INTERVIEWER_REMINDER_FIRST).active(true).build();
+				.name(REFEREE_NOTIFICATION).active(true).build();
 		EmailTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(INTERVIEWER_REMINDER_FIRST).version(version.toDate()).build();
+				.name(REFEREE_NOTIFICATION).version(version.toDate()).build();
 		expect(daoMock.getById(2L)).andReturn(toActivate);
-		expect(daoMock.getActiveByName(INTERVIEWER_REMINDER_FIRST)).andReturn(oldTtemplate);
+		expect(daoMock.getActiveByName(REFEREE_NOTIFICATION)).andReturn(oldTtemplate);
 		daoMock.save(oldTtemplate);
 		daoMock.save(toActivate);
 		replay(daoMock);
@@ -122,7 +122,7 @@ public class EmailTemplateServiceTest {
 	public void shouldNotActivateEmailIfAlreadyActive() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
 		EmailTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(INTERVIEWER_REMINDER_FIRST).version(version.toDate()).active(true).build();
+				.name(REFEREE_NOTIFICATION).version(version.toDate()).active(true).build();
 		expect(daoMock.getById(2L)).andReturn(toActivate);
 		replay(daoMock);
 		
@@ -135,7 +135,7 @@ public class EmailTemplateServiceTest {
 	public void shouldNotActivateEmailTemplateBecauseOfNoTemplateFoundException() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
 		EmailTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(INTERVIEWER_REMINDER_FIRST).version(version.toDate()).active(true).build();
+				.name(REFEREE_NOTIFICATION).version(version.toDate()).active(true).build();
 		expect(daoMock.getById(2L)).andReturn(null);
 		replay(daoMock);
 		
@@ -148,9 +148,9 @@ public class EmailTemplateServiceTest {
 	public void shouldNotActivateEmailTemplateBecauseOfNoActiveTemplateFound() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
 		EmailTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(INTERVIEWER_REMINDER_FIRST).version(version.toDate()).build();
+				.name(REFEREE_NOTIFICATION).version(version.toDate()).build();
 		expect(daoMock.getById(2L)).andReturn(toActivate);
-		expect(daoMock.getActiveByName(INTERVIEWER_REMINDER_FIRST)).andReturn(null);
+		expect(daoMock.getActiveByName(REFEREE_NOTIFICATION)).andReturn(null);
 		replay(daoMock);
 		
 		service.activateEmailTemplate(toActivate);
@@ -161,11 +161,11 @@ public class EmailTemplateServiceTest {
 	@Test
 	public void shouldReturnDefaultTemplate() {
 		EmailTemplate defaultTemplate = new EmailTemplateBuilder().id(1L).content("Template1 content")
-				.name(INTERVIEWER_REMINDER_FIRST).build();
-		expect(daoMock.getDefaultByName(INTERVIEWER_REMINDER_FIRST)).andReturn(defaultTemplate);
+				.name(REFEREE_NOTIFICATION).build();
+		expect(daoMock.getDefaultByName(REFEREE_NOTIFICATION)).andReturn(defaultTemplate);
 		replay(daoMock);
 		
-		service.getDefaultEmailTemplate(INTERVIEWER_REMINDER_FIRST);
+		service.getDefaultEmailTemplate(REFEREE_NOTIFICATION);
 		
 		verify(daoMock);
 	}
@@ -174,7 +174,7 @@ public class EmailTemplateServiceTest {
 	public void shouldDeleteTemplate() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
 		EmailTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(INTERVIEWER_REMINDER_FIRST).version(version.toDate()).build();
+				.name(REFEREE_NOTIFICATION).version(version.toDate()).build();
 		expect(daoMock.getById(2L)).andReturn(toDelete);
 		daoMock.remove(toDelete);
 		replay(daoMock);
@@ -188,7 +188,7 @@ public class EmailTemplateServiceTest {
 	public void shouldNotDeletActiveTemplate() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
 		EmailTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(INTERVIEWER_REMINDER_FIRST).active(true).version(version.toDate()).build();
+				.name(REFEREE_NOTIFICATION).active(true).version(version.toDate()).build();
 		expect(daoMock.getById(2L)).andReturn(toDelete);
 		daoMock.remove(toDelete);
 		replay(daoMock);
@@ -201,7 +201,7 @@ public class EmailTemplateServiceTest {
 	@Test(expected = EmailTemplateException.class)
 	public void shouldNotDeletDefaultTemplate() throws Exception {
 		EmailTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(INTERVIEWER_REMINDER_FIRST).build();
+				.name(REFEREE_NOTIFICATION).build();
 		expect(daoMock.getById(2L)).andReturn(toDelete);
 		daoMock.remove(toDelete);
 		replay(daoMock);
@@ -215,7 +215,7 @@ public class EmailTemplateServiceTest {
 	@Test
 	public void shouldSaveNewUpdatedEmailTemplate() {
 		EmailTemplate updatedTemplate = new EmailTemplateBuilder().id(1L).content("Changed Content!!")
-				.name(INTERVIEWER_REMINDER_FIRST).build();
+				.name(REFEREE_NOTIFICATION).build();
 		daoMock.save(updatedTemplate);
 		replay(daoMock);
 		
@@ -233,5 +233,5 @@ public class EmailTemplateServiceTest {
 		ftlCode = "href=${host}/pgadmissions/register?activationCode=${approver.activationCode?html}";
 		assertEquals(expected , service.processTemplateContent(ftlCode));
 	}
-
 }
+	

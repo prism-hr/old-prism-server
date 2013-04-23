@@ -18,6 +18,13 @@ public class EmailTemplateBuilder {
     
     private Boolean active;
     
+    private String subject;
+    
+    public EmailTemplateBuilder subject(String subject) {
+        this.subject = subject;
+        return this;
+    }
+    
     public EmailTemplateBuilder active(Boolean active) {
     	this.active=active;
     	return this;
@@ -50,6 +57,7 @@ public class EmailTemplateBuilder {
         template.setContent(content);
         template.setVersion(version);
         template.setActive(active);
+        template.setSubject(subject);
         return template;
     }
 

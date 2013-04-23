@@ -15,10 +15,61 @@ function toggleButtons(disable) {
 	$('#modal-preview-go').attr('disabled', disable);
 }
 
+function doGetCaretPosition (ctrl) {
+	  var CaretPos = 0; // IE Support
+	  if (document.selection) {
+	  ctrl.focus ();
+	    var Sel = document.selection.createRange ();
+	    Sel.moveStart ('character', -ctrl.value.length);
+	    CaretPos = Sel.text.length;
+	  }
+	  // Firefox support
+	  else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+	    CaretPos = ctrl.selectionStart;
+	  return (CaretPos);
+	}
+	function setCaretPosition(ctrl, pos){
+	  if(ctrl.setSelectionRange)
+	  {
+	    ctrl.focus();
+	    ctrl.setSelectionRange(pos,pos);
+	  }
+	  else if (ctrl.createTextRange) {
+	    var range = ctrl.createTextRange();
+	    range.collapse(true);
+	    range.moveEnd('character', pos);
+	    range.moveStart('character', pos);
+	    range.select();
+	  }
+	}
+
 var emailTemplateContent;
+var emailTemplateSubject;
 
 
 $(document).ready(function() {
+	
+	$('#templateSubjectId').focus();
+    $('#templateSubjectId').on('keydown', function(evt) {
+      console.log(evt.keyCode);
+      if (evt.keyCode == 37 || evt.keyCode == 39 || evt.keyCode == 9 || evt.keyCode == 13) return;
+      var c = doGetCaretPosition(evt.target);
+      var value = $(this).val();
+      var match = value.match(/%[0-9]\$s/g);
+
+      var prev = 0;
+      _.each(match, function(item) {
+        var start = value.indexOf(item, prev);
+        var end = start + item.length;
+        if (c >= start && c <= end) {
+          evt.preventDefault();
+          return;
+        }
+        prev = end;
+      });
+
+    });
+	
 	toggleButtons(true);
     $(document).on('change', 'select.templateType', function() {
             if ($(this).val()!='original template') {
@@ -31,8 +82,11 @@ $(document).ready(function() {
         	        url : url,
         	        success : function(data) {
         	            		$('#templateContentId').val(data.content);
+        	            		$('#templateSubjectId').val(data.subject);
         	            		emailTemplateContent=$('#templateContentId').val();
+        	            		emailTemplateSubject=$('#templateSubjectId').val();
         	            		$('#templateContentId').prop('disabled', false);
+        	            		$('#templateSubjectId').prop('disabled', false);
         	            		toggleButtons(false);
         	            		$('#emailTemplateVersion').empty();
         	            		$.each(data, function(key,value){
@@ -54,8 +108,11 @@ $(document).ready(function() {
         	    });
             } else {
             	$('#templateContentId').prop('disabled', true);
+            	$('#templateSubjectId').prop('disabled', true);
             	$('#templateContentId').val('');
+            	$('#templateSubjectId').val('');
             	emailTemplateContent='';
+            	emailTemplateSubject='';
             	$('#emailTemplateVersion').empty();
             	toggleButtons(true);
             }
@@ -73,8 +130,11 @@ $(document).ready(function() {
     			url : url,
     			success : function(data) {
     				$('#templateContentId').val(data.content);
+    				$('#templateSubjectId').val(data.subject);
     				emailTemplateContent=$('#templateContentId').val();
+    				emailTemplateSubject=$('#templateSubjectId').val();
     				$('#templateContentId').prop('disabled', false);
+    				$('#templateSubjectId').prop('disabled', false);
     				toggleButtons(false);
     			},
     			complete : function() {
@@ -83,8 +143,11 @@ $(document).ready(function() {
     		});
     	} else {
     		$('#templateContentId').prop('disabled', true);
+    		$('#templateSubjectId').prop('disabled', true);
     		$('#templateContentId').val('');
+    		$('#templateSubjectId').val('');
     		emailTemplateContent='';
+    		emailTemplateSubject='';
     		toggleButtons(true);
     	}
     	
@@ -92,18 +155,24 @@ $(document).ready(function() {
     
     $('#save-go').click(function() {
 		$("#templateContentId").parent().find('.alert-info').remove();
-    	if ($('#templateContentId').val()!=emailTemplateContent) {//user has changed template before re-enabling it
+    	if ($('#templateContentId').val()!=emailTemplateContent || $('#templateSubjectId').val()!=emailTemplateSubject) {//user has changed template or the subject before re-enabling it
     		$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
 	    	 $.ajax({
 	    	        type : 'POST',
 	    	        statusCode : errorCodes,
 	    	        url : "/pgadmissions/configuration/saveEmailTemplate/"+$('#emailTemplateType').val(),
-	    	        data: {content : $('#templateContentId').val()},
+	    	        data: {content : $('#templateContentId').val(), subject : $('#templateSubjectId').val()},
 	    	        success : function(data) {
-	    	        				$('#emailTemplateVersion').append(new Option(data.version, data.id));
-	    	        				$('#emailTemplateVersion').val(data.id);
-									$("#templateContentId").parent().find('.alert-error').remove();
-									emailTemplateContent=$('#templateContentId').val();
+				    	        	if (data.error!=null) {
+				    					$("#templateContentId").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> '+data.error+'</div>');
+				        			}
+				    	        	else {
+		    	        				$('#emailTemplateVersion').append(new Option(data.version, data.id));
+		    	        				$('#emailTemplateVersion').val(data.id);
+										$("#templateContentId").parent().find('.alert-error').remove();
+										emailTemplateContent=$('#templateContentId').val();
+										emailTemplateSubject=$('#templateSubjectId').val();
+				    	        	}
 	    	               		},
 	    	        complete : function() {
 	    	        				$('div.ajax').remove();
@@ -117,10 +186,11 @@ $(document).ready(function() {
     
     $('#enable-go').click(function() {
     	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
-    	if ($('#templateContentId').val()!=emailTemplateContent) {//user has chnaged template before rnabling it
+    	if ($('#templateContentId').val()!=emailTemplateContent || $('#templateSubjectId').val()!=emailTemplateSubject) {//user has chnaged template before rnabling it
     		var options = {
     				saveCopy : true,
-    				newContent : $('#templateContentId').val()
+    				newContent : $('#templateContentId').val(),
+    				newSubject : $('#templateSubjectId').val()
     				};
     	}
     	else {
@@ -182,7 +252,9 @@ $(document).ready(function() {
 	    			$("#emailTemplateVersion option[value="+optionVal+"]").remove();
 	    			$('#emailTemplateVersion').val(data.activeTemplateId);
 	    			$('#templateContentId').val(data.activeTemplateContent);
+	    			$('#templateSubjectId').val(data.activeTemplateSubject);
 	    			emailTemplateContent=$('#templateContentId').val();
+	    			emailTemplateSubject=$('#templateSubjectId').val();
     			}
     		},
     		complete : function() {

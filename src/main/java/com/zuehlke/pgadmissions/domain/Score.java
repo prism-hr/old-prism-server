@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 @Entity(name = "SCORE")
@@ -53,7 +54,7 @@ public class Score implements Serializable {
     private Integer ratingResponse;
 
     @Transient
-    private Boolean required;
+    private Question originalQuestion;
 
     public Integer getId() {
         return id;
@@ -111,12 +112,13 @@ public class Score implements Serializable {
         this.ratingResponse = ratingResponse;
     }
 
-    public Boolean getRequired() {
-        return required;
+    public Question getOriginalQuestion() {
+        return originalQuestion;
     }
 
-    public void setRequired(Boolean required) {
-        this.required = required;
+    public void setOriginalQuestion(Question originalQuestion) {
+        this.originalQuestion = originalQuestion;
     }
+
 
 }

@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
+
+import java.util.GregorianCalendar;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -23,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
+import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -169,14 +173,65 @@ public class FeedbackCommentValidatorTest {
     }
 
     @Test
-    public void shouldRequiredScoreIsEmpty() {
-        Score score1 = new ScoreBuilder().required(false).questionType(QuestionType.TEXT).build();
-        Score score2 = new ScoreBuilder().required(true).questionType(QuestionType.TEXT).build();
+    public void shouldInvalidateWhenRequiredTextScoreIsEmpty() {
+        Question question1 = new Question();
+        question1.setRequired(false);
+        Question question2 = new Question();
+        question2.setRequired(true);
+
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.TEXT).build();
+        Score score2 = new ScoreBuilder().originalQuestion(question2).questionType(QuestionType.TEXT).build();
         Comment comment = new CommentBuilder().scores(score1, score2).build();
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
         feedbackCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[1].textResponse").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[1]").getCode());
+    }
+
+    @Test
+    public void shouldInvalidateWhenRequiredDateScoreIsEmpty() {
+        Question question1 = new Question();
+        question1.setRequired(false);
+        Question question2 = new Question();
+        question2.setRequired(true);
+
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE).build();
+        Score score2 = new ScoreBuilder().originalQuestion(question2).questionType(QuestionType.DATE).build();
+        Comment comment = new CommentBuilder().scores(score1, score2).build();
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+        feedbackCommentValidator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[1]").getCode());
+    }
+
+    @Test
+    public void shouldInvalidateWhenDateBeforeMinDate() {
+        Question question1 = new Question();
+        question1.setRequired(false);
+        question1.setMinDate("2013-07-15");
+
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE)
+                .dateResponse(new GregorianCalendar(2013, 3, 12).getTime()).build();
+        Comment comment = new CommentBuilder().scores(score1).build();
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+        feedbackCommentValidator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.notbefore", mappingResult.getFieldError("scores[0]").getCode());
+    }
+    
+    @Test
+    public void shouldInvalidateWhenDateAfterMaxDate() {
+        Question question1 = new Question();
+        question1.setRequired(false);
+        question1.setMaxDate("2013-07-15");
+
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE)
+                .dateResponse(new GregorianCalendar(2013, 11, 12).getTime()).build();
+        Comment comment = new CommentBuilder().scores(score1).build();
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+        feedbackCommentValidator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.notafter", mappingResult.getFieldError("scores[0]").getCode());
     }
 
     @Before

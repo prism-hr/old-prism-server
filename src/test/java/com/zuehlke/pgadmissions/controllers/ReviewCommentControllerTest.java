@@ -253,7 +253,7 @@ public class ReviewCommentControllerTest {
     }
 
     @Test
-    public void shouldReturnToCommentsPageIfErrors() {
+    public void shouldReturnToCommentsPageIfErrors() throws ScoringDefinitionParseException {
         ApplicationForm application = new ApplicationForm();
 
         ReviewComment comment = new ReviewCommentBuilder().application(application).build();
@@ -264,7 +264,7 @@ public class ReviewCommentControllerTest {
     }
 
     @Test
-    public void shouldSaveCommentAndRedirectApplicationsPageIfNoErrors() {
+    public void shouldSaveCommentAndRedirectApplicationsPageIfNoErrors() throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).build();
         ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).build();
         BindingResult result = new BeanPropertyBindingResult(comment, "comment");

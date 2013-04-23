@@ -16,14 +16,19 @@ $(document).ready(function()
 	// --------------------------------------------------------------------------------
 	// Clear button
 	// --------------------------------------------------------------------------------
-	
+
 	$('#documentsClearButton').click(function()
 	{
-	
-		loadDocumentsSection(true);
+		if ($('#psUploadedDocument').children().length > 0) {
+			$('#psUploadedDocument').find('.delete').trigger('click');
+		}
+		if ($('#cvUploadedDocument').children().length > 0) {
+			$('#cvUploadedDocument').find('.delete').trigger('click');
+		}
+		
 	});
-
 	
+
 	// --------------------------------------------------------------------------------
 	// 
 	// --------------------------------------------------------------------------------

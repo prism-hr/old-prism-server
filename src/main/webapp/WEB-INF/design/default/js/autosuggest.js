@@ -1,5 +1,5 @@
 function autosuggest($fname, $lname, $email) {
-
+	$($fname, $lname, $email).attr('autocomplete','off');
 	$fname.typeaheadmap({
 		source : function(query, process) {
 			return $.getJSON("/pgadmissions/autosuggest/users/firstname/" + $fname.val(), function(data) {

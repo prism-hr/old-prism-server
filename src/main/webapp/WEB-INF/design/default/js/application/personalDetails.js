@@ -425,7 +425,7 @@ function enableLanguageQualifications() {
 	$(
 			"#qualificationType, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.removeAttr("readonly", "readonly");
-
+	
 	$(
 			'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
 			.removeAttr("disabled", "disabled");
@@ -449,7 +449,8 @@ function enableLanguageQualifications() {
 	if ($("#languageQualificationsTable tr").length <= 0) {
 		$("#addLanguageQualificationButton").show();
 	}
-
+	$("#languageQualification_div").find(".disabled").removeClass("disabled");
+	
 	$("#updateLanguageQualificationButton").hide();
 }
 
@@ -484,7 +485,9 @@ function disableLanguageQualifications() {
 
 	$("#addLanguageQualificationButton").hide();
 	$("#updateLanguageQualificationButton").hide();
-
+	
+	
+	
 	clearLanguageQualification();
 }
 
@@ -696,13 +699,16 @@ function postPersonalDetailsData(message) {
 }
 
 function deleteQualificationDocumentFile() {
+	
+	var $container = $('#languageQualificationDocument').closest('div.field');
+	var $hidden = $container.find('.file');
+	var $uploadedDocuments = $container.find('ul.uploaded-files');
 
-	var $container = $('#languageQualificationDocument').parent('div.field');
-	var $hidden = $container.find('input.file');
-
-	$container.find('span a').each(function() {
-		$(this).remove();
-	});
+	$uploadedDocuments.find('li:last-child').remove();
+	$uploadedDocuments.hide();
+	
+	//Display uploader back
+	$container.find('.fileupload').fileupload('clear').show();
 
 	$hidden.val(''); // clear field value.
 	$container.removeClass('uploaded');

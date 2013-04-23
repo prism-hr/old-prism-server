@@ -1,24 +1,31 @@
 <div class="row">
-	<label class="plain-label" for="commentDocument">Attach Document (PDF)</label>
-	<span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
-	<div class="field" id="uploadFields">
-        <input id="commentDocument" class="full" data-type="COMMENT" data-reference="Comment" type="file" name="file" value="" />                   
-        <input type="hidden" class="file" id="document_COMMENT" value=""/>
-        <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
-        <span id="commentDocumentProgress" class="progress" style="display: none;"></span>
-	</div>
-    <div id="commentUploadedDocument" class="uploaded-files">
+<label class="plain-label" for="commentDocument">Attach Document (PDF)</label>
+<span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
+<div class="field" id="uploadFields">
+  <div class="fileupload fileupload-new" data-provides="fileupload">
+    <div class="input-append">
+      <div class="uneditable-input span4"> <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
+      <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
+      <input id="commentDocument" class="full" data-type="COMMENT" data-reference="Comment" type="file" name="file" value="" />
+      <input type="hidden" class="file" id="document_COMMENT" value=""/>
+      </span> </div>
+  </div>
+  <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+<div id="commentDocumentProgress" class="progress" style="display: none;"></span> </div>
+        <ul id="commentUploadedDocument"  class="uploaded-files" style="display:none;">
         <#if comment??>
-            <#list comment.documents as document>
-                <div class="row">
-                  <div class="field">
-                    <span class="uploaded-file" name="supportingDocumentSpan" style="display:inline">
-                        <input class="file" style="display:none" type="text" value="${encrypter.encrypt(document.id)}" name="documents"/>	
-                        <a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a>
-                        <a name="delete" data-desc="Delete" class="button-delete button-hint" id="${encrypter.encrypt(document.id)}">delete</a>
-                    </span>
-                </div>
+          <#list comment.documents as document>
+            <li class="done"> 
+            <span class="uploaded-file" name="supportingDocumentSpan">
+            <input class="file" style="display:none" type="text" value="${encrypter.encrypt(document.id)}" name="documents"/><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">
+                ${document.fileName?html}
+                </a> <a class="btn btn-danger delete" href="#" id="${encrypter.encrypt(document.id)}" data-desc="Delete" name="delete"> <i class="icon-trash icon-large"></i> Delete</a> 
+                </span></li>
             </#list>
-        </#if>
-    </div>
+            </#if>
+    
+        </ul>
+  </div>
+  
 </div>
+

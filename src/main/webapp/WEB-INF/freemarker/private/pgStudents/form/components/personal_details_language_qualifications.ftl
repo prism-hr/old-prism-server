@@ -245,17 +245,28 @@
             <div class="row">
                 <label for="languageQualificationDocument" id="lbl-languageQualificationDocument" class="plain-label grey-label">Certificate (PDF)<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.pdf'/>"></span>
-                <div class="field <#if personalDetails.languageQualifications[0].languageQualificationDocument??>uploaded</#if>" id="uploadFields">                      
-                    <input id="languageQualificationDocument"  data-type="LANGUAGE_QUALIFICATION" data-reference="Language Qualification" class="full" type="file" name="file" value="" disabled="disabled" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> readonly="readonly" disabled="disabled"/> 
+                <div class="field <#if personalDetails.languageQualifications[0].languageQualificationDocument??>uploaded</#if>" id="uploadFields">
+                      <div class="fileupload fileupload-new" data-provides="fileupload">
+                        <div class="input-append">
+                          <div class="uneditable-input span4 disabled" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
+                          <span class="btn btn-file disabled"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
+                         <input id="languageQualificationDocument"  data-type="LANGUAGE_QUALIFICATION" data-reference="Language Qualification" class="full" type="file" name="file" value="" disabled="disabled" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> readonly="readonly" disabled="disabled"/> 
+                          </span> </div>
+                      </div>
 
-                    <span id="langqualUploadedDocument">
-                        <input type="hidden" class="file" id="document_LANGUAGE_QUALIFICATION" value="${(encrypter.encrypt(personalDetails.languageQualifications[0].languageQualificationDocument.id))!}"/>
+                    <ul id="langqualUploadedDocument"  class="uploaded-files">
                         <#if personalDetails.languageQualifications[0].languageQualificationDocument??> 
-                            <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(personalDetails.languageQualifications[0].languageQualificationDocument.id))!}'/>" target="_blank">
-                            ${(personalDetails.languageQualifications[0].languageQualificationDocument.fileName?html)!}</a>
-                            <a id="deleteLq" class="button-delete button-hint" data-desc="Change Language Qualification">delete</a> 
+                            
+                             <li class="done">
+                             <span class="uploaded-file" name="supportingDocumentSpan">
+                             <input type="hidden" class="file" id="document_LANGUAGE_QUALIFICATION" value="${(encrypter.encrypt(personalDetails.languageQualifications[0].languageQualificationDocument.id))!}"/> 
+                             <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(personalDetails.languageQualifications[0].languageQualificationDocument.id))!}'/>" target="_blank">                  ${(personalDetails.languageQualifications[0].languageQualificationDocument.fileName?html)!}</a>
+                             
+                            <a id="deleteLq" class="btn btn-danger delete" data-desc="delete Language Qualification"><i class="icon-trash icon-large"></i> Delete</a> 
+                            </span>
                         </#if>
-                    </span>
+                    </ul>
+                    
                     <span class="progress" style="display: none;"></span> 
                     <@spring.bind "personalDetails.languageQualifications[0].languageQualificationDocument" />
                     <#list spring.status.errorMessages as error>

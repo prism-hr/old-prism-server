@@ -1394,7 +1394,7 @@ i {
   margin-bottom: 10px !important;
 }
 #appliList.table-bordered th, #appliList.table-bordered td { border-color: #B5B1B3 !important; border-left-color: #B5B1B3 !important; border-top-color: #B5B1B3 !important;}
-#createinterviewersection, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
+#createinterviewersection, #editUser, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
 	overflow: visible !important;
 }
 #section-registryusers .table-bordered th, #section-registryusers .table-bordered td{
@@ -1515,4 +1515,46 @@ form#removeForm {
     right: 5px;
     top: 6px;
     width: 28px;
+}
+body.applist .ui-tooltip{
+	margin-left: -77px;
+    margin-top: 18px;
+}
+/* Show only the file link when a file is uploaded. */
+
+.uploaded-files li.posting { background: url(../../images/ajax-loader-file.gif) 4px center no-repeat; }
+.uploaded-files li.done:before{
+  font-family:FontAwesome;font-weight:normal;
+  font-style:normal;
+  text-decoration:inherit;-webkit-font-smoothing:antialiased;
+  cursor: default;
+  content:"\f058";
+  color: #51a351;
+  font-size:16px;
+  position: absolute;
+}
+.uploaded-files {margin-left: 0px; list-style: none; }
+.uploaded-files li {
+	padding: relative;
+	padding-left: 0px;
+	display: block;
+	border-top: 1px solid #E0E0E0;
+	display: block;
+	padding: 6px 7px;
+	line-height: 26px;
+}
+#timelineview .uploaded-files li {
+	border-top: none;
+	padding-top: 1px;
+	padding-left: 2px;
+}
+.uploaded-file { margin-left: 20px; }
+.uploaded-files li:last-child {
+	border-bottom: 1px solid #E0E0E0;
+}
+#timelineview .uploaded-files :last-child {
+	border-bottom: none;
+}
+.uploaded-files li .btn {
+ 	float: right;
 }

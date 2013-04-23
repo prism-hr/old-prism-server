@@ -242,7 +242,7 @@
 							    </#if>
 									<div class="row">
 										<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
-											Confirm you want to move this application to the next stage.				
+											Confirm that you wish to move this application to the next stage.				
 										</label>
 										<div class="terms-field">
 											<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>

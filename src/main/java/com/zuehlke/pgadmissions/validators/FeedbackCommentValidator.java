@@ -60,21 +60,26 @@ public class FeedbackCommentValidator extends AbstractValidator {
         Comment comment = (Comment) target;
         List<Score> scores = comment.getScores();
         if (scores != null) {
-            for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);
-                if (BooleanUtils.isNotTrue(score.getRequired())) {
-                    continue;
-                }
-                switch (score.getQuestionType()) {
-                case TEXT:
-                    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "scores[" + i + "].textResponse", EMPTY_FIELD_ERROR_MESSAGE);
-                    break;
-                default:
-                    break;
-                }
-            }
+            validateScores(errors, scores);
         }
 
+    }
+
+    private void validateScores(Errors errors, List<Score> scores) {
+        for (int i = 0; i < scores.size(); i++) {
+            Score score = scores.get(i);
+            if (BooleanUtils.isNotTrue(score.getRequired())) {
+                continue;
+            }
+            switch (score.getQuestionType()) {
+            case TEXT:
+            case TEXTAREA:
+                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "scores[" + i + "].textResponse", EMPTY_FIELD_ERROR_MESSAGE);
+                break;
+            default:
+                break;
+            }
+        }
     }
 
 }

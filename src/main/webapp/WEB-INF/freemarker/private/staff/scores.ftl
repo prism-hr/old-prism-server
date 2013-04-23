@@ -9,28 +9,21 @@
       <#if score.questionType == "TEXT">
       
           <input class="text-input" type="text" value="${score.textResponse!}"/>
-          <@spring.bind "comment.scores[${score_index}].textResponse" />
-          <#list spring.status.errorMessages as error>
-            <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-          </#list>
           
       <#elseif score.questionType == "TEXTAREA">
           
           <textarea class="textarea-input" rows="15" cols="150">${score.textResponse!}</textarea>
-          <@spring.bind "comment.scores[${score_index}].textResponse" />
-          <#list spring.status.errorMessages as error>
-            <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-          </#list>
           
       <#elseif score.questionType == "DATE">
           
           <input class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
-          <@spring.bind "comment.scores[${score_index}].dateResponse" />
-          <#list spring.status.errorMessages as error>
-            <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-          </#list>
           
       </#if>
+      
+      <@spring.bind "comment.scores[${score_index}]" />
+      <#list spring.status.errorMessages as error>
+        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+      </#list>
     </div>
     
   </div>

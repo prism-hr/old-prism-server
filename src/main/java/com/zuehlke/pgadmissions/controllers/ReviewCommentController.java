@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -140,8 +138,20 @@ public class ReviewCommentController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String addComment(@Valid @ModelAttribute("comment") ReviewComment comment, BindingResult result) {
+    public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = comment.getApplication();
+        List<Score> scores = comment.getScores();
+        if(scores != null){
+            List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
+            for (int i = 0; i < scores.size(); i++) {
+                Score score = scores.get(i);
+                score.setOriginalQuestion(questions.get(i));
+                
+            }
+        }
+        
+        reviewFeedbackValidator.validate(comment, result);
+        
         if (result.hasErrors()) {
             return REVIEW_FEEDBACK_PAGE;
         }

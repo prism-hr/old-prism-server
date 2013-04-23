@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Score;
+import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 public class ScoreBuilder {
@@ -21,7 +22,7 @@ public class ScoreBuilder {
 
     private Integer ratingResponse;
     
-    private Boolean required;
+    private Question originalQuestion;
 
     public ScoreBuilder id(Integer id) {
         this.id = id;
@@ -59,10 +60,11 @@ public class ScoreBuilder {
         return this;
     }
 
-    public ScoreBuilder required(Boolean required) {
-        this.required = required;
+    public ScoreBuilder originalQuestion(Question originalQuestion) {
+        this.originalQuestion = originalQuestion;
         return this;
     }
+
 
     public Score build() {
         Score score = new Score();
@@ -73,7 +75,7 @@ public class ScoreBuilder {
         score.setDateResponse(dateResponse);
         score.setSecondDateResponse(secondDateResponse);
         score.setRatingResponse(ratingResponse);
-        score.setRequired(required);
+        score.setOriginalQuestion(originalQuestion);
         return score;
     }
 }

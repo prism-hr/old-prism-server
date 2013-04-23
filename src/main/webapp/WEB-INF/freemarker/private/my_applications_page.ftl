@@ -39,7 +39,7 @@
   <body class="old-ie">
 <![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!-->
-<body>
+<body class="applist">
 <!--<![endif]--> 
 
 <!-- Wrapper Starts -->

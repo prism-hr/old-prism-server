@@ -255,7 +255,7 @@
             
             <div class="row">
                 <label id="lbl-languageQualificationAvailable" class="plain-label grey-label">Do you have an English language qualification?<em>*</em></label>
-                <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.available'/>"></span>
+                <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.available'/>"></span>
                 <div class="field">
                     <label>
                         <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailableYes" value="true" disabled="disabled"

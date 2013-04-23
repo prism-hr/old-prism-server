@@ -2,17 +2,17 @@
 <span class="uploaded-file" name="supportingDocumentSpan">
 	<#if document?? && document.id??>
 		<#if document.type != 'COMMENT'>
-			<input type="text" class="file" id="document_${document.type}" value="${encrypter.encrypt(document.id)}" style="display:none" name="document"/>
+			<input type="hidden" class="file" id="document_${document.type}" value="${encrypter.encrypt(document.id)}" name="document"/>
 			<#if document.type != 'REFERENCE' >
 				<a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a>
-				<a data-desc="Delete" class="button-delete button-hint">delete</a>
+				<a data-desc="Delete" class="btn btn-danger delete"><i class="icon-trash icon-large"></i> Delete</a>
 			<#else>
 				${document.fileName?html}
 			</#if>
 		<#else>
-			<input type="text" class="file" value="${encrypter.encrypt(document.id)}" style="display:none" name="documents" />	
+			<input type="hidden" class="file" value="${encrypter.encrypt(document.id)}" name="documents" />	
 			<a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a>
-			<a name="delete" data-desc="Delete" class="button-delete button-hint" id="${encrypter.encrypt(document.id)}">delete</a>
+			<a name="delete" data-desc="Delete" class="btn btn-danger delete" id="${encrypter.encrypt(document.id)}"><i class="icon-trash icon-large"></i> Delete</a>
 		</#if>
 	</#if>
 	<#if message??>

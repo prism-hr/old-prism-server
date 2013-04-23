@@ -56,7 +56,7 @@ public class FeedbackCommentValidator extends AbstractValidator {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
-        
+
         Comment comment = (Comment) target;
         List<Score> scores = comment.getScores();
         if (scores != null) {
@@ -75,6 +75,9 @@ public class FeedbackCommentValidator extends AbstractValidator {
             case TEXT:
             case TEXTAREA:
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "scores[" + i + "].textResponse", EMPTY_FIELD_ERROR_MESSAGE);
+                break;
+            case DATE:
+                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "scores[" + i + "].dateResponse", EMPTY_FIELD_ERROR_MESSAGE);
                 break;
             default:
                 break;

@@ -18,9 +18,20 @@ function getScores(container) {
 		} else if(questionType == "TEXTAREA"){
 			textResponse = $(this).find("textarea.textarea-input").val();
 			score.textResponse = textResponse;
+		} else if(questionType == "DATE"){
+			dateResponse = $(this).find("input.date-input").val();
+			if(dateResponse != ""){
+				score.dateResponse = dateResponse;
+			}
 		}
 			
 		scores.push(score);
 	});
 	return JSON.stringify(scores);
+}
+
+function registerBindPickers(container){
+	container.find("input.date").each(function(){
+		bindDatePicker($(this));
+	});
 }

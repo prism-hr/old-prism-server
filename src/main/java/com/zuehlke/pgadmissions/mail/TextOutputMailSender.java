@@ -20,7 +20,7 @@ public class TextOutputMailSender extends JavaMailSenderImpl {
     private final Logger log = LoggerFactory.getLogger(TextOutputMailSender.class);
 
     private String getFilename() {
-        return String.format("%s/%s.txt", System.getProperty("user.home"), new DateTime().toString("yyyy-MM-dd HH-mm-ss-SSS"));
+        return String.format("%s/prism_email_%s.txt", System.getProperty("user.home"), new DateTime().toString("yyyy-MM-dd HH-mm-ss-SSS"));
     }
     
     @Override

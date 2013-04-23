@@ -132,8 +132,6 @@ public class MailSender {
                          messageHelper.setReplyTo(message.getReplyToAddress());
                      }
                      
-                     messageHelper.setFrom(message.getFromAddress());
-                     
                      messageHelper.setSubject(message.getSubjectCode());
                      
                      for (PdfAttachmentInputSource attachment : message.getAttachments()) {

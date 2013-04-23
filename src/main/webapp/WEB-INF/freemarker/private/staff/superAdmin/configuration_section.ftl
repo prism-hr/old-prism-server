@@ -32,13 +32,7 @@
 						<select name="${stage}_unit" id="${stage}_unit" class="input-small">
 							<option value="">Select...</option>
 							<#list units as unit>
-								<#if unit != 'MINUTES'&& unit != 'HOURS'>
-									<option value="${unit}"
-									<#if  stageDurations[stage]?? && stageDurations[stage].unit?? && stageDurations[stage].unit == unit>
-											selected="selected"
-									</#if>>
-										${unit.displayValue()}</option>
-								 </#if>              
+                                <option value="${unit}" <#if  stageDurations[stage]?? && stageDurations[stage].unit?? && stageDurations[stage].unit == unit> selected="selected"</#if>>${unit.displayValue()}</option>
 							</#list>
 						</select>
                         <div class="alert alert-error" id="${stage}_invalidDuration"  style="display:none;">
@@ -69,11 +63,7 @@
 						<select name="reminderUnit" id="reminderUnit" class="input-small">
 							<option value="">Select...</option>
 						<#list units as unit>
-							<option value="${unit}"
-							<#if  reminderInterval?? && reminderInterval.unit?? && reminderInterval.unit == unit>
-								selected="selected"
-							</#if>>
-							${unit.displayValue()}</option>               
+							<option value="${unit}" <#if  reminderInterval?? && reminderInterval.unit?? && reminderInterval.unit == unit> selected="selected" </#if>> ${unit.displayValue()}</option>               
 						</#list>
 						</select>
 						<div class="alert alert-error" id="invalidDurationInterval"  style="display:none;">

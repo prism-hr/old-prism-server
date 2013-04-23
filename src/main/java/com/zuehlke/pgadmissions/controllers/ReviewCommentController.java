@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -40,134 +40,148 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @RequestMapping(value = { "/reviewFeedback" })
 public class ReviewCommentController {
 
-    private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
-    private final ApplicationsService applicationsService;
-    private final UserService userService;
-    private final FeedbackCommentValidator reviewFeedbackValidator;
-    private final CommentService commentService;
-    private final DocumentPropertyEditor documentPropertyEditor;
-    private final ScoringDefinitionParser scoringDefinitionParser;
-    private final ScoresPropertyEditor scoresPropertyEditor;
+	private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
+	private final ApplicationsService applicationsService;
+	private final UserService userService;
+	private final FeedbackCommentValidator reviewFeedbackValidator;
+	private final CommentService commentService;
+	private final DocumentPropertyEditor documentPropertyEditor;
+	private final ScoringDefinitionParser scoringDefinitionParser;
+	private final ScoresPropertyEditor scoresPropertyEditor;
+	private final ScoreFactory scoreFactory;
 
-    ReviewCommentController() {
-        this(null, null, null, null, null, null, null);
-    }
+	ReviewCommentController() {
+		this(null, null, null, null, null, null, null, null);
+	}
 
-    @Autowired
-    public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.commentService = commentService;
-        this.reviewFeedbackValidator = reviewFeedbackValidator;
-        this.documentPropertyEditor = documentPropertyEditor;
-        this.scoringDefinitionParser = scoringDefinitionParser;
-        this.scoresPropertyEditor = scoresPropertyEditor;
-    }
+	@Autowired
+	public ReviewCommentController(ApplicationsService applicationsService,
+			UserService userService, CommentService commentService,
+			FeedbackCommentValidator reviewFeedbackValidator,
+			DocumentPropertyEditor documentPropertyEditor,
+			ScoringDefinitionParser scoringDefinitionParser,
+			ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory) {
+		this.applicationsService = applicationsService;
+		this.userService = userService;
+		this.commentService = commentService;
+		this.reviewFeedbackValidator = reviewFeedbackValidator;
+		this.documentPropertyEditor = documentPropertyEditor;
+		this.scoringDefinitionParser = scoringDefinitionParser;
+		this.scoresPropertyEditor = scoresPropertyEditor;
+		this.scoreFactory = scoreFactory;
+	}
 
-    @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = userService.getCurrentUser();
-        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
-        if (!currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
-        }
-        if (applicationForm.isDecided() || applicationForm.isWithdrawn() || getUser().hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)) {
-            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
-        }
-        return applicationForm;
-    }
+	@ModelAttribute("applicationForm")
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		RegisteredUser currentUser = userService.getCurrentUser();
+		ApplicationForm applicationForm = applicationsService
+				.getApplicationByApplicationNumber(applicationId);
+		if (applicationForm == null) {
+			throw new MissingApplicationFormException(applicationId);
+		}
+		if (!currentUser
+				.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)
+				|| !currentUser.canSee(applicationForm)) {
+			throw new InsufficientApplicationFormPrivilegesException(
+					applicationId);
+		}
+		if (applicationForm.isDecided()
+				|| applicationForm.isWithdrawn()
+				|| getUser()
+						.hasRespondedToProvideReviewForApplicationLatestRound(
+								applicationForm)) {
+			throw new ActionNoLongerRequiredException(
+					applicationForm.getApplicationNumber());
+		}
+		return applicationForm;
+	}
 
-    @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
-        ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.getActionsDefinition(getUser(), application);
-    }
+	@ModelAttribute("actionsDefinition")
+	public ApplicationActionsDefinition getActionsDefinition(
+			@RequestParam String applicationId) {
+		ApplicationForm application = getApplicationForm(applicationId);
+		return applicationsService.getActionsDefinition(getUser(), application);
+	}
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String getReviewFeedbackPage() {
-        return REVIEW_FEEDBACK_PAGE;
-    }
+	@RequestMapping(method = RequestMethod.GET)
+	public String getReviewFeedbackPage() {
+		return REVIEW_FEEDBACK_PAGE;
+	}
 
-    @ModelAttribute("user")
-    public RegisteredUser getUser() {
-        return userService.getCurrentUser();
-    }
+	@ModelAttribute("user")
+	public RegisteredUser getUser() {
+		return userService.getCurrentUser();
+	}
 
-    @ModelAttribute("comment")
-    public ReviewComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
-        ReviewComment reviewComment = new ReviewComment();
-        reviewComment.setApplication(applicationForm);
-        reviewComment.setUser(user);
-        reviewComment.setComment("");
-        reviewComment.setType(CommentType.REVIEW);
-        reviewComment.setReviewer(user.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
+	@ModelAttribute("comment")
+	public ReviewComment getComment(@RequestParam String applicationId)
+			throws ScoringDefinitionParseException {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		RegisteredUser user = getUser();
+		ReviewComment reviewComment = new ReviewComment();
+		reviewComment.setApplication(applicationForm);
+		reviewComment.setUser(user);
+		reviewComment.setComment("");
+		reviewComment.setType(CommentType.REVIEW);
+		reviewComment
+				.setReviewer(user
+						.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
 
-        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
-        if (scoringDefinition != null) {
-            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-            List<Score> scores = createScores(customQuestion.getQuestion());
-            reviewComment.getScores().addAll(scores);
-        }
+		ScoringDefinition scoringDefinition = applicationForm.getProgram()
+				.getScoringDefinitions().get(ScoringStage.REVIEW);
+		if (scoringDefinition != null) {
+			CustomQuestions customQuestion = scoringDefinitionParser
+					.parseScoringDefinition(scoringDefinition.getContent());
+			List<Score> scores = scoreFactory.createScores(customQuestion
+					.getQuestion());
+			reviewComment.getScores().addAll(scores);
+		}
 
-        return reviewComment;
-    }
+		return reviewComment;
+	}
 
-    // @ModelAttribute("customQuestions")
-    public List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
-        if (scoringDefinition != null) {
-            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-            return customQuestion.getQuestion();
-        }
-        return null;
-    }
+	public List<Question> getCustomQuestions(@RequestParam String applicationId)
+			throws ScoringDefinitionParseException {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		ScoringDefinition scoringDefinition = applicationForm.getProgram()
+				.getScoringDefinitions().get(ScoringStage.REVIEW);
+		if (scoringDefinition != null) {
+			CustomQuestions customQuestion = scoringDefinitionParser
+					.parseScoringDefinition(scoringDefinition.getContent());
+			return customQuestion.getQuestion();
+		}
+		return null;
+	}
 
-    @InitBinder(value = "comment")
-    public void registerBinders(WebDataBinder binder) {
-        binder.setValidator(reviewFeedbackValidator);
-        binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
-    }
+	@InitBinder(value = "comment")
+	public void registerBinders(WebDataBinder binder) {
+		binder.setValidator(reviewFeedbackValidator);
+		binder.registerCustomEditor(Document.class, documentPropertyEditor);
+		binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
+	}
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = comment.getApplication();
-        List<Score> scores = comment.getScores();
-        if (scores != null) {
-            List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
-            for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);
-                score.setOriginalQuestion(questions.get(i));
-            }
-        }
+	@RequestMapping(method = RequestMethod.POST)
+	public String addComment(@ModelAttribute("comment") ReviewComment comment,
+			BindingResult result) throws ScoringDefinitionParseException {
+		ApplicationForm applicationForm = comment.getApplication();
+		List<Score> scores = comment.getScores();
+		if (scores != null) {
+			List<Question> questions = getCustomQuestions(applicationForm
+					.getApplicationNumber());
+			for (int i = 0; i < scores.size(); i++) {
+				Score score = scores.get(i);
+				score.setOriginalQuestion(questions.get(i));
+			}
+		}
 
-        reviewFeedbackValidator.validate(comment, result);
+		reviewFeedbackValidator.validate(comment, result);
 
-        if (result.hasErrors()) {
-            return REVIEW_FEEDBACK_PAGE;
-        }
-        commentService.save(comment);
-        return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
-    }
+		if (result.hasErrors()) {
+			return REVIEW_FEEDBACK_PAGE;
+		}
+		commentService.save(comment);
+		return "redirect:/applications?messageCode=review.feedback&application="
+				+ applicationForm.getApplicationNumber();
+	}
 
-    public List<Score> createScores(List<Question> questions) throws ScoringDefinitionParseException {
-        List<Score> scores = Lists.newArrayListWithExpectedSize(questions.size());
-
-        for (Question question : questions) {
-            Score score = new Score();
-            score.setQuestion(question.getLabel());
-            score.setQuestionType(question.getType());
-            score.setOriginalQuestion(question);
-            scores.add(score);
-        }
-        return scores;
-    }
 }

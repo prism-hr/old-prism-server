@@ -208,7 +208,7 @@ public class ReviewCommentControllerTest {
         assertEquals("question1", scores.get(0).getQuestion());
         assertEquals(QuestionType.RATING, scores.get(0).getQuestionType());
     }
-    
+
     @Test
     public void shouldReturnCustomQuestions() throws ScoringDefinitionParseException {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
@@ -254,20 +254,41 @@ public class ReviewCommentControllerTest {
 
     @Test
     public void shouldReturnToCommentsPageIfErrors() throws ScoringDefinitionParseException {
-        ApplicationForm application = new ApplicationForm();
-
+        Program program = new Program();
+        final ApplicationForm application = new ApplicationFormBuilder().program(program).applicationNumber("5").build();
         ReviewComment comment = new ReviewCommentBuilder().application(application).build();
         BindingResult result = new BeanPropertyBindingResult(comment, "comment");
         result.reject("error");
+
+        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock) {
+
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return application;
+            }
+
+        };
 
         assertEquals("private/staff/reviewer/feedback/reviewcomment", controller.addComment(comment, result));
     }
 
     @Test
     public void shouldSaveCommentAndRedirectApplicationsPageIfNoErrors() throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).build();
+        Program program = new Program();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).program(program).build();
         ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).build();
         BindingResult result = new BeanPropertyBindingResult(comment, "comment");
+
+        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock) {
+
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return applicationForm;
+            }
+
+        };
 
         commentServiceMock.save(comment);
 

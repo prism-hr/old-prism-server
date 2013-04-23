@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import junit.framework.Assert;
@@ -218,7 +219,7 @@ public class FeedbackCommentValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.notbefore", mappingResult.getFieldError("scores[0]").getCode());
     }
-    
+
     @Test
     public void shouldInvalidateWhenDateAfterMaxDate() {
         Question question1 = new Question();
@@ -232,6 +233,78 @@ public class FeedbackCommentValidatorTest {
         feedbackCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.notafter", mappingResult.getFieldError("scores[0]").getCode());
+    }
+
+    @Test
+    public void shouldInvalidateWhenFirstDateIsMissingForDateRange() {
+        Question question1 = new Question();
+        question1.setRequired(true);
+
+        Date secondDate = new GregorianCalendar(2013, 03, 12).getTime();
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE_RANGE).secondDateResponse(secondDate).build();
+        Comment comment = new CommentBuilder().scores(score1).build();
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+        feedbackCommentValidator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[0]").getCode());
+    }
+
+    @Test
+    public void shouldInvalidateWhenFirstDateIsAfterSecondDateForDateRange() {
+        Question question1 = new Question();
+        question1.setRequired(false);
+
+        Date firstDate = new GregorianCalendar(2013, 11, 12).getTime();
+        Date secondDate = new GregorianCalendar(2013, 03, 12).getTime();
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE_RANGE).dateResponse(firstDate)
+                .secondDateResponse(secondDate).build();
+        Comment comment = new CommentBuilder().scores(score1).build();
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+        feedbackCommentValidator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("daterange.field.notafter", mappingResult.getFieldError("scores[0]").getCode());
+    }
+    
+    @Test
+    public void shouldInvalidateWhenRequiredDropdownScoreIsEmpty() {
+        Question question1 = new Question();
+        question1.setRequired(false);
+        Question question2 = new Question();
+        question2.setRequired(true);
+
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DROPDOWN).build();
+        Score score2 = new ScoreBuilder().originalQuestion(question2).questionType(QuestionType.DROPDOWN).build();
+        Comment comment = new CommentBuilder().scores(score1, score2).build();
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+        feedbackCommentValidator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[1]").getCode());
+    }
+    
+    @Test
+    public void shouldInvalidateWhenRequiredRatingScoreIsEmpty() {
+        Question question1 = new Question();
+        question1.setRequired(true);
+
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.RATING).ratingResponse(null).build();
+        Comment comment = new CommentBuilder().scores(score1).build();
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+        feedbackCommentValidator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[0]").getCode());
+    }
+    
+    @Test
+    public void shouldInvalidateWhenRatingScoreHasNotCorrectValue() {
+        Question question1 = new Question();
+        question1.setRequired(false);
+
+        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.RATING).ratingResponse(6).build();
+        Comment comment = new CommentBuilder().scores(score1).build();
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+        feedbackCommentValidator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[0]").getCode());
     }
 
     @Before

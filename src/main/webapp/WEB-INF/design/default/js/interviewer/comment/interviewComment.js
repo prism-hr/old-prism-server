@@ -1,5 +1,6 @@
 $(document).ready(function()
 {
+	registerBindPickers($('#scoring-questions'));
 	
 	$('#cancelInterviewFeedbackBtn').click(function()
 	{
@@ -21,7 +22,10 @@ $(document).ready(function()
 			{
 				$('#interviewForm').append("<input type='hidden' name='decline' value='true'/>");			
 			}
+			var scores = getScores($('#scoring-questions'));
+			$('#interviewForm').append("<input type='hidden' name='scores' value=\'" + scores + "\'/>");
 			$('#interviewForm').submit();
+			
 		};
 		var onCancel = function()
 		{

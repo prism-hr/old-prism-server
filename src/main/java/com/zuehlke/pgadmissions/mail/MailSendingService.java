@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.mail;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_SUBMIT_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
@@ -31,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -85,7 +85,7 @@ public class MailSendingService extends AbstractMailSendingService {
                     new Object[] { referee, adminsEmails, applicationForm.getApplicant(),
                     applicationForm, applicationForm.getProgrammeDetails(), getInstance().getApplicationHostName() });
             
-            String subject = resolveMessage("reference.request", applicationForm);
+            String subject = resolveMessage(REFEREE_NOTIFICATION, applicationForm);
             
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
             sendEmail(message);
@@ -136,7 +136,7 @@ public class MailSendingService extends AbstractMailSendingService {
        			}
                
                Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle()};
-               String subject = resolveMessage("validation.submission.applicant", args);
+               String subject = resolveMessage(APPLICATION_SUBMIT_CONFIRMATION, args);
                
                message = buildMessage(applicant, subject, model, APPLICATION_SUBMIT_CONFIRMATION);
                sendEmail(message);
@@ -198,7 +198,7 @@ public class MailSendingService extends AbstractMailSendingService {
             
             Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
          			   form.getOutcomeOfStage().displayValue() };
-            String subject = resolveMessage("rejection.notification", args);
+            String subject = resolveMessage(REJECTED_NOTIFICATION, args);
             
             message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
             sendEmail(message);
@@ -291,7 +291,7 @@ public class MailSendingService extends AbstractMailSendingService {
 
      			}
              
-             String subject =resolveMessage("approved.notification.applicant", form, form.getOutcomeOfStage());
+             String subject =resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getOutcomeOfStage());
              
              message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
              sendEmail(message);
@@ -332,14 +332,14 @@ public class MailSendingService extends AbstractMailSendingService {
     	  PrismEmailMessage message =null;
     	  for (Interviewer interviewer : interviewers) {
     		  try {
-    			  String subject = resolveMessage("interview.notification.interviewer", interviewer.getInterview().getApplication());
+    			  String subject = resolveMessage(INTERVIEWER_NOTIFICATION, interviewer.getInterview().getApplication());
     			  ApplicationForm applicationForm = interviewer.getInterview().getApplication(); 
     			  List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
     			  EmailModelBuilder modelBuilder = getModelBuilder(
     					  new String[] {"adminsEmails", "interviewer", "application", "applicant", "host"},
     					  new Object[] {getAdminsEmailsCommaSeparatedAsString(admins), interviewer, applicationForm, applicationForm.getApplicant(), getInstance().getApplicationHostName()}
     					  );
-    			  message = buildMessage(interviewer.getUser(), subject, modelBuilder.build(), EmailTemplateName.INTERVIEWER_NOTIFICATION);
+    			  message = buildMessage(interviewer.getUser(), subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
     			  sendEmail(message);
     		  }
     		  catch (Exception e) {
@@ -380,7 +380,7 @@ public class MailSendingService extends AbstractMailSendingService {
       public void sendInterviewConfirmationToApplicant(ApplicationForm applicationForm) {
     	  PrismEmailMessage message = null;
     	  try {
-    		  String subject = resolveMessage("interview.notification.applicant", applicationForm, applicationForm.getOutcomeOfStage());
+    		  String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, applicationForm, applicationForm.getOutcomeOfStage());
 			  List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
 			  EmailModelBuilder modelBuilder = getModelBuilder(
 					  new String[] {"adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage"},
@@ -432,7 +432,7 @@ public class MailSendingService extends AbstractMailSendingService {
         if (messageCode == null) {
             throw new PrismMailMessageException("Error while sending export error message: messageCode is null", message);
         }
-        String subject = resolveMessage("reference.data.export.error", (Object[]) null);
+        String subject = resolveMessage(EXPORT_ERROR, (Object[]) null);
         for (RegisteredUser user : superadmins) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(
@@ -607,7 +607,7 @@ public class MailSendingService extends AbstractMailSendingService {
         if (messageCode == null) {
             throw new PrismMailMessageException("Error while sending import error message: messageCode is null", message);
         }
-        String subject = resolveMessage("reference.data.import.error", (Object[]) null);
+        String subject = resolveMessage(IMPORT_ERROR, (Object[]) null);
         for (RegisteredUser user : superadmins) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(
@@ -659,7 +659,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "user", "action", "host" }, 
                     new Object[] { user, action, getInstance().getApplicationHostName() });
-            String subject = resolveMessage("registration.confirmation", (Object[]) null);
+            String subject = resolveMessage(REGISTRATION_CONFIRMATION, (Object[]) null);
             message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {
@@ -747,7 +747,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "user", "newPassword", "host" },
                     new Object[] { user, newPassword, getInstance().getApplicationHostName() });
-            String subject = resolveMessage("user.password.reset", (Object[]) null);
+            String subject = resolveMessage(NEW_PASSWORD_CONFIRMATION, (Object[]) null);
             message = buildMessage(user, subject, modelBuilder.build(), NEW_PASSWORD_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {

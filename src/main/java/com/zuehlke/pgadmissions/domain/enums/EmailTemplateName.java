@@ -5,9 +5,6 @@ public enum EmailTemplateName {
 	REFEREE_NOTIFICATION("Referee notification"), //sent by timer and on event
 	REFEREE_REMINDER("Referee reminder"),//sent by timer
 	INTERVIEWER_NOTIFICATION("Interviewer notification"),//sent by timer
-	INTERVIEWER_REMINDER("Interviewer reminder"),//sent by timer
-	INTERVIEWER_REMINDER_FIRST("Interviewer reminder first"),//sent by timer
-	APPROVAL_NOTIFICATION("Approval notification"),//sent by timer
 	NEW_PASSWORD_CONFIRMATION("New password confirmation"),//send on event
 	REGISTRY_VALIDATION_REQUEST("Registry vlaidation request"),
 	REGISTRATION_CONFIRMATION("Registration confirmation"), //sent on event

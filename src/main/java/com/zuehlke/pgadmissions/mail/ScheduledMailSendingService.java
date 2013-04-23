@@ -1,6 +1,10 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_REMINDER;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
@@ -146,15 +150,19 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void sendDigestsToUsers() {
 		log.info("Sending daily digests to users");
+		
+		String taskNotificationSubject = resolveMessage(DIGEST_TASK_NOTIFICATION, (Object[])null);
+		String taskReminderSubject = resolveMessage(DIGEST_TASK_REMINDER, (Object[])null);
+		String updateNotificationSubject = resolveMessage(DIGEST_UPDATE_NOTIFICATION, (Object[])null);
 
 		PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subject(
-				"Prism Digest Notification").emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
+		        taskNotificationSubject).emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
 
 		PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subject(
-				"Prism Digest Task Reminder").emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
+		        taskReminderSubject).emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
 
 		PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subject(
-				"Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
+		        updateNotificationSubject).emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
 
 		for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
 			try {
@@ -929,7 +937,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		try {
     		List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
     		for (Referee referee : refereesDueAReminder) {
-    			String subject = resolveMessage("reference.request.reminder", referee.getApplication());
+    			String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
     			
     			ApplicationForm applicationForm = referee.getApplication();
     			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
@@ -986,7 +994,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     		for (ApplicationForm applicationForm : applications) {
     			PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
     			
-    			String subject = resolveMessage("validation.request.registry.contacts", applicationForm);
+    			String subject = resolveMessage(REGISTRY_VALIDATION_REQUEST, applicationForm);
     			messageBuilder.subject(subject);
     			
     			RegisteredUser currentUser = applicationForm.getAdminRequestedRegistry();
@@ -1007,7 +1015,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     			
     			messageBuilder.cc(currentUser);
     			
-    			messageBuilder.templateName=EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
+    			messageBuilder.templateName=REGISTRY_VALIDATION_REQUEST;
     			
     			String recipientList = createRecipientString(registryContacts);
     			EmailModelBuilder modelBuilder = getModelBuilder(

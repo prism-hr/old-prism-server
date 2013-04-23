@@ -121,9 +121,9 @@ public abstract class AbstractMailSendingService {
         };
     }
     
-    protected String resolveMessage(String code, ApplicationForm form, ApplicationFormStatus previousStage) {
+    protected String resolveMessage(EmailTemplateName templateName, ApplicationForm form, ApplicationFormStatus previousStage) {
 		if (previousStage == null) {
-			return resolveMessage(code, form);
+			return resolveMessage(templateName, form);
 		}
 		RegisteredUser applicant = form.getApplicant();
 		if (applicant == null) {
@@ -132,21 +132,21 @@ public abstract class AbstractMailSendingService {
 		Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
 				previousStage.displayValue() };
 
-		return resolveMessage(code, args);
+		return resolveMessage(templateName, args);
 	}
     
-    protected String resolveMessage(String subjectCode, ApplicationForm applicationForm) {
+    protected String resolveMessage(EmailTemplateName templateName, ApplicationForm applicationForm) {
         RegisteredUser applicant = applicationForm.getApplicant();
         if (applicant == null) {
-            return mailSender.resolveMessage(subjectCode, applicationForm.getApplicationNumber(), applicationForm.getProgram().getTitle());
+            return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getProgram().getTitle());
         } else {
-            return mailSender.resolveMessage(subjectCode, applicationForm.getApplicationNumber(), applicationForm
+            return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm
                     .getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName());
         }
     }
     
-    protected String resolveMessage(String subjectCode, Object[] args) {
-    	return mailSender.resolveMessage(subjectCode, args);
+    protected String resolveMessage(EmailTemplateName templateName, Object[] args) {
+    	return mailSender.resolveSubject(templateName, args);
     }
     
     protected void sendEmail(PrismEmailMessage message) {

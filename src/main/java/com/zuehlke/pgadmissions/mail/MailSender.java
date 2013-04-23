@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -25,6 +24,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
@@ -40,8 +40,6 @@ public class MailSender {
     
     protected final JavaMailSender javaMailSender;
     
-    protected final MessageSource messageSource;
-    
     protected final boolean emailProductionSwitch;
     
     protected final String emailAddressFrom;
@@ -55,14 +53,12 @@ public class MailSender {
     @Autowired
     public MailSender(
             final JavaMailSender javaMailSender, 
-            final MessageSource messageSource, 
             @Value("${email.prod}") final String production,
             @Value("${email.address.from}") final String emailAddressFrom,  
             @Value("${email.address.to}") final String emailAddressTo,
             final EmailTemplateService emailTemplateService,
             final FreeMarkerConfig freemarkerConfig) {
         this.javaMailSender = javaMailSender;
-        this.messageSource = messageSource;
         this.emailProductionSwitch = BooleanUtils.toBoolean(production);
         this.emailAddressFrom = emailAddressFrom;
         this.emailAddressTo = emailAddressTo;
@@ -88,8 +84,9 @@ public class MailSender {
         }
     }
     
-    protected String resolveMessage(final String code, final Object... args) {
-        return messageSource.getMessage(code, args, null);
+    protected String resolveSubject(final EmailTemplateName templateName, final Object... args) {
+        String subjectFormat = emailTemplateService.getSubjectForTemplate(templateName);
+        return args == null ? subjectFormat :String.format(subjectFormat, args);
     }
     
     public void sendEmail(final PrismEmailMessage... emailMessage) {

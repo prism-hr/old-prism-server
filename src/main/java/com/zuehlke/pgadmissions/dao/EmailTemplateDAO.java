@@ -92,5 +92,4 @@ public class EmailTemplateDAO {
 	public void remove(EmailTemplate template) {
 		sessionFactory.getCurrentSession().delete(template);
 	}
-
 }

@@ -23,7 +23,25 @@ function getScores(container) {
 			if(dateResponse != ""){
 				score.dateResponse = dateResponse;
 			}
-		}
+		} else if(questionType == "DATE_RANGE"){
+			dateResponse = $(this).find("input.date-input").val();
+			if(dateResponse != ""){
+				score.dateResponse = dateResponse;
+			}
+			secondDateResponse = $(this).find("input.second-date-input").val();
+			if(secondDateResponse != ""){
+				score.secondDateResponse = secondDateResponse;
+			}
+		} else if(questionType == "DROPDOWN"){
+			values = $(this).find("select.dropdown-input").val() || [];
+			if(typeof values == 'string'){
+				values = [ values ];
+			}
+			score.textResponse = values.join('|');
+		} else if(questionType == "RATING"){
+			value = $(this).find("input.rating-input").val();
+			score.ratingResponse = value;
+		} 
 			
 		scores.push(score);
 	});

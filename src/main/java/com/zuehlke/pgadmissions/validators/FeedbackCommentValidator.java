@@ -93,10 +93,42 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 Date maxDate = parseQuestionDate(question.getMaxDate());
                 if (required && date == null) {
                     errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
-                } else if (date != null && minDate != null && date.before(minDate)) {
-                    errors.rejectValue("scores[" + i + "]", NOT_BEFORE_ERROR_MESSAGE, new Object[] { minDate }, null);
-                } else if (date != null && maxDate != null && date.after(maxDate)) {
-                    errors.rejectValue("scores[" + i + "]", NOT_AFTER_ERROR_MESSAGE, new Object[] { maxDate }, null);
+                } else if (date != null) {
+                    if (minDate != null && date.before(minDate)) {
+                        errors.rejectValue("scores[" + i + "]", NOT_BEFORE_ERROR_MESSAGE, new Object[] { minDate }, null);
+                    } else if (maxDate != null && date.after(maxDate)) {
+                        errors.rejectValue("scores[" + i + "]", NOT_AFTER_ERROR_MESSAGE, new Object[] { maxDate }, null);
+                    }
+                }
+                break;
+            case DATE_RANGE:
+                date = score.getDateResponse();
+                Date secondDate = score.getSecondDateResponse();
+                minDate = parseQuestionDate(question.getMinDate());
+                maxDate = parseQuestionDate(question.getMaxDate());
+                if (required && (date == null || secondDate == null)) {
+                    errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
+                }
+                if (date != null && secondDate != null) {
+                    if (date.after(secondDate)) {
+                        errors.rejectValue("scores[" + i + "]", "daterange.field.notafter");
+                    } else if (minDate != null && date.before(minDate)) {
+                        errors.rejectValue("scores[" + i + "]", NOT_BEFORE_ERROR_MESSAGE, new Object[] { minDate }, null);
+                    } else if (maxDate != null && secondDate.after(maxDate)) {
+                        errors.rejectValue("scores[" + i + "]", NOT_AFTER_ERROR_MESSAGE, new Object[] { maxDate }, null);
+                    }
+                }
+                break;
+            case DROPDOWN:
+                if (required && StringUtils.isBlank(score.getTextResponse())) {
+                    errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
+                }
+                break;
+            case RATING:
+                if (required && score.getRatingResponse() == null) {
+                    errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
+                } else if (score.getRatingResponse() != null && ( score.getRatingResponse() < 1 || score.getRatingResponse() > 5)) {
+                    errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
                 }
                 break;
             default:

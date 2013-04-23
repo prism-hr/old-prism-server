@@ -119,7 +119,7 @@ public class ReviewCommentController {
         return reviewComment;
     }
 
-    @ModelAttribute("customQuestions")
+    // @ModelAttribute("customQuestions")
     public List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
@@ -141,17 +141,16 @@ public class ReviewCommentController {
     public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = comment.getApplication();
         List<Score> scores = comment.getScores();
-        if(scores != null){
+        if (scores != null) {
             List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
             for (int i = 0; i < scores.size(); i++) {
                 Score score = scores.get(i);
                 score.setOriginalQuestion(questions.get(i));
-                
             }
         }
-        
+
         reviewFeedbackValidator.validate(comment, result);
-        
+
         if (result.hasErrors()) {
             return REVIEW_FEEDBACK_PAGE;
         }
@@ -166,6 +165,7 @@ public class ReviewCommentController {
             Score score = new Score();
             score.setQuestion(question.getLabel());
             score.setQuestionType(question.getType());
+            score.setOriginalQuestion(question);
             scores.add(score);
         }
         return scores;

@@ -35,6 +35,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -63,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class MailSendingServiceTest {
@@ -91,12 +95,24 @@ public class MailSendingServiceTest {
 	
 	protected ApplicationFormDAO applicationFormDAOMock;
 
+	protected UserDAO userDAOMock;
+	
+    protected RoleDAO roleDAOMock;
+    
+    protected RefereeDAO refereeDAOMock; 
+    
+    protected EncryptionUtils encryptionUtilsMock;
+	
 	@Before
 	public void setup() {
+	    userDAOMock = createMock(UserDAO.class);
+	    roleDAOMock = createMock(RoleDAO.class);
+	    refereeDAOMock = createMock(RefereeDAO.class);
+	    encryptionUtilsMock = createMock(EncryptionUtils.class);
 		mockMailSender = createMock(MailSender.class);
 		configurationServiceMock = createMock(ConfigurationService.class);
 		applicationFormDAOMock = createMock(ApplicationFormDAO.class);
-		service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock);
+		service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock);
 	}
 	
 	@Test
@@ -278,6 +294,13 @@ public class MailSendingServiceTest {
 	
 	@Test
 	public void sendRefereeRequestShouldSuccessfullySendMessage() throws Exception {
+	    service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock) {
+	        @Override
+	        protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
+	            return null;
+	        }
+	    };
+	    
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		Referee referee = new RefereeBuilder().id(0).user(user).build();
 		String adminMails = SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS;
@@ -315,6 +338,13 @@ public class MailSendingServiceTest {
 	
 	@Test
 	public void sendRefereeRequestShouldSuccessfullySendMessageWithNoApplicant() throws Exception {
+	    service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock) {
+            @Override
+            protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
+                return null;
+            }
+        };
+        
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		Referee referee = new RefereeBuilder().id(0).user(user).build();
 		String adminMails = SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS;

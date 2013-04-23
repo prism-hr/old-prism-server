@@ -26,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -34,20 +37,26 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
 
     public MailSendingService() {
-        this(null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public MailSendingService(final MailSender mailSender,
+    public MailSendingService(
+            final MailSender mailSender,
     		final ConfigurationService configurationService,
-    		final ApplicationFormDAO formDAO) {
-        super(mailSender, formDAO, configurationService);
+    		final ApplicationFormDAO formDAO, 
+    		final UserDAO userDAO, 
+    		final RoleDAO roleDAO,
+            final RefereeDAO refereeDAO, 
+            final EncryptionUtils encryptionUtils) {
+        super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils);
     }
 
     /**
@@ -77,6 +86,9 @@ public class MailSendingService extends AbstractMailSendingService {
      * </p>
      */
     public void sendReferenceRequest(Referee referee, ApplicationForm applicationForm) {
+        
+        processRefereeAndGetAsUser(referee);
+        
         PrismEmailMessage message = null;
         try {
         	String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());

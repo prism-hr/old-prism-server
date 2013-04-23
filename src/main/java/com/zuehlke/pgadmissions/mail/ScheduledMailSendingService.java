@@ -30,8 +30,10 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -58,6 +60,7 @@ import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.DateUtils;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
@@ -97,8 +100,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             final ReviewerDAO reviewerDAO, final ApplicationsService applicationsService, final ConfigurationService configurationService,
             final CommentFactory commentFactory, final CommentService commentService,
             final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, final PdfDocumentBuilder pdfDocumentBuilder,
-            final RefereeDAO refereeDAO, final UserService userService) {
-        super(mailSender, applicationFormDAO, configurationService);
+            final RefereeDAO refereeDAO, final UserService userService, final UserDAO userDAO, final RoleDAO roleDAO, final EncryptionUtils encryptionUtils) {
+        super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
@@ -114,7 +117,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Scheduled(cron = "${email.digest.cron}")

@@ -37,8 +37,10 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -77,6 +79,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
@@ -106,6 +109,10 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	private ScheduledMailSendingService service;
 
 	private UserService userServiceMock;
+	
+    private RoleDAO roleDAOMock;
+    
+    private EncryptionUtils encryptionUtilsMock;
 
 	@Before
 	@Override
@@ -123,6 +130,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		pdfDocumentBuilderMock = createMock(PdfDocumentBuilder.class);
 		refereeDAOMock = createMock(RefereeDAO.class);
 		userServiceMock = createMock(UserService.class);
+		userDAOMock = createMock(UserDAO.class);
+        roleDAOMock = createMock(RoleDAO.class);
+        encryptionUtilsMock = createMock(EncryptionUtils.class);
 		service = new ScheduledMailSendingService(
 				mockMailSender,
 				applicationFormDAOMock,
@@ -138,7 +148,10 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				pdfAttachmentInputSourceFactoryMock,
 				pdfDocumentBuilderMock,
 				refereeDAOMock,
-				userServiceMock);
+				userServiceMock,
+				userDAOMock, 
+				roleDAOMock,
+		        encryptionUtilsMock);
 	}
 	
 	@Test
@@ -628,6 +641,31 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	
 	@Test
 	public void shouldSendReferenceReminder() throws Exception {
+	       service = new ScheduledMailSendingService(
+	               mockMailSender,
+	               applicationFormDAOMock,
+	                notificationRecordDAOMock,
+	                commentDAOMock,
+	                supervisorDAOMock,
+	                stageDurationDAOMock,
+	                reviewerDAOMock,
+	                applicationsServiceMock,
+	                configurationServiceMock,
+	                commentFactoryMock,
+	                commentServiceMock,
+	                pdfAttachmentInputSourceFactoryMock,
+	                pdfDocumentBuilderMock,
+	                refereeDAOMock,
+	                userServiceMock,
+	                userDAOMock, 
+	                roleDAOMock,
+	                encryptionUtilsMock) {
+	           @Override
+	           protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
+	               return null;
+	           }
+	       };
+	    
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		String adminMails = SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS;
 		ApplicationForm form = getSampleApplicationForm();

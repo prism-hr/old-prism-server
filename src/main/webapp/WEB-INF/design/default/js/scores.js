@@ -15,6 +15,9 @@ function getScores(container) {
 		if(questionType == "TEXT"){
 			textResponse = $(this).find("input.text-input").val();
 			score.textResponse = textResponse;
+		} else if(questionType == "TEXTAREA"){
+			textResponse = $(this).find("textarea.textarea-input").val();
+			score.textResponse = textResponse;
 		}
 			
 		scores.push(score);

@@ -107,16 +107,14 @@ public class MailSender {
     }
     
     protected void sendEmailAsProductionMessage(final PrismEmailMessage message) {
-    	 if (isNotValidEmailMessage(message)) {
-             return;
-         }
-         
          log.info(String.format("Sending PRODUCTION Email: %s", message.toString()));
          try {
              javaMailSender.send(new MimeMessagePreparator() {
                  @Override
                  public void prepare(final MimeMessage mimeMessage) throws Exception {
                      final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+                     
+                     messageHelper.setFrom(emailAddressFrom);
                      
                      for (InternetAddress addresses : message.getToAsInternetAddresses()) {
                          messageHelper.addTo(addresses);
@@ -171,8 +169,9 @@ public class MailSender {
                  public void prepare(final MimeMessage mimeMessage) throws Exception {
                      final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
                      
-                     messageHelper.setTo(emailAddressTo);
                      messageHelper.setFrom(emailAddressFrom);
+
+                     messageHelper.setTo(emailAddressTo);
                      
                      if (StringUtils.isNotBlank(message.getReplyToAddress())) {
                          messageHelper.setReplyTo(message.getReplyToAddress());

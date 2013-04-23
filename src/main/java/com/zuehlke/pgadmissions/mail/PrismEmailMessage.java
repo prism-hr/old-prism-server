@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.Address;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -169,9 +171,18 @@ public final class PrismEmailMessage {
     public void setSubjectCode(final String subjectCode) {
         this.subjectCode = subjectCode;
     }
+
+    public Address getFromAddressAsInternetAddress() {
+        try {
+            return new InternetAddress(fromAddress);
+        } catch (AddressException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
     
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
     }
+
 }

@@ -160,10 +160,13 @@ public class ApplicationSummaryService {
             result.put("cvId", encryptionHelper.encrypt(cv.getId()));
             result.put("cvFilename", cv.getFileName());
         }
+        else  {
+            result.put("cvProvided", "false");
+        }
     }
     
-    public Map<String, String> getSummary(final String applicationId) {
-        ApplicationForm form = applicationsService.getApplicationByApplicationNumber(applicationId);
+    public Map<String, String> getSummary(final String applicationNumber) {
+        ApplicationForm form = applicationsService.getApplicationByApplicationNumber(applicationNumber);
 
         if (form.getStatus().equals(ApplicationFormStatus.WITHDRAWN )|| form.getStatus().equals(ApplicationFormStatus.UNSUBMITTED)) {
             return Collections.emptyMap();

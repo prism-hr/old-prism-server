@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REJECT
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REVIEW;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.WITHDRAWN;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -22,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+
+import junit.framework.Assert;
 
 import org.apache.struts.mock.MockHttpSession;
 import org.easymock.EasyMock;
@@ -51,6 +54,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -63,6 +67,7 @@ public class ApplicationListControllerTest {
     private ApplicationsReportService applicationsReportServiceMock;
     private UserService userServiceMock;
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
+    private ApplicationSummaryService applicationSummaryServiceMock;
 
     @Test
     public void shouldReturnViewForApplicationListPageWithStoredFiltersWhenSessionFiltersNotInitialized() {
@@ -318,8 +323,24 @@ public class ApplicationListControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         applicationsReportServiceMock = EasyMock.createMock(ApplicationsReportService.class);
-        filtersPropertyEditorMock = EasyMock.createMock(ApplicationsFiltersPropertyEditor.class);
-        controller = new ApplicationListController(applicationsServiceMock, applicationsReportServiceMock, userServiceMock, filtersPropertyEditorMock);
+        filtersPropertyEditorMock = createMock(ApplicationsFiltersPropertyEditor.class);
+        applicationSummaryServiceMock = createMock(ApplicationSummaryService.class);
+        controller = new ApplicationListController(applicationsServiceMock,
+                applicationsReportServiceMock,
+                userServiceMock,
+                filtersPropertyEditorMock,
+                applicationSummaryServiceMock);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldCallSummaryServiceToGetApplicationSummary() {
+        EasyMock.expect(applicationSummaryServiceMock.getSummary("appID"))
+        .andReturn(Collections.EMPTY_MAP);
+        
+        replay(applicationSummaryServiceMock);
+        Assert.assertTrue(controller.getApplicationDetails("appID").isEmpty());
+        EasyMock.verify(applicationSummaryServiceMock);
     }
 
     private List<ApplicationsFilter> getFiltersForActiveApplications() {

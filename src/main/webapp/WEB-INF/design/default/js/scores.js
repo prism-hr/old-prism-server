@@ -40,7 +40,9 @@ function getScores(container) {
 			score.textResponse = values.join('|');
 		} else if(questionType == "RATING"){
 			value = $(this).find("input.rating-input").val();
-			score.ratingResponse = value;
+			if(value!=""){
+				score.ratingResponse = value;
+			}
 		} 
 			
 		scores.push(score);

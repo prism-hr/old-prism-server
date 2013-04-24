@@ -3,11 +3,13 @@ package com.zuehlke.pgadmissions.mail;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_REMINDER;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +41,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -46,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
@@ -960,6 +966,36 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		}
 	}
     
+    @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendNewUserInvitation() {
+        log.info("Running sendNewUserInvitation Task");
+        PrismEmailMessage message = null;
+        try {
+            List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+            String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[])null);
+            for (RegisteredUser user : users) {
+                for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
+                    if (notification.getNotificationDate() == null) {
+                        notification.setNotificationDate(new Date());
+                    }
+                }
+                RegisteredUser admin =user.getPendingRoleNotifications().get(0).getAddedByUser();
+                Program program =user.getPendingRoleNotifications().get(0).getProgram();
+                String rolesString = constructRolesString(user);
+                EmailModelBuilder modelBuilder = getModelBuilder(
+                        new String[] {"newUser", "admin", "program", "newRoles", "host"},
+                        new Object[] {user, admin, program, rolesString, getHostName()}
+                        );
+                message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
+                sendEmail(message);
+                userDAO.save(user);
+            }
+        } catch (Exception e) {
+            throw new PrismMailMessageException("Error while sending reference reminder email to referee: ",
+                    e.getCause(), message);
+        }
+    }
+    
     /**
      * <p>
      * <b>Summary</b><br/>
@@ -1378,5 +1414,37 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		sb.append(".");
 		return sb.toString();
 	}
-   
+    
+    private String constructRolesString(RegisteredUser user) {
+        List<String> rolesList = new ArrayList<String>();
+        String programTitle = null;
+
+        for (PendingRoleNotification roleNotification : user.getPendingRoleNotifications()) {
+            Authority authority = roleNotification.getRole().getAuthorityEnum();
+            String roleAsString = StringUtils.capitalize(authority.toString().toLowerCase());
+            
+            if (authority != Authority.SUPERADMINISTRATOR && StringUtils.isBlank(programTitle)) {
+                programTitle = roleNotification.getProgram().getTitle();
+            }
+            
+            switch (authority) {
+            case INTERVIEWER:
+            case REVIEWER:
+            case SUPERVISOR:
+                rolesList.add("Default " + roleAsString);
+                break;
+            default:
+                rolesList.add(roleAsString);
+                break;
+            }
+        }
+        
+        StringBuilder messageBuilder = new StringBuilder(StringUtils.join(rolesList.toArray(new String[]{}), ", ", 0, rolesList.size() - 1));
+        messageBuilder.append(" and " ).append(rolesList.get(rolesList.size() - 1));
+        if (StringUtils.isNotBlank(programTitle)) {
+            messageBuilder.append(" for ").append(programTitle);
+        }
+        
+        return messageBuilder.toString();
+    }
 }

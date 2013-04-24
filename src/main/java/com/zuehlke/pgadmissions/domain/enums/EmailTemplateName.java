@@ -14,6 +14,7 @@ public enum EmailTemplateName {
 	MOVED_TO_APPROVED_NOTIFICATION("Moved to approved notification"),//sent by timer
 	APPLICATION_SUBMIT_CONFIRMATION("Application submit confirmation"),//sent on event
 	MOVED_TO_INTERVIEW_NOTIFICATION("Moved to interview notification"),//sent by timer
+	NEW_USER_SUGGESTION("New user suggestion"),//sent by timer
 	DIGEST_UPDATE_NOTIFICATION("Digest Update Notification"), 
 	DIGEST_TASK_NOTIFICATION("Digest Task Notification"),
 	DIGEST_TASK_REMINDER("Digest Task Reminder");

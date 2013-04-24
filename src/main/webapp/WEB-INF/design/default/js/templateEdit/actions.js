@@ -61,7 +61,7 @@ $(document).ready(function() {
       _.each(match, function(item) {
         var start = value.indexOf(item, prev);
         var end = start + item.length;
-        if (c >= start && c <= end) {
+        if (c > start && c < end) {
           evt.preventDefault();
           return;
         }

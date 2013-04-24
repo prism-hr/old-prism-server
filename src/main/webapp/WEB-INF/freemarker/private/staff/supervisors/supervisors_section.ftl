@@ -3,6 +3,7 @@
 <section class="form-rows"  id="approvalsection">
 <h2 class="no-arrow"> Confirm project details </h2>
 <div>
+<form>
 <div class="alert alert-info" id="add-info-bar-div"><i class="icon-info-sign"></i> Confirm project details. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant. </div>
 <div class="row-group" id="assignSupervisorsToAppSection"> <#import "/spring.ftl" as spring />
   <#assign avaliableOptionsSize = (programmeSupervisors?size + previousSupervisors?size + 4)/>
@@ -177,9 +178,12 @@
     <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
     </#list> </div>
 </div>
+		<div class="buttons">
+		  <button class="btn btn-primary" type="button" id="assignSupervisorsBtn">Submit</button>
+		</div>
+	</form>
+</div>
 </section>
 <div id="postApprovalData"></div>
-<div class="buttons">
-  <button class="btn btn-primary" type="button" id="assignSupervisorsBtn">Submit</button>
-</div>
+
 <script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/supervisor.js'/>"></script>

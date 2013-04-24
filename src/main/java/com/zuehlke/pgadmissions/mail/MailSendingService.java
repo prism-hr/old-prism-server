@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,8 @@ import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
+    
+    Logger log = LoggerFactory.getLogger(MailSendingService.class);
 
     public MailSendingService() {
         this(null, null, null, null, null, null, null);
@@ -344,8 +348,8 @@ public class MailSendingService extends AbstractMailSendingService {
     	  PrismEmailMessage message =null;
     	  for (Interviewer interviewer : interviewers) {
     		  try {
-    			  String subject = resolveMessage(INTERVIEWER_NOTIFICATION, interviewer.getInterview().getApplication());
-    			  ApplicationForm applicationForm = interviewer.getInterview().getApplication(); 
+    		      ApplicationForm applicationForm = interviewer.getInterview().getApplication(); 
+    			  String subject = resolveMessage(INTERVIEWER_NOTIFICATION, applicationForm);
     			  List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
     			  EmailModelBuilder modelBuilder = getModelBuilder(
     					  new String[] {"adminsEmails", "interviewer", "application", "applicant", "host"},
@@ -355,6 +359,7 @@ public class MailSendingService extends AbstractMailSendingService {
     			  sendEmail(message);
     		  }
     		  catch (Exception e) {
+    		      log.error(e.getMessage());
     			  throw new PrismMailMessageException("Error while sending interview confirmation email to interviewer: ", e.getCause(), message);
     	      }
     	  }
@@ -413,6 +418,7 @@ public class MailSendingService extends AbstractMailSendingService {
 			  sendEmail(message);
     	  }
     	  catch (Exception e) {
+    	      log.error(e.getMessage());
     		  throw new PrismMailMessageException("Error while sending interview confirmation email to applicant: ", e.getCause(), message);
 	      }
       }

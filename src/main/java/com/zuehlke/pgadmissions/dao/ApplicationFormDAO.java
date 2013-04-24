@@ -87,7 +87,7 @@ public class ApplicationFormDAO {
 		DetachedCriteria overDueRemindersCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", notificationType))
-				.add(Restrictions.lt("notificationRecord.date", subtractInterval))
+				.add(Restrictions.le("notificationRecord.date", subtractInterval))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		return sessionFactory

@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 
@@ -234,6 +235,7 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
         ReminderIntervalDAO reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval();
         reminderInterval.setDuration(5);
+        reminderInterval.setUnit(DurationUnitEnum.DAYS);
         save(reminderInterval);
         flushAndClearSession();
         

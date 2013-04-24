@@ -1,0 +1,81 @@
+/* CSS Document */
+
+/* Timeline tab ------------------------------------------------------------------------------------------- */
+#prospectus { clear: both; margin-top: 20px; }
+#prospectus ul.tabs { background: url(../../../images/tab_line.gif) repeat-x 0 100%; list-style: none; margin: 0; height: 33px; overflow: hidden; }
+#prospectus ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; float: left; margin: 5px 5px 0 3px; padding: 0; }
+#prospectus ul.tabs li.current { background-position: 0 -31px; }
+#prospectus ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; margin-bottom: -5px; padding: 0 10px; }
+#prospectus ul.tabs li.current a { margin-bottom: 0; }
+
+#prospectus .tab-page { clear: both; padding-top: 10px; position: relative; }
+
+/* Tabs tineline view */
+#prospectus {
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  padding: 10px;
+  position: relative;
+  margin-top: 40px;
+}
+#prospectus section:last-child {
+	margin-bottom:0px;
+}
+#prospectus ul.tabs {
+  margin-top: -43px;
+  background: none;
+  margin-bottom: 10px;
+}
+#prospectus ul.tabs li {
+  box-shadow: none;
+  font-size: 12px;
+  display: block;
+  float: left;
+  font-weight: bold;
+  -webkit-transition: 0.6s ease-in-out left;
+  -moz-transition: 0.6s ease-in-out left;
+  -o-transition: 0.6s ease-in-out left;
+  transition: 0.6s ease-in-out left;
+}
+#prospectus ul.tabs li.current a {
+  border: 1px solid #ddd;
+  background: white;
+  color: black;
+  text-shadow: none;
+}
+#prospectus ul.tabs li.current a:hover {
+  background: white;
+  border: 1px solid #ddd;
+}
+#prospectus ul.tabs li a {
+  line-height: 27px;
+  display: block;
+  background: #B0B1B3;
+  border-radius: 2px 2px 0 0;
+  color: #FFFFFF;
+  padding: 0px 10px;
+  font-size:13px;
+  text-shadow: 0 1px #26538C;
+}
+#prospectus ul.tabs li a:hover {
+  text-decoration: none;
+  background: #C6C7C9;
+  border-color: transparent;
+}
+#prospectus h2 {
+  font-size: 15px;
+  padding: 4px 14px;
+  margin-top: 0px;
+}
+#prospectus .tab-page {
+  padding-top: 0px;
+}
+#prospectus input[type="radio"],
+#prospectus input[type="checkbox"] {
+  margin-top: -3px;
+}
+#prospectus .field>label {
+  margin-top: 4px;
+}

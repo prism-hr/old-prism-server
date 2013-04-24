@@ -13,11 +13,14 @@
 	    <#if errorCode?? && errorCode=="true">
         <div class="alert alert-error"> 
         <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
-          <@spring.message 'addressDetails.sectionInfo'/>
+          <@spring.message 'additionalInformation.sectionInfo'/>
+          
         </div>
         <#else>
         <div class="alert alert-info"> <i class="icon-info-sign"></i>
-          <@spring.message 'addressDetails.sectionInfo'/>
+        
+          <@spring.message 'additionalInformation.sectionInfo'/>
+          
         </div>
         </#if>
 		<div class="row-group">

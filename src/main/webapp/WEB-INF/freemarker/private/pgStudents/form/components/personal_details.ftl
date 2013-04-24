@@ -36,7 +36,7 @@
         <#if errorCode?? && errorCode=="true">
         <div class="alert alert-error">
             <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i>
-				<span class="invalid-info-text"><@spring.message 'programmeDetails.sectionInfo'/>
+				<@spring.message 'programmeDetails.sectionInfo'/>
 	    </div>
         <#else>
             <div class="alert alert-info">

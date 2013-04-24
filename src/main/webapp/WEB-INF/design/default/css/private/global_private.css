@@ -1092,6 +1092,9 @@ span.count {
   line-height: 30px;
   padding-right: 235px;
 }
+.ie9 .rsbox {
+	width: 220px;
+}
 .rsbox {
   position: absolute;
   top: 0px;
@@ -1239,7 +1242,7 @@ section.form-rows .hint{
 }
 
 .old-ie #applicationTab section {
-	margin-bottom: 10px;
+	margin-bottom: 10px !important;
 }
 
 /* Application status icons. ------------------------------------------------------------------------- */

@@ -4,12 +4,15 @@ $(document).ready(function(){
     addCounter();
 	
 	var addImgCount = 0;
-	
+	debugger;
 	$("#acceptTermsAIDValue").val("NO");
 	
 	//limitTextArea();
-	
-	$("#convictionsText").attr("disabled", "disabled");
+	if ($('#convictionRadio_true').attr("checked", "checked")) {
+		
+	} else {
+		$("#convictionsText").attr("disabled", "disabled");
+	}
 	
 	if ($("#convictionsText").val() != "") {
 	    $("#convictionsText").removeAttr("disabled", "disabled");

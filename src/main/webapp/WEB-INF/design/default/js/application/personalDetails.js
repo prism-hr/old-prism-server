@@ -589,7 +589,6 @@ function postPersonalDetailsData(message) {
 	}  else {
 		documentLanguageQualification = $('#document_LANGUAGE_QUALIFICATION').val()
 	}
-	debugger;
 	var postData = {
 		title : $("#title").val(),
 		firstName : $("#firstName").val(),

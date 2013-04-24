@@ -120,7 +120,7 @@
                       <div class="row">
                         <label class="plain-label" for="templateSubjectId">Edit subject</label> <span data-desc="HTML template" class="hint"></span>
                         <div class="field">
-                          <input type="text" disabled name="templateSubject" id="templateSubjectId" class="input-xxlarge" rows="5" cols="150">
+                          <input type="text" disabled readonly name="templateSubject" id="templateSubjectId" class="input-xxlarge" rows="5" cols="150">
     	                    <#if template??>${template.subject}</#if>
     	                    </textarea>
                         </div>

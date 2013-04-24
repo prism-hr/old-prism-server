@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.mail;
+package com.zuehlke.pgadmissions.domain.enums;
 
 public enum DigestNotificationType {
 

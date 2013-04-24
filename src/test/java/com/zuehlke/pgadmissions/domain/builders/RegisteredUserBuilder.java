@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.mail.DigestNotificationType;
+import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 
 public class RegisteredUserBuilder {
     private String firstName;

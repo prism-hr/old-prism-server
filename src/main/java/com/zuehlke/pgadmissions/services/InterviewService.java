@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Calendar;
 
+import org.apache.commons.collections.Closure;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,15 +52,22 @@ public class InterviewService {
         interviewDAO.save(interview);
     }
 
-    public void moveApplicationToInterview(Interview interview, ApplicationForm applicationForm) {
+    public void moveApplicationToInterview(final Interview interview, ApplicationForm applicationForm) {
         interview.setApplication(applicationForm);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(interview.getInterviewDueDate());
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         applicationForm.setDueDate(calendar.getTime());
-        mailService.sendInterviewConfirmationToApplicant(applicationForm);
-        mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
         interviewDAO.save(interview);
+        CollectionUtils.forAllDo(interview.getInterviewers(), new Closure() {
+            
+            @Override
+            public void execute(Object input) {
+                   Interviewer interviewer = (Interviewer)input;
+                   interviewer.setInterview(interview);
+                   interviewerDAO.save(interviewer);
+            }
+        });
         applicationForm.setLatestInterview(interview);
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
@@ -73,6 +82,8 @@ public class InterviewService {
         	applicationForm.setApplicationAdministrator(null);
         	applicationForm.setSuppressStateChangeNotifications(false);
         }
+        mailService.sendInterviewConfirmationToApplicant(applicationForm);
+        mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
         if (interviewReminderRecord != null) {
             applicationForm.removeNotificationRecord(interviewReminderRecord);
         }

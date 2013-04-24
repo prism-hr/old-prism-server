@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -60,18 +61,22 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -703,6 +708,50 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		
 		assertNotNull(referee.getLastNotified());
 	}
+	
+    @Test
+    public void shouldSendNewUserInvitation() {
+        ApplicationForm form = getSampleApplicationForm();
+        PendingRoleNotification roleNotification = new PendingRoleNotificationBuilder()
+            .role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build())
+            .addedByUser(form.getProgram().getAdministrators().get(0))
+            .program(form.getProgram())
+            .build();
+        RegisteredUser user = new RegisteredUserBuilder().id(1)
+            .pendingRoleNotifications(roleNotification)
+            .build();
+        
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("newUser", user);
+        model.put("admin", form.getProgram().getAdministrators().get(0));
+        model.put("program", form.getProgram());
+        model.put("newRoles", "Administrator for MRes Security Science");
+        model.put("host", Environment.getInstance().getApplicationHostName());
+
+        expect(userDAOMock.getUsersWithPendingRoleNotifications()).andReturn(asList(user));
+        String subjectToReturn = "Invitation to Join UCL Prism";
+        expect(mockMailSender.resolveSubject(EmailTemplateName.NEW_USER_SUGGESTION, (Object[])null))
+            .andReturn(subjectToReturn);
+        
+        Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+        mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+        
+        userDAOMock.save(user);
+        
+        replay(userDAOMock, mockMailSender);
+        service.sendNewUserInvitation();
+        verify(userDAOMock, mockMailSender);
+        
+        PrismEmailMessage message = messageCaptor.getValue();
+        assertNotNull(message.getTo());
+        assertNotNull(message.getCc());
+        assertEquals(1, message.getTo().size());
+        assertEquals(subjectToReturn, message.getSubjectCode());
+        assertModelEquals(model, message.getModel());
+        
+        assertNotNull(roleNotification.getNotificationDate());
+
+    }
 	
 	@Test
 	public void shouldSendValidationRequestToRegistry() {

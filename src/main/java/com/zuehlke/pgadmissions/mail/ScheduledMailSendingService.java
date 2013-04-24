@@ -1423,7 +1423,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             Authority authority = roleNotification.getRole().getAuthorityEnum();
             String roleAsString = StringUtils.capitalize(authority.toString().toLowerCase());
             
-            if (authority != Authority.SUPERADMINISTRATOR && StringUtils.isBlank(programTitle)) {
+            if (authority != Authority.SUPERADMINISTRATOR && StringUtils.isBlank(programTitle)) {//looks like a bug
                 programTitle = roleNotification.getProgram().getTitle();
             }
             
@@ -1440,7 +1440,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
         
         StringBuilder messageBuilder = new StringBuilder(StringUtils.join(rolesList.toArray(new String[]{}), ", ", 0, rolesList.size() - 1));
-        messageBuilder.append(" and " ).append(rolesList.get(rolesList.size() - 1));
+        messageBuilder.append(rolesList.get(rolesList.size() - 1));
         if (StringUtils.isNotBlank(programTitle)) {
             messageBuilder.append(" for ").append(programTitle);
         }

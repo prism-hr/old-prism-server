@@ -205,6 +205,9 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
 		postData['editedRefereeId'] = refereeId;
 	}
     
+    var scoreData=getScores($("#scoring-questions_"+refereeId));
+    postData['scores']=scoreData;
+    
     $('#referencesSection > div').append('<div class="ajax" />');
     $.ajax({
         type : 'POST',

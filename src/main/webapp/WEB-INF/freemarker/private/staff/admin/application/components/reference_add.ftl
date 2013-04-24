@@ -1,3 +1,8 @@
+<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
+<script type="text/javascript">
+  registerBindPickers($('#scoring-questions'));
+</script>
+
 <div class="row-group">
     <div class="row">
         <label for="refereeComment_${encRefereeId}" class="plain-label">Comment<em>*</em></label>
@@ -71,6 +76,14 @@
             <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
             </#list>
         </div>
+    </div>
+    
+    <div id="scoring-questions_${encRefereeId}" class="row multi-line">
+      <h3>Scoring questions</h3>
+      
+      <#assign scores = refereesAdminEditDTO.scores>
+      <#assign errorsContainerName = "refereesAdminEditDTO">
+      <#include "/private/staff/scores.ftl"/>
     </div>
     
     <@spring.bind "refereesAdminEditDTO.*" />

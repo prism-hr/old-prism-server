@@ -44,7 +44,7 @@
           
       </#if>
       
-      <@spring.bind "comment.scores[${score_index}]" />
+      <@spring.bind "${errorsContainerName}.scores[${score_index}]" />
       <#list spring.status.errorMessages as error>
         <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
       </#list>

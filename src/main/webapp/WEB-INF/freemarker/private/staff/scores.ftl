@@ -19,10 +19,11 @@
       <#elseif score.questionType == "DATE">
           <input class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
           
+      <#--
       <#elseif score.questionType == "DATE_RANGE">
-      
           <input class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
-          <input class="full date second-date-input" type="text" value="${(score.secondDateResponse?string('dd MMM yyyy'))!}" />.
+          <input class="full date second-date-input" type="text" value="${(score.secondDateResponse?string('dd MMM yyyy'))!}" />
+      -->
           
       <#elseif score.questionType == "DROPDOWN">
       

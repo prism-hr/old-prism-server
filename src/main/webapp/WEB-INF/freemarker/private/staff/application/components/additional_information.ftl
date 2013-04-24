@@ -9,7 +9,7 @@
     
       <div class="admin_row">
         <label class="admin_row_label">Do you have any unspent Criminial Convictions?</label>
-        <div class="field"><#if applicationForm.additionalInformation.convictions>Yes<#else>No</#if></div>
+        <div class="field">${(applicationForm.additionalInformation.convictions?html)!"Not Provided"}</div>
       </div>
       
       <#if user.isInRole('SUPERADMINISTRATOR')>

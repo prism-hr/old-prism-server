@@ -136,8 +136,11 @@ public class ApplicationFormListDAO {
                     newCriterion = Restrictions.ilike("applicationNumber", term, MatchMode.ANYWHERE);
                     break;
                 case PROGRAMME_NAME:
-                    newCriterion = Restrictions.disjunction().add(Restrictions.ilike("p.title", term, MatchMode.ANYWHERE))
-                            .add(Restrictions.ilike("p.code", term, MatchMode.ANYWHERE));
+                    newCriterion = Restrictions.disjunction()
+                            .add(Restrictions.like("p.title", StringUtils.upperCase(term), MatchMode.ANYWHERE))
+                            .add(Restrictions.like("p.title", StringUtils.lowerCase(term), MatchMode.ANYWHERE))
+                            .add(Restrictions.like("p.code", StringUtils.upperCase(term), MatchMode.ANYWHERE))
+                            .add(Restrictions.like("p.code", StringUtils.lowerCase(term), MatchMode.ANYWHERE));
                     break;
                 case APPLICATION_STATUS:
                     ApplicationFormStatus status = ApplicationFormStatus.convert(term);

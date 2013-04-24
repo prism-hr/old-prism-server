@@ -102,4 +102,19 @@ public class DateUtilsTest {
         assertEquals(DateTimeConstants.MARCH, endDate.getMonthOfYear());
         assertEquals(2013, endDate.getYear());
     }
+    
+    @Test
+    public void shouldAddTheCorrectNumberOfWorkingDaysToA5MinuteInterval() {
+        // Monday 4. March 2013 8am
+        DateTime saturday = new DateTime(2013, 3, 4, 8, 0);
+        Date addWorkingDays = DateUtils.addWorkingDaysInMinutes(saturday.toDate(), 5);
+
+        // Monday 4. March 2013 8:05am
+        DateTime endDate = new DateTime(addWorkingDays);
+        assertEquals(DateTimeConstants.MONDAY, endDate.getDayOfWeek());
+        assertEquals(DateTimeConstants.MARCH, endDate.getMonthOfYear());
+        assertEquals(8, endDate.getHourOfDay());
+        assertEquals(485, endDate.getMinuteOfDay());
+        assertEquals(2013, endDate.getYear());
+    }
 }

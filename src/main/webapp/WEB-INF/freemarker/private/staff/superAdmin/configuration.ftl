@@ -128,7 +128,7 @@
                       <div class="row">
                         <label class="plain-label" for="templateContentId">Edit template</label> <span data-desc="HTML template" class="hint"></span>
                         <div class="field">
-                          <textarea disabled name="templateContent" id="templateContentId" class="input-xxlarge" rows="15" cols="150">
+                          <textarea disabled wrap="off" style="overflow : scroll;" name="templateContent" id="templateContentId" class="input-xxlarge" rows="15" cols="150">
     	                    <#if template??>${template.content}</#if>
     	                    </textarea>
                         </div>

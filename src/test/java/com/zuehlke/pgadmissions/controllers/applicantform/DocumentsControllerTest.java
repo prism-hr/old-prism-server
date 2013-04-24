@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -31,12 +32,26 @@ public class DocumentsControllerTest {
 	private RegisteredUser currentUser;
 
 	private ApplicationsService applicationsServiceMock;
+	
 	private DocumentSectionValidator documentSectionValidatorMock;
+	
 	private DocumentsController controller;
 	
 	private DocumentPropertyEditor documentPropertyEditorMock;
 
 	private UserService userServiceMock;
+
+    @Before
+    public void setUp() {
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        documentSectionValidatorMock = EasyMock.createMock(DocumentSectionValidator.class);
+        documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        controller = new DocumentsController(applicationsServiceMock, userServiceMock, documentSectionValidatorMock, documentPropertyEditorMock);   
+        currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+    }
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -45,7 +60,6 @@ public class DocumentsControllerTest {
 		EasyMock.replay(applicationsServiceMock, errors);
 		controller.editDocuments(applicationForm, errors);
 		EasyMock.verify(applicationsServiceMock);
-
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -100,7 +114,6 @@ public class DocumentsControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
 		controller.getApplicationForm("1");
-
 	}
 
 	@Test
@@ -116,17 +129,18 @@ public class DocumentsControllerTest {
 	@Test
 	public void shouldReturnMessage() {
 		assertEquals("bob", controller.getMessage("bob"));
-
 	}
 
 	@Test
 	public void shouldSaveAppplicationFormAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").personalStatement(new DocumentBuilder().build()).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock, errors);
+		
 		String view = controller.editDocuments(applicationForm, errors);
+		
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals("redirect:/update/getDocuments?applicationId=ABC", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
@@ -136,30 +150,13 @@ public class DocumentsControllerTest {
 	public void shouldNotSaveAndReturnToViewIfErrors() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		errors.rejectValue("personalStatement", "file.upload.empty");
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
-
 		EasyMock.replay(applicationsServiceMock, errors);
+
 		String view = controller.editDocuments(applicationForm, errors);
+		
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals("/private/pgStudents/form/components/documents", view);
 	}
-
-	@Before
-	public void setUp() {
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		documentSectionValidatorMock = EasyMock.createMock(DocumentSectionValidator.class);
-		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-
-		controller = new DocumentsController(applicationsServiceMock, userServiceMock, documentSectionValidatorMock, documentPropertyEditorMock);	
-
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		
-
-	}
-
-	
-
 }

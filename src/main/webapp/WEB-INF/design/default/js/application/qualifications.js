@@ -385,7 +385,7 @@ function postQualificationData(message) {
 }
 
 function ajaxProofOfAwardDelete() {
-    if ($('#profOfAwardId') && $('#profOfAwardId').val() && $('#profOfAwardId').val() != '') {
+    if ($('#document_PROOF_OF_AWARD') && $('#document_PROOF_OF_AWARD').val() && $('#document_PROOF_OF_AWARD').val() != '') {
         $.ajax({
             type : 'POST',
             statusCode : {
@@ -407,7 +407,7 @@ function ajaxProofOfAwardDelete() {
             },
             url : "/pgadmissions/delete/asyncdelete",
             data : {
-                documentId : $('#profOfAwardId').val()
+                documentId : $('#document_PROOF_OF_AWARD').val()
             }
         });
 

@@ -112,26 +112,26 @@ public class ScoringDefinitionParserTest {
 		parser.validateScoringDefinition(customQuestions);
 	}
 
-	@Test
-	public void shouldRequireBothMinDateAndMaxDateForDateRangeField() {
-		CustomQuestions customQuestions = new CustomQuestions();
-		List<Question> questions = customQuestions.getQuestion();
-		Question question = new Question();
-		String label = "testQuestion";
-		question.setLabel(label);
-		question.setType(QuestionType.DATE_RANGE);
-		question.setMinDate("TODAY");
-		questions.add(question);
-
-		try {
-			parser.validateScoringDefinition(customQuestions);
-			Assert.fail();
-		} catch (ScoringDefinitionParseException e) {
-			Assert.assertEquals(
-					"Both minDate and maxDate elements are required for dateRange type "
-							+ label, e.getLocalizedMessage());
-		}
-	}
+//	@Test
+//	public void shouldRequireBothMinDateAndMaxDateForDateRangeField() {
+//		CustomQuestions customQuestions = new CustomQuestions();
+//		List<Question> questions = customQuestions.getQuestion();
+//		Question question = new Question();
+//		String label = "testQuestion";
+//		question.setLabel(label);
+//		question.setType(QuestionType.DATE_RANGE);
+//		question.setMinDate("TODAY");
+//		questions.add(question);
+//
+//		try {
+//			parser.validateScoringDefinition(customQuestions);
+//			Assert.fail();
+//		} catch (ScoringDefinitionParseException e) {
+//			Assert.assertEquals(
+//					"Both minDate and maxDate elements are required for dateRange type "
+//							+ label, e.getLocalizedMessage());
+//		}
+//	}
 
 	@Test
 	public void shouldRequireOptionsForDropdown() {

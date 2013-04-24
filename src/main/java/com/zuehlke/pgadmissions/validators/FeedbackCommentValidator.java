@@ -101,24 +101,24 @@ public class FeedbackCommentValidator extends AbstractValidator {
                     }
                 }
                 break;
-            case DATE_RANGE:
-                date = score.getDateResponse();
-                Date secondDate = score.getSecondDateResponse();
-                minDate = parseQuestionDate(question.getMinDate());
-                maxDate = parseQuestionDate(question.getMaxDate());
-                if (required && (date == null || secondDate == null)) {
-                    errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
-                }
-                if (date != null && secondDate != null) {
-                    if (date.after(secondDate)) {
-                        errors.rejectValue("scores[" + i + "]", "daterange.field.notafter");
-                    } else if (minDate != null && date.before(minDate)) {
-                        errors.rejectValue("scores[" + i + "]", NOT_BEFORE_ERROR_MESSAGE, new Object[] { minDate }, null);
-                    } else if (maxDate != null && secondDate.after(maxDate)) {
-                        errors.rejectValue("scores[" + i + "]", NOT_AFTER_ERROR_MESSAGE, new Object[] { maxDate }, null);
-                    }
-                }
-                break;
+//            case DATE_RANGE:
+//                date = score.getDateResponse();
+//                Date secondDate = score.getSecondDateResponse();
+//                minDate = parseQuestionDate(question.getMinDate());
+//                maxDate = parseQuestionDate(question.getMaxDate());
+//                if (required && (date == null || secondDate == null)) {
+//                    errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
+//                }
+//                if (date != null && secondDate != null) {
+//                    if (date.after(secondDate)) {
+//                        errors.rejectValue("scores[" + i + "]", "daterange.field.notafter");
+//                    } else if (minDate != null && date.before(minDate)) {
+//                        errors.rejectValue("scores[" + i + "]", NOT_BEFORE_ERROR_MESSAGE, new Object[] { minDate }, null);
+//                    } else if (maxDate != null && secondDate.after(maxDate)) {
+//                        errors.rejectValue("scores[" + i + "]", NOT_AFTER_ERROR_MESSAGE, new Object[] { maxDate }, null);
+//                    }
+//                }
+//                break;
             case DROPDOWN:
                 if (required && StringUtils.isBlank(score.getTextResponse())) {
                     errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);

@@ -235,35 +235,35 @@ public class FeedbackCommentValidatorTest {
         Assert.assertEquals("date.field.notafter", mappingResult.getFieldError("scores[0]").getCode());
     }
 
-    @Test
-    public void shouldInvalidateWhenFirstDateIsMissingForDateRange() {
-        Question question1 = new Question();
-        question1.setRequired(true);
+//    @Test
+//    public void shouldInvalidateWhenFirstDateIsMissingForDateRange() {
+//        Question question1 = new Question();
+//        question1.setRequired(true);
+//
+//        Date secondDate = new GregorianCalendar(2013, 03, 12).getTime();
+//        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE_RANGE).secondDateResponse(secondDate).build();
+//        Comment comment = new CommentBuilder().scores(score1).build();
+//        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+//        feedbackCommentValidator.validate(comment, mappingResult);
+//        Assert.assertEquals(1, mappingResult.getErrorCount());
+//        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[0]").getCode());
+//    }
 
-        Date secondDate = new GregorianCalendar(2013, 03, 12).getTime();
-        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE_RANGE).secondDateResponse(secondDate).build();
-        Comment comment = new CommentBuilder().scores(score1).build();
-        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
-        feedbackCommentValidator.validate(comment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("scores[0]").getCode());
-    }
-
-    @Test
-    public void shouldInvalidateWhenFirstDateIsAfterSecondDateForDateRange() {
-        Question question1 = new Question();
-        question1.setRequired(false);
-
-        Date firstDate = new GregorianCalendar(2013, 11, 12).getTime();
-        Date secondDate = new GregorianCalendar(2013, 03, 12).getTime();
-        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE_RANGE).dateResponse(firstDate)
-                .secondDateResponse(secondDate).build();
-        Comment comment = new CommentBuilder().scores(score1).build();
-        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
-        feedbackCommentValidator.validate(comment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("daterange.field.notafter", mappingResult.getFieldError("scores[0]").getCode());
-    }
+//    @Test
+//    public void shouldInvalidateWhenFirstDateIsAfterSecondDateForDateRange() {
+//        Question question1 = new Question();
+//        question1.setRequired(false);
+//
+//        Date firstDate = new GregorianCalendar(2013, 11, 12).getTime();
+//        Date secondDate = new GregorianCalendar(2013, 03, 12).getTime();
+//        Score score1 = new ScoreBuilder().originalQuestion(question1).questionType(QuestionType.DATE_RANGE).dateResponse(firstDate)
+//                .secondDateResponse(secondDate).build();
+//        Comment comment = new CommentBuilder().scores(score1).build();
+//        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(comment, "comment");
+//        feedbackCommentValidator.validate(comment, mappingResult);
+//        Assert.assertEquals(1, mappingResult.getErrorCount());
+//        Assert.assertEquals("daterange.field.notafter", mappingResult.getFieldError("scores[0]").getCode());
+//    }
     
     @Test
     public void shouldInvalidateWhenRequiredDropdownScoreIsEmpty() {

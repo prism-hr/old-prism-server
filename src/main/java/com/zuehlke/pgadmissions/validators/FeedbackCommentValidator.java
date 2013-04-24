@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -25,6 +26,9 @@ import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 public class FeedbackCommentValidator extends AbstractValidator {
 
     private static final Logger log = LoggerFactory.getLogger(FeedbackCommentValidator.class);
+
+    @Autowired
+    private ScoresValidator scoresValidator;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -70,7 +74,14 @@ public class FeedbackCommentValidator extends AbstractValidator {
         Comment comment = (Comment) target;
         List<Score> scores = comment.getScores();
         if (scores != null) {
-            validateScores(errors, scores);
+            for (int i = 0; i < scores.size(); i++) {
+                try {
+                    errors.pushNestedPath("scores[" + i + "]");
+                    ValidationUtils.invokeValidator(scoresValidator, scores.get(i), errors);
+                } finally {
+                    errors.popNestedPath();
+                }
+            }
         }
 
     }
@@ -101,24 +112,24 @@ public class FeedbackCommentValidator extends AbstractValidator {
                     }
                 }
                 break;
-//            case DATE_RANGE:
-//                date = score.getDateResponse();
-//                Date secondDate = score.getSecondDateResponse();
-//                minDate = parseQuestionDate(question.getMinDate());
-//                maxDate = parseQuestionDate(question.getMaxDate());
-//                if (required && (date == null || secondDate == null)) {
-//                    errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
-//                }
-//                if (date != null && secondDate != null) {
-//                    if (date.after(secondDate)) {
-//                        errors.rejectValue("scores[" + i + "]", "daterange.field.notafter");
-//                    } else if (minDate != null && date.before(minDate)) {
-//                        errors.rejectValue("scores[" + i + "]", NOT_BEFORE_ERROR_MESSAGE, new Object[] { minDate }, null);
-//                    } else if (maxDate != null && secondDate.after(maxDate)) {
-//                        errors.rejectValue("scores[" + i + "]", NOT_AFTER_ERROR_MESSAGE, new Object[] { maxDate }, null);
-//                    }
-//                }
-//                break;
+            // case DATE_RANGE:
+            // date = score.getDateResponse();
+            // Date secondDate = score.getSecondDateResponse();
+            // minDate = parseQuestionDate(question.getMinDate());
+            // maxDate = parseQuestionDate(question.getMaxDate());
+            // if (required && (date == null || secondDate == null)) {
+            // errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
+            // }
+            // if (date != null && secondDate != null) {
+            // if (date.after(secondDate)) {
+            // errors.rejectValue("scores[" + i + "]", "daterange.field.notafter");
+            // } else if (minDate != null && date.before(minDate)) {
+            // errors.rejectValue("scores[" + i + "]", NOT_BEFORE_ERROR_MESSAGE, new Object[] { minDate }, null);
+            // } else if (maxDate != null && secondDate.after(maxDate)) {
+            // errors.rejectValue("scores[" + i + "]", NOT_AFTER_ERROR_MESSAGE, new Object[] { maxDate }, null);
+            // }
+            // }
+            // break;
             case DROPDOWN:
                 if (required && StringUtils.isBlank(score.getTextResponse())) {
                     errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
@@ -127,7 +138,7 @@ public class FeedbackCommentValidator extends AbstractValidator {
             case RATING:
                 if (required && score.getRatingResponse() == null) {
                     errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
-                } else if (score.getRatingResponse() != null && ( score.getRatingResponse() < 1 || score.getRatingResponse() > 5)) {
+                } else if (score.getRatingResponse() != null && (score.getRatingResponse() < 1 || score.getRatingResponse() > 5)) {
                     errors.rejectValue("scores[" + i + "]", EMPTY_FIELD_ERROR_MESSAGE);
                 }
                 break;

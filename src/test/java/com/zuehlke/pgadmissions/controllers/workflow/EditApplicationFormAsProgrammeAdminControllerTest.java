@@ -20,6 +20,7 @@ import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -27,20 +28,26 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -61,6 +68,9 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private CountryService countryServiceMock;
     private CountryPropertyEditor countryPropertyEditorMock;
     private MessageSource messageSourceMock;
+    private ScoringDefinitionParser scoringDefinitionParserMock;
+    private ScoresPropertyEditor scoresPropertyEditorMock;
+    private ScoreFactory scoreFactoryMock;
 
     @Before
     public void setUp() {
@@ -74,15 +84,21 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         countryServiceMock = EasyMock.createMock(CountryService.class);
         countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
         messageSourceMock = EasyMock.createMock(MessageSource.class);
+        scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
+        scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
+        scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock, refereeServiceMock,
                 refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, countryServiceMock, countryPropertyEditorMock,
-                messageSourceMock);
+                messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock);
     }
 
     @Test
-    public void shouldAddNewReferenceWithoutSavingSendToPorticoReferences() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).build();
+    public void shouldAddNewReferenceWithoutSavingSendToPorticoReferences() throws ScoringDefinitionParseException {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program).build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
@@ -157,7 +173,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     }
 
     @Test
-    public void shouldSaveSendToPorticoReferencesWithoutAddingNewReference() {
+    public void shouldSaveSendToPorticoReferencesWithoutAddingNewReference() throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
@@ -182,8 +198,10 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     }
 
     @Test
-    public void shouldSaveSendToPorticoReferencesAndAddNewReference() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).build();
+    public void shouldSaveSendToPorticoReferencesAndAddNewReference() throws ScoringDefinitionParseException {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program).build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 
@@ -219,8 +237,10 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     }
 
     @Test
-    public void shouldSaveSendToPorticoReferencesAndReportFormErrors() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).build();
+    public void shouldSaveSendToPorticoReferencesAndReportFormErrors() throws ScoringDefinitionParseException {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program).build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 
@@ -263,14 +283,14 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     @Test
     public void shouldRegisterPropertyEditors() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-        
+
         binderMock.setValidator(refereesAdminEditDTOValidatorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
         binderMock.registerCustomEditor(Country.class, countryPropertyEditorMock);
         binderMock.registerCustomEditor((Class<?>) EasyMock.isNull(), EasyMock.eq("comment"), EasyMock.isA(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(EasyMock.eq(String[].class), EasyMock.anyObject(StringArrayPropertyEditor.class));
-
+        binderMock.registerCustomEditor(null, "scores", scoresPropertyEditorMock);
         EasyMock.replay(binderMock);
         controller.registerPropertyEditors(binderMock);
 

@@ -178,7 +178,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
             List<Score> scores = refereesAdminEditDTO.getScores();
             if (scores != null) {
-                List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
+                List<Question> questions = getCustomQuestions(applicationForm);
                 for (int i = 0; i < scores.size(); i++) {
                     Score score = scores.get(i);
                     score.setOriginalQuestion(questions.get(i));
@@ -203,8 +203,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
     }
     
-    public List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+    public List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
             CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());

@@ -1,7 +1,4 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
-<script type="text/javascript">
-  registerBindPickers($('#scoring-questions'));
-</script>
 
 <div class="row-group">
     <div class="row">
@@ -77,26 +74,28 @@
             </#list>
         </div>
     </div>
+    	<@spring.bind "refereesAdminEditDTO.*" />
+     
+    	<#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
+    	<input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
     
-    <div id="scoring-questions_${encRefereeId}" class="row multi-line">
+</div>
+
+	
+<#assign scores = refereesAdminEditDTO.scores>
+<#if (scores)?has_content>
+<div class="row-group">
+    <div id="scoring-questions_${encRefereeId}">
       <h3>Scoring questions</h3>
-      
-      <#assign scores = refereesAdminEditDTO.scores>
       <#assign errorsContainerName = "refereesAdminEditDTO">
       <#include "/private/staff/scores.ftl"/>
     </div>
-    
-    <@spring.bind "refereesAdminEditDTO.*" />
-     
-    <#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
-    <input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
-    
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
             <button id="addReferenceButton" type="button" class="btn">Add</button>
         </div>
     </div>
-    
 </div>
-
+</#if>
+    

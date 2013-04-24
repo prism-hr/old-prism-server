@@ -4,7 +4,6 @@ $(document).ready(function(){
     addCounter();
 	
 	var addImgCount = 0;
-	debugger;
 	$("#acceptTermsAIDValue").val("NO");
 	
 	//limitTextArea();

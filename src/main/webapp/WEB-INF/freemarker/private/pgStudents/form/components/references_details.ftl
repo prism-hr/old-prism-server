@@ -105,6 +105,27 @@
           </div>
           </#list> </div>
       </div>
+      <!-- Email address -->
+      <div class="row" >
+        <label for="ref_email" class=
+        <#if referee.editable && (applicationForm.referees?size &lt; 4 || referee.id??) > "plain-label"
+          <#else>
+          "plain-label grey-label"
+          </#if>
+          >Email<em>*</em></label>
+        <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
+        <div class="field"> <#if referee.editable && (applicationForm.referees?size &lt; 4 || referee.id??) >
+          <input class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/>
+          <#else>
+          <input readonly class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}" disabled="disabled"/>
+          </#if>
+          <@spring.bind "referee.email" />
+          <#list spring.status.errorMessages as error>
+          <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+            ${error}
+          </div>
+          </#list> </div>
+      </div>
     </div>
     <div class="row-group">
     
@@ -294,28 +315,6 @@
         </#if>
         >Contact Details</h3>
         
-      <!-- Email address -->
-      <div class="row" >
-        <label for="ref_email" class=
-        <#if referee.editable && (applicationForm.referees?size &lt; 4 || referee.id??) > "plain-label"
-          <#else>
-          "plain-label grey-label"
-          </#if>
-          >Email<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
-        <div class="field"> <#if referee.editable && (applicationForm.referees?size &lt; 4 || referee.id??) >
-          <input class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/>
-          <#else>
-          <input readonly class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}" disabled="disabled"/>
-          </#if>
-          <@spring.bind "referee.email" />
-          <#list spring.status.errorMessages as error>
-          <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-            ${error}
-          </div>
-          </#list> </div>
-      </div>
-      
       <!-- Telephone -->
       <div class="row"> 
        <label for="refPhoneNumber" class=

@@ -179,9 +179,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
     }
 
     @Before
-    public void setUp() {
-        super.setUp();
-
+    public void prepare() {
         country1 = new CountryBuilder().name("AA").code("AA").enabled(true).build();
         country2 = new CountryBuilder().name("CC").code("CC").enabled(true).build();
         country3 = new DomicileBuilder().name("DD").code("DD").enabled(true).build();

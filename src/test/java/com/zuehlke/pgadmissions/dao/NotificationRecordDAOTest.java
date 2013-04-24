@@ -25,7 +25,7 @@ public class NotificationRecordDAOTest extends AutomaticRollbackTestCase {
 	private NotificationRecord record3;
 	
 	@Before
-	public void setup() {
+	public void prepare() {
 		dao = new NotificationRecordDAO(sessionFactory);
 		DateTime notificationDate = new DateTime(2013, 4, 10, 00, 00);
 		record1 = new NotificationRecordBuilder().notificationDate(notificationDate.toDate()).notificationType(INTERVIEW_ADMINISTRATION_REMINDER).build();

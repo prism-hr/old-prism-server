@@ -746,7 +746,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Before
-    public void setup() {
+    public void prepare() {
         userDAO = new UserDAO(sessionFactory);
     }
 

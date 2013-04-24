@@ -39,9 +39,10 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Before
-	public void setup() {
-		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+	public void prepare() {
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 		save(user);
 		flushAndClearSession();
 	}

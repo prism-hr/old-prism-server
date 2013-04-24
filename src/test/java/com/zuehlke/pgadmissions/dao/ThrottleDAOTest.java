@@ -15,7 +15,7 @@ public class ThrottleDAOTest extends AutomaticRollbackTestCase {
 	private ThrottleDAO dao;
 	
 	@Before
-	public void setup() {
+	public void prepare() {
 		dao = new ThrottleDAO(sessionFactory);
 	}
 	

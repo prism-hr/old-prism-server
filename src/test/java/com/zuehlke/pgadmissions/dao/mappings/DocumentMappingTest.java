@@ -81,19 +81,18 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 	}
 
 	@Before
-	public void setUp() {
-		super.setUp();
+	public void prepare() {
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
+        save(program);
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-		save(program);
+        applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 
-		applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        save(applicant);
 
-		save(applicant);
-
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
-		save(applicationForm);
-		flushAndClearSession();
+        applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        save(applicationForm);
+        flushAndClearSession();
 	}
 }

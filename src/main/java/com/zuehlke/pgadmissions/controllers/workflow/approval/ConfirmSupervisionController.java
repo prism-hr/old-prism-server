@@ -65,19 +65,24 @@ public class ConfirmSupervisionController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null){
+        if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }
+        
         Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-        if(primarySupervisor == null) {
+        
+        if (primarySupervisor == null) {
             throw new PrimarySupervisorNotDefinedException(applicationId);
         }
-        if(getUser().getId() != primarySupervisor.getUser().getId()){
+        
+        if (!getUser().getId().equals(primarySupervisor.getUser().getId())) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
-        if(primarySupervisor.getConfirmedSupervision() != null){
+        
+        if (primarySupervisor.getConfirmedSupervision() != null) {
             throw new ActionNoLongerRequiredException(applicationId);
         }
+        
         return application;
     }
     

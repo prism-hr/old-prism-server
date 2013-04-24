@@ -26,7 +26,7 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	private EmailTemplateDAO dao;
 
 	@Before
-	public void setup() {
+	public void prepare() {
 		dao = new EmailTemplateDAO(sessionFactory);
 	}
 

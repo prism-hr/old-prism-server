@@ -210,7 +210,7 @@ var tooltipSettings = {
     },
     position : {
         my : 'bottom right', // Use the corner...
-        at : 'top center', // ...and opposite corner
+        at : 'top left', // ...and opposite corner
         viewport : $(window),
         adjust : {
             method : 'flip shift'

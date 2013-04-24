@@ -66,8 +66,7 @@ public class EmploymentPositionMappingTest extends AutomaticRollbackTestCase {
 	}
 
 	@Before
-	public void setUp() {
-		super.setUp();
+	public void prepare() {
 		languageDAO = new LanguageDAO(sessionFactory);
 		countriesDAO = new CountriesDAO(sessionFactory);
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();		

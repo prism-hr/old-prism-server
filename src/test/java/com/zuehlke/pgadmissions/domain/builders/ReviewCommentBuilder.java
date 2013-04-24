@@ -23,6 +23,11 @@ public class ReviewCommentBuilder {
 	private CommentType commentType;
 	private Reviewer reviewer;
 	
+	public ReviewCommentBuilder createdTimeStamp(Date createdTimeStamp) {
+        this.createdTimeStamp = createdTimeStamp;
+        return this;
+    }
+	
 	public ReviewCommentBuilder reviewer(Reviewer reviewer) {
 		this.reviewer = reviewer;
 		return this;
@@ -91,7 +96,5 @@ public class ReviewCommentBuilder {
 		reviewComment.setReviewer(reviewer);
 		reviewComment.setSuitableCandidateForProgramme(suitableCandidateForProgramme);
 		return reviewComment;
-		
 	}
-	
 }

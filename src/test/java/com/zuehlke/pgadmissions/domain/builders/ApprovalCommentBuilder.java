@@ -23,6 +23,11 @@ public class ApprovalCommentBuilder {
     private String recommendedConditions;
     private CommentType commentType;
 
+    public ApprovalCommentBuilder createdTimeStamp(Date createdTimeStamp) {
+        this.createdTimeStamp = createdTimeStamp;
+        return this;
+    }
+    
     public ApprovalCommentBuilder projectDescriptionAvailable(Boolean projectDescriptionAvailable) {
         this.projectDescriptionAvailable = projectDescriptionAvailable;
         return this;

@@ -14,6 +14,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -335,7 +336,8 @@ public class ValidationTransitionControllerTest {
 		assertTrue(comment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
 	}
 	
-	public void shouldAddAPplicationFormClosingDateIfExistInPast() throws ParseException {
+	@Test
+	public void shouldAddApplicationFormClosingDateIfExistInPast() throws ParseException {
 		Program program = new Program();
 		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().batchDeadline(pastDate).id(1).program(program).build();
@@ -358,13 +360,15 @@ public class ValidationTransitionControllerTest {
 			}
 				
 		};
-		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(Arrays.asList(new Date()));
+		DateTime now = new DateTime();
+		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>(Arrays.asList(now.toDate())));
 		EasyMock.replay(badgeServiceMock);
 		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains(pastDate));
 		EasyMock.verify(badgeServiceMock);
 	}
 	
-	public void shouldAddAPplicationFormProjectTitleIfExistAndClosingDateInPast() throws ParseException {
+	@Test
+	public void shouldAddApplicationFormProjectTitleIfExistAndClosingDateInPast() throws ParseException {
 		Program program = new Program();
 		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").batchDeadline(pastDate).id(1).program(program).build();
@@ -387,11 +391,13 @@ public class ValidationTransitionControllerTest {
 			}
 			
 		};
-		EasyMock.expect(badgeServiceMock.getAllProjectTitlesByProgram(program)).andReturn(Arrays.asList("title 1"));
+		DateTime now = new DateTime();
+		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>(Arrays.asList(now.toDate())));
 		EasyMock.replay(badgeServiceMock);
-		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains("title"));
+		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains(pastDate));
 	}
 	
+	@Test
 	public void shouldAddAPplicationFormProjectTitleIfExistAndClosingDateDontExist() throws ParseException {
 		Program program = new Program();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").id(1).program(program).build();
@@ -414,9 +420,10 @@ public class ValidationTransitionControllerTest {
 			}
 			
 		};
-		EasyMock.expect(badgeServiceMock.getAllProjectTitlesByProgram(program)).andReturn(Arrays.asList("title 1"));
+		DateTime now = new DateTime();
+		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(Arrays.asList(now.toDate()));
 		EasyMock.replay(badgeServiceMock);
-		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains("title"));
+		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains(now.toDate()));
 		EasyMock.verify(badgeServiceMock);
 	}
 	

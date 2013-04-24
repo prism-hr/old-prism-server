@@ -160,9 +160,9 @@ public class ConfirmSupervisionControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         approvalServiceMock = EasyMock.createMock(ApprovalService.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-
-        controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock, datePropertyEditorMock,
-                confirmSupervisionDTOValidatorMock);
+        confirmSupervisionDTOValidatorMock = EasyMock.createMock(ConfirmSupervisionDTOValidator.class);
+        controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock,
+                datePropertyEditorMock, confirmSupervisionDTOValidatorMock);
 
     }
 

@@ -64,9 +64,7 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 	}
 	
 	@Before
-	public void setUp() {
-		super.setUp();
-
+	public void prepare() {
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		
 		save(program);

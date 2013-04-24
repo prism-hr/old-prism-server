@@ -76,7 +76,7 @@ public class ApplicationsFilterDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Before
-    public void setup() {
+    public void prepare() {
         filterDao = new ApplicationsFilterDAO(sessionFactory);
     }
 

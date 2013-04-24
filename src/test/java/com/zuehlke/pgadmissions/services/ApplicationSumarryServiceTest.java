@@ -72,9 +72,9 @@ public class ApplicationSumarryServiceTest {
 
     private static final String CV_FILE_NAME = "MyCV.pdf";
 
-    private static Date DATE_OF_LAST_UPDATE;
+    private Date dateOfLastUpdate;
     
-    private static Date DATE_OF_SUBMISSION;
+    private Date dateOfSubmission;
     
     private RegisteredUser currentUser;
     
@@ -90,8 +90,8 @@ public class ApplicationSumarryServiceTest {
     
     @Before
     public void setup() {
-        DATE_OF_SUBMISSION = (new DateTime(2013, 4, 23, 9, 20)).toDate();
-        DATE_OF_LAST_UPDATE = (new DateTime(2013, 4, 20, 9, 20)).toDate();
+        dateOfSubmission = new DateTime(2013, 4, 23, 9, 20).toDate();
+        dateOfLastUpdate = new DateTime(2013, 4, 20, 9, 20).toDate();
         currentUser = getCurrentUser();
         actionsDefinitionMock = createMock(ApplicationActionsDefinition.class);
         userServiceMock = createMock(UserService.class);
@@ -157,8 +157,8 @@ public class ApplicationSumarryServiceTest {
         
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-        assertEquals(dateFormat.format(DATE_OF_SUBMISSION), result.get("applicationSubmissionDate"));
-        assertEquals(dateFormat.format(DATE_OF_LAST_UPDATE), result.get("applicationUpdateDate"));
+        assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
+        assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
         assertEquals("XYZ", result.get("personalStatementId"));
@@ -209,8 +209,8 @@ public class ApplicationSumarryServiceTest {
         
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-        assertEquals(dateFormat.format(DATE_OF_SUBMISSION), result.get("applicationSubmissionDate"));
-        assertEquals(dateFormat.format(DATE_OF_LAST_UPDATE), result.get("applicationUpdateDate"));
+        assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
+        assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
         assertEquals("XYZ", result.get("personalStatementId"));
@@ -261,8 +261,8 @@ public class ApplicationSumarryServiceTest {
         
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-        assertEquals(dateFormat.format(DATE_OF_SUBMISSION), result.get("applicationSubmissionDate"));
-        assertEquals(dateFormat.format(DATE_OF_LAST_UPDATE), result.get("applicationUpdateDate"));
+        assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
+        assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
         assertEquals("XYZ", result.get("personalStatementId"));
@@ -313,8 +313,8 @@ public class ApplicationSumarryServiceTest {
         
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-        assertEquals(dateFormat.format(DATE_OF_SUBMISSION), result.get("applicationSubmissionDate"));
-        assertEquals(dateFormat.format(DATE_OF_LAST_UPDATE), result.get("applicationUpdateDate"));
+        assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
+        assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
         assertEquals("XYZ", result.get("personalStatementId"));
@@ -362,8 +362,8 @@ public class ApplicationSumarryServiceTest {
         
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-        assertEquals(dateFormat.format(DATE_OF_SUBMISSION), result.get("applicationSubmissionDate"));
-        assertEquals(dateFormat.format(DATE_OF_LAST_UPDATE), result.get("applicationUpdateDate"));
+        assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
+        assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
         assertEquals("XYZ", result.get("personalStatementId"));
@@ -396,19 +396,19 @@ public class ApplicationSumarryServiceTest {
                 .build();
         
         Qualification qualification = new QualificationBuilder()
-                .awardDate(DATE_OF_LAST_UPDATE)
+                .awardDate(dateOfLastUpdate)
                 .build();
         Qualification mostRecentQualification = new QualificationBuilder()
-                .awardDate(DATE_OF_SUBMISSION)
+                .awardDate(dateOfSubmission)
                 .title(MOST_RECENT_QUALIFICATION_TITLE)
                 .build();
         
         EmploymentPosition position = new EmploymentPositionBuilder()
-                .endDate(DATE_OF_LAST_UPDATE)
+                .endDate(dateOfLastUpdate)
                 .toEmploymentPosition();
         EmploymentPosition mostRecentPosition = new EmploymentPositionBuilder()
                 .employerName("Shortcuts production")
-                .endDate(DATE_OF_SUBMISSION)
+                .endDate(dateOfSubmission)
                 .toEmploymentPosition();
         
         Document personalStatement = new DocumentBuilder().id(369)
@@ -430,9 +430,9 @@ public class ApplicationSumarryServiceTest {
                 .qualifications(qualification, mostRecentQualification)
                 .employmentPositions(position, mostRecentPosition)
                 .status(ApplicationFormStatus.APPROVED)
-                .submittedDate(DATE_OF_SUBMISSION)
+                .submittedDate(dateOfSubmission)
                 .cv(cv)
-                .lastUpdated(DATE_OF_LAST_UPDATE)
+                .lastUpdated(dateOfLastUpdate)
                 .applicant(applicant)
                 .applicationNumber(SAMPLE_APPLICATION_NUMBER)
                 .build();

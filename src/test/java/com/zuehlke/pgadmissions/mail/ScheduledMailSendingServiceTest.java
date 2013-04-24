@@ -115,9 +115,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     private EncryptionUtils encryptionUtilsMock;
 
 	@Before
-	@Override
-	public void setup() {
-		super.setup();
+	public void prepare() {
 		notificationRecordDAOMock = createMock(NotificationRecordDAO.class);
 		commentDAOMock = createMock(CommentDAO.class);
 		supervisorDAOMock = createMock(SupervisorDAO.class);

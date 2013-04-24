@@ -112,9 +112,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Before
-    @Override
-    public void setUp() {
-        super.setUp();
+    public void prepare() {
         country = new CountryBuilder().name("AA").code("AA").enabled(true).build();
         domicile = new DomicileBuilder().name("BB").code("BB").enabled(true).build();
         ethnicity = new EthnicityBuilder().name("AAAA").code(1).enabled(true).build();

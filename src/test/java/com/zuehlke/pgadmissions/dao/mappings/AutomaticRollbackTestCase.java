@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.utils.ApplicationContext;
 public abstract class AutomaticRollbackTestCase {
 
 	protected SessionFactory sessionFactory;
+	
 	protected Transaction transaction;
 
 	public AutomaticRollbackTestCase() {
@@ -31,7 +32,7 @@ public abstract class AutomaticRollbackTestCase {
 	}
 
 	@Before
-	public void setUp() {
+	public final void setup() {
 		transaction = sessionFactory.getCurrentSession().beginTransaction();		
 	}
 

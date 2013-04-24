@@ -53,19 +53,16 @@ public class InterviewMappingTest extends AutomaticRollbackTestCase{
 	}
 	
 	@Before
-	public void setup() {
-		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-		
-		interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com").username("brady").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-
-		program = new ProgramBuilder().code("doesntexist").title("another title").build();
-
-		application = new ApplicationFormBuilder().program(program).applicant(user).build();
-		save(user, program, interviewerUser, application);
-
-		flushAndClearSession();
+	public void prepare() {
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
+        interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com")
+                .username("brady").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
+        program = new ProgramBuilder().code("doesntexist").title("another title").build();
+        application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        save(user, program, interviewerUser, application);
+        flushAndClearSession();
 	}
-
 }

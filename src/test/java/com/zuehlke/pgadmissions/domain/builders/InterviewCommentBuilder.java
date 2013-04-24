@@ -23,6 +23,11 @@ public class InterviewCommentBuilder {
 	private CommentType commentType;
 	private Interviewer interviewer;
 	
+	public InterviewCommentBuilder createdTimeStamp(Date createdTimeStamp) {
+	    this.createdTimeStamp = createdTimeStamp;
+	    return this;
+	}
+	
 	public InterviewCommentBuilder interviewer(Interviewer interviewer) {
 		this.interviewer = interviewer;
 		return this;

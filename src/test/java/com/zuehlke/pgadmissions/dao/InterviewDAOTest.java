@@ -55,8 +55,7 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Before
-	public void setUp() {
-		super.setUp();
+	public void prepare() {
 		applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		program = new ProgramBuilder().code("doesntexist").title("another title").build();

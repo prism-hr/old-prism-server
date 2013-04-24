@@ -61,7 +61,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	private ApplicationForm application;
 
 	@Before
-	public void setup() {
+	public void prepare() {
 		applicationDAO = new ApplicationFormDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("username").password("password").accountNonExpired(false).accountNonLocked(false)

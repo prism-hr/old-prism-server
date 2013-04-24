@@ -1,5 +1,8 @@
 <#setting locale = "en_US">
+<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
+
 <#list scores as score>
+<div class="scoring-questions">
   <div class="row multi-line score-row">
     <#assign originalQuestion = score.originalQuestion>
     <input type="hidden" class="question-type" value = "${score.questionType}"/>
@@ -51,4 +54,7 @@
     </div>
     
   </div>
+</div>
 </#list>
+
+<script>registerBindPickers($('.scoring-questions'));</script>

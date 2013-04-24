@@ -1,3 +1,4 @@
+
 function getScores(container) {
 	
 	var scores = new Array();
@@ -46,7 +47,6 @@ function getScores(container) {
 				score.ratingResponse = value;
 			}
 		} 
-			
 		scores.push(score);
 	});
 	return JSON.stringify(scores);

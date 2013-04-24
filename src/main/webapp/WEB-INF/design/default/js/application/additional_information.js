@@ -7,8 +7,7 @@ $(document).ready(function(){
 	$("#acceptTermsAIDValue").val("NO");
 	
 	//limitTextArea();
-	if ($('#convictionRadio_true').attr("checked", "checked")) {
-		
+	if ($('#convictionRadio_true').is(':checked')) {
 	} else {
 		$("#convictionsText").attr("disabled", "disabled");
 	}

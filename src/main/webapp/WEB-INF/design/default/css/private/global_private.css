@@ -1519,9 +1519,8 @@ form#removeForm {
     top: 6px;
     width: 28px;
 }
-body.applist .ui-tooltip{
-	margin-left: -77px;
-    margin-top: 18px;
+.ui-tooltip{
+    margin-top: 10px;
 }
 /* Show only the file link when a file is uploaded. */
 

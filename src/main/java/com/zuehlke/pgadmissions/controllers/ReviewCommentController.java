@@ -121,7 +121,7 @@ public class ReviewCommentController {
         return reviewComment;
     }
 
-    public List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
+    private List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
         if (scoringDefinition != null) {

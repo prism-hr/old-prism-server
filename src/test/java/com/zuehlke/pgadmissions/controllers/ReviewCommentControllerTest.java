@@ -212,38 +212,6 @@ public class ReviewCommentControllerTest {
     }
 
     @Test
-    public void shouldReturnCustomQuestions() throws ScoringDefinitionParseException {
-        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
-        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
-        final Question question1 = new Question();
-        question1.setLabel("question1");
-        question1.setType(QuestionType.RATING);
-        final CustomQuestions customQuestions = new CustomQuestions();
-        customQuestions.getQuestion().add(question1);
-
-        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
-        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, null) {
-
-            @Override
-            public ApplicationForm getApplicationForm(String id) {
-                return applicationForm;
-            }
-
-        };
-
-        EasyMock.replay(scoringDefinitionParserMock);
-        List<Question> questions = controller.getCustomQuestions("5");
-        EasyMock.verify(scoringDefinitionParserMock);
-
-        assertEquals(1, questions.size());
-        assertEquals("question1", questions.get(0).getLabel());
-        assertEquals(QuestionType.RATING, questions.get(0).getType());
-    }
-
-    @Test
     public void shouldRegisterValidator() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.setValidator(reviewFeedbackValidatorMock);

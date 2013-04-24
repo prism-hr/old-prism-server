@@ -459,12 +459,10 @@ function doUpload($upload_field) {
     $container.find('div.alert-error').remove();
 
 	// ajax process start/complete
-	$uploadedDocuments.ajaxStart(function(){
-		if ($upload_field.val() != '') {
-			$(this).show();
-			$(this).append('<li class="posting"><a class="uploaded-file">' + $upload_field.val().split('\\').pop() + '</a></li>');
-		}
-	});
+	if ($upload_field.val() != '') {
+		$uploadedDocuments.show();
+		$uploadedDocuments.append('<li class="posting"><a class="uploaded-file">' + $upload_field.val().split('\\').pop() + '</a></li>');
+	}
 	
     $.ajaxFileUpload({
         url : '/pgadmissions/documents/async',
@@ -484,14 +482,14 @@ function doUpload($upload_field) {
                 $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');
 				
 				$upload_field.val('');
-				$uploadedDocuments.find('li:last-child').remove();
+				$uploadedDocuments.find('li').last().remove();
 				
             } else {
 				
 				$container.addClass('uploaded');
 				var doc_type = $upload_field.attr('data-reference');
 
-				$uploadedDocuments.find('li:last-child').remove();
+				$uploadedDocuments.find('li').last().remove();
                 $("<li>" + data + "</li>").appendTo($uploadedDocuments);
                 $uploadedDocuments.show();
                 var $fileInput = $container.find('input.full');
@@ -501,7 +499,7 @@ function doUpload($upload_field) {
 				$container.find('.fileupload').fileupload('clear').hide();
 				
 				$upload_field.val('');
-				$uploadedDocuments.find('li:last-child').addClass('done');
+				$uploadedDocuments.find('li').last().addClass('done');
 				
 				$uploadedDocuments.find('a.delete').attr({
                     'data-desc' : 'Delete ' + doc_type
@@ -572,13 +570,10 @@ function doUploadComment($upload_field, $uploadedDocuments) {
     // Remove any previous error messages.
     $container.find('div.alert-error').remove();
 	
-	// ajax process start/complete
-	$uploadedDocuments.ajaxStart(function(){
-		if ($upload_field.val() != '') {
-			$(this).show();
-			$(this).append('<li class="posting"><a class="uploaded-file">' + $upload_field.val().split('\\').pop() + '</a></li>');
-		}
-	});
+	if ($upload_field.val() != '') {
+		$uploadedDocuments.show();
+		$uploadedDocuments.append('<li class="posting"><a class="uploaded-file">' + $upload_field.val().split('\\').pop() + '</a></li>');
+	}
 	
     $.ajaxFileUpload({
         url : '/pgadmissions/documents/async',
@@ -593,15 +588,15 @@ function doUploadComment($upload_field, $uploadedDocuments) {
             if ($(data).find('div.alert-error').length > 0) {
                 // There was an uploading error.
                 $container.append(data);
-            } else if ($(data).find('input').length == 0) {
+            } else if ($(data).find('.file').length == 0) {
                 // There was (probably) a server error.
                 $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');
 				$upload_field.val('');
-				$uploadedDocuments.find('li:last-child').remove();
+				$uploadedDocuments.find('li').last().remove();
             } else {
 				
                 $container.addClass('uploaded');
-				$uploadedDocuments.find('li:last-child').remove();
+				$uploadedDocuments.find('li').last().remove();
                 $("<li>" + data + "</li>").appendTo($uploadedDocuments);
                 $uploadedDocuments.show();
                 var $fileInput = $container.find('input.full');
@@ -611,7 +606,7 @@ function doUploadComment($upload_field, $uploadedDocuments) {
 				$('#uploadFields .fileupload').fileupload('clear');
 				
 				$upload_field.val('');
-				$uploadedDocuments.find('li:last-child').addClass('done');
+				$uploadedDocuments.find('li').last().addClass('done');
             }
         },
         error : function() {

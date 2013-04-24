@@ -583,7 +583,13 @@ function postPersonalDetailsData(message) {
 	if ($("input[name='examTakenOnline']:checked").length > 0) {
 		examTakenOnline = $("input[name='examTakenOnline']:checked").val();
 	}
-
+	var documentLanguageQualification;
+	if ( $('#document_LANGUAGE_QUALIFICATION').length == 0) {
+		documentLanguageQualification = '';	
+	}  else {
+		documentLanguageQualification = $('#document_LANGUAGE_QUALIFICATION').val()
+	}
+	debugger;
 	var postData = {
 		title : $("#title").val(),
 		firstName : $("#firstName").val(),
@@ -620,8 +626,7 @@ function postPersonalDetailsData(message) {
 		'languageQualifications[0].speakingScore' : selectValue('speakingScore'),
 		'languageQualifications[0].listeningScore' : selectValue('listeningScore'),
 		'languageQualifications[0].examTakenOnline' : examTakenOnline,
-		'languageQualifications[0].languageQualificationDocument' : $(
-				'#document_LANGUAGE_QUALIFICATION').val(),
+		'languageQualifications[0].languageQualificationDocument' : documentLanguageQualification,
 		message : message,
 		acceptedTerms : acceptedTheTerms,
 		cacheBreaker : new Date().getTime()

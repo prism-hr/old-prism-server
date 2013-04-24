@@ -34,7 +34,8 @@ td.status { text-align: center !important; }
 #search-box label { font-weight: bold; }
 #search-box input { padding: 4px; width: 240px; height: 17px; margin-bottom: 0px; margin-right:4px;}
 #search-box select { padding: 4px; width: 150px; height: auto; margin-bottom: 0px;  margin-right: 6px; }
-#search-box select:nth-child(2) { width: 120px; }
+#search-box select.selectPredicate { width: 120px; }
+
 #search-box button { margin-top: -2px; }
 #search-box .invalid  { display: block; margin-left: 147px; margin-top: 5px; padding: 3px; text-align: left; }
 #search-box .filter {

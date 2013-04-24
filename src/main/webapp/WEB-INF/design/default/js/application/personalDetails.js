@@ -422,6 +422,7 @@ function enableLanguageQualifications() {
 	$(
 			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.removeAttr("disabled", "disabled");
+			$('#examTakenOnlineYes, #examTakenOnlineNo').parent().removeClass("grey-label");
 	$(
 			"#qualificationType, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.removeAttr("readonly", "readonly");
@@ -458,6 +459,7 @@ function disableLanguageQualifications() {
 	$(
 			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.attr("disabled", "disabled");
+			$('#examTakenOnlineYes, #examTakenOnlineNo').parent().addClass("grey-label");
 	$(
 			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.attr("readonly", "readonly");

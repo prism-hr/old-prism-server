@@ -213,7 +213,7 @@
                 <label id="lbl-examTakenOnline" class="plain-label grey-label">Did you sit the exam online?<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.exam.online'/>"></span>
                 <div class="field">
-                    <label>
+                    <label class="grey-label">
                         <input type="radio" name="examTakenOnline" id="examTakenOnlineYes" value="true" readonly disabled="disabled"
                         <#if personalDetails.languageQualifications[0].isExamTakenOnlineSet() && personalDetails.languageQualifications[0].getExamTakenOnline()>
                             checked="checked"
@@ -222,7 +222,7 @@
                             disabled="disabled"
                         </#if>/> Yes
                     </label>                            
-                    <label>
+                    <label class="grey-label">
                         <input type="radio" name="examTakenOnline" id="examTakenOnlineNo" value="false" readonly disabled="disabled"
                         <#if personalDetails.languageQualifications[0].isExamTakenOnlineSet() && !personalDetails.languageQualifications[0].getExamTakenOnline()>
                             checked="checked"

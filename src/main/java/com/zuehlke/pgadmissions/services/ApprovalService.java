@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 @Transactional
 public class ApprovalService {
 
-	private Logger log = LoggerFactory.getLogger(ApprovalService.class);
+	private final Logger log = LoggerFactory.getLogger(ApprovalService.class);
 
 	private final ApplicationFormDAO applicationDAO;
 

@@ -28,12 +28,16 @@ import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
 public class DocumentsController {
 
     private static final String STUDENTS_FORM_DOCUMENTS_VIEW = "/private/pgStudents/form/components/documents";
+    
     private final ApplicationsService applicationsService;
+    
     private final DocumentSectionValidator documentSectionValidator;
+    
     private final DocumentPropertyEditor documentPropertyEditor;
+    
     private final UserService userService;
 
-    DocumentsController() {
+    public DocumentsController() {
         this(null, null, null, null);
     }
 
@@ -54,6 +58,10 @@ public class DocumentsController {
         
         if (applicationForm.isDecided()) {
             throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
+        }
+        
+        if (applicationForm.getPersonalStatement() == null) {
+            result.rejectValue("personalStatement", "file.upload.empty");
         }
         
         if (result.hasErrors()) {

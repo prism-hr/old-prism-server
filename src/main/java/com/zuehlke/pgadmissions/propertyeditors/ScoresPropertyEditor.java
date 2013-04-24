@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.Score;
 @Component
 public class ScoresPropertyEditor extends PropertyEditorSupport{
 
-	private Gson gson = new GsonBuilder().setDateFormat("dd MMM yyyy").create();;
+	private Gson gson = new GsonBuilder().setDateFormat("dd MMM yyyy").create();
 
     @Override
 	public void setAsText(String strId) throws IllegalArgumentException {

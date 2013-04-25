@@ -11,6 +11,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
   
   <!-- Styles for Application List Page -->
+  <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
@@ -146,6 +147,22 @@
             	  </div>
                   
                 </div>
+                <@spring.bind "comment.confirmNextStage" />
+			    <#if spring.status.errorMessages?size &gt; 0>
+		     		<div class="alert alert-error" >
+			    <#else>
+			        <div class="alert" >
+			    </#if>
+					<div class="row">
+						<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
+							Please confirm that you are satisfied with your comments.				
+						</label>
+						<div class="terms-field">
+							<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+						</div>
+						<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
+					</div>
+				</div>
                 <div class="buttons">
                   <button class="btn btn-primary" id="submitInterviewFeedback" type="button" value="Submit">Submit</button>
                 </div>

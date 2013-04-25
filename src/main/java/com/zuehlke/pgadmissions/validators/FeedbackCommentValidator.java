@@ -57,6 +57,9 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 if (comment.getWillingToSupervise() == null) {
                     errors.rejectValue("willingToSupervise", EMPTY_DROPDOWN_ERROR_MESSAGE);
                 }
+                if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
+                    errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
+                }
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
             }
         } else if (target instanceof ReferenceComment) {

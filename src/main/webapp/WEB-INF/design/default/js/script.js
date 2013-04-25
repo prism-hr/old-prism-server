@@ -773,7 +773,9 @@ function modalPrompt(message, okay, cancel) {
     });
 
     // Show the box.
-    $('#dialog-box').modal().css({ 'top':($(window).height()-$('#dialog-box').height())/2 });
+    $('#dialog-box').modal().css({
+    	'top':($(window).height()-$('#dialog-box').height())/2
+	});
 }
 
 function numbersOnly(event) {

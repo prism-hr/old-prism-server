@@ -12,12 +12,22 @@ public enum DigestNotificationType {
     
     private final int priority;
     
+    private String whatever;
+    
     DigestNotificationType(final int priority) {
         this.priority = priority;
     }
     
     public int getPriority() {
         return priority;
+    }
+    
+    public void setWhatever(final String ss) {
+        this.whatever = ss;
+    }
+    
+    public String getWhatever() {
+        return whatever;
     }
     
     public DigestNotificationType max(final DigestNotificationType type) {

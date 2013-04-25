@@ -416,6 +416,28 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
     }
     
+    public void scheduleReviewRequestAndReminder() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
+            if (form.getNotificationForType(NotificationType.REVIEW_REQUEST)!=null) {
+                createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
+                for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
+                    if (reviewer.getReview()==null) {
+                        setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
+                    }
+                }
+            }
+        }
+        
+        for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.REVIEW_REQUEST, ApplicationFormStatus.REVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REQUEST);
+            for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
+                if (reviewer.getReview()==null) {
+                    setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+                }
+            }
+        }
+    }
+    
     /**
      * <p>
      * <b>Summary</b><br/>

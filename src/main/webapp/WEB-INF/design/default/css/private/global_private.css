@@ -907,6 +907,13 @@ div.ajax {
 a.proceed-link { color: #00F; }
 a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 
+#dialog-box { width:350px; margin-left:-175px; }
+
+#dialog-box #dialog-message {
+	background: url("../../images/large_exclamation.png") no-repeat 290px 15px;
+	line-height: 1.2;
+	padding: 15px 80px 15px 12px;
+}
 
 /* Buttons */
 #dialog-box a { text-decoration: none; }

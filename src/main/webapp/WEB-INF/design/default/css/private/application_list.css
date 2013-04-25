@@ -96,32 +96,59 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 #applicationListSection .application-details, #applicationListSection .placeholder {
 	display:none;
 }
-
-.application-details .application-lhs {
-	float:left;
-	width:66%;
-	padding:10px 0 0 1%;
-	margin-bottom:15px;
+.application-lhs.loading {
+  background: #FFFFFF url(../../images/ajax-loader-file.gif) 854px 4px no-repeat;
 }
-
+.application-lhs {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #DDDDDD !important;
+    border-radius: 4px 4px 4px 4px;
+    margin-bottom: 0px;
+    overflow: hidden;
+    margin-left: 4px;
+    margin-right: 4px;
+    padding: 10px;
+    position: relative;
+}
+.application-lhs .details  {
+  margin-top: 6px;
+}
+.details .thumbnail {
+  margin-left: 0px;
+  margin-top: -6px;
+}
 .application-details .applicant-name {
 	font-weight:bold;
 	padding:0 !important;
 }
-
-.application-details .dates span {
-	display:inline-block;
-}
-
-.application-details .dates span:last-child {
-	margin-left:50px;
-}
-
 .application-details .detail-status {
 	position:relative;
 	padding-right:20px;
 }
-
+.submitted-date, .last-edited-date {
+  font-weight: bold;
+}
+.application-details td {
+  background: #F9F9F9;
+}
+.documents {
+  list-style: none;
+  padding-left: 0px;
+  margin-left: 0px;
+}
+.tlf i{
+  font-size: 14px;
+}
+.skype, .tlf  {
+  vertical-align: center;
+}
+.skype i {
+  font-size: 15px;
+}
+.mdetails {
+  margin-top: 10px;
+  margin-left: 4px;
+}
 .application-details .detail-status i {
 	display:block;
 	position:absolute;

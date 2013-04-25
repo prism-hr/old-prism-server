@@ -34,6 +34,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/templateEdit/actions.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/serviceThrottling/actions.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/configuration/scoringConfiguration.js'/>"></script>
 
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />" />
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />" />
@@ -194,6 +195,44 @@
                                 </div>
                             </section>
                         </div>
+
+            <div id="scoringConfiguration">
+              <section class="form-rows">
+                <h2>Scoring Configuration</h2>
+                <div class="row-group">
+                <div class="row">
+                  <label class="plain-label" for="program">Program <em>*</em></label> <span data-desc="Select a program" class="hint"></span>
+                  <div class="field">
+                    <select name="programSelect" id="programSelect">
+        							<option value="">Please select a program</option>
+        							<#list programs as program>
+        							  <option value="${program.code}">${program.title?html}</option>
+        							</#list>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="plain-label" for="stageSelect">Stage <em>*</em></label> <span data-desc="Select a stage" class="hint"></span>
+                  <div class="field">
+                    <select name="stageSelect" id="stageSelect">
+                      <#list scoringStages as scoringStage>
+                      	<option value="${scoringStage}">${scoringStage.displayValue()}</option>
+                      </#list>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="plain-label" for="scoringConfigurationContent">Edit scoring configuration <em>*</em></label> <span data-desc="XML scoring configuration" class="hint"></span>
+                  <div class="field">
+                    <textarea name="scoringConfigurationContent" id="scoringConfigurationContent" class="input-xxlarge" rows="15" cols="150"></textarea>
+                  </div>
+                </div>
+                <div class="buttons">
+                  <button class="btn btn-primary" type="button" id="save-scoring">Save</button>
+                </div>
+              </section>
+            </div>  
+                        
                     </div>
                     <!-- .content-box-inner -->
                 </div>

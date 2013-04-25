@@ -24,6 +24,7 @@
   <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/comment/interviewComment.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
@@ -137,6 +138,13 @@
                       </div>
                       </#list> </div>
                   </div>
+                  <div id="scoring-questions" class="row-group">
+	                  <h3>Scoring questions</h3>
+	                  <#assign scores = comment.scores>
+	                  <#assign errorsContainerName = "comment">
+	                  <#include "/private/staff/scores.ftl"/>
+            	  </div>
+                  
                 </div>
                 <div class="buttons">
                   <button class="btn btn-primary" id="submitInterviewFeedback" type="button" value="Submit">Submit</button>

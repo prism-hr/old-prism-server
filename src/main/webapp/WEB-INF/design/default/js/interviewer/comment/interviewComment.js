@@ -1,6 +1,5 @@
 $(document).ready(function()
 {
-	
 	$('#cancelInterviewFeedbackBtn').click(function()
 	{
 		window.location.href = "/pgadmissions/interviewFeedback?applicationId=" +  $('#applicationId').val();
@@ -8,10 +7,6 @@ $(document).ready(function()
 	
 	$('#submitInterviewFeedback').click(function()
 	{
-		/*if (!validateFeedback())
-		{
-			return false;
-		}*/
 		
 		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()
@@ -21,7 +16,10 @@ $(document).ready(function()
 			{
 				$('#interviewForm').append("<input type='hidden' name='decline' value='true'/>");			
 			}
+			var scores = getScores($('#scoring-questions'));
+			$('#interviewForm').append("<input type='hidden' name='scores' value=\'" + scores + "\'/>");
 			$('#interviewForm').submit();
+			
 		};
 		var onCancel = function()
 		{

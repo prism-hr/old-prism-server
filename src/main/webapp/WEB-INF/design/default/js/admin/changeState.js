@@ -93,7 +93,7 @@ $(document).ready(function()
 		}
 		else {
 			var state = $('#status option:selected').text().toLowerCase().capitalize();
-			var message = 'Confirm you want to move this application to the ' + state + ' stage.';
+			var message = 'Confirm that you want to move this application to the ' + state + ' stage.';
 			modalPrompt(message, changeState);
 		}
 	});
@@ -108,7 +108,7 @@ $(document).ready(function()
 				state = 'next';
 			}
 			
-			var message = 'Confirm you want to move this application to the ' + state + ' stage.';
+			var message = 'Confirm that you want to move this application to the ' + state + ' stage.';
 		
 			$('#confirmNextStageLabel').html(message);
 		}

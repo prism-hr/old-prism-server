@@ -109,7 +109,7 @@ public class DateUtilsTest {
         DateTime saturday = new DateTime(2013, 3, 4, 8, 0);
         Date addWorkingDays = DateUtils.addWorkingDaysInMinutes(saturday.toDate(), 5);
 
-        // Monday 3. March 2013 8:05am
+        // Sunday 3. March 2013 8:05am
         DateTime endDate = new DateTime(addWorkingDays);
         assertEquals(DateTimeConstants.SUNDAY, endDate.getDayOfWeek());
         assertEquals(DateTimeConstants.MARCH, endDate.getMonthOfYear());

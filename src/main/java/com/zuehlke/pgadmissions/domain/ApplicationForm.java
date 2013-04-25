@@ -235,7 +235,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private Boolean isEditableByApplicant = true;
     
     @Column(name = "suppress_state_change_notifications")
-    private Boolean suppressStateChangeNotifications;
+    private Boolean suppressStateChangeNotifications = false;
 
     public List<Qualification> getQualifications() {
         return qualifications;

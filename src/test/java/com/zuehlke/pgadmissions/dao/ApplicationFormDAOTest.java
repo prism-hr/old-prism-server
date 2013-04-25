@@ -602,6 +602,36 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
+	
+    @Test
+    public void shouldReturnOverDueApplicationInValidationStageWithReminder10MinutesAgoForAReminderWith5MinutesIntervalWithSuppressChangeStateNotificationsNull() {
+        ReminderInterval reminderInterval = new ReminderInterval();
+        reminderInterval.setId(1);
+        reminderInterval.setDuration(5);
+        reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+
+        sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+
+        Date now = Calendar.getInstance().getTime();
+        Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+        Date oneMonthAgo = DateUtils.addMonths(now, -1);
+        ApplicationForm applicationForm = new ApplicationFormBuilder()
+                .program(program)
+                .applicant(user)
+                .status(ApplicationFormStatus.VALIDATION)
+                .suppressChangeStateNotifications(null)
+                .dueDate(oneMonthAgo)
+                .notificationRecords(
+                        new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER)
+                                .notificationDate(tenMinutesAgo).build()).build();
+        save(applicationForm);
+
+        flushAndClearSession();
+
+        List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(
+                NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+        assertTrue(listContainsId(applicationForm, applicationsDueReminder));
+    }	
 
 	@Test
 	public void shouldReturnOverDueApplicationInValidationStageWithReminder1DayAgoForAReminderWith23HoursInterval() {

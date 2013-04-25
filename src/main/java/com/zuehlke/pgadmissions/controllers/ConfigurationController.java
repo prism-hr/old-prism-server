@@ -81,14 +81,9 @@ public class ConfigurationController {
 	}
 
 	@Autowired
-	public ConfigurationController(
-			StageDurationPropertyEditor stageDurationPropertyEditor,
-			PersonPropertyEditor registryPropertyEditor,
-			UserService userService, ConfigurationService configurationService,
-			EmailTemplateService templateService,
-			ThrottleService throttleService, PorticoQueueService queueService,
-			ProgramsService programsService,
-			ScoringDefinitionParser scoringDefinitionParser) {
+	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor, PersonPropertyEditor registryPropertyEditor,
+	                UserService userService, ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService,
+	                PorticoQueueService queueService, ProgramsService programsService, ScoringDefinitionParser scoringDefinitionParser) {
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
 		this.registryPropertyEditor = registryPropertyEditor;
 		this.userService = userService;
@@ -102,20 +97,17 @@ public class ConfigurationController {
 
 	@InitBinder(value = "stageDurationDTO")
 	public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
-		binder.registerCustomEditor(StageDuration.class,
-				stageDurationPropertyEditor);
+		binder.registerCustomEditor(StageDuration.class, stageDurationPropertyEditor);
 	}
 
 	@InitBinder(value = "registryUserDTO")
-	public void registerValidatorsAndPropertyEditorsForRegistryUsers(
-			WebDataBinder binder) {
+	public void registerValidatorsAndPropertyEditorsForRegistryUsers(WebDataBinder binder) {
 		binder.registerCustomEditor(Person.class, registryPropertyEditor);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String getConfigurationPage() {
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)
-				&& !getUser().isInRole(Authority.ADMINISTRATOR)) {
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
 		return CONFIGURATION_VIEW_NAME;
@@ -130,15 +122,12 @@ public class ConfigurationController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@ModelAttribute StageDurationDTO stageDurationDto,
-			@ModelAttribute RegistryUserDTO registryUserDTO,
-			@ModelAttribute ReminderInterval reminderInterval) {
+	public String submit(@ModelAttribute StageDurationDTO stageDurationDto, @ModelAttribute RegistryUserDTO registryUserDTO,
+	                @ModelAttribute ReminderInterval reminderInterval) {
 		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
-		configurationService.saveConfigurations(
-				stageDurationDto.getStagesDuration(),
-				registryUserDTO.getRegistryUsers(), reminderInterval);
+		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
 		return "redirect:/configuration/config_section";
 	}
 
@@ -169,17 +158,13 @@ public class ConfigurationController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
 	@ResponseBody
-	public Map<String, String> updateThrottle(@RequestParam Integer id,
-			@RequestParam Boolean enabled, @RequestParam String batchSize) {
-		boolean hasSwitchedFromFalseToTrue = throttleService
-				.userTurnedOnThrottle(enabled);
+	public Map<String, String> updateThrottle(@RequestParam Integer id, @RequestParam Boolean enabled, @RequestParam String batchSize) {
+		boolean hasSwitchedFromFalseToTrue = throttleService.userTurnedOnThrottle(enabled);
 
 		try {
 			throttleService.updateThrottleWithNewValues(enabled, batchSize);
 		} catch (NumberFormatException e) {
-			return Collections
-					.singletonMap("error",
-							"The throttling batch size must be a valid positive number");
+			return Collections.singletonMap("error", "The throttling batch size must be a valid positive number");
 		}
 
 		if (hasSwitchedFromFalseToTrue) {
@@ -191,35 +176,28 @@ public class ConfigurationController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/editScoringDefinition")
 	@ResponseBody
-	public Map<String, String> editScoringDefinition(
-			@RequestParam String programCode,
-			@RequestParam ScoringStage scoringStage,
-			@RequestParam String scoringContent, HttpServletResponse response) {
+	public Map<String, String> editScoringDefinition(@RequestParam String programCode, @RequestParam ScoringStage scoringStage,
+	                @RequestParam String scoringContent, HttpServletResponse response) {
 		Program program = programsService.getProgramByCode(programCode);
 		if (program == null) {
-			return Collections.singletonMap("programCode",
-					"Given program code is not valid");
+			return Collections.singletonMap("programCode", "Given program code is not valid");
 		}
 
 		try {
 			scoringDefinitionParser.parseScoringDefinition(scoringContent);
 		} catch (ScoringDefinitionParseException e) {
-			return Collections.singletonMap("scoringContent",
-					e.getLocalizedMessage());
+			return Collections.singletonMap("scoringContent", e.getLocalizedMessage());
 		}
-		programsService.applyScoringDefinition(programCode, scoringStage,
-				scoringContent);
+		programsService.applyScoringDefinition(programCode, scoringStage, scoringContent);
 
 		return Collections.emptyMap();
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/getScoringDefinition")
 	@ResponseBody
-	public String getScoringDefinition(@RequestParam String programCode,
-			@RequestParam ScoringStage scoringStage) {
+	public String getScoringDefinition(@RequestParam String programCode, @RequestParam ScoringStage scoringStage) {
 		Program program = programsService.getProgramByCode(programCode);
-		ScoringDefinition scoringDefinition = program.getScoringDefinitions()
-				.get(scoringStage);
+		ScoringDefinition scoringDefinition = program.getScoringDefinitions().get(scoringStage);
 		if (scoringDefinition != null) {
 			return scoringDefinition.getContent();
 		} else {
@@ -229,12 +207,9 @@ public class ConfigurationController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{templateName:[a-zA-Z_]+}")
 	@ResponseBody
-	public Map<Object, Object> getVersionsForTemplate(
-			@PathVariable String templateName) {
-		EmailTemplate template = templateService
-				.getActiveEmailTemplate(valueOf(templateName));
-		Map<Long, String> versions = templateService
-				.getEmailTemplateVersions(template.getName());
+	public Map<Object, Object> getVersionsForTemplate(@PathVariable String templateName) {
+		EmailTemplate template = templateService.getActiveEmailTemplate(valueOf(templateName));
+		Map<Long, String> versions = templateService.getEmailTemplateVersions(template.getName());
 		Map<Object, Object> result = new HashMap<Object, Object>();
 		result.put("content", template.getContent());
 		result.put("versions", versions);
@@ -246,38 +221,31 @@ public class ConfigurationController {
 
 	@RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{templateName:[a-zA-Z_]+}" })
 	@ResponseBody
-	public Map<String, Object> saveTemplate(@PathVariable EmailTemplateName templateName,
-			@RequestParam String content, @RequestParam String subject) {
+	public Map<String, Object> saveTemplate(@PathVariable EmailTemplateName templateName, @RequestParam String content, @RequestParam String subject) {
 		return saveNewTemplate(templateName, content, subject);
 	}
 
-    private Map<String, Object> saveNewTemplate(EmailTemplateName templateName, String content, String subject) {
-        EmailTemplate template = templateService.saveNewEmailTemplate(templateName, content, subject);
-		EmailTemplate template = templateService.saveNewEmailTemplate(
-				templateName, content);
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("id", template.getId());
-		result.put("version", new SimpleDateFormat("yyyy/M/d - HH:mm:ss")
-				.format(template.getVersion()));
-        return result;
-    }
+	private Map<String, Object> saveNewTemplate(EmailTemplateName templateName, String content, String subject) {
+		EmailTemplate template = templateService.saveNewEmailTemplate(templateName, content, subject);
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("id", template.getId());
+		result.put("version", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(template.getVersion()));
+		return result;
+	}
 
 	@RequestMapping(method = RequestMethod.POST, value = { "activateEmailTemplate/{templateName:[a-zA-Z_]+}/{id:\\d+}" })
 	@ResponseBody
-	public Map<String, Object> activateTemplate(
-		@PathVariable String templateName,@PathVariable Long id,@RequestParam Boolean saveCopy,@RequestParam(required = false) String newContent,
-			@RequestParam(required = false) String newSubject
-			) {
+	public Map<String, Object> activateTemplate(@PathVariable String templateName, @PathVariable Long id, @RequestParam Boolean saveCopy,
+	                @RequestParam(required = false) String newContent, @RequestParam(required = false) String newSubject) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (saveCopy != null && saveCopy) {
 			result = saveNewTemplate(valueOf(templateName), newContent, newSubject);
 			id = (Long) result.get("id");
 		}
-if (result.containsKey("error")) {
-		    return result;
+		if (result.containsKey("error")) {
+			return result;
 		}
 		Long previousId = templateService.getActiveEmailTemplate(valueOf(templateName)).getId();
-		}
 
 		try {
 			templateService.activateEmailTemplate(valueOf(templateName), id);
@@ -294,8 +262,7 @@ if (result.containsKey("error")) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		EmailTemplate toDeleteTemplate = templateService.getEmailTemplate(id);
 		EmailTemplateName templateName = toDeleteTemplate.getName();
-		EmailTemplate activeTemplate = templateService
-				.getActiveEmailTemplate(templateName);
+		EmailTemplate activeTemplate = templateService.getActiveEmailTemplate(templateName);
 		result.put("activeTemplateId", activeTemplate.getId());
 		result.put("activeTemplateContent", activeTemplate.getContent());
 		result.put("activeTemplateSubject", activeTemplate.getSubject());
@@ -310,10 +277,8 @@ if (result.containsKey("error")) {
 	// Not used now, may be in the future
 	@RequestMapping(method = RequestMethod.POST, value = { "previewTemplate" })
 	@ResponseBody
-	public Map<String, String> getTemplatePreview(
-			@RequestParam String templateContent) {
-		return Collections.singletonMap("template",
-				templateService.processTemplateContent(templateContent));
+	public Map<String, String> getTemplatePreview(@RequestParam String templateContent) {
+		return Collections.singletonMap("template", templateService.processTemplateContent(templateContent));
 	}
 
 	@ModelAttribute("templateTypes")
@@ -330,7 +295,7 @@ if (result.containsKey("error")) {
 
 	@ModelAttribute("stages")
 	public ApplicationFormStatus[] getConfigurableStages() {
-	    return configurationService.getConfigurableStages();
+		return configurationService.getConfigurableStages();
 	}
 
 	@ModelAttribute("user")
@@ -340,8 +305,7 @@ if (result.containsKey("error")) {
 
 	@ModelAttribute("stageDurations")
 	public Map<String, StageDuration> getStageDurations() {
-		Map<ApplicationFormStatus, StageDuration> stageDurations = configurationService
-				.getStageDurations();
+		Map<ApplicationFormStatus, StageDuration> stageDurations = configurationService.getStageDurations();
 		Map<String, StageDuration> durations = new HashMap<String, StageDuration>();
 		for (ApplicationFormStatus status : stageDurations.keySet()) {
 			durations.put(status.toString(), stageDurations.get(status));

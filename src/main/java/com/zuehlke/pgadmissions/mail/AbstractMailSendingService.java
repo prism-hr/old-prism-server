@@ -57,7 +57,7 @@ public abstract class AbstractMailSendingService {
 
         @Override
         public void execute(final Object input) {
-           setDigestNotificationType((RegisteredUser) input, type);
+            setDigestNotificationType((RegisteredUser) input, type);
         }
     }
     
@@ -124,6 +124,7 @@ public abstract class AbstractMailSendingService {
         } else if (currentType.getPriority() < type.getPriority()) {
             user.setDigestNotificationType(type);
         }
+        userDAO.save(user);
     }
     
     protected String getAdminsEmailsCommaSeparatedAsString(final List<RegisteredUser> administrators) {

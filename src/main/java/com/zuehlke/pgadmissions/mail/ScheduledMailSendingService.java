@@ -70,7 +70,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional
 public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);
@@ -126,37 +126,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
-    @Scheduled(cron = "${email.digest.cron}")
-    public void run() {
-        log.info("Running ScheduledMailSendingService Task");
-        scheduleApprovalReminder();
-        scheduleInterviewFeedbackEvaluationRequest();
-        scheduleInterviewFeedbackEvaluationReminder();
-        scheduleReviewReminder();
-        scheduleReviewRequest();
-        scheduleUpdateConfirmation();
-        scheduleValidationRequest();
-        scheduleValidationReminder();
-        scheduleRestartApprovalRequest();
-        scheduleRestartApprovalReminder();
-        scheduleApprovedConfirmation();
-        scheduleInterviewAdministrationReminder();
-        scheduleInterviewFeedbackConfirmation();
-        scheduleInterviewFeedbackRequest();
-        scheduleInterviewFeedbackReminder();
-        scheduleApplicationUnderApprovalNotification();
-        scheduleRejectionConfirmationToAdministrator();
-        scheduleReviewSubmittedConfirmation();
-        scheduleReviewEvaluationRequest();
-        scheduleReviewEvaluationReminder();
-        scheduleConfirmSupervisionRequest();
-        scheduleConfirmSupervisionReminder();
-        scheduleApplicationUnderReviewNotification();
-        sendDigestsToUsers();
-        log.info("Finished ScheduledMailSendingService Task");
-    }
-
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void sendDigestsToUsers() {
 		log.info("Sending daily digests to users");
 		

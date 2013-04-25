@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.enums;
 public enum NotificationType {
 	VALIDATION_REMINDER,
 	REVIEW_REMINDER,
+	REVIEW_REQUEST,
 	INTERVIEW_REMINDER,
 	APPROVAL_REMINDER,
 	UPDATED_NOTIFICATION,

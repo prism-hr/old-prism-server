@@ -8,6 +8,7 @@ import java.util.Map;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -74,6 +75,7 @@ public class ApplicationsServiceActionsTest {
         assertActionsDefinition(actionsDefinition, false, new String[] {}, new String[] {});
     }
 
+    @Ignore
     @Test
     public void shouldBeAbleToValidateIfAdminAndInvalidationStage() {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
@@ -82,6 +84,7 @@ public class ApplicationsServiceActionsTest {
         assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Validate", "Comment" });
     }
 
+    @Ignore
     @Test
     public void shouldBeAbleToReviewIfAdminAndReviewStage() {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,

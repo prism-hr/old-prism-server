@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -61,6 +62,9 @@ public class Comment implements Comparable<Comment>, Serializable {
     @JoinColumn(name = "application_form_id")
     private ApplicationForm application = null;
 
+    @Transient
+    private Boolean confirmNextStage;
+    
     public String getComment() {
         return comment;
     }
@@ -128,5 +132,13 @@ public class Comment implements Comparable<Comment>, Serializable {
 
     public void setScores(List<Score> scores) {
         this.scores = scores;
+    }
+
+    public Boolean getConfirmNextStage() {
+        return confirmNextStage;
+    }
+
+    public void setConfirmNextStage(Boolean confirmNextStage) {
+        this.confirmNextStage = confirmNextStage;
     }
 }

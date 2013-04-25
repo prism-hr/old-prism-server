@@ -45,6 +45,10 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 if (comment.getWillingToInterview() == null) {
                     errors.rejectValue("willingToInterview", EMPTY_DROPDOWN_ERROR_MESSAGE);
                 }
+                if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
+                    errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
+                }
+                
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
             }
         } else if (target instanceof InterviewComment) {

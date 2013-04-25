@@ -64,7 +64,7 @@ public class ScoringDefinitionParser {
 		List<Question> questions = scoringDefinition.getQuestion();
 		for (Question question : questions) {
 			validateDateType(question);
-			validateDateRangeType(question);
+//			validateDateRangeType(question);
 			validateDropDownType(question);
 		}
 	}
@@ -95,20 +95,20 @@ public class ScoringDefinitionParser {
 
 	}
 
-	private void validateDateRangeType(Question question)
-			throws ScoringDefinitionParseException {
-		if (question.getType().equals(QuestionType.DATE_RANGE)) {
-			String minDate = question.getMinDate();
-			String maxDate = question.getMaxDate();
-			if (minDate == null || maxDate == null) {
-				throw new ScoringDefinitionParseException(String.format(
-						DATE_RANGE_ERROR_MESSAGE_TEMPLATE, question.getLabel()));
-			}
-			validateDate(minDate);
-			validateDate(maxDate);
-		}
-
-	}
+//	private void validateDateRangeType(Question question)
+//			throws ScoringDefinitionParseException {
+//		if (question.getType().equals(QuestionType.DATE_RANGE)) {
+//			String minDate = question.getMinDate();
+//			String maxDate = question.getMaxDate();
+//			if (minDate == null || maxDate == null) {
+//				throw new ScoringDefinitionParseException(String.format(
+//						DATE_RANGE_ERROR_MESSAGE_TEMPLATE, question.getLabel()));
+//			}
+//			validateDate(minDate);
+//			validateDate(maxDate);
+//		}
+//
+//	}
 
 	private void validateDate(String date)
 			throws ScoringDefinitionParseException {

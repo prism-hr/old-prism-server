@@ -1,5 +1,8 @@
 <#setting locale = "en_US">
+<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
+
 <#list scores as score>
+<div class="scoring-questions">
   <div class="row multi-line score-row">
     <#assign originalQuestion = score.originalQuestion>
     <input type="hidden" class="question-type" value = "${score.questionType}"/>
@@ -19,10 +22,11 @@
       <#elseif score.questionType == "DATE">
           <input class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
           
+      <#--
       <#elseif score.questionType == "DATE_RANGE">
-      
           <input class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
-          <input class="full date second-date-input" type="text" value="${(score.secondDateResponse?string('dd MMM yyyy'))!}" />.
+          <input class="full date second-date-input" type="text" value="${(score.secondDateResponse?string('dd MMM yyyy'))!}" />
+      -->
           
       <#elseif score.questionType == "DROPDOWN">
       
@@ -43,11 +47,14 @@
           
       </#if>
       
-      <@spring.bind "comment.scores[${score_index}]" />
+      <@spring.bind "${errorsContainerName}.scores[${score_index}]" />
       <#list spring.status.errorMessages as error>
         <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
       </#list>
     </div>
     
   </div>
+</div>
 </#list>
+
+<script>registerBindPickers($('.scoring-questions'));</script>

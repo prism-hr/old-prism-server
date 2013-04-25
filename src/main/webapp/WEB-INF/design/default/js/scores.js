@@ -1,3 +1,4 @@
+
 function getScores(container) {
 	
 	var scores = new Array();
@@ -23,7 +24,8 @@ function getScores(container) {
 			if(dateResponse != ""){
 				score.dateResponse = dateResponse;
 			}
-		} else if(questionType == "DATE_RANGE"){
+		} 
+		/*else if(questionType == "DATE_RANGE"){
 			dateResponse = $(this).find("input.date-input").val();
 			if(dateResponse != ""){
 				score.dateResponse = dateResponse;
@@ -32,7 +34,8 @@ function getScores(container) {
 			if(secondDateResponse != ""){
 				score.secondDateResponse = secondDateResponse;
 			}
-		} else if(questionType == "DROPDOWN"){
+		}*/
+		 else if(questionType == "DROPDOWN"){
 			values = $(this).find("select.dropdown-input").val() || [];
 			if(typeof values == 'string'){
 				values = [ values ];
@@ -44,7 +47,6 @@ function getScores(container) {
 				score.ratingResponse = value;
 			}
 		} 
-			
 		scores.push(score);
 	});
 	return JSON.stringify(scores);

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -47,369 +49,237 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 public class ReviewCommentControllerTest {
 
-	private ApplicationsService applicationsServiceMock;
-	private UserService userServiceMock;
-	private ReviewCommentController controller;
-	private FeedbackCommentValidator reviewFeedbackValidatorMock;
-	private CommentService commentServiceMock;
-	private DocumentPropertyEditor documentPropertyEditorMock;
-	private ScoringDefinitionParser scoringDefinitionParserMock;
-	private ScoresPropertyEditor scoresPropertyEditorMock;
+    private ApplicationsService applicationsServiceMock;
+    private UserService userServiceMock;
+    private ReviewCommentController controller;
+    private FeedbackCommentValidator reviewFeedbackValidatorMock;
+    private CommentService commentServiceMock;
+    private DocumentPropertyEditor documentPropertyEditorMock;
+    private ScoringDefinitionParser scoringDefinitionParserMock;
+    private ScoresPropertyEditor scoresPropertyEditorMock;
+    private ScoreFactory scoreFactoryMock;
 
-	@Test
-	public void shouldGetApplicationFormFromId() {
-		Program program = new ProgramBuilder().id(7).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-				.program(program).build();
+    @Test
+    public void shouldGetApplicationFormFromId() {
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser())
-				.andReturn(currentUser).anyTimes();
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(
-				currentUser
-						.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm))
-				.andReturn(true);
-		EasyMock.expect(
-				currentUser
-						.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm))
-				.andReturn(false);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)).andReturn(false);
 
-		EasyMock.expect(
-				applicationsServiceMock.getApplicationByApplicationNumber("5"))
-				.andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 
-		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
-		ApplicationForm returnedApplication = controller
-				.getApplicationForm("5");
-		EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        ApplicationForm returnedApplication = controller.getApplicationForm("5");
+        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
 
-		assertEquals(returnedApplication, applicationForm);
-	}
+        assertEquals(returnedApplication, applicationForm);
+    }
 
-	@Test(expected = MissingApplicationFormException.class)
-	public void shouldThrowExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(
-				applicationsServiceMock.getApplicationByApplicationNumber("5"))
-				.andReturn(null);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("5");
-	}
+    @Test(expected = MissingApplicationFormException.class)
+    public void shouldThrowExceptionIfApplicationFormDoesNotExist() {
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+        EasyMock.replay(applicationsServiceMock);
+        controller.getApplicationForm("5");
+    }
 
-	@Test(expected = InsufficientApplicationFormPrivilegesException.class)
-	public void shouldThrowExceptionIfCurrentUserNotReviewerOfForm() {
-		Program program = new ProgramBuilder().id(7).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-				.program(program).build();
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
+    public void shouldThrowExceptionIfCurrentUserNotReviewerOfForm() {
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser())
-				.andReturn(currentUser);
-		EasyMock.expect(
-				currentUser
-						.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm))
-				.andReturn(false);
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(false);
 
-		EasyMock.expect(
-				applicationsServiceMock.getApplicationByApplicationNumber("5"))
-				.andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
-		controller.getApplicationForm("5");
-		EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
-	}
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        controller.getApplicationForm("5");
+        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
+    }
 
-	@Test(expected = InsufficientApplicationFormPrivilegesException.class)
-	public void shouldThrowExceptionIfCurrentUserCannotSeeApplication() {
-		Program program = new ProgramBuilder().id(7).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-				.program(program).build();
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
+    public void shouldThrowExceptionIfCurrentUserCannotSeeApplication() {
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser())
-				.andReturn(currentUser).anyTimes();
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
-		EasyMock.expect(
-				currentUser
-						.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm))
-				.andReturn(true);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
+        EasyMock.expect(currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 
-		EasyMock.expect(
-				applicationsServiceMock.getApplicationByApplicationNumber("5"))
-				.andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
-		controller.getApplicationForm("5");
-		EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
-	}
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        controller.getApplicationForm("5");
+        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
+    }
 
-	@Test(expected = ActionNoLongerRequiredException.class)
-	public void shouldThrowExceptionIfReviewerAlreadyResponded() {
-		Program program = new ProgramBuilder().id(7).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-				.program(program).build();
+    @Test(expected = ActionNoLongerRequiredException.class)
+    public void shouldThrowExceptionIfReviewerAlreadyResponded() {
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 
-		EasyMock.expect(userServiceMock.getCurrentUser())
-				.andReturn(currentUser).anyTimes();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
-		EasyMock.expect(
-				currentUser
-						.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm))
-				.andReturn(true);
-		EasyMock.expect(
-				currentUser
-						.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm))
-				.andReturn(true);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 
-		EasyMock.expect(
-				applicationsServiceMock.getApplicationByApplicationNumber("5"))
-				.andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
-		controller.getApplicationForm("5");
-		EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
-	}
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        controller.getApplicationForm("5");
+        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
+    }
 
-	@Test(expected = ActionNoLongerRequiredException.class)
-	public void shouldThrowExceptionIfApplicationIsDecided() {
-		Program program = new ProgramBuilder().id(7).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-				.program(program).status(ApplicationFormStatus.APPROVED)
-				.build();
+    @Test(expected = ActionNoLongerRequiredException.class)
+    public void shouldThrowExceptionIfApplicationIsDecided() {
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).status(ApplicationFormStatus.APPROVED).build();
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 
-		EasyMock.expect(userServiceMock.getCurrentUser())
-				.andReturn(currentUser).anyTimes();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
-		EasyMock.expect(
-				currentUser
-						.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm))
-				.andReturn(false);
-		EasyMock.expect(
-				currentUser
-						.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm))
-				.andReturn(true);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)).andReturn(false);
+        EasyMock.expect(currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 
-		EasyMock.expect(
-				applicationsServiceMock.getApplicationByApplicationNumber("5"))
-				.andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
-		controller.getApplicationForm("5");
-		EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
-	}
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        controller.getApplicationForm("5");
+        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
+    }
 
-	@Test
-	public void shouldReturnGenericCommentPage() {
-		assertEquals("private/staff/reviewer/feedback/reviewcomment",
-				controller.getReviewFeedbackPage());
-	}
+    @Test
+    public void shouldReturnGenericCommentPage() {
+        assertEquals("private/staff/reviewer/feedback/reviewcomment", controller.getReviewFeedbackPage());
+    }
 
-	@Test
-	public void shouldReturnCurrentUser() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
-		EasyMock.expect(userServiceMock.getCurrentUser())
-				.andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		assertEquals(currentUser, controller.getUser());
-	}
+    @Test
+    public void shouldReturnCurrentUser() {
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+        assertEquals(currentUser, controller.getUser());
+    }
 
-	@Test
-	public void shouldCreateNewReviewCommentForApplicationForm()
-			throws ScoringDefinitionParseException {
-		final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder()
-				.stage(ScoringStage.REVIEW).content("xmlContent").build();
-		final Program program = new ProgramBuilder().scoringDefinitions(
-				Collections
-						.singletonMap(ScoringStage.REVIEW, scoringDefinition))
-				.build();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder()
-				.id(5).program(program).build();
-		final RegisteredUser currentUser = EasyMock
-				.createMock(RegisteredUser.class);
-		final Reviewer reviewer = new ReviewerBuilder().id(5).build();
+    @Test
+    public void shouldCreateNewReviewCommentForApplicationForm() throws ScoringDefinitionParseException {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        final Reviewer reviewer = new ReviewerBuilder().id(5).build();
 
-		final Question question1 = new Question();
-		question1.setLabel("question1");
-		question1.setType(QuestionType.RATING);
-		final CustomQuestions customQuestions = new CustomQuestions();
-		customQuestions.getQuestion().add(question1);
+        final Question question1 = new Question();
+        question1.setLabel("question1");
+        question1.setType(QuestionType.RATING);
+        final CustomQuestions customQuestions = new CustomQuestions();
+        customQuestions.getQuestion().add(question1);
+        ArrayList<Score> generatedScores = new ArrayList<Score>();
 
-		EasyMock.expect(userServiceMock.getCurrentUser())
-				.andReturn(currentUser);
-		EasyMock.expect(
-				currentUser
-						.getReviewerForCurrentUserFromLatestReviewRound(applicationForm))
-				.andReturn(reviewer);
-		EasyMock.expect(
-				scoringDefinitionParserMock
-						.parseScoringDefinition("xmlContent")).andReturn(
-				customQuestions);
-		controller = new ReviewCommentController(applicationsServiceMock,
-				userServiceMock, commentServiceMock,
-				reviewFeedbackValidatorMock, documentPropertyEditorMock,
-				scoringDefinitionParserMock, scoresPropertyEditorMock, null) {
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
+        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
+        EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
+        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock) {
 
-			@Override
-			public ApplicationForm getApplicationForm(String id) {
-				return applicationForm;
-			}
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return applicationForm;
+            }
 
-		};
+        };
 
-		EasyMock.replay(userServiceMock, scoringDefinitionParserMock,
-				currentUser);
-		ReviewComment comment = controller.getComment("5");
-		EasyMock.verify(userServiceMock, scoringDefinitionParserMock,
-				currentUser);
+        EasyMock.replay(userServiceMock, scoringDefinitionParserMock, currentUser, scoreFactoryMock);
+        ReviewComment comment = controller.getComment("5");
+        EasyMock.verify(userServiceMock, scoringDefinitionParserMock, currentUser, scoreFactoryMock);
 
-		assertNull(comment.getId());
-		assertEquals(applicationForm, comment.getApplication());
-		assertEquals(currentUser, comment.getUser());
-		assertEquals(CommentType.REVIEW, comment.getType());
-		assertEquals(reviewer, comment.getReviewer());
-		List<Score> scores = comment.getScores();
-		assertEquals(1, scores.size());
-		assertEquals("question1", scores.get(0).getQuestion());
-		assertEquals(QuestionType.RATING, scores.get(0).getQuestionType());
-	}
+        assertNull(comment.getId());
+        assertEquals(applicationForm, comment.getApplication());
+        assertEquals(currentUser, comment.getUser());
+        assertEquals(CommentType.REVIEW, comment.getType());
+        assertEquals(reviewer, comment.getReviewer());
+        assertEquals(generatedScores, comment.getScores());
+    }
 
-	@Test
-	public void shouldReturnCustomQuestions()
-			throws ScoringDefinitionParseException {
-		final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder()
-				.stage(ScoringStage.REVIEW).content("xmlContent").build();
-		final Program program = new ProgramBuilder().scoringDefinitions(
-				Collections
-						.singletonMap(ScoringStage.REVIEW, scoringDefinition))
-				.build();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder()
-				.id(5).program(program).build();
+    @Test
+    public void shouldRegisterValidator() {
+        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        binderMock.setValidator(reviewFeedbackValidatorMock);
+        binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
+        binderMock.registerCustomEditor(null, "scores", scoresPropertyEditorMock);
+        EasyMock.replay(binderMock);
+        controller.registerBinders(binderMock);
+        EasyMock.verify(binderMock);
+    }
 
-		final Question question1 = new Question();
-		question1.setLabel("question1");
-		question1.setType(QuestionType.RATING);
-		final CustomQuestions customQuestions = new CustomQuestions();
-		customQuestions.getQuestion().add(question1);
+    @Test
+    public void shouldReturnToCommentsPageIfErrors() throws ScoringDefinitionParseException {
+        Program program = new Program();
+        final ApplicationForm application = new ApplicationFormBuilder().program(program).applicationNumber("5").build();
+        ReviewComment comment = new ReviewCommentBuilder().application(application).build();
+        BindingResult result = new BeanPropertyBindingResult(comment, "comment");
+        result.reject("error");
 
-		EasyMock.expect(
-				scoringDefinitionParserMock
-						.parseScoringDefinition("xmlContent")).andReturn(
-				customQuestions);
-		controller = new ReviewCommentController(applicationsServiceMock,
-				userServiceMock, commentServiceMock,
-				reviewFeedbackValidatorMock, documentPropertyEditorMock,
-				scoringDefinitionParserMock, scoresPropertyEditorMock,null) {
+        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, null) {
 
-			@Override
-			public ApplicationForm getApplicationForm(String id) {
-				return applicationForm;
-			}
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return application;
+            }
 
-		};
+        };
 
-		EasyMock.replay(scoringDefinitionParserMock);
-		List<Question> questions = controller.getCustomQuestions("5");
-		EasyMock.verify(scoringDefinitionParserMock);
+        assertEquals("private/staff/reviewer/feedback/reviewcomment", controller.addComment(comment, result));
+    }
 
-		assertEquals(1, questions.size());
-		assertEquals("question1", questions.get(0).getLabel());
-		assertEquals(QuestionType.RATING, questions.get(0).getType());
-	}
+    @Test
+    public void shouldSaveCommentAndRedirectApplicationsPageIfNoErrors() throws ScoringDefinitionParseException {
+        Program program = new Program();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).program(program).build();
+        ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).build();
+        BindingResult result = new BeanPropertyBindingResult(comment, "comment");
 
-	@Test
-	public void shouldRegisterValidator() {
-		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.setValidator(reviewFeedbackValidatorMock);
-		binderMock.registerCustomEditor(Document.class,
-				documentPropertyEditorMock);
-		binderMock.registerCustomEditor(null, "scores",
-				scoresPropertyEditorMock);
-		EasyMock.replay(binderMock);
-		controller.registerBinders(binderMock);
-		EasyMock.verify(binderMock);
-	}
+        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, null) {
 
-	@Test
-	public void shouldReturnToCommentsPageIfErrors()
-			throws ScoringDefinitionParseException {
-		Program program = new Program();
-		final ApplicationForm application = new ApplicationFormBuilder()
-				.program(program).applicationNumber("5").build();
-		ReviewComment comment = new ReviewCommentBuilder().application(
-				application).build();
-		BindingResult result = new BeanPropertyBindingResult(comment, "comment");
-		result.reject("error");
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return applicationForm;
+            }
 
-		controller = new ReviewCommentController(applicationsServiceMock,
-				userServiceMock, commentServiceMock,
-				reviewFeedbackValidatorMock, documentPropertyEditorMock,
-				scoringDefinitionParserMock, scoresPropertyEditorMock,null) {
+        };
 
-			@Override
-			public ApplicationForm getApplicationForm(String id) {
-				return application;
-			}
+        commentServiceMock.save(comment);
 
-		};
+        EasyMock.replay(commentServiceMock);
+        assertEquals("redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber(),
+                controller.addComment(comment, result));
+        EasyMock.verify(commentServiceMock);
+    }
 
-		assertEquals("private/staff/reviewer/feedback/reviewcomment",
-				controller.addComment(comment, result));
-	}
+    @Before
+    public void setUp() {
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        reviewFeedbackValidatorMock = EasyMock.createMock(FeedbackCommentValidator.class);
+        commentServiceMock = EasyMock.createMock(CommentService.class);
+        documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+        scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
+        scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
+        scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
+        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock);
 
-	@Test
-	public void shouldSaveCommentAndRedirectApplicationsPageIfNoErrors()
-			throws ScoringDefinitionParseException {
-		Program program = new Program();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder()
-				.id(6).program(program).build();
-		ReviewComment comment = new ReviewCommentBuilder().id(1)
-				.application(applicationForm).build();
-		BindingResult result = new BeanPropertyBindingResult(comment, "comment");
-
-		controller = new ReviewCommentController(applicationsServiceMock,
-				userServiceMock, commentServiceMock,
-				reviewFeedbackValidatorMock, documentPropertyEditorMock,
-				scoringDefinitionParserMock, scoresPropertyEditorMock,null) {
-
-			@Override
-			public ApplicationForm getApplicationForm(String id) {
-				return applicationForm;
-			}
-
-		};
-
-		commentServiceMock.save(comment);
-
-		EasyMock.replay(commentServiceMock);
-		assertEquals(
-				"redirect:/applications?messageCode=review.feedback&application="
-						+ applicationForm.getApplicationNumber(),
-				controller.addComment(comment, result));
-		EasyMock.verify(commentServiceMock);
-	}
-
-	@Before
-	public void setUp() {
-		applicationsServiceMock = EasyMock
-				.createMock(ApplicationsService.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		reviewFeedbackValidatorMock = EasyMock
-				.createMock(FeedbackCommentValidator.class);
-		commentServiceMock = EasyMock.createMock(CommentService.class);
-		documentPropertyEditorMock = EasyMock
-				.createMock(DocumentPropertyEditor.class);
-		scoringDefinitionParserMock = EasyMock
-				.createMock(ScoringDefinitionParser.class);
-		scoresPropertyEditorMock = EasyMock
-				.createMock(ScoresPropertyEditor.class);
-		controller = new ReviewCommentController(applicationsServiceMock,
-				userServiceMock, commentServiceMock,
-				reviewFeedbackValidatorMock, documentPropertyEditorMock,
-				scoringDefinitionParserMock, scoresPropertyEditorMock,null);
-
-	}
+    }
 }

@@ -441,21 +441,26 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     }
 
     @Before
-    public void setup() {
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+    public void prepare() {
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 
-        reviewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("hoopla").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        reviewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com")
+                .username("hoopla").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 
-        interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com").username("brady").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com")
+                .username("brady").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 
-        applicationAdmin = new RegisteredUserBuilder().firstName("joan").lastName("arc").email("act@test.com").username("arc").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        applicationAdmin = new RegisteredUserBuilder().firstName("joan").lastName("arc").email("act@test.com")
+                .username("arc").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 
-        approver = new RegisteredUserBuilder().firstName("het").lastName("get").email("het@test.com").username("hed").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        approver = new RegisteredUserBuilder().firstName("het").lastName("get").email("het@test.com").username("hed")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
+                .enabled(false).build();
 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
 

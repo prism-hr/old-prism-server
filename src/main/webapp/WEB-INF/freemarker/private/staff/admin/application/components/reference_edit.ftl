@@ -15,16 +15,29 @@
         <label class="plain-label" for="referenceDocument_${encRefereeId}">Attach Document (PDF)</label>
         <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
         <div class="field <#if referee.reference.documents[0]??>uploaded</#if>" id="psUploadFields">
-            <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
-            <span id="psUploadedDocument">
-                <input type="hidden" class="file" id="document_COMMENT" value="${(encrypter.encrypt(referee.reference.documents[0].id))!}"/>
+        
+        	<div class="fileupload fileupload-new" data-provides="fileupload">
+                <div class="input-append">
+                  <div class="uneditable-input span4" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
+                  <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
+                  <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
+                  <input type="hidden" class="file" id="document_COMMENT" value="${(encrypter.encrypt(referee.reference.documents[0].id))!}"/>
+                </span> </div>
+              </div>
+        
+            
+            <ul id="psUploadedDocument" class="uploaded-files">
                 <#if referee.reference.documents[0]??> 
+                <li class="done">
+                    <span class="uploaded-file" name="supportingDocumentSpan">
                     <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(referee.reference.documents[0].id))!}'/>" target="_blank">
                     ${(referee.reference.documents[0].fileName?html)!}</a>
-                    <a id="deleteLq" class="button-delete button-hint" data-desc="Change reference document">delete</a> 
+                    <a id="deleteLq" class="btn btn-danger delete" data-desc="Change reference document"><i class="icon-trash icon-large"></i> Delete</a> 
+                    </span>
+                </li>
                 </#if>
-            </span>
-            <span id="referenceDocumentProgress" class="progress" style="display: none;"></span>
+            </ul>
+
         </div>
     </div>
         
@@ -66,7 +79,7 @@
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
-            <button id="editReferenceButton" type="button" class="btn">Edit</button>
+            <button id="editReferenceButton" type="button" class="btn btn-primary">Save chages</button>
         </div>
     </div>
     

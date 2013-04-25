@@ -62,7 +62,7 @@ public class DeclineController {
 		    return DECLINE_SUCCESS_VIEW_NAME;
 		} else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
             // the user clicked on "Provide Review"
-		    if (reviewer != null && !reviewer.isEnabled()) {
+		    if (!reviewer.isEnabled()) {
                 return "redirect:/register?activationCode=" + reviewer.getActivationCode() + "&directToUrl=/reviewFeedback?applicationId=" + application.getApplicationNumber();
 		    } else {
 		        return "redirect:/reviewFeedback?applicationId=" + application.getApplicationNumber() + "&activationCode=" + reviewer.getActivationCode();

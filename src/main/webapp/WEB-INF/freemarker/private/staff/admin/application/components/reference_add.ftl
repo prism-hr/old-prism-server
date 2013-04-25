@@ -20,16 +20,30 @@
         <label for="referenceDocument_${encRefereeId}" class="plain-label">Attach Document (PDF)</label>
         <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
         <div class="field <#if refereesAdminEditDTO.referenceDocument??>uploaded</#if>" id="psUploadFields">
-            <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
-            <span id="psUploadedDocument">
-                <input type="hidden" class="file" id="document_COMMENT" value="${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}"/>
+        
+        	<div class="fileupload fileupload-new" data-provides="fileupload">
+                <div class="input-append">
+                  <div class="uneditable-input span4" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
+                  <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
+                  <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
+                  <input type="hidden" class="file" id="document_COMMENT" value="${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}"/>
+                </span> </div>
+              </div>
+        
+        
+            
+            <ul id="psUploadedDocument" class="uploaded-files">
+            	
                 <#if refereesAdminEditDTO.referenceDocument??> 
-                    <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}'/>" target="_blank">
-                    ${(refereesAdminEditDTO.referenceDocument.fileName?html)!}</a>
-                    <a id="deleteLq" class="button-delete button-hint" data-desc="Change reference document">delete</a> 
+                <li class="done">
+                    <span class="uploaded-file" name="supportingDocumentSpan">
+                        <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}'/>" target="_blank">
+                        ${(refereesAdminEditDTO.referenceDocument.fileName?html)!}</a>
+                        <a id="deleteLq" class="btn btn-danger delete" data-desc="Change reference document"><i class="icon-trash icon-large"></i> Delete</a>
+                    </span>
+                </li>
                 </#if>
-            </span>
-            <span id="referenceDocumentProgress" class="progress" style="display: none;"></span>
+            </ul>
             <@spring.bind "refereesAdminEditDTO.referenceDocument" /> 
             <#list spring.status.errorMessages as error>
                 <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
@@ -93,7 +107,7 @@
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
-            <button id="addReferenceButton" type="button" class="btn">Add</button>
+            <button id="addReferenceButton" type="button" class="btn btn-primary">Add refecence</button>
         </div>
     </div>
 </div>

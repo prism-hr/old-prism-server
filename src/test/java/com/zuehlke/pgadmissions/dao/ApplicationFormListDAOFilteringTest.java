@@ -58,7 +58,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     private Date searchTermDateForSubmission;
 
     @Before
-    public void setup() {
+    public void prepare() {
         applicationDAO = new ApplicationFormListDAO(sessionFactory);
 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();

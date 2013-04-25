@@ -71,8 +71,7 @@ public class ApplicationFormDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getApplicationsDueUserReminder(NotificationType notificationType,
-			ApplicationFormStatus status) {
+	public List<ApplicationForm> getApplicationsDueUserReminder(NotificationType notificationType, ApplicationFormStatus status) {
 
 		Date today = Calendar.getInstance().getTime();
 		ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
@@ -87,13 +86,13 @@ public class ApplicationFormDAO {
 		DetachedCriteria overDueRemindersCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", notificationType))
-				.add(Restrictions.lt("notificationRecord.date", subtractInterval))
+				.add(Restrictions.le("notificationRecord.date", subtractInterval))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
-				.add(Restrictions.eq("suppressStateChangeNotifications", false))
+				.add(Restrictions.or(Restrictions.isNull("suppressStateChangeNotifications"), Restrictions.eq("suppressStateChangeNotifications", false)))
 				.add(Restrictions.eq("status", status))
 				.add(Restrictions.lt("dueDate", today))
 				.add(Restrictions.or(Subqueries.exists(overDueRemindersCriteria.setProjection(Projections

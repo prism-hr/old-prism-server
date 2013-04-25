@@ -210,7 +210,7 @@ var tooltipSettings = {
     },
     position : {
         my : 'bottom right', // Use the corner...
-        at : 'top center', // ...and opposite corner
+        at : 'top left', // ...and opposite corner
         viewport : $(window),
         adjust : {
             method : 'flip shift'
@@ -375,49 +375,49 @@ function fixedTip($object, text) {
 // Set up a div.field container with a file INPUT field for AJAX uploading.
 // ------------------------------------------------------------------------------
 function watchUpload($field, $deleteFunction) {
-    var $container = $field.parent('div.field');
+    var $container = $field.closest('div.field');
 
+	var $uploadedDocuments = $container.find('ul.uploaded-files');
+	
+	
+	if ($uploadedDocuments.children().length > 0) {
+		$container.find('.fileupload').hide();
+	}
+	
     /* Delete button functionality. */
-    $container.on('click', '.button-delete', function() {
-        var $hidden = $container.find('input.file');
+    $container.on('click', '.button-delete, .delete', function() {
+        
+		var $hidden = $container.find('input.file');
+		
         if (!$deleteFunction) {
             deleteUploadedFile($hidden);
         } else {
             $deleteFunction();
         }
 
-        $container.find('span a').each(function() {
-            $(this).remove();
-        });
+        $uploadedDocuments.find('li:last-child').remove()
+		$uploadedDocuments.hide();
 
         $hidden.val(''); // clear field value.
         $container.removeClass('uploaded');
-
-        // Replace the file field with a fresh copy (that's the only way we can
-        // set its value to empty).
-        // var id = $field.attr('id');
-        // var ref = $field.attr('data-reference');
-        // var type = $field.attr('data-type');
-        // $field.replaceWith('<input class="full" type="file" name="file"
-        // value="" id="' + id +'" data-reference="' + ref + '" data-type="' +
-        // type + '" />');
-
-        // this is another way to clear out local file path
-        var newField = $container.find('input.full');
-        newField.val("");
-
-        watchUpload($('#' + id));
+		
+		
+		//Display uploader back
+		$container.find('.fileupload').fileupload('clear').show();
     });
-
+	
     $container.on('change', $field, function() {
-        var input = this.children[0];
+
+		var input = $(this).find('input[type="file"]');
+
         var $hidden = $container.find('input.file');
+
         if (!$deleteFunction) {
             deleteUploadedFile($hidden);
         } else {
             $deleteFunction();
         }
-        $container.addClass('posting');
+		
         doUpload($(input));
         $field.removeAttr("readonly");
     });
@@ -448,14 +448,22 @@ function deleteUploadedFile($hidden_field) {
 // Upload a file from an INPUT field using AJAX.
 // ------------------------------------------------------------------------------
 function doUpload($upload_field) {
-    var $container = $upload_field.parent('div.field');
+    var $container = $upload_field.closest('div.field');
+	var $uploadedDocuments = $container.find('ul.uploaded-files');
+	
     var $hidden = $container.find('span input');
-    var $hfParent = $hidden.parent();
-    var $progress = $container.find('span.progress');
+    // var $hfParent = $hidden.parent();
+    // var $progress = $container.find('span.progress');
 
     // Remove any previous error messages.
     $container.find('div.alert-error').remove();
 
+	// ajax process start/complete
+	if ($upload_field.val() != '') {
+		$uploadedDocuments.show();
+		$uploadedDocuments.append('<li class="posting"><a class="uploaded-file">' + $upload_field.val().split('\\').pop() + '</a></li>');
+	}
+	
     $.ajaxFileUpload({
         url : '/pgadmissions/documents/async',
         secureuri : false,
@@ -472,15 +480,39 @@ function doUpload($upload_field) {
             } else if ($(data).find('input').length == 0) {
                 // There was (probably) a server error.
                 $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');
+				
+				$upload_field.val('');
+				$uploadedDocuments.find('li').last().remove();
+				
             } else {
+				
+				$container.addClass('uploaded');
+				var doc_type = $upload_field.attr('data-reference');
+
+				$uploadedDocuments.find('li').last().remove();
+                $("<li>" + data + "</li>").appendTo($uploadedDocuments);
+                $uploadedDocuments.show();
+                var $fileInput = $container.find('input.full');
+                $fileInput.show();
+                $fileInput.val("");
+                $('.uploaded-file').show();
+				$container.find('.fileupload').fileupload('clear').hide();
+				
+				$upload_field.val('');
+				$uploadedDocuments.find('li').last().addClass('done');
+				
+				$uploadedDocuments.find('a.delete').attr({
+                    'data-desc' : 'Delete ' + doc_type
+                }).qtip(tooltipSettings);
+				
                 // i.e. if there are no uploading errors, which would be
                 // indicated by the presence of a div.alert-error tag.
-                $hfParent.html(data);
+               /* $hfParent.html(data);
                 $container.addClass('uploaded');
                 var doc_type = $upload_field.attr('data-reference');
                 $('a.button-delete', $hfParent).attr({
                     'data-desc' : 'Delete ' + doc_type
-                }).qtip(tooltipSettings);
+                }).qtip(tooltipSettings);*/
             }
         },
         error : function() {
@@ -490,18 +522,22 @@ function doUpload($upload_field) {
 }
 
 function watchUploadComment($field, $uploadedDocuments) {
-    var $container = $field.parent('div.field');
-
-    $uploadedDocuments.on('click', '.button-delete', function() {
+    var $container = $field.parent('.btn-file');
+	
+	if ($uploadedDocuments.children().length > 0) {
+		$uploadedDocuments.css('display','block');
+	}
+	
+	// Delete File
+    $uploadedDocuments.on('click', '.delete', function() {
         deleteUploadedFileComment($(this).attr("id"));
-        $(this).parent().parent().parent().remove();
+		$(this).closest('li').remove();
     });
-
+	
+	// On change input upload file
     $container.on('change', $field, function() {
-        var input = this.children[0];
-        $container.addClass('posting');
+        var input = $(this).find('input[type="file"]');
         doUploadComment($(input), $uploadedDocuments);
-        $field.removeAttr("readonly");
     });
 }
 
@@ -529,11 +565,16 @@ function deleteUploadedFileComment(id) {
 // Upload a file from an INPUT field using AJAX.
 // ------------------------------------------------------------------------------
 function doUploadComment($upload_field, $uploadedDocuments) {
-    var $container = $upload_field.parent('div.field');
+    var $container = $upload_field.closest('div.field');
 
     // Remove any previous error messages.
     $container.find('div.alert-error').remove();
-
+	
+	if ($upload_field.val() != '') {
+		$uploadedDocuments.show();
+		$uploadedDocuments.append('<li class="posting"><a class="uploaded-file">' + $upload_field.val().split('\\').pop() + '</a></li>');
+	}
+	
     $.ajaxFileUpload({
         url : '/pgadmissions/documents/async',
         secureuri : false,
@@ -547,17 +588,25 @@ function doUploadComment($upload_field, $uploadedDocuments) {
             if ($(data).find('div.alert-error').length > 0) {
                 // There was an uploading error.
                 $container.append(data);
-            } else if ($(data).find('input').length == 0) {
+            } else if ($(data).find('.file').length == 0) {
                 // There was (probably) a server error.
                 $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');
+				$upload_field.val('');
+				$uploadedDocuments.find('li').last().remove();
             } else {
+				
                 $container.addClass('uploaded');
-                $("<div class=\"row\"><div class=\"field\">" + data + "</span></div>").appendTo($uploadedDocuments);
+				$uploadedDocuments.find('li').last().remove();
+                $("<li>" + data + "</li>").appendTo($uploadedDocuments);
                 $uploadedDocuments.show();
                 var $fileInput = $container.find('input.full');
                 $fileInput.show();
                 $fileInput.val("");
                 $('.uploaded-file').show();
+				$('#uploadFields .fileupload').fileupload('clear');
+				
+				$upload_field.val('');
+				$uploadedDocuments.find('li').last().addClass('done');
             }
         },
         error : function() {
@@ -709,21 +758,24 @@ function modalPrompt(message, okay, cancel) {
 
     // Set function to execute on "Ok".
     $('#dialog-box').off('click', '#popup-ok-button').on('click', '#popup-ok-button', function() {
-        $('#dialog-overlay, #dialog-box').hide();
         okay();
         return false;
     }); 
 
     // Set function to execute on "Cancel".
     $('#dialog-box').off('click', '#popup-cancel-button').on('click', '#popup-cancel-button', function() {
-        $('#dialog-overlay, #dialog-box').hide();
         cancel();
         return false;
     });
+    
+    $('#dialog-box').on('hide', function () {
+    	cancel();
+    });
 
     // Show the box.
-    $('#dialog-overlay, #dialog-box').show();
-    modalPosition();
+    $('#dialog-box').modal().css({
+    	'top':($(window).height()-$('#dialog-box').height())/2
+	});
 }
 
 function numbersOnly(event) {

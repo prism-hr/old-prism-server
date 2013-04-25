@@ -66,8 +66,7 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 	}
 
 	@Before
-	public void setUp() {
-		super.setUp();
+	public void prepare() {
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
 		reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
 

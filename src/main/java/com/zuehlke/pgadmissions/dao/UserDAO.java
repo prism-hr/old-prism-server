@@ -23,8 +23,9 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.mail.DigestNotificationType;
+import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 
 @Repository
 public class UserDAO {
@@ -63,12 +64,20 @@ public class UserDAO {
     public List<RegisteredUser> getUsersInRole(Role role) {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles")
                 .add(Restrictions.eq("id", role.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-
     }
 
     public RegisteredUser getUserByActivationCode(String activationCode) {
         return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
                 .add(Restrictions.eq("activationCode", activationCode)).uniqueResult();
+    }
+    
+    public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .add(Restrictions.eq("applicant", applicant))
+                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPROVED)))
+                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.REJECTED)))
+                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.WITHDRAWN)))
+                .setProjection(Projections.rowCount()).uniqueResult();
     }
 
     public List<RegisteredUser> getUsersForProgram(Program program) {

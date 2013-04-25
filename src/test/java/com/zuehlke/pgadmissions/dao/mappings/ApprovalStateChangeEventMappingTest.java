@@ -58,15 +58,17 @@ public class ApprovalStateChangeEventMappingTest extends AutomaticRollbackTestCa
 	}
 	
 	@Before
-	public void setup() {
+	public void prepare() {
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();		
+                .credentialsNonExpired(false).enabled(false).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
-		approvalRound = new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(user).isPrimary(false).build()).application(application).build();
-		save(user, program,  application, approvalRound);
-		flushAndClearSession();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        approvalRound = new ApprovalRoundBuilder()
+                .supervisors(new SupervisorBuilder().user(user).isPrimary(false).build()).application(application)
+                .build();
+        save(user, program, application, approvalRound);
+        flushAndClearSession();
 	}
 	
 }

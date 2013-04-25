@@ -59,19 +59,14 @@ public class InterviewStateChangeEventMappingTest extends AutomaticRollbackTestC
 	}
 	
 	@Before
-	public void setup() {
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();		
-		
-
+	public void prepare() {
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
-		 interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(user).build()).application(application).build();
-		
-		
+		interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(user).build()).application(application).build();
 		save(user, program,  application, interview);
-
 		flushAndClearSession();
 	}
 	

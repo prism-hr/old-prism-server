@@ -25,7 +25,7 @@ public class BadgeDAOTest extends AutomaticRollbackTestCase {
     private Program program;
 
     @Before
-    public void setup() {
+    public void prepare() {
         badgeDAO = new BadgeDAO(sessionFactory);
         programDAO = new ProgramDAO(sessionFactory); 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();

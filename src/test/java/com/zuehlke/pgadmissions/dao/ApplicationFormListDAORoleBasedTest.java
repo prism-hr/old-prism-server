@@ -47,7 +47,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
     private ApplicationForm application;
 
     @Before
-    public void setup() {
+    public void prepare() {
         applicationDAO = new ApplicationFormListDAO(sessionFactory);
 
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

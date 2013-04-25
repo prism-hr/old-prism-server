@@ -83,7 +83,7 @@ $(document).ready(function() {
         });
     });
     
-    $("input:file").each(function() {
+    $(".file").each(function() {
     	watchUpload($(this));
     });
 });
@@ -113,12 +113,12 @@ function clearRefereeForm(form) {
         $(this).val("");
     });
     
-    form.find("input:file").each(function() {
-    	var $container  = $(this).parent('div.field');
-    	$deleteButton = $container.find('a.button-delete');
+    form.find("input.file").each(function() {
+    	var $container  = $(this).closest('div.field');
+    	$deleteButton = $container.find('.delete');
 
-    	var $hidden  = $container.find('input.file');
-    	$container.find('span a').each(function()
+    	var $hidden  = $container.find('.uploaded-files .file');
+    	$container.find('.uploaded-files li').each(function()
 		{
 			$(this).remove();
 		});
@@ -126,8 +126,8 @@ function clearRefereeForm(form) {
     	$hidden.val(''); // clear field value.
     	$container.removeClass('uploaded');
 
-		var newField = $container.find('input.full');
-		newField.val("");
+		$container.find('.fileupload').fileupload('clear')
+
     });
     
 }
@@ -162,8 +162,8 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
     }
     
     var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
-    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
-    var $ref_doc_hidden     = $ref_doc_container.find('span input');
+    var $ref_doc_container  = $ref_doc_upload_field.closest('div.field');
+    var $ref_doc_hidden     = $ref_doc_container.find('.uploaded-files .file');
 	
     postData =  {
         applicationId : $('#applicationId').val(),
@@ -175,7 +175,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         editedRefereeId : $('#editedRefereeId').val(),
         cacheBreaker: new Date().getTime()
     };
-    
+
     if(forceSavingReference){
     	postData['forceSavingReference'] = true;
     }
@@ -248,8 +248,9 @@ function editReferenceData() {
     }
     
     var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
-    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
-    var $ref_doc_hidden     = $ref_doc_container.find('span input');
+    var $ref_doc_container  = $ref_doc_upload_field.closest('div.field');
+    var $ref_doc_hidden     = $ref_doc_container.find('.uploaded-files .file');	
+	
 	
     postData =  {
 		editedRefereeId : refereeId,
@@ -259,7 +260,7 @@ function editReferenceData() {
         suitableForUCL : suitableUCL,
         suitableForProgramme : suitableForProgramme, 
     };
-    
+
     $('#referencesSection > div').append('<div class="ajax" />');
     $.ajax({
     	dataType: "json",

@@ -6,7 +6,7 @@ $(document).ready(function()
 	$('#withdrawButton').click(function(e)
 	{
 		e.preventDefault();
-		setPopupText("Are you sure you want to withdraw the application? <b>You will not be able to submit a withdrawn application.</b>");
+		setPopupText("Are you sure you want to withdraw the application? <b>You will not be able to submit a withdrawn application.</b>"); 
 		positionPopup();
 		$('#dialog-overlay, #dialog-box').show();
 		return false;

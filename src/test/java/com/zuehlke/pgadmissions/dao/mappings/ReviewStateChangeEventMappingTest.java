@@ -57,20 +57,20 @@ public class ReviewStateChangeEventMappingTest extends AutomaticRollbackTestCase
 	}
 	
 	@Before
-	public void setup() {
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();		
-		
+	public void prepare() {
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
-		reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(user).build()).application(application).build();
-		
-		
-		save(user, program,  application, reviewRound);
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(user).build())
+                .application(application).build();
 
-		flushAndClearSession();
+        save(user, program, application, reviewRound);
+
+        flushAndClearSession();
 	}
 	
 }

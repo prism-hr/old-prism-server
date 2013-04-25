@@ -29,7 +29,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
     private ApplicationForm applicationForm;
     
     @Before
-    public void setup() {
+    public void prepare() {
         applicationFormTransferDAO = new ApplicationFormTransferDAO(sessionFactory);
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username").password("password").accountNonExpired(false).accountNonLocked(false)

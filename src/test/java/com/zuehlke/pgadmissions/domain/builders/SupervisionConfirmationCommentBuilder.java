@@ -24,6 +24,11 @@ public class SupervisionConfirmationCommentBuilder {
     private String recommendedConditions;
     private CommentType commentType;
 
+    public SupervisionConfirmationCommentBuilder createdTimeStamp(Date createdTimeStamp) {
+        this.createdTimeStamp = createdTimeStamp;
+        return this;
+    }
+    
     public SupervisionConfirmationCommentBuilder supervisor(Supervisor supervisor) {
         this.supervisor = supervisor;
         return this;

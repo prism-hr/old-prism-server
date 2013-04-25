@@ -52,23 +52,17 @@ public class ReferenceEventMappingTest extends AutomaticRollbackTestCase {
 
 	}
 	@Before
-	public void setup() {
-		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();		
-		
-
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
-		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		 referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1))
-				.address1("loc").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
-				.phoneNumber("phoneNumber").build();
-		
-		
-		save(user, program,  application, referee);
-
-		flushAndClearSession();
+	public void prepare() {
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+        referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1))
+                .address1("loc").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl")
+                .lastname("lastname").phoneNumber("phoneNumber").build();
+        save(user, program, application, referee);
+        flushAndClearSession();
 	}
-	
 }

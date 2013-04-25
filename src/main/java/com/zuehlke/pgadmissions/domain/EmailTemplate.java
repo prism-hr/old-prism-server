@@ -40,9 +40,20 @@ public class EmailTemplate implements Serializable {
 	@Column(name = "active")
 	private Boolean active;
 	
+	@Column(name = "subject")
+	private String subject;
+	
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
+	
+	public String getSubject() {
+        return subject;
+    }
+	
+	public void setSubject(String subject) {
+        this.subject = subject;
+    }
 	
 	public Boolean getActive() {
 		return active;

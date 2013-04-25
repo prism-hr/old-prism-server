@@ -1,9 +1,15 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_REMINDER;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +18,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +33,17 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -40,10 +51,11 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -54,10 +66,11 @@ import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.DateUtils;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional
 public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);
@@ -93,8 +106,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             final ReviewerDAO reviewerDAO, final ApplicationsService applicationsService, final ConfigurationService configurationService,
             final CommentFactory commentFactory, final CommentService commentService,
             final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, final PdfDocumentBuilder pdfDocumentBuilder,
-            final RefereeDAO refereeDAO, final UserService userService) {
-        super(mailSender, applicationFormDAO, configurationService);
+            final RefereeDAO refereeDAO, final UserService userService, final UserDAO userDAO, final RoleDAO roleDAO, final EncryptionUtils encryptionUtils) {
+        super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
@@ -110,51 +123,24 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
-    @Scheduled(cron = "${email.digest.cron}")
-    public void run() {
-        log.info("Running ScheduledMailSendingService Task");
-        scheduleApprovalReminder();
-        scheduleInterviewFeedbackEvaluationRequest();
-        scheduleInterviewFeedbackEvaluationReminder();
-        scheduleReviewReminder();
-        scheduleReviewRequest();
-        scheduleUpdateConfirmation();
-        scheduleValidationRequest();
-        scheduleValidationReminder();
-        scheduleRestartApprovalRequest();
-        scheduleRestartApprovalReminder();
-        scheduleApprovedConfirmation();
-        scheduleInterviewAdministrationReminder();
-        scheduleInterviewFeedbackConfirmation();
-        scheduleInterviewFeedbackRequest();
-        scheduleInterviewFeedbackReminder();
-        scheduleApplicationUnderApprovalNotification();
-        scheduleRejectionConfirmationToAdministrator();
-        scheduleReviewSubmittedConfirmation();
-        scheduleReviewEvaluationRequest();
-        scheduleReviewEvaluationReminder();
-        scheduleConfirmSupervisionRequest();
-        scheduleConfirmSupervisionReminder();
-        scheduleApplicationUnderReviewNotification();
-        sendDigestsToUsers();
-        log.info("Finished ScheduledMailSendingService Task");
-    }
-
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void sendDigestsToUsers() {
 		log.info("Sending daily digests to users");
+		
+		String taskNotificationSubject = resolveMessage(DIGEST_TASK_NOTIFICATION, (Object[])null);
+		String taskReminderSubject = resolveMessage(DIGEST_TASK_REMINDER, (Object[])null);
+		String updateNotificationSubject = resolveMessage(DIGEST_UPDATE_NOTIFICATION, (Object[])null);
 
 		PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subject(
-				"Prism Digest Notification").emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
+		        taskNotificationSubject).emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
 
 		PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subject(
-				"Prism Digest Task Reminder").emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
+		        taskReminderSubject).emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
 
 		PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subject(
-				"Prism Digest Update Reminder").emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
+		        updateNotificationSubject).emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
 
 		for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
 			try {
@@ -929,7 +915,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		try {
     		List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
     		for (Referee referee : refereesDueAReminder) {
-    			String subject = resolveMessage("reference.request.reminder", referee.getApplication());
+    			String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
     			
     			ApplicationForm applicationForm = referee.getApplication();
     			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
@@ -948,6 +934,36 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 					e.getCause(), message);
 		}
 	}
+    
+    @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendNewUserInvitation() {
+        log.info("Running sendNewUserInvitation Task");
+        PrismEmailMessage message = null;
+        try {
+            List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+            String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[])null);
+            for (RegisteredUser user : users) {
+                for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
+                    if (notification.getNotificationDate() == null) {
+                        notification.setNotificationDate(new Date());
+                    }
+                }
+                RegisteredUser admin =user.getPendingRoleNotifications().get(0).getAddedByUser();
+                Program program =user.getPendingRoleNotifications().get(0).getProgram();
+                String rolesString = constructRolesString(user);
+                EmailModelBuilder modelBuilder = getModelBuilder(
+                        new String[] {"newUser", "admin", "program", "newRoles", "host"},
+                        new Object[] {user, admin, program, rolesString, getHostName()}
+                        );
+                message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
+                sendEmail(message);
+                userDAO.save(user);
+            }
+        } catch (Exception e) {
+            throw new PrismMailMessageException("Error while sending reference reminder email to referee: ",
+                    e.getCause(), message);
+        }
+    }
     
     /**
      * <p>
@@ -986,7 +1002,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     		for (ApplicationForm applicationForm : applications) {
     			PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
     			
-    			String subject = resolveMessage("validation.request.registry.contacts", applicationForm);
+    			String subject = resolveMessage(REGISTRY_VALIDATION_REQUEST, applicationForm);
     			messageBuilder.subject(subject);
     			
     			RegisteredUser currentUser = applicationForm.getAdminRequestedRegistry();
@@ -1007,7 +1023,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     			
     			messageBuilder.cc(currentUser);
     			
-    			messageBuilder.templateName=EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
+    			messageBuilder.templateName=REGISTRY_VALIDATION_REQUEST;
     			
     			String recipientList = createRecipientString(registryContacts);
     			EmailModelBuilder modelBuilder = getModelBuilder(
@@ -1367,5 +1383,37 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		sb.append(".");
 		return sb.toString();
 	}
-   
+    
+    private String constructRolesString(RegisteredUser user) {
+        List<String> rolesList = new ArrayList<String>();
+        String programTitle = null;
+
+        for (PendingRoleNotification roleNotification : user.getPendingRoleNotifications()) {
+            Authority authority = roleNotification.getRole().getAuthorityEnum();
+            String roleAsString = StringUtils.capitalize(authority.toString().toLowerCase());
+            
+            if (authority != Authority.SUPERADMINISTRATOR && StringUtils.isBlank(programTitle)) {//looks like a bug
+                programTitle = roleNotification.getProgram().getTitle();
+            }
+            
+            switch (authority) {
+            case INTERVIEWER:
+            case REVIEWER:
+            case SUPERVISOR:
+                rolesList.add("Default " + roleAsString);
+                break;
+            default:
+                rolesList.add(roleAsString);
+                break;
+            }
+        }
+        
+        StringBuilder messageBuilder = new StringBuilder(StringUtils.join(rolesList.toArray(new String[]{}), ", ", 0, rolesList.size() - 1));
+        messageBuilder.append(rolesList.get(rolesList.size() - 1));
+        if (StringUtils.isNotBlank(programTitle)) {
+            messageBuilder.append(" for ").append(programTitle);
+        }
+        
+        return messageBuilder.toString();
+    }
 }

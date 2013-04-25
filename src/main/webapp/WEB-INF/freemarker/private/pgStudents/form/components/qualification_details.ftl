@@ -256,11 +256,31 @@
       <div class="row"> 
       <label id="quali-proof-of-award-lb" class="plain-label" for="proofOfAward"><#if !qualification.isQualificationCompleted()>Interim Transcript (PDF)<#else>Proof of award (PDF)</#if></label> 
       <span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
-        <div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields"> <input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value=""<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/> <span id="qualUploadedDocument">
-          <input type="hidden" class="file" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}" />
-          <#if qualification.proofOfAward??> <a class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>" target="_blank">
-          ${(qualification.proofOfAward.fileName?html)!}
-          </a> <a class="button-delete button-hint" data-desc="Change Proof Of Award">delete</a> </#if> </span> <span class="progress" style="display: none;"></span> </div>
+        <div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields"> 
+        
+        <div class="fileupload fileupload-new" data-provides="fileupload">
+            <div class="input-append">
+              <div class="uneditable-input span4" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
+              <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
+              <input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>
+    
+              </span> 
+            </div>
+        </div>
+        
+        <ul id="qualUploadedDocument" class="uploaded-files">
+          <#if qualification.proofOfAward??> 
+           <li class="done">
+            <span class="uploaded-file" name="supportingDocumentSpan">
+             <input type="text" class="file" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}" style="display:none;" />
+           	<a class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>" target="_blank">${(qualification.proofOfAward.fileName?html)!}</a> 
+          	<a class="btn btn-danger delete" data-desc="Delete Proof Of Award"><i class="icon-trash icon-large"></i> Delete</a> 
+           </span>
+          </#if>
+         </ul> 
+         
+         
+        </div>
       </div>
       
       <!-- Add another button --> 

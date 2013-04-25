@@ -5,11 +5,8 @@ public enum EmailTemplateName {
 	REFEREE_NOTIFICATION("Referee notification"), //sent by timer and on event
 	REFEREE_REMINDER("Referee reminder"),//sent by timer
 	INTERVIEWER_NOTIFICATION("Interviewer notification"),//sent by timer
-	INTERVIEWER_REMINDER("Interviewer reminder"),//sent by timer
-	INTERVIEWER_REMINDER_FIRST("Interviewer reminder first"),//sent by timer
-	APPROVAL_NOTIFICATION("Approval notification"),//sent by timer
 	NEW_PASSWORD_CONFIRMATION("New password confirmation"),//send on event
-	REGISTRY_VALIDATION_REQUEST("Registry vlaidation request"),
+	REGISTRY_VALIDATION_REQUEST("Registry validation request"),
 	REGISTRATION_CONFIRMATION("Registration confirmation"), //sent on event
 	EXPORT_ERROR("Export error"), //sent on event
 	IMPORT_ERROR("Import error"), //sent on event
@@ -17,6 +14,7 @@ public enum EmailTemplateName {
 	MOVED_TO_APPROVED_NOTIFICATION("Moved to approved notification"),//sent by timer
 	APPLICATION_SUBMIT_CONFIRMATION("Application submit confirmation"),//sent on event
 	MOVED_TO_INTERVIEW_NOTIFICATION("Moved to interview notification"),//sent by timer
+	NEW_USER_SUGGESTION("New user suggestion"),//sent by timer
 	DIGEST_UPDATE_NOTIFICATION("Digest Update Notification"), 
 	DIGEST_TASK_NOTIFICATION("Digest Task Notification"),
 	DIGEST_TASK_REMINDER("Digest Task Reminder");

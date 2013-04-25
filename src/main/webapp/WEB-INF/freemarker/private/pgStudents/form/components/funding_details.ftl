@@ -133,12 +133,31 @@
       <div class="row">
         <label class="plain-label" for="fundingDocument">Proof of Award (PDF)<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
-        <div class="field<#if funding.document??> uploaded</#if>" id="fundingUploadFields"> <input id="fundingDocument" data-type="SUPPORTING_FUNDING" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/> <span id="fundingUploadedDocument" class="uploaded-file">
-          <input type="hidden" class="file" id="document_SUPPORTING_FUNDING" value="${(encrypter.encrypt(funding.document.id))!}"/>
-          <#if funding.document??> <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(funding.document.id)}" data-desc="Proof of Award" class="uploaded-filename" target="_blank">
-          ${funding.document.fileName}
-          </a> <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a class="button-delete button-hint" data-desc="Edit Proof Of Award">delete</a> </#if>
-          </#if> </span> <span id="fundingDocumentProgress" class="progress" style="display: none;"></span>
+        <div class="field<#if funding.document??> uploaded</#if>" id="fundingUploadFields"> 
+       		 <div class="fileupload fileupload-new" data-provides="fileupload">
+                <div class="input-append">
+                  <div class="uneditable-input span4" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
+                  <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
+                  <input id="fundingDocument" data-type="SUPPORTING_FUNDING" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>
+ 
+                </span> </div>
+              </div>
+
+		
+ 		<ul id="fundingUploadedDocument" class="uploaded-files">
+          <#if funding.document??>
+           <li class="done">
+              <span class="uploaded-file" name="supportingDocumentSpan">
+                  <input type="hidden" class="file" id="document_SUPPORTING_FUNDING" value="${(encrypter.encrypt(funding.document.id))!}"/>
+                   <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(funding.document.id)}" data-desc="Proof of Award" class="uploaded-filename" target="_blank">
+                  ${funding.document.fileName}
+                  </a> 
+                  <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a class="btn btn-danger delete" data-desc="Edit Proof Of Award"><i class="icon-trash icon-large"></i> Delete</a> 
+				  </#if>
+              </span>
+              </li>
+          </#if> 
+        </ul> 
           <@spring.bind "funding.document" />
           <#list spring.status.errorMessages as error>
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>

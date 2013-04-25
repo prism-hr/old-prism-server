@@ -8,6 +8,8 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
 
 public final class DateUtils {
+    
+    private static final int ONE_DAY_IN_MINUTES = 1440;
 
     private DateUtils() {
     }
@@ -36,6 +38,10 @@ public final class DateUtils {
     
     public static DateTime addWorkingDaysInMinutes(final DateTime date, final int numberOfMinutes) {
         DateTime startDate = new DateTime(date);
+        
+        if (numberOfMinutes < ONE_DAY_IN_MINUTES) {
+            return startDate.plusMinutes(numberOfMinutes).minusDays(1);
+        }
         
         switch (startDate.getDayOfWeek()) {
         case DateTimeConstants.FRIDAY:

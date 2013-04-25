@@ -422,10 +422,11 @@ function enableLanguageQualifications() {
 	$(
 			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.removeAttr("disabled", "disabled");
+			$('#examTakenOnlineYes, #examTakenOnlineNo').parent().removeClass("grey-label");
 	$(
 			"#qualificationType, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.removeAttr("readonly", "readonly");
-
+	
 	$(
 			'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
 			.removeAttr("disabled", "disabled");
@@ -449,7 +450,8 @@ function enableLanguageQualifications() {
 	if ($("#languageQualificationsTable tr").length <= 0) {
 		$("#addLanguageQualificationButton").show();
 	}
-
+	$("#languageQualification_div").find(".disabled").removeClass("disabled");
+	
 	$("#updateLanguageQualificationButton").hide();
 }
 
@@ -457,6 +459,7 @@ function disableLanguageQualifications() {
 	$(
 			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.attr("disabled", "disabled");
+			$('#examTakenOnlineYes, #examTakenOnlineNo').parent().addClass("grey-label");
 	$(
 			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
 			.attr("readonly", "readonly");
@@ -484,7 +487,9 @@ function disableLanguageQualifications() {
 
 	$("#addLanguageQualificationButton").hide();
 	$("#updateLanguageQualificationButton").hide();
-
+	
+	
+	
 	clearLanguageQualification();
 }
 
@@ -580,7 +585,12 @@ function postPersonalDetailsData(message) {
 	if ($("input[name='examTakenOnline']:checked").length > 0) {
 		examTakenOnline = $("input[name='examTakenOnline']:checked").val();
 	}
-
+	var documentLanguageQualification;
+	if ( $('#document_LANGUAGE_QUALIFICATION').length == 0) {
+		documentLanguageQualification = '';	
+	}  else {
+		documentLanguageQualification = $('#document_LANGUAGE_QUALIFICATION').val()
+	}
 	var postData = {
 		title : $("#title").val(),
 		firstName : $("#firstName").val(),
@@ -617,8 +627,7 @@ function postPersonalDetailsData(message) {
 		'languageQualifications[0].speakingScore' : selectValue('speakingScore'),
 		'languageQualifications[0].listeningScore' : selectValue('listeningScore'),
 		'languageQualifications[0].examTakenOnline' : examTakenOnline,
-		'languageQualifications[0].languageQualificationDocument' : $(
-				'#document_LANGUAGE_QUALIFICATION').val(),
+		'languageQualifications[0].languageQualificationDocument' : documentLanguageQualification,
 		message : message,
 		acceptedTerms : acceptedTheTerms,
 		cacheBreaker : new Date().getTime()
@@ -696,13 +705,16 @@ function postPersonalDetailsData(message) {
 }
 
 function deleteQualificationDocumentFile() {
+	
+	var $container = $('#languageQualificationDocument').closest('div.field');
+	var $hidden = $container.find('.file');
+	var $uploadedDocuments = $container.find('ul.uploaded-files');
 
-	var $container = $('#languageQualificationDocument').parent('div.field');
-	var $hidden = $container.find('input.file');
-
-	$container.find('span a').each(function() {
-		$(this).remove();
-	});
+	$uploadedDocuments.find('li:last-child').remove();
+	$uploadedDocuments.hide();
+	
+	//Display uploader back
+	$container.find('.fileupload').fileupload('clear').show();
 
 	$hidden.val(''); // clear field value.
 	$container.removeClass('uploaded');

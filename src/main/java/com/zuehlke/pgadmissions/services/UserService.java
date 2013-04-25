@@ -441,4 +441,8 @@ public class UserService {
     public List<Integer> getAllUsersInNeedOfADigestNotification() {
         return userDAO.getAllUserIdsInNeedOfADigestNotification();
     }
+    
+    public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {
+        return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
+    }
 }

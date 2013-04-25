@@ -3,11 +3,11 @@
 <#list applications as application>
     <#assign actionsDefinition = actionDefinitions[application.applicationNumber]>
     <#assign actions = actionsDefinition.actions>
-    <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow">
+    <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow" >
     	<td class="centre">
             <input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" />
     	</td>
-    	<td <#if actionsDefinition.requiresAttention>data-desc="This Application requires your attention" class="applicant-name flagred" <#else> class="applicant-name flaggreen"</#if>>
+    	<td <#if actionsDefinition.requiresAttention>data-desc="This application requires your attention" class="applicant-name flagred" <#else> class="applicant-name flaggreen"</#if>>
          	<#if actionsDefinition.requiresAttention>
               <i class="icon-circle"></i>
             <#else>
@@ -44,17 +44,19 @@
     		</#if>
     	</td>
     </tr>
-    <tr class="application-details" data-application-id="${application.applicationNumber}">
+    <tr class="application-details" data-application-id="${application.applicationNumber}" data-application-status="${application.status}" data-application-issubmitted="${application.submitted?string("true", "false")}">
     	<td colspan="6">
     		<div class="application-lhs">
+    		    <#if actionsDefinition.requiresAttention>
 				<div class="alert alert-info"> <i class="icon-info-sign"></i>
 					<span data-field="message"></span>
 				</div>
+				</#if>
     			<p class="applicant-name" data-field="applicant-name"></p>
     			<p class="detail-status">
     				<span class="dates">
-    					<span>Submitted <span data-field="submitted-date"></span></span>
-	    				<span>Last edited <span data-field="last-edited-date"></span></span>
+    					<span>Submitted: <span data-field="submitted-date"></span></span>
+	    				<span>Last edited: <span data-field="last-edited-date"></span></span>
     				</span>
     			</p>
     			<p class="detail-status">
@@ -70,13 +72,22 @@
 					<span data-field="funding-requirements">None provided</span>
     			</p>
     			<p class="detail-status">
-    				No. of References Responded: <span data-field="references-responded"></span><br />
-					<a data-field="personal-statement-link" href="javascript:void(0);">Personal Statement and CV provided</a>
+    				<b>No. of References Responded:</b><br /> 
+    				<span data-field="references-responded"></span><br />
+    			</p>
+    			<p class="detail-status">
+    			     <b>Documents:</b><br />
+    			     <a data-field="personal-statement-link" target="_blank" href="javascript:void(0);"></a> <br />
+    			     <#if application.cv?has_content>
+                     <a data-field="cv-statement-link" target="_blank" href="javascript:void(0);"></a> <br />
+    			     </#if>
     			</p>
     		</div>
     		<div class="application-rhs">
+    			<!--
     			<a data-field="active-applications-link" href="javascript:void(0);">... Active Applications >></a>
-    			<img data-field="gravatar" src="http://www.hdwallpaperspk.com/wp-content/uploads/2013/02/Tintin-cartoon-falls-foul-001-150x150.jpg" alt="Application photo" width="160" height="160" />
+    			-->
+    			<img data-field="gravatar" src="/pgadmissions/design/default/images/transparent.gif" width="160" height="160" />
     			<a data-field="email" href="javascript:void(0);"></a>
     			<span data-field="phone-number" class="phone-number"></span>
     			<span data-field="skype" class="skype"></span>

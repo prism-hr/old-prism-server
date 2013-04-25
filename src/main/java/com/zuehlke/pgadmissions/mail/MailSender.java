@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -25,7 +24,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
-import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
@@ -40,8 +39,6 @@ public class MailSender {
     
     protected final JavaMailSender javaMailSender;
     
-    protected final MessageSource messageSource;
-    
     protected final boolean emailProductionSwitch;
     
     protected final String emailAddressFrom;
@@ -55,14 +52,12 @@ public class MailSender {
     @Autowired
     public MailSender(
             final JavaMailSender javaMailSender, 
-            final MessageSource messageSource, 
             @Value("${email.prod}") final String production,
             @Value("${email.address.from}") final String emailAddressFrom,  
             @Value("${email.address.to}") final String emailAddressTo,
             final EmailTemplateService emailTemplateService,
             final FreeMarkerConfig freemarkerConfig) {
         this.javaMailSender = javaMailSender;
-        this.messageSource = messageSource;
         this.emailProductionSwitch = BooleanUtils.toBoolean(production);
         this.emailAddressFrom = emailAddressFrom;
         this.emailAddressTo = emailAddressTo;
@@ -88,8 +83,9 @@ public class MailSender {
         }
     }
     
-    protected String resolveMessage(final String code, final Object... args) {
-        return messageSource.getMessage(code, args, null);
+    protected String resolveSubject(final EmailTemplateName templateName, final Object... args) {
+        String subjectFormat = emailTemplateService.getSubjectForTemplate(templateName);
+        return args == null ? subjectFormat :String.format(subjectFormat, args);
     }
     
     public void sendEmail(final PrismEmailMessage... emailMessage) {
@@ -107,16 +103,14 @@ public class MailSender {
     }
     
     protected void sendEmailAsProductionMessage(final PrismEmailMessage message) {
-    	 if (isNotValidEmailMessage(message)) {
-             return;
-         }
-         
          log.info(String.format("Sending PRODUCTION Email: %s", message.toString()));
          try {
              javaMailSender.send(new MimeMessagePreparator() {
                  @Override
                  public void prepare(final MimeMessage mimeMessage) throws Exception {
                      final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+                     
+                     messageHelper.setFrom(emailAddressFrom);
                      
                      for (InternetAddress addresses : message.getToAsInternetAddresses()) {
                          messageHelper.addTo(addresses);
@@ -133,8 +127,6 @@ public class MailSender {
                      if (StringUtils.isNotBlank(message.getReplyToAddress())) {
                          messageHelper.setReplyTo(message.getReplyToAddress());
                      }
-                     
-                     messageHelper.setFrom(message.getFromAddress());
                      
                      messageHelper.setSubject(message.getSubjectCode());
                      
@@ -160,19 +152,16 @@ public class MailSender {
     }
     
     protected void sendEmailAsDevelopmentMessage(final PrismEmailMessage message) {
-    	 if (isNotValidEmailMessage(message)) {
-             return;
-         }
-         
-         log.info(String.format("Sending DEVELOPMENT Email: %s", message.toString()));
+    	 log.info(String.format("Sending DEVELOPMENT Email: %s", message.toString()));
          try {
              javaMailSender.send(new MimeMessagePreparator() {
                  @Override
                  public void prepare(final MimeMessage mimeMessage) throws Exception {
                      final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
                      
-                     messageHelper.setTo(emailAddressTo);
                      messageHelper.setFrom(emailAddressFrom);
+
+                     messageHelper.setTo(emailAddressTo);
                      
                      if (StringUtils.isNotBlank(message.getReplyToAddress())) {
                          messageHelper.setReplyTo(message.getReplyToAddress());
@@ -206,12 +195,5 @@ public class MailSender {
              log.error(String.format("Failed to send email message %s", message.toString()), e);
              throw new PrismMailMessageException(message);
          }
-    }
-    
-    private boolean isNotValidEmailMessage(final PrismEmailMessage message) {
-        if (message.getTo().isEmpty() && message.getCc().isEmpty() && message.getBcc().isEmpty()) {
-            return true;
-        }
-        return false;
     }
 }

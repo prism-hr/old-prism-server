@@ -44,7 +44,7 @@
     <div class="buttons">
         <button name="refereeClearButton" type="button" class="btn" id="refereeClearButton">Clear</button>
         <button type="button" id="refereeCloseButton" class="btn">Close</button>
-        <button type="button" id="refereeSaveButton" class="btn btn-primary">Save</button>
+        <button type="button" id="refereeSaveButton" class="btn btn-primary">Save selection</button>
     </div>
 </#if>
 </div>

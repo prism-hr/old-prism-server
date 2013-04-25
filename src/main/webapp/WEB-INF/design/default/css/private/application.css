@@ -204,9 +204,11 @@ table.data-table .editButton{
 
 section.form-rows .field .data-table a.button-delete { display: inline-block; }
 
-/* Show only the file link when a file is uploaded. */
-section.form-rows .field.posting { background: url(../../images/ajax-loader-file.gif) no-repeat 20px center; height: 24px; }
+
 section.form-rows .field.posting * { display: none; }
+.template-upload td {
+	vertical-align: middle !important;
+}
 
 /* Show only the file link when a file is uploaded. */
 section.form-rows .field.uploaded input { display: none; }
@@ -214,7 +216,6 @@ section.form-rows .field.uploaded input.multiple { display: block; }
 section.form-rows .field.uploaded a.uploaded-filename { display: inline-block; }
 section.form-rows .field.uploaded a { display: inline-block; vertical-align: top; }
 
-section.form-rows .field span.uploaded-file { display: none; }
 section.form-rows .field.uploaded span.uploaded-file { display: block; padding: 1px; }
 section.form-rows .field span.uploaded-files .uploaded-file:last-child { margin-bottom: 5px; }
 

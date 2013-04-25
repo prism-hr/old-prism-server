@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -58,6 +59,15 @@ public class SendToPorticoDataDTOValidatorTest {
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
         assertFalse(mappingResult.hasErrors());
     }
+    
+    @Test
+    public void shouldValidateCorrectlyIfNoQualificationAndExplanationExistent() {
+        sendToPorticoDataDTO.setQualificationsSendToPortico(new ArrayList<Integer>());
+        sendToPorticoDataDTO.setEmptyQualificationsExplanation("I've got a reason");
+        EasyMock.replay(qualificationServiceMock, refereeServiceMock);
+        sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
+        assertFalse(mappingResult.hasErrors());
+    }
 
     @Test
     public void shouldRejectIfNoQualificationAndEmptyExplanation() {
@@ -66,8 +76,7 @@ public class SendToPorticoDataDTOValidatorTest {
 
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
-        assertEquals(2, mappingResult.getErrorCount());
-        assertEquals("portico.submit.explanation.empty", mappingResult.getFieldError("emptyQualificationsExplanation").getCode());
+        assertEquals(1, mappingResult.getErrorCount());
         assertEquals("portico.submit.explanation.required", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
     }
     
@@ -158,5 +167,4 @@ public class SendToPorticoDataDTOValidatorTest {
     public void cleanUp() {
         EasyMock.verify(qualificationServiceMock, refereeServiceMock);
     }
-
 }

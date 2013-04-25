@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
@@ -32,14 +37,17 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -53,17 +61,22 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -72,6 +85,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
@@ -101,11 +115,13 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	private ScheduledMailSendingService service;
 
 	private UserService userServiceMock;
+	
+    private RoleDAO roleDAOMock;
+    
+    private EncryptionUtils encryptionUtilsMock;
 
 	@Before
-	@Override
-	public void setup() {
-		super.setup();
+	public void prepare() {
 		notificationRecordDAOMock = createMock(NotificationRecordDAO.class);
 		commentDAOMock = createMock(CommentDAO.class);
 		supervisorDAOMock = createMock(SupervisorDAO.class);
@@ -118,6 +134,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		pdfDocumentBuilderMock = createMock(PdfDocumentBuilder.class);
 		refereeDAOMock = createMock(RefereeDAO.class);
 		userServiceMock = createMock(UserService.class);
+		userDAOMock = createMock(UserDAO.class);
+        roleDAOMock = createMock(RoleDAO.class);
+        encryptionUtilsMock = createMock(EncryptionUtils.class);
 		service = new ScheduledMailSendingService(
 				mockMailSender,
 				applicationFormDAOMock,
@@ -133,7 +152,10 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				pdfAttachmentInputSourceFactoryMock,
 				pdfDocumentBuilderMock,
 				refereeDAOMock,
-				userServiceMock);
+				userServiceMock,
+				userDAOMock, 
+				roleDAOMock,
+		        encryptionUtilsMock);
 	}
 	
 	@Test
@@ -163,9 +185,16 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		model4.putAll(model1);
 		model4.put("user", user4);
 		
-		String subjectToReturn1 = "Prism Digest Notification";
+		String subjectToReturn1 = "Prism Digest Task Notification";
 		String subjectToReturn2 = "Prism Digest Task Reminder";
-		String subjectToReturn3 = "Prism Digest Update Reminder";
+		String subjectToReturn3 = "Prism Digest Update Notification";
+		
+		expect(mockMailSender.resolveSubject(DIGEST_TASK_NOTIFICATION, (Object[])null))
+		.andReturn(subjectToReturn1);
+		expect(mockMailSender.resolveSubject(DIGEST_TASK_REMINDER, (Object[])null))
+		.andReturn(subjectToReturn2);
+		expect(mockMailSender.resolveSubject(DIGEST_UPDATE_NOTIFICATION, (Object[])null))
+		.andReturn(subjectToReturn3);
 		
 		expect(userServiceMock.getAllUsersInNeedOfADigestNotification())
 		.andReturn(asList(1, 2, 3, 4));
@@ -616,6 +645,31 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	
 	@Test
 	public void shouldSendReferenceReminder() throws Exception {
+	       service = new ScheduledMailSendingService(
+	               mockMailSender,
+	               applicationFormDAOMock,
+	                notificationRecordDAOMock,
+	                commentDAOMock,
+	                supervisorDAOMock,
+	                stageDurationDAOMock,
+	                reviewerDAOMock,
+	                applicationsServiceMock,
+	                configurationServiceMock,
+	                commentFactoryMock,
+	                commentServiceMock,
+	                pdfAttachmentInputSourceFactoryMock,
+	                pdfDocumentBuilderMock,
+	                refereeDAOMock,
+	                userServiceMock,
+	                userDAOMock, 
+	                roleDAOMock,
+	                encryptionUtilsMock) {
+	           @Override
+	           protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
+	               return null;
+	           }
+	       };
+	    
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		String adminMails = SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS;
 		ApplicationForm form = getSampleApplicationForm();
@@ -632,7 +686,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		
 		expect(refereeDAOMock.getRefereesDueAReminder()).andReturn(asList(referee));
 		
-		expect(mockMailSender.resolveMessage("reference.request.reminder", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
+		expect(mockMailSender.resolveSubject(REFEREE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
 				.andReturn(subjectToReturn);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
@@ -654,6 +708,50 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		
 		assertNotNull(referee.getLastNotified());
 	}
+	
+    @Test
+    public void shouldSendNewUserInvitation() {
+        ApplicationForm form = getSampleApplicationForm();
+        PendingRoleNotification roleNotification = new PendingRoleNotificationBuilder()
+            .role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build())
+            .addedByUser(form.getProgram().getAdministrators().get(0))
+            .program(form.getProgram())
+            .build();
+        RegisteredUser user = new RegisteredUserBuilder().id(1)
+            .pendingRoleNotifications(roleNotification)
+            .build();
+        
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("newUser", user);
+        model.put("admin", form.getProgram().getAdministrators().get(0));
+        model.put("program", form.getProgram());
+        model.put("newRoles", "Administrator for MRes Security Science");
+        model.put("host", Environment.getInstance().getApplicationHostName());
+
+        expect(userDAOMock.getUsersWithPendingRoleNotifications()).andReturn(asList(user));
+        String subjectToReturn = "Invitation to Join UCL Prism";
+        expect(mockMailSender.resolveSubject(EmailTemplateName.NEW_USER_SUGGESTION, (Object[])null))
+            .andReturn(subjectToReturn);
+        
+        Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
+        mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+        
+        userDAOMock.save(user);
+        
+        replay(userDAOMock, mockMailSender);
+        service.sendNewUserInvitation();
+        verify(userDAOMock, mockMailSender);
+        
+        PrismEmailMessage message = messageCaptor.getValue();
+        assertNotNull(message.getTo());
+        assertNotNull(message.getCc());
+        assertEquals(1, message.getTo().size());
+        assertEquals(subjectToReturn, message.getSubjectCode());
+        assertModelEquals(model, message.getModel());
+        
+        assertNotNull(roleNotification.getNotificationDate());
+
+    }
 	
 	@Test
 	public void shouldSendValidationRequestToRegistry() {
@@ -690,7 +788,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Validation Request";
 		expect(
-				mockMailSender.resolveMessage("validation.request.registry.contacts", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(REGISTRY_VALIDATION_REQUEST, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME)).andReturn(subjectToReturn);
 
 		byte[] document =new byte[] {'a', 'b', 'c'};

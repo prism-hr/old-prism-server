@@ -907,72 +907,12 @@ div.ajax {
 a.proceed-link { color: #00F; }
 a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 
-
-/* MODAL WINDOW / DIALOGUE BOX --------------------------------------------------------------------------- */
-#dialog-overlay {
-	width: 100%; 
-	height: 100%;
-	position: fixed; 
-	top: 0;
-	left: 0; 
-	display: none;
-	z-index: 3000; 
-	
-	/* transparency for different browsers */
-	filter:alpha(opacity=50); 
-	-moz-opacity:0.5; 
-	-khtml-opacity: 0.5; 
-	opacity: 0.5; 
-	background:#000; 
-}
-
-
-#dialog-box {
-	border-radius: 12px;
-	box-shadow: 0px 0px 10px #000;
-	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-	width: 350px;
-	background:#e2e4e3;	
-	position:fixed; 
-	z-index:5000; 
-	display:none;
-	top: 50%;
-	left: 50%;
-}
-
-#dialog-box .dialog-content {
-	background: #e2e4e3;	
-	border-radius: 10px;
-	font: 10pt/1 Arial,Helvetica,sans-serif;
-	text-align: left; 
-}
+#dialog-box { width:350px; margin-left:-175px; }
 
 #dialog-box #dialog-message {
 	background: url("../../images/large_exclamation.png") no-repeat 290px 15px;
 	line-height: 1.2;
 	padding: 15px 80px 15px 12px;
-	text-align: justify;
-}
-
-#dialog-box #dialog-row {
-	line-height: 24px;
-	padding: 10px;
-}
-
-#dialog-box #dialog-actions {
-	text-align: right;
-}
-
-
-#dialog-box #dialog-header {
-	background: #6b6b6b; /* Old browsers */
-	border: 2px solid #FFF;
-	border-radius: 12px;
-	box-shadow: 0 0 5px #000;
-	color: #FFF;
-	font-weight: bold;
-	padding: 5px 10px;
 }
 
 /* Buttons */
@@ -1091,6 +1031,9 @@ span.count {
   font-size: 18px;
   line-height: 30px;
   padding-right: 235px;
+}
+.ie9 .rsbox {
+	width: 220px;
 }
 .rsbox {
   position: absolute;
@@ -1239,7 +1182,7 @@ section.form-rows .hint{
 }
 
 .old-ie #applicationTab section {
-	margin-bottom: 10px;
+	margin-bottom: 10px !important;
 }
 
 /* Application status icons. ------------------------------------------------------------------------- */
@@ -1394,7 +1337,7 @@ i {
   margin-bottom: 10px !important;
 }
 #appliList.table-bordered th, #appliList.table-bordered td { border-color: #B5B1B3 !important; border-left-color: #B5B1B3 !important; border-top-color: #B5B1B3 !important;}
-#createinterviewersection, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
+#createinterviewersection, #editUser, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
 	overflow: visible !important;
 }
 #section-registryusers .table-bordered th, #section-registryusers .table-bordered td{
@@ -1521,3 +1464,45 @@ form#removeForm {
 .score-results p { margin-bottom:12px !important; }
 .score-results b { display:block; margin-bottom:10px; }
 .score-results ul { margin-top:-24px !important; margin-bottom:-11px !important; }
+
+.ui-tooltip{
+    margin-top: 10px;
+}
+/* Show only the file link when a file is uploaded. */
+
+.uploaded-files li.posting { background: url(../../images/ajax-loader-file.gif) 4px center no-repeat; }
+.uploaded-files li.done:before{
+  font-family:FontAwesome;font-weight:normal;
+  font-style:normal;
+  text-decoration:inherit;-webkit-font-smoothing:antialiased;
+  cursor: default;
+  content:"\f058";
+  color: #51a351;
+  font-size:16px;
+  position: absolute;
+}
+.uploaded-files {margin-left: 0px; list-style: none; }
+.uploaded-files li {
+	padding: relative;
+	padding-left: 0px;
+	display: block;
+	border-top: 1px solid #E0E0E0;
+	display: block;
+	padding: 6px 7px;
+	line-height: 26px;
+}
+#timelineview .uploaded-files li {
+	border-top: none;
+	padding-top: 1px;
+	padding-left: 2px;
+}
+.uploaded-file { margin-left: 20px; }
+.uploaded-files li:last-child {
+	border-bottom: 1px solid #E0E0E0;
+}
+#timelineview .uploaded-files :last-child {
+	border-bottom: none;
+}
+.uploaded-files li .btn {
+ 	float: right;
+}

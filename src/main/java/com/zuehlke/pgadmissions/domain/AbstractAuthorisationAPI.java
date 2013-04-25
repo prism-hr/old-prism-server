@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
  */
 public abstract class AbstractAuthorisationAPI {
 
-    private Logger log = LoggerFactory.getLogger(AbstractAuthorisationAPI.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractAuthorisationAPI.class);
     
     protected boolean containsUser(final RegisteredUser user, final List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {

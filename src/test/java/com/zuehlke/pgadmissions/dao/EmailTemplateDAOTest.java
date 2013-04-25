@@ -26,13 +26,13 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	private EmailTemplateDAO dao;
 
 	@Before
-	public void setup() {
+	public void prepare() {
 		dao = new EmailTemplateDAO(sessionFactory);
 	}
 
 	@Test
 	public void shouldPersistEmailTemplate() {
-		EmailTemplate template = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.REFEREE_NOTIFICATION)
 				.content("You have been approved!").build();
 
 		dao.save(template);
@@ -43,7 +43,7 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldRemoveTemplate() {
-		EmailTemplate template = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template = new EmailTemplateBuilder().subject("subject").subject("subject").name(EmailTemplateName.REFEREE_NOTIFICATION)
 				.content("You have been approved!").build();
 		save(template);
 		flushAndClearSession();
@@ -56,11 +56,11 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void defaultEmailTemnplateShouldHaveNullVersion() {
-		EmailTemplate template = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.REFEREE_NOTIFICATION)
 				.content("You have been approved!").build();
 		save(template);
 
-		EmailTemplate result = dao.getByName(EmailTemplateName.APPROVAL_NOTIFICATION).get(0);
+		EmailTemplate result = dao.getByName(EmailTemplateName.REFEREE_NOTIFICATION).get(0);
 		assertNotNull(result);
 		assertNull(result.getVersion());
 	}
@@ -68,9 +68,9 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnListAllEmailTemplates() {
 		DateTime version = new DateTime(2013, 3, 12, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.REFEREE_NOTIFICATION)
 				.content("You have been approved!").version(version.toDate()).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.REFEREE_REMINDER)
 				.content("You have been rejected!").version(version.toDate()).build();
 		save(template1, template2);
 		flushAndClearSession();
@@ -95,7 +95,7 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnEmailTemplateById() {
 		DateTime version = new DateTime(2013, 3, 12, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.REFEREE_REMINDER)
 				.content("You have been approved!").version(version.toDate()).build();
 		save(template1);
 		flushAndClearSession();
@@ -109,16 +109,16 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnListOfTwoEmailTemplates() {
 		DateTime version = new DateTime(2013, 3, 12, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.REFEREE_REMINDER)
 				.content("You have been approved!").version(version.toDate()).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected!").version(version.toDate()).build();
-		EmailTemplate template3 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template3 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected2!").version(version.plusDays(1).toDate()).build();
 		save(template1, template2, template3);
 		flushAndClearSession();
 
-		List<EmailTemplate> result = dao.getByName(EmailTemplateName.INTERVIEWER_REMINDER_FIRST);
+		List<EmailTemplate> result = dao.getByName(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION);
 
 		assertNotNull(result);
 		EmailTemplate actualTemplate2 = contains(result, template2);
@@ -130,16 +130,16 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnLatestEmailTemplate() {
 		DateTime version = new DateTime(2013, 3, 12, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been approved!").version(version.toDate()).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected!").version(version.plusDays(1).toDate()).build();
-		EmailTemplate template3 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template3 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected2!").version(version.plusDays(2).toDate()).build();
 		save(template1, template2, template3);
 		flushAndClearSession();
 
-		EmailTemplate result = dao.getLatestByName(EmailTemplateName.INTERVIEWER_REMINDER_FIRST);
+		EmailTemplate result = dao.getLatestByName(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION);
 
 		assertNotNull(result);
 		compareEmailTemplates(template3, result);
@@ -149,16 +149,16 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	public void shouldReturnDefaultEmailTemplate() {
 		DateTime version = new DateTime(Calendar.getInstance().getTimeInMillis());
 		version = version.plusDays(1);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been approved1!").build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected2!").version(version.toDate()).build();
-		EmailTemplate template3 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template3 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected3!").version(version.plusDays(1).toDate()).build();
 		save(template1, template2, template3);
 		flushAndClearSession();
 
-		EmailTemplate result = dao.getDefaultByName(EmailTemplateName.INTERVIEWER_REMINDER_FIRST);
+		EmailTemplate result = dao.getDefaultByName(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION);
 
 		assertNotNull(result);
 		assertNull(result.getVersion());
@@ -169,16 +169,16 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnActiveEmailTemplate() {
 		DateTime version = new DateTime(2013, 4, 23, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been approved1!").build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.active(true).content("You have been rejected2!").version(version.toDate()).build();
-		EmailTemplate template3 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template3 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected3!").version(version.plusDays(1).toDate()).build();
 		save(template1, template2, template3);
 		flushAndClearSession();
 
-		EmailTemplate result = dao.getActiveByName(EmailTemplateName.INTERVIEWER_REMINDER_FIRST);
+		EmailTemplate result = dao.getActiveByName(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION);
 
 		assertNotNull(result);
 		compareEmailTemplates(template2, result);
@@ -187,16 +187,16 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnListOfThreeDates() {
 		DateTime version = new DateTime(2013, 4, 23, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been approved1!").version(version.toDate()).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.active(true).content("You have been rejected2!").version(version.plusDays(1).toDate()).build();
-		EmailTemplate template3 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template3 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected3!").version(version.plusDays(2).toDate()).build();
 		save(template1, template2, template3);
 		flushAndClearSession();
 
-		Map<Long, Date> result = dao.getVersionsByName(EmailTemplateName.INTERVIEWER_REMINDER_FIRST);
+		Map<Long, Date> result = dao.getVersionsByName(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION);
 
 		assertNotNull(result);
 		compareDates(version.toDate(), result.get(template1.getId()));
@@ -207,16 +207,16 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnListOfDatesWithFirstPositionNull() {
 		DateTime version = new DateTime(2013, 4, 23, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been approved1!").build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.active(true).content("You have been rejected2!").version(version.plusDays(1).toDate()).build();
-		EmailTemplate template3 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template3 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected3!").version(version.plusDays(2).toDate()).build();
 		save(template1, template2, template3);
 		flushAndClearSession();
 
-		Map<Long, Date> result = dao.getVersionsByName(EmailTemplateName.INTERVIEWER_REMINDER_FIRST);
+		Map<Long, Date> result = dao.getVersionsByName(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION);
 
 		assertNotNull(result);
 		assertNull(result.get(template1.getId()));
@@ -231,16 +231,16 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnUniqueEmailTemplates() {
 		DateTime version = new DateTime(2013, 3, 12, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.DIGEST_TASK_NOTIFICATION)
 				.content("You have been approved!").version(version.toDate()).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected!").version(version.toDate()).build();
-		EmailTemplate template3 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER_FIRST)
+		EmailTemplate template3 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected2!").version(version.plusDays(1).toDate()).build();
 		save(template1, template2, template3);
 		flushAndClearSession();
 
-		EmailTemplate result = dao.getByNameAndVersion(EmailTemplateName.INTERVIEWER_REMINDER_FIRST, version.toDate());
+		EmailTemplate result = dao.getByNameAndVersion(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION, version.toDate());
 
 		assertNotNull(result);
 		compareEmailTemplates(template2, result);
@@ -250,9 +250,9 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test(expected = ConstraintViolationException.class)
 	public void shouldFailToSaveTwoEmailTemplatesWithSameNameAndVersion() {
 		DateTime version = new DateTime(2013, 3, 12, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.DIGEST_TASK_NOTIFICATION)
 				.content("You have been approved!").version(version.toDate()).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.DIGEST_TASK_NOTIFICATION)
 				.content("You have been rejected!").version(version.toDate()).build();
 
 		dao.save(template1);
@@ -263,14 +263,14 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnListEmailTemplateByName() {
 		DateTime version = new DateTime(2013, 3, 12, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().name(EmailTemplateName.APPROVAL_NOTIFICATION)
+		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.DIGEST_TASK_NOTIFICATION)
 				.content("You have been approved!").version(version.toDate()).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().name(EmailTemplateName.INTERVIEWER_REMINDER)
+		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been rejected!").version(version.toDate()).build();
 		save(template1, template2);
 		flushAndClearSession();
 
-		List<EmailTemplate> result = dao.getByName(EmailTemplateName.APPROVAL_NOTIFICATION);
+		List<EmailTemplate> result = dao.getByName(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
 
 		assertNotNull(result);
 		EmailTemplate actualTemplate1 = contains(result, template1);

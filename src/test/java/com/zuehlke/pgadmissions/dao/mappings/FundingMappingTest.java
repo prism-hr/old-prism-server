@@ -63,19 +63,12 @@ public class FundingMappingTest extends AutomaticRollbackTestCase{
 
 	
 	@Before
-	public void setUp() {
-		super.setUp();
-		
-		
+	public void prepare() {
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-		
 		save(program);
-
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-
 		save(applicant);
-
 		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();

@@ -1,6 +1,10 @@
 package com.zuehlke.pgadmissions.interceptors;
 
-public class AlertDefinition {
+import java.io.Serializable;
+
+public class AlertDefinition implements Serializable {
+
+    private static final long serialVersionUID = 1212289406492146105L;
 
     private AlertType type;
 

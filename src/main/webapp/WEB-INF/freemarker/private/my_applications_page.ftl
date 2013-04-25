@@ -39,7 +39,7 @@
   <body class="old-ie">
 <![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!-->
-<body>
+<body class="applist">
 <!--<![endif]--> 
 
 <!-- Wrapper Starts -->
@@ -193,9 +193,7 @@
                 <th scope="col">Application #</th>
                 </#if>
                 <th class="sortable" scope="col" id="PROGRAMME_NAME" onclick="sortList(this)">Programme</th>
-                  <th class="sortable" scope="col" id="APPLICATION_STATUS" onclick="sortList(this)" class="header-text-center">
-                Status
-                  </th>
+                <th class="sortable" scope="col" id="APPLICATION_STATUS" onclick="sortList(this)" class="header-text-center">Status</th>
                 <th scope="col">Actions</th>
                 <th class="sortable" scope="col" id="APPLICATION_DATE" onclick="sortList(this)">Submitted</th>
               </tr>

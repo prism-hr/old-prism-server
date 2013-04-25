@@ -1,5 +1,15 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_SUBMIT_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERROR;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
@@ -25,6 +35,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -51,8 +64,9 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.exceptions.PrismMailMessageException;
+import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class MailSendingServiceTest {
@@ -81,12 +95,24 @@ public class MailSendingServiceTest {
 	
 	protected ApplicationFormDAO applicationFormDAOMock;
 
+	protected UserDAO userDAOMock;
+	
+    protected RoleDAO roleDAOMock;
+    
+    protected RefereeDAO refereeDAOMock; 
+    
+    protected EncryptionUtils encryptionUtilsMock;
+	
 	@Before
 	public void setup() {
+	    userDAOMock = createMock(UserDAO.class);
+	    roleDAOMock = createMock(RoleDAO.class);
+	    refereeDAOMock = createMock(RefereeDAO.class);
+	    encryptionUtilsMock = createMock(EncryptionUtils.class);
 		mockMailSender = createMock(MailSender.class);
 		configurationServiceMock = createMock(ConfigurationService.class);
 		applicationFormDAOMock = createMock(ApplicationFormDAO.class);
-		service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock);
+		service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock);
 	}
 	
 	@Test
@@ -104,7 +130,7 @@ public class MailSendingServiceTest {
 		model2.putAll(model1);
 		model2.put("user", user2);
 		
-		expect(mockMailSender.resolveMessage("reference.data.export.error", (Object[])null))
+		expect(mockMailSender.resolveSubject(EXPORT_ERROR, (Object[])null))
 		.andReturn("UCL Prism to Portico Export Error");
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
@@ -158,7 +184,7 @@ public class MailSendingServiceTest {
 		model2.putAll(model1);
 		model2.put("user", user2);
 		
-		expect(mockMailSender.resolveMessage("reference.data.import.error", (Object[])null))
+		expect(mockMailSender.resolveSubject(IMPORT_ERROR, (Object[])null))
 		.andReturn("UCL Prism to Portico Import Error");
 		
 		
@@ -268,6 +294,13 @@ public class MailSendingServiceTest {
 	
 	@Test
 	public void sendRefereeRequestShouldSuccessfullySendMessage() throws Exception {
+	    service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock) {
+	        @Override
+	        protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
+	            return null;
+	        }
+	    };
+	    
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		Referee referee = new RefereeBuilder().id(0).user(user).build();
 		String adminMails = SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS;
@@ -283,7 +316,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn=SAMPLE_APPLICANT_NAME+" "+SAMPLE_APPLICANT_SURNAME+" "
 		+"Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request";
 		
-		expect(mockMailSender.resolveMessage("reference.request", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
+		expect(mockMailSender.resolveSubject(REFEREE_NOTIFICATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
 				.andReturn(subjectToReturn);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
@@ -305,6 +338,13 @@ public class MailSendingServiceTest {
 	
 	@Test
 	public void sendRefereeRequestShouldSuccessfullySendMessageWithNoApplicant() throws Exception {
+	    service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock) {
+            @Override
+            protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
+                return null;
+            }
+        };
+        
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		Referee referee = new RefereeBuilder().id(0).user(user).build();
 		String adminMails = SAMPLE_ADMIN1_EMAIL_ADDRESS+", "+SAMPLE_ADMIN2_EMAIL_ADDRESS;
@@ -318,7 +358,7 @@ public class MailSendingServiceTest {
 		model.put("programme", form.getProgrammeDetails());
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		
-		expect(mockMailSender.resolveMessage("reference.request", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
+		expect(mockMailSender.resolveSubject(REFEREE_NOTIFICATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
 		.andReturn("[2] [3] Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request");
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
@@ -350,7 +390,7 @@ public class MailSendingServiceTest {
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		
-		expect(mockMailSender.resolveMessage("user.password.reset", (Object[])null)).andReturn("New Password for UCL Prism");
+		expect(mockMailSender.resolveSubject(NEW_PASSWORD_CONFIRMATION, (Object[])null)).andReturn("New Password for UCL Prism");
 		
 		replay(mockMailSender);
 		service.sendResetPasswordMessage(user, newPassword);
@@ -376,7 +416,7 @@ public class MailSendingServiceTest {
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		
-		expect(mockMailSender.resolveMessage("registration.confirmation", (Object[])null)).andReturn("Your Registration for UCL Prism");
+		expect(mockMailSender.resolveSubject(REGISTRATION_CONFIRMATION, (Object[])null)).andReturn("Your Registration for UCL Prism");
 		
 		replay(mockMailSender);
 		service.sendRegistrationConfirmation(user, action);
@@ -396,7 +436,7 @@ public class MailSendingServiceTest {
 		
 		mockMailSender.sendEmail(isA(PrismEmailMessage.class));
 		
-		expect(mockMailSender.resolveMessage("registration.confirmation", (Object[])null)).andReturn("Your Registration for UCL Prism");
+		expect(mockMailSender.resolveSubject(REGISTRATION_CONFIRMATION, (Object[])null)).andReturn("Your Registration for UCL Prism");
 		
 		replay(mockMailSender);
 		service.sendRegistrationConfirmation(user, null);
@@ -409,7 +449,7 @@ public class MailSendingServiceTest {
 		
 		mockMailSender.sendEmail(isA(PrismEmailMessage.class));
 		
-		expect(mockMailSender.resolveMessage("user.password.reset", (Object[])null)).andReturn("New Password for UCL Prism");
+		expect(mockMailSender.resolveSubject(NEW_PASSWORD_CONFIRMATION, (Object[])null)).andReturn("New Password for UCL Prism");
 		
 		replay(mockMailSender);
 		service.sendResetPasswordMessage(null, newPassword);
@@ -421,7 +461,7 @@ public class MailSendingServiceTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		String newPassword = "password";
 		
-		expect(mockMailSender.resolveMessage("user.password.reset", (Object[])null)).andReturn("New Password for UCL Prism");
+		expect(mockMailSender.resolveSubject(NEW_PASSWORD_CONFIRMATION, (Object[])null)).andReturn("New Password for UCL Prism");
 
 		mockMailSender.sendEmail(isA(PrismEmailMessage.class));
 		expectLastCall().andThrow(new RuntimeException());
@@ -458,7 +498,7 @@ public class MailSendingServiceTest {
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
 		
 		String subjectToReturn="Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE;
-		expect(mockMailSender.resolveMessage("validation.submission.applicant", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
+		expect(mockMailSender.resolveSubject(APPLICATION_SUBMIT_CONFIRMATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
 						.andReturn(subjectToReturn);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
@@ -504,7 +544,7 @@ public class MailSendingServiceTest {
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
 		
 		String subjectToReturn="Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE;
-		expect(mockMailSender.resolveMessage("validation.submission.applicant", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
+		expect(mockMailSender.resolveSubject(APPLICATION_SUBMIT_CONFIRMATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
 						.andReturn(subjectToReturn);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
@@ -552,7 +592,7 @@ public class MailSendingServiceTest {
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
 		
 		String subjectToReturn="Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE;
-		expect(mockMailSender.resolveMessage("validation.submission.applicant", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
+		expect(mockMailSender.resolveSubject(APPLICATION_SUBMIT_CONFIRMATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
 						.andReturn(subjectToReturn);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
@@ -591,7 +631,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - " + form.getOutcomeOfStage().displayValue() + " Outcome";
 		expect(
-				mockMailSender.resolveMessage("rejection.notification", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(REJECTED_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 
@@ -640,7 +680,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - " + form.getOutcomeOfStage().displayValue() + " Outcome";
 		expect(
-				mockMailSender.resolveMessage("rejection.notification", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(REJECTED_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 		
@@ -691,7 +731,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - " + form.getOutcomeOfStage().displayValue() + " Outcome";
 		expect(
-				mockMailSender.resolveMessage("rejection.notification", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(REJECTED_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 		
@@ -731,7 +771,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Approval Outcome";
 		expect(
-				mockMailSender.resolveMessage("approved.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(MOVED_TO_APPROVED_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 
@@ -780,7 +820,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Approval Outcome";
 		expect(
-				mockMailSender.resolveMessage("approved.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(MOVED_TO_APPROVED_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 		
@@ -831,7 +871,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Approval Outcome";
 		expect(
-				mockMailSender.resolveMessage("approved.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(MOVED_TO_APPROVED_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 		
@@ -871,7 +911,7 @@ public class MailSendingServiceTest {
 		
 		String subjectToReturn = SAMPLE_APPLICANT_NAME+" " +SAMPLE_APPLICANT_SURNAME+
 				" Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Interview Confirmation";
-		expect(mockMailSender.resolveMessage("interview.notification.interviewer", SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
+		expect(mockMailSender.resolveSubject(INTERVIEWER_NOTIFICATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
 		.andReturn(subjectToReturn).times(2);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
@@ -918,7 +958,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Interview Confirmation";
 		expect(
-				mockMailSender.resolveMessage("interview.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(MOVED_TO_INTERVIEW_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 
@@ -967,7 +1007,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Interview Confirmation";
 		expect(
-				mockMailSender.resolveMessage("interview.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(MOVED_TO_INTERVIEW_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 		
@@ -1018,7 +1058,7 @@ public class MailSendingServiceTest {
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Interview Confirmation";
 		expect(
-				mockMailSender.resolveMessage("interview.notification.applicant", SAMPLE_APPLICATION_NUMBER,
+				mockMailSender.resolveSubject(MOVED_TO_INTERVIEW_NOTIFICATION, SAMPLE_APPLICATION_NUMBER,
 						SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME, form.getOutcomeOfStage()
 								.displayValue())).andReturn(subjectToReturn);
 		

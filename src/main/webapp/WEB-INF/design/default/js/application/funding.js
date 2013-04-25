@@ -1,6 +1,5 @@
 $(document).ready(function(){
 	
-	//Add Counter
     addCounter();
 	
 	var fundImgCount = 0;
@@ -32,8 +31,6 @@ $(document).ready(function(){
 	});
 	
 	$("#acceptTermsFDValue").val("NO");
-	//limitTextArea();
-	
 
 	// -------------------------------------------------------------------------------
 	// Close button.
@@ -99,12 +96,9 @@ $(document).ready(function(){
 		{	
 			$("#acceptTermsFDValue").val("YES");
 			fundImgCount = 0;
-			
-		
 		}
 		});
 	
-
 	// -------------------------------------------------------------------------------
 	// Add funding button.
 	// -------------------------------------------------------------------------------
@@ -120,15 +114,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#fundingSaveCloseButton').click(function()
 	{
-		/*
-		if ($("#acceptTermsFDValue").val() == 'NO' && !isFormEmpty('#fundingSection form'))
-		{ 
-			// Highlight the information bar and terms box.
-			markSectionError('#fundingSection');
-		}
-		else
-		{
-		*/
+		
 			$("span[name='nonAcceptedFD']").html('');
 
 			// Check for a "dirty" employment position form. If there is data try to submit it.
@@ -141,9 +127,6 @@ $(document).ready(function(){
 				unmarkSection('#fundingSection');
 				$('#fundingCloseButton').trigger('click');
 			}
-		/*
-		}
-		*/
 	});
 	
 	
@@ -279,7 +262,7 @@ function postFundingData(message)
 
 function fundingDocumentDelete(){
 	
-	if($('#document_SUPPORTING_FUNDING') && $('#document_SUPPORTING_FUNDING').val() && $('#document_SUPPORTING_FUNDING').val() != ''){
+	if ($('#document_SUPPORTING_FUNDING') && $('#document_SUPPORTING_FUNDING').val() && $('#document_SUPPORTING_FUNDING').val() != '') {
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -302,10 +285,8 @@ function fundingDocumentDelete(){
 			url:"/pgadmissions/delete/asyncdelete",
 			data:{
 				documentId: $('#document_SUPPORTING_FUNDING').val()
-				
 			}				
 		});
-
 	}
 }
 

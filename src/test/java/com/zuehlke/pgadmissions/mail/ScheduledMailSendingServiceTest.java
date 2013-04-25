@@ -350,7 +350,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		
 		EasyMock.expect(
 				applicationFormDAOMock.
-				getApplicationsDueUserReminder(NotificationType.REVIEW_REQUEST, ApplicationFormStatus.REVIEW))
+				getApplicationsDueNotificationForStateChangeEvent(NotificationType.REVIEW_REQUEST, ApplicationFormStatus.REVIEW))
 				.andReturn(asList(form));
 		
 		applicationFormDAOMock.save(form);

@@ -109,6 +109,12 @@ public class MailSendingService extends AbstractMailSendingService {
             throw new PrismMailMessageException("Error while sending reference request mail: ", e.getCause(), message);
         }
     }
+    
+    public void sendReferenceRequest(List<Referee> referees, ApplicationForm applicationForm) {
+        for (Referee referee : referees) {
+            sendReferenceRequest(referee, applicationForm);
+        }
+    }
 
     /**
      * <p>

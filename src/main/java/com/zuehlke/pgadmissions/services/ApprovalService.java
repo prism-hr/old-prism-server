@@ -185,6 +185,7 @@ public class ApprovalService {
         approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
         approvalComment.setUser(userService.getCurrentUser());
 
+        mailSendingService.sendReferenceRequest(form.getReferees(), form);
         commentDAO.save(approvalComment);
     }
 

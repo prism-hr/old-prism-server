@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -87,9 +86,7 @@ public class RefereeController {
             refereeService.save(referee);
         } else if (application.isModifiable()) {
             refereeService.processRefereesRoles(Arrays.asList(referee));
-            if (application.getStatus() != ApplicationFormStatus.VALIDATION) {
-                refereeService.sendRefereeMailNotification(referee);
-            }
+
         }
 
         application.setLastUpdated(new Date());

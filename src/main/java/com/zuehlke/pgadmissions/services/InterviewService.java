@@ -84,6 +84,7 @@ public class InterviewService {
         }
         mailService.sendInterviewConfirmationToApplicant(applicationForm);
         mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
+        mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
         if (interviewReminderRecord != null) {
             applicationForm.removeNotificationRecord(interviewReminderRecord);
         }

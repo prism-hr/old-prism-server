@@ -150,10 +150,20 @@ public class ApplicationsService {
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState("VALIDATION")) {
-            actions.addAction("validate", "Validate");
+            if (application.getApplicationAdministrator()!=null && application.getApplicationAdministrator().getId().equals(user.getId())) {
+                actions.addAction("validate", "Administer Interview");
+            }
+            else {
+                actions.addAction("validate", "Validate");
+            }
         }
         if (user.hasAdminRightsOnApplication(application) && application.isInState("REVIEW")) {
-            actions.addAction("validate", "Evaluate reviews");
+            if (application.getApplicationAdministrator()!=null && application.getApplicationAdministrator().getId().equals(user.getId())) {
+                actions.addAction("validate", "Administer Interview");
+            }
+            else {
+                actions.addAction("validate", "Evaluate reviews");
+            }
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState("INTERVIEW")) {

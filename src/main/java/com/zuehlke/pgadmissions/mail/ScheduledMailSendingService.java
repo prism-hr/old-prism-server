@@ -363,7 +363,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleReviewReminder() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
             createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
-            CollectionUtils.forAllDo(getReviewersFromLatestReviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+            for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
+                if (reviewer.getReview()==null) {
+                    setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
+                }
+            }
         }
     }
 
@@ -402,8 +406,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * </p>
         */
     public void scheduleReviewRequest() {
-        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
-            createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REQUEST, ApplicationFormStatus.REVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REQUEST);
             CollectionUtils.forAllDo(getReviewersFromLatestReviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
         }
     }

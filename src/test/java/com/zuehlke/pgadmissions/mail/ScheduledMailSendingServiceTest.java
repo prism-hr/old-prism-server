@@ -345,12 +345,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		ReviewRound round = new ReviewRoundBuilder().reviewers(reviewer1, reviewer2).build();
 		ApplicationForm form = getSampleApplicationForm();
 		form.setLatestReviewRound(round);
-		NotificationRecord record = new NotificationRecordBuilder().notificationType(NotificationType.REVIEW_REMINDER).build();
+		NotificationRecord record = new NotificationRecordBuilder().notificationType(NotificationType.REVIEW_REQUEST).build();
 		form.setNotificationRecords(asList(record));
 		
 		EasyMock.expect(
 				applicationFormDAOMock.
-				getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW))
+				getApplicationsDueUserReminder(NotificationType.REVIEW_REQUEST, ApplicationFormStatus.REVIEW))
 				.andReturn(asList(form));
 		
 		applicationFormDAOMock.save(form);

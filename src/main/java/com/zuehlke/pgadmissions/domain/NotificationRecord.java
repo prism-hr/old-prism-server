@@ -36,7 +36,7 @@ public class NotificationRecord implements Serializable {
 
 	@Column(name = "notification_date")
 	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date date;
+	private Date date = new Date();
 
 	@Column(name = "notification_type")
 	@Enumerated(EnumType.STRING)

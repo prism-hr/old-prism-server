@@ -758,21 +758,22 @@ function modalPrompt(message, okay, cancel) {
 
     // Set function to execute on "Ok".
     $('#dialog-box').off('click', '#popup-ok-button').on('click', '#popup-ok-button', function() {
-        $('#dialog-overlay, #dialog-box').hide();
         okay();
         return false;
     }); 
 
     // Set function to execute on "Cancel".
     $('#dialog-box').off('click', '#popup-cancel-button').on('click', '#popup-cancel-button', function() {
-        $('#dialog-overlay, #dialog-box').hide();
         cancel();
         return false;
     });
+    
+    $('#dialog-box').on('hide', function () {
+    	cancel();
+    });
 
     // Show the box.
-    $('#dialog-overlay, #dialog-box').show();
-    modalPosition();
+    $('#dialog-box').modal().css({ 'top':($(window).height()-$('#dialog-box').height())/2 });
 }
 
 function numbersOnly(event) {

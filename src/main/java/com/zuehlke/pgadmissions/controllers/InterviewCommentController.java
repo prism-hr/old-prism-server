@@ -175,7 +175,7 @@ public class InterviewCommentController {
 				+ applicationForm.getApplicationNumber();
 	}
 	
-	public List<Question> getCustomQuestions(String applicationId)
+	private List<Question> getCustomQuestions(String applicationId)
 			throws ScoringDefinitionParseException {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		ScoringDefinition scoringDefinition = applicationForm.getProgram()

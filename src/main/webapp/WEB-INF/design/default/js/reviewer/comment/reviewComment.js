@@ -1,7 +1,5 @@
 $(document).ready(function(){
 	
-	registerBindPickers($('#scoring-questions'));
-	
 	$('#cancelReviewBtn').click(function() {
 		window.location.href = "/pgadmissions/reviewFeedback?applicationId=" +  $('#applicationId').val();
 	});	

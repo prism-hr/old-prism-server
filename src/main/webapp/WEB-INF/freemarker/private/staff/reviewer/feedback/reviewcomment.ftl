@@ -140,10 +140,9 @@
                 
                 <div id="scoring-questions" class="row-group">
                   <h3>Scoring questions</h3>
-                  
                   <#assign scores = comment.scores>
+                  <#assign errorsContainerName = "comment">
                   <#include "/private/staff/scores.ftl"/>
-                  
                 </div>
                 <@spring.bind "comment.confirmNextStage" />
 			    <#if spring.status.errorMessages?size &gt; 0>

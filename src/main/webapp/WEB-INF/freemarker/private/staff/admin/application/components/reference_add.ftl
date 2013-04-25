@@ -1,3 +1,5 @@
+<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
+
 <div class="row-group">
     <div class="row">
         <label for="refereeComment_${encRefereeId}" class="plain-label">Comment<em>*</em></label>
@@ -72,18 +74,28 @@
             </#list>
         </div>
     </div>
-    
-    <@spring.bind "refereesAdminEditDTO.*" />
+    	<@spring.bind "refereesAdminEditDTO.*" />
      
-    <#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
-    <input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
+    	<#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
+    	<input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
     
+</div>
+
+	
+<#assign scores = refereesAdminEditDTO.scores>
+<#if (scores)?has_content>
+<div class="row-group">
+    <div id="scoring-questions_${encRefereeId}">
+      <h3>Scoring questions</h3>
+      <#assign errorsContainerName = "refereesAdminEditDTO">
+      <#include "/private/staff/scores.ftl"/>
+    </div>
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
             <button id="addReferenceButton" type="button" class="btn">Add</button>
         </div>
     </div>
-    
 </div>
-
+</#if>
+    

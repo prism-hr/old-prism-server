@@ -1,7 +1,5 @@
 $(document).ready(function()
 {
-	registerBindPickers($('#scoring-questions'));
-	
 	$('#cancelInterviewFeedbackBtn').click(function()
 	{
 		window.location.href = "/pgadmissions/interviewFeedback?applicationId=" +  $('#applicationId').val();
@@ -9,10 +7,6 @@ $(document).ready(function()
 	
 	$('#submitInterviewFeedback').click(function()
 	{
-		/*if (!validateFeedback())
-		{
-			return false;
-		}*/
 		
 		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()

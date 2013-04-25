@@ -142,7 +142,6 @@
                 </form>
               </div>
             </section>
-            <hr/>
             <#include "/private/staff/admin/comment/timeline_application.ftl"/> </div>
           <!-- .content-box-inner --> 
         </div>

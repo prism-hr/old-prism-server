@@ -136,10 +136,10 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
   padding-left: 0px;
   margin-left: 0px;
 }
-.tlf i{
+.tlf i, .documents i{
   font-size: 14px;
 }
-.skype, .tlf  {
+.skype, .tlf, .documents li  {
   vertical-align: center;
 }
 .skype i {
@@ -220,4 +220,7 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 
 .application-actions .bs-status .icon {
 	float:right;
+}
+.applist .alert {
+  margin-bottom: 0px;
 }

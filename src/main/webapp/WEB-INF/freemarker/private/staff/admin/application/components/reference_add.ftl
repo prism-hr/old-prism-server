@@ -95,7 +95,7 @@
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
-            <button id="addReferenceButton" type="button" class="btn btn-primary">Add refecence</button>
+            <button id="addReferenceButton" type="button" class="btn btn-primary">Add Reference</button>
         </div>
     </div>
     

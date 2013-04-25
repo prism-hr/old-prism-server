@@ -115,7 +115,6 @@
               </div>
             </section>
           </form>
-          <hr>
           <table class="data table table-striped table-condensed table-bordered table-hover" border="0">
             <colgroup>
             <col style="width: 220px;" />

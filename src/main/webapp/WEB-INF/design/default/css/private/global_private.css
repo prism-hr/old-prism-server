@@ -1301,6 +1301,7 @@ span.icon-status.not-submitted:before {
 }
 #psUploadedDocument, #cvUploadedDocument {
   line-height: 25px;
+  margin-bottom: 0px;
 }
 i {
   cursor: default;
@@ -1337,7 +1338,7 @@ i {
   margin-bottom: 10px !important;
 }
 #appliList.table-bordered th, #appliList.table-bordered td { border-color: #B5B1B3 !important; border-left-color: #B5B1B3 !important; border-top-color: #B5B1B3 !important;}
-#createinterviewersection, #editUser, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
+#createinterviewersection, #supervisor_div .row-group, #editUser, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
 	overflow: visible !important;
 }
 #section-registryusers .table-bordered th, #section-registryusers .table-bordered td{

@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
@@ -30,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
@@ -70,7 +72,8 @@ public class InterviewServiceTest {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
 		Interviewer interviewer = new InterviewerBuilder().build();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).dueDate(dateFormat.parse("01 04 2012")).id(1).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).build();
+		Referee referee = new RefereeBuilder().build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
 		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_REMINDER).build());
 	
 		interviewDAOMock.save(interview);
@@ -79,6 +82,7 @@ public class InterviewServiceTest {
 		EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
 		mailServiceMock.sendInterviewConfirmationToApplicant(applicationForm);
 		mailServiceMock.sendInterviewConfirmationToInterviewers(asList(interviewer));
+		mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
 		EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
 		
 		interviewService.moveApplicationToInterview(interview, applicationForm);

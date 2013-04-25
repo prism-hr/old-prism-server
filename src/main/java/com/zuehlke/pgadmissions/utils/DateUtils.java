@@ -40,7 +40,7 @@ public final class DateUtils {
         DateTime startDate = new DateTime(date);
         
         if (numberOfMinutes < ONE_DAY_IN_MINUTES) {
-            return startDate.plusMinutes(numberOfMinutes);
+            return startDate.plusMinutes(numberOfMinutes).minusDays(1);
         }
         
         switch (startDate.getDayOfWeek()) {

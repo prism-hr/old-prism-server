@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.referencedata.adapters;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.CodeObject;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.Disability;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Disabilities.Disability;
 
 public class DisabilityAdapter implements ImportData {
 

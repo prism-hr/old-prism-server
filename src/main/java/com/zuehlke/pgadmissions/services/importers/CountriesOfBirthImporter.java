@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.CountryOfBirthAdapter;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Countries;
 
 @Service
 public class CountriesOfBirthImporter implements Importer {
@@ -65,7 +65,7 @@ public class CountriesOfBirthImporter implements Importer {
 
 	private List<CountryOfBirthAdapter> createAdapter(Countries countries) {
 		List<CountryOfBirthAdapter> result = new ArrayList<CountryOfBirthAdapter>(countries.getCountry().size());
-		for (com.zuehlke.pgadmissions.referencedata.jaxb.Countries.Country country : countries.getCountry()) {
+		for (com.zuehlke.pgadmissions.referencedata.v1.jaxb.Countries.Country country : countries.getCountry()) {
 			result.add(new CountryOfBirthAdapter(country));
 		}
 		return result;

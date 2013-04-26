@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.referencedata.adapters;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.CodeObject;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Countries.Country;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Countries.Country;
 
 public class CountryOfBirthAdapter implements ImportData {
 

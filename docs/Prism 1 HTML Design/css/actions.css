@@ -1,0 +1,7 @@
+/* ACTIONS (approval/rejection/comments) page ------------------------------------------------------------ */
+#actions { background: #DDD; border: 1px solid #999; margin: 20px 0; padding: 20px; }
+#actions .row { margin-bottom: 10px; }
+#actions .row label { display: inline-block; width: 140px; }
+#actions .row select { width: 240px; }
+#actions .row textarea { clear: left; margin-top: 0.5em; width: 100%; }
+

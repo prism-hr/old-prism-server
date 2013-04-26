@@ -112,6 +112,7 @@ public class MailSendingService extends AbstractMailSendingService {
     
     public void sendReferenceRequest(List<Referee> referees, ApplicationForm applicationForm) {
         for (Referee referee : referees) {
+            referee.setLastNotified(new Date());
             sendReferenceRequest(referee, applicationForm);
         }
     }

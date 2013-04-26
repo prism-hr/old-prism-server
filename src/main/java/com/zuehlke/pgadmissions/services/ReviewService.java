@@ -53,13 +53,16 @@ public class ReviewService {
 		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), reviewStageDuration.getDurationInMinutes());
         application.setDueDate(dueDate.toDate());
+        boolean sendReferenceRequest = application.getStatus()==ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
 		NotificationRecord reviewReminderNotificationRevord = application.getNotificationForType(NotificationType.REVIEW_REMINDER);
         if (reviewReminderNotificationRevord != null) {
             application.removeNotificationRecord(reviewReminderNotificationRevord);
         }
-        mailService.sendReferenceRequest(application.getReferees(), application);
+        if (sendReferenceRequest) {
+            mailService.sendReferenceRequest(application.getReferees(), application);
+        }
 		applicationDAO.save(application);
 	}
 

@@ -166,6 +166,8 @@ public class ApprovalService {
         form.setDueDate(dueDate.toDate());
         
         form.getEvents().add(eventFactory.createEvent(approvalRound));
+        
+        boolean sendReferenceRequest = form.getStatus()==ApplicationFormStatus.VALIDATION;
 
         form.setStatus(ApplicationFormStatus.APPROVAL);
         form.setPendingApprovalRestart(false);
@@ -185,7 +187,9 @@ public class ApprovalService {
         approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
         approvalComment.setUser(userService.getCurrentUser());
 
-        mailSendingService.sendReferenceRequest(form.getReferees(), form);
+        if (sendReferenceRequest) {
+            mailSendingService.sendReferenceRequest(form.getReferees(), form);
+        }
         commentDAO.save(approvalComment);
     }
 

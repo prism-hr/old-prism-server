@@ -32,8 +32,7 @@ public class ScheduledMailSendingTimer {
         mailService.scheduleInterviewFeedbackEvaluationReminder();
         mailService.scheduleReviewRequestAndReminder();
         mailService.scheduleUpdateConfirmation();
-        mailService.scheduleValidationRequest();
-        mailService.scheduleValidationReminder();
+        mailService.scheduleValidationRequestAndReminder();
         mailService.scheduleRestartApprovalRequest();
         mailService.scheduleRestartApprovalReminder();
         mailService.scheduleApprovedConfirmation();

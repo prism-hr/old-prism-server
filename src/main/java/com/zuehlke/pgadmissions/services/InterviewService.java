@@ -69,6 +69,7 @@ public class InterviewService {
             }
         });
         applicationForm.setLatestInterview(interview);
+        boolean sendReferenceRequest = applicationForm.getStatus()==ApplicationFormStatus.VALIDATION;
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
         NotificationRecord interviewReminderRecord = applicationForm
@@ -84,7 +85,9 @@ public class InterviewService {
         }
         mailService.sendInterviewConfirmationToApplicant(applicationForm);
         mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
-        mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
+        if (sendReferenceRequest) {
+            mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
+        }
         if (interviewReminderRecord != null) {
             applicationForm.removeNotificationRecord(interviewReminderRecord);
         }

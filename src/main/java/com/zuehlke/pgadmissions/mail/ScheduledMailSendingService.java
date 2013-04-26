@@ -508,6 +508,19 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
         }
     }
+    
+    public void scheduleValidationRequestAndReminder() {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION)) {
+            if (form.getNotificationForType(NotificationType.UPDATED_NOTIFICATION)!=null) {
+                createNotificationRecordIfNotExists(form, NotificationType.VALIDATION_REMINDER);
+                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+            }
+        }
+        for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.UPDATED_NOTIFICATION, ApplicationFormStatus.VALIDATION)) {
+            createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
+            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+        }
+    }
 
     /**
      * <p>

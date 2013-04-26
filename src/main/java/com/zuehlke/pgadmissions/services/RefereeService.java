@@ -255,6 +255,7 @@ public class RefereeService {
         applicationFormDAO.save(application);
     }
 
+    //TODO: remove this method if not used
     public void sendRefereeMailNotification(Referee referee) {
         sendMailToReferee(referee);
     }

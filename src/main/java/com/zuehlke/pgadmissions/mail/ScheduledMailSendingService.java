@@ -23,9 +23,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -938,7 +936,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Notification
      * </p>
      */
-    @Scheduled(cron = "${email.schedule.period.chron}")
 	public void sendReferenceReminder() {
     	log.info("Running sendReferenceReminder Task");
 		PrismEmailMessage message = null;
@@ -965,7 +962,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		}
 	}
     
-    @Scheduled(cron = "${email.schedule.period.chron}")
     public void sendNewUserInvitation() {
         log.info("Running sendNewUserInvitation Task");
         PrismEmailMessage message = null;
@@ -1022,7 +1018,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Immediate Notification
      * </p>
      */
-    @Scheduled(cron = "${email.schedule.period.chron}")
     public void sendValidationRequestToRegistry() {
     	log.info("Running sendValidationRequestToRegistry Task");
     	PrismEmailMessage message = null;
@@ -1360,7 +1355,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		return form.getProgram().getAdministrators();
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private NotificationRecord createNotificationRecordIfNotExists(final ApplicationForm form,
 			final NotificationType type) {
 		NotificationRecord notificationRecord = form.getNotificationForType(type);

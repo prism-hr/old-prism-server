@@ -52,4 +52,19 @@ public class ScheduledMailSendingTimer {
         mailService.sendDigestsToUsers();
         log.info("Finished ScheduledMailSendingService Task");
     }
+    
+    @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendReferenceReminder() {
+        mailService.sendReferenceReminder();
+    }
+    
+    @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendNewUserInvitation() {
+        mailService.sendNewUserInvitation();
+    }
+    
+    @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendValidationRequestToRegistry() {
+        mailService.sendValidationRequestToRegistry();
+    }
 }

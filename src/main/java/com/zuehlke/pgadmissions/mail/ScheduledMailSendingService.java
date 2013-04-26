@@ -1165,7 +1165,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleReviewSubmittedConfirmation() {
         for (ReviewComment comment : commentDAO.getReviewCommentsDueNotification()) {
             comment.setAdminsNotified(true);
-            setDigestNotificationType(comment.getUser(), DigestNotificationType.UPDATE_NOTIFICATION);
             CollectionUtils.forAllDo(getProgramAdministrators(comment.getApplication()), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
         }
     }
@@ -1200,11 +1199,15 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
+    //REMOVE
+    //the old system was not sending request to admins to evaluate the review but just a notification of review submitted
+    //which means "evaluate it". This is done by the method 'scheduleReviewSubmittedConfirmation'.
+    //This explains why the code below is sending digests  to reviewers instead of admins (as it should be by spec!).
     public void scheduleReviewEvaluationRequest() {
-        for (Reviewer reviewer : reviewerDAO.getReviewersDueNotification()) {
-            reviewer.setLastNotified(new Date());
-            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
-        }
+//        for (Reviewer reviewer : reviewerDAO.getReviewersDueNotification()) {
+//            reviewer.setLastNotified(new Date());
+//            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+//        }
     }
 
     /**
@@ -1241,11 +1244,15 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 3 (Task Reminder)
      * </p>
      */
+    //REMOVE
+    //the old system was not sending reminder to admins to evaluate the review but just a notification of review submitted
+    //which means "evaluate it". This is done by the method 'scheduleReviewSubmittedConfirmation'.
+    //This explains why the code below is sending digests  to reviewers instead of admins (as it should be by spec!)
     public void scheduleReviewEvaluationReminder() {
-        for (Reviewer reviewer : reviewerDAO.getReviewersDueReminder()) {
-            reviewer.setLastNotified(new Date());
-            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
-        }
+//        for (Reviewer reviewer : reviewerDAO.getReviewersDueReminder()) {
+//            reviewer.setLastNotified(new Date());
+//            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
+//        }
     }
 
     /**

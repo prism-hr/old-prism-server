@@ -727,12 +727,10 @@ public class MailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
-    public void scheduleInterviewAdministrationRequest(RegisteredUser delegatedUser, ApplicationForm form) {
-    	List<RegisteredUser> admins = form.getProgram().getAdministrators();
-    	List<RegisteredUser> users = new ArrayList<RegisteredUser>(admins.size()+1);
-    	users.add(delegatedUser);
-    	users.addAll(admins);
-    	CollectionUtils.forAllDo(users, new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+    public void scheduleInterviewAdministrationRequest(ApplicationForm form) {
+//    	if (null!=form.getApplicationAdministrator()) {
+//    	    setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_NOTIFICATION);
+//    	}
     }
 
     /**

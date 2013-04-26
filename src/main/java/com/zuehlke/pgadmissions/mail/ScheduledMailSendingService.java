@@ -752,6 +752,29 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             }
         }
     }
+    
+    public void scheduleInterviewAdministrationRequestAndReminder() {
+
+        Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
+        for (ApplicationForm form : applicationDAO
+                .getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST)) {
+            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REQUEST);
+            idsForWhichRequestWasFired.add(form.getId());
+            if (form.getApplicationAdministrator() != null) {
+                setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_NOTIFICATION);
+            }
+        }
+        for (ApplicationForm form : applicationDAO
+                .getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
+            if (!idsForWhichRequestWasFired.contains(form.getId())) {
+                createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+                if (form.getApplicationAdministrator() != null) {
+                    setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_REMINDER);
+                }
+            }
+        }
+
+    }
 
     /**
      * <p>

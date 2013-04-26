@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,13 +17,11 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -421,17 +418,17 @@ public class UserService {
     }
     
     public void sendEmailToDelegateAndRegisterReminder(ApplicationForm applicationForm, RegisteredUser delegate) {
-    	NotificationRecord delegateReminder = new NotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
-    	delegateReminder.setApplication(applicationForm);
-    	delegateReminder.setUser(delegate);
-    	delegateReminder.setDate(new Date());
-    	applicationForm.setSuppressStateChangeNotifications(true);
-    	applicationForm.addNotificationRecord(delegateReminder);
-    	 try {
-    		 mailService.scheduleInterviewAdministrationRequest(delegate, applicationForm);
-         } catch (Exception e) {
-             log.warn("error while sending email", e);
-         }
+//    	NotificationRecord delegateReminder = new NotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+//    	delegateReminder.setApplication(applicationForm);
+//    	delegateReminder.setUser(delegate);
+//    	delegateReminder.setDate(new Date());
+//    	applicationForm.setSuppressStateChangeNotifications(true);
+//    	applicationForm.addNotificationRecord(delegateReminder);
+//    	 try {
+//    		 mailService.scheduleInterviewAdministrationRequest(applicationForm);
+//         } catch (Exception e) {
+//             log.warn("error while sending email", e);
+//         }
     }
 
     public void resetDigestNotificationsForAllUsers() {

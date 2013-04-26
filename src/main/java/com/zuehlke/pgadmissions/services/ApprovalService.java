@@ -154,9 +154,7 @@ public class ApprovalService {
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
-
-        NotificationRecord reminder = new NotificationRecord(NotificationType.APPROVAL_REMINDER);
-        form.addNotificationRecord(reminder);
+        form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
         
         approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
@@ -258,7 +256,7 @@ public class ApprovalService {
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form, ApprovalRound approvalRound) {
-        boolean explanationProvided = !StringUtils.isBlank(approvalRound.getMissingQualificationExplanation());
+        boolean explanationProvided = StringUtils.isNotBlank(approvalRound.getMissingQualificationExplanation());
         if (!form.isCompleteForSendingToPortico(explanationProvided)) {
             throw new IllegalStateException("Send to portico data is not valid");
         }

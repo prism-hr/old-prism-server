@@ -28,17 +28,15 @@ public class ScheduledMailSendingTimer {
     public void run() {
         log.info("Running ScheduledMailSendingService Task");
         mailService.scheduleApprovalReminder();
-        mailService.scheduleInterviewFeedbackEvaluationRequest();
         mailService.scheduleInterviewFeedbackEvaluationReminder();
         mailService.scheduleReviewRequestAndReminder();
         mailService.scheduleUpdateConfirmation();
         mailService.scheduleValidationRequestAndReminder();
         mailService.scheduleRestartApprovalRequestAndReminder();
         mailService.scheduleApprovedConfirmation();
-        mailService.scheduleInterviewAdministrationReminder();
+        mailService.scheduleInterviewAdministrationRequestAndReminder();
         mailService.scheduleInterviewFeedbackConfirmation();
-        mailService.scheduleInterviewFeedbackRequest();
-        mailService.scheduleInterviewFeedbackReminder();
+        mailService.scheduleInterviewFeedbackRequestAndReminder();
         mailService.scheduleApplicationUnderApprovalNotification();
         mailService.scheduleRejectionConfirmationToAdministrator();
         mailService.scheduleReviewSubmittedConfirmation();

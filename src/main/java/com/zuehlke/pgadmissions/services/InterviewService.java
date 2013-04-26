@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
@@ -72,8 +71,6 @@ public class InterviewService {
         boolean sendReferenceRequest = applicationForm.getStatus()==ApplicationFormStatus.VALIDATION;
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
-        NotificationRecord interviewReminderRecord = applicationForm
-                .getNotificationForType(NotificationType.INTERVIEW_REMINDER);
         //Check if the interview administration was delegated
         if (applicationForm.getApplicationAdministrator()!=null) {
         	//We remove the notification record so that the delegate does not receive reminders any longer
@@ -86,9 +83,6 @@ public class InterviewService {
         mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
-        }
-        if (interviewReminderRecord != null) {
-            applicationForm.removeNotificationRecord(interviewReminderRecord);
         }
         applicationFormDAO.save(applicationForm);
     }

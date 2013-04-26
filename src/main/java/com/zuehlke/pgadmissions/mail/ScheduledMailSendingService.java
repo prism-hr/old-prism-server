@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPD
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_REMINDER;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.ArrayList;
@@ -40,6 +39,9 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
@@ -267,16 +269,17 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
-    public void scheduleInterviewFeedbackEvaluationRequest() {
-        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
-            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
-            RegisteredUser delegate = form.getApplicationAdministrator();
-            if (delegate != null) {
-                setDigestNotificationType(delegate, DigestNotificationType.TASK_NOTIFICATION);
-            }
-        }
-    }
+//    TODO: Talk to Alastair about this, this might be a duplicate
+//    public void scheduleInterviewFeedbackEvaluationRequest() {
+//        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+//            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
+//            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+//            RegisteredUser delegate = form.getApplicationAdministrator();
+//            if (delegate != null) {
+//                setDigestNotificationType(delegate, DigestNotificationType.TASK_NOTIFICATION);
+//            }
+//        }
+//    }
 
     /**
      * <p>
@@ -314,12 +317,24 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * </p>
      */
     public void scheduleInterviewFeedbackEvaluationReminder() {
-        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
-            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
-            RegisteredUser delegate = form.getApplicationAdministrator();
-            if (delegate != null) {
-            	setDigestNotificationType(delegate, DigestNotificationType.TASK_REMINDER);
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_EVALUATION_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+            Interview latestInterview = form.getLatestInterview();
+            
+            boolean sendDigest = true;
+            for (Interviewer interviewer : latestInterview.getInterviewers()) {
+                if (interviewer.getInterviewComment() == null) {
+                    sendDigest = false;
+                    break;
+                }
+            }
+            
+            if (sendDigest) {
+                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+                createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_EVALUATION_REMINDER);
+                RegisteredUser delegate = form.getApplicationAdministrator();
+                if (delegate != null) {
+                    setDigestNotificationType(delegate, DigestNotificationType.TASK_REMINDER);
+                }
             }
         }
     }
@@ -742,6 +757,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 3 (Task Reminder)
      * </p>
      */
+    @Deprecated
     public void scheduleInterviewAdministrationReminder() {
         DateTime yesterday = new DateTime().minusDays(1);
         for (NotificationRecord notificationRecord : notificationRecordDAO.getNotificationsWithTimeStampGreaterThan(yesterday.toDate(), NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
@@ -754,18 +770,15 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
     
     public void scheduleInterviewAdministrationRequestAndReminder() {
-
         Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
-        for (ApplicationForm form : applicationDAO
-                .getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST)) {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST)) {
             createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REQUEST);
             idsForWhichRequestWasFired.add(form.getId());
             if (form.getApplicationAdministrator() != null) {
                 setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_NOTIFICATION);
             }
         }
-        for (ApplicationForm form : applicationDAO
-                .getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
+        for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
             if (!idsForWhichRequestWasFired.contains(form.getId())) {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
                 if (form.getApplicationAdministrator() != null) {
@@ -773,7 +786,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 }
             }
         }
-
     }
 
     /**
@@ -807,12 +819,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * </p>
      */
     public void scheduleInterviewFeedbackConfirmation() {
-    	for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
-            createNotificationRecordIfNotExists(form, INTERVIEW_REMINDER);
-            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
+        for (InterviewComment comment : commentDAO.getInterviewCommentsDueNotification()) {
+            comment.setAdminsNotified(true);
+            CollectionUtils.forAllDo(getProgramAdministrators(comment.getApplication()), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
         }
     }
-
 
     /**
      * <p>
@@ -843,11 +854,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
+    @Deprecated
     public void scheduleInterviewFeedbackRequest() {
-        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
-            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
-        }
+//        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+//            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
+//            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+//        }
     }
 
     /**
@@ -884,12 +896,29 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 3 (Task Reminder)
      * </p>
      */
+    @Deprecated
     public void scheduleInterviewFeedbackReminder() {
-        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
-            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
-            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+//        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+//            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_REMINDER);
+//            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+//        }
+    }
+    
+    public void scheduleInterviewFeedbackRequestAndReminder() {
+        Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
+        for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewFeedbackNotification()) {
+            idsForWhichRequestWasFired.add(form.getId());
+            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_FEEDBACK_REQUEST);
+            CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+        }
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_FEEDBACK_REMINDER, ApplicationFormStatus.INTERVIEW)) {
+            if (!idsForWhichRequestWasFired.contains(form.getId())) {
+                createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_FEEDBACK_REMINDER);
+                CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+            }
         }
     }
+    
 
     /**
      * <p>

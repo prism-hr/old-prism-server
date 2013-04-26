@@ -202,7 +202,7 @@ public class ApplicationFormDAO {
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
-				.add(Subqueries.notExists(approvalNotificationCriteria.setProjection(Projections.property("notificationRecord.id"))))
+				.add(Subqueries.exists(approvalNotificationCriteria.setProjection(Projections.property("notificationRecord.id"))))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 

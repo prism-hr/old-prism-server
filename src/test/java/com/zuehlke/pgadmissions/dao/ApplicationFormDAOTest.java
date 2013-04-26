@@ -1256,47 +1256,27 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldGetApplicationsDueApprovalNotifications() {
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder()
-				.program(program)
-				.applicant(user)
-				.status(ApplicationFormStatus.APPROVAL)
-				.notificationRecords(
-						new NotificationRecordBuilder().notificationDate(new Date())
-								.notificationType(NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION).build())
-				.build();
+	public void shouldGetApplicationsDueDueApprovalReminder() {
+        ApplicationForm applicationForm = new ApplicationFormBuilder()
+                .program(program)
+                .applicant(user)
+                .status(ApplicationFormStatus.APPROVAL)
+                .notificationRecords(
+                        new NotificationRecordBuilder().notificationDate(new Date())
+                                .notificationType(NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION).build(),
+                        new NotificationRecordBuilder().notificationDate(new Date())
+                                .notificationType(NotificationType.APPROVAL_REMINDER).build())
+                .build();
 
 		Supervisor supervisor = new SupervisorBuilder().isPrimary(true).confirmedSupervision(true).build();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(supervisor)
-				.build();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(supervisor).build();
 		applicationForm.setLatestApprovalRound(approvalRound);
 
 		save(applicationForm, approvalRound);
 
 		flushAndClearSession();
-		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO
-				.getApplicationsDueApprovalReminder();
+		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalReminder();
 		assertTrue(listContainsId(applicationForm, applicationsDueApprovalNotification));
-	}
-
-	@Test
-	public void shouldReturnApplicationsDueApprovalNotifications() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder()
-                .program(program)
-                .applicant(user)
-                .status(ApplicationFormStatus.APPROVAL)
-                .build();
-
-        Supervisor supervisor = new SupervisorBuilder().isPrimary(true).confirmedSupervision(false).build();
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(supervisor).build();
-        applicationForm.setLatestApprovalRound(approvalRound);
-
-        save(applicationForm, approvalRound);
-
-        flushAndClearSession();
-        List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalReminder();
-        assertTrue(listContainsId(applicationForm, applicationsDueApprovalNotification));
 	}
 
 	@Test
@@ -1319,22 +1299,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.getApplicationsDueApprovalReminder();
 		assertFalse(applicationsDueApprovalNotification.contains(applicationForm));
 
-	}
-
-	@Test
-	public void shouldReturnApplicationIfInApprovalButHasApprovalNotificationRecor() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
-				.status(ApplicationFormStatus.APPROVAL).build();
-		Supervisor supervisor = new SupervisorBuilder().isPrimary(true).confirmedSupervision(true).build();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(supervisor)
-				.build();
-		applicationForm.setLatestApprovalRound(approvalRound);
-		save(applicationForm, approvalRound);
-
-		flushAndClearSession();
-		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO
-				.getApplicationsDueApprovalReminder();
-		assertTrue(listContainsId(applicationForm, applicationsDueApprovalNotification));
 	}
 
 	@Test

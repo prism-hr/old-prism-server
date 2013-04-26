@@ -223,13 +223,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleApprovalReminder() {
         final StageDuration approvalDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalReminder()) {
-            
             ApprovalRound approvalRound = form.getLatestApprovalRound();
             if (approvalRound != null) {
-
+                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
                 DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
                 if (approvalRoundExpiryDate.isAfterNow()) {
-                    createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
                     CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
                 }
             }
@@ -402,7 +400,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * <b>Notification Type</b><br/>
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
-        */
+     */
+    @Deprecated
     public void scheduleReviewRequest() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.REVIEW_REQUEST, ApplicationFormStatus.REVIEW)) {
             createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REQUEST);

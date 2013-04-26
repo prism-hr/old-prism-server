@@ -38,9 +38,9 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.QualificationsTp;
+import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
@@ -57,6 +57,7 @@ import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost;
@@ -64,7 +65,6 @@ import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
-import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/testPorticoIntegrationContext.xml"})

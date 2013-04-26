@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.DisabilityDAO;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.DisabilityAdapter;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.Disability;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Disabilities;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Disabilities.Disability;
 
 @Service
 public class DisabilitiesImporter implements Importer {

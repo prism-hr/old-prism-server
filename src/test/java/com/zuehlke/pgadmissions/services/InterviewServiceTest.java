@@ -136,6 +136,7 @@ public class InterviewServiceTest {
 		interviewService.moveApplicationToInterview(interview, applicationForm);	
 		EasyMock.verify(interviewDAOMock, applicationFormDAOMock);
 		
+		assertNull(applicationForm.getApplicationAdministrator());
 		assertNull(applicationForm.getNotificationForType(INTERVIEW_ADMINISTRATION_REMINDER));
 	}
 	

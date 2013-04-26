@@ -358,6 +358,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 3 (Task Reminder)
      * </p>
      */
+    @Deprecated
     public void scheduleReviewReminder() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
             createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
@@ -505,6 +506,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
+    @Deprecated
     public void scheduleValidationRequest() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.UPDATED_NOTIFICATION, ApplicationFormStatus.VALIDATION)) {
             createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
@@ -598,6 +600,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * </p>
      */
     // TODO: Business logic is currently incorrect. Administrator cannot restart the approval state until requested to do so by an Approver.
+    @Deprecated
     public void scheduleRestartApprovalRequest() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalRequestNotification()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
@@ -639,13 +642,28 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 3 (Task Reminder)
      * </p>
      */
+    @Deprecated
     public void scheduleRestartApprovalReminder() {
         for (ApplicationForm form : applicationDAO.getApplicationDueApprovalRestartRequestReminder()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
             CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
         }
     }
-
+    
+    public void scheduleRestartApprovalRequestAndReminder() {
+        Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
+        for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalRequestNotification()) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+        }
+        for (ApplicationForm form : applicationDAO.getApplicationDueApprovalRestartRequestReminder()) {
+            if (!idsForWhichRequestWasFired.contains(form.getId())) {
+                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+            }
+        }
+    }
+    
     /**
      * <p>
      * <b>Summary</b><br/>

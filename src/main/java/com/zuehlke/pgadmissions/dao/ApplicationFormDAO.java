@@ -158,6 +158,36 @@ public class ApplicationFormDAO {
 				.add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id"))))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueInterviewAdministration(NotificationType notificationType) {
+	    DetachedCriteria notificationCriteriaOne = DetachedCriteria
+	            .forClass(NotificationRecord.class, "notificationRecord")
+	            .add(Restrictions.eq("notificationType", notificationType))
+	            .add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
+	    
+	    DetachedCriteria notificationCriteriaTwo = DetachedCriteria
+	            .forClass(NotificationRecord.class, "notificationRecord")
+	            .add(Restrictions.eq("notificationType", notificationType))
+	            .add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
+	    
+	    DetachedCriteria reviewEventsCriteria = DetachedCriteria
+	            .forClass(StateChangeEvent.class, "event")
+	            .add(Restrictions.or(Subqueries.notExists(notificationCriteriaOne.setProjection(Projections
+	                    .property("notificationRecord.id"))), Subqueries.propertyGt("date",
+	                            notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.date")))))
+	                            .add(Property.forName("event.application").eqProperty("applicationForm.id"));
+	    
+	    List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
+	    invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
+        invalidStateList.add(ApplicationFormStatus.REJECTED);
+        invalidStateList.add(ApplicationFormStatus.APPROVED);
+	    return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
+	            .add(Restrictions.isNotNull("applicationAdministrator"))
+	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
+	            .add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id"))))
+	            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueRejectNotifications() {

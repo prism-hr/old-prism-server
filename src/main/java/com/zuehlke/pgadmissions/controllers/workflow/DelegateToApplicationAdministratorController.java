@@ -97,9 +97,8 @@ public class DelegateToApplicationAdministratorController {
             applicationAdmin = userService.createNewUserInRole(delegatedInterviewer.getFirstName(), delegatedInterviewer.getLastName(),
                     delegatedInterviewer.getEmail(), Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm);
         }
-        applicationForm.setApplicationAdministrator(applicationAdmin);
         
-        userService.sendEmailToDelegateAndRegisterReminder(applicationForm, applicationAdmin);
+        applicationsService.delegateInterviewAdministration(applicationForm, applicationAdmin);
 
         NotificationRecord reviewReminderNotification = applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER);
         if (reviewReminderNotification != null) {

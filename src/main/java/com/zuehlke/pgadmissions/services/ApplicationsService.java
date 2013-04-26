@@ -138,6 +138,12 @@ public class ApplicationsService {
         }
         return applicationFormListDAO.getVisibleApplications(user, filters, sortCategory, sortOrder, pageCount, APPLICATION_BLOCK_SIZE);
     }
+    
+    public void delegateInterviewAdministration(ApplicationForm applicationForm, RegisteredUser delegate) {
+        applicationForm.setSuppressStateChangeNotifications(true);
+        applicationForm.setApplicationAdministrator(delegate);
+        applicationFormDAO.save(applicationForm);
+    }
 
     public ApplicationActionsDefinition getActionsDefinition(RegisteredUser user, ApplicationForm application) {
         ApplicationActionsDefinition actions = new ApplicationActionsDefinition();

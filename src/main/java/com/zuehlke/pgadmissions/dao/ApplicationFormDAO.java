@@ -17,6 +17,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -252,6 +253,22 @@ public class ApplicationFormDAO {
 						.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
+	
+    @SuppressWarnings("unchecked")
+    public List<ApplicationForm> getApplicationsDueInterviewFeedbackNotification() {
+        DetachedCriteria appronalNotificationCriteria = DetachedCriteria
+                .forClass(NotificationRecord.class, "notificationRecord")
+                .add(Restrictions.eq("notificationType", NotificationType.INTERVIEW_FEEDBACK_REQUEST))
+                .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+
+        return sessionFactory
+                .getCurrentSession()
+                .createCriteria(ApplicationForm.class, "applicationForm")
+                .add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
+                .add(Restrictions.lt("dueDate", new DateTime().toDate()))
+                .add(Subqueries.notExists(appronalNotificationCriteria.setProjection(Projections.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .list();
+    }
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueRegistryNotification() {

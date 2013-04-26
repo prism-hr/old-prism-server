@@ -7,13 +7,14 @@
   
     <div class="row-group">
     
+      <#assign hasConviction=applicationForm.additionalInformation.convictions?? && applicationForm.additionalInformation.convictions >
       <div class="admin_row">
         <label class="admin_row_label">Do you have any unspent Criminial Convictions?</label>
-        <div class="field"><#if applicationForm.additionalInformation.convictions>Yes<#else>No</#if></div>
+        <div class="field"><#if hasConviction>Yes<#else>No</#if></div>
       </div>
       
       <#if user.isInRole('SUPERADMINISTRATOR')>
-          <#if applicationForm.additionalInformation.convictions?? && applicationForm.additionalInformation.convictions >
+          <#if hasConviction>
           <!-- Free text field for convictions. -->
           <div class="admin_row">
             <span class="admin_row_label">Description</span>

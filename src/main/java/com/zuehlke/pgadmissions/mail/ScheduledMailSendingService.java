@@ -1244,7 +1244,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleReviewEvaluationReminder() {
         for (Reviewer reviewer : reviewerDAO.getReviewersDueReminder()) {
             reviewer.setLastNotified(new Date());
-            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
         }
     }
 

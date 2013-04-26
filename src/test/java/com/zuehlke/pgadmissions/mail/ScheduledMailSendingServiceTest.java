@@ -904,8 +904,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		assertNotNull(reviewer1.getLastNotified());
 		assertNotNull(reviewer2.getLastNotified());
 		
-		assertEquals(reviewerUser1.getDigestNotificationType(),  DigestNotificationType.TASK_NOTIFICATION);
-        assertEquals(reviewerUser2.getDigestNotificationType(),  DigestNotificationType.TASK_NOTIFICATION);
+		assertEquals(reviewerUser1.getDigestNotificationType(),  DigestNotificationType.TASK_REMINDER);
+        assertEquals(reviewerUser2.getDigestNotificationType(),  DigestNotificationType.TASK_REMINDER);
 	}
 	
 	

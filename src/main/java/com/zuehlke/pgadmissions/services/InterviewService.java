@@ -79,7 +79,7 @@ public class InterviewService {
         	//We remove the notification record so that the delegate does not receive reminders any longer
         	applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST);
         	applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
-        	//applicationForm.setApplicationAdministrator(null);
+        	applicationForm.setApplicationAdministrator(null);
         	applicationForm.setSuppressStateChangeNotifications(false);
         }
         mailService.sendInterviewConfirmationToApplicant(applicationForm);

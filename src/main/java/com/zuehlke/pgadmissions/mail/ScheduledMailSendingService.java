@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -414,8 +416,18 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
     
     public void scheduleReviewRequestAndReminder() {
+        Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
+        for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.REVIEW_REQUEST, ApplicationFormStatus.REVIEW)) {
+            createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REQUEST);
+            idsForWhichRequestWasFired.add(form.getId());
+            for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
+                if (reviewer.getReview()==null) {
+                    setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+                }
+            }
+        }
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
-            if (form.getNotificationForType(NotificationType.REVIEW_REQUEST)!=null) {
+            if (!idsForWhichRequestWasFired.contains(form.getId())) {
                 createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
                 for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
                     if (reviewer.getReview()==null) {
@@ -425,14 +437,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             }
         }
         
-        for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.REVIEW_REQUEST, ApplicationFormStatus.REVIEW)) {
-            createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REQUEST);
-            for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
-                if (reviewer.getReview()==null) {
-                    setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
-                }
-            }
-        }
     }
     
     /**
@@ -509,15 +513,17 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
     
     public void scheduleValidationRequestAndReminder() {
+        Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
+        for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.UPDATED_NOTIFICATION, ApplicationFormStatus.VALIDATION)) {
+            idsForWhichRequestWasFired.add(form.getId());
+            createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
+            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+        }
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION)) {
-            if (form.getNotificationForType(NotificationType.UPDATED_NOTIFICATION)!=null) {
+            if (!idsForWhichRequestWasFired.contains(form.getId())) {
                 createNotificationRecordIfNotExists(form, NotificationType.VALIDATION_REMINDER);
                 CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
             }
-        }
-        for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.UPDATED_NOTIFICATION, ApplicationFormStatus.VALIDATION)) {
-            createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
-            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
         }
     }
 

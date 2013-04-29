@@ -49,7 +49,7 @@
     <!-- Middle Starts -->
     <div id="middle"> <#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
       <@header/>
-      <section id="reviewcommentsectopm" >
+      <div id="reviewcommentsectopm" >
       <!-- Main content area. -->
       <article id="content" role="main"> 
         
@@ -172,7 +172,7 @@
         <!-- .content-box --> 
         
       </article>
-      </section>
+      </div>
     </div>
     <!-- Middle Ends --> 
     

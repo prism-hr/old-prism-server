@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
@@ -143,7 +145,11 @@ public class ApplicationPageModelBuilderTest {
 	@Before
 	public void setUp() {
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		userMock = EasyMock.createMock(RegisteredUser.class);
+		
+		userMock = EasyMock.createNiceMock(RegisteredUser.class);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(new ArrayList<Role>());
+		EasyMock.replay(userMock);
+		
 		authenticationToken.setDetails(userMock);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);

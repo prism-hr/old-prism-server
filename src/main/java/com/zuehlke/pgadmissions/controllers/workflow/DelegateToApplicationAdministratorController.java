@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
@@ -100,10 +99,7 @@ public class DelegateToApplicationAdministratorController {
         
         applicationsService.delegateInterviewAdministration(applicationForm, applicationAdmin);
 
-        NotificationRecord reviewReminderNotification = applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER);
-        if (reviewReminderNotification != null) {
-            applicationForm.removeNotificationRecord(reviewReminderNotification);
-        }
+        applicationForm.removeNotificationRecord(NotificationType.REVIEW_REMINDER);
         commentService.createDelegateComment(getCurrentUser(), applicationForm);
         return result;
     }

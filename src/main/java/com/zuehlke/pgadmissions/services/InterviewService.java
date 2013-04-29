@@ -77,8 +77,8 @@ public class InterviewService {
         //Check if the interview administration was delegated
         if (applicationForm.getApplicationAdministrator()!=null) {
         	//We remove the notification record so that the delegate does not receive reminders any longer
-        	applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST);
-        	applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+        	applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST,
+        	        NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
         	applicationForm.setApplicationAdministrator(null);
         	applicationForm.setSuppressStateChangeNotifications(false);
         }

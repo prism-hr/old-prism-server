@@ -590,6 +590,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 3 (Task Reminder)
      * </p>
      */
+    @Deprecated
     public void scheduleValidationReminder() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION)) {
             createNotificationRecordIfNotExists(form, NotificationType.VALIDATION_REMINDER);
@@ -781,6 +782,45 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
     }
     
+    /**
+     * <p>
+     * <b>Summary</b><br/>
+     * Reminds users when they are required to administer interviews.<br/>
+     * Finds all applications in the system that urgently require interviews to be administered, and;<br/> 
+     * Schedules their Delegate Interview Administrators to be reminded.
+     * <p/><p>
+     * <b>Recipients</b><br/>
+     * Delegate Interview Administrator
+     * </p><p>
+     * <b>Previous Email Template Name</b><br/>
+     * Kevin to Insert
+     * </p><p> 
+     * <b>Business Rules</b>
+     * <ol>
+     * <li>Administrators can specify Delegate Interview Administrators, when:
+     *    <ol>
+     *    <li>They move applications into the interview state.</li>
+     *    </ol></li>
+     * <li>Delegate Interview Administrators can administer interviews, while:
+     *    <ol>
+     *    <li>They are in the current interview state, and;</li>
+     *    <li>An interview has not been scheduled.</li>
+     *    </ol></li>
+     * <li>They are scheduled to be reminded to do so, when:
+     *    <ol>
+     *    <li>They have previously been notified or reminded to do so, and;</li>
+     *    <li>The time elapsed since the previous notification or reminder:
+     *       <ol>
+     *       <li>Equals the system defined maximum time interval between reminders, or;</li>
+     *       <li>Exceeds the system defined maximum time interval between reminders.</li>
+     *       </ol></li>
+     *    </ol></li>
+     * </ol>
+     * </p><p>
+     * <b>Notification Type</b><br/>
+     * Scheduled Digest Priority 3 (Task Reminder)
+     * </p>
+     */
     public void scheduleInterviewAdministrationRequestAndReminder() {
         Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
         for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST)) {

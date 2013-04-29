@@ -701,47 +701,6 @@ public class MailSendingService extends AbstractMailSendingService {
     /**
      * <p>
      * <b>Summary</b><br/>
-     * Informs users when they are required to administer interviews.<br/>
-     * Finds all applications in the system that require interviews to be administered, and;<br/> 
-     * Schedules their Delegate Interview Administrators to be notified.
-     * <p/><p>
-     * <b>Recipients</b><br/>
-     * Delegate Interview Administrator
-     * </p><p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p><p> 
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Administrators can specify Delegate Interview Administrators, when:
-     *    <ol>
-     *    <li>They move applications into the interview state.</li>
-     *    </ol></li>
-     * <li>Delegate Interview Administrators can administer interviews, while:
-     *    <ol>
-     *    <li>They are in the current interview state, and;</li>
-     *    <li>An interview has not been scheduled.</li>
-     *    </ol></li>
-     * <li>They are scheduled to be notified to do so, when:
-     *    <ol>
-     *    <li>Applications have been delegated to them within the last 24 hours.</li>
-     *    </ol></li>
-     * </ol>
-     * </ol>
-     * </p><p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 2 (Task Notification)
-     * </p>
-     */
-    public void scheduleInterviewAdministrationRequest(ApplicationForm form) {
-//    	if (null!=form.getApplicationAdministrator()) {
-//    	    setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_NOTIFICATION);
-//    	}
-    }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
      * Informs users when temporary passwords have been set for their account.
      * <p/>
      * <p>

@@ -240,13 +240,15 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleApprovalRequestAndReminder() {
         Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
         for (ApplicationForm form : applicationDAO.getApplicationsDueMovedToApprovalNotifications()) {
-            createNotificationRecordIfNotExists(form, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
-            CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
-            idsForWhichRequestWasFired.add(form.getId());
+            if (form.getLatestApprovalRound().getPrimarySupervisor().hasResponded()) {
+                createNotificationRecordIfNotExists(form, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
+                CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+                idsForWhichRequestWasFired.add(form.getId());
+            }
         }
         final StageDuration approvalDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalReminder()) {
-            if (!idsForWhichRequestWasFired.contains(form.getId())) {
+            if (!idsForWhichRequestWasFired.contains(form.getId()) && form.getLatestApprovalRound().getPrimarySupervisor().hasResponded()) {
                 ApprovalRound approvalRound = form.getLatestApprovalRound();
                 if (approvalRound != null) {
                     createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);

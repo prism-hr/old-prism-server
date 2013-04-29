@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 @Transactional
 public class InterviewService {
 
+    private final Logger log = LoggerFactory.getLogger(InterviewService.class);
     private final InterviewDAO interviewDAO;
     private final ApplicationFormDAO applicationFormDAO;
     private final EventFactory eventFactory;
@@ -79,10 +82,14 @@ public class InterviewService {
         	applicationForm.setApplicationAdministrator(null);
         	applicationForm.setSuppressStateChangeNotifications(false);
         }
-        mailService.sendInterviewConfirmationToApplicant(applicationForm);
-        mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
-        if (sendReferenceRequest) {
-            mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
+        try {
+            mailService.sendInterviewConfirmationToApplicant(applicationForm);
+            mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
+            if (sendReferenceRequest) {
+                mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
+            }
+        } catch (Exception e) {
+            log.warn("{}", e);
         }
         applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
         

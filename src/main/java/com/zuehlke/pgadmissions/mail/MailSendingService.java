@@ -63,6 +63,27 @@ public class MailSendingService extends AbstractMailSendingService {
         super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils);
     }
 
+    private void sendReferenceRequest(Referee referee, ApplicationForm applicationForm) {
+        
+        processRefereeAndGetAsUser(referee);
+        
+        PrismEmailMessage message = null;
+        try {
+        	String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
+            EmailModelBuilder modelBuilder = getModelBuilder(
+                    new String[] { "referee", "adminsEmails", "applicant", "application", "programme", "host" }, 
+                    new Object[] { referee, adminsEmails, applicationForm.getApplicant(),
+                    applicationForm, applicationForm.getProgrammeDetails(), getInstance().getApplicationHostName() });
+            
+            String subject = resolveMessage(REFEREE_NOTIFICATION, applicationForm);
+            
+            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
+            sendEmail(message);
+        } catch (Exception e) {
+            throw new PrismMailMessageException("Error while sending reference request mail: ", e.getCause(), message);
+        }
+    }
+    
     /**
      * <p>
      * <b>Summary</b><br/>
@@ -89,27 +110,6 @@ public class MailSendingService extends AbstractMailSendingService {
      * Immediate Notification
      * </p>
      */
-    public void sendReferenceRequest(Referee referee, ApplicationForm applicationForm) {
-        
-        processRefereeAndGetAsUser(referee);
-        
-        PrismEmailMessage message = null;
-        try {
-        	String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
-            EmailModelBuilder modelBuilder = getModelBuilder(
-                    new String[] { "referee", "adminsEmails", "applicant", "application", "programme", "host" }, 
-                    new Object[] { referee, adminsEmails, applicationForm.getApplicant(),
-                    applicationForm, applicationForm.getProgrammeDetails(), getInstance().getApplicationHostName() });
-            
-            String subject = resolveMessage(REFEREE_NOTIFICATION, applicationForm);
-            
-            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending reference request mail: ", e.getCause(), message);
-        }
-    }
-    
     public void sendReferenceRequest(List<Referee> referees, ApplicationForm applicationForm) {
         for (Referee referee : referees) {
             referee.setLastNotified(new Date());

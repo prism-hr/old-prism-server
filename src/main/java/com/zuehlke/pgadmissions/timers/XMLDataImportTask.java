@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.mail.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.Importer;
 
@@ -62,7 +63,11 @@ public class XMLDataImportTask {
                 if (cause != null) {
                     message += "\n" + cause.toString();
                 }
-                mailService.sendImportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
+                try {
+                    mailService.sendImportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
+                } catch (PrismMailMessageException pmme) {
+                    log.warn("{}", pmme);
+                }
             } finally {
                 Authenticator.setDefault(null);
                 if (maxRedirects != null) {

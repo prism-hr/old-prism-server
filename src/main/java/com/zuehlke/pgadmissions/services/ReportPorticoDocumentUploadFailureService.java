@@ -64,7 +64,11 @@ public class ReportPorticoDocumentUploadFailureService {
     }
 
     private void sendErrorMessageToSuperAdministrators(final String message) {
-    	mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
+        try {
+            mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
+        } catch (Exception e) {
+            log.warn("{}", e);
+        }
     }
     
     private ApplicationFormTransferError saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {

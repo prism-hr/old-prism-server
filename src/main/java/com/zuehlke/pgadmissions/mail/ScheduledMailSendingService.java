@@ -914,7 +914,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.INTERVIEW_FEEDBACK_REMINDER, ApplicationFormStatus.INTERVIEW)) {
             if (!idsForWhichRequestWasFired.contains(form.getId())) {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_FEEDBACK_REMINDER);
-                CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+                for (Interviewer interviewer : form.getLatestInterview().getInterviewers()) {
+                    if (interviewer.getInterviewComment()==null) {
+                        setDigestNotificationType(interviewer.getUser(), DigestNotificationType.TASK_REMINDER);
+                    }
+                }
             }
         }
     }

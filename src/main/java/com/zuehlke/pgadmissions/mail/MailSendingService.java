@@ -268,7 +268,7 @@ public class MailSendingService extends AbstractMailSendingService {
      * </p>
      */
     public void scheduleApprovalRequest(ApplicationForm form) {
-        CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+        //CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
     }
     
     /**

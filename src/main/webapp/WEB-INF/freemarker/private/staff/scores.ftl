@@ -23,18 +23,18 @@
     <div class="field">
       <#if score.questionType == "TEXT">
       
-          <input class="text-input max" type="text" value="${score.textResponse!}"/>
+          <input id="question_${score_index}" class="text-input max" type="text" value="${score.textResponse!}"/>
           
       <#elseif score.questionType == "TEXTAREA">
           
-          <textarea class="textarea-input max" rows="8" cols="150">${score.textResponse!}</textarea>
+          <textarea id="question_${score_index}" class="textarea-input max" rows="6">${score.textResponse!}</textarea>
           
       <#elseif score.questionType == "DATE">
-          <input class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
+          <input id="question_${score_index}" class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
           
       <#--
       <#elseif score.questionType == "DATE_RANGE">
-          <input class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
+          <input id="question_${score_index}" class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />
           <input class="full date second-date-input" type="text" value="${(score.secondDateResponse?string('dd MMM yyyy'))!}" />
       -->
           
@@ -42,7 +42,7 @@
       
           <#assign multiple =  originalQuestion.isEnableMultipleSelection()?? && originalQuestion.isEnableMultipleSelection()>
           <#assign selectedOptions = (score.textResponse!"")?split("|") >
-          <select class="dropdown-input max" <#if multiple>multiple</#if>>
+          <select id="question_${score_index}" class="dropdown-input max" <#if multiple>multiple</#if>>
             <#if !multiple>
               <option value="">Column...</option>
             </#if>
@@ -52,8 +52,15 @@
           </select>
           
       <#elseif score.questionType == "RATING">
-      
-          <input class="rating-input" type="number" value="${score.ratingResponse!}" min="0" max="5" />
+      	  <ul class="rating-list">
+          		<li><i class="icon-thumbs-down"></i></li>
+          		<li><i class="icon-star-empty"></i></li>
+          		<li><i class="icon-star-empty"></i></li>
+          		<li><i class="icon-star-empty"></i></li>
+          		<li><i class="icon-star-empty"></i></li>
+          		<li><i class="icon-star-empty"></i></li>
+          </ul>
+          <input id="question_${score_index}" class="rating-input" type="number" value="${score.ratingResponse!}" min="0" max="5" />
           
       </#if>
       

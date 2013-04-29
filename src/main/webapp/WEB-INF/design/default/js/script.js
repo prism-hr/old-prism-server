@@ -348,10 +348,10 @@ function toggleScores() {
 	
 	$('.more-scores').toggle(function () {
 		$(this).closest('.score-results').find('.hide-score-group').slideDown();
-		$(this).text('less');
+		$(this).text('Show less').addClass('collapsed').removeClass('expand');
 	}, function () {
 		$(this).closest('.score-results').find('.hide-score-group').slideUp();
-		$(this).text('more');
+		$(this).text('Show more').addClass('expand').removeClass('collapsed');
 	});
 }
 

@@ -65,7 +65,7 @@
 	
 	        <#if comment.scores?size &gt; 3>
 	            <p>
-	                <a class="more-scores" href="javascript:void(0);">more</a>
+	                <a class="expand more-scores" href="javascript:void(0);">Show more</a>
 	            </p>
 	        </#if>
         </#if>

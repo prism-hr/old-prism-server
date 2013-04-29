@@ -140,6 +140,18 @@
 .expandable {
 	margin-bottom: 24px;
 }
+
+.more-scores {
+	width: 688px;
+  text-align: right;
+  border-top: 1px solid #999;
+	cursor: pointer;
+	display: block;
+	color: #333333;
+	font-weight: bold;
+	padding-right: 24px;
+	line-height: 24px;
+}
 .expander {
 	position: absolute;
 	right: 12px;
@@ -154,6 +166,8 @@
 	padding-right: 24px;
 	line-height: 24px;
 }
+
+
 .expander.expand {
 	background: url('../../../images/icon_expand.png') center right no-repeat;
 }

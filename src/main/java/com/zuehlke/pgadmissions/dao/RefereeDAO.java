@@ -66,11 +66,7 @@ public class RefereeDAO {
         CollectionUtils.filter(referees, new Predicate() {
             @Override
             public boolean evaluate(final Object object) {
-                Referee referee = (Referee) object;
-                if (!referee.hasProvidedReference()) {
-                    return true;
-                }
-                return false;
+                return !((Referee) object).hasProvidedReference();
             }
         });
         return referees;

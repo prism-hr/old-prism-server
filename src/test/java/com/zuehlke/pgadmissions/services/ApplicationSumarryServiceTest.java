@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -41,7 +40,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 public class ApplicationSumarryServiceTest {
-    
+
     private static final String PERSONAL_STATEMENT_FILE_NAME = "MyPersonalStatement.pdf";
 
     private static final String FUNDING_DESCRIPTION = "borsa crivelli";
@@ -73,21 +72,21 @@ public class ApplicationSumarryServiceTest {
     private static final String CV_FILE_NAME = "MyCV.pdf";
 
     private Date dateOfLastUpdate;
-    
+
     private Date dateOfSubmission;
-    
+
     private RegisteredUser currentUser;
-    
+
     private ApplicationActionsDefinition actionsDefinitionMock;
-    
+
     private UserService userServiceMock;
-    
+
     private EncryptionHelper encryptionHelperMock;
-    
+
     private ApplicationsService applicationsServiceMock;
-    
+
     private ApplicationSummaryService service;
-    
+
     @Before
     public void setup() {
         dateOfSubmission = new DateTime(2013, 4, 23, 9, 20).toDate();
@@ -99,62 +98,52 @@ public class ApplicationSumarryServiceTest {
         applicationsServiceMock = createMock(ApplicationsService.class);
         service = new ApplicationSummaryService(applicationsServiceMock, userServiceMock, encryptionHelperMock);
     }
-    
+
     @Test
     public void shouldReturnEmptySummaryIfApplicationIsWithdrawn() {
         ApplicationForm form = getSampleApplicationForm();
         form.setStatus(ApplicationFormStatus.WITHDRAWN);
-        
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP"))
-            .andReturn(form);
-        
+
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+
         replay(applicationsServiceMock);
         assertTrue(service.getSummary("APP").isEmpty());
         verify(applicationsServiceMock);
     }
-    
+
     @Test
     public void shouldReturnEmptySummaryIfApplicationIsUnsubmitted() {
         ApplicationForm form = getSampleApplicationForm();
         form.setStatus(ApplicationFormStatus.UNSUBMITTED);
-        
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP"))
-        .andReturn(form);
-        
+
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+
         replay(applicationsServiceMock);
         assertTrue(service.getSummary("APP").isEmpty());
         verify(applicationsServiceMock);
     }
-    
+
     @Test
     public void shouldReturnSummary() {
         ApplicationForm form = getSampleApplicationForm();
-        
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP"))
-        .andReturn(form);
-        
-        expect(userServiceMock.getCurrentUser())
-        .andReturn(currentUser);
-        
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form))
-        .andReturn(actionsDefinitionMock);
-        
-        expect(actionsDefinitionMock.isRequiresAttention())
-        .andReturn(ATTENTION_IS_REQUIRED);
-        
-        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant()))
-        .andReturn(NUMBER_OF_APPLICATIONS);
-        
-        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId()))
-        .andReturn("XYZ");
-        expect(encryptionHelperMock.encrypt(form.getCv().getId()))
-        .andReturn("XYZ");
-        
-        
+
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+
+        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+
+        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
+
+        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
+        expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
+
         replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
         Map<String, String> result = service.getSummary("APP");
         verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
-        
+
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
         assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
@@ -167,46 +156,34 @@ public class ApplicationSumarryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
-        
-        String expectedApplicantJson = "{\"title\":\""+APPLICANT_TITLE.getDisplayValue()+"\",\"phoneNumber\":\""+APPLICANT_PHONE_NUMBER+"\",\"fundingRequirements\":"+
-                "\"[\\\""+FUNDING_DESCRIPTION+"\\\"]\",\"email\":\""+APPLICANT_EMAIL_ADDRESS+"\",\"applicationStatus\":\"Approved\",\"name\":" +
-                "\""+APPLICANT_NAME+" "+APPLICANT_SURNAME+"\",\"mostRecentQualification\":\""+MOST_RECENT_QUALIFICATION_TITLE+"\",\"mostRecentEmployment\":" +
-                		"\"Shortcuts production\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void shouldReturnSummaryWithNoQualificationProvided() {
         ApplicationForm form = getSampleApplicationForm();
-        
+
         form.setQualifications(Collections.EMPTY_LIST);
-        
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP"))
-        .andReturn(form);
-        
-        expect(userServiceMock.getCurrentUser())
-        .andReturn(currentUser);
-        
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form))
-        .andReturn(actionsDefinitionMock);
-        
-        expect(actionsDefinitionMock.isRequiresAttention())
-        .andReturn(ATTENTION_IS_REQUIRED);
-        
-        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant()))
-        .andReturn(NUMBER_OF_APPLICATIONS);
-        
-        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId()))
-        .andReturn("XYZ");
-        expect(encryptionHelperMock.encrypt(form.getCv().getId()))
-        .andReturn("XYZ");
-        
-        
+
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+
+        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+
+        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
+
+        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
+        expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
+
         replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
         Map<String, String> result = service.getSummary("APP");
         verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
-        
+
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
         assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
@@ -219,46 +196,35 @@ public class ApplicationSumarryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
-        
-        String expectedApplicantJson = "{\"title\":\""+APPLICANT_TITLE.getDisplayValue()+"\",\"phoneNumber\":\""+APPLICANT_PHONE_NUMBER+"\",\"fundingRequirements\":"+
-                "\"[\\\""+FUNDING_DESCRIPTION+"\\\"]\",\"email\":\""+APPLICANT_EMAIL_ADDRESS+"\",\"applicationStatus\":\"Approved\",\"name\":" +
-                "\""+APPLICANT_NAME+" "+APPLICANT_SURNAME+"\",\"mostRecentQualification\":\"None provided\",\"mostRecentEmployment\":" +
-                "\"Shortcuts production\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"None provided\",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void shouldReturnSummaryWithNoEmploymentPositionsProvided() {
         ApplicationForm form = getSampleApplicationForm();
-        
+
         form.setEmploymentPositions(Collections.EMPTY_LIST);
-        
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP"))
-        .andReturn(form);
-        
-        expect(userServiceMock.getCurrentUser())
-        .andReturn(currentUser);
-        
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form))
-        .andReturn(actionsDefinitionMock);
-        
-        expect(actionsDefinitionMock.isRequiresAttention())
-        .andReturn(ATTENTION_IS_REQUIRED);
-        
-        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant()))
-        .andReturn(NUMBER_OF_APPLICATIONS);
-        
-        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId()))
-        .andReturn("XYZ");
-        expect(encryptionHelperMock.encrypt(form.getCv().getId()))
-        .andReturn("XYZ");
-        
-        
+
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+
+        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+
+        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(
+                NUMBER_OF_APPLICATIONS);
+
+        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
+        expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
+
         replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
         Map<String, String> result = service.getSummary("APP");
         verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
-        
+
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
         assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
@@ -271,46 +237,34 @@ public class ApplicationSumarryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
-        
-        String expectedApplicantJson = "{\"title\":\""+APPLICANT_TITLE.getDisplayValue()+"\",\"phoneNumber\":\""+APPLICANT_PHONE_NUMBER+"\",\"fundingRequirements\":"+
-                "\"[\\\""+FUNDING_DESCRIPTION+"\\\"]\",\"email\":\""+APPLICANT_EMAIL_ADDRESS+"\",\"applicationStatus\":\"Approved\",\"name\":" +
-                "\""+APPLICANT_NAME+" "+APPLICANT_SURNAME+"\",\"mostRecentQualification\":\""+MOST_RECENT_QUALIFICATION_TITLE+"\",\"mostRecentEmployment\":" +
-                        "\"None provided\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"None provided\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void shouldReturnSummaryWithNoFundingsProvided() {
         ApplicationForm form = getSampleApplicationForm();
-        
+
         form.setFundings(Collections.EMPTY_LIST);
-        
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP"))
-        .andReturn(form);
-        
-        expect(userServiceMock.getCurrentUser())
-        .andReturn(currentUser);
-        
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form))
-        .andReturn(actionsDefinitionMock);
-        
-        expect(actionsDefinitionMock.isRequiresAttention())
-        .andReturn(ATTENTION_IS_REQUIRED);
-        
-        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant()))
-        .andReturn(NUMBER_OF_APPLICATIONS);
-        
-        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId()))
-        .andReturn("XYZ");
-        expect(encryptionHelperMock.encrypt(form.getCv().getId()))
-        .andReturn("XYZ");
-        
-        
+
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+
+        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+
+        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
+
+        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
+        expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
+
         replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
         Map<String, String> result = service.getSummary("APP");
         verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
-        
+
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
         assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
@@ -323,43 +277,33 @@ public class ApplicationSumarryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
-        
-        String expectedApplicantJson = "{\"title\":\""+APPLICANT_TITLE.getDisplayValue()+"\",\"phoneNumber\":\""+APPLICANT_PHONE_NUMBER+"\",\"fundingRequirements\":"+
-                "\"[\\\"None provided\\\"]\",\"email\":\""+APPLICANT_EMAIL_ADDRESS+"\",\"applicationStatus\":\"Approved\",\"name\":" +
-                "\""+APPLICANT_NAME+" "+APPLICANT_SURNAME+"\",\"mostRecentQualification\":\""+MOST_RECENT_QUALIFICATION_TITLE+"\",\"mostRecentEmployment\":" +
-                        "\"Shortcuts production\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
-    
+
     @Test
     public void shouldReturnSummaryWithNoCvProvided() {
         ApplicationForm form = getSampleApplicationForm();
-        
+
         form.setCv(null);
-        
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP"))
-        .andReturn(form);
-        
-        expect(userServiceMock.getCurrentUser())
-        .andReturn(currentUser);
-        
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form))
-        .andReturn(actionsDefinitionMock);
-        
-        expect(actionsDefinitionMock.isRequiresAttention())
-        .andReturn(ATTENTION_IS_REQUIRED);
-        
-        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant()))
-        .andReturn(NUMBER_OF_APPLICATIONS);
-        
-        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId()))
-        .andReturn("XYZ");
-        
-        
+
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+
+        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+
+        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(
+                NUMBER_OF_APPLICATIONS);
+
+        expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
+
         replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
         Map<String, String> result = service.getSummary("APP");
         verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
-        
+
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
         assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
@@ -370,80 +314,45 @@ public class ApplicationSumarryServiceTest {
         assertEquals(PERSONAL_STATEMENT_FILE_NAME, result.get("personalStatementFilename"));
         assertEquals("false", result.get("cvProvided"));
         assertEquals("1", result.get("numberOfReferences"));
-        
-        String expectedApplicantJson = "{\"title\":\""+APPLICANT_TITLE.getDisplayValue()+"\",\"phoneNumber\":\""+APPLICANT_PHONE_NUMBER+"\",\"fundingRequirements\":"+
-                "\"[\\\""+FUNDING_DESCRIPTION+"\\\"]\",\"email\":\""+APPLICANT_EMAIL_ADDRESS+"\",\"applicationStatus\":\"Approved\",\"name\":" +
-                "\""+APPLICANT_NAME+" "+APPLICANT_SURNAME+"\",\"mostRecentQualification\":\""+MOST_RECENT_QUALIFICATION_TITLE+"\",\"mostRecentEmployment\":" +
-                        "\"Shortcuts production\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
-    
+
     private ApplicationForm getSampleApplicationForm() {
-        RegisteredUser applicant = new RegisteredUserBuilder().id(APPLICANT_ID)
-                .email(APPLICANT_EMAIL_ADDRESS)
-                .firstName(APPLICANT_NAME)
-                .lastName(APPLICANT_SURNAME)
-                .build();
-        
+        RegisteredUser applicant = new RegisteredUserBuilder().id(APPLICANT_ID).email(APPLICANT_EMAIL_ADDRESS)
+                .firstName(APPLICANT_NAME).lastName(APPLICANT_SURNAME).build();
+
         Referee referee = new RefereeBuilder().build();
-        Referee refereeWhoResponded = new RefereeBuilder()
-                .declined(true)
-                .build();
-        
-        PersonalDetails details = new PersonalDetailsBuilder().id(321)
-                .title(APPLICANT_TITLE)
-                .phoneNumber(APPLICANT_PHONE_NUMBER)
-                .build();
-        
-        Qualification qualification = new QualificationBuilder()
-                .awardDate(dateOfLastUpdate)
-                .build();
-        Qualification mostRecentQualification = new QualificationBuilder()
-                .awardDate(dateOfSubmission)
-                .title(MOST_RECENT_QUALIFICATION_TITLE)
-                .build();
-        
-        EmploymentPosition position = new EmploymentPositionBuilder()
-                .endDate(dateOfLastUpdate)
-                .toEmploymentPosition();
-        EmploymentPosition mostRecentPosition = new EmploymentPositionBuilder()
-                .employerName("Shortcuts production")
-                .endDate(dateOfSubmission)
-                .toEmploymentPosition();
-        
-        Document personalStatement = new DocumentBuilder().id(369)
-                .fileName(PERSONAL_STATEMENT_FILE_NAME)
-                .build();
-        Document cv = new DocumentBuilder().id(379)
-                .fileName(CV_FILE_NAME)
-                .build();
-        
-        Funding funding = new FundingBuilder()
-                .description(FUNDING_DESCRIPTION)
-                .build();
-        
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6)
-                .personalStatement(personalStatement)
-                .referees(referee, refereeWhoResponded)
-                .personalDetails(details)
-                .fundings(funding)
+        Referee refereeWhoResponded = new RefereeBuilder().declined(true).build();
+
+        PersonalDetails details = new PersonalDetailsBuilder().id(321).title(APPLICANT_TITLE)
+                .phoneNumber(APPLICANT_PHONE_NUMBER).build();
+
+        Qualification qualification = new QualificationBuilder().awardDate(dateOfLastUpdate).build();
+        Qualification mostRecentQualification = new QualificationBuilder().awardDate(dateOfSubmission)
+                .title(MOST_RECENT_QUALIFICATION_TITLE).build();
+
+        EmploymentPosition position = new EmploymentPositionBuilder().endDate(dateOfLastUpdate).toEmploymentPosition();
+        EmploymentPosition mostRecentPosition = new EmploymentPositionBuilder().employerName("Shortcuts production")
+                .endDate(dateOfSubmission).toEmploymentPosition();
+
+        Document personalStatement = new DocumentBuilder().id(369).fileName(PERSONAL_STATEMENT_FILE_NAME).build();
+        Document cv = new DocumentBuilder().id(379).fileName(CV_FILE_NAME).build();
+
+        Funding funding = new FundingBuilder().description(FUNDING_DESCRIPTION).build();
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).personalStatement(personalStatement)
+                .referees(referee, refereeWhoResponded).personalDetails(details).fundings(funding)
                 .qualifications(qualification, mostRecentQualification)
-                .employmentPositions(position, mostRecentPosition)
-                .status(ApplicationFormStatus.APPROVED)
-                .submittedDate(dateOfSubmission)
-                .cv(cv)
-                .lastUpdated(dateOfLastUpdate)
-                .applicant(applicant)
-                .applicationNumber(SAMPLE_APPLICATION_NUMBER)
-                .build();
+                .employmentPositions(position, mostRecentPosition).status(ApplicationFormStatus.APPROVED)
+                .submittedDate(dateOfSubmission).cv(cv).lastUpdated(dateOfLastUpdate).applicant(applicant)
+                .applicationNumber(SAMPLE_APPLICATION_NUMBER).build();
         return applicationForm;
-        
+
     }
-    
+
     private RegisteredUser getCurrentUser() {
-        return new RegisteredUserBuilder().id(CURRENT_USER_ID)
-                .email(CURRENT_USER_EMAIL_ADDRESS)
-                .build();
+        return new RegisteredUserBuilder().id(CURRENT_USER_ID).email(CURRENT_USER_EMAIL_ADDRESS).build();
     }
 
 }

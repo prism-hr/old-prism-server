@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
@@ -69,24 +68,24 @@ public class InterviewService {
             }
         });
         applicationForm.setLatestInterview(interview);
+        boolean sendReferenceRequest = applicationForm.getStatus()==ApplicationFormStatus.VALIDATION;
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
-        NotificationRecord interviewReminderRecord = applicationForm
-                .getNotificationForType(NotificationType.INTERVIEW_REMINDER);
         //Check if the interview administration was delegated
         if (applicationForm.getApplicationAdministrator()!=null) {
         	//We remove the notification record so that the delegate does not receive reminders any longer
-        	NotificationRecord interviewAdministrationReminderRecord = applicationForm
-        			.getNotificationForType(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
-        	applicationForm.removeNotificationRecord(interviewAdministrationReminderRecord);
+        	applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST);
+        	applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
         	applicationForm.setApplicationAdministrator(null);
         	applicationForm.setSuppressStateChangeNotifications(false);
         }
         mailService.sendInterviewConfirmationToApplicant(applicationForm);
         mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
-        if (interviewReminderRecord != null) {
-            applicationForm.removeNotificationRecord(interviewReminderRecord);
+        if (sendReferenceRequest) {
+            mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
         }
+        applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
+        
         applicationFormDAO.save(applicationForm);
     }
 

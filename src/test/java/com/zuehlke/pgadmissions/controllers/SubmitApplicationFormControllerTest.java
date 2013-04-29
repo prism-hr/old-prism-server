@@ -289,6 +289,7 @@ public class SubmitApplicationFormControllerTest {
                 .batchDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/12")).build();
         StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
+        EasyMock.expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);
         EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
         EasyMock.replay(stageDurationServiceMock, stageDurationMock);
         applicationController.calculateAndSetValidationDueDate(applicationForm);
@@ -302,6 +303,7 @@ public class SubmitApplicationFormControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
         StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
+        EasyMock.expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);
         EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
         EasyMock.replay(stageDurationServiceMock, stageDurationMock);
         applicationController.calculateAndSetValidationDueDate(applicationForm);

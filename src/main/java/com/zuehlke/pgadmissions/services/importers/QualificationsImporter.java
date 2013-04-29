@@ -19,8 +19,8 @@ import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.QualificationAdapter;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications.Qualification;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Qualifications;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Qualifications.Qualification;
 
 @Service
 public class QualificationsImporter implements Importer {

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -18,6 +19,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
@@ -25,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
@@ -33,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 public class ReviewServiceTest {
 
@@ -45,6 +49,7 @@ public class ReviewServiceTest {
 	private ReviewRound reviewRound;
 	private Reviewer reviewer;
 	private EventFactory eventFactoryMock;
+	private MailSendingService mailServiceMock;
 
 	@Before
 	public void setUp() {
@@ -55,7 +60,8 @@ public class ReviewServiceTest {
 		reviewRoundDAOMock = EasyMock.createMock(ReviewRoundDAO.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationService.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock, reviewerDAO){
+		mailServiceMock = EasyMock.createMock(MailSendingService.class);
+		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock, reviewerDAO, mailServiceMock){
 			@Override
 			public ReviewRound newReviewRound() {
 				return reviewRound;
@@ -99,7 +105,8 @@ public class ReviewServiceTest {
 	public void shouldSetDueDateOnApplicationUpdateFormAndSaveBoth() throws ParseException {
 
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).build();
+		Referee referee = new RefereeBuilder().build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
 		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.REVIEW_REMINDER).build());
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
@@ -109,8 +116,8 @@ public class ReviewServiceTest {
 		
 		StateChangeEvent event = new ReviewStateChangeEventBuilder().id(1).build();		
 		EasyMock.expect(eventFactoryMock.createEvent(reviewRound)).andReturn(event);
-		
-		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
+		mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
+		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, mailServiceMock, stageDurationDAOMock, eventFactoryMock);
 
 		reviewService.moveApplicationToReview(applicationForm, reviewRound);
 		
@@ -121,7 +128,7 @@ public class ReviewServiceTest {
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(event, applicationForm.getEvents().get(0));
-		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock);
+		EasyMock.verify(reviewRoundDAOMock, mailServiceMock, applicationFormDAOMock);
 		assertTrue(applicationForm.getNotificationRecords().isEmpty());
 	}
 

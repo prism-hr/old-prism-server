@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.SourcesOfInterestDAO;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.SourceOfInterestAdapter;
-import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
-import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest.SourceOfInterest;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.SourcesOfInterest;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.SourcesOfInterest.SourceOfInterest;
 
 @Service
 public class SourcesOfInterestImporter implements Importer {

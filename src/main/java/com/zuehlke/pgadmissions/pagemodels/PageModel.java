@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.validation.BindingResult;
@@ -28,16 +27,16 @@ public class PageModel {
 		return result;
 	}
 
-	private void setUserRoles(RegisteredUser user) {
-		StringBuilder userRolesStrBuilder = new StringBuilder();
-		Collection<Role> authorities = user.getAuthorities();
-		if (user != null && authorities != null) {
+	private void setUserRoles(final RegisteredUser user) {
+	    StringBuilder userRolesStrBuilder = new StringBuilder();
+	    if (user != null) {
+	        ArrayList<Role> authorities = new ArrayList<Role>(user.getAuthorities());
 			for (Role role : authorities) {
 				userRolesStrBuilder.append(role.getAuthority());
 				userRolesStrBuilder.append(";");
 			}
 		}
-		this.userRoles = userRolesStrBuilder.toString();
+		userRoles = userRolesStrBuilder.toString();
 	}
 
 	public String getUserRoles() {

@@ -101,11 +101,11 @@ public class DeclineController {
     		return DECLINE_SUCCESS_VIEW_NAME;
 	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
 	        // the user clicked on "Provide Reference"
-            if (referee != null && !referee.getUser().isEnabled()) {
-                return "redirect:/register?activationCode=" + referee.getUser().getActivationCode() + "&directToUrl=/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber();
-            } else {
-                return "redirect:/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber() + "&activationCode=" + referee.getUser().getActivationCode();
-            }
+	        if (!referee.getUser().isEnabled()) {
+	            return "redirect:/register?activationCode=" + referee.getUser().getActivationCode() + "&directToUrl=/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber();
+	        } else {
+	            return "redirect:/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber() + "&activationCode=" + referee.getUser().getActivationCode();
+	        }
 	    } else {
 	        modelMap.put("message", "Please confirm that you wish to decline to provide a reference. <b>You will not be able to reverse this decision.</b>");
 	        modelMap.put("okButton", "Confirm");

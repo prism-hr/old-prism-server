@@ -57,3 +57,49 @@ function registerBindPickers(container){
 		bindDatePicker($(this));
 	});
 }
+/* Start rating system*/
+$(document).ready(function() {
+	 $items = $('.rating-list li i');
+	 $($items).click(function() {
+		 rating('select', $(this) );
+    });
+	$($items).hover(function() {
+         rating('hover', $(this));
+    });
+	$items.mouseout(function(){
+	    rating('out', $(this));
+	});
+});
+
+function rating(type, item){
+	value = item.parent().index();
+	if (type == 'select') {
+		// value for input
+		item.closest('.field').find('.rating-input').val(value);
+		// clear selected starts
+		
+		item.closest('.rating-list').find('li i.icon-star').removeClass('icon-star, hover').addClass('icon-star-empty');
+		
+		// select starts
+		for (var i = 1; i < value+1; i++) {
+		    var it = 'li:nth-child('+ (i+1) +')';
+			item.closest('.rating-list').find(it).find('i').removeClass('icon-star-empty').addClass('icon-star hover'); 
+		}
+		if (value == 0) {
+		  item.addClass('hover'); 
+		} else {
+		  item.closest('.rating-list').find('li i.icon-thumbs-down').removeClass('hover');
+		}
+	}
+	if (type == 'hover') {
+		item.closest('.rating-list').find('li i.icon-star-empty').removeClass('hover');
+		// hover previous starts
+		for (var i = 1; i < value+1; i++) {
+		    var it = 'li:nth-child('+ (i+1) +')';
+			item.closest('.rating-list').find(it).find('i').addClass('hover'); 
+		}
+	}
+	if (type == 'out') {
+	    item.closest('.rating-list').find('li i.icon-star-empty').removeClass('hover');
+	}
+}

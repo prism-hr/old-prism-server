@@ -391,7 +391,6 @@ function disablePassportInformation() {
 	$("#lbl_passportExpiryDate").addClass("grey-label").parent().find('.hint')
 			.addClass("grey");
 	$("#lbl_passportExpiryDate").html("Passport Expiry Date");
-	$("#residenceid div.alert").remove();
 }
 
 function enablePassportInformation() {

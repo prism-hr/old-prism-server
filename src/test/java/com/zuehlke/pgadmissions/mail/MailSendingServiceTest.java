@@ -319,7 +319,7 @@ public class MailSendingServiceTest {
 		
 		
 		replay(mockMailSender);
-		service.sendReferenceRequest(referee, form);
+		service.sendReferenceRequest(asList(referee), form);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
@@ -361,7 +361,7 @@ public class MailSendingServiceTest {
 		
 		
 		replay(mockMailSender);
-		service.sendReferenceRequest(referee, form);
+		service.sendReferenceRequest(asList(referee), form);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();

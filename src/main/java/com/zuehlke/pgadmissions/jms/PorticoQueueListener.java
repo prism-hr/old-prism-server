@@ -115,7 +115,7 @@ public class PorticoQueueListener implements MessageListener {
         try {
         	mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), e.getMessage(), new Date());
         } catch (Exception ex) {
-            log.warn(ex.getMessage(), ex);
+            log.warn("{}", ex);
         }
     }
     
@@ -137,6 +137,10 @@ public class PorticoQueueListener implements MessageListener {
         throttleService.disablePorticoInterface();
         String messageCode = "There was an issue with the PORTICO interfaces which needs attention by an administrator. " +
         		"PRISM is now not sending any more applications to PORTICO until this issue has been resolved";
-        mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), messageCode, new Date());
+        try {
+            mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), messageCode, new Date());
+        } catch (Exception ex) {
+            log.warn("{}", ex);
+        }
     }
 }

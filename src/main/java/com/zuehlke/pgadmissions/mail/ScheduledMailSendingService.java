@@ -1375,6 +1375,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
      */
+    @Deprecated
     public void scheduleConfirmSupervisionRequest() {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueNotification()) {
             supervisor.setLastNotified(new Date());
@@ -1416,10 +1417,27 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     * Scheduled Digest Priority 3 (Task Reminder)
     * </p>
     */
+    @Deprecated
     public void scheduleConfirmSupervisionReminder() {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueReminder()) {
             supervisor.setLastNotified(new Date());
             setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_REMINDER);
+        }
+    }
+    
+    public void scheduleConfirmSupervisionRequestAndReminder() {
+        Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
+        for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueNotification()) {
+            idsForWhichRequestWasFired.add(supervisor.getId());
+            supervisor.setLastNotified(new Date());
+            setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+        }
+
+        for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueReminder()) {
+            if (!idsForWhichRequestWasFired.contains(supervisor.getId())) {
+                supervisor.setLastNotified(new Date());
+                setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_REMINDER);
+            }
         }
     }
     

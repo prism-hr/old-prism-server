@@ -42,8 +42,7 @@ public class ScheduledMailSendingTimer {
         mailService.scheduleReviewSubmittedConfirmation();
         mailService.scheduleReviewEvaluationRequest();
         mailService.scheduleReviewEvaluationReminder();
-        mailService.scheduleConfirmSupervisionRequest();
-        mailService.scheduleConfirmSupervisionReminder();
+        mailService.scheduleConfirmSupervisionRequestAndReminder();
         mailService.scheduleApplicationUnderReviewNotification();
         mailService.sendDigestsToUsers();
         log.info("Finished ScheduledMailSendingService Task");

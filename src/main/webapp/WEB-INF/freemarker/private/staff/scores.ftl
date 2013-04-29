@@ -1,15 +1,25 @@
 <#setting locale = "en_US">
 <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
 
+<#if comment.alert??>
+	<div class="alert alert-info">
+		<i class="icon-info-sign"></i>
+		${comment.alert}
+	</div>
+</#if>
+
 <#list scores as score>
 <div class="scoring-questions">
   <div class="row multi-line score-row">
+          			
     <#assign originalQuestion = score.originalQuestion>
     <input type="hidden" class="question-type" value = "${score.questionType}"/>
     <input type="hidden" class="question" value = "${score.question}"/>
     <input type="hidden" class="question-required" value = "${originalQuestion.required?string("true", "false")}"/>
     <label class="plain-label question-label" for="question_${score_index}">${score.question} <#if originalQuestion.required> <em>*</em> </#if></label>
-
+	<#if score.tooltip??>
+		<span class="hint" data-desc="${score.tooltip}"></span>
+	</#if>
     <div class="field">
       <#if score.questionType == "TEXT">
       
@@ -17,7 +27,7 @@
           
       <#elseif score.questionType == "TEXTAREA">
           
-          <textarea class="textarea-input max" rows="15" cols="150">${score.textResponse!}</textarea>
+          <textarea class="textarea-input max" rows="8" cols="150">${score.textResponse!}</textarea>
           
       <#elseif score.questionType == "DATE">
           <input class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />

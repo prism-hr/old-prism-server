@@ -6,7 +6,7 @@
         	<#list comment.scores as score>
 	            <div <#if score_index + 1 &gt; 3> class="hide-score" style="display:none;"</#if>>
 	                <#if score.questionType == "TEXT" || score.questionType == "TEXTAREA">
-	                    <p class="conditional_offer">
+	                    <p class="sQuestion">
 	                        <span/>
 	                        <b>${score.question} </b>
 	                        <#if score.textResponse??>
@@ -17,7 +17,7 @@
 	                    </p>
 	
 	                <#elseif score.questionType == "DATE">
-	                    <p class="conditional_offer">
+	                    <p class="sQuestion">
 	                        <span/>
 	                        <b>${score.question}</b>
 	                        <#if score.dateResponse??>
@@ -29,14 +29,14 @@
 	
 	                <#--
 	                <#elseif score.questionType == "DATE_RANGE">
-	                    <p class="conditional_offer">
+	                    <p class="sQuestion">
 	                        <span/>
 	                        <b>${score.question} </b>From ${score.dateResponse} to ${score.secondDateResponse}
 	                    </p>
 	                    -->
 	
 	                <#elseif score.questionType == "DROPDOWN">
-	                    <p class="conditional_offer">
+	                    <p class="sQuestion">
 	                        <span/>
 	                        <b>${score.question} </b>
 	                        <#if score.textResponse??>
@@ -48,15 +48,26 @@
 	                    
 	
 	                <#elseif score.questionType == "RATING">
-	                    <p class="conditional_offer">
+
+	                    <p class="sQuestion">
 	                        <span/>
 	                        <b>${score.question} </b>
-	                        <#if score.ratingResponse??>
-	                            ${score.ratingResponse}
-	                            <#else>
-	                                <i>${notProvided}</i>
-	                            </#if>
+	                        
 	                    </p>
+                        <#if score.ratingResponse??>
+                            <ul class="rating-list clearfix">
+                                <#if score.ratingResponse == 0>
+                                    <li><i class="icon-thumbs-down hover"></i></li>
+                                <#else>
+                                    <#list 1..score.ratingResponse as i>
+                                    <li><i class="icon-star hover"></i></li>
+                                    </#list>
+                                </#if>
+                            </ul>
+                        <#else>
+                            <i>${notProvided}</i>
+                        </#if>
+                      
 	                </#if>
 	            </div>
 	        </#list>

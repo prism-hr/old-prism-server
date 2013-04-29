@@ -328,7 +328,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 }
             }
             
-            if (sendDigest) {
+            if (sendDigest && !form.hasInterviewEvaluationComment()) {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_EVALUATION_REMINDER);
                 CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
                 RegisteredUser delegate = form.getApplicationAdministrator();

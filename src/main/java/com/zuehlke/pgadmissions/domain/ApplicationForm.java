@@ -297,6 +297,15 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isSubmitted() {
         return status != ApplicationFormStatus.UNSUBMITTED;
     }
+    
+    public boolean hasInterviewEvaluationComment() {
+        for (Comment comment : this.getApplicationComments()) {
+            if (comment instanceof InterviewEvaluationComment) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean isDecided() {
         if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {

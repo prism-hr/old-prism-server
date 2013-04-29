@@ -50,7 +50,8 @@ $(document).ready(function()
 					{
 						jumpToTimeline = true;
 					}
-					addToolTips();	
+					addToolTips();
+					toggleScores();
 				},			
 		});
 		

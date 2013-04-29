@@ -59,19 +59,7 @@ $(document).ready(function()
 						jumpToTimeline = true;
 					}
 					addToolTips();
-					
-					$.each($('.hide-score'), function (key, value) {
-						$('.hide-score-group').append($(this));
-						$(this).show();
-					});
-					
-					$('#more-scores').toggle(function () {
-						$('.hide-score-group').slideDown();
-						$(this).text('less');
-					}, function () {
-						$('.hide-score-group').slideUp();
-						$(this).text('more');
-					});
+					toggleScores();
 				}			
 		});
 		

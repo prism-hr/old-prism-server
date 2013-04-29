@@ -84,6 +84,8 @@ public class InterviewService {
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
         }
+        applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
+        
         applicationFormDAO.save(applicationForm);
     }
 

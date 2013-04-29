@@ -74,7 +74,7 @@ public class InterviewServiceTest {
 		Interview interview = new InterviewBuilder().interviewers(interviewer).dueDate(dateFormat.parse("01 04 2012")).id(1).build();
 		Referee referee = new RefereeBuilder().build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
-		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_REMINDER).build());
+		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_FEEDBACK_REMINDER).build());
 	
 		interviewDAOMock.save(interview);
 		applicationFormDAOMock.save(applicationForm);
@@ -91,7 +91,7 @@ public class InterviewServiceTest {
 		assertEquals(applicationForm, interview.getApplication());
 		assertEquals(interview, applicationForm.getLatestInterview());
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
-		EasyMock.verify(interviewDAOMock, applicationFormDAOMock, mailServiceMock);
+		EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));

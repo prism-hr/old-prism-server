@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -1329,17 +1330,13 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * <b>Notification Type</b><br/>
      * Scheduled Digest Priority 2 (Task Notification)
      * </p>
+     * 
+     * The old system was not sending request to admins to evaluate the review but just a notification of review submitted
+     * which means "evaluate it". This is done by the method 'scheduleReviewSubmittedConfirmation'.
+     * This explains why the code below is sending digests  to reviewers instead of admins (as it should be by spec!).
      */
-    //REMOVE
-    //the old system was not sending request to admins to evaluate the review but just a notification of review submitted
-    //which means "evaluate it". This is done by the method 'scheduleReviewSubmittedConfirmation'.
-    //This explains why the code below is sending digests  to reviewers instead of admins (as it should be by spec!).
     @Deprecated
     public void scheduleReviewEvaluationRequest() {
-//        for (Reviewer reviewer : reviewerDAO.getReviewersDueNotification()) {
-//            reviewer.setLastNotified(new Date());
-//            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
-//        }
     }
 
     /**
@@ -1350,7 +1347,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Schedules their Reviewers to be reminded.
      * <p/><p>
      * <b>Recipients</b><br/>
-     * Reviewer
+     * Admistrator
      * </p><p>
      * <b>Previous Email Template Name</b><br/>
      * Kevin to Insert
@@ -1376,16 +1373,26 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 3 (Task Reminder)
      * </p>
      */
-    //REMOVE
-    //the old system was not sending reminder to admins to evaluate the review but just a notification of review submitted
-    //which means "evaluate it". This is done by the method 'scheduleReviewSubmittedConfirmation'.
-    //This explains why the code below is sending digests  to reviewers instead of admins (as it should be by spec!)
-    @Deprecated
     public void scheduleReviewEvaluationReminder() {
-//        for (Reviewer reviewer : reviewerDAO.getReviewersDueReminder()) {
-//            reviewer.setLastNotified(new Date());
-//            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
-//        }
+        for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_EVALUATION_REMINDER, ApplicationFormStatus.REVIEW)) {
+            ReviewRound latestReviewRound = form.getLatestReviewRound();
+            boolean sendDigest = true;
+            for (Reviewer reviewer : latestReviewRound.getReviewers()) {
+                if (reviewer.getReview() == null) {
+                    sendDigest = false;
+                    break;
+                }
+            }
+
+            if (sendDigest && !form.hasReviewEvaluationComment()) {
+                createNotificationRecordIfNotExists(form, NotificationType.REVIEW_EVALUATION_REMINDER);
+                CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+                RegisteredUser delegate = form.getApplicationAdministrator();
+                if (delegate != null) {
+                    setDigestNotificationType(delegate, DigestNotificationType.TASK_REMINDER);
+                }
+            }
+        }
     }
 
     /**

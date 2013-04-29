@@ -306,6 +306,15 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return false;
     }
+    
+    public boolean hasReviewEvaluationComment() {
+        for (Comment comment : this.getApplicationComments()) {
+            if (comment instanceof ReviewEvaluationComment) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean isDecided() {
         if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {

@@ -50,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -65,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -921,29 +923,62 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         assertEquals(reviewerUser2.getDigestNotificationType(),  DigestNotificationType.TASK_NOTIFICATION);
 	}
  
-	@Ignore
 	@Test
-	public void shouldScheduleReviewEvaluationReminder() {
+	public void shouldScheduleReviewEvaluationReminderIfAllReviewersHaveProvidedFeedback() {
+	    RegisteredUser admin = new RegisteredUserBuilder().build();
 		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().build();
 		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().build();
-		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).build();
-		Reviewer reviewer2 = new ReviewerBuilder().user(reviewerUser2).id(1).build();
+		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).review(new ReviewComment()).build();
+		Reviewer reviewer2 = new ReviewerBuilder().user(reviewerUser2).id(2).review(new ReviewComment()).build();
 		
-		expect(reviewerDAOMock.getReviewersDueReminder()).andReturn(asList(reviewer1, reviewer2));
+		Program program = new ProgramBuilder().administrators(admin).build();
+
+		ApplicationForm form = getSampleApplicationForm();
+		form.setProgram(program);
+        form.setLatestReviewRound(new ReviewRoundBuilder().reviewers(reviewer1, reviewer2).build());
 		
+        NotificationRecord record = new NotificationRecordBuilder().id(1).notificationType(NotificationType.REVIEW_EVALUATION_REMINDER).build();
+        record.setApplication(form);
+        
+        EasyMock.expect(applicationFormDAOMock.getApplicationsDueUserReminder(NotificationType.REVIEW_EVALUATION_REMINDER, ApplicationFormStatus.REVIEW)).andReturn(asList(form));
+        applicationFormDAOMock.save(form);
+        
+		EasyMock.replay(applicationFormDAOMock);
 		
-		replay(reviewerDAOMock);
 		service.scheduleReviewEvaluationReminder();
-		verify(reviewerDAOMock);
 		
-		assertNotNull(reviewer1.getLastNotified());
-		assertNotNull(reviewer2.getLastNotified());
+		verify(applicationFormDAOMock);
 		
-		assertEquals(reviewerUser1.getDigestNotificationType(),  DigestNotificationType.TASK_REMINDER);
-        assertEquals(reviewerUser2.getDigestNotificationType(),  DigestNotificationType.TASK_REMINDER);
+		assertEquals(DigestNotificationType.TASK_REMINDER, admin.getDigestNotificationType());
 	}
 	
-	
+    @Test
+    public void shouldNotScheduleReviewEvaluationReminderIfAllReviewersHaveProvidedFeedback() {
+        RegisteredUser admin = new RegisteredUserBuilder().build();
+        RegisteredUser reviewerUser1 = new RegisteredUserBuilder().build();
+        RegisteredUser reviewerUser2 = new RegisteredUserBuilder().build();
+        Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).review(new ReviewComment()).build();
+        Reviewer reviewer2 = new ReviewerBuilder().user(reviewerUser2).id(2).build();
+
+        Program program = new ProgramBuilder().administrators(admin).build();
+
+        ApplicationForm form = getSampleApplicationForm();
+        form.setProgram(program);
+        form.setLatestReviewRound(new ReviewRoundBuilder().reviewers(reviewer1, reviewer2).build());
+
+        NotificationRecord record = new NotificationRecordBuilder().id(1).notificationType(NotificationType.REVIEW_EVALUATION_REMINDER).build();
+        record.setApplication(form);
+
+        EasyMock.expect(applicationFormDAOMock.getApplicationsDueUserReminder(NotificationType.REVIEW_EVALUATION_REMINDER, ApplicationFormStatus.REVIEW)).andReturn(asList(form));
+        
+        EasyMock.replay(applicationFormDAOMock);
+
+        service.scheduleReviewEvaluationReminder();
+
+        verify(applicationFormDAOMock);
+
+        assertEquals(DigestNotificationType.NONE, admin.getDigestNotificationType());
+    }
 	
 	@Test
 	public void shouldScheduleConfirmSupervisionReminder() {

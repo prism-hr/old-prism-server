@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -30,7 +31,6 @@ import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.BadgeService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.validators.BadgeValidator;
 
 @Controller
@@ -38,27 +38,43 @@ import com.zuehlke.pgadmissions.validators.BadgeValidator;
 public class BadgeController {
 
 	private static final String BADGE = "private/staff/superAdmin/badge";
+	
 	private static final String BADGE_MANAGEMENT = "private/staff/superAdmin/badge_management";
+	
 	private final UserService userService;
+	
 	private final ProgramsService programsService;
-    private final BadgeService badgeService;
+    
+	private final BadgeService badgeService;
+    
     private final ProgramPropertyEditor programFormPropertyEditor;
+    
     private final DatePropertyEditor datePropertyEditor;
+    
     private final BadgeValidator badgeValidator;
+    
+    private final String host;
 
-	BadgeController() {
-		this(null, null, null, null, null, null);
+	public BadgeController() {
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public BadgeController(UserService userService, ProgramsService programsService, DatePropertyEditor datePropertyEditor, 
-	        ProgramPropertyEditor programFormPropertyEditor, BadgeValidator badgeValidator, BadgeService badgeService) {
+	public BadgeController(
+	        final UserService userService, 
+	        final ProgramsService programsService, 
+	        final DatePropertyEditor datePropertyEditor, 
+	        final ProgramPropertyEditor programFormPropertyEditor, 
+	        final BadgeValidator badgeValidator, 
+	        final BadgeService badgeService,
+	        @Value("${application.host}") final String host) {
 	    this.badgeValidator = badgeValidator;
 		this.userService = userService;
 		this.programsService = programsService;
         this.datePropertyEditor = datePropertyEditor;
         this.programFormPropertyEditor = programFormPropertyEditor;
         this.badgeService = badgeService;
+        this.host = host;
 	}
 
 	@InitBinder("badge")
@@ -138,7 +154,7 @@ public class BadgeController {
 	
 	@ModelAttribute("host")
 	public String getHost() {
-		return Environment.getInstance().getApplicationHostName();
+		return host;
 	}
 
 	@RequestMapping (value ="/saveBadge", method = RequestMethod.POST)

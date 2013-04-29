@@ -10,7 +10,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWO
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_NOTIFICATION;
-import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +24,7 @@ import org.apache.commons.collections.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -40,15 +40,18 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
     
-    Logger log = LoggerFactory.getLogger(MailSendingService.class);
+    private final Logger log = LoggerFactory.getLogger(MailSendingService.class);
 
+    private final String admissionsOfferServiceLevel;
+    
+    private final String uclProspectusLink;
+    
     public MailSendingService() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -59,8 +62,13 @@ public class MailSendingService extends AbstractMailSendingService {
     		final UserDAO userDAO, 
     		final RoleDAO roleDAO,
             final RefereeDAO refereeDAO, 
-            final EncryptionUtils encryptionUtils) {
-        super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils);
+            final EncryptionUtils encryptionUtils,
+            @Value("${application.host}") final String host,
+            @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel,
+            @Value("${ucl.prospectus.url}") final String uclProspectusLink) {
+        super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
+        this.admissionsOfferServiceLevel = admissionsOfferServiceLevel;
+        this.uclProspectusLink = uclProspectusLink;
     }
 
     /**
@@ -99,7 +107,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "referee", "adminsEmails", "applicant", "application", "programme", "host" }, 
                     new Object[] { referee, adminsEmails, applicationForm.getApplicant(),
-                    applicationForm, applicationForm.getProgrammeDetails(), getInstance().getApplicationHostName() });
+                    applicationForm, applicationForm.getProgrammeDetails(), host});
             
             String subject = resolveMessage(REFEREE_NOTIFICATION, applicationForm);
             
@@ -147,15 +155,14 @@ public class MailSendingService extends AbstractMailSendingService {
                EmailModelBuilder modelBuilder = getModelBuilder(
                        new String[] {"adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" }, 
                        new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                    		   Environment.getInstance().getAdmissionsOfferServiceLevel(), form.getOutcomeOfStage()});
+                               admissionsOfferServiceLevel, form.getOutcomeOfStage()});
                
                Map<String, Object> model = modelBuilder.build();
                if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
        				model.put("reason", form.getRejection().getRejectionReason());
        				if (form.getRejection().isIncludeProspectusLink()) {
-       					model.put("prospectusLink", Environment.getInstance().getUCLProspectusLink());
+       					model.put("prospectusLink", uclProspectusLink);
        				}
-
        			}
                
                Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle()};
@@ -207,16 +214,15 @@ public class MailSendingService extends AbstractMailSendingService {
      	   String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] {"adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" }, 
-                    new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getInstance().getApplicationHostName(),
-                 		   Environment.getInstance().getAdmissionsOfferServiceLevel(), form.getOutcomeOfStage()});
+                    new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), host,
+                 		   admissionsOfferServiceLevel, form.getOutcomeOfStage()});
             
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
     				model.put("reason", form.getRejection().getRejectionReason());
     				if (form.getRejection().isIncludeProspectusLink()) {
-    					model.put("prospectusLink", Environment.getInstance().getUCLProspectusLink());
+    					model.put("prospectusLink", uclProspectusLink);
     				}
-
     			}
             
             Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
@@ -302,16 +308,15 @@ public class MailSendingService extends AbstractMailSendingService {
       	   String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
              EmailModelBuilder modelBuilder = getModelBuilder(
                      new String[] {"adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" }, 
-                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getInstance().getApplicationHostName(),
-                  		   Environment.getInstance().getAdmissionsOfferServiceLevel(), form.getOutcomeOfStage()});
+                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), host,
+                  		   admissionsOfferServiceLevel, form.getOutcomeOfStage()});
              
              Map<String, Object> model = modelBuilder.build();
              if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
      				model.put("reason", form.getRejection().getRejectionReason());
      				if (form.getRejection().isIncludeProspectusLink()) {
-     					model.put("prospectusLink", Environment.getInstance().getUCLProspectusLink());
+     					model.put("prospectusLink", uclProspectusLink);
      				}
-
      			}
              
              String subject =resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getOutcomeOfStage());
@@ -360,7 +365,7 @@ public class MailSendingService extends AbstractMailSendingService {
     			  List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
     			  EmailModelBuilder modelBuilder = getModelBuilder(
     					  new String[] {"adminsEmails", "interviewer", "application", "applicant", "host"},
-    					  new Object[] {getAdminsEmailsCommaSeparatedAsString(admins), interviewer, applicationForm, applicationForm.getApplicant(), getInstance().getApplicationHostName()}
+    					  new Object[] {getAdminsEmailsCommaSeparatedAsString(admins), interviewer, applicationForm, applicationForm.getApplicant(), host}
     					  );
     			  message = buildMessage(interviewer.getUser(), subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
     			  sendEmail(message);
@@ -409,16 +414,16 @@ public class MailSendingService extends AbstractMailSendingService {
 			  EmailModelBuilder modelBuilder = getModelBuilder(
 					  new String[] {"adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage"},
 					  new Object[] {getAdminsEmailsCommaSeparatedAsString(admins), applicationForm, applicationForm.getApplicant(),
-							  		configurationService.getAllRegistryUsers(), getHostName(), Environment.getInstance().getAdmissionsOfferServiceLevel(), applicationForm.getOutcomeOfStage()}
+							  		configurationService.getAllRegistryUsers(), getHostName(), 
+							  		admissionsOfferServiceLevel, applicationForm.getOutcomeOfStage()}
 					  );
 			  
 			  Map<String, Object> model = modelBuilder.build();
 			  if (ApplicationFormStatus.REJECTED.equals(applicationForm.getStatus())) {
 					model.put("reason", applicationForm.getRejection().getRejectionReason());
 					if (applicationForm.getRejection().isIncludeProspectusLink()) {
-						model.put("prospectusLink", Environment.getInstance().getUCLProspectusLink());
+						model.put("prospectusLink", uclProspectusLink);
 					}
-
 			  }
 			  
 			  message = buildMessage(applicationForm.getApplicant(), subject, model, MOVED_TO_INTERVIEW_NOTIFICATION);
@@ -462,7 +467,7 @@ public class MailSendingService extends AbstractMailSendingService {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(
                         new String[] { "user", "message", "time", "host" }, 
-                        new Object[] { user, messageCode, timestamp, getInstance().getApplicationHostName() });
+                        new Object[] { user, messageCode, timestamp, host });
                 message = buildMessage(user, subject, modelBuilder.build(), EXPORT_ERROR);
                 sendEmail(message);
             } catch (Exception e) {
@@ -637,7 +642,7 @@ public class MailSendingService extends AbstractMailSendingService {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(
                         new String[] { "user", "message", "time", "host" },
-                        new Object[] { user, messageCode, timestamp, getInstance().getApplicationHostName() });
+                        new Object[] { user, messageCode, timestamp, host });
                 message = buildMessage(user, subject, modelBuilder.build(), IMPORT_ERROR);
                 sendEmail(message);
             } catch (Exception e) {
@@ -683,7 +688,7 @@ public class MailSendingService extends AbstractMailSendingService {
         try {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "user", "action", "host" }, 
-                    new Object[] { user, action, getInstance().getApplicationHostName() });
+                    new Object[] { user, action, host });
             String subject = resolveMessage(REGISTRATION_CONFIRMATION, (Object[]) null);
             message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
             sendEmail(message);
@@ -769,7 +774,7 @@ public class MailSendingService extends AbstractMailSendingService {
         try {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "user", "newPassword", "host" },
-                    new Object[] { user, newPassword, getInstance().getApplicationHostName() });
+                    new Object[] { user, newPassword, host });
             String subject = resolveMessage(NEW_PASSWORD_CONFIRMATION, (Object[]) null);
             message = buildMessage(user, subject, modelBuilder.build(), NEW_PASSWORD_CONFIRMATION);
             sendEmail(message);

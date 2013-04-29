@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TAS
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
-import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -89,7 +88,6 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
@@ -122,6 +120,10 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     private RoleDAO roleDAOMock;
     
     private EncryptionUtils encryptionUtilsMock;
+    
+    private static final String HOST = "http://localhost:8080";
+    
+    private static final String SERVICE_OFFER = "5 working days";
 
 	@Before
 	public void prepare() {
@@ -129,7 +131,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		commentDAOMock = createMock(CommentDAO.class);
 		supervisorDAOMock = createMock(SupervisorDAO.class);
 		stageDurationDAOMock = createMock(StageDurationDAO.class);
-		reviewerDAOMock = createMock(ReviewerDAO.class);
 		applicationsServiceMock = createMock(ApplicationsService.class);
 		commentFactoryMock = createMock(CommentFactory.class);
 		commentServiceMock = createMock(CommentService.class);
@@ -147,7 +148,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				commentDAOMock,
 				supervisorDAOMock,
 				stageDurationDAOMock,
-				reviewerDAOMock,
 				applicationsServiceMock,
 				configurationServiceMock,
 				commentFactoryMock,
@@ -158,7 +158,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				userServiceMock,
 				userDAOMock, 
 				roleDAOMock,
-		        encryptionUtilsMock);
+		        encryptionUtilsMock,
+		        HOST,
+		        SERVICE_OFFER);
 	}
 	
 	@Test
@@ -177,7 +179,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				.build();
 		Map<String, Object> model1 = new HashMap<String, Object>();
 		model1.put("user", user1);
-		model1.put("host", getInstance().getApplicationHostName());
+		model1.put("host", HOST);
 		Map<String, Object> model2 = new HashMap<String, Object>();
 		model2.putAll(model1);
 		model2.put("user", user2);
@@ -680,22 +682,23 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	       service = new ScheduledMailSendingService(
 	               mockMailSender,
 	               applicationFormDAOMock,
-	                notificationRecordDAOMock,
-	                commentDAOMock,
-	                supervisorDAOMock,
-	                stageDurationDAOMock,
-	                reviewerDAOMock,
-	                applicationsServiceMock,
-	                configurationServiceMock,
-	                commentFactoryMock,
-	                commentServiceMock,
-	                pdfAttachmentInputSourceFactoryMock,
-	                pdfDocumentBuilderMock,
-	                refereeDAOMock,
-	                userServiceMock,
-	                userDAOMock, 
-	                roleDAOMock,
-	                encryptionUtilsMock) {
+	               notificationRecordDAOMock,
+	               commentDAOMock,
+	               supervisorDAOMock,
+	               stageDurationDAOMock,
+	               applicationsServiceMock,
+	               configurationServiceMock,
+	               commentFactoryMock,
+	               commentServiceMock,
+	               pdfAttachmentInputSourceFactoryMock,
+	               pdfDocumentBuilderMock,
+	               refereeDAOMock,
+	               userServiceMock,
+	               userDAOMock, 
+	               roleDAOMock,
+	               encryptionUtilsMock,
+	               HOST,
+	               SERVICE_OFFER) {
 	           @Override
 	           protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
 	               return null;
@@ -711,7 +714,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		model.put("referee", referee);
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
-		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("host", HOST);
 		
 		String subjectToReturn="REMINDER: "+SAMPLE_APPLICANT_NAME+" "+SAMPLE_APPLICANT_SURNAME+" "
 		+"Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request";
@@ -758,7 +761,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         model.put("admin", form.getProgram().getAdministrators().get(0));
         model.put("program", form.getProgram());
         model.put("newRoles", "Administrator for MRes Security Science");
-        model.put("host", Environment.getInstance().getApplicationHostName());
+        model.put("host", HOST);
 
         expect(userDAOMock.getUsersWithPendingRoleNotifications()).andReturn(asList(user));
         String subjectToReturn = "Invitation to Join UCL Prism";
@@ -810,9 +813,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("application", form);
 		model.put("sender", form.getAdminRequestedRegistry());
-		model.put("host", getInstance().getApplicationHostName());
+		model.put("host", HOST);
 		model.put("recipients", "Ivo, Ektor");
-		model.put("admissionsValidationServiceLevel", Environment.getInstance().getAdmissionsValidationServiceLevel());
+		model.put("admissionsValidationServiceLevel", SERVICE_OFFER);
 		
 		expect(applicationsServiceMock.getApplicationsDueRegistryNotification()).andReturn(asList(form));
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);

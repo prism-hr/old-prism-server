@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,6 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
@@ -69,7 +69,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 @Transactional
@@ -85,8 +84,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     private final StageDurationDAO stageDurationDAO;
     
-    private final ReviewerDAO reviewerDAO;
-    
     private final ApplicationsService applicationsService;
     
     private final CommentFactory commentFactory;
@@ -101,20 +98,34 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 	
 	private final UserService userService;
 	
+	private final String admissionsOfferServiceLevel;
+	
     @Autowired
-    public ScheduledMailSendingService(final MailSender mailSender,
-            final ApplicationFormDAO applicationFormDAO, final NotificationRecordDAO notificationRecordDAO,
-            final CommentDAO commentDAO, final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO,
-            final ReviewerDAO reviewerDAO, final ApplicationsService applicationsService, final ConfigurationService configurationService,
-            final CommentFactory commentFactory, final CommentService commentService,
-            final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, final PdfDocumentBuilder pdfDocumentBuilder,
-            final RefereeDAO refereeDAO, final UserService userService, final UserDAO userDAO, final RoleDAO roleDAO, final EncryptionUtils encryptionUtils) {
-        super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils);
+    public ScheduledMailSendingService(
+            final MailSender mailSender,
+            final ApplicationFormDAO applicationFormDAO, 
+            final NotificationRecordDAO notificationRecordDAO,
+            final CommentDAO commentDAO, 
+            final SupervisorDAO supervisorDAO, 
+            final StageDurationDAO stageDurationDAO,
+            final ApplicationsService applicationsService, 
+            final ConfigurationService configurationService,
+            final CommentFactory commentFactory, 
+            final CommentService commentService,
+            final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, 
+            final PdfDocumentBuilder pdfDocumentBuilder,
+            final RefereeDAO refereeDAO, 
+            final UserService userService, 
+            final UserDAO userDAO, 
+            final RoleDAO roleDAO, 
+            final EncryptionUtils encryptionUtils,
+            @Value("${application.host}") final String host,
+            @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel) {
+        super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
         this.stageDurationDAO = stageDurationDAO;
-        this.reviewerDAO = reviewerDAO;
 		this.applicationsService = applicationsService;
 		this.commentService = commentService;
 		this.commentFactory = commentFactory;
@@ -122,10 +133,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		this.pdfDocumentBuilder = pdfDocumentBuilder;
 		this.refereeDAO = refereeDAO;
 		this.userService = userService;
+		this.admissionsOfferServiceLevel = admissionsOfferServiceLevel;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
 	public void sendDigestsToUsers() {
@@ -1141,7 +1153,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     			String recipientList = createRecipientString(registryContacts);
     			EmailModelBuilder modelBuilder = getModelBuilder(
     					new String[] {"application", "sender", "host", "recipients", "admissionsValidationServiceLevel"},
-    					new Object[] {applicationForm, currentUser, getHostName(), recipientList, Environment.getInstance().getAdmissionsValidationServiceLevel()}
+    					new Object[] {applicationForm, currentUser, getHostName(), recipientList, admissionsOfferServiceLevel}
     					);
     			
     			messageBuilder.model(modelBuilder);

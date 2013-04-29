@@ -24,19 +24,27 @@ import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.BadgeService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.validators.BadgeValidator;
 
 public class BadgeControllerTest {
 
+    private static final String HOST = "http://localhost:8080";
+    
 	private UserService userServiceMock;
+	
 	private BadgeController controller;
+	
 	private ProgramsService programServiceMock;
+	
 	private RegisteredUser currentUserMock;
+	
 	private BadgeValidator badgeValidatorMock;
+	
 	private ProgramPropertyEditor programPropertyEditorMock;
+	
 	private DatePropertyEditor datePropertyEditorMock;
-    private BadgeService badgeServiceMock;
+    
+	private BadgeService badgeServiceMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -102,7 +110,7 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void shouldReturnEnvironmentHostAsHost(){
-		assertEquals(Environment.getInstance().getApplicationHostName(), controller.getHost());
+		assertEquals(HOST, controller.getHost());
 	}
 	
 	@Test
@@ -124,7 +132,7 @@ public class BadgeControllerTest {
 		programPropertyEditorMock = EasyMock.createMock(ProgramPropertyEditor.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 		badgeServiceMock = EasyMock.createMock(BadgeService.class);
-		controller = new BadgeController(userServiceMock, programServiceMock, datePropertyEditorMock, programPropertyEditorMock, badgeValidatorMock, badgeServiceMock);
+		controller = new BadgeController(userServiceMock, programServiceMock, datePropertyEditorMock, programPropertyEditorMock, badgeValidatorMock, badgeServiceMock, HOST);
 
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();

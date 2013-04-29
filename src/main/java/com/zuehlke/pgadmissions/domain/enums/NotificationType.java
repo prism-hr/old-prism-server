@@ -38,5 +38,8 @@ public enum NotificationType {
     
     UPDATED_NOTIFICATION,
     
-    VALIDATION_REMINDER;
+    VALIDATION_REMINDER,
+    
+    @Deprecated
+    INTERVIEW_REMINDER
 }

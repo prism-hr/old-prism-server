@@ -50,6 +50,10 @@
 
 #timeline-statuses ul .box ul { margin: 0; padding: 10px 0 20px 40px; }
 #timeline-statuses ul .box li { display: inline-block; margin-right: 20px; }
+#timeline-statuses .rating-list li {
+  margin-right: 2px !important;
+}
+
 
 #timeline-statuses .validation .box { background: #FDDB91; }
 #timeline-statuses .validation .box .title { background: #FBBE1E; }
@@ -98,6 +102,7 @@
 #timeline-statuses ul .box p.project_title,
 #timeline-statuses ul .box p.start_date,
 #timeline-statuses ul .box p.conditional_offer,
+#timeline-statuses ul .box p.sQuestion,
 #timeline-statuses ul .box p.unconditional_offer { padding: 10px 10px 5px 40px; position: relative; }
 
 #timeline-statuses ul .box p.datetime span,
@@ -110,6 +115,7 @@
 #timeline-statuses ul .box p.project_title span,
 #timeline-statuses ul .box p.start_date span,
 #timeline-statuses ul .box p.conditional_offer span,
+#timeline-statuses ul .box p.sQuestion span,
 #timeline-statuses ul .box p.unconditional_offer span { position: absolute; left: 10px; top: 6px; width: 25px; height: 27px; display: block; }
 
 #timeline-statuses ul .box p.datetime span { background: url(../../../images/icon_calendar.png) no-repeat 2px 0; }
@@ -123,6 +129,13 @@
 #timeline-statuses ul .box p.start_date span { background: url(../../../images/provisional_start_date.png) no-repeat 0 -2px; }
 #timeline-statuses ul .box p.conditional_offer span { background: url(../../../images/conditional_offer_recommended.png) no-repeat 0 -4px ; }
 #timeline-statuses ul .box p.unconditional_offer span { background: url(../../../images/unconditional_offer_recommended.png) no-repeat 0 -4px ; }
+
+#timeline-statuses ul .box p.sQuestion span:before {
+  content: "\f0e6";
+  font-size: 20px !important;
+  color: #E96C37;
+}
+
 
 
 /* Application tab ---------------------------------------------------------------------------------------- */
@@ -142,20 +155,20 @@
 }
 
 .more-scores {
-	width: 688px;
+	width: 712px;
   text-align: right;
   border-top: 1px solid #999;
 	cursor: pointer;
 	display: block;
 	color: #333333;
 	font-weight: bold;
-	padding-right: 24px;
 	line-height: 24px;
+  margin-bottom: -16px;
 }
 .expander {
 	position: absolute;
 	right: 12px;
-	width: 688px;
+	width: 712px;
   text-align: right;
   border-top: 1px solid #999;
 	cursor: pointer;
@@ -163,17 +176,44 @@
 	top: 92px;
 	color: #333333;
 	font-weight: bold;
-	padding-right: 24px;
 	line-height: 24px;
 }
-
-
-.expander.expand {
+.expander.expand:after, .expander.collapsed:after,.more-scores.expand:after, .more-scores.collapsed:after, #timeline-statuses ul .box p.sQuestion span:before  {
+  font-family:FontAwesome;
+  font-weight:normal;
+  font-style:normal;
+  text-decoration:inherit;-webkit-font-smoothing:antialiased;
+  display:inline-block;
+  width:auto;
+  height:auto;
+  line-height:normal;
+  vertical-align:baseline;
+  background-image:none;
+  background-position:0 0;
+  background-repeat:repeat;
+  margin-top:0;
+  text-decoration: none;
+  text-align: center;
+  width: 25px;
+  -webkit-font-smoothing: antialiased;
+  cursor:default;
+  font-size: 17px;
+}
+/*.expander.expand {
 	background: url('../../../images/icon_expand.png') center right no-repeat;
 }
 .expander.collapsed {
-	background: url('../../../images/icon_collapse.png') center right no-repeat;
+  background: url('../../../images/icon_collapse.png') center right no-repeat;
+}*/
+.expander.expand:after, .more-scores.expand:after {
+content:"\f0ab";
+color:grey;
 }
+.expander.collapsed:after, .more-scores.collapsed:after {
+  content:"\f0aa";
+color:grey;
+}
+
 
 /* Tabs tineline view */
 #timelineview {

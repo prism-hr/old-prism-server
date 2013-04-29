@@ -52,7 +52,7 @@
           </select>
           
       <#elseif score.questionType == "RATING">
-      	  <ul class="rating-list">
+      	  <ul class="rating-list clearfix">
           		<li><i class="icon-thumbs-down"></i></li>
           		<li><i class="icon-star-empty"></i></li>
           		<li><i class="icon-star-empty"></i></li>

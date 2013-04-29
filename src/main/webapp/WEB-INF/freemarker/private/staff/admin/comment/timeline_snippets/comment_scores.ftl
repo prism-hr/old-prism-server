@@ -40,15 +40,12 @@
 	                        <span/>
 	                        <b>${score.question} </b>
 	                        <#if score.textResponse??>
-	                            <ul>
-	                                <#list score.textResponse?split("|") as value>
-	                                    <li>${value}</li>
-	                                </#list>
-	                            </ul>
-	                            <#else>
-	                                <i>${notProvided}</i>
-	                            </#if>
+	                            <#list score.textResponse?split("|") as value><#if value_index + 1 &gt; 1>, </#if>${value}</#list>
+	                        <#else>
+	                            <i>${notProvided}</i>
+	                        </#if>
 	                    </p>
+	                    
 	
 	                <#elseif score.questionType == "RATING">
 	                    <p class="conditional_offer">

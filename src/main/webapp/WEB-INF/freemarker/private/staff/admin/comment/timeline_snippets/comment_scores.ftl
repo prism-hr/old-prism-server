@@ -28,7 +28,7 @@
 	                    </p>
 	
 	                <#--
-	                <#elseif score.questionType =""= "DATE_RANGE">
+	                <#elseif score.questionType == "DATE_RANGE">
 	                    <p class="conditional_offer">
 	                        <span/>
 	                        <b>${score.question} </b>From ${score.dateResponse} to ${score.secondDateResponse}
@@ -41,7 +41,7 @@
 	                        <b>${score.question} </b>
 	                        <#if score.textResponse??>
 	                            <ul>
-	                                <#list score.textResponse?split=""("|") as value>
+	                                <#list score.textResponse?split("|") as value>
 	                                    <li>${value}</li>
 	                                </#list>
 	                            </ul>
@@ -54,7 +54,7 @@
 	                    <p class="conditional_offer">
 	                        <span/>
 	                        <b>${score.question} </b>
-	                        <#if score.ratingResponse=""??>
+	                        <#if score.ratingResponse??>
 	                            ${score.ratingResponse}
 	                            <#else>
 	                                <i>${notProvided}</i>

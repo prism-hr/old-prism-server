@@ -237,15 +237,23 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 3 (Task Reminder)
      * </p>
      */
-    public void scheduleApprovalReminder() {
+    public void scheduleApprovalRequestAndReminder() {
+        Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
+        for (ApplicationForm form : applicationDAO.getApplicationsDueMovedToApprovalNotifications()) {
+            createNotificationRecordIfNotExists(form, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
+            CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+            idsForWhichRequestWasFired.add(form.getId());
+        }
         final StageDuration approvalDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalReminder()) {
-            ApprovalRound approvalRound = form.getLatestApprovalRound();
-            if (approvalRound != null) {
-                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
-                DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
-                if (approvalRoundExpiryDate.isAfterNow()) {
-                    CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+            if (!idsForWhichRequestWasFired.contains(form.getId())) {
+                ApprovalRound approvalRound = form.getLatestApprovalRound();
+                if (approvalRound != null) {
+                    createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
+                    DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
+                    if (approvalRoundExpiryDate.isAfterNow()) {
+                        CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
+                    }
                 }
             }
         }

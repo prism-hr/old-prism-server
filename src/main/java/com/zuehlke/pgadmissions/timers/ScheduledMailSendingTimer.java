@@ -27,7 +27,7 @@ public class ScheduledMailSendingTimer {
     @Scheduled(cron = "${email.digest.cron}")
     public void run() {
         log.info("Running ScheduledMailSendingService Task");
-        mailService.scheduleApprovalReminder();
+        mailService.scheduleApprovalRequestAndReminder();
         mailService.scheduleInterviewFeedbackEvaluationReminder();
         mailService.scheduleReviewRequestAndReminder();
         mailService.scheduleUpdateConfirmation();

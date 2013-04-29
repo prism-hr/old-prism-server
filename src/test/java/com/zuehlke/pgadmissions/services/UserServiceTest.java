@@ -829,20 +829,6 @@ public class UserServiceTest {
 		userServiceWithCurrentUserOverride.linkAccounts(secondAccount.getEmail());
 	}
 
-	@Test
-    public void shouldSendemailToDelegateForInterviewAdministration() {
-    	RegisteredUser delegate = new RegisteredUserBuilder().email("cls@zuhlke.com").firstName("Claudio").lastName("Scandura").build();
-    	RegisteredUser admin1 = new RegisteredUserBuilder().email("admin1@zuhlke.com").id(2).build();
-    	RegisteredUser admin2 = new RegisteredUserBuilder().email("admin2@zuhlke.com").id(3).firstName("Claudio").lastName("Scandura").build();
-    	ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().administrators(admin1, admin2).build()).build();
-    	
-    	mailServiceMock.scheduleInterviewAdministrationRequest(delegate, applicationForm);
-    	
-    	replay(mailServiceMock);
-    	userService.sendEmailToDelegateAndRegisterReminder(applicationForm, delegate);
-    	verify(mailServiceMock);
-	}
-	
 	 @Before
 	    public void setUp() {
 	        encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);

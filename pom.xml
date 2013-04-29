@@ -291,13 +291,13 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>1.4.12</version>
+            <version>1.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-easymock</artifactId>
-            <version>1.4.12</version>
+            <version>1.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -397,9 +397,9 @@
                             <goal>xjc</goal>
                         </goals>
                         <configuration>
-                            <packageName>com.zuehlke.pgadmissions.referencedata.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/xsd/import</schemaDirectory>
+                            <packageName>com.zuehlke.pgadmissions.referencedata.v1.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/import/v1</outputDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/xsd/import.v1</schemaDirectory>
                             <staleFile>${project.build.directory}/jaxb2/.schema1XjcStaleFlag</staleFile>
                         </configuration>
                     </execution>
@@ -409,15 +409,26 @@
                             <goal>xjc</goal>
                         </goals>
                         <configuration>
-                            <packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb</packageName>
-                            <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-                            <schemaDirectory>${project.basedir}/src/main/xsd/export</schemaDirectory>
+                            <packageName>com.zuehlke.pgadmissions.admissionsservice.v1.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/export/v1</outputDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/xsd/export.v1</schemaDirectory>
                             <staleFile>${project.build.directory}/jaxb2/.schema2XjcStaleFlag</staleFile>
-                            <clearOutputDir>false</clearOutputDir>
                         </configuration>
                     </execution>
                     <execution>
                         <id>xjc-3</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>com.zuehlke.pgadmissions.admissionsservice.v2.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/export/v2</outputDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/xsd/export.v2</schemaDirectory>
+                            <staleFile>${project.build.directory}/jaxb2/.schema3XjcStaleFlag</staleFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-4</id>
                         <goals>
                             <goal>xjc</goal>
                         </goals>

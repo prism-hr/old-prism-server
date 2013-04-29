@@ -13,9 +13,11 @@ $(document).ready(function() {
 	$.fn.jExpand = function(){
         var element = this;
 
-		$(element).find('.application-details:odd').addClass('odd');
+		$(element).find('.application-details:odd').addClass('odd').addClass('loading');
         $(element).find('.applicationRow').click(function() {
 			var applicationDetails = $(this).next();
+			
+			
 			
 			if (applicationDetails.attr('data-application-status') == 'UNSUBMITTED' || applicationDetails.attr('data-application-status') == 'WITHDRAWN') {
 				return;
@@ -24,6 +26,7 @@ $(document).ready(function() {
 			// Load data if not already.
 			if (applicationDetails.attr('data-loaded') != 'true') {
 				applicationDetails.attr('data-loaded', 'true');
+				$(element).find('.application-lhs').addClass('loading');
 				
 				$.ajax({
 					type : 'GET',
@@ -54,11 +57,9 @@ $(document).ready(function() {
 						
 						applicationDetails.find('[data-field=most-recent-employment]').text(applicant.mostRecentEmployment);
 						
-						var fundings = JSON.parse(applicant.fundingRequirements);
+						applicationDetails.find('[data-field=funding-requirements] b').text("£"+applicant.fundingRequirements);
 						
-						applicationDetails.find('[data-field=funding-requirements]').text(fundings.join(', '));
-						
-						applicationDetails.find('[data-field=references-responded]').text(data.numberOfReferences);
+						applicationDetails.find('[data-field=references-responded] b').text(data.numberOfReferences);
 						
 						applicationDetails.find('[data-field=personal-statement-link]').text("Personal Statement");
 						applicationDetails.find('[data-field=personal-statement-link]').attr('href', '/pgadmissions/download?documentId=' + data.personalStatementId);
@@ -73,12 +74,14 @@ $(document).ready(function() {
 						
 						applicationDetails.find('[data-field=email]').text(applicant.email);
 						applicationDetails.find('[data-field=email]').attr('href', 'mailto:' + applicant.email);
-						applicationDetails.find('[data-field=phone-number]').text(applicant.phoneNumber);
+						applicationDetails.find('[data-field=phone-number] span').text(applicant.phoneNumber);
+						applicationDetails.find('[data-field=skype] span').text(applicant.skype);
 						
 						applicationDetails.find('[data-field=application-status]').text(data.applicationStatus);
 						//applicationDetails.find('[data-field=application-status-symbol]').addClass(data.applicationStatus.toLowerCase());
 					},
 					complete : function() {
+						$(element).find('.loading').removeClass('loading');
 					}
 				});
 			}
@@ -396,11 +399,7 @@ function populateApplicationList() {
 			
 			$('#appliList').jExpand();
 			
-			$('#appliList .actionType').click(function (e) {
-				e.stopPropagation();
-			});
-			
-			$('#appliList .btn').click(function (e) {
+			$('#appliList .btn, input, .actionType').click(function (e) {
 				e.stopPropagation();
 			});
 		},

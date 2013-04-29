@@ -18,25 +18,25 @@ import org.junit.Test;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Countries.Country;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Disabilities.Disability;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles.Domicile;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities.Ethnicity;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities.Nationality;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications.Qualification;
-import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
-import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest.SourceOfInterest;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Countries;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Countries.Country;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Disabilities;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Disabilities.Disability;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Domiciles;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Domiciles.Domicile;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Ethnicities;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Ethnicities.Ethnicity;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Institutions;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Institutions.Institution;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Nationalities;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Nationalities.Nationality;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Qualifications;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Qualifications.Qualification;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.SourcesOfInterest;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.SourcesOfInterest.SourceOfInterest;
 
 public class ReferenceDataXMLUnmarshallTest {
 

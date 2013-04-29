@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.referencedata.builders;
 
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 
 public class PrismProgrammeBuilder {
 	private String academicYear;

@@ -211,18 +211,6 @@ public class MailSendingServiceTest {
 		assertModelEquals(model2, message.getModel());
 	}
 	
-	@Test
-	public void shouldScheduleInterviewAdministrationRequest() {
-		ApplicationForm form = getSampleApplicationForm();
-		RegisteredUser delegate = new RegisteredUserBuilder().id(1).build();
-		
-		service.scheduleInterviewAdministrationRequest(delegate, form);
-		
-		List<RegisteredUser> admins = form.getProgram().getAdministrators();
-		assertEquals(delegate.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-		assertEquals(admins.get(1).getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-	}
 	
 	@Test
 	public void shouldScheduleReferenceSubmitConfirmation() {

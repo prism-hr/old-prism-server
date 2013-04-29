@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.CodeObject;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramInstanceInterface;
-import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.services.importers.ImportService;
 
 public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportData {

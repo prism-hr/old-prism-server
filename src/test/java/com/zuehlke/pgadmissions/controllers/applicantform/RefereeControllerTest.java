@@ -194,7 +194,6 @@ public class RefereeControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		refereeServiceMock.processRefereesRoles(application.getReferees());
-		refereeServiceMock.sendRefereeMailNotification(referee);
 		EasyMock.replay(refereeServiceMock, errors);
 		String view = controller.editReferee(referee, errors);
 		EasyMock.verify(refereeServiceMock);
@@ -209,7 +208,6 @@ public class RefereeControllerTest {
         BindingResult errors = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errors.hasErrors()).andReturn(false);
         refereeServiceMock.processRefereesRoles(application.getReferees());
-        //refereeServiceMock.sendRefereeMailNotification(referee);
         EasyMock.replay(refereeServiceMock, errors);
         String view = controller.editReferee(referee, errors);
         EasyMock.verify(refereeServiceMock);
@@ -224,7 +222,6 @@ public class RefereeControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		refereeServiceMock.processRefereesRoles(application.getReferees());
-		refereeServiceMock.sendRefereeMailNotification(referee);
 		EasyMock.replay(refereeServiceMock, errors);
 		String view = controller.editReferee(referee, errors);
 		EasyMock.verify(refereeServiceMock);
@@ -239,7 +236,6 @@ public class RefereeControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		refereeServiceMock.processRefereesRoles(application.getReferees());
-		refereeServiceMock.sendRefereeMailNotification(referee);
 		EasyMock.replay(refereeServiceMock, errors);
 		String view = controller.editReferee(referee, errors);
 		EasyMock.verify(refereeServiceMock);

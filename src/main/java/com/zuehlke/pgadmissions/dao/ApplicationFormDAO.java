@@ -17,6 +17,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -158,6 +159,37 @@ public class ApplicationFormDAO {
 				.add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id"))))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueInterviewAdministration(NotificationType notificationType) {
+	    DetachedCriteria notificationCriteriaOne = DetachedCriteria
+	            .forClass(NotificationRecord.class, "notificationRecord")
+	            .add(Restrictions.eq("notificationType", notificationType))
+	            .add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
+	    
+	    DetachedCriteria notificationCriteriaTwo = DetachedCriteria
+	            .forClass(NotificationRecord.class, "notificationRecord")
+	            .add(Restrictions.eq("notificationType", notificationType))
+	            .add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
+	    
+	    DetachedCriteria reviewEventsCriteria = DetachedCriteria
+	            .forClass(StateChangeEvent.class, "event")
+	            .add(Restrictions.or(Subqueries.notExists(notificationCriteriaOne.setProjection(Projections
+	                    .property("notificationRecord.id"))), Subqueries.propertyGt("date",
+	                            notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.date")))))
+	                            .add(Property.forName("event.application").eqProperty("applicationForm.id"));
+	    
+	    List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
+	    invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
+        invalidStateList.add(ApplicationFormStatus.REJECTED);
+        invalidStateList.add(ApplicationFormStatus.APPROVED);
+        invalidStateList.add(ApplicationFormStatus.INTERVIEW);
+	    return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
+	            .add(Restrictions.isNotNull("applicationAdministrator"))
+	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
+	            .add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id"))))
+	            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueRejectNotifications() {
@@ -202,7 +234,7 @@ public class ApplicationFormDAO {
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
-				.add(Subqueries.notExists(approvalNotificationCriteria.setProjection(Projections.property("notificationRecord.id"))))
+				.add(Subqueries.exists(approvalNotificationCriteria.setProjection(Projections.property("notificationRecord.id"))))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
@@ -221,6 +253,22 @@ public class ApplicationFormDAO {
 						.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
+	
+    @SuppressWarnings("unchecked")
+    public List<ApplicationForm> getApplicationsDueInterviewFeedbackNotification() {
+        DetachedCriteria appronalNotificationCriteria = DetachedCriteria
+                .forClass(NotificationRecord.class, "notificationRecord")
+                .add(Restrictions.eq("notificationType", NotificationType.INTERVIEW_FEEDBACK_REQUEST))
+                .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+
+        return sessionFactory
+                .getCurrentSession()
+                .createCriteria(ApplicationForm.class, "applicationForm")
+                .add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
+                .add(Restrictions.lt("dueDate", new DateTime().toDate()))
+                .add(Subqueries.notExists(appronalNotificationCriteria.setProjection(Projections.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .list();
+    }
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueRegistryNotification() {

@@ -28,20 +28,15 @@ public class ScheduledMailSendingTimer {
     public void run() {
         log.info("Running ScheduledMailSendingService Task");
         mailService.scheduleApprovalReminder();
-        mailService.scheduleInterviewFeedbackEvaluationRequest();
         mailService.scheduleInterviewFeedbackEvaluationReminder();
-        mailService.scheduleReviewReminder();
-        mailService.scheduleReviewRequest();
+        mailService.scheduleReviewRequestAndReminder();
         mailService.scheduleUpdateConfirmation();
-        mailService.scheduleValidationRequest();
-        mailService.scheduleValidationReminder();
-        mailService.scheduleRestartApprovalRequest();
-        mailService.scheduleRestartApprovalReminder();
+        mailService.scheduleValidationRequestAndReminder();
+        mailService.scheduleRestartApprovalRequestAndReminder();
         mailService.scheduleApprovedConfirmation();
-        mailService.scheduleInterviewAdministrationReminder();
+        mailService.scheduleInterviewAdministrationRequestAndReminder();
         mailService.scheduleInterviewFeedbackConfirmation();
-        mailService.scheduleInterviewFeedbackRequest();
-        mailService.scheduleInterviewFeedbackReminder();
+        mailService.scheduleInterviewFeedbackRequestAndReminder();
         mailService.scheduleApplicationUnderApprovalNotification();
         mailService.scheduleRejectionConfirmationToAdministrator();
         mailService.scheduleReviewSubmittedConfirmation();
@@ -52,5 +47,20 @@ public class ScheduledMailSendingTimer {
         mailService.scheduleApplicationUnderReviewNotification();
         mailService.sendDigestsToUsers();
         log.info("Finished ScheduledMailSendingService Task");
+    }
+    
+    @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendReferenceReminder() {
+        mailService.sendReferenceReminder();
+    }
+    
+    @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendNewUserInvitation() {
+        mailService.sendNewUserInvitation();
+    }
+    
+    @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendValidationRequestToRegistry() {
+        mailService.sendValidationRequestToRegistry();
     }
 }

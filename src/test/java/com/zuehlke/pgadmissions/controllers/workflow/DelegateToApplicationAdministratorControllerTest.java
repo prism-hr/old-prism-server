@@ -109,13 +109,12 @@ public class DelegateToApplicationAdministratorControllerTest {
         EasyMock.expect(
                 userServiceMock.createNewUserInRole("Claudia", "Scanduro", "cs@zuhlke.com", Authority.INTERVIEWER,
                         DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm)).andReturn(applicationAdmin);
-        userServiceMock.sendEmailToDelegateAndRegisterReminder(applicationForm, applicationAdmin);
+        applicationServiceMock.delegateInterviewAdministration(applicationForm, applicationAdmin);
 
-        EasyMock.replay(userServiceMock);
+        EasyMock.replay(userServiceMock, applicationServiceMock);
         controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
-        EasyMock.verify(userServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock);
 
-        assertSame(applicationAdmin, applicationForm.getApplicationAdministrator());
     }
 
     @Test
@@ -129,11 +128,11 @@ public class DelegateToApplicationAdministratorControllerTest {
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("cs@zuhlke.com")).andReturn(applicationAdmin);
-        userServiceMock.sendEmailToDelegateAndRegisterReminder(applicationForm, applicationAdmin);
+        applicationServiceMock.delegateInterviewAdministration(applicationForm, applicationAdmin);
 
-        EasyMock.replay(userServiceMock);
+        EasyMock.replay(userServiceMock, applicationServiceMock);
         controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
-        EasyMock.verify(userServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock);
 
         assertNull(applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER));
     }
@@ -149,12 +148,12 @@ public class DelegateToApplicationAdministratorControllerTest {
         
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("cs@zuhlke.com")).andReturn(applicationAdmin);
-        userServiceMock.sendEmailToDelegateAndRegisterReminder(applicationForm, applicationAdmin);
+        applicationServiceMock.delegateInterviewAdministration(applicationForm, applicationAdmin);
         commentServiceMock.createDelegateComment(currentUser, applicationForm);
 
-        EasyMock.replay(userServiceMock, commentServiceMock);
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock);
         controller.delegateToApplicationAdministrator(applicationForm, proposedInterviewerDetails, delegatedInterviewerResult);
-        EasyMock.verify(userServiceMock, commentServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock);
     }
 
     @Before

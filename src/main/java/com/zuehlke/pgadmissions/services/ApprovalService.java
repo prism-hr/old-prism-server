@@ -154,9 +154,7 @@ public class ApprovalService {
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
-
-        NotificationRecord reminder = new NotificationRecord(NotificationType.APPROVAL_REMINDER);
-        form.addNotificationRecord(reminder);
+        form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
         
         approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
@@ -166,6 +164,8 @@ public class ApprovalService {
         form.setDueDate(dueDate.toDate());
         
         form.getEvents().add(eventFactory.createEvent(approvalRound));
+        
+        boolean sendReferenceRequest = form.getStatus()==ApplicationFormStatus.VALIDATION;
 
         form.setStatus(ApplicationFormStatus.APPROVAL);
         form.setPendingApprovalRestart(false);
@@ -185,6 +185,9 @@ public class ApprovalService {
         approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
         approvalComment.setUser(userService.getCurrentUser());
 
+        if (sendReferenceRequest) {
+            mailSendingService.sendReferenceRequest(form.getReferees(), form);
+        }
         commentDAO.save(approvalComment);
     }
 
@@ -253,7 +256,7 @@ public class ApprovalService {
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form, ApprovalRound approvalRound) {
-        boolean explanationProvided = !StringUtils.isBlank(approvalRound.getMissingQualificationExplanation());
+        boolean explanationProvided = StringUtils.isNotBlank(approvalRound.getMissingQualificationExplanation());
         if (!form.isCompleteForSendingToPortico(explanationProvided)) {
             throw new IllegalStateException("Send to portico data is not valid");
         }

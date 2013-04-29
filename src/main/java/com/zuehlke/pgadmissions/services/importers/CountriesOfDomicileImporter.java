@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.CountryOfDomicileAdapter;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles;
+import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Domiciles;
 
 @Service
 public class CountriesOfDomicileImporter implements Importer {
@@ -65,7 +65,7 @@ public class CountriesOfDomicileImporter implements Importer {
 
 	private List<CountryOfDomicileAdapter> createAdapter(Domiciles domiciles) {
 		List<CountryOfDomicileAdapter> result = new ArrayList<CountryOfDomicileAdapter>(domiciles.getDomicile().size());
-		for (com.zuehlke.pgadmissions.referencedata.jaxb.Domiciles.Domicile domicile : domiciles.getDomicile()) {
+		for (com.zuehlke.pgadmissions.referencedata.v1.jaxb.Domiciles.Domicile domicile : domiciles.getDomicile()) {
 			result.add(new CountryOfDomicileAdapter(domicile));
 		}
 		return result;

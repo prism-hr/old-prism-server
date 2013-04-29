@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static java.util.Arrays.asList;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -263,9 +265,9 @@ public class RefereeService {
     private void sendMailToReferee(Referee referee) {
         try {
             ApplicationForm form = referee.getApplication();
-            mailService.sendReferenceRequest(referee, form);
+            mailService.sendReferenceRequest(asList(referee), form);
         } catch (Exception e) {
-            log.warn("error while sending email", e);
+            log.warn("Error while sending reference request email", e);
         }
     }
 }

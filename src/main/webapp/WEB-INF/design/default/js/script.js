@@ -337,6 +337,24 @@ function addToolTips() {
     $('*[data-desc]').qtip(tooltipSettings);
 }
 
+//------------------------------------------------------------------------------
+// Alternates between showing only the first score answers and all.
+//------------------------------------------------------------------------------
+function toggleScores() {
+	$.each($('.hide-score'), function (key, value) {
+		$('.hide-score-group').append($(this));
+		$(this).show();
+	});
+	
+	$('#more-scores').toggle(function () {
+		$('.hide-score-group').slideDown();
+		$(this).text('less');
+	}, function () {
+		$('.hide-score-group').slideUp();
+		$(this).text('more');
+	});
+}
+
 // ------------------------------------------------------------------------------
 // Immediately display a tooltip.
 // ------------------------------------------------------------------------------

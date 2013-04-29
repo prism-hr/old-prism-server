@@ -1334,6 +1334,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     //the old system was not sending request to admins to evaluate the review but just a notification of review submitted
     //which means "evaluate it". This is done by the method 'scheduleReviewSubmittedConfirmation'.
     //This explains why the code below is sending digests  to reviewers instead of admins (as it should be by spec!).
+    @Deprecated
     public void scheduleReviewEvaluationRequest() {
 //        for (Reviewer reviewer : reviewerDAO.getReviewersDueNotification()) {
 //            reviewer.setLastNotified(new Date());
@@ -1379,6 +1380,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     //the old system was not sending reminder to admins to evaluate the review but just a notification of review submitted
     //which means "evaluate it". This is done by the method 'scheduleReviewSubmittedConfirmation'.
     //This explains why the code below is sending digests  to reviewers instead of admins (as it should be by spec!)
+    @Deprecated
     public void scheduleReviewEvaluationReminder() {
 //        for (Reviewer reviewer : reviewerDAO.getReviewersDueReminder()) {
 //            reviewer.setLastNotified(new Date());

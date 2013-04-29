@@ -342,15 +342,15 @@ function addToolTips() {
 //------------------------------------------------------------------------------
 function toggleScores() {
 	$.each($('.hide-score'), function (key, value) {
-		$('.hide-score-group').append($(this));
+		$(this).closest('.score-results').find('.hide-score-group').append($(this));
 		$(this).show();
 	});
 	
-	$('#more-scores').toggle(function () {
-		$('.hide-score-group').slideDown();
+	$('.more-scores').toggle(function () {
+		$(this).closest('.score-results').find('.hide-score-group').slideDown();
 		$(this).text('less');
 	}, function () {
-		$('.hide-score-group').slideUp();
+		$(this).closest('.score-results').find('.hide-score-group').slideUp();
 		$(this).text('more');
 	});
 }

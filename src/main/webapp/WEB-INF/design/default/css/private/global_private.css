@@ -1501,3 +1501,12 @@ form#removeForm {
 .uploaded-files li .btn {
  	float: right;
 }
+.btn-file {
+	overflow: visible !important;
+}
+.btn-file > input {
+	transform: translate(-68px, 2px) scale(2) !important;
+}
+.fileupload-new, .fileupload-new, .uneditable-input{
+	cursor: pointer !important;
+}

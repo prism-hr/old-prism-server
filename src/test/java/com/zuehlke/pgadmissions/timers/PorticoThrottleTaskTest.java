@@ -8,7 +8,7 @@ import static org.easymock.EasyMock.verify;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.services.PorticoQueueService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 
 public class PorticoThrottleTaskTest {

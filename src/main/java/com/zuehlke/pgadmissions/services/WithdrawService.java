@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service

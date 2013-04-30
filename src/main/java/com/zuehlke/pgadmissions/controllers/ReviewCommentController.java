@@ -116,6 +116,7 @@ public class ReviewCommentController {
             CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
             List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
             reviewComment.getScores().addAll(scores);
+            reviewComment.setAlert(customQuestion.getAlert());
         }
 
         return reviewComment;

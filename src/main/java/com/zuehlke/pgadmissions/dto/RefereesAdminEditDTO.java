@@ -52,6 +52,8 @@ public class RefereesAdminEditDTO {
     private String messenger;
 
     private List<Score> scores = new ArrayList<Score>();
+    
+    private String alert;
 
     public String getComment() {
         return comment;
@@ -206,5 +208,13 @@ public class RefereesAdminEditDTO {
             }
         }
         return true;
+    }
+
+	public String getAlert() {
+	    return alert;
+    }
+
+	public void setAlert(String alert) {
+	    this.alert = alert;
     }
 }

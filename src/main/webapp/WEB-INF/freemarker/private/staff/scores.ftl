@@ -1,10 +1,10 @@
 <#setting locale = "en_US">
 <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
 
-<#if comment.alert??>
+<#if alertForScoringQuestions??>
 	<div class="alert alert-info">
 		<i class="icon-info-sign"></i>
-		${comment.alert}
+		${alertForScoringQuestions}
 	</div>
 </#if>
 
@@ -17,8 +17,8 @@
     <input type="hidden" class="question" value = "${score.question}"/>
     <input type="hidden" class="question-required" value = "${originalQuestion.required?string("true", "false")}"/>
     <label class="plain-label question-label" for="question_${score_index}">${score.question} <#if originalQuestion.required> <em>*</em> </#if></label>
-	<#if score.tooltip??>
-		<span class="hint" data-desc="${score.tooltip}"></span>
+	<#if originalQuestion.tooltip??>
+		<span class="hint" data-desc="${originalQuestion.tooltip}"></span>
 	</#if>
     <div class="field">
       <#if score.questionType == "TEXT">

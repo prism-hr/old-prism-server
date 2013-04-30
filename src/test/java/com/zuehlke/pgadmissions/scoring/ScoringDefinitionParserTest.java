@@ -78,7 +78,7 @@ public class ScoringDefinitionParserTest {
 			parser.validateScoringDefinition(customQuestions);
 			Assert.fail();
 		} catch (ScoringDefinitionParseException e) {
-			Assert.assertEquals("Mulformated date " + minDateForTest
+			Assert.assertEquals("Malformated date " + minDateForTest
 					+ ". Expected format is yyyy-mm-dd, or \"TODAY\"",
 					e.getLocalizedMessage());
 		}

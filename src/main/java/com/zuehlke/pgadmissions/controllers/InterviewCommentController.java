@@ -134,6 +134,7 @@ public class InterviewCommentController {
 			List<Score> scores = scoreFactory.createScores(customQuestion
 					.getQuestion());
 			interviewComment.getScores().addAll(scores);
+			interviewComment.setAlert(customQuestion.getAlert());
 		}
 
 		return interviewComment;

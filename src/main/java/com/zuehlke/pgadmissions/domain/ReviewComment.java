@@ -7,8 +7,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 
 @Entity(name="REVIEW_COMMENT")
 public class ReviewComment extends Comment {
@@ -38,6 +40,9 @@ public class ReviewComment extends Comment {
 	@Enumerated(EnumType.STRING)
 	@Column(name="comment_type")
 	private CommentType type;
+	
+    @Transient
+    private String alert;
 
 	public CommentType getType() {
 		return type;
@@ -103,4 +108,12 @@ public class ReviewComment extends Comment {
 			Boolean suitableCandidateForProgramme) {
 		this.suitableCandidateForProgramme = suitableCandidateForProgramme;
 	}
+
+	public String getAlert() {
+	    return alert;
+    }
+
+	public void setAlert(String alert) {
+	    this.alert = alert;
+    }
 }

@@ -11,7 +11,7 @@ public class FundingDAO {
 
 	private final SessionFactory sessionFactory;
 
-	FundingDAO() {
+	public FundingDAO() {
 		this(null);
 	}
 
@@ -32,7 +32,5 @@ public class FundingDAO {
 
 	public void save(Funding funding) {
 		sessionFactory.getCurrentSession().saveOrUpdate(funding);
-
 	}
-
 }

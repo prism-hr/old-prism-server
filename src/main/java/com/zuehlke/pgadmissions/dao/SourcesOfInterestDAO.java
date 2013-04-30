@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class SourcesOfInterestDAO {
 
     private final SessionFactory sessionFactory;
@@ -25,13 +26,11 @@ public class SourcesOfInterestDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    @SuppressWarnings("unchecked")
     public List<SourcesOfInterest> getAllEnabledSourcesOfInterest() {
         return sessionFactory.getCurrentSession().createCriteria(SourcesOfInterest.class)
                 .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("name")).list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<SourcesOfInterest> getAllSourcesOfInterest() {
         return sessionFactory.getCurrentSession().createCriteria(SourcesOfInterest.class)
                 .addOrder(Order.asc("name"))

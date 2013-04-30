@@ -10,7 +10,8 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 public class QualificationDAO {
 
 	private final SessionFactory sessionFactory;
-	QualificationDAO(){
+	
+	public QualificationDAO(){
 		this(null);
 	}
 	
@@ -29,6 +30,5 @@ public class QualificationDAO {
 	
 	public void save(Qualification qualification) {
 		sessionFactory.getCurrentSession().saveOrUpdate(qualification);
-		
 	}
 }

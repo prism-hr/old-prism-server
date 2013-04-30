@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class EmailTemplateDAO {
 	
 	private final SessionFactory sessionFactory;
@@ -29,7 +30,6 @@ public class EmailTemplateDAO {
 		this.sessionFactory = sessionFactory;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<EmailTemplate> getAll() {
 		return sessionFactory.getCurrentSession().createCriteria(EmailTemplate.class)
 				.list();
@@ -44,13 +44,11 @@ public class EmailTemplateDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(emailTemplate);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<EmailTemplate> getByName(EmailTemplateName name) {
 		return (List<EmailTemplate>) sessionFactory.getCurrentSession().createCriteria(EmailTemplate.class)
 				.add(Restrictions.eq("name", name)).list();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Map<Long, Date> getVersionsByName(EmailTemplateName name) {
 		List<Object[]> templates = (List<Object[]>) sessionFactory.getCurrentSession().createCriteria(EmailTemplate.class)
 				.add(Restrictions.eq("name", name)).addOrder(Order.asc("version"))

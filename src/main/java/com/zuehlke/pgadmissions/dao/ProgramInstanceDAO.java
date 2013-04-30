@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ProgramInstanceDAO {
 
 	private final SessionFactory sessionFactory;
@@ -29,7 +30,6 @@ public class ProgramInstanceDAO {
 		this.sessionFactory = sessionFactory;	
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ProgramInstance> getActiveProgramInstances(Program program) {
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
@@ -40,7 +40,6 @@ public class ProgramInstanceDAO {
 				.list();
 	}
 	
-    @SuppressWarnings("unchecked")
     public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         return (List<ProgramInstance>) sessionFactory.getCurrentSession()
@@ -54,7 +53,6 @@ public class ProgramInstanceDAO {
                 .list();
     }
 
-	@SuppressWarnings("unchecked")
 	public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPast(Program program, String studyOption) {
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
@@ -66,7 +64,6 @@ public class ProgramInstanceDAO {
 				.list();
 	}
 	
-	@SuppressWarnings("unchecked")
     public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         return (List<ProgramInstance>) sessionFactory.getCurrentSession()
@@ -79,7 +76,6 @@ public class ProgramInstanceDAO {
                 .list();
     }
 	
-	@SuppressWarnings("unchecked")
 	public ProgramInstance getCurrentProgramInstanceForStudyOption(Program program, String studyOption) {
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		List<ProgramInstance> futureInstances = sessionFactory.getCurrentSession()
@@ -93,7 +89,6 @@ public class ProgramInstanceDAO {
 		return futureInstances.get(0);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<ProgramInstance> getAllProgramInstances() {
         return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}

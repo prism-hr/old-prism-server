@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Person;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class PersonDAO {
 
 	private final SessionFactory sessionFactory;
@@ -31,7 +32,6 @@ public class PersonDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(person);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Person> getAllPersons() {
 		return (List<Person>) sessionFactory.getCurrentSession().createCriteria(Person.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Domicile;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class DomicileDAO {
 
     private final SessionFactory sessionFactory;
@@ -26,13 +27,11 @@ public class DomicileDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Domicile> getAllDomiciles() {
         return sessionFactory.getCurrentSession().createCriteria(Domicile.class).addOrder(Order.asc("name"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<Domicile> getAllEnabledDomiciles() {
         return sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("enabled", true))
                 .addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
@@ -44,7 +43,6 @@ public class DomicileDAO {
      * displaying institutions: {@code XF, XG, ZZ, XH, XI}.
      * @return a list of all the enabled domicile codes except domicile's with the following codes: {@code XF, XG, ZZ, XH, XI}
      */
-    @SuppressWarnings("unchecked")
     public List<Domicile> getAllEnabledDomicilesExceptAlternateValues() {
         Conjunction conjunction = Restrictions.conjunction();
         conjunction.add(Restrictions.eq("enabled", true));

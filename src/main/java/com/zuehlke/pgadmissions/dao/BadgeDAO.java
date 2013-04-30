@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class BadgeDAO {
 
     private final SessionFactory sessionFactory;
@@ -30,13 +31,11 @@ public class BadgeDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(badge);
     }
     
-    @SuppressWarnings("unchecked")
     public List<Badge> getBadgesByProgram(Program program){
         return (List<Badge>) sessionFactory.getCurrentSession().createCriteria(Badge.class)
                 .add(Restrictions.eq("program", program)).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Badge> getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(Program program, String term) {
         return sessionFactory
                 .getCurrentSession()
@@ -46,7 +45,6 @@ public class BadgeDAO {
                 .addOrder(Order.asc("projectTitle")).list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<Badge> getDuplicateBadges(Badge badge) {
         return (List<Badge>) sessionFactory
                 .getCurrentSession()

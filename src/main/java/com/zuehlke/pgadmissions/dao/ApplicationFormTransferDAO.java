@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ApplicationFormTransferDAO {
 
     private final SessionFactory sessionFactory;
@@ -40,13 +41,11 @@ public class ApplicationFormTransferDAO {
                 .add(Restrictions.eq("uclBookingReferenceReceived", bookingReferenceNumber)).uniqueResult();
     }
     
-    @SuppressWarnings("unchecked")
     public List<ApplicationFormTransfer> getAllTransfersWaitingForWebserviceCall() {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).
             add(Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL)).list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<ApplicationFormTransfer> getAllTransfersWaitingToBeSentToPorticoOldestFirst() {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class)
                 .add(Restrictions.or(
@@ -55,7 +54,6 @@ public class ApplicationFormTransferDAO {
                 .addOrder(Order.asc("transferStartTimepoint")).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ApplicationFormTransfer> getAllTransfersWaitingForAttachmentsSending() {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).
             add(Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING)).list();
@@ -66,7 +64,6 @@ public class ApplicationFormTransferDAO {
                 add(Restrictions.eq("applicationForm", form)).uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ApplicationFormTransfer> getAllTransfers() {
         return (List<ApplicationFormTransfer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).list();
     }

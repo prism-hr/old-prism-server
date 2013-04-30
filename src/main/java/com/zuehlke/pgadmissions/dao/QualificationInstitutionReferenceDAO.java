@@ -14,11 +14,12 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class QualificationInstitutionReferenceDAO {
 
     private final SessionFactory sessionFactory;
 
-    QualificationInstitutionReferenceDAO() {
+    public QualificationInstitutionReferenceDAO() {
         this(null);
     }
 
@@ -27,21 +28,18 @@ public class QualificationInstitutionReferenceDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    @SuppressWarnings("unchecked")
     public List<QualificationInstitutionReference> getAllEnabledInstitutions() {
         return sessionFactory.getCurrentSession().createCriteria(QualificationInstitutionReference.class)
                 .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("name"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
-    
-    @SuppressWarnings("unchecked")
+
     public List<QualificationInstitutionReference> getAllInstitutions() {
         return sessionFactory.getCurrentSession().createCriteria(QualificationInstitutionReference.class)
                 .addOrder(Order.asc("name"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<QualificationInstitutionReference> getAllInstitutionByName(String name) {
         return (List<QualificationInstitutionReference>) sessionFactory.getCurrentSession().createCriteria(QualificationInstitutionReference.class)
                 .add(Restrictions.eq("name", name))
@@ -53,7 +51,6 @@ public class QualificationInstitutionReferenceDAO {
         return (QualificationInstitution) sessionFactory.getCurrentSession().get(QualificationInstitutionReference.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<QualificationInstitutionReference> getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String domicileCode, String term) {
         return sessionFactory
                 .getCurrentSession()

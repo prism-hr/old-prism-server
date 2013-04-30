@@ -14,7 +14,7 @@ public class LanguageQualificationDAO {
 
     private final EncryptionHelper encryptionHelper;
     
-    LanguageQualificationDAO() {
+    public LanguageQualificationDAO() {
         this(null, null);
     }
 

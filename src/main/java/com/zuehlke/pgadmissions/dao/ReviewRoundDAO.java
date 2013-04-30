@@ -11,9 +11,10 @@ public class ReviewRoundDAO {
 
 	private final SessionFactory sessionFactory;
 
-	ReviewRoundDAO(){
+	public ReviewRoundDAO(){
 		this(null);
 	}
+	
 	@Autowired
 	public ReviewRoundDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -25,7 +26,5 @@ public class ReviewRoundDAO {
 
 	public void save(ReviewRound reviewRound) {
 		sessionFactory.getCurrentSession().saveOrUpdate(reviewRound);
-		
 	}
-
 }

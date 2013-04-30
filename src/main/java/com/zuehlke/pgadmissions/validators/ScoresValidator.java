@@ -78,7 +78,7 @@ public class ScoresValidator extends AbstractValidator {
             case RATING:
                 if (required && score.getRatingResponse() == null) {
                     errors.rejectValue(null, EMPTY_FIELD_ERROR_MESSAGE);
-                } else if (score.getRatingResponse() != null && (score.getRatingResponse() < 1 || score.getRatingResponse() > 5)) {
+                } else if (score.getRatingResponse() != null && (score.getRatingResponse() < 0 || score.getRatingResponse() > 5)) {
                     errors.rejectValue(null, EMPTY_FIELD_ERROR_MESSAGE);
                 }
                 break;

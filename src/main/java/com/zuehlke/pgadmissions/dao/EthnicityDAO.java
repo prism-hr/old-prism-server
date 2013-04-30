@@ -12,11 +12,12 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class EthnicityDAO {
 
 	private final SessionFactory sessionFactory;
 
-	EthnicityDAO() {
+	public EthnicityDAO() {
 		this(null);
 	}
 
@@ -25,13 +26,11 @@ public class EthnicityDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Ethnicity> getAllEthnicities() {
         return sessionFactory.getCurrentSession().createCriteria(Ethnicity.class).addOrder(Order.asc("id"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
-	@SuppressWarnings("unchecked")
     public List<Ethnicity> getAllEnabledEthnicities() {
         return sessionFactory.getCurrentSession().createCriteria(Ethnicity.class).add(Restrictions.eq("enabled", true))
                 .addOrder(Order.asc("id")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();

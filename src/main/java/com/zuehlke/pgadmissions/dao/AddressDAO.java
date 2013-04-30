@@ -10,9 +10,11 @@ import com.zuehlke.pgadmissions.domain.Address;
 public class AddressDAO {
 
 	private final SessionFactory sessionFactory;
-	AddressDAO(){
+	
+	public AddressDAO(){
 		this(null);
 	}
+	
 	@Autowired
 	public AddressDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -20,7 +22,5 @@ public class AddressDAO {
 	}
 	public void delete(Address address) {
 		sessionFactory.getCurrentSession().delete(address);
-		
 	}
-
 }

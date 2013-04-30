@@ -11,7 +11,7 @@ public class PersonalDetailDAO {
 
     private final SessionFactory sessionFactory;
 
-    PersonalDetailDAO() {
+    public PersonalDetailDAO() {
         this(null);
     }
 

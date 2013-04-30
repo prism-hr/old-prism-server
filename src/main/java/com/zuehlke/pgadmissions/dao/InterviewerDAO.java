@@ -19,11 +19,12 @@ import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class InterviewerDAO {
 
 	private final SessionFactory sessionFactory;
 
-	InterviewerDAO() {
+	public InterviewerDAO() {
 		this(null);
 	}
 
@@ -35,7 +36,6 @@ public class InterviewerDAO {
 
 	public void save(Interviewer interviewer) {
 		sessionFactory.getCurrentSession().saveOrUpdate(interviewer);
-
 	}
 
 	public Interviewer getInterviewerById(Integer id) {
@@ -46,8 +46,6 @@ public class InterviewerDAO {
 		return (Interviewer) sessionFactory.getCurrentSession().createCriteria(Interviewer.class).add(Restrictions.eq("user", user)).uniqueResult();
 	}
 
-	
-	@SuppressWarnings("unchecked")
 	public List<Interviewer> getInterviewersDueNotification() {
 		return sessionFactory.getCurrentSession().createCriteria(Interviewer.class)
 				.add(Restrictions.isNull("lastNotified"))
@@ -59,7 +57,6 @@ public class InterviewerDAO {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Interviewer> getInterviewersDueReminder() {
 		Date today = Calendar.getInstance().getTime();
 		ReminderInterval reminderInterval = (ReminderInterval)sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
@@ -81,7 +78,6 @@ public class InterviewerDAO {
 		return interviewers;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Interviewer> getInterviewersRequireAdminNotification() {
 		return sessionFactory.getCurrentSession()
 				.createCriteria(Interviewer.class)

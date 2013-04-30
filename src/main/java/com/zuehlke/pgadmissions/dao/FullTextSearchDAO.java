@@ -22,6 +22,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class FullTextSearchDAO {
 
     private SessionFactory sessionFactory;
@@ -53,7 +54,6 @@ public class FullTextSearchDAO {
         return getMatchingUsers(searchTerm, "email", LASTNAME_COMPARATOR);
     }
     
-    @SuppressWarnings("unchecked")
     private List<RegisteredUser> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<RegisteredUser> comparator) {
         String trimmedSearchTerm = StringUtils.trimToEmpty(searchTerm);
 

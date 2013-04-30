@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class QualificationTypeDAO {
 
     private final SessionFactory sessionFactory;
@@ -25,14 +26,12 @@ public class QualificationTypeDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    @SuppressWarnings("unchecked")
     public List<QualificationType> getAllEnabledQualificationTypes() {
         return sessionFactory.getCurrentSession().createCriteria(QualificationType.class)
                 .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("name"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<QualificationType> getAllQualificationTypes() {
         return sessionFactory.getCurrentSession().createCriteria(QualificationType.class)
                 .addOrder(Order.asc("name"))

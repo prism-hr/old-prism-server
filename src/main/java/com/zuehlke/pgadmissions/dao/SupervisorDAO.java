@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class SupervisorDAO {
 
 	private final SessionFactory sessionFactory;
@@ -42,7 +43,6 @@ public class SupervisorDAO {
 	/**
 	 * @deprecated This method is now being replaced by the {@link #getPrimarySupervisorsDueNotification() getPrimarySupervisorsDueNotification} method.
 	 */
-	@SuppressWarnings("unchecked")
 	@Deprecated
 	public List<Supervisor> getSupervisorsDueNotification() {
 		return sessionFactory.getCurrentSession()
@@ -59,7 +59,6 @@ public class SupervisorDAO {
         return (Supervisor) sessionFactory.getCurrentSession().createCriteria(Supervisor.class).add(Restrictions.eq("user", user)).uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Supervisor> getPrimarySupervisorsDueNotification() {
         return sessionFactory.getCurrentSession()
                 .createCriteria(Supervisor.class, "supervisor")
@@ -73,7 +72,6 @@ public class SupervisorDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Supervisor> getPrimarySupervisorsDueReminder() {
         Date today = Calendar.getInstance().getTime();
         ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
@@ -90,7 +88,6 @@ public class SupervisorDAO {
                 .list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<Supervisor> getPrimarySupervisorsWhichHaveRecentlyBeenConfirmedInTheLast24Hours() {
         return sessionFactory.getCurrentSession()
                 .createCriteria(Supervisor.class, "supervisor")

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Country;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class CountriesDAO {
 
 	private final SessionFactory sessionFactory;
@@ -25,13 +26,11 @@ public class CountriesDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Country> getAllCountries() {
 	    return sessionFactory.getCurrentSession().createCriteria(Country.class)
                 .addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
-	@SuppressWarnings("unchecked")
     public List<Country> getAllEnabledCountries() {
         return sessionFactory.getCurrentSession().createCriteria(Country.class).add(Restrictions.eq("enabled", true))
                 .addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();

@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Program;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ProgramDAO {
 
-	
 	private final SessionFactory sessionFactory;
 
-	ProgramDAO() {
+	public ProgramDAO() {
 		this(null);
 	}
 
@@ -27,7 +27,6 @@ public class ProgramDAO {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Program> getAllPrograms() {
         return sessionFactory.getCurrentSession().createCriteria(Program.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).addOrder(Order.asc("title")).list();

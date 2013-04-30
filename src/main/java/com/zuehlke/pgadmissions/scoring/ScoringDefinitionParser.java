@@ -23,7 +23,7 @@ public class ScoringDefinitionParser {
 
 	private static final String OPTIONS_ELEMENT_MISSING_MESSAGE_TEMPLATE = "Options element is required for dropdown type %s";
 
-	private static final String DATE_RANGE_ERROR_MESSAGE_TEMPLATE = "Both minDate and maxDate elements are required for dateRange type %s";
+//	private static final String DATE_RANGE_ERROR_MESSAGE_TEMPLATE = "Both minDate and maxDate elements are required for dateRange type %s";
 
 	public static final String TODAY = "TODAY";
 
@@ -48,7 +48,7 @@ public class ScoringDefinitionParser {
 
 	public CustomQuestions parseScoringDefinition(String definitionXml)
 			throws ScoringDefinitionParseException {
-		CustomQuestions scoringDefinition;
+		CustomQuestions scoringDefinition = null;
 		try {
 			scoringDefinition = (CustomQuestions) unmarshaller
 					.unmarshal(new StringReader(definitionXml));
@@ -56,6 +56,7 @@ public class ScoringDefinitionParser {
 			throw new ScoringDefinitionParseException(e.getLinkedException()
 					.getLocalizedMessage(), e);
 		}
+		validateScoringDefinition(scoringDefinition);
 		return scoringDefinition;
 	}
 

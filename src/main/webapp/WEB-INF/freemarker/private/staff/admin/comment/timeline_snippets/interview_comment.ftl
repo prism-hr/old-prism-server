@@ -11,3 +11,5 @@
 	<span data-desc="<#if comment.willingToSupervise?? && comment.willingToSupervise?string == 'true'>Yes<#else>No</#if>"></span> Would you like to supervise/direct the applicant?
 </h3>
 </#if> 			
+
+<#include "comment_scores.ftl"/>

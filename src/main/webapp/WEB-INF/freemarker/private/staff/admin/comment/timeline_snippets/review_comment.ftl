@@ -14,3 +14,5 @@
 </h3>
 
 </#if>
+
+<#include "comment_scores.ftl"/>

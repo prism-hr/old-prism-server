@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -18,23 +19,28 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
 
@@ -242,7 +248,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         ValidationComment returnedComment = commentDAO.getValidationCommentForApplication(application);
         assertEquals(HomeOrOverseas.HOME, returnedComment.getHomeOrOverseas());
     }
-    
+
     @Test
     public void shouldReturnNoValidationCommentForApplication() {
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
@@ -255,6 +261,26 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
         ValidationComment returnedComment = commentDAO.getValidationCommentForApplication(application);
         assertNull(returnedComment);
+    }
+
+    @Test
+    public void shouldReturnCommentWithTwoScores() {
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        Score score1 = new ScoreBuilder().dateResponse(new Date()).question("1??").questionType(QuestionType.RATING).ratingResponse(4).build();
+        Score score2 = new ScoreBuilder().dateResponse(new Date()).question("2??").questionType(QuestionType.TEXTAREA).textResponse("aaa").build();
+        ReferenceComment comment = new ReferenceCommentBuilder().comment("reference").user(user).application(application).scores(score1, score2).build();
+        
+        save(user, application, comment);
+        flushAndClearSession();
+
+        Integer commentId = comment.getId();
+
+        ReferenceComment returnedComment = (ReferenceComment) commentDAO.get(commentId);
+        assertNotNull(returnedComment);
+        assertEquals(2, returnedComment.getScores().size());
     }
 
     private boolean listContainsId(Comment comment, List<? extends Comment> reloadedComments) {

@@ -1,7 +1,6 @@
 $(document).ready(function() {
     
     addToolTips();
-    
     showProperRefereeEntry();
     
     // --------------------------------------------------------------------------------
@@ -204,6 +203,9 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
 	} else {
 		postData['editedRefereeId'] = refereeId;
 	}
+    
+    var scoreData=getScores($("#scoring-questions_"+refereeId));
+    postData['scores']=scoreData;
     
     $('#referencesSection > div').append('<div class="ajax" />');
     $.ajax({

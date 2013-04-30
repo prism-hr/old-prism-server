@@ -11,6 +11,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
   
   <!-- Styles for Application List Page -->
+  <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
@@ -51,14 +52,6 @@
       <!-- Main content area. -->
       <article id="content" role="main"> 
         
-        <!-- "Tools"
-				  <div id="tools">
-					<ul class="left">
-					  <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
-					  <li class="icon-feedback"><a title="Send Feedback" href="mailto:prism@ucl.ac.uk?subject=Feedback" target="_blank">Send Feedback</a></li>
-					</ul>
-				  </div> --> 
-        
         <!-- content box -->
         <div class="content-box">
           <div class="content-box-inner"> <#include "/private/common/parts/application_info.ftl"/>
@@ -75,8 +68,7 @@
                     <label for="review-comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
                     <div class="field">
-                      <textarea name="comment" id="review-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}
-</textarea>
+                      <textarea name="comment" id="review-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}</textarea>
                       <@spring.bind "comment.comment" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -92,12 +84,8 @@
                     <label id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPG'/>"></span>
                     <div class="field" id="field-issuitableucl">
-                      <label><input type="radio" name="suitableCandidateForUcl" value="true" id="suitableRB_true"
-													<#if comment.suitableCandidateForUcl?? && comment.suitableCandidateForUcl> checked="checked"</#if>
-                        /> Yes</label>
-                      <label><input type="radio" name="suitableCandidateForUcl" value="false" id="suitableRB_false"
-													<#if comment.suitableCandidateForUcl?? && !comment.suitableCandidateForUcl> checked="checked"</#if>
-                        /> No</label>
+                      <label><input type="radio" name="suitableCandidateForUcl" value="true" id="suitableRB_true" <#if comment.suitableCandidateForUcl?? && comment.suitableCandidateForUcl> checked="checked"</#if> /> Yes</label>
+                      <label><input type="radio" name="suitableCandidateForUcl" value="false" id="suitableRB_false" <#if comment.suitableCandidateForUcl?? && !comment.suitableCandidateForUcl> checked="checked"</#if> /> No</label>
                       <@spring.bind "comment.suitableCandidateForUcl" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -109,12 +97,8 @@
                     <label id="suitable-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPGP'/>"></span>
                     <div class="field" id="field-issuitableprog">
-                      <label><input type="radio" name="suitableCandidateForProgramme" value="true" id="suitableRB_true"
-													<#if comment.suitableCandidateForProgramme?? && comment.suitableCandidateForProgramme> checked="checked"</#if>
-                        /> Yes</label>
-                      <label><input type="radio" name="suitableCandidateForProgramme" value="false" id="suitableRB_false"
-													<#if comment.suitableCandidateForProgramme?? && !comment.suitableCandidateForProgramme> checked="checked"</#if>
-                        /> No</label>
+                      <label><input type="radio" name="suitableCandidateForProgramme" value="true" id="suitableRB_true" <#if comment.suitableCandidateForProgramme?? && comment.suitableCandidateForProgramme> checked="checked"</#if> /> Yes</label>
+                      <label><input type="radio" name="suitableCandidateForProgramme" value="false" id="suitableRB_false" <#if comment.suitableCandidateForProgramme?? && !comment.suitableCandidateForProgramme> checked="checked"</#if> /> No</label>
                       <@spring.bind "comment.suitableCandidateForProgramme" />
                       <#list spring.status.errorMessages as error> 
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
@@ -124,17 +108,28 @@
                   <label id="supervise-lbl" class="plain-label">Would you like to interview the applicant with a view to working with them?<em>*</em></label> 
                   <span class="hint" data-desc="<@spring.message 'review.interview'/>"></span>
                     <div class="field" id="field-wouldinterview">
-                      <label><input type="radio" name="willingToInterview" value="true" id="willingRB_true"
-													<#if comment.willingToInterviewSet && comment.willingToInterview> checked="checked"</#if> 
-                        /> Yes</label>
-                      <label><input type="radio" name="willingToInterview" value="false" id="willingRB_false"
-													<#if comment.willingToInterviewSet && !comment.willingToInterview> checked="checked"</#if>
-                        /> No</label>
+                      <label><input type="radio" name="willingToInterview" value="true" id="willingRB_true" <#if comment.willingToInterviewSet && comment.willingToInterview> checked="checked"</#if> /> Yes</label>
+                      <label><input type="radio" name="willingToInterview" value="false" id="willingRB_false" <#if comment.willingToInterviewSet && !comment.willingToInterview> checked="checked"</#if> /> No</label>
                       <@spring.bind "comment.willingToInterview" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
                       </#list> </div>
                   </div>
+                </div>
+                
+                <@spring.bind "comment.confirmNextStage" />
+                <#if spring.status.errorMessages?size &gt; 0>
+                    <div class="alert alert-error" >
+                <#else>
+                    <div class="alert" >
+                </#if>
+                    <div class="row">
+                        <label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">Please confirm that you are satisfied with your comments.</label>
+                        <div class="terms-field">
+                            <input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+                        </div>
+                        <input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
+                    </div>
                 </div>
                 <div class="buttons">
                   <button class="btn btn-primary" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>

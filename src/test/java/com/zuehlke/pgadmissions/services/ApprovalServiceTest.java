@@ -65,7 +65,6 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 public class ApprovalServiceTest {
@@ -367,7 +366,6 @@ public class ApprovalServiceTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
         mailSendingServiceMock.scheduleSupervisionConfirmedNotification(applicationForm);
-        mailSendingServiceMock.scheduleApprovalRequest(applicationForm);
         
         EasyMock.replay(commentDAOMock, userServiceMock, mailSendingServiceMock);
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.zuehlke.pgadmissions.jms.PorticoQueueService;
+import com.zuehlke.pgadmissions.services.PorticoQueueService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 
 public class PorticoThrottleTask {

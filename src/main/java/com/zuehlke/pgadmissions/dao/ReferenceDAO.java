@@ -11,7 +11,7 @@ public class ReferenceDAO {
 
 	private final SessionFactory sessionFactory;
 
-	ReferenceDAO(){
+	public ReferenceDAO(){
 		this(null);
 	}
 	

@@ -9,7 +9,6 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
@@ -56,10 +55,7 @@ public class ReviewService {
         boolean sendReferenceRequest = application.getStatus()==ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
-		NotificationRecord reviewReminderNotificationRevord = application.getNotificationForType(NotificationType.REVIEW_REMINDER);
-        if (reviewReminderNotificationRevord != null) {
-            application.removeNotificationRecord(reviewReminderNotificationRevord);
-        }
+		application.removeNotificationRecord(NotificationType.REVIEW_REMINDER);
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);
         }

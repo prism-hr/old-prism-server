@@ -29,6 +29,4 @@ public class InterviewDAO {
 	public Interview getInterviewById(Integer id) {
 		return (Interview) sessionFactory.getCurrentSession().get(Interview.class, id);
 	}
-
-
 }

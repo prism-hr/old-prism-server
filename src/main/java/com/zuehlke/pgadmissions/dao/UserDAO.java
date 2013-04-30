@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class UserDAO {
 
     private final SessionFactory sessionFactory;
@@ -54,13 +55,11 @@ public class UserDAO {
                 .add(Restrictions.eq("username", username)).add(Restrictions.eq("enabled", true)).uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<RegisteredUser> getAllUsers() {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<RegisteredUser> getUsersInRole(Role role) {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles")
                 .add(Restrictions.eq("id", role.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
@@ -179,7 +178,6 @@ public class UserDAO {
                 .add(Restrictions.eq("email", email)).uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<RegisteredUser> getInternalUsers() {
         return sessionFactory
                 .getCurrentSession()
@@ -192,7 +190,6 @@ public class UserDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<RegisteredUser> getUsersWithPendingRoleNotifications() {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user")
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("enabled", false))
@@ -201,7 +198,6 @@ public class UserDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<RegisteredUser> getAllPreviousInterviewersOfProgram(Program program) {
         List<Interviewer> interviewers = sessionFactory.getCurrentSession().createCriteria(Interviewer.class)
                 .createAlias("interview", "interview").createAlias("interview.application", "application")
@@ -216,7 +212,6 @@ public class UserDAO {
         return users;
     }
 
-    @SuppressWarnings("unchecked")
     public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
         List<Reviewer> reviewers = sessionFactory.getCurrentSession().createCriteria(Reviewer.class)
                 .createAlias("reviewRound", "reviewRound").createAlias("reviewRound.application", "application")
@@ -231,7 +226,6 @@ public class UserDAO {
         return users;
     }
 
-    @SuppressWarnings("unchecked")
     public List<RegisteredUser> getReviewersWillingToInterview(ApplicationForm applicationForm) {
         List<ReviewComment> reviews = sessionFactory.getCurrentSession().createCriteria(ReviewComment.class)
                 .createAlias("reviewer", "reviewer").createAlias("reviewer.reviewRound", "reviewRound")
@@ -249,7 +243,6 @@ public class UserDAO {
         return users;
     }
 
-    @SuppressWarnings("unchecked")
     public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(Program program) {
         List<Supervisor> supervisors = sessionFactory.getCurrentSession().createCriteria(Supervisor.class)
                 .createAlias("approvalRound", "approvalRound").createAlias("approvalRound.application", "application")
@@ -268,7 +261,6 @@ public class UserDAO {
         sessionFactory.getCurrentSession().delete(user);
     }
     
-    @SuppressWarnings("unchecked")
     public List<Integer> getAllUserIdsInNeedOfADigestNotification() {
         return (List<Integer>) sessionFactory
                 .getCurrentSession()
@@ -296,5 +288,4 @@ public class UserDAO {
         }
         return false;
     }
-
 }

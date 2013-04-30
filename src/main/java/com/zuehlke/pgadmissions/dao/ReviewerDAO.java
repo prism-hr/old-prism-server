@@ -20,11 +20,12 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ReviewerDAO {
 
 	private final SessionFactory sessionFactory;
 
-	ReviewerDAO() {
+	public ReviewerDAO() {
 		this(null);
 	}
 
@@ -34,7 +35,6 @@ public class ReviewerDAO {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Reviewer> getReviewersDueNotification() {
 		return sessionFactory.getCurrentSession()
 				.createCriteria(Reviewer.class)
@@ -57,7 +57,6 @@ public class ReviewerDAO {
 		return (Reviewer) sessionFactory.getCurrentSession().createCriteria(Reviewer.class).add(Restrictions.eq("user", user)).uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Reviewer> getReviewersDueReminder() {
 		Date today = Calendar.getInstance().getTime();
 		ReminderInterval reminderInterval = (ReminderInterval)sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
@@ -82,7 +81,6 @@ public class ReviewerDAO {
         return reviewers;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Reviewer> getReviewersRequireAdminNotification() {
 		return sessionFactory.getCurrentSession()
 				.createCriteria(Reviewer.class)

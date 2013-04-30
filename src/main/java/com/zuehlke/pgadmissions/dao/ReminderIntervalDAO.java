@@ -11,7 +11,7 @@ public class ReminderIntervalDAO {
 
 	private final SessionFactory sessionFactory;
 
-	ReminderIntervalDAO() {
+	public ReminderIntervalDAO() {
 		this(null);
 	}
 

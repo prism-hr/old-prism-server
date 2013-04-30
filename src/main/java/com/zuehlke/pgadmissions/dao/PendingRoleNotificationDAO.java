@@ -10,11 +10,12 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class PendingRoleNotificationDAO {
 
 	private final SessionFactory sessionFactory;
 
-	PendingRoleNotificationDAO(){
+	public PendingRoleNotificationDAO(){
 		this(null);		
 	}
 	
@@ -23,14 +24,11 @@ public class PendingRoleNotificationDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<PendingRoleNotification> getAllPendingRoleNotifications() {
 		return sessionFactory.getCurrentSession().createCriteria(PendingRoleNotification.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	public void deletePendingRoleNotifcation(PendingRoleNotification pendingNotification) {
 		sessionFactory.getCurrentSession().delete(pendingNotification);
-		
 	}
-
 }

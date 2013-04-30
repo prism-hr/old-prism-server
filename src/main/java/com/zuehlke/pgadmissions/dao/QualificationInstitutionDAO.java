@@ -18,11 +18,12 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class QualificationInstitutionDAO {
 
     private final SessionFactory sessionFactory;
 
-    QualificationInstitutionDAO() {
+    public QualificationInstitutionDAO() {
         this(null);
     }
 
@@ -31,21 +32,18 @@ public class QualificationInstitutionDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    @SuppressWarnings("unchecked")
     public List<QualificationInstitution> getAllEnabledInstitutions() {
         return sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
                 .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("name"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<QualificationInstitution> getAllInstitutions() {
         return sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
                 .addOrder(Order.asc("name"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
     
-    @SuppressWarnings("unchecked")
     public List<QualificationInstitution> getAllInstitutionByName(String name) {
         return (List<QualificationInstitution>) sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
                 .add(Restrictions.eq("name", name))
@@ -61,7 +59,6 @@ public class QualificationInstitutionDAO {
      * @deprecated Use {@link #getEnableAndValiddInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String, String)} instead.
      */
     @Deprecated
-    @SuppressWarnings("unchecked")
     public List<QualificationInstitution> getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String domicileCode, String term) {
         return sessionFactory
                 .getCurrentSession()
@@ -86,7 +83,6 @@ public class QualificationInstitutionDAO {
      * 
      * @deprecated PRISM is switching back to a drop down element rather than autosuggest.
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public List<QualificationInstitution> getEnableAndValiddInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String domicileCode, String term) {        
         DetachedCriteria qReferenceInstitutionCriteria = DetachedCriteria.forClass(QualificationInstitutionReference.class, "qr");
@@ -104,7 +100,6 @@ public class QualificationInstitutionDAO {
         return qInstitutionsCriteria.getExecutableCriteria(sessionFactory.getCurrentSession()).list(); 
     }
     
-    @SuppressWarnings("unchecked")
     public List<QualificationInstitution> getEnabledInstitutionsByCountryCode(String domicileCode) {
         Conjunction conjunction = Restrictions.conjunction();
         conjunction.add(Restrictions.eq("enabled", true));

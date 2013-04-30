@@ -31,7 +31,7 @@ public class ScoringDefinitionParser {
 
 	private Unmarshaller unmarshaller;
 
-	private final static String MULFORMATTED_DATE_ERROR_MESSAGE_TEMPLATE = "Mulformated date %s. Expected format is yyyy-mm-dd, or \"TODAY\"";
+	private final static String MALFORMATTED_DATE_ERROR_MESSAGE_TEMPLATE = "Malformated date %s. Expected format is yyyy-mm-dd, or \"TODAY\"";
 
 	public ScoringDefinitionParser() throws Exception {
 		File file = new DefaultResourceLoader().getResource(
@@ -115,7 +115,7 @@ public class ScoringDefinitionParser {
 			throws ScoringDefinitionParseException {
 		if (date != null && !date.matches(DATE_FORMAT) && !(date.equals(TODAY))) {
 			throw new ScoringDefinitionParseException(String.format(
-					MULFORMATTED_DATE_ERROR_MESSAGE_TEMPLATE, date));
+					MALFORMATTED_DATE_ERROR_MESSAGE_TEMPLATE, date));
 		}
 	}
 

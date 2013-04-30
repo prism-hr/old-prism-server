@@ -297,6 +297,24 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isSubmitted() {
         return status != ApplicationFormStatus.UNSUBMITTED;
     }
+    
+    public boolean hasInterviewEvaluationComment() {
+        for (Comment comment : this.getApplicationComments()) {
+            if (comment instanceof InterviewEvaluationComment) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasReviewEvaluationComment() {
+        for (Comment comment : this.getApplicationComments()) {
+            if (comment instanceof ReviewEvaluationComment) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean isDecided() {
         if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {
@@ -564,13 +582,15 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return notificationRecords.remove(record);
     }
     
-    public void removeNotificationRecord(final NotificationType recordType) {
+    public void removeNotificationRecord(final NotificationType... recordTypes) {
         CollectionUtils.filter(notificationRecords, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
                 NotificationRecord existingRecord  = (NotificationRecord) object;
-                if (existingRecord.getNotificationType() == recordType) {
-                    return false;
+                for (NotificationType type : recordTypes) {
+                    if (type == existingRecord.getNotificationType()) {
+                        return false;
+                    }
                 }
                 return true;
             }

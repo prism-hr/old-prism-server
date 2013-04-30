@@ -35,8 +35,12 @@ public enum NotificationType {
     
     REVIEW_REMINDER,
     REVIEW_REQUEST,
+    REVIEW_EVALUATION_REMINDER,
     
     UPDATED_NOTIFICATION,
     
-    VALIDATION_REMINDER;
+    VALIDATION_REMINDER,
+    
+    @Deprecated
+    INTERVIEW_REMINDER;
 }

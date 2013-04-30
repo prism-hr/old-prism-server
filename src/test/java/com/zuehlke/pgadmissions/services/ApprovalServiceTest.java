@@ -367,7 +367,6 @@ public class ApprovalServiceTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
         mailSendingServiceMock.scheduleSupervisionConfirmedNotification(applicationForm);
-        mailSendingServiceMock.scheduleApprovalRequest(applicationForm);
         
         EasyMock.replay(commentDAOMock, userServiceMock, mailSendingServiceMock);
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);

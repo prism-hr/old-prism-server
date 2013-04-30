@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,34 +26,46 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
 @Transactional
 public class RegistrationService {
 
+    private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
+
 	private final EncryptionUtils encryptionUtils;
+	
 	private final RoleDAO roleDAO;
+	
 	private final UserDAO userDAO;
 
 	private final InterviewerDAO interviewerDAO;
+	
 	private final ReviewerDAO reviewerDAO;
+	
 	private final SupervisorDAO supervisorDAO;
+	
 	private final RefereeDAO refereeDAO;
 	
 	private final MailSendingService mailService;
 
-	private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
-
-
+	private final String host;
+	
 	public RegistrationService() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO,
-			InterviewerDAO interviewerDAO, ReviewerDAO reviewerDAO, SupervisorDAO supervisorDAO, RefereeDAO refereeDAO,
-			final MailSendingService mailService) {
+	public RegistrationService(
+	        final EncryptionUtils encryptionUtils, 
+	        final RoleDAO roleDAO, 
+	        final UserDAO userDAO,
+			final InterviewerDAO interviewerDAO, 
+			final ReviewerDAO reviewerDAO, 
+			final SupervisorDAO supervisorDAO, 
+			final RefereeDAO refereeDAO,
+			final MailSendingService mailService,
+			@Value("${application.host}") final String host) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
@@ -61,6 +74,7 @@ public class RegistrationService {
 		this.mailService = mailService;
 		this.supervisorDAO = supervisorDAO;
 		this.refereeDAO = refereeDAO;
+		this.host = host;
 	}
 
 	public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, String queryString) {
@@ -139,7 +153,7 @@ public class RegistrationService {
 	Map<String, Object> populateModelForRegistrationConfirmation(RegisteredUser newUser) {
 		Map<String, Object> model = modelMap();
 		model.put("user", newUser);
-		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("host", host);
 		model.put("action", getRegistrationConfirmationAction(newUser));
 		return model;
 	}

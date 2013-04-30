@@ -12,6 +12,7 @@ import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
@@ -30,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 public abstract class AbstractMailSendingService {
 
@@ -48,6 +48,8 @@ public abstract class AbstractMailSendingService {
     
     protected final RefereeDAO refereeDAO;
     
+    protected final String host;
+    
     protected class UpdateDigestNotificationClosure implements Closure {
         private final DigestNotificationType type;
 
@@ -61,9 +63,15 @@ public abstract class AbstractMailSendingService {
         }
     }
     
-    public AbstractMailSendingService(final MailSender mailSender, final ApplicationFormDAO formDAO,
-            final ConfigurationService configurationService, final UserDAO userDAO, final RoleDAO roleDAO,
-            final RefereeDAO refereeDAO, final EncryptionUtils encryptionUtils) {
+    public AbstractMailSendingService(
+            final MailSender mailSender, 
+            final ApplicationFormDAO formDAO,
+            final ConfigurationService configurationService, 
+            final UserDAO userDAO, 
+            final RoleDAO roleDAO,
+            final RefereeDAO refereeDAO, 
+            final EncryptionUtils encryptionUtils,
+            @Value("${application.host}") final String host) {
         this.mailSender = mailSender;
         this.applicationDAO = formDAO;
         this.configurationService = configurationService;
@@ -71,6 +79,7 @@ public abstract class AbstractMailSendingService {
         this.roleDAO = roleDAO;
         this.encryptionUtils = encryptionUtils;
         this.refereeDAO = refereeDAO;
+        this.host = host;
     }
     
     protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
@@ -223,6 +232,6 @@ public abstract class AbstractMailSendingService {
     }
     
     protected String getHostName() {
-    	return Environment.getInstance().getApplicationHostName();
+    	return host;
     }
 }

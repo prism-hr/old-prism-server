@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.UserFactory;
 
 @Service("userService")
 @Transactional
@@ -417,20 +416,6 @@ public class UserService {
         userDAO.save(user);
     }
     
-    public void sendEmailToDelegateAndRegisterReminder(ApplicationForm applicationForm, RegisteredUser delegate) {
-//    	NotificationRecord delegateReminder = new NotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
-//    	delegateReminder.setApplication(applicationForm);
-//    	delegateReminder.setUser(delegate);
-//    	delegateReminder.setDate(new Date());
-//    	applicationForm.setSuppressStateChangeNotifications(true);
-//    	applicationForm.addNotificationRecord(delegateReminder);
-//    	 try {
-//    		 mailService.scheduleInterviewAdministrationRequest(applicationForm);
-//         } catch (Exception e) {
-//             log.warn("error while sending email", e);
-//         }
-    }
-
     public void resetDigestNotificationsForAllUsers() {
         userDAO.resetDigestNotificationsForAllUsers();
     }

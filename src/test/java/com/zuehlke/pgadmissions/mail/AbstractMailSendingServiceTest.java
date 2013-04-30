@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static org.easymock.EasyMock.createMock;
-
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,6 +22,8 @@ import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class AbstractMailSendingServiceTest {
+    
+    private static final String HOST = "http://localhost:8080";
 
     private class TestableAbstractMailSendingService extends AbstractMailSendingService {
         public TestableAbstractMailSendingService(
@@ -34,7 +34,7 @@ public class AbstractMailSendingServiceTest {
                 final RoleDAO roleDAO, 
                 final RefereeDAO refereeDAO,
                 final EncryptionUtils encryptionUtils) {
-            super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils);
+            super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, HOST);
         }
     }
     
@@ -56,14 +56,14 @@ public class AbstractMailSendingServiceTest {
     
     @Before
     public void setup() {
-        mockMailSender = createMock(MailSender.class);
-        configurationServiceMock = createMock(ConfigurationService.class);
-        applicationFormDAOMock = createMock(ApplicationFormDAO.class);
-        userDAOMock = createMock(UserDAO.class);
-        roleDAOMock = createMock(RoleDAO.class);
-        refereeDAOMock = createMock(RefereeDAO.class);
-        encryptionUtilsMock = createMock(EncryptionUtils.class);
-        userDAOMock = createMock(UserDAO.class);
+        mockMailSender = EasyMock.createMock(MailSender.class);
+        configurationServiceMock = EasyMock.createMock(ConfigurationService.class);
+        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
+        userDAOMock = EasyMock.createMock(UserDAO.class);
+        roleDAOMock = EasyMock.createMock(RoleDAO.class);
+        refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
+        encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
+        userDAOMock = EasyMock.createMock(UserDAO.class);
         service = new TestableAbstractMailSendingService(
                 mockMailSender, 
                 applicationFormDAOMock, 

@@ -91,7 +91,6 @@ public class ApprovalService {
         Boolean confirmed = confirmSupervisionDTO.getConfirmedSupervision();
 
         supervisor.setConfirmedSupervision(confirmed);
-        mailSendingService.scheduleApprovalRequest(form);
 
         if (BooleanUtils.isTrue(confirmed)) {
             approvalRound.setProjectDescriptionAvailable(true);
@@ -207,18 +206,9 @@ public class ApprovalService {
     }
 
     private void resetNotificationRecords(ApplicationForm form) {
-        NotificationRecord restartRequestNotification = form.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
-        if (restartRequestNotification != null) {
-            form.removeNotificationRecord(restartRequestNotification);
-        }
-        NotificationRecord restartRequestReminder = form.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
-        if (restartRequestReminder != null) {
-            form.removeNotificationRecord(restartRequestReminder);
-        }
-        NotificationRecord adminAndAproverNotificationRecord = form.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
-        if (adminAndAproverNotificationRecord != null) {
-            form.removeNotificationRecord(adminAndAproverNotificationRecord);
-        }
+        form.removeNotificationRecord(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION,
+                NotificationType.APPROVAL_RESTART_REQUEST_REMINDER,
+                NotificationType.APPROVAL_NOTIFICATION);
     }
 
     public void requestApprovalRestart(ApplicationForm application, RegisteredUser approver, Comment comment) {

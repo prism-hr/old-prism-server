@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -118,7 +119,7 @@ public class RefereeServiceTest {
         programmeDetails.setId(1);
         form.setProgrammeDetails(programmeDetails);
         
-        mailServiceMock.sendReferenceRequest(referee, form);
+        mailServiceMock.sendReferenceRequest(asList(referee), form);
 
         EasyMock.replay(mailServiceMock);
 

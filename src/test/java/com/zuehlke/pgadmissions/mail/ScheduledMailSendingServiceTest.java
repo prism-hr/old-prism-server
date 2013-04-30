@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TAS
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
-import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -51,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -66,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -89,7 +90,6 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
@@ -122,6 +122,10 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     private RoleDAO roleDAOMock;
     
     private EncryptionUtils encryptionUtilsMock;
+    
+    private static final String HOST = "http://localhost:8080";
+    
+    private static final String SERVICE_OFFER = "5 working days";
 
 	@Before
 	public void prepare() {
@@ -129,7 +133,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		commentDAOMock = createMock(CommentDAO.class);
 		supervisorDAOMock = createMock(SupervisorDAO.class);
 		stageDurationDAOMock = createMock(StageDurationDAO.class);
-		reviewerDAOMock = createMock(ReviewerDAO.class);
 		applicationsServiceMock = createMock(ApplicationsService.class);
 		commentFactoryMock = createMock(CommentFactory.class);
 		commentServiceMock = createMock(CommentService.class);
@@ -147,7 +150,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				commentDAOMock,
 				supervisorDAOMock,
 				stageDurationDAOMock,
-				reviewerDAOMock,
 				applicationsServiceMock,
 				configurationServiceMock,
 				commentFactoryMock,
@@ -158,7 +160,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				userServiceMock,
 				userDAOMock, 
 				roleDAOMock,
-		        encryptionUtilsMock);
+		        encryptionUtilsMock,
+		        HOST,
+		        SERVICE_OFFER);
 	}
 	
 	@Test
@@ -177,7 +181,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				.build();
 		Map<String, Object> model1 = new HashMap<String, Object>();
 		model1.put("user", user1);
-		model1.put("host", getInstance().getApplicationHostName());
+		model1.put("host", HOST);
 		Map<String, Object> model2 = new HashMap<String, Object>();
 		model2.putAll(model1);
 		model2.put("user", user2);
@@ -239,6 +243,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		assertModelEquals(model3, messages.get(2).getModel());
 	}
 	
+	@Ignore
     @Test
     public void shouldScheduleApprovalReminder() {
 
@@ -257,7 +262,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
         applicationFormDAOMock.save(form);
         replay(stageDurationDAOMock, applicationFormDAOMock);
-        service.scheduleApprovalReminder();
+        service.scheduleApprovalRequestAndReminder();
         verify(stageDurationDAOMock, applicationFormDAOMock);
 
         assertEquals(approver1.getDigestNotificationType(), DigestNotificationType.TASK_REMINDER);
@@ -295,6 +300,44 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		assertEquals(interviewerUser1.getDigestNotificationType(),  DigestNotificationType.TASK_NOTIFICATION);
 		assertEquals(interviewerUser2.getDigestNotificationType(),  DigestNotificationType.TASK_NOTIFICATION);
 	}
+    
+    @Test
+    public void shouldScheduleInterviewFeedbackRequestAndReminderforDifferentApplications() {
+        RegisteredUser interviewerUser1 = new RegisteredUserBuilder().id(564).build();
+        RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(565).build();
+        Interviewer interviewer1 = new InterviewerBuilder().user(interviewerUser1).build();
+        Interviewer interviewer2 = new InterviewerBuilder().user(interviewerUser2).build();
+        
+        ApplicationForm form1 = getSampleApplicationForm();
+        form1.setLatestInterview(new InterviewBuilder().interviewers(interviewer1).build());
+        
+        ApplicationForm form2 = getSampleApplicationForm();
+        form2.setId(8459);
+        form2.setLatestInterview(new InterviewBuilder().interviewers(interviewer2).build());
+        
+        NotificationRecord record = new NotificationRecordBuilder().id(1)
+                .notificationType(NotificationType.INTERVIEW_FEEDBACK_REQUEST)
+                .build();
+        record.setApplication(form1);
+        applicationFormDAOMock.save(form1);
+        applicationFormDAOMock.save(form2);
+        EasyMock.expect(
+                applicationFormDAOMock.getApplicationsDueInterviewFeedbackNotification())
+                .andReturn(asList(form1));
+        EasyMock.expect(
+                applicationFormDAOMock.getApplicationsDueUserReminder(NotificationType.INTERVIEW_FEEDBACK_REMINDER, ApplicationFormStatus.INTERVIEW))
+                .andReturn(asList(form1, form2));
+        
+        userDAOMock.save(interviewerUser1);
+        userDAOMock.save(interviewerUser2);
+        
+        replay(applicationFormDAOMock, userDAOMock);
+        service.scheduleInterviewFeedbackRequestAndReminder();
+        verify(applicationFormDAOMock, userDAOMock);
+        
+        assertEquals(interviewerUser1.getDigestNotificationType(),  DigestNotificationType.TASK_NOTIFICATION);
+        assertEquals(interviewerUser2.getDigestNotificationType(),  DigestNotificationType.TASK_REMINDER);
+    }
 	
 	@Test
 	public void shouldScheduleInterviewFeedbackEvaluationReminderIfAllInterviewersHaveProvidedFeedback() {
@@ -680,22 +723,23 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	       service = new ScheduledMailSendingService(
 	               mockMailSender,
 	               applicationFormDAOMock,
-	                notificationRecordDAOMock,
-	                commentDAOMock,
-	                supervisorDAOMock,
-	                stageDurationDAOMock,
-	                reviewerDAOMock,
-	                applicationsServiceMock,
-	                configurationServiceMock,
-	                commentFactoryMock,
-	                commentServiceMock,
-	                pdfAttachmentInputSourceFactoryMock,
-	                pdfDocumentBuilderMock,
-	                refereeDAOMock,
-	                userServiceMock,
-	                userDAOMock, 
-	                roleDAOMock,
-	                encryptionUtilsMock) {
+	               notificationRecordDAOMock,
+	               commentDAOMock,
+	               supervisorDAOMock,
+	               stageDurationDAOMock,
+	               applicationsServiceMock,
+	               configurationServiceMock,
+	               commentFactoryMock,
+	               commentServiceMock,
+	               pdfAttachmentInputSourceFactoryMock,
+	               pdfDocumentBuilderMock,
+	               refereeDAOMock,
+	               userServiceMock,
+	               userDAOMock, 
+	               roleDAOMock,
+	               encryptionUtilsMock,
+	               HOST,
+	               SERVICE_OFFER) {
 	           @Override
 	           protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
 	               return null;
@@ -711,7 +755,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		model.put("referee", referee);
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
-		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("host", HOST);
 		
 		String subjectToReturn="REMINDER: "+SAMPLE_APPLICANT_NAME+" "+SAMPLE_APPLICANT_SURNAME+" "
 		+"Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request";
@@ -758,7 +802,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         model.put("admin", form.getProgram().getAdministrators().get(0));
         model.put("program", form.getProgram());
         model.put("newRoles", "Administrator for MRes Security Science");
-        model.put("host", Environment.getInstance().getApplicationHostName());
+        model.put("host", HOST);
 
         expect(userDAOMock.getUsersWithPendingRoleNotifications()).andReturn(asList(user));
         String subjectToReturn = "Invitation to Join UCL Prism";
@@ -810,9 +854,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("application", form);
 		model.put("sender", form.getAdminRequestedRegistry());
-		model.put("host", getInstance().getApplicationHostName());
+		model.put("host", HOST);
 		model.put("recipients", "Ivo, Ektor");
-		model.put("admissionsValidationServiceLevel", Environment.getInstance().getAdmissionsValidationServiceLevel());
+		model.put("admissionsValidationServiceLevel", SERVICE_OFFER);
 		
 		expect(applicationsServiceMock.getApplicationsDueRegistryNotification()).andReturn(asList(form));
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
@@ -918,29 +962,62 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         assertEquals(reviewerUser2.getDigestNotificationType(),  DigestNotificationType.TASK_NOTIFICATION);
 	}
  
-	@Ignore
 	@Test
-	public void shouldScheduleReviewEvaluationReminder() {
+	public void shouldScheduleReviewEvaluationReminderIfAllReviewersHaveProvidedFeedback() {
+	    RegisteredUser admin = new RegisteredUserBuilder().build();
 		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().build();
 		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().build();
-		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).build();
-		Reviewer reviewer2 = new ReviewerBuilder().user(reviewerUser2).id(1).build();
+		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).review(new ReviewComment()).build();
+		Reviewer reviewer2 = new ReviewerBuilder().user(reviewerUser2).id(2).review(new ReviewComment()).build();
 		
-		expect(reviewerDAOMock.getReviewersDueReminder()).andReturn(asList(reviewer1, reviewer2));
+		Program program = new ProgramBuilder().administrators(admin).build();
+
+		ApplicationForm form = getSampleApplicationForm();
+		form.setProgram(program);
+        form.setLatestReviewRound(new ReviewRoundBuilder().reviewers(reviewer1, reviewer2).build());
 		
+        NotificationRecord record = new NotificationRecordBuilder().id(1).notificationType(NotificationType.REVIEW_EVALUATION_REMINDER).build();
+        record.setApplication(form);
+        
+        EasyMock.expect(applicationFormDAOMock.getApplicationsDueUserReminder(NotificationType.REVIEW_EVALUATION_REMINDER, ApplicationFormStatus.REVIEW)).andReturn(asList(form));
+        applicationFormDAOMock.save(form);
+        
+		EasyMock.replay(applicationFormDAOMock);
 		
-		replay(reviewerDAOMock);
 		service.scheduleReviewEvaluationReminder();
-		verify(reviewerDAOMock);
 		
-		assertNotNull(reviewer1.getLastNotified());
-		assertNotNull(reviewer2.getLastNotified());
+		verify(applicationFormDAOMock);
 		
-		assertEquals(reviewerUser1.getDigestNotificationType(),  DigestNotificationType.TASK_REMINDER);
-        assertEquals(reviewerUser2.getDigestNotificationType(),  DigestNotificationType.TASK_REMINDER);
+		assertEquals(DigestNotificationType.TASK_REMINDER, admin.getDigestNotificationType());
 	}
 	
-	
+    @Test
+    public void shouldNotScheduleReviewEvaluationReminderIfAllReviewersHaveProvidedFeedback() {
+        RegisteredUser admin = new RegisteredUserBuilder().build();
+        RegisteredUser reviewerUser1 = new RegisteredUserBuilder().build();
+        RegisteredUser reviewerUser2 = new RegisteredUserBuilder().build();
+        Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).review(new ReviewComment()).build();
+        Reviewer reviewer2 = new ReviewerBuilder().user(reviewerUser2).id(2).build();
+
+        Program program = new ProgramBuilder().administrators(admin).build();
+
+        ApplicationForm form = getSampleApplicationForm();
+        form.setProgram(program);
+        form.setLatestReviewRound(new ReviewRoundBuilder().reviewers(reviewer1, reviewer2).build());
+
+        NotificationRecord record = new NotificationRecordBuilder().id(1).notificationType(NotificationType.REVIEW_EVALUATION_REMINDER).build();
+        record.setApplication(form);
+
+        EasyMock.expect(applicationFormDAOMock.getApplicationsDueUserReminder(NotificationType.REVIEW_EVALUATION_REMINDER, ApplicationFormStatus.REVIEW)).andReturn(asList(form));
+        
+        EasyMock.replay(applicationFormDAOMock);
+
+        service.scheduleReviewEvaluationReminder();
+
+        verify(applicationFormDAOMock);
+
+        assertEquals(DigestNotificationType.NONE, admin.getDigestNotificationType());
+    }
 	
 	@Test
 	public void shouldScheduleConfirmSupervisionReminder() {

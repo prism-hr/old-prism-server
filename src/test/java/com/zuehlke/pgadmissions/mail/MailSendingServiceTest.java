@@ -10,7 +10,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWO
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_NOTIFICATION;
-import static com.zuehlke.pgadmissions.utils.Environment.getInstance;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -67,7 +66,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 public class MailSendingServiceTest {
 	
@@ -87,6 +85,12 @@ public class MailSendingServiceTest {
 
 	protected static final String SAMPLE_APPLICANT_EMAIL_ADDRESS = "capatonda@mail.com";
 
+	protected static final String HOST = "http://localhost:8080";
+	
+	protected static final String UCL_PROSPECTUS_LINK = "http://www.ucl.ac.uk/prospective-students/graduate-study";
+	
+	protected static final String SERVICE_OFFER = "5 working days";
+	
 	protected MailSendingService service;
 	
 	protected MailSender mockMailSender;
@@ -112,7 +116,10 @@ public class MailSendingServiceTest {
 		mockMailSender = createMock(MailSender.class);
 		configurationServiceMock = createMock(ConfigurationService.class);
 		applicationFormDAOMock = createMock(ApplicationFormDAO.class);
-		service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock);
+		service = new MailSendingService(mockMailSender, 
+		        configurationServiceMock, applicationFormDAOMock, 
+		        userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock,
+		        HOST, SERVICE_OFFER, UCL_PROSPECTUS_LINK);
 	}
 	
 	@Test
@@ -125,7 +132,7 @@ public class MailSendingServiceTest {
 		model1.put("user", user1);
 		model1.put("message", messageCode);
 		model1.put("time", timestamp);
-		model1.put("host", getInstance().getApplicationHostName());
+		model1.put("host", HOST);
 		Map<String, Object> model2 =  new HashMap<String, Object>();
 		model2.putAll(model1);
 		model2.put("user", user2);
@@ -156,18 +163,6 @@ public class MailSendingServiceTest {
 		assertModelEquals(model2, message.getModel());
 	}
 	
-	@Test
-    public void shouldScheduleApprovalRequest() {
-        RegisteredUser approver1 = new RegisteredUserBuilder().build();
-        RegisteredUser approver2 = new RegisteredUserBuilder().build();
-        ApplicationForm form = getSampleApplicationForm();
-        form.getProgram().setApprovers(asList(approver1, approver2));
-        
-        service.scheduleApprovalRequest(form);
-        
-        assertEquals(approver1.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-        assertEquals(approver2.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-    }
 	
 	@Test
 	public void sendImportErrorMessageShouldSuccessfullySendMessage() throws Exception {
@@ -179,7 +174,7 @@ public class MailSendingServiceTest {
 		model1.put("user", user1);
 		model1.put("message", messageCode);
 		model1.put("time", timestamp);
-		model1.put("host", getInstance().getApplicationHostName());
+		model1.put("host", HOST);
 		Map<String, Object> model2 =  new HashMap<String, Object>();
 		model2.putAll(model1);
 		model2.put("user", user2);
@@ -282,7 +277,7 @@ public class MailSendingServiceTest {
 	
 	@Test
 	public void sendRefereeRequestShouldSuccessfullySendMessage() throws Exception {
-	    service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock) {
+	    service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock, HOST, SERVICE_OFFER, UCL_PROSPECTUS_LINK) {
 	        @Override
 	        protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
 	            return null;
@@ -299,7 +294,7 @@ public class MailSendingServiceTest {
 		model.put("applicant", form.getApplicant());
 		model.put("application", form);
 		model.put("programme", form.getProgrammeDetails());
-		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("host", HOST);
 		
 		String subjectToReturn=SAMPLE_APPLICANT_NAME+" "+SAMPLE_APPLICANT_SURNAME+" "
 		+"Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request";
@@ -312,7 +307,7 @@ public class MailSendingServiceTest {
 		
 		
 		replay(mockMailSender);
-		service.sendReferenceRequest(referee, form);
+		service.sendReferenceRequest(asList(referee), form);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
@@ -326,7 +321,7 @@ public class MailSendingServiceTest {
 	
 	@Test
 	public void sendRefereeRequestShouldSuccessfullySendMessageWithNoApplicant() throws Exception {
-	    service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock) {
+	    service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock, encryptionUtilsMock, HOST, SERVICE_OFFER, UCL_PROSPECTUS_LINK) {
             @Override
             protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
                 return null;
@@ -344,7 +339,7 @@ public class MailSendingServiceTest {
 		model.put("applicant", form.getApplicant());
 		model.put("application", form);
 		model.put("programme", form.getProgrammeDetails());
-		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("host", HOST);
 		
 		expect(mockMailSender.resolveSubject(REFEREE_NOTIFICATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE))
 		.andReturn("[2] [3] Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request");
@@ -354,7 +349,7 @@ public class MailSendingServiceTest {
 		
 		
 		replay(mockMailSender);
-		service.sendReferenceRequest(referee, form);
+		service.sendReferenceRequest(asList(referee), form);
 		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
@@ -373,7 +368,7 @@ public class MailSendingServiceTest {
 		Map<String, Object> model = new HashMap<String, Object>();
         model.put("user", user);
         model.put("newPassword", newPassword);
-        model.put("host", Environment.getInstance().getApplicationHostName());
+        model.put("host", HOST);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
@@ -399,7 +394,7 @@ public class MailSendingServiceTest {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("user", user);
 		model.put("action", action);
-		model.put("host", getInstance().getApplicationHostName());
+		model.put("host", HOST);
 		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
@@ -479,8 +474,8 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
@@ -524,8 +519,8 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 		model.put("reason", form.getRejection().getRejectionReason());
 		
@@ -571,11 +566,11 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 		model.put("reason", form.getRejection().getRejectionReason());
-		model.put("prospectusLink",  Environment.getInstance().getUCLProspectusLink());
+		model.put("prospectusLink",  UCL_PROSPECTUS_LINK);
 		
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
 		
@@ -610,8 +605,8 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
@@ -658,8 +653,8 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 		model.put("reason", form.getRejection().getRejectionReason());
 		
@@ -708,11 +703,11 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 		model.put("reason", form.getRejection().getRejectionReason());
-		model.put("prospectusLink",  Environment.getInstance().getUCLProspectusLink());
+		model.put("prospectusLink",  UCL_PROSPECTUS_LINK);
 		
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
 		
@@ -750,8 +745,8 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
@@ -798,8 +793,8 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 		model.put("reason", form.getRejection().getRejectionReason());
 		
@@ -848,11 +843,11 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 		model.put("reason", form.getRejection().getRejectionReason());
-		model.put("prospectusLink",  Environment.getInstance().getUCLProspectusLink());
+		model.put("prospectusLink",  UCL_PROSPECTUS_LINK);
 		
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
 		
@@ -892,7 +887,7 @@ public class MailSendingServiceTest {
 		model1.put("interviewer", interviewer1);
 		model1.put("application", form);
 		model1.put("applicant", form.getApplicant());
-		model1.put("host", getInstance().getApplicationHostName());
+		model1.put("host", HOST);
 		Map<String, Object> model2 =  new HashMap<String, Object>();
 		model2.putAll(model1);
 		model2.put("interviewer", interviewer2);
@@ -937,8 +932,8 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
@@ -985,8 +980,8 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 		model.put("reason", form.getRejection().getRejectionReason());
 		
@@ -1035,11 +1030,11 @@ public class MailSendingServiceTest {
 		model.put("application", form);
 		model.put("applicant", form.getApplicant());
 		model.put("registryContacts", registryUsers);
-		model.put("host", getInstance().getApplicationHostName());
-		model.put("admissionOfferServiceLevel", getInstance().getAdmissionsOfferServiceLevel());
+		model.put("host", HOST);
+		model.put("admissionOfferServiceLevel", SERVICE_OFFER);
 		model.put("previousStage", form.getOutcomeOfStage());
 		model.put("reason", form.getRejection().getRejectionReason());
-		model.put("prospectusLink",  Environment.getInstance().getUCLProspectusLink());
+		model.put("prospectusLink",  UCL_PROSPECTUS_LINK);
 		
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
 		

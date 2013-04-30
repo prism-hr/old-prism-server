@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
@@ -44,14 +43,24 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class RegistrationServiceTest {
 
 	private RegistrationService registrationService;
+	
 	private EncryptionUtils encryptionUtilsMock;
+	
 	private RoleDAO roleDAOMock;
+	
 	private UserDAO userDAOMock;
+	
 	private InterviewerDAO interviewerDAOMock;
-    private ReviewerDAO reviewerDAOMock;
+    
+	private ReviewerDAO reviewerDAOMock;
+    
     private SupervisorDAO supervisorDAOMock;
+    
     private RefereeDAO refereeDAOMock;
+    
     private MailSendingService mailServiceMock;
+    
+    private static final String HOST = "http://localhost:8080";
 	
 	@Test
 	public void shouldHashPasswordsAndSetAccountDataAndAndQueryString() {
@@ -120,7 +129,7 @@ public class RegistrationServiceTest {
                         new PendingRoleNotificationBuilder().id(2).notificationDate(new Date())
                                 .build()).build();
         registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
-                 interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock);
+                 interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST);
         registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
         Assert.assertTrue(databaseUser.getPendingRoleNotifications().size() > 0);
         for (PendingRoleNotification roleNotification : databaseUser.getPendingRoleNotifications()) {
@@ -183,7 +192,7 @@ public class RegistrationServiceTest {
 
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, 
-				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock) {
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -214,7 +223,7 @@ public class RegistrationServiceTest {
 
 		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, 
-				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock) {
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST) {
 
 			@Override
 			public RegisteredUser processPendingSuggestedUser(RegisteredUser pendingSuggestedUser ) {
@@ -244,7 +253,7 @@ public class RegistrationServiceTest {
 		expectedRecord.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, 
-				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock) {
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -277,7 +286,7 @@ public class RegistrationServiceTest {
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").build();
 
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
-				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock) {
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -335,10 +344,10 @@ public class RegistrationServiceTest {
 	    supervisorDAOMock = EasyMock.createMock(SupervisorDAO.class);
 	    refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
 	    
-		encryptionUtilsMock = createMock(EncryptionUtils.class);
-		mailServiceMock = createMock(MailSendingService.class);
+		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
+		mailServiceMock = EasyMock.createMock(MailSendingService.class);
 		
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
-				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock);
+				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST);
 	}
 }

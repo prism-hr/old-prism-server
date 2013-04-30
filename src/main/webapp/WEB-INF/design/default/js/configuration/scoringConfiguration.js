@@ -29,7 +29,7 @@ $(document).ready(function() {
 		    success : function(data) {
 		    	$("#scoringConfiguration").parent().find('.alert-error').remove();
 		    	if (data.scoringContent != null) {
-		    		$("#scoringConfigurationContent").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> ' + data.scoringContent + ' </div>');
+		    		$("#scoringConfigurationContent").parent().append('<div class="alert alert-error"><p><i class="icon-warning-sign"></i><b>There is an error in your XML:</b></p>' + data.scoringContent + ' </div>');
 				}
 		    	if (data.programCode != null) {
 		    		$("#programSelect").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> ' + data.programCode + ' </div>');

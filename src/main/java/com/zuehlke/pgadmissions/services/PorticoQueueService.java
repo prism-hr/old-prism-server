@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.jms;
+package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 

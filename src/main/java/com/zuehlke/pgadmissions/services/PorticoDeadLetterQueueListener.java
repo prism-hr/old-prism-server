@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.jms;
+package com.zuehlke.pgadmissions.services;
 
 import javax.jms.JMSException;
 import javax.jms.Message;

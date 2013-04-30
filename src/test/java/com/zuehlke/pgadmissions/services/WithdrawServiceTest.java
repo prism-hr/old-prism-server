@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 public class WithdrawServiceTest {

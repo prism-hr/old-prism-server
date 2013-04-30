@@ -22,9 +22,6 @@ public class StateChangeComment extends Comment {
 	@Column(name="next_status")
 	private ApplicationFormStatus nextStatus = null;
 	
-	@Transient
-	private Boolean confirmNextStage;
-	
 	public CommentType getType() {
 		return type;
 	}
@@ -40,14 +37,4 @@ public class StateChangeComment extends Comment {
 	public void setNextStatus(ApplicationFormStatus nextStatus) {
 		this.nextStatus = nextStatus;
 	}
-
-	public Boolean getConfirmNextStage() {
-		return confirmNextStage;
-	}
-
-	public void setConfirmNextStage(Boolean confirmNextStage) {
-		this.confirmNextStage = confirmNextStage;
-	}
-	
-	
 }

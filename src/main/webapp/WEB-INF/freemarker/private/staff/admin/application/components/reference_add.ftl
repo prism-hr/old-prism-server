@@ -97,6 +97,7 @@
 
 	
 <#assign scores = refereesAdminEditDTO.scores>
+<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
 <#if (scores)?has_content>
 <div class="row-group">
     <div id="scoring-questions_${encRefereeId}">

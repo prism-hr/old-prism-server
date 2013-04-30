@@ -168,6 +168,7 @@ public class ApprovalController {
 			CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
 			List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
 			refereesAdminEditDTO.getScores().addAll(scores);
+			refereesAdminEditDTO.setAlert(customQuestion.getAlert());
 		}
 		return refereesAdminEditDTO;
 	}

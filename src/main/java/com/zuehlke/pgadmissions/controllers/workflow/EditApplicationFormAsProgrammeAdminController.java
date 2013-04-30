@@ -217,6 +217,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 			CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
 			List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
 			refereesAdminEditDTO.getScores().addAll(scores);
+			refereesAdminEditDTO.setAlert(customQuestion.getAlert());
 		}
 		return refereesAdminEditDTO;
 	}
@@ -257,7 +258,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 	public RegisteredUser getUser() {
 		return getCurrentUser();
 	}
-	
+
 	private void createScoresWithQuestion(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
 		List<Score> scores = refereesAdminEditDTO.getScores();
 		if (scores != null) {

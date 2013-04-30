@@ -27,6 +27,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.Matcher;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -1257,14 +1258,15 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetApplicationsDueDueApprovalReminder() {
+	    DateTime oldDate = new DateTime(2000,1, 1, 00, 0);
         ApplicationForm applicationForm = new ApplicationFormBuilder()
                 .program(program)
                 .applicant(user)
                 .status(ApplicationFormStatus.APPROVAL)
                 .notificationRecords(
-                        new NotificationRecordBuilder().notificationDate(new Date())
+                        new NotificationRecordBuilder().notificationDate(oldDate.toDate())
                                 .notificationType(NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION).build(),
-                        new NotificationRecordBuilder().notificationDate(new Date())
+                        new NotificationRecordBuilder().notificationDate(oldDate.toDate())
                                 .notificationType(NotificationType.APPROVAL_REMINDER).build())
                 .build();
 

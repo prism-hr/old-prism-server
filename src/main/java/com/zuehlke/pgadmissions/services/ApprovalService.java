@@ -152,6 +152,7 @@ public class ApprovalService {
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
+        form.setPendingApprovalRestart(false);
         form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
         
         approvalRound.setApplication(form);
@@ -221,6 +222,7 @@ public class ApprovalService {
         if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
             throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
         }
+        application.removeNotificationRecord(NotificationType.APPROVAL_REMINDER, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
         restartApprovalStage(application, approver, comment);
     }
 

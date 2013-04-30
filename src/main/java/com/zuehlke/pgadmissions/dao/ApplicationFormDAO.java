@@ -218,9 +218,15 @@ public class ApplicationFormDAO {
 	}
 
 	public List<ApplicationForm> getApplicationsDueApprovalReminder() {
+	    Date today = Calendar.getInstance().getTime();
+        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
+                .createCriteria(ReminderInterval.class).uniqueResult();
+        Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+       
 	    DetachedCriteria approvalNotificationCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", NotificationType.APPROVAL_REMINDER))
+				.add(Restrictions.le("notificationRecord.date", subtractInterval))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		return sessionFactory
@@ -330,6 +336,7 @@ public class ApplicationFormDAO {
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.or(Restrictions.isNull("pendingApprovalRestart"), Restrictions.eq("pendingApprovalRestart", false)))
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
 				.add(Subqueries.notExists(mvoedToApprovalNotificationCriteria.setProjection(Projections
 						.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)

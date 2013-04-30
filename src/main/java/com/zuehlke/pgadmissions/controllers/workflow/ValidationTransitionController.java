@@ -141,6 +141,7 @@ public class ValidationTransitionController extends StateTransitionController {
                 applicationsService.save(application);
             }
 
+            validationComment.setDate(new Date());
             commentService.save(validationComment);
 
             if (validationComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {

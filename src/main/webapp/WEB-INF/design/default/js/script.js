@@ -810,9 +810,15 @@ function guid() {
 }
 	
 $('button.btn.btn-primary').live('click', function() {
-	var section = $(this).closest('section.form-rows');
+	var section;
 	
-	if (section.length == 1) {
+	if ($(this).hasClass('btn-large')) {
+		section = $('section.form-rows');
+	} else {
+		section = $(this).closest('section.form-rows');
+	}
+	
+	if (section.length >= 1) {
 		
 		if (section[0].id == "") {
 			section[0].id = guid();

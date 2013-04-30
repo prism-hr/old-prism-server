@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.jms;
+package com.zuehlke.pgadmissions.services;
 
 import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.eq;
@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.services.PorticoQueueListener;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferErrorBuilder;

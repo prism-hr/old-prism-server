@@ -29,9 +29,9 @@ xmlns:oxm="http://www.springframework.org/schema/oxm"
         <property name="jndiName" value="java:jboss/exported/jms/queue/DLQ"/>
     </bean>
     
-    <bean id="porticoQueueListener" class="com.zuehlke.pgadmissions.jms.PorticoQueueListener" />
+    <bean id="porticoQueueListener" class="com.zuehlke.pgadmissions.services.PorticoQueueListener" />
 
-    <bean id="porticoDeadLetterQueueListener" class="com.zuehlke.pgadmissions.jms.PorticoDeadLetterQueueListener" />
+    <bean id="porticoDeadLetterQueueListener" class="com.zuehlke.pgadmissions.services.PorticoDeadLetterQueueListener" />
     
     <bean id="porticoContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
     	<property name="sessionTransacted" value="true" />

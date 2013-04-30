@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class CommentDAO {
 
     private final SessionFactory sessionFactory;
@@ -39,19 +40,16 @@ public class CommentDAO {
         return (Comment) sessionFactory.getCurrentSession().get(Comment.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Comment> getAllComments() {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ReviewComment> getReviewCommentsDueNotification() {
         return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class).add(Restrictions.eq("type", CommentType.REVIEW))
                 .add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", false)))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<InterviewComment> getInterviewCommentsDueNotification() {
         return (List<InterviewComment>) sessionFactory.getCurrentSession().createCriteria(InterviewComment.class)
                 .add(Restrictions.eq("type", CommentType.INTERVIEW))
@@ -59,7 +57,6 @@ public class CommentDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ReviewComment> getReviewCommentsForReviewerAndApplication(Reviewer reviewer, ApplicationForm applicationForm) {
         return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class).add(Restrictions.eq("type", CommentType.REVIEW))
                 .add(Restrictions.eq("reviewer", reviewer)).add(Restrictions.eq("application", applicationForm)).list();
@@ -73,5 +70,4 @@ public class CommentDAO {
                 .setMaxResults(1)
                 .uniqueResult();
     }
-
 }

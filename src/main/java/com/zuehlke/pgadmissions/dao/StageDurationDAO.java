@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class StageDurationDAO {
 
 	private final SessionFactory sessionFactory;
@@ -35,7 +36,6 @@ public class StageDurationDAO {
 				.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<StageDuration> getAllStagesDurations() {
         return (List<StageDuration>) sessionFactory.getCurrentSession().createCriteria(StageDuration.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();

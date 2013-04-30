@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class NotificationRecordDAO {
 	
 	private final SessionFactory sessionFactory;
@@ -25,12 +26,10 @@ public class NotificationRecordDAO {
 		this.sessionFactory = sessionFactory;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<NotificationRecord> getNotificationsWithTimeStampGreaterThan(Date timestamp, NotificationType notificationType) {
 		return (List<NotificationRecord>) sessionFactory.getCurrentSession()
 				.createCriteria(NotificationRecord.class)
 				.add(Restrictions.ge("date", timestamp))
 				.add(Restrictions.eq("notificationType", notificationType)).list();
 	}
-
 }

@@ -31,7 +31,6 @@ import java.util.Map;
 import org.easymock.Capture;
 import org.easymock.CaptureType;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -164,19 +163,6 @@ public class MailSendingServiceTest {
 		assertModelEquals(model2, message.getModel());
 	}
 	
-	@Ignore
-	@Test
-    public void shouldScheduleApprovalRequest() {
-        RegisteredUser approver1 = new RegisteredUserBuilder().build();
-        RegisteredUser approver2 = new RegisteredUserBuilder().build();
-        ApplicationForm form = getSampleApplicationForm();
-        form.getProgram().setApprovers(asList(approver1, approver2));
-        
-        service.scheduleApprovalRequest(form);
-        
-        assertEquals(approver1.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-        assertEquals(approver2.getDigestNotificationType(), DigestNotificationType.TASK_NOTIFICATION);
-    }
 	
 	@Test
 	public void sendImportErrorMessageShouldSuccessfullySendMessage() throws Exception {

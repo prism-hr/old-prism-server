@@ -10,9 +10,11 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 public class EmploymentPositionDAO {
 
 	private final SessionFactory sessionFactory;
-	EmploymentPositionDAO(){
+	
+	public EmploymentPositionDAO(){
 		this(null);
 	}
+	
 	@Autowired
 	public EmploymentPositionDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;

@@ -11,7 +11,7 @@ public class ProgrammeDetailDAO {
 
 	private final SessionFactory sessionFactory;
 
-	ProgrammeDetailDAO(){
+	public ProgrammeDetailDAO(){
 		this(null);
 	}
 	

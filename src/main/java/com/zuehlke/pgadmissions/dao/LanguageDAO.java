@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Language;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class LanguageDAO {
 
 	private final SessionFactory sessionFactory;
@@ -26,13 +27,11 @@ public class LanguageDAO {
 
 	}
 
-	@SuppressWarnings("unchecked")
     public List<Language> getAllEnabledLanguages() {
         return sessionFactory.getCurrentSession().createCriteria(Language.class).add(Restrictions.eq("enabled", true))
                 .addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 	
-	@SuppressWarnings("unchecked")
 	public List<Language> getAllLanguages() {
         return sessionFactory.getCurrentSession().createCriteria(Language.class).addOrder(Order.asc("name"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
@@ -45,5 +44,4 @@ public class LanguageDAO {
 	public void save(Language language) {
 		sessionFactory.getCurrentSession().saveOrUpdate(language);
 	}
-
 }

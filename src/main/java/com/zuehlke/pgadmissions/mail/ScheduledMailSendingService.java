@@ -833,17 +833,34 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleInterviewAdministrationRequestAndReminder() {
         Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
         for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST)) {
-            createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REQUEST);
-            idsForWhichRequestWasFired.add(form.getId());
-            if (form.getApplicationAdministrator() != null) {
-                setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_NOTIFICATION);
+            Interview latestInterview = form.getLatestInterview();
+            boolean itsOldInterview = false;
+            if (latestInterview != null) {
+                DateTime interviewDueDate = new DateTime(latestInterview.getInterviewDueDate());
+                itsOldInterview = interviewDueDate.isBefore((new Date()).getTime());
+            }
+            if (latestInterview==null || itsOldInterview) {
+                createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REQUEST);
+                idsForWhichRequestWasFired.add(form.getId());
+                if (form.getApplicationAdministrator() != null) {
+                    setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_NOTIFICATION);
+                }
             }
         }
         for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
             if (!idsForWhichRequestWasFired.contains(form.getId())) {
-                createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
-                if (form.getApplicationAdministrator() != null) {
-                    setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_REMINDER);
+                Interview latestInterview = form.getLatestInterview();
+                boolean itsOldInterview = false;
+                if (latestInterview != null) {
+                    DateTime interviewDueDate = new DateTime(latestInterview.getInterviewDueDate());
+                    itsOldInterview = interviewDueDate.isBefore((new Date()).getTime());
+                }
+                if (latestInterview == null || itsOldInterview) {
+                    createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+                    if (form.getApplicationAdministrator() != null) {
+                        setDigestNotificationType(form.getApplicationAdministrator(),
+                                DigestNotificationType.TASK_REMINDER);
+                    }
                 }
             }
         }

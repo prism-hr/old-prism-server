@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,140 +22,154 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
+
 @Entity(name = "INTERVIEW")
 public class Interview implements Serializable {
 
-	private static final long serialVersionUID = -730673777949846236L;
+    private static final long serialVersionUID = -730673777949846236L;
 
-	@Id
-	@GeneratedValue
-	private Integer id;
-	
-	@Column(name = "last_notified")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastNotified;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-	@Column(name = "interview_time")
-	private String interviewTime;
+    @Column(name = "last_notified")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastNotified;
 
-	@Column(name = "created_date", insertable = false)
-	@Generated(GenerationTime.INSERT)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+    @Column(name = "interview_time")
+    private String interviewTime;
 
-	@Column(name = "further_details")
-	private String furtherDetails;
+    @Column(name = "created_date", insertable = false)
+    @Generated(GenerationTime.INSERT)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_form_id")
-	private ApplicationForm application;
+    @Column(name = "further_details")
+    private String furtherDetails;
 
-	@Column(name = "location_url")
-	private String locationURL;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_id")
+    private ApplicationForm application;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "due_date")
-	private Date interviewDueDate;
+    @Column(name = "location_url")
+    private String locationURL;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "interview_id")
-	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
+    @Temporal(TemporalType.DATE)
+    @Column(name = "due_date")
+    private Date interviewDueDate;
 
-	@Transient
-	private String timeHours;
-	
-	@Transient
-	private String timeMinutes;
+    @OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @JoinColumn(name = "interview_id")
+    private List<Interviewer> interviewers = new ArrayList<Interviewer>();
 
-	public Date getLastNotified() {
-		return lastNotified;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stage", nullable = false)
+    private InterviewStage stage = InterviewStage.INITIAL;
 
-	public void setLastNotified(Date lastNotified) {
-		this.lastNotified = lastNotified;
-	}
+    @Transient
+    private String timeHours;
 
-	public String getFurtherDetails() {
-		return furtherDetails;
-	}
+    @Transient
+    private String timeMinutes;
 
-	public void setFurtherDetails(String furtherDetails) {
-		this.furtherDetails = furtherDetails;
-	}
+    public Date getLastNotified() {
+        return lastNotified;
+    }
 
-	public ApplicationForm getApplication() {
-		return application;
-	}
+    public void setLastNotified(Date lastNotified) {
+        this.lastNotified = lastNotified;
+    }
 
-	public void setApplication(ApplicationForm application) {
-		this.application = application;
-	}
+    public String getFurtherDetails() {
+        return furtherDetails;
+    }
 
-	public String getLocationURL() {
-		return locationURL;
-	}
+    public void setFurtherDetails(String furtherDetails) {
+        this.furtherDetails = furtherDetails;
+    }
 
-	public void setLocationURL(String locationURL) {
-		this.locationURL = locationURL;
-	}
+    public ApplicationForm getApplication() {
+        return application;
+    }
 
-	public Date getInterviewDueDate() {
-		return interviewDueDate;
-	}
+    public void setApplication(ApplicationForm application) {
+        this.application = application;
+    }
 
-	public void setInterviewDueDate(Date dueDate) {
-		this.interviewDueDate = dueDate;
-	}
+    public String getLocationURL() {
+        return locationURL;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setLocationURL(String locationURL) {
+        this.locationURL = locationURL;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Date getInterviewDueDate() {
+        return interviewDueDate;
+    }
 
-	public List<Interviewer> getInterviewers() {
-		return interviewers;
-	}
+    public void setInterviewDueDate(Date dueDate) {
+        this.interviewDueDate = dueDate;
+    }
 
-	public void setInterviewers(List<Interviewer> interviewers) {
-		this.interviewers.clear();
-		for (Interviewer interviewer : interviewers) {
-			if(interviewer != null){
-				this.interviewers.add(interviewer);
-			}
-		}
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setCreatedDate(Date created) {
-		this.createdDate = created;
-	}
+    public List<Interviewer> getInterviewers() {
+        return interviewers;
+    }
 
-	public String getInterviewTime() {
-		return interviewTime;
-	}
+    public void setInterviewers(List<Interviewer> interviewers) {
+        this.interviewers.clear();
+        for (Interviewer interviewer : interviewers) {
+            if (interviewer != null) {
+                this.interviewers.add(interviewer);
+            }
+        }
+    }
 
-	public void setInterviewTime(String interviewTime) {
-		this.interviewTime = interviewTime;
-		if (interviewTime != null) {
-			int semiColonPosition = interviewTime.indexOf(':');		
-			timeHours = interviewTime.substring(0, semiColonPosition);
-			timeMinutes = interviewTime.substring(semiColonPosition + 1);
-		}
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public String getTimeHours() {
-		return timeHours;
-	}
+    public void setCreatedDate(Date created) {
+        this.createdDate = created;
+    }
 
-	public String getTimeMinutes() {
-		return timeMinutes;
-	}
+    public String getInterviewTime() {
+        return interviewTime;
+    }
+
+    public void setInterviewTime(String interviewTime) {
+        this.interviewTime = interviewTime;
+        if (interviewTime != null) {
+            int semiColonPosition = interviewTime.indexOf(':');
+            timeHours = interviewTime.substring(0, semiColonPosition);
+            timeMinutes = interviewTime.substring(semiColonPosition + 1);
+        }
+    }
+
+    public InterviewStage getStage() {
+        return stage;
+    }
+
+    public void setStage(InterviewStage stage) {
+        this.stage = stage;
+    }
+
+    public String getTimeHours() {
+        return timeHours;
+    }
+
+    public String getTimeMinutes() {
+        return timeMinutes;
+    }
 
 }

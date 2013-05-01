@@ -122,6 +122,10 @@ $(document).ready(function() {
             locationURL : $('#interviewLocation').val()
         };
         
+        if($('input:radio[name=interviewStatus]:checked').length > 0){
+        	postData.stage = $('input:radio[name=interviewStatus]:checked').val();
+        }
+        
         $.ajax({
             type : 'POST',
             statusCode : {
@@ -150,6 +154,7 @@ $(document).ready(function() {
                 } else {
                     $('#temp').html(data);
                     $('#assignInterviewersToAppSection').html($('#section_1').html());
+                    $('#interviewStatus').html($('#section_interview_status').html());
                     $('#interviewdetailsSection').html($('#section_2').html());
                     $('#temp').empty();
                     $('#postInterviewData').empty();
@@ -232,10 +237,10 @@ function getInterviewersAndDetailsSections() {
             	$('.interview-to-schedule').hide();
             	
             	switch (interviewStatus) {
-            	case 'happened':
+            	case 'TAKEN_PLACE':
             		$('.interview-happened').show();
             		break;
-            	case 'scheduled':
+            	case 'SCHEDULED':
             		$('.interview-scheduled').show();
             		break;
             	default:

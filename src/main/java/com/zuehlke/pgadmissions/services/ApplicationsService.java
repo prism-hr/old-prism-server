@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
@@ -189,7 +190,7 @@ public class ApplicationsService {
             actions.addAction("review", "Add review");
             actions.setRequiresAttention(true);
         }
-        if (user.isInterviewerOfApplicationForm(application) && application.isInState("INTERVIEW")
+        if (user.isInterviewerOfApplicationForm(application) && application.isInState("INTERVIEW") && application.getLatestInterview().getStage() == InterviewStage.SCHEDULED
                 && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);

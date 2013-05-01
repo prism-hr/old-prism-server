@@ -240,10 +240,11 @@
       </#if>
       <@spring.bind "interview.furtherDetails" />
       <#list spring.status.errorMessages as error>
-      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-        ${error}
-      </div>
-      </#list> </div>
+        <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+          ${error}
+        </div>
+      </#list>
+    </div>
   </div>
   <div class="row interview-scheduled interview-to-schedule">
     <label class="plain-label normal" for="interviewLocation">Interview Location</label>
@@ -257,10 +258,11 @@
       
       <@spring.bind "interview.locationURL" />
       <#list spring.status.errorMessages as error>
-      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-        ${error}
-      </div>
-      </#list> </div>
+        <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+          ${error}
+        </div>
+      </#list>
+    </div>
   </div>
 </div>
 <div id="section_interview_status">
@@ -268,21 +270,29 @@
   <div class="row">
     <label class="plain-label normal" for="interviewHappened">The interview has taken place</label>
     <div class="field">
-    	<input id="interviewHappened" type="radio" class="interviewHappened" name="interviewStatus" checked="checked" value="happened" />
-	</div>
+      <input id="interviewHappened" type="radio" class="interviewHappened" name="interviewStatus" value="TAKEN_PLACE" <#if interview.stage = 'TAKEN_PLACE'>checked</#if> />
+	  </div>
   </div>
   <div class="row">
     <label class="plain-label normal" for="interviewScheduled">The interview has been scheduled</label>
     <div class="field">
-    	<input id="interviewScheduled" type="radio" class="interviewScheduled" name="interviewStatus" value="scheduled" />
-	</div>
+      <input id="interviewScheduled" type="radio" class="interviewScheduled" name="interviewStatus" value="SCHEDULED" <#if interview.stage = 'SCHEDULED'>checked</#if>/>
+	  </div>
   </div>
   <div class="row">
     <label class="plain-label normal" for="interviewToBeScheduled">The interview needs to be scheduled</label>
     <div class="field">
-    	<input id="interviewToBeScheduled" type="radio" class="interviewScheduled" name="interviewStatus" value="to-schedule" />
-	</div>
+      <input id="interviewToBeScheduled" type="radio" class="interviewScheduled" name="interviewStatus" value="SCHEDULING" <#if interview.stage = 'SCHEDULING'>checked</#if>/>
+	  </div>
   </div>
+  
+  <@spring.bind "interview.stage" />
+  <#list spring.status.errorMessages as error>
+    <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+      ${error}
+    </div>
+  </#list>
+  
 </div>
 <div id="section_4">
 	

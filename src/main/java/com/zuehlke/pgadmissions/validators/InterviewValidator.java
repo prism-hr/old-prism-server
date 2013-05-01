@@ -10,36 +10,44 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 
 @Component
 public class InterviewValidator extends AbstractValidator {
 
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return Interview.class.equals(clazz);
-	}
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return Interview.class.equals(clazz);
+    }
 
-	@Override
-	public void addExtraValidation(Object target, Errors errors) {
-		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-		Interview interview = (Interview) target;
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewDueDate", EMPTY_FIELD_ERROR_MESSAGE);
-		String dueDate = interview.getInterviewDueDate() == null ? "": interview.getInterviewDueDate().toString();
+    @Override
+    public void addExtraValidation(Object target, Errors errors) {
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        Interview interview = (Interview) target;
 
-		if (StringUtils.isBlank(interview.getTimeHours())) {
-		    errors.rejectValue("timeHours", EMPTY_FIELD_ERROR_MESSAGE);
-		} else if (StringUtils.isBlank(interview.getTimeMinutes())) {
-		    errors.rejectValue("timeMinutes", EMPTY_FIELD_ERROR_MESSAGE);
-		}
-		
-		if (StringUtils.isNotBlank(dueDate) && interview.getInterviewDueDate().before(today)) {
-			errors.rejectValue("interviewDueDate", "date.field.notfuture");
-		}
-		
-		if(interview.getInterviewers().isEmpty()){
-			errors.rejectValue("interviewers", EMPTY_DROPDOWN_ERROR_MESSAGE);
-		}
-	}
-	
+        if (interview.getStage() == null || interview.getStage() == InterviewStage.INITIAL) {
+            errors.rejectValue("stage", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
+
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", EMPTY_FIELD_ERROR_MESSAGE);
+
+        if (StringUtils.isBlank(interview.getTimeHours())) {
+            errors.rejectValue("timeHours", EMPTY_FIELD_ERROR_MESSAGE);
+        } else if (StringUtils.isBlank(interview.getTimeMinutes())) {
+            errors.rejectValue("timeMinutes", EMPTY_FIELD_ERROR_MESSAGE);
+        }
+
+        if (interview.getInterviewDueDate() == null) {
+            errors.rejectValue("interviewDueDate", EMPTY_FIELD_ERROR_MESSAGE);
+        } else if (interview.getStage() == InterviewStage.SCHEDULED && interview.getInterviewDueDate().before(today)) {
+            errors.rejectValue("interviewDueDate", "date.field.notfuture");
+        } else if (interview.getStage() == InterviewStage.TAKEN_PLACE && interview.getInterviewDueDate().after(today)) {
+            errors.rejectValue("interviewDueDate", "date.field.notpast");
+        }
+
+        if (interview.getInterviewers().isEmpty()) {
+            errors.rejectValue("interviewers", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
+    }
+
 }

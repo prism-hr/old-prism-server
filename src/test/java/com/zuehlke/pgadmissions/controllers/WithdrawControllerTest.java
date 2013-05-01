@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -92,6 +93,28 @@ public class WithdrawControllerTest {
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(event, applicationForm.getEvents().get(0));
 	}
+	
+    @Test
+    public void shouldChangeStatusToWithdrawnAndSetWithdrawnBeforeSubmitToTrue() {
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).applicant(student).id(2).applicationNumber("abc").build();
+        withdrawServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
+        
+        StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
+        EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
+        withdrawServiceMock.sendToPortico(applicationForm);
+        
+        EasyMock.replay(withdrawServiceMock, eventFactoryMock);
+        
+        String view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
+        
+        EasyMock.verify(withdrawServiceMock);
+        assertTrue(applicationForm.getWithdrawnBeforeSubmit());
+        assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
+        assertEquals("redirect:/applications?messageCode=application.withdrawn&application=abc", view);
+        
+        assertEquals(1, applicationForm.getEvents().size());
+        assertEquals(event, applicationForm.getEvents().get(0));
+    }	
 
 	@Test
 	public void shouldGetApplicationForm() {

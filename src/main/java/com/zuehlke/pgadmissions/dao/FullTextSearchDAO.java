@@ -74,7 +74,7 @@ public class FullTextSearchDAO {
                     .forEntity(RegisteredUser.class).get();
 
             FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(queryBuilder.keyword().fuzzy()
-                    .withThreshold(.5f).withPrefixLength(0).onField(propertyName).matching(trimmedSearchTerm)
+                    .withThreshold(.7f).withPrefixLength(0).onField(propertyName).matching(trimmedSearchTerm)
                     .createQuery(), RegisteredUser.class);
 
             uniqueResults.addAll(fuzzyQuery.list());

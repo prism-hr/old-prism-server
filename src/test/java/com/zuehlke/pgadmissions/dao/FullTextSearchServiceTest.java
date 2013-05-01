@@ -67,15 +67,14 @@ public class FullTextSearchServiceTest {
 
     @Test
     public void shouldReturnAFuzzyMatchBasedOnAMisspelledFirstname() {
-        List<RegisteredUser> matchingUsersWithFirstnameLike = fullTextService.getMatchingUsersWithFirstnameLike("tayle");
-        assertEquals(2, matchingUsersWithFirstnameLike.size());
-        assertTrue(listContainsId(user1, matchingUsersWithFirstnameLike));
+        List<RegisteredUser> matchingUsersWithFirstnameLike = fullTextService.getMatchingUsersWithFirstnameLike("taylar");
+        assertEquals(1, matchingUsersWithFirstnameLike.size());
         assertTrue(listContainsId(similiarToUser1, matchingUsersWithFirstnameLike));
     }
     
     @Test
     public void shouldReturnAFuzzyMatchBasedOnAMisspelledLastname() {
-        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durden");
+        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durdeen");
         assertEquals(2, matchingUsersWithLastnameLike.size());
         assertTrue(listContainsId(user1, matchingUsersWithLastnameLike));
         assertTrue(listContainsId(similiarToUser1, matchingUsersWithLastnameLike));

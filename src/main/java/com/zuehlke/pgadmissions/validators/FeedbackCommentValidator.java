@@ -66,6 +66,11 @@ public class FeedbackCommentValidator extends AbstractValidator {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", EMPTY_DROPDOWN_ERROR_MESSAGE);
+            
+            
+            if (BooleanUtils.isNotTrue(((Comment) target).getConfirmNextStage())) {
+                errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
+            }
         }
 
         Comment comment = (Comment) target;

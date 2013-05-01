@@ -146,6 +146,7 @@ public class FeedbackCommentValidatorTest {
     @Test
     public void shouldRejectIfCommentIsMissing() {
         referenceComment.setComment(null);
+        referenceComment.setConfirmNextStage(true);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "comment");
         feedbackCommentValidator.validate(referenceComment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -155,6 +156,7 @@ public class FeedbackCommentValidatorTest {
     @Test
     public void shouldRejectIfSuitableForUCLIsNotSelected() {
         referenceComment.setSuitableForUCL(null);
+        referenceComment.setConfirmNextStage(true);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForUCL");
         feedbackCommentValidator.validate(referenceComment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -164,14 +166,33 @@ public class FeedbackCommentValidatorTest {
     @Test
     public void shouldRejectIfSuitableForProgrammeIsNotSelected() {
         referenceComment.setSuitableForProgramme(null);
+        referenceComment.setConfirmNextStage(true);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForProgramme");
         feedbackCommentValidator.validate(referenceComment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForProgramme").getCode());
     }
+    
+    @Test
+    public void shouldRejectReferenceIfConfirmationCheckboxIsNotPresent() {
+        referenceComment.setConfirmNextStage(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "confirmNextStage");
+        feedbackCommentValidator.validate(referenceComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
 
     @Test
-    public void shouldRejectIfConfirmationCheckboxIsNotPresent() {
+    public void shouldRejectReferenceIfConfirmationCheckboxIsNotChecked() {
+        referenceComment.setConfirmNextStage(false);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "confirmNextStage");
+        feedbackCommentValidator.validate(referenceComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
+
+    @Test
+    public void shouldRejectReviewIfConfirmationCheckboxIsNotPresent() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
         reviewComment.setConfirmNextStage(null);
         feedbackCommentValidator.validate(reviewComment, mappingResult);
@@ -198,7 +219,7 @@ public class FeedbackCommentValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfConfirmationCheckboxIsNotChecked() {
+    public void shouldRejectReviewIfConfirmationCheckboxIsNotChecked() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
         reviewComment.setConfirmNextStage(false);
         feedbackCommentValidator.validate(reviewComment, mappingResult);

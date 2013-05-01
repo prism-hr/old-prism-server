@@ -5,7 +5,7 @@
     <label class="plain-label" for="newReviewerFirstName">Reviewer First Name<em>*</em></label> 
 	<span class="hint" data-desc="<@spring.message 'assignReviewer.firstName'/>"></span>
     <div class="field">
-      <input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName" value="${(reviewer.firstName?html)!}"/>
+      <input class="full" type="text" name="newReviewerFirstName" autocomplete="off" id="newReviewerFirstName" value="${(reviewer.firstName?html)!}"/>
       <@spring.bind "reviewer.firstName" /> 
       <#list spring.status.errorMessages as error> 
       <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
@@ -17,7 +17,7 @@
     <label class="plain-label" for="newReviewerLastName">Reviewer Last Name<em>*</em></label>
 	<span class="hint" data-desc="<@spring.message 'assignReviewer.lastName'/>"></span>
     <div class="field">
-      <input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName" value="${(reviewer.lastName?html)!}"/>                                            
+      <input class="full" type="text" name="newReviewerLastName" autocomplete="off" id="newReviewerLastName" value="${(reviewer.lastName?html)!}"/>                                            
       <@spring.bind "reviewer.lastName" /> 
       <#list spring.status.errorMessages as error> 
       <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
@@ -29,7 +29,7 @@
     <label class="plain-label" for="newReviewerEmail">Reviewer Email<em>*</em></label>
 	<span class="hint" data-desc="<@spring.message 'assignReviewer.email'/>"></span>
     <div class="field">
-      <input class="full" type="email"  name="newReviewerEmail" id="newReviewerEmail" value="${(reviewer.email?html)!}"/>                                               
+      <input class="full" type="email"  name="newReviewerEmail" autocomplete="off" id="newReviewerEmail" value="${(reviewer.email?html)!}"/>                                               
       <@spring.bind "reviewer.email" /> 
       <#list spring.status.errorMessages as error>
        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>

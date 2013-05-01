@@ -5,7 +5,7 @@
     <label class="plain-label" for="firstname_${encRefereeId}">First Name<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'referee.firstname'/>"></span>
     <div class="field">
-      <input type="text" class="full" id="firstname_${encRefereeId}" name="ref_firstname" value="${(refereesAdminEditDTO.firstname?html)!}"/>
+      <input type="text" class="full" id="firstname_${encRefereeId}" name="ref_firstname" autocomplete="off" value="${(refereesAdminEditDTO.firstname?html)!}"/>
       <@spring.bind "refereesAdminEditDTO.firstname" />
       <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -19,7 +19,7 @@
     <label class="plain-label" for="lastname_${encRefereeId}">Last Name<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'referee.lastname'/>"></span>
     <div class="field">
-      <input type="text" class="full" id="lastname_${encRefereeId}" name="ref_lastname" value="${(refereesAdminEditDTO.lastname?html)!}"/>
+      <input type="text" class="full" id="lastname_${encRefereeId}" name="ref_lastname" autocomplete="off" value="${(refereesAdminEditDTO.lastname?html)!}"/>
       <@spring.bind "refereesAdminEditDTO.lastname" />
       <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -150,7 +150,7 @@
     <label class="plain-label" for="email_${encRefereeId}">Email<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
     <div class="field">
-      <input type="text" class="full" type="email" id="email_${encRefereeId}" name="ref_email" value="${(refereesAdminEditDTO.email?html)!}"/>
+      <input type="text" class="full" type="email" id="email_${encRefereeId}" autocomplete="off" name="ref_email" value="${(refereesAdminEditDTO.email?html)!}"/>
       <@spring.bind "refereesAdminEditDTO.email" />
       <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>

@@ -98,7 +98,7 @@ public class FullTextSearchDAO {
                     queryBuilder
                     .keyword()
                     .fuzzy()
-                    .withThreshold(.5f)
+                    .withThreshold(.7f)
                     .withPrefixLength(0)
                     .onField(propertyName)
                     .matching(trimmedSearchTerm)

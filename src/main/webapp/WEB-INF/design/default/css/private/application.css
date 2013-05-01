@@ -152,6 +152,7 @@ section.form-rows label.label { font-weight: bold; }
 .grey-label em { color: #AAA !important; }
 section.form-rows .alert { margin-bottom: 10px;}
 
+section.form-rows .field .very-large { width:440px; }
 section.form-rows .field .max { width: 330px; }
 section.form-rows .field .full { width: 240px; }
 section.form-rows .field .half { width: 120px; }

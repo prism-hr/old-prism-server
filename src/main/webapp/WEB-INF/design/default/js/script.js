@@ -238,16 +238,21 @@ function makeFeedbackButton() {
 // ------------------------------------------------------------------------------
 // Initialise jQuery's date picker on specified fields.
 // ------------------------------------------------------------------------------
-function bindDatePicker(selector) {
+function bindDatePicker(selector, notReadOnly) {
     $(selector).each(function() {
         if (!$(this).hasClass('hasDatepicker')) {
-            $(this).attr("readonly", "readonly");
+        	if (!notReadOnly) {
+        		$(this).attr("readonly", "readonly");
+        	}
+        	
             $(this).datepicker({
                 dateFormat : 'dd M yy',
                 changeMonth : true,
                 changeYear : true,
                 yearRange : '1900:+20'
             });
+            
+            $(this).addClass('hasDatepicker');
         }
     });
 }

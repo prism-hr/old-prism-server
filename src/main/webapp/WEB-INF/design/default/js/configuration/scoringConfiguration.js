@@ -36,9 +36,8 @@ $(document)
 
 					$('#save-scoring').click(
 									function() {
-										$('div.content-box-inner').css({
-											position : 'relative'
-										}).append('<div class="ajax" />');
+										$('#ajaxloader').show();
+										
 										$.ajax({
 													type : 'POST',
 													statusCode : errorCodes,
@@ -65,7 +64,7 @@ $(document)
 														}
 													},
 													complete : function() {
-														$('div.ajax').remove();
+														$('#ajaxloader').fadeOut('fast');
 													}
 												});
 									});
@@ -100,7 +99,7 @@ function updateScoringDefinition() {
 				}
 			},
 			complete : function() {
-				$('div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	}

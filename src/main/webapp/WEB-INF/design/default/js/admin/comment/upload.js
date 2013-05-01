@@ -8,14 +8,21 @@ $(document).ready(function() {
 			return false;
 		}*/
 		
-		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()
 		{
 			$('#documentUploadForm').submit();
 		};
-		var onCancel = function(){};
 		
-		modalPrompt(message, onOk, onCancel);
+		var section = $(this).closest('section.form-rows');
+		if (section.length == 1 && section.find('#confirmNextStage').length > 0) {
+			onOk();
+		}
+		else {
+			var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
+			var onCancel = function(){};
+			modalPrompt(message, onOk, onCancel);
+		}
+		
 		return false;
 	});
 });

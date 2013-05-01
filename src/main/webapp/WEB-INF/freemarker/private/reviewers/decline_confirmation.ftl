@@ -16,6 +16,7 @@
 		<![endif]-->
 		
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/global_public.css' />" />
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/register.css' />" />
 		<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 		
@@ -51,27 +52,18 @@
                 $('#dialog-box a.default-button').css('width', '110px');
             
                 var message = '${message}';
-                modalPrompt(message, userOk, userCancel);
+                modalPrompt(message, userOk, userCancel, new function() {});
                 return;                  
             });
             
             function userOk() {
-                displayDialogBoxAgainAndShowSpinningWheel();
                 var url = window.location + "&confirmation=OK";
                 window.location = url;
             }
             
             function userCancel() {
-                displayDialogBoxAgainAndShowSpinningWheel();
                 var url = window.location + "&confirmation=Cancel";
                 window.location = url;
-            }
-            
-            function displayDialogBoxAgainAndShowSpinningWheel() {
-                $('#popup-ok-button').attr("disabled", "disabled");
-                $('#popup-cancel-button').attr("disabled", "disabled");
-                $('#dialog-overlay, #dialog-box').show();
-                $('#dialog-box').append('<div class="ajax" />');
             }
             
 		</script>

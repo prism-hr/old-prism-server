@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
@@ -246,7 +247,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalReminder()) {
             if (!idsForWhichRequestWasFired.contains(form.getId())) {
                 ApprovalRound approvalRound = form.getLatestApprovalRound();
-                if (approvalRound != null && approvalRound.getPrimarySupervisor().hasResponded()) {
+                Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
+                if (approvalRound != null && primarySupervisor!=null && primarySupervisor.hasResponded()) {
                     createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
                     DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
                     if (approvalRoundExpiryDate.isAfterNow()) {
@@ -346,8 +348,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                     break;
                 }
             }
-            
-            if (sendDigest && !form.hasInterviewEvaluationComment()) {
+            InterviewEvaluationComment evalComment = form.getLastInterviewEvaluationComment();
+            if (sendDigest && (evalComment==null || !evalComment.getInterview().getId().equals(latestInterview.getId()))) {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_EVALUATION_REMINDER);
                 CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
                 RegisteredUser delegate = form.getApplicationAdministrator();

@@ -246,7 +246,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalReminder()) {
             if (!idsForWhichRequestWasFired.contains(form.getId())) {
                 ApprovalRound approvalRound = form.getLatestApprovalRound();
-                if (approvalRound != null && approvalRound.getPrimarySupervisor().hasResponded()) {
+                Supervisor primarySupervisor = null;
+                if (approvalDuration!=null) {
+                    primarySupervisor = approvalRound.getPrimarySupervisor();
+                }
+                if (approvalRound != null && primarySupervisor != null && approvalRound.getPrimarySupervisor().hasResponded()) {
                     createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
                     DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
                     if (approvalRoundExpiryDate.isAfterNow()) {

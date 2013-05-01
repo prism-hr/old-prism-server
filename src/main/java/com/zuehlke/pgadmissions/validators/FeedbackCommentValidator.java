@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -60,6 +61,10 @@ public class FeedbackCommentValidator extends AbstractValidator {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", EMPTY_DROPDOWN_ERROR_MESSAGE);
+			
+			if (BooleanUtils.isNotTrue(((Comment) target).getConfirmNextStage())) {
+			    errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
+			}
 		}
 	}
 }

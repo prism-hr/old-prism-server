@@ -26,7 +26,8 @@ $(document).ready(function()
 				cacheBreaker: new Date().getTime() 
 			},
 			success:function(data) {
-				$('#timeline').html(data);				
+				$('#timeline').html(data);
+				toggleScores();			
 			}
 	});
 		

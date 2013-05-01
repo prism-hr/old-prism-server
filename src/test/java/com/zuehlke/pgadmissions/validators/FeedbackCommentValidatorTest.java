@@ -1,6 +1,10 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -9,15 +13,22 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.Score;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
+import com.zuehlke.pgadmissions.scoring.jaxb.Question;
+import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -91,6 +102,24 @@ public class FeedbackCommentValidatorTest {
         feedbackCommentValidator.validate(reviewComment, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
+    
+    @Test
+    public void shouldRejectIfConfirmationCheckboxIsNotPresent() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
+        reviewComment.setConfirmNextStage(null);
+        feedbackCommentValidator.validate(reviewComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfConfirmationCheckboxIsNotChecked() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
+        reviewComment.setConfirmNextStage(false);
+        feedbackCommentValidator.validate(reviewComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
 
     @Test
     public void shouldRejectIfNotDeclinedAndInterviewCommentIsEmpty() {
@@ -141,6 +170,24 @@ public class FeedbackCommentValidatorTest {
         interviewComment.setWillingToSupervise(null);
         feedbackCommentValidator.validate(interviewComment, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldRejectInterviewIfConfirmationCheckboxIsNotPresent() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "confirmNextStage");
+        interviewComment.setConfirmNextStage(null);
+        feedbackCommentValidator.validate(interviewComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
+    
+    @Test
+    public void shouldRejectInterviewIfConfirmationCheckboxIsNotChecked() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "confirmNextStage");
+        interviewComment.setConfirmNextStage(false);
+        feedbackCommentValidator.validate(interviewComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
     }
 
     @Test

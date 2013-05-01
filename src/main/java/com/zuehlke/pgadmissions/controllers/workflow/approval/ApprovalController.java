@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -30,8 +31,11 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
+import com.zuehlke.pgadmissions.domain.Score;
+import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
@@ -42,8 +46,13 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
+import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
+import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -60,329 +69,371 @@ import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 @RequestMapping("/approval")
 public class ApprovalController {
 
-    private static final String REQUEST_RESTART_APPROVE_PAGE = "/private/staff/approver/request_restart_approve_page";
-    private static final String SUPERVISORS_SECTION = "/private/staff/supervisors/supervisors_section";
-    private static final String PORTICO_VALIDATION_SECTION = "/private/staff/supervisors/portico_validation_section";
-    private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
-    private static final String QUALIFICATION_SECTION = "/private/staff/supervisors/components/qualification_portico_validation";
-    private static final String REFERENCE_SECTION = "/private/staff/supervisors/components/reference_portico_validation";
+	private static final String REQUEST_RESTART_APPROVE_PAGE = "/private/staff/approver/request_restart_approve_page";
+	private static final String SUPERVISORS_SECTION = "/private/staff/supervisors/supervisors_section";
+	private static final String PORTICO_VALIDATION_SECTION = "/private/staff/supervisors/portico_validation_section";
+	private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
+	private static final String QUALIFICATION_SECTION = "/private/staff/supervisors/components/qualification_portico_validation";
+	private static final String REFERENCE_SECTION = "/private/staff/supervisors/components/reference_portico_validation";
 
-    private final ApplicationsService applicationsService;
+	private final ApplicationsService applicationsService;
 
-    private final UserService userService;
+	private final UserService userService;
 
-    private final ApprovalRoundValidator approvalRoundValidator;
+	private final ApprovalRoundValidator approvalRoundValidator;
 
-    private final SupervisorPropertyEditor supervisorPropertyEditor;
+	private final SupervisorPropertyEditor supervisorPropertyEditor;
 
-    private final ApprovalService approvalService;
+	private final ApprovalService approvalService;
 
-    private final DocumentPropertyEditor documentPropertyEditor;
+	private final DocumentPropertyEditor documentPropertyEditor;
 
-    private final GenericCommentValidator commentValidator;
+	private final GenericCommentValidator commentValidator;
 
-    private final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
+	private final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
 
-    private final QualificationService qualificationService;
+	private final QualificationService qualificationService;
 
-    private final RefereeService refereeService;
+	private final RefereeService refereeService;
 
-    private final EncryptionHelper encryptionHelper;
+	private final EncryptionHelper encryptionHelper;
 
-    private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
+	private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
 
-    private final SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator;
+	private final SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator;
 
-    private final DatePropertyEditor datePropertyEditor;
+	private final DatePropertyEditor datePropertyEditor;
 
-    private final CountryService countryService;
+	private final CountryService countryService;
 
-    private final CountryPropertyEditor countryPropertyEditor;
+	private final CountryPropertyEditor countryPropertyEditor;
 
-    public ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    }
+	private final ScoringDefinitionParser scoringDefinitionParser;
 
-    @Autowired
-    public ApprovalController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-            ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
-            GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
-            RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
-            CountryPropertyEditor countryPropertyEditor) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.approvalService = approvalService;
-        this.approvalRoundValidator = approvalRoundValidator;
-        this.supervisorPropertyEditor = supervisorPropertyEditor;
-        this.documentPropertyEditor = documentPropertyEditor;
-        this.commentValidator = commentValidator;
-        this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
-        this.qualificationService = qualificationService;
-        this.refereeService = refereeService;
-        this.encryptionHelper = encryptionHelper;
-        this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
-        this.sendToPorticoDataDTOValidator = sendToPorticoDataDTOValidator;
-        this.datePropertyEditor = datePropertyEditor;
-        this.countryService = countryService;
-        this.countryPropertyEditor = countryPropertyEditor;
-    }
+	private final ScoresPropertyEditor scoresPropertyEditor;
 
-    @InitBinder(value = "refereesAdminEditDTO")
-    public void registerPropertyEditors(WebDataBinder binder) {
-        binder.setValidator(refereesAdminEditDTOValidator);
-        binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(Country.class, countryPropertyEditor);
-        binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-        binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
-    }
+	private final ScoreFactory scoreFactory;
 
-    @ModelAttribute(value = "refereesAdminEditDTO")
-    public RefereesAdminEditDTO getRefereesAdminEditDTO() {
-        return new RefereesAdminEditDTO();
-    }
+	public ApprovalController() {
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	}
 
-    @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
-    public String getMoveToApprovalPage(@RequestParam String applicationId, Model model) {
-        model.addAttribute("approvalRound", getApprovalRound(applicationId));
-        return APPROVAL_PAGE;
-    }
+	@Autowired
+	public ApprovalController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
+	                ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor,
+	                DocumentPropertyEditor documentPropertyEditor, GenericCommentValidator commentValidator,
+	                RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService, RefereeService refereeService,
+	                EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
+	                SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
+	                CountryPropertyEditor countryPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
+	                ScoreFactory scoreFactory) {
+		this.applicationsService = applicationsService;
+		this.userService = userService;
+		this.approvalService = approvalService;
+		this.approvalRoundValidator = approvalRoundValidator;
+		this.supervisorPropertyEditor = supervisorPropertyEditor;
+		this.documentPropertyEditor = documentPropertyEditor;
+		this.commentValidator = commentValidator;
+		this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
+		this.qualificationService = qualificationService;
+		this.refereeService = refereeService;
+		this.encryptionHelper = encryptionHelper;
+		this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
+		this.sendToPorticoDataDTOValidator = sendToPorticoDataDTOValidator;
+		this.datePropertyEditor = datePropertyEditor;
+		this.countryService = countryService;
+		this.countryPropertyEditor = countryPropertyEditor;
+		this.scoringDefinitionParser = scoringDefinitionParser;
+		this.scoresPropertyEditor = scoresPropertyEditor;
+		this.scoreFactory = scoreFactory;
+	}
 
-    @RequestMapping(method = RequestMethod.GET, value = "supervisors_section")
-    public String getSupervisorSection() {
-        return SUPERVISORS_SECTION;
-    }
+	@InitBinder(value = "refereesAdminEditDTO")
+	public void registerPropertyEditors(WebDataBinder binder) {
+		binder.setValidator(refereesAdminEditDTOValidator);
+		binder.registerCustomEditor(Document.class, documentPropertyEditor);
+		binder.registerCustomEditor(Country.class, countryPropertyEditor);
+		binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+		binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
+		binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
+	}
 
-    @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = userService.getCurrentUser();
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
-        if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
-        }
-        return application;
-    }
-    
-    @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
-        ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.getActionsDefinition(getUser(), application);
-    }
+	@ModelAttribute(value = "refereesAdminEditDTO")
+	public RefereesAdminEditDTO getRefereesAdminEditDTO(@RequestParam String applicationId) throws ScoringDefinitionParseException {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+		ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
+		if (scoringDefinition != null) {
+			CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+			List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
+			refereesAdminEditDTO.getScores().addAll(scores);
+			refereesAdminEditDTO.setAlert(customQuestion.getAlert());
+		}
+		return refereesAdminEditDTO;
+	}
 
-    @ModelAttribute("programmeSupervisors")
-    public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId) {
-        return getApplicationForm(applicationId).getProgram().getSupervisors();
-    }
+	@RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
+	public String getMoveToApprovalPage(@RequestParam String applicationId, Model model) {
+		model.addAttribute("approvalRound", getApprovalRound(applicationId));
+		return APPROVAL_PAGE;
+	}
 
-    @ModelAttribute("previousSupervisors")
-    public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
-        List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        List<RegisteredUser> previousSupervisorsOfProgram = userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram());
+	@RequestMapping(method = RequestMethod.GET, value = "supervisors_section")
+	public String getSupervisorSection() {
+		return SUPERVISORS_SECTION;
+	}
 
-        for (RegisteredUser registeredUser : previousSupervisorsOfProgram) {
-            if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors())) {
-                availablePreviousSupervisors.add(registeredUser);
-            }
-        }
-        List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
-        for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
-            if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors()) && !listContainsId(registeredUser, availablePreviousSupervisors)) {
-                availablePreviousSupervisors.add(registeredUser);
-            }
-        }
-        return availablePreviousSupervisors;
-    }
+	@ModelAttribute("applicationForm")
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		RegisteredUser currentUser = userService.getCurrentUser();
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+		if (application == null) {
+			throw new MissingApplicationFormException(applicationId);
+		}
+		if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
+			throw new InsufficientApplicationFormPrivilegesException(applicationId);
+		}
+		return application;
+	}
 
-    @ModelAttribute("approvalRound")
-    public ApprovalRound getApprovalRound(@RequestParam String applicationId) {
-        ApprovalRound approvalRound = new ApprovalRound();
-        ApplicationForm applicationForm = getApplicationForm((String) applicationId);
-        ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
-        if (latestApprovalRound != null) {
-            approvalRound.setSupervisors(latestApprovalRound.getSupervisors());
-        }
-        List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
-        for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
-            if (!registeredUser.isSupervisorInApprovalRound(approvalRound)) {
-                Supervisor supervisor = new Supervisor();
-                supervisor.setUser(registeredUser);
-                approvalRound.getSupervisors().add(supervisor);
-            }
-        }
+	@ModelAttribute("actionsDefinition")
+	public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
+		ApplicationForm application = getApplicationForm(applicationId);
+		return applicationsService.getActionsDefinition(getUser(), application);
+	}
 
-        Date startDate = applicationForm.getProgrammeDetails().getStartDate();
-        if (!applicationForm.isPrefferedStartDateWithinBounds()) {
-            startDate = applicationForm.getEarliestPossibleStartDate();
-        } 
-        approvalRound.setRecommendedStartDate(startDate);
-        return approvalRound;
-    }
+	@ModelAttribute("programmeSupervisors")
+	public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId) {
+		return getApplicationForm(applicationId).getProgram().getSupervisors();
+	}
 
-    @ModelAttribute("explanation")
-    public String getExplanation() {
-        return "";
-    }
+	@ModelAttribute("previousSupervisors")
+	public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
+		List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		List<RegisteredUser> previousSupervisorsOfProgram = userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram());
 
-    @ModelAttribute("user")
-    public RegisteredUser getUser() {
-        return userService.getCurrentUser();
-    }
+		for (RegisteredUser registeredUser : previousSupervisorsOfProgram) {
+			if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors())) {
+				availablePreviousSupervisors.add(registeredUser);
+			}
+		}
+		List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
+		for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
+			if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors()) && !listContainsId(registeredUser, availablePreviousSupervisors)) {
+				availablePreviousSupervisors.add(registeredUser);
+			}
+		}
+		return availablePreviousSupervisors;
+	}
 
-    @InitBinder("approvalRound")
-    public void registerValidatorAndPropertyEditorForApprovalRound(WebDataBinder binder) {
-        binder.setValidator(approvalRoundValidator);
-        binder.registerCustomEditor(Supervisor.class, supervisorPropertyEditor);
-        binder.registerCustomEditor(Date.class, datePropertyEditor);
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-    }
+	@ModelAttribute("approvalRound")
+	public ApprovalRound getApprovalRound(@RequestParam String applicationId) {
+		ApprovalRound approvalRound = new ApprovalRound();
+		ApplicationForm applicationForm = getApplicationForm((String) applicationId);
+		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+		if (latestApprovalRound != null) {
+			approvalRound.setSupervisors(latestApprovalRound.getSupervisors());
+		}
+		List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
+		for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
+			if (!registeredUser.isSupervisorInApprovalRound(approvalRound)) {
+				Supervisor supervisor = new Supervisor();
+				supervisor.setUser(registeredUser);
+				approvalRound.getSupervisors().add(supervisor);
+			}
+		}
 
-    public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
-    }
+		Date startDate = applicationForm.getProgrammeDetails().getStartDate();
+		if (!applicationForm.isPrefferedStartDateWithinBounds()) {
+			startDate = applicationForm.getEarliestPossibleStartDate();
+		}
+		approvalRound.setRecommendedStartDate(startDate);
+		return approvalRound;
+	}
 
-    @InitBinder("comment")
-    public void registerValidatorAndPropertyEditorForComment(WebDataBinder binder) {
-        binder.setValidator(commentValidator);
-        binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-    }
+	@ModelAttribute("explanation")
+	public String getExplanation() {
+		return "";
+	}
 
-    @InitBinder(value = "sendToPorticoData")
-    public void registerSendToPorticoDataBinder(WebDataBinder binder) {
-        binder.setValidator(sendToPorticoDataDTOValidator);
-        binder.registerCustomEditor(List.class, sendToPorticoDataDTOEditor);
-    }
+	@ModelAttribute("user")
+	public RegisteredUser getUser() {
+		return userService.getCurrentUser();
+	}
 
-    @ModelAttribute("sendToPorticoData")
-    public SendToPorticoDataDTO getSendToPorticoDataDTO() {
-        return new SendToPorticoDataDTO();
-    }
+	@InitBinder("approvalRound")
+	public void registerValidatorAndPropertyEditorForApprovalRound(WebDataBinder binder) {
+		binder.setValidator(approvalRoundValidator);
+		binder.registerCustomEditor(Supervisor.class, supervisorPropertyEditor);
+		binder.registerCustomEditor(Date.class, datePropertyEditor);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+	}
 
-    @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
-    public String assignSupervisors(@ModelAttribute ApplicationForm applicationForm, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
-            BindingResult bindingResult, SessionStatus sessionStatus) {
-        if (bindingResult.hasErrors()) {
-            return SUPERVISORS_SECTION;
-        }
+	public StringTrimmerEditor newStringTrimmerEditor() {
+		return new StringTrimmerEditor(false);
+	}
 
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        sessionStatus.setComplete();
-        return "/private/common/ajax_OK";
-    }
+	@InitBinder("comment")
+	public void registerValidatorAndPropertyEditorForComment(WebDataBinder binder) {
+		binder.setValidator(commentValidator);
+		binder.registerCustomEditor(Document.class, documentPropertyEditor);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+	}
 
-    @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
-    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("approvalRound") ApprovalRound approvalRound,
-            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
-        if (sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getRefereesSendToPortico() == null) {
-            throw new ResourceNotFoundException();
-        }
+	@InitBinder(value = "sendToPorticoData")
+	public void registerSendToPorticoDataBinder(WebDataBinder binder) {
+		binder.setValidator(sendToPorticoDataDTOValidator);
+		binder.registerCustomEditor(List.class, sendToPorticoDataDTOEditor);
+	}
 
-        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
-        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
+	@ModelAttribute("sendToPorticoData")
+	public SendToPorticoDataDTO getSendToPorticoDataDTO() {
+		return new SendToPorticoDataDTO();
+	}
 
-        if (result.hasErrors()) {
-            return PORTICO_VALIDATION_SECTION;
-        }
+	@RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
+	public String assignSupervisors(@ModelAttribute ApplicationForm applicationForm, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
+	                BindingResult bindingResult, SessionStatus sessionStatus) {
+		if (bindingResult.hasErrors()) {
+			return SUPERVISORS_SECTION;
+		}
 
-        approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
-        return SUPERVISORS_SECTION;
-    }
+		approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+		sessionStatus.setComplete();
+		return "/private/common/ajax_OK";
+	}
 
-    @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
-    public String submitQualificationsData(@ModelAttribute ApplicationForm applicationForm,
-            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
-        if (sendToPorticoData.getQualificationsSendToPortico() == null) {
-            throw new ResourceNotFoundException();
-        }
+	@RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
+	public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("approvalRound") ApprovalRound approvalRound,
+	                @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
+		if (sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getRefereesSendToPortico() == null) {
+			throw new ResourceNotFoundException();
+		}
 
-        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
+		qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
+		refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
 
-        return QUALIFICATION_SECTION;
-    }
+		if (result.hasErrors()) {
+			return PORTICO_VALIDATION_SECTION;
+		}
 
-    @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-    public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
-            @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
-            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
-            @RequestParam(required = false) Boolean forceSavingReference, Model model) {
+		approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
+		return SUPERVISORS_SECTION;
+	}
 
-        String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
-        model.addAttribute("editedRefereeId", editedRefereeId);
+	@RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
+	public String submitQualificationsData(@ModelAttribute ApplicationForm applicationForm,
+	                @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
+		if (sendToPorticoData.getQualificationsSendToPortico() == null) {
+			throw new ResourceNotFoundException();
+		}
 
-        // save "send to UCL" data first
-        List<Integer> refereesSendToPortico = sendToPorticoData.getRefereesSendToPortico();
-        if (refereesSendToPortico != null) {
-            refereeService.selectForSendingToPortico(applicationForm, refereesSendToPortico);
-        }
+		qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
 
-        if (!"newReferee".equals(editedRefereeId)) {
-            Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
-            Referee referee = refereeService.getRefereeById(decryptedId);
-            if (referee.getReference() != null) {
-                return REFERENCE_SECTION;
-            }
-        }
+		return QUALIFICATION_SECTION;
+	}
 
-        if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
-            refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
+	@RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
+	public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
+	                @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
+	                @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
+	                @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
-            if (referenceResult.hasErrors()) {
-                return REFERENCE_SECTION;
-            }
+		String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
+		model.addAttribute("editedRefereeId", editedRefereeId);
 
-            ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-            Referee referee = newComment.getReferee();
-            applicationsService.refresh(applicationForm);
-            refereeService.refresh(referee);
+		// save "send to UCL" data first
+		List<Integer> refereesSendToPortico = sendToPorticoData.getRefereesSendToPortico();
+		if (refereesSendToPortico != null) {
+			refereeService.selectForSendingToPortico(applicationForm, refereesSendToPortico);
+		}
 
-            String newRefereeId = encryptionHelper.encrypt(referee.getId());
-            model.addAttribute("editedRefereeId", newRefereeId);
+		if (!"newReferee".equals(editedRefereeId)) {
+			Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
+			Referee referee = refereeService.getRefereeById(decryptedId);
+			if (referee.getReference() != null) {
+				return REFERENCE_SECTION;
+			}
+		}
 
-            // update referees send to Portico in order to validate it
-            if (refereesSendToPortico != null && !refereesSendToPortico.contains(referee.getId())) {
-                refereesSendToPortico.add(referee.getId());
-            }
-        }
+		createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
+		if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
+			refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
 
-        sendToPorticoDataDTOValidator.validate(sendToPorticoData, porticoResult);
+			if (referenceResult.hasErrors()) {
+				return REFERENCE_SECTION;
+			}
 
-        return REFERENCE_SECTION;
-    }
+			ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+			Referee referee = newComment.getReferee();
+			applicationsService.refresh(applicationForm);
+			refereeService.refresh(referee);
 
-    @ModelAttribute("comment")
-    public RequestRestartComment getRequestRestartComment(@RequestParam String applicationId) {
-        RequestRestartComment comment = new RequestRestartComment();
-        comment.setApplication(getApplicationForm(applicationId));
-        comment.setUser(getUser());
-        return comment;
-    }
+			String newRefereeId = encryptionHelper.encrypt(referee.getId());
+			model.addAttribute("editedRefereeId", newRefereeId);
 
-    @ModelAttribute("countries")
-    public List<Country> getAllCountries() {
-        return countryService.getAllCountries();
-    }
+			// update referees send to Portico in order to validate it
+			if (refereesSendToPortico != null && !refereesSendToPortico.contains(referee.getId())) {
+				refereesSendToPortico.add(referee.getId());
+			}
+		}
 
-    @RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)
-    public String requestRestart(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
-            @Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result) {
-        if (result.hasErrors()) {
-            return REQUEST_RESTART_APPROVE_PAGE;
-        }
-        approvalService.requestApprovalRestart(applicationForm, getUser(), comment);
-        return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
-    }
+		sendToPorticoDataDTOValidator.validate(sendToPorticoData, porticoResult);
 
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
+		return REFERENCE_SECTION;
+	}
+
+	@ModelAttribute("comment")
+	public RequestRestartComment getRequestRestartComment(@RequestParam String applicationId) {
+		RequestRestartComment comment = new RequestRestartComment();
+		comment.setApplication(getApplicationForm(applicationId));
+		comment.setUser(getUser());
+		return comment;
+	}
+
+	@ModelAttribute("countries")
+	public List<Country> getAllCountries() {
+		return countryService.getAllCountries();
+	}
+
+	@RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)
+	public String requestRestart(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
+	                @Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result) {
+		if (result.hasErrors()) {
+			return REQUEST_RESTART_APPROVE_PAGE;
+		}
+		approvalService.requestApprovalRestart(applicationForm, getUser(), comment);
+		return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
+	}
+
+	private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+		for (RegisteredUser entry : users) {
+			if (entry.getId().equals(user.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void createScoresWithQuestion(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
+		List<Score> scores = refereesAdminEditDTO.getScores();
+		if (scores != null) {
+			List<Question> questions = getCustomQuestions(applicationForm);
+			for (int i = 0; i < scores.size(); i++) {
+				Score score = scores.get(i);
+				score.setOriginalQuestion(questions.get(i));
+			}
+		}
+	}
+
+	public List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
+		ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
+		if (scoringDefinition != null) {
+			CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+			return customQuestion.getQuestion();
+		}
+		return null;
+	}
 }

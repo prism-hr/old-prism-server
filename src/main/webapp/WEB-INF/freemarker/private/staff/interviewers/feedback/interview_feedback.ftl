@@ -22,9 +22,10 @@
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
   
-  <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/comment/interviewComment.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
@@ -75,8 +76,7 @@
                     <label for="interview-comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
                     <div class="field">
-                      <textarea name="comment" id="interview-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}
-</textarea>
+                      <textarea name="comment" id="interview-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}</textarea>
                       <@spring.bind "comment.comment" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -139,6 +139,15 @@
                       </#list> </div>
                   </div>
                 </div>
+                
+              <div id="scoring-questions" class="row-group">
+                  <h3>Scoring questions</h3>
+                  <#assign scores = comment.scores>
+                  <#assign alertForScoringQuestions=comment.alert>
+                  <#assign errorsContainerName = "comment">
+                  <#include "/private/staff/scores.ftl"/>
+        	  </div>
+                  
                 <@spring.bind "comment.confirmNextStage" />
 			    <#if spring.status.errorMessages?size &gt; 0>
 		     		<div class="alert alert-error" >
@@ -155,6 +164,8 @@
 						<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
 					</div>
 				</div>
+
+				
                 <div class="buttons">
                   <button class="btn btn-primary" id="submitInterviewFeedback" type="button" value="Submit">Submit</button>
                 </div>

@@ -24,6 +24,7 @@
   
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/reviewer/comment/reviewComment.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
@@ -48,7 +49,7 @@
     <!-- Middle Starts -->
     <div id="middle"> <#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
       <@header/>
-      <section id="reviewcommentsectopm" >
+      <div id="reviewcommentsectopm" >
       <!-- Main content area. -->
       <article id="content" role="main"> 
         
@@ -131,6 +132,30 @@
                         <input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
                     </div>
                 </div>
+                
+                <div id="scoring-questions" class="row-group">
+                  <h3>Scoring questions</h3>
+                  <#assign scores = comment.scores>
+                  <#assign alertForScoringQuestions=comment.alert>
+                  <#assign errorsContainerName = "comment">
+                  <#include "/private/staff/scores.ftl"/>
+                </div>
+                <@spring.bind "comment.confirmNextStage" />
+			    <#if spring.status.errorMessages?size &gt; 0>
+		     		<div class="alert alert-error" >
+			    <#else>
+			        <div class="alert" >
+			    </#if>
+					<div class="row">
+						<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
+							Please confirm that you are satisfied with your comments.				
+						</label>
+						<div class="terms-field">
+							<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+						</div>
+						<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
+					</div>
+				</div>
                 <div class="buttons">
                   <button class="btn btn-primary" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>
                 </div>
@@ -143,7 +168,7 @@
         <!-- .content-box --> 
         
       </article>
-      </section>
+      </div>
     </div>
     <!-- Middle Ends --> 
     

@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
 	
 	$('#cancelReviewBtn').click(function() {
 		window.location.href = "/pgadmissions/reviewFeedback?applicationId=" +  $('#applicationId').val();
@@ -19,6 +18,8 @@ $(document).ready(function(){
 			{
 				$('#reviewForm').append("<input type='hidden' name='decline' value='true'/>");
 			}
+			var scores = getScores($('#scoring-questions'));
+			$('#reviewForm').append("<input type='hidden' name='scores' value=\'" + scores + "\'/>");
 			$('#reviewForm').submit();
 		};
 		

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -18,17 +19,22 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -42,6 +48,7 @@ public class InterviewCommentControllerTest {
     private FeedbackCommentValidator reviewFeedbackValidatorMock;
     private CommentService commentServiceMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
+    private ScoresPropertyEditor scoresPropertyEditorMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -146,8 +153,10 @@ public class InterviewCommentControllerTest {
     }
 
     @Test
-    public void shouldCreateNewInterviewCommentForApplicationForm() {
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+    public void shouldCreateNewInterviewCommentForApplicationForm() throws ScoringDefinitionParseException {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
         final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         Interviewer interviewer = new InterviewerBuilder().id(5).build();
 
@@ -155,16 +164,11 @@ public class InterviewCommentControllerTest {
         EasyMock.expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
         EasyMock.replay(userServiceMock, currentUser);
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock) {
+                documentPropertyEditorMock, null, null, null) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
                 return applicationForm;
-            }
-
-            @Override
-            public RegisteredUser getUser() {
-                return currentUser;
             }
 
         };
@@ -183,30 +187,56 @@ public class InterviewCommentControllerTest {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.setValidator(reviewFeedbackValidatorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-
+        binderMock.registerCustomEditor(null, "scores", scoresPropertyEditorMock);
         EasyMock.replay(binderMock);
         controller.registerBinders(binderMock);
         EasyMock.verify(binderMock);
     }
 
     @Test
-    public void shouldReturnToCommentsPageIfErrors() {
-        InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationForm()).build();
+    public void shouldReturnToCommentsPageIfErrors() throws ScoringDefinitionParseException {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
+        InterviewComment comment = new InterviewCommentBuilder().application(applicationForm).build();
         BindingResult errorsMock = new BeanPropertyBindingResult(comment, "comment");
         errorsMock.reject("error");
+
+        controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, null, null, null) {
+
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return applicationForm;
+            }
+
+        };
 
         assertEquals("private/staff/interviewers/feedback/interview_feedback", controller.addComment(comment, errorsMock));
     }
 
     @Test
-    public void shouldSaveCommentAndResetAppAdminAndToApplicationListIfNoErrors() {
-        InterviewComment comment = new InterviewCommentBuilder().id(1)
-                .application(new ApplicationFormBuilder().id(6).applicationNumber("abc").applicationAdministrator(new RegisteredUser()).build()).build();
+    public void shouldSaveCommentAndResetAppAdminAndToApplicationListIfNoErrors() throws ScoringDefinitionParseException {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(6).applicationNumber("abc").applicationAdministrator(new RegisteredUser())
+                .program(program).build();
+        InterviewComment comment = new InterviewCommentBuilder().id(1).application(application).build();
         BindingResult errorsMock = new BeanPropertyBindingResult(comment, "comment");
-        ApplicationForm applicationForm = comment.getApplication();
+        final ApplicationForm applicationForm = comment.getApplication();
 
         applicationsServiceMock.save(applicationForm);
         commentServiceMock.save(comment);
+
+        controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, null, null, null) {
+
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return applicationForm;
+            }
+
+        };
 
         EasyMock.replay(commentServiceMock);
         EasyMock.replay(applicationsServiceMock);
@@ -224,8 +254,9 @@ public class InterviewCommentControllerTest {
         reviewFeedbackValidatorMock = EasyMock.createMock(FeedbackCommentValidator.class);
         commentServiceMock = EasyMock.createMock(CommentService.class);
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+        scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock);
+                documentPropertyEditorMock, null, scoresPropertyEditorMock, null);
 
     }
 }

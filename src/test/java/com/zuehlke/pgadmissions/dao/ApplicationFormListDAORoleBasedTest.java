@@ -70,8 +70,8 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
         RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin);
-        assertTrue(listContainsId(applicationFormOne, applications));
-        assertFalse(listContainsId(applicationFormTwo, applications));
+        assertTrue(contains(applicationFormOne, applications));
+        assertFalse(contains(applicationFormTwo, applications));
     }
 
     @Test
@@ -109,8 +109,8 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicant);
 
-        assertTrue("The application form for which the user is an applicant could not be found.", listContainsId(applicationFormOne, applications));
-        assertTrue("The application form for which the user is a referee could not be found.", listContainsId(applicationFormTwo, applications));
+        assertTrue("The application form for which the user is an applicant could not be found.", contains(applicationFormOne, applications));
+        assertTrue("The application form for which the user is a referee could not be found.", contains(applicationFormTwo, applications));
     }
 
     @Test
@@ -126,7 +126,6 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicant);
         assertFalse(applications.contains(applicationFormOne));
-
     }
 
     @Test
@@ -151,7 +150,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         save(applicationFormOne);
         flushAndClearSession();
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(refereeUser);
-        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(contains(applicationFormOne, applications));
 
     }
 
@@ -177,7 +176,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         save(applicationFormOne);
         flushAndClearSession();
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(refereeUser);
-        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(contains(applicationFormOne, applications));
 
     }
 
@@ -220,8 +219,8 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(admin);
-        assertTrue(listContainsId(applicationFormOne, applications));
-        assertFalse(listContainsId(applicationFormTwo, applications));
+        assertTrue(contains(applicationFormOne, applications));
+        assertFalse(contains(applicationFormTwo, applications));
 
     }
 
@@ -262,7 +261,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicationAdministrator);
-        assertTrue(listContainsId(applicationForm, applications));
+        assertTrue(contains(applicationForm, applications));
 
     }
 
@@ -307,7 +306,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(reviewerUser);
-        assertTrue(listContainsId(applicationForm, applications));
+        assertTrue(contains(applicationForm, applications));
     }
 
     @Test
@@ -382,8 +381,8 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(reviewerAndAdminUser);
 
-        assertTrue(listContainsId(applicationFormOne, applications));
-        assertTrue(listContainsId(applicationFormTwo, applications));
+        assertTrue(contains(applicationFormOne, applications));
+        assertTrue(contains(applicationFormTwo, applications));
     }
 
     @Test
@@ -408,7 +407,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerUser);
-        assertTrue(listContainsId(applicationForm, applications));
+        assertTrue(contains(applicationForm, applications));
     }
 
     @Test
@@ -486,8 +485,8 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(supervisorUser);
-        assertTrue(listContainsId(applicationFormOne, applications));
-        assertTrue(listContainsId(applicationFormTwo, applications));
+        assertTrue(contains(applicationFormOne, applications));
+        assertTrue(contains(applicationFormTwo, applications));
 
     }
 
@@ -537,8 +536,8 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerAndAdminUser);
 
-        assertTrue(listContainsId(applicationFormOne, applications));
-        assertTrue(listContainsId(applicationFormTwo, applications));
+        assertTrue(contains(applicationFormOne, applications));
+        assertTrue(contains(applicationFormTwo, applications));
     }
 
     @Test
@@ -554,7 +553,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approver);
-        assertTrue(listContainsId(applicationForm, applications));
+        assertTrue(contains(applicationForm, applications));
     }
 
     @Test
@@ -591,8 +590,8 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approverAndAdminUser);
 
-        assertTrue(listContainsId(applicationFormOne, applications));
-        assertTrue(listContainsId(applicationFormTwo, applications));
+        assertTrue(contains(applicationFormOne, applications));
+        assertTrue(contains(applicationFormTwo, applications));
     }
 
     @Test
@@ -616,11 +615,44 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(viewer);
 
-        assertTrue(listContainsId(applicationFormOne, applications));
-        assertTrue(listContainsId(applicationFormTwo, applications));
+        assertTrue(contains(applicationFormOne, applications));
+        assertTrue(contains(applicationFormTwo, applications));
+    }
+    
+    @Test
+    public void shouldReturnWithdrawnApplicationsForApplicantEvenThoughTheyHaveBeenWithdrawnBeforeSubmit() {
+        RoleDAO roleDAO = new RoleDAO(sessionFactory);
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.WITHDRAWN).withdrawnBeforeSubmit(true).build();
+
+        save(applicant, applicationFormOne);
+        flushAndClearSession();
+        
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicant);
+        assertTrue(contains(applicationFormOne, applications));
+    }
+    
+    @Test
+    public void shouldNotReturnWithdrawnApplicationsForAdminWhenTheyHaveBeenWithdrawnBeforeSubmit() {
+        RoleDAO roleDAO = new RoleDAO(sessionFactory);
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.WITHDRAWN).withdrawnBeforeSubmit(true).build();
+
+        save(applicant, applicationFormOne);
+        flushAndClearSession();
+        
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin);
+        assertFalse(contains(applicationFormOne, applications));
     }
 
-    private boolean listContainsId(ApplicationForm form, List<ApplicationForm> aplicationForms) {
+    private boolean contains(ApplicationForm form, List<ApplicationForm> aplicationForms) {
         for (ApplicationForm entry : aplicationForms) {
             if (form.getId().equals(entry.getId())) {
                 return true;

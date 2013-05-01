@@ -23,11 +23,13 @@ import com.zuehlke.pgadmissions.services.WithdrawService;
 public class WithdrawController{
 
 	private final WithdrawService withdrawService;
+	
 	private final ApplicationsService applicationService;
+	
 	private final EventFactory eventFactory;
+	
 	private final UserService userService;
 	
-
 	public WithdrawController() {
 		this(null, null, null, null);
 	}
@@ -49,6 +51,11 @@ public class WithdrawController{
                 || applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN) {
             throw new CannotTerminateApplicationException(applicationForm.getApplicationNumber());
         }
+        
+        if (applicationForm.getStatus().equals(ApplicationFormStatus.UNSUBMITTED)) {
+            applicationForm.setWithdrawnBeforeSubmit(true);
+        }
+        
         applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
         withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
@@ -67,7 +74,6 @@ public class WithdrawController{
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
-		
 	}
 
 
@@ -75,5 +81,4 @@ public class WithdrawController{
 	public RegisteredUser getUser() {		
 		return getCurrentUser();
 	}
-
 }

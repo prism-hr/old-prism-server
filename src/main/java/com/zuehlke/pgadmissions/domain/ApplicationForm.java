@@ -236,6 +236,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     
     @Column(name = "suppress_state_change_notifications")
     private Boolean suppressStateChangeNotifications = false;
+    
+    @Column(name = "withdrawn_before_submit")
+    private Boolean withdrawnBeforeSubmit = false;
 
     public List<Qualification> getQualifications() {
         return qualifications;
@@ -1053,5 +1056,13 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
 
         return true;
+    }
+
+    public Boolean getWithdrawnBeforeSubmit() {
+        return withdrawnBeforeSubmit;
+    }
+
+    public void setWithdrawnBeforeSubmit(final Boolean withdrawnBeforeSubmit) {
+        this.withdrawnBeforeSubmit = withdrawnBeforeSubmit;
     }
 }

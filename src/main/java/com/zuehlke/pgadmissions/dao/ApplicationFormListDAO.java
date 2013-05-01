@@ -56,24 +56,28 @@ public class ApplicationFormListDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sortCategory, SortOrder sortOrder,
-            Integer pageCount, Integer itemsPerPage) {
+    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sortCategory, SortOrder sortOrder, Integer pageCount, Integer itemsPerPage) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
+        
         if (pageCount != null && itemsPerPage != null) {
             criteria.setFirstResult((pageCount - 1) * itemsPerPage);
             criteria.setMaxResults(itemsPerPage);
         }
+        
         criteria.setReadOnly(true);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
             criteria.add(getAllApplicationsForSuperAdministrator());
+            criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
         } else {
             Disjunction disjunction = Restrictions.disjunction();
 
             if (user.isInRole(Authority.APPLICANT)) {
                 disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichApplicant(user)));
                 disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichReferee(user)));
+            } else {
+                criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
             }
 
             if (user.isInRole(Authority.REFEREE)) {
@@ -236,6 +240,10 @@ public class ApplicationFormListDAO {
         } else {
             return Order.desc(propertyName);
         }
+    }
+    
+    private Criterion getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit() {
+        return Restrictions.eq("withdrawnBeforeSubmit", false);
     }
 
     private Criterion getAllApplicationsForSuperAdministrator() {

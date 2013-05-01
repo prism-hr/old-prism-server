@@ -127,8 +127,7 @@ public class ApplicationsService {
         return applicationFormDAO.getApplicationsDueUpdateNotification();
     }
 
-    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sort, SortOrder order,
-            Integer page) {
+    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sort, SortOrder order, Integer page) {
         // default values
         int pageCount = page == null ? 1 : page;
         SortCategory sortCategory = sort == null ? SortCategory.APPLICATION_DATE : sort;

@@ -39,15 +39,6 @@ public class InterviewValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfFurtherDetailsIsEmpty() {
-        interview.setFurtherDetails(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "furtherDetails");
-        interviewValidator.validate(interview, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("furtherDetails").getCode());
-    }
-
-    @Test
     public void shouldRejectIfDueDateIsEmpty() {
         interview.setInterviewDueDate(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewDueDate");

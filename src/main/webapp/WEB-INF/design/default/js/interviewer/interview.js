@@ -113,18 +113,29 @@ $(document).ready(function() {
             $('#postInterviewData').append("<input name='interviewers' type='text' value='" + $(this).val() + "'/>");
         });
 
+        var stage = null;
+        if($('input:radio[name=interviewStatus]:checked').length > 0){
+        	stage = $('input:radio[name=interviewStatus]:checked').val();
+        }
+        
         var postData = {
             applicationId : $('#applicationId').val(),
             interviewers : '',
             interviewTime : $('#hours').val() + ":" + $('#minutes').val(),
-            furtherDetails : $('#furtherDetails').val(),
             interviewDueDate : $('#interviewDate').val(),
-            locationURL : $('#interviewLocation').val()
         };
         
-        if($('input:radio[name=interviewStatus]:checked').length > 0){
-        	postData.stage = $('input:radio[name=interviewStatus]:checked').val();
+        if(stage != null){
+        	postData.stage = stage;
         }
+        
+        if(stage == 'SCHEDULED'){
+        	postData.furtherDetails = $('#furtherDetails').val();
+        	postData.furtherInterviewerDetails = $('#furtherInterviewerDetails').val();
+        	locationURL : $('#interviewLocation').val();
+        }
+        
+        
         
         $.ajax({
             type : 'POST',
@@ -169,6 +180,10 @@ $(document).ready(function() {
                     
                     	
                     bindDatePicker('#availableDates');
+                    
+                    var interviewStatus = $('input[name=interviewStatus]:radio');
+                	interviewStatus.change(showProperInterviewArrangements);
+                	interviewStatus.change();
                 }
                 addToolTips();
             },
@@ -229,26 +244,7 @@ function getInterviewersAndDetailsSections() {
             // Interview status.
         	var interviewStatus = $('input[name=interviewStatus]:radio');
         	
-        	interviewStatus.change(function () {
-            	var interviewStatus = $('input[name=interviewStatus]:radio:checked').val();
-            	
-            	$('.interview-happened').hide();
-            	$('.interview-scheduled').hide();
-            	$('.interview-to-schedule').hide();
-            	
-            	switch (interviewStatus) {
-            	case 'TAKEN_PLACE':
-            		$('.interview-happened').show();
-            		break;
-            	case 'SCHEDULED':
-            		$('.interview-scheduled').show();
-            		break;
-            	default:
-            		$('.interview-to-schedule').show();
-            		break;
-            	}
-            });
-        	
+        	interviewStatus.change(showProperInterviewArrangements);
         	interviewStatus.change();
         },
         complete : function() {
@@ -321,4 +317,24 @@ function resetInterviwersErrors() {
     if ($('#applicationInterviewers option').size() > 0) {
         $('#interviewersErrorSpan').remove();
     }
+}
+
+function showProperInterviewArrangements() {
+	var interviewStatus = $('input[name=interviewStatus]:radio:checked').val();
+	
+	$('.interview-happened').hide();
+	$('.interview-scheduled').hide();
+	$('.interview-to-schedule').hide();
+	
+	switch (interviewStatus) {
+	case 'TAKEN_PLACE':
+		$('.interview-happened').show();
+		break;
+	case 'SCHEDULED':
+		$('.interview-scheduled').show();
+		break;
+	default:
+		$('.interview-to-schedule').show();
+		break;
+	}
 }

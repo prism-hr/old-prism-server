@@ -158,10 +158,10 @@
 			<option timeZoneId="82" gmtAdjustment="GMT+13:00" useDaylightTime="0" value="13">(GMT+13:00) Nuku'alofa</option>
 		</select>
 		<@spring.bind "interview.interviewDueDate" />
-      	<#list spring.status.errorMessages as error>
-      		<div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
-      	</#list>											
-	</div>	
+    	<#list spring.status.errorMessages as error>
+    		<div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
+    	</#list>											
+	  </div>	
 	  	
   </div>
   
@@ -170,11 +170,11 @@
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
     <div class="field">
 	  	<input class="half date" type="text" name="availableDates" id="availableDates" value="${(interview.interviewDueDate?string('dd MMM yyyy'))!}" />
-		<@spring.bind "interview.interviewDueDate" />
+		  <@spring.bind "interview.interviewDueDate" />
       	<#list spring.status.errorMessages as error>
       		<div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
       	</#list>									
-	</div>
+	  </div>
   </div>
   
   <div class="row interview-happened interview-scheduled">
@@ -193,50 +193,38 @@
       </div>
       </#list> </div>
   </div>
+  
   <div class="row interview-happened interview-scheduled">
     <label class="plain-label normal">Interview Time (GMT/BST)<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewTime'/>"></span>
     <div class="field"> <#include "/private/staff/interviewers/time_dropdown.ftl"/> </div>
   </div>
+  
   <div class="row interview-scheduled interview-to-schedule">
-    <label class="plain-label normal" for="instructionsForInterviewer">Interview Instructions for Interviewer<em>*</em></label>
-    <span class="hint" data-desc="<@spring.message 'assignInterviewer.instructions'/>"></span>
+    <label class="plain-label normal" for="instructionsForInterviewer">Interview Instructions for Interviewer</label>
+    <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewerInstructions'/>"></span>
     <div class="field">
     	<#if assignOnly?? && assignOnly>
-	      <textarea id="instructionsForInterviewer" readonly disabled="disabled" name="instructionsForInterviewer" class="max" rows="6" cols="80" maxlength='5000'>${interview.instructionsForInterviewer!}</textarea>
+	      <textarea id="furtherInterviewerDetails" readonly disabled="disabled" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherInterviewerDetails!}</textarea>
 	    <#else>
-	      <textarea id="instructionsForInterviewer" name="instructionsForInterviewer" class="max" rows="6" cols="80" maxlength='5000'>${interview.instructionsForInterviewer!}</textarea>
+	      <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherInterviewerDetails!}</textarea>
 	    </#if>
-      <@spring.bind "interview.furtherDetails" />
+      <@spring.bind "interview.furtherInterviewerDetails" />
       <#list spring.status.errorMessages as error>
-      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-        ${error}
-      </div>
-      </#list> </div>
+        <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+          ${error}
+        </div>
+      </#list>
+    </div>
   </div>
-  <div class="row interview-happened">
-    <label class="plain-label normal" for="comments">Comments about Candidate<em>*</em></label>
-    <span class="hint" data-desc="<@spring.message 'assignInterviewer.instructions'/>"></span>
-    <div class="field">
-    	<#if assignOnly?? && assignOnly>
-	      <textarea id="comments" readonly disabled="disabled" name="comments" class="max" rows="6" cols="80" maxlength='5000'>${interview.comments!}</textarea>
-	    <#else>
-	      <textarea id="comments" name="comments" class="max" rows="6" cols="80" maxlength='5000'>${interview.comments!}</textarea>
-	    </#if>
-      <@spring.bind "interview.furtherDetails" />
-      <#list spring.status.errorMessages as error>
-      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-        ${error}
-      </div>
-      </#list> </div>
-  </div>
+
   <div class="row interview-scheduled interview-to-schedule">
-    <label class="plain-label normal" for="furtherDetails">Interview Instructions for Candidate<em>*</em></label>
-    <span class="hint" data-desc="<@spring.message 'assignInterviewer.instructions'/>"></span>
+    <label class="plain-label normal" for="furtherDetails">Interview Instructions for Candidate</label>
+    <span class="hint" data-desc="<@spring.message 'assignInterviewer.candidateInstructions'/>"></span>
     <div class="field"> <#if assignOnly?? && assignOnly>
-      <textarea id="furtherDetails" readonly disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+      <textarea id="furtherDetails" readonly disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherDetails!}</textarea>
       <#else>
-      <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+      <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherDetails!}</textarea>
       </#if>
       <@spring.bind "interview.furtherDetails" />
       <#list spring.status.errorMessages as error>
@@ -246,6 +234,7 @@
       </#list>
     </div>
   </div>
+  
   <div class="row interview-scheduled interview-to-schedule">
     <label class="plain-label normal" for="interviewLocation">Interview Location</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
@@ -264,6 +253,7 @@
       </#list>
     </div>
   </div>
+  
 </div>
 <div id="section_interview_status">
   <h3>Interview Status</h3>

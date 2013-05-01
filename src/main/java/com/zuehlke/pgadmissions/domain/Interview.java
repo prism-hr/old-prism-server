@@ -48,6 +48,9 @@ public class Interview implements Serializable {
     @Column(name = "further_details")
     private String furtherDetails;
 
+    @Column(name = "further_interviewer_details")
+    private String furtherInterviewerDetails;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_form_id")
     private ApplicationForm application;
@@ -88,6 +91,14 @@ public class Interview implements Serializable {
 
     public void setFurtherDetails(String furtherDetails) {
         this.furtherDetails = furtherDetails;
+    }
+
+    public String getFurtherInterviewerDetails() {
+        return furtherInterviewerDetails;
+    }
+
+    public void setFurtherInterviewerDetails(String furtherInterviewerDetails) {
+        this.furtherInterviewerDetails = furtherInterviewerDetails;
     }
 
     public ApplicationForm getApplication() {

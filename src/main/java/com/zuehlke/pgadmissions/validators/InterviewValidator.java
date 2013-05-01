@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
@@ -28,8 +27,6 @@ public class InterviewValidator extends AbstractValidator {
         if (interview.getStage() == null || interview.getStage() == InterviewStage.INITIAL) {
             errors.rejectValue("stage", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
-
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", EMPTY_FIELD_ERROR_MESSAGE);
 
         if (StringUtils.isBlank(interview.getTimeHours())) {
             errors.rejectValue("timeHours", EMPTY_FIELD_ERROR_MESSAGE);

@@ -22,67 +22,62 @@ $(document).ready(function()
 	}
 	
 	/* Programme Details. */
-	loadProgrammeSection(false, function () {
-		
-		$('#applicationTab div.ajax').remove();
-		
-		/* Personal Details. */
-		 loadPersonalDetails();
-		
-		/* Address. */
-		 loadAddresSection();
-		
-		/* Qualifications. */	
-		 loadQualificationsSection();
-		 
-		/* (Employment) Position. */
-		 loadEmploymentSection();
-		
-		/* Funding. */
-		 loadFundingSection();
-		
-		/* Referees. */
-		 loadReferenceSection();
-		 
-		/* Documents. */
-		 loadDocumentsSection();
-		
-		/* Additional Information. */
-		 loadAdditionalInformationSection();
-		 
-		/* Terms and conditions. */
-		$.ajax({
-				type: 'GET',
-				statusCode: {
-					401: function() {
-						window.location.reload();
-					},
-					  500: function() {
-						  window.location.href = "/pgadmissions/error";
-					  },
-					  404: function() {
-						  window.location.href = "/pgadmissions/404";
-					  },
-					  400: function() {
-						  window.location.href = "/pgadmissions/400";
-					  },				  
-					  403: function() {
-						  window.location.href = "/pgadmissions/404";
-					  }
-				},
-				url:"/pgadmissions/acceptTerms/getTermsAndConditions",
-				data:{
-					applicationId:  $('#applicationId').val(),
-					errorCode: $('#termsAndConditionsError').val()
-				},
-				success: function(data)
-				{
-					$('#acceptTermsSection').html(data);
-				}
-		});
-	});	
+	loadProgrammeSection();	
 	
+	/* Personal Details. */
+	 loadPersonalDetails();
 	
+	/* Address. */
+	 loadAddresSection();
+	
+	/* Qualifications. */	
+	 loadQualificationsSection();
+	 
+	/* (Employment) Position. */
+	 loadEmploymentSection();
+	
+	/* Funding. */
+	 loadFundingSection();
+	
+	/* Referees. */
+	 loadReferenceSection();
+	 
+	/* Documents. */
+	 loadDocumentsSection();
+	
+	/* Additional Information. */
+	 loadAdditionalInformationSection();
+	
+	/* Terms and conditions. */
+	$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				},
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
+				  }
+			},
+			url:"/pgadmissions/acceptTerms/getTermsAndConditions",
+			data:{
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#termsAndConditionsError').val()
+			},
+			success: function(data)
+			{
+				$('#acceptTermsSection').html(data);
+			}
+	});
 	
 	
 	/*
@@ -240,7 +235,7 @@ function checkLoadedSections()
 }
 
 
-function loadProgrammeSection(clear, onComplete){
+function loadProgrammeSection(clear){
 	/* Programme Details. */
 	$.ajax({
 		 type: 'GET',
@@ -286,12 +281,8 @@ function loadProgrammeSection(clear, onComplete){
 					$("#awareYes").prop('checked', false);
 					$("#awareNo").prop('checked', false);
 				}
-				
-				onComplete();
-			},
-		  complete: function() {
-			  onComplete();
-		  }
+		
+			}	
 	});
 	
 }

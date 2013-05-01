@@ -3,12 +3,12 @@
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
 <a name="additional-info"></a>
-<h2 id="additional-H2" class="empty">
+<h2 id="additional-H2" class="empty open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
 	Additional Information<em>*</em>
 </h2>
 
-<div style=" display:none;">
+<div>
 	<form>
 	    <#if errorCode?? && errorCode=="true">
         <div class="alert alert-error"> 

@@ -150,7 +150,7 @@
 		      	</form>
 		      	
 		      	<#if RequestParameters.activationCode?has_content>
-		      	   <p>&nbsp;</p>
+		      	   
                 <#else>
                     
                 </#if>

@@ -5,7 +5,7 @@ $(document).ready(function()
 	
 	$('#createreviewersection').on('click','#createReviewer', function()
 	{
-		$('#createreviewersection').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		var postData = {
 			applicationId : $('#applicationId').val(),
 			firstName: $('#newReviewerFirstName').val(),
@@ -60,7 +60,7 @@ $(document).ready(function()
 			},
 		      complete: function()
 		      {
-				 $('#createreviewersection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 		      }
 		});
 		
@@ -70,7 +70,7 @@ $(document).ready(function()
 
 	$('#moveToReviewBtn').click(function() {
 		
-		$('#reviewsection').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		var url = null;
 		if($('#assign').val() == 'true'){
 			url = "/pgadmissions/review/assign";
@@ -124,7 +124,7 @@ $(document).ready(function()
 			},
 		      complete: function()
 		      {
-						$('#reviewsection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 		      }
 		});
 	});
@@ -132,7 +132,7 @@ $(document).ready(function()
 
 
 function getReviewersSection(){
-	$('#reviewsection').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	
 	var url = null;
 	if($('#assign').val() == 'true'){
@@ -167,13 +167,13 @@ function getReviewersSection(){
 		},
 		complete: function()
     	{
-	      $('#reviewsection div.ajax').remove();
+	      $('#ajaxloader').fadeOut('fast');
 	    }
 	});
 }
 
 function getCreateReviewersSection(){
-	$('#createreviewersection').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	
 	$.ajax({
 		type: 'GET',
@@ -197,7 +197,7 @@ function getCreateReviewersSection(){
 		url:"/pgadmissions/review/create_reviewer_section?applicationId=" + $('#applicationId').val(), 
 		success: function(data)
 		{
-			$('#createreviewersection div.ajax').remove();
+			$('#ajaxloader').fadeOut('fast');
 			$('#createreviewersection').html(data);
 		}
 	});

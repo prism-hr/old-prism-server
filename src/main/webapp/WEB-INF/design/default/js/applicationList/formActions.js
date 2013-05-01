@@ -356,6 +356,8 @@ function increasePageCount() {
 function populateApplicationList() {
 
 	loading = true;
+	
+	$('#ajaxloader').show();
 
 	filters = getFilters();
 
@@ -367,8 +369,6 @@ function populateApplicationList() {
 	};
 
 	$('#search-box div.alert-error').remove();
-
-	$('div.content-box-inner').append('<div class="ajax" />');
 
 	$('#loadMoreApplicationsTable').show();
 
@@ -407,8 +407,7 @@ function populateApplicationList() {
 			});
 		},
 		complete : function() {
-			$('.content-box-inner div.fetching, .content-box-inner div.ajax')
-					.remove();
+			 $('#ajaxloader').fadeOut('fast');
 			addToolTips();
 			loading = false;
 		}

@@ -143,7 +143,7 @@ $(document).ready(function()
 	// ------------------------------------------------------------------------------
 	$('#notifyRegistryButton').click(function()
 	{
-		$('#commentsection').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -236,8 +236,8 @@ function saveComment()
 }
 
 function getCreateInterviewersSection() {
-    $('#createInterviewerSection').append('<div class="ajax" />');
-
+	
+    $('#ajaxloader').show();
     $.ajax({
         type : 'GET',
         statusCode : {
@@ -262,7 +262,7 @@ function getCreateInterviewersSection() {
             $('#createInterviewerSection').html(data);
         },
         complete : function() {
-            $('#createInterviewerSection div.ajax').remove();
+			$('#ajaxloader').fadeOut('fast');
         }
     });
 }

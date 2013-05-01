@@ -27,7 +27,7 @@ $(document).ready(function() {
     // Create interviewer button.
     // -----------------------------------------------------------------------------------------
     $('#createinterviewersection').on('click', '#createInterviewer', function() {
-        $('#createinterviewersection').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         var postData = {
             applicationId : $('#applicationId').val(),
             firstName : $('#newInterviewerFirstName').val(),
@@ -78,7 +78,7 @@ $(document).ready(function() {
                 addToolTips();
             },
             complete : function() {
-                $('#createinterviewersection div.ajax').remove();
+                $('#ajaxloader').fadeOut('fast');
 				addCounter();
             }
         });
@@ -106,7 +106,7 @@ $(document).ready(function() {
     // -----------------------------------------------------------------------------------------
     $('#moveToInterviewBtn').click(function() {
         $('#interviewsection div.alert-error').remove();
-        $('#interviewsection').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         var url = "/pgadmissions/interview/move";
 
         $('#applicationInterviewers option').each(function() {
@@ -168,7 +168,7 @@ $(document).ready(function() {
                 addToolTips();
             },
             complete : function() {
-                $('#interviewsection div.ajax').remove();
+                $('#ajaxloader').fadeOut('fast');
 				addCounter();
             }
         });
@@ -176,7 +176,7 @@ $(document).ready(function() {
 });
 
 function getInterviewersAndDetailsSections() {
-    $('#interviewsection').append('<div class="ajax" />');
+    $('#ajaxloader').show();
 
     var url = "/pgadmissions/interview/interviewers_section";
 
@@ -247,14 +247,14 @@ function getInterviewersAndDetailsSections() {
         	interviewStatus.change();
         },
         complete : function() {
-            $('#interviewsection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
 			addCounter();
         }
     });
 }
 
 function getCreateInterviewersSection() {
-    $('#createinterviewersection').append('<div class="ajax" />');
+    $('#ajaxloader').show();
 
     $.ajax({
         type : 'GET',
@@ -280,7 +280,7 @@ function getCreateInterviewersSection() {
             $('#createinterviewersection').html(data);
         },
         complete : function() {
-            $('#createinterviewersection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
         }
     });
 }

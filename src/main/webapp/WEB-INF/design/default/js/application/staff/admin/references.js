@@ -207,7 +207,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
     var scoreData=getScores($("#scoring-questions_"+refereeId));
     postData['scores']=scoreData;
     
-    $('#referencesSection > div').append('<div class="ajax" />');
+    $('#ajaxloader').show();
     $.ajax({
         type : 'POST',
         statusCode : {
@@ -228,7 +228,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
             addCounter();
         },
         complete : function() {
-            $('#referencesSection div.ajax').remove();
+           $('#ajaxloader').fadeOut('fast');
             
         }
     });
@@ -261,7 +261,7 @@ function editReferenceData() {
         suitableForProgramme : suitableForProgramme, 
     };
 
-    $('#referencesSection > div').append('<div class="ajax" />');
+    $('#ajaxloader').show();
     $.ajax({
     	dataType: "json",
         type : 'POST',
@@ -283,7 +283,7 @@ function editReferenceData() {
         	}
         },
         complete : function() {
-            $('#referencesSection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
         },
         
     });

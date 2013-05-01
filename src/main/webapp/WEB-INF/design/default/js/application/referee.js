@@ -22,7 +22,7 @@ $(document).ready(function()
 	$('a[name="deleteRefereeButton"]').click(function()
 	{	
 		var id = $(this).attr("id").replace("referee_", "");
-		$('#referencesSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -53,7 +53,7 @@ $(document).ready(function()
 			},
 			completed: function()
 			{
-				$('#referencesSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});
@@ -132,7 +132,7 @@ $(document).ready(function()
 
 	$('#refereeClearButton').click(function()
 	{
-		$('#referencesSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		loadReferenceSection(true);
 	});
 	
@@ -143,7 +143,7 @@ $(document).ready(function()
 	$('a[name="editRefereeLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('referee_', '');	
-		$('#referencesSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 		 type: 'GET',
 		 statusCode: {
@@ -177,7 +177,7 @@ $(document).ready(function()
 			},
 			completed: function()
 			{
-				$('#referencesSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});
@@ -218,7 +218,7 @@ function postRefereeData(message){
 			acceptedTerms: acceptedTheTerms
 	}
 
-	$('#referencesSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 
 	$.ajax({
 		type: 'POST',
@@ -256,9 +256,8 @@ function postRefereeData(message){
 				}
 		
 			},
-    complete: function()
-    {
-      $('#referencesSection div.ajax').remove();
-    }
+		complete: function(){
+		  $('#ajaxloader').fadeOut('fast');
+		}
 	});
 }

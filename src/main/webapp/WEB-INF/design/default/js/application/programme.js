@@ -475,7 +475,7 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$('#programmeClearButton').click(function()
 	{
-		$('#programmeDetailsSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		loadProgrammeSection(true);
 	});
 
@@ -517,7 +517,7 @@ function postProgrammeData(message)
 			message: message
 		};
 
-	$('#programmeDetailsSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 		
 	$.ajax({
 		type: 'POST',
@@ -558,7 +558,7 @@ function postProgrammeData(message)
 			},
     complete: function()
     {
-      $('#programmeDetailsSection div.ajax').remove();
+      $('#ajaxloader').fadeOut('fast');
     }
 	});
 }

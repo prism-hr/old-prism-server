@@ -29,7 +29,7 @@ $(document).ready(function()
 	
 	$('#login-box button').click(function()
 	{
-		$('#login-box').append('<div class="ajax" />');
+		$('#login-box').addClass('loading');
 		return true;
 	});
   

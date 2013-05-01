@@ -158,7 +158,7 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
     $('a[name="deleteQualificationButton"]').click(function() {
         var id = $(this).attr("id").replace("qualification_", "");
-        $('#qualificationsSection > div').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         $.ajax({
             type : 'POST',
             statusCode : {
@@ -186,7 +186,7 @@ $(document).ready(function() {
                 $('#qualificationsSection').html(data);
             },
             completed : function() {
-                $('#qualificationsSection div.ajax').remove();
+                $('#ajaxloader').fadeOut('fast');
                 showOrHideAddQualificationButton();
             }
         });
@@ -239,7 +239,7 @@ $(document).ready(function() {
         $('#editClicked').val("1");
         var id = this.id;
         id = id.replace('qualification_', '');
-        $('#qualificationsSection > div').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         $.ajax({
             type : 'GET',
             statusCode : {
@@ -292,7 +292,7 @@ $(document).ready(function() {
                 $("#addQualificationButton").show();
             },
             completed : function() {
-                $('#qualificationsSection div.ajax').remove();
+                $('#ajaxloader').fadeOut('fast');
                 // showOrHideAddQualificationButton();
             }
         });
@@ -302,7 +302,7 @@ $(document).ready(function() {
     // Clear button.
     // -------------------------------------------------------------------------------
     $('#qualificationClearButton').click(function() {
-        $('#qualificationsSection > div').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         loadQualificationsSection(true);
     });
 
@@ -315,7 +315,7 @@ $(document).ready(function() {
 });
 
 function postQualificationData(message) {
-    $('#qualificationsSection > div').append('<div class="ajax" />');
+    $('#ajaxloader').show();
     var acceptedTheTerms;
     if ($("#acceptTermsQDValue").val() == 'NO') {
         acceptedTheTerms = false;
@@ -379,7 +379,7 @@ function postQualificationData(message) {
             }
         },
         complete : function() {
-            $('#qualificationsSection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
         }
     });
 }

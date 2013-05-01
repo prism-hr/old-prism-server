@@ -87,7 +87,7 @@ $(document).ready(function()
 // --------------------------------------------------------------------------------
 function postDocumentData(message)
 {
-	$('#documentSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	var acceptedTheTerms;
 	if ($("#acceptTermsDDValue").val() == 'NO'){
 		acceptedTheTerms = false;
@@ -139,10 +139,9 @@ function postDocumentData(message)
 				}
 			}
 		},
-    complete: function()
-    {
-			$('#documentSection div.ajax').remove();
-    }
+		complete: function(){
+			$('#ajaxloader').fadeOut('fast');
+		}
 	});
 }
 

@@ -29,7 +29,7 @@ $(document).ready(function()
 			
 			var onCancel = function()
 			{
-				$('div.content-box-inner div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			};
 			
 			modalPrompt(message, onOk, onCancel);

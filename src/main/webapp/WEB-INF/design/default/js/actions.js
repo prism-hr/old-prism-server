@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $(document).on('change', 'select.actionType', function() {
-        $('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
+		$('#ajaxloader').show();
             var name = this.name;
             var id = name.substring(5).replace(']','');
             switch ($(this).val()) {
@@ -57,13 +57,13 @@ $(document).ready(function() {
                             window.location.href = "/pgadmissions/applications?messageCode=application.withdrawn&application="+ id;
                         },
                         complete : function() {
-                            $('div.content-box-inner div.ajax').remove();
+                            $('#ajaxloader').fadeOut('fast');
                         }
                     });    
                 };
                 var onCancel = function() {
                 	$('#actionTypeSelect').val('Actions');
-                    $('div.content-box-inner div.ajax').remove();
+					$('#ajaxloader').fadeOut('fast');
                 };
                 modalPrompt(message, onOk, onCancel);
                 break;

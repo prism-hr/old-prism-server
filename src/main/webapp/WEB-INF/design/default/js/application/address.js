@@ -121,7 +121,7 @@ function postAddressData(message)
 	else{
 		acceptedTheTerms = true;
 	}
-	$('#addressSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 
 	$.ajax({
 		type: 'POST',
@@ -176,10 +176,9 @@ function postAddressData(message)
 				}
 			}
 		},
-    complete: function()
-    {
-			$('#addressSection div.ajax').remove();
-    }
+		complete: function(){
+			$('#ajaxloader').fadeOut('fast');
+		}
 	});
 }
 

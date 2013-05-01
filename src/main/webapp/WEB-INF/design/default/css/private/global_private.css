@@ -869,17 +869,37 @@ button span.icon-down { background-image: url(../../images/icon_arrow_down.png) 
 
 
 /* AJAX loading/posting notification */
-div.ajax {
-	background: rgba(128,128,128,.4) url(../../images/ajax-loader.gif) no-repeat center !important;
+div#ajaxloader {
+	display: none;
+	background: rgba(0,0,0,0.4);
 	border: none !important;
 	height: 100%;
 	left: 0;
 	margin: 0 !important;
 	min-height: 80px;
 	padding: 0 !important;
-	position: absolute !important;
+	position: fixed !important;
 	top: 0;
 	width: 100%;
+	z-index: 999;
+}
+.ajaxbox {
+	background-clip: padding-box;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    left: 50%;
+    margin-left: -162px;
+    outline: medium none;
+    position: fixed;
+    top: 30%;
+    width: 300px;
+    padding: 10px;
+    z-index: 1050;
+}
+.ajaxbox .progress {
+	margin-bottom: 0px;
 }
 
 

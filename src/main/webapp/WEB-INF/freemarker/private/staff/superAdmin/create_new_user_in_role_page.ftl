@@ -92,7 +92,7 @@
 										<label for="firstName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">First Name<em>*</em></label>
 										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
 										<div class="field">
-											<input class="max" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			    
+											<input class="max" type="text" value="${(userDTO.firstName?html)!}" autocomplete="off" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			    
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.firstName?html)!}" name="firstName" /></#if>                              
 											<@spring.bind "userDTO.firstName" /> 
 											<#list spring.status.errorMessages as error>
@@ -105,7 +105,7 @@
 										<label for="lastName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Last Name<em>*</em></label>
 										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
 										<div class="field">
-											<input class="max" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>
+											<input class="max" type="text" value="${(userDTO.lastName?html)!}" autocomplete="off" name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.lastName?html)!}" name="lastName" /></#if>    
 											<@spring.bind "userDTO.lastName" /> 
 											<#list spring.status.errorMessages as error>
@@ -118,7 +118,7 @@
 										<label for="email" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Email<em>*</em></label>
 										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
-											<input class="max" type="email" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
+											<input class="max" type="email" value="${(userDTO.email?html)!}" autocomplete="off" name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.email?html)!}" name="email" /></#if>    
 											<@spring.bind "userDTO.email" /> 
 											<#list spring.status.errorMessages as error>

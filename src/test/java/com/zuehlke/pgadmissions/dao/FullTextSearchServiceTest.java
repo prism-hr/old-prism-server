@@ -15,81 +15,159 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testFullTextSearchContext.xml")
-@TransactionConfiguration(defaultRollback = false)
-@Transactional
 public class FullTextSearchServiceTest {
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+    
     @Autowired
     private FullTextSearchService fullTextService;
 
     @Autowired
     private SessionFactory sessionFactory;
-
+    
     @Autowired
     private UserDAO registeredUserDAO;
 
+    @Autowired
+    private RoleDAO roleDAO;
+    
     private RegisteredUser user1;
 
     private RegisteredUser similiarToUser1;
-    
-    public static boolean dbInit = false;
 
     @Before
     public void prepare() {
-        user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
-                .username("tyler@durden.com").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
+        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        template.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(final TransactionStatus status) {
+                sessionFactory
+                    .getCurrentSession()
+                    .createSQLQuery(""
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (1,'ADMINISTRATOR');"
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (2,'APPLICANT');"
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (4,'APPROVER');"
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (7,'INTERVIEWER');"
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (6,'REFEREE');"
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (3,'REVIEWER');"
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (5,'SUPERADMINISTRATOR');"
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (8,'SUPERVISOR');"
+                            + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (9,'VIEWER');")
+                     .executeUpdate();
+                    
+                user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
+                        .username("tyler@durden.com").password("password").accountNonExpired(false).accountNonLocked(false)
+                        .credentialsNonExpired(false).enabled(false).build();
+                
+                similiarToUser1 = new RegisteredUserBuilder().firstName("Taylor").lastName("Dordeen")
+                        .email("taylor@dordeen.com").username("taylor@durden.com").password("password")
+                        .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                        .build();
+                
+                registeredUserDAO.save(user1);
+                registeredUserDAO.save(similiarToUser1);
+                
+                user1.getRoles().add(roleDAO.getRoleByAuthority(Authority.REFEREE));
+                similiarToUser1.getRoles().add(roleDAO.getRoleByAuthority(Authority.INTERVIEWER));
 
-        similiarToUser1 = new RegisteredUserBuilder().firstName("Taylor").lastName("Dordeen")
-                .email("taylor@dordeen.com").username("taylor@durden.com").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-
-        registeredUserDAO.save(user1);
-        registeredUserDAO.save(similiarToUser1);
-
-        flushIndexes();
+                flushIndexes();
+            }
+        });
+        
     }
 
     @After
     public void clean() {
-        registeredUserDAO.delete(user1);
-        registeredUserDAO.delete(similiarToUser1);
+        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        template.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(final TransactionStatus status) {
+                sessionFactory.getCurrentSession()
+                        .createSQLQuery("DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
+                        .executeUpdate();
+            }
+        });
     }
 
     @Test
     public void shouldReturnAFuzzyMatchBasedOnAMisspelledFirstname() {
-        List<RegisteredUser> matchingUsersWithFirstnameLike = fullTextService.getMatchingUsersWithFirstnameLike("tayle");
-        assertEquals(2, matchingUsersWithFirstnameLike.size());
-        assertTrue(listContainsId(user1, matchingUsersWithFirstnameLike));
-        assertTrue(listContainsId(similiarToUser1, matchingUsersWithFirstnameLike));
+        List<RegisteredUser> matchingUsersWithFirstnameLike = fullTextService.getMatchingUsersWithFirstnameLike("taylar");
+        assertEquals(1, matchingUsersWithFirstnameLike.size());
+        assertTrue(contains(similiarToUser1, matchingUsersWithFirstnameLike));
     }
     
     @Test
     public void shouldReturnAFuzzyMatchBasedOnAMisspelledLastname() {
-        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durden");
+        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durdeen");
         assertEquals(2, matchingUsersWithLastnameLike.size());
-        assertTrue(listContainsId(user1, matchingUsersWithLastnameLike));
-        assertTrue(listContainsId(similiarToUser1, matchingUsersWithLastnameLike));
+        assertTrue(contains(user1, matchingUsersWithLastnameLike));
+        assertTrue(contains(similiarToUser1, matchingUsersWithLastnameLike));
     }
 
     @Test
     public void shouldReturnAFuzzyMatchBasedOnAMisspelledEmail() {
         List<RegisteredUser> matchingUsersWithEmailLike = fullTextService.getMatchingUsersWithEmailLike("tulor@durden.com");
         assertEquals(2, matchingUsersWithEmailLike.size());
-        assertTrue(listContainsId(user1, matchingUsersWithEmailLike));
-        assertTrue(listContainsId(similiarToUser1, matchingUsersWithEmailLike));
+        assertTrue(contains(user1, matchingUsersWithEmailLike));
+        assertTrue(contains(similiarToUser1, matchingUsersWithEmailLike));
     }
     
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+    @Test
+    public void shouldNotReturnAMatchForApplicants() {
+        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        template.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(final TransactionStatus status) {
+                user1.getRoles().clear();
+                similiarToUser1.getRoles().clear();
+                
+                user1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+                similiarToUser1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+                
+                sessionFactory.getCurrentSession().saveOrUpdate(user1);
+                sessionFactory.getCurrentSession().saveOrUpdate(similiarToUser1);
+            }
+        });
+        
+        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("Du");
+        assertEquals(0, matchingUsersWithLastnameLike.size());
+    }
+    
+    @Test
+    public void shouldNotReturnAFuzzyMatchBasedOnAMisspelledLastnameForApplicants() {
+        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        template.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(final TransactionStatus status) {
+                user1.getRoles().clear();
+                similiarToUser1.getRoles().clear();
+                
+                user1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+                similiarToUser1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+                
+                sessionFactory.getCurrentSession().saveOrUpdate(user1);
+                sessionFactory.getCurrentSession().saveOrUpdate(similiarToUser1);
+            }
+        });
+        
+        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durden");
+        assertEquals(0, matchingUsersWithLastnameLike.size());
+    }
+    
+    private boolean contains(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (user.getId().equals(entry.getId())) {
                 return true;

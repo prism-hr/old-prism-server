@@ -223,6 +223,7 @@
                   <div class="field">
                     <textarea name="scoringConfigurationContent" id="scoringConfigurationContent" class="input-xxlarge" rows="15" cols="150"></textarea>
                   </div>
+	              <div class="field"> <a disabled href="#previewModal" id="scoring-config-preview" role="button" class="btn" data-toggle="modal">Preview</a> </div>
                 </div>
               </div>
               <div class="buttons">

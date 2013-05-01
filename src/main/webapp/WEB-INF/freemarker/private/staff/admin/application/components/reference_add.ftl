@@ -97,11 +97,12 @@
 
 	
 <#assign scores = refereesAdminEditDTO.scores>
-<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
+<#if refereesAdminEditDTO.alert??>
+	<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
+</#if>
 <#if (scores)?has_content>
 <div class="row-group">
     <div id="scoring-questions_${encRefereeId}">
-      <h3>Scoring questions</h3>
       <#assign errorsContainerName = "refereesAdminEditDTO">
       <#include "/private/staff/scores.ftl"/>
     </div>

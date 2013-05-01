@@ -1,0 +1,276 @@
+@charset "utf-8";
+
+
+section.form-rows { margin-bottom: 10px; position: relative; }
+body.old-ie section.form-rows { width: 100%; }
+body.ie9 section.form-rows { margin-bottom: 0; }
+body.ie9 section.form-rows > div { margin-bottom: 10px; }
+
+/* SECTION HEADINGS --------------------------------------------------------------------------------------- */
+section.form-rows h2,
+#view-toolbar li.tool-button a { 
+  border: none;
+  -webkit-border-radius: 4px; 
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #FFF; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 10px; }
+section.form-rows h2 .left { background: url(../../images/bg_expand_arrow.png) no-repeat; float: left; height: 11px; margin: 5px 4px 0 0; width: 11px; }
+section.form-rows h2.open .left { background-position: 0 -11px; }
+section.form-rows h2 .status { 
+	/* background: url(../../images/bg_bar_status.png) no-repeat 0 14px; */ 
+	float: right; height: 14px; margin: 3px 3px 0 0; width: 14px;
+}
+section.form-rows h2.no-arrow { padding-left: 13px; }
+
+/* Heading/section states (icons to the header's right) */
+section.form-rows h2.tick .status { background-position: 0 0; }
+section.form-rows h2.cross .status { background-position: 0 -15px; }
+section.form-rows h2.empty .status { background-position: 0 -30px; }
+
+
+/* SECTION BODY ------------------------------------------------------------------------------------------ */
+section.form-rows > div { background: #DDD; border: 1px solid #999; padding: 10px; padding-bottom: 0; position: relative; }
+
+
+/* EXISTING ROWS ----------------------------------------------------------------------------------------- */
+/*section.form-rows table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%;  margin: -10px -10px 10px; width: 824px; }
+/*section.form-rows table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
+/*  Temp Fix: Modified to accomodate backgournd for long strings : Manish */
+/*section.form-rows table.existing td { 
+	/*background: url("../../images/bg_table_row.jpg") repeat-x scroll left bottom #E6E8E7;
+	/* background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; */
+	/*padding: 3px;
+/*}
+/*  Modified to acomodate long strings : Manish */
+/*section.form-rows table.existing td,
+/*section.form-rows table.existing th { 
+/*	line-height: 25px; padding: 0 3px; vertical-align: text-top; 
+/*}
+/* Contrlloing the appearince of the text of the first column header */
+/*section.form-rows table.existing th#primary-header { padding-left: 33px; }*/
+section.form-rows table.existing td {
+	vertical-align: middle;
+}
+
+
+/* ROW GROUPS (white boxes) ------------------------------------------------------------------------------ */
+section.form-rows .row-group { background: #FFF; border: 1px solid #999; margin-bottom: 10px; overflow: hidden; padding: 10px; position: relative; }
+section.form-rows .row-group .admin_row:last-child { border-bottom: none; }
+
+
+/* BUTTONS AREA ------------------------------------------------------------------------------------------ */
+section.form-rows .buttons { background: #EEE; border: 1px solid #999; border-width: 1px 0 0; margin: 8px -10px -10px; padding: 10px;  border-radius: 0  0 4px 4px;}
+#edit-template-section section.form-rows .buttons {margin-bottom: 0px;}
+/* Expandable content boxes */
+/*section.form-rows > div { border: 2px solid #999; margin-bottom: 10px; }*/
+
+/* Expanding forms ---------------------------------------------------------------------------------------- */
+section.form-rows header { background: #EEE; border-bottom: 1px solid #999; font-weight: bold; padding: 6px; }
+section.form-rows footer { background: #EEE; border-top: 1px solid #999; padding: 6px !important; text-align: right; }
+
+
+
+/* Make the extra text hidden*/
+.row-extra-hide{
+	height:24px; width:655px; overflow:hidden;
+}
+
+/* Used to control the width of the last col in an existing table */
+#last-col{
+	width: 30px;
+}
+
+
+
+
+
+.old-ie section.form-rows { display: inline-block; margin-bottom: 0px !important; } /* fixes unsightly space at the bottom of a folding section. */
+section.form-rows h3 { margin-bottom: 1em; }
+section.form-rows .row { line-height: 24px; margin-bottom: 2px; clear: left; }
+
+.admin_row { border-bottom: 1px solid #999; clear: left; overflow: hidden; padding: 8px 0; }
+.admin_row_label { float: left; line-height: 1.2; width: 180px; }
+.admin_header { float: left;  width: 180px; font-weight: bold; }
+.admin_row .field { line-height: 1.2; padding: 0 !important; }
+
+section.form-rows > div.sub_section_admin { margin-bottom: 10px; overflow: hidden; padding-bottom: 8px; }
+
+/* Label lenght increased by 195px; - edited by Manish */
+section.form-rows .label { float: left; line-height: 1.2; width: 180px; }
+
+/* To align with label, increasing the width : Edited by Manish*/
+section.form-rows .field { margin-left: 235px; padding: 1px 0; }
+
+/* To align with label, increasing the width : Edited by Manish*/
+section.form-rows .hint { 
+	/*background: url(../../images/button_question.png)
+	no-repeat; width: 25px; height: 20px;  */
+	float: left; margin-left: 10px;
+	margin-top: 0.1em; 
+}
+
+section.form-rows .error-hint { 
+	background: url(../../images/button_exclaim.png) no-repeat 0 .1em; 
+	no-repeat; height: 24px; 
+	width: 20px; 
+  margin-left: 3px;
+  margin-right: -3px;
+  margin-top: -2px;	
+	position: absolute;
+	top: 7px;
+}
+
+.individual-hint { margin-top: 2px;	} 
+ 	
+	
+section.form-rows label.label { font-weight: bold; }
+
+/* To avoid any nesting effect, implement this class where you need
+ * regular fields regardless of inside or outside of a form element - Edited by Manish*/
+.plain-label { 
+	float: left; line-height: 
+	1.2; width: 195px; 
+	padding-top: 4px; 
+	font-weight: normal; 
+}
+
+.multi-line{
+	padding-top: 8px;
+}
+
+.group-heading-label { 
+	float: left;
+	line-height: 1.2;
+	width: 195px; 
+	font-weight: bold;
+	padding-top: 2px; 
+	padding-bottom: 10px;
+}
+
+.grey-label { color: #AAA; }
+.grey-label em { color: #AAA !important; }
+section.form-rows .alert { margin-bottom: 10px;}
+
+section.form-rows .field .max { width: 330px; }
+section.form-rows .field .full { width: 240px; }
+section.form-rows .field .half { width: 120px; }
+section.form-rows .field label { display: inline-block; margin-right: 1em; min-width: 48px; }
+
+section.form-rows div.add { padding: 10px 5px; text-align: left; }
+
+
+section.form-rows div.comment { display: none; }
+section.form-rows div.comment label { display: block; margin-bottom: 4px; }
+section.form-rows div.comment textarea { width: 99%; }
+section.form-rows div.comment .buttons { background-color: transparent; padding: 5px; }
+section.form-rows div.comment .previous { margin-bottom: 10px; }
+section.form-rows div.comment .previous a.more { float: right; font-weight: bold; }
+section.form-rows div.comment .previous ul { list-style: none; margin: 10px 0; }
+section.form-rows div.comment .previous ul li { background: #DDD; margin-bottom: 0.5em; padding: 10px; }
+section.form-rows div.comment .previous ul li.even { background: #EEE; }
+section.form-rows div.comment .previous ul li span { display: block; }
+
+
+
+/* Dynamic Data Table */
+table.data-table { border-collapse: collapse; border-spacing: 0; }
+table.data-table td, table.data-table th { padding: 4px 3px 3px; text-align:left; } 
+table.data-table .odd td { background-color: #FFF; } 
+table.data-table .even td { background-color: #DDD; }
+table.data-table .deleteButton{
+	background-image: url("images/trash.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    overflow: hidden;
+    text-indent: 99px;
+    vertical-align: middle;
+    width: 24px;
+}
+table.data-table .editButton{
+	background-image: url("images/edit_grey.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    overflow: hidden;
+    text-indent: 99px;
+    vertical-align: middle;
+    width: 24px;
+}
+
+
+/* Upload fields. */
+
+section.form-rows .field .data-table a.button-delete { display: inline-block; }
+
+
+section.form-rows .field.posting * { display: none; }
+.template-upload td {
+	vertical-align: middle !important;
+}
+
+/* Show only the file link when a file is uploaded. */
+section.form-rows .field.uploaded input { display: none; }
+section.form-rows .field.uploaded input.multiple { display: block; }
+section.form-rows .field.uploaded a.uploaded-filename { display: inline-block; }
+section.form-rows .field.uploaded a { display: inline-block; vertical-align: top; }
+
+section.form-rows .field.uploaded span.uploaded-file { display: block; padding: 1px; }
+section.form-rows .field span.uploaded-files .uploaded-file:last-child { margin-bottom: 5px; }
+
+
+/* Deleted uploads. */
+section.form-rows .field.upload-delete a { display: none !important; }
+section.form-rows .field.upload-delete input[type="file"] { display: inline-block !important; }
+
+
+/* Withdraw button. */
+#withdrawButton { float: left; }
+
+/* Selecting lists of users. */
+select.list-select-from { height: 300px; width: 400px; }
+select.list-select-to { width: 400px; }
+select.list-select-from option:last-child,
+select.list-select-to option:last-child { border-bottom: none; }
+
+/* "From" list */
+select.list-select-from optgroup {
+	background: #DDD;
+	font-style: normal;
+	font-weight: normal;
+	margin-bottom: 5px;
+	padding: 5px;
+}
+select.list-select-from option {
+	background: #FFF;
+	margin: 5px -5px -5px;
+	padding: 5px 5px 5px 20px;
+}
+
+/* "To" list */
+select.list-select-to { min-height:34px; }
+select.list-select-to option { padding: 5px; }
+
+.list-select-buttons .field { padding: 6px 0 8px !important; text-align: center; width: 400px; }
+.list-select-buttons .field button { margin: 0 5px; width: 90px; }
+
+/* Select Supervisors */
+#applicationSupervisorsList { border: 1px solid #999999; min-height:34px }
+#applicationSupervisorsList .ui-selecting { background: #3399FF; color: white; }
+#applicationSupervisorsList .ui-selected { background: #3399FF; color: white; }
+#applicationSupervisorsList { list-style-type: none; margin: 0; margin-bottom:10px; padding: 0; width: 400px; }
+#applicationSupervisorsList li { padding:5px; }
+.ui-widget-content { border: 0px }
+
+/* Rating system css */
+.rating-list {	margin-left: 0px;	list-style: none;}
+.rating-list li { display: inline-block; float: left; font-size: 19px; color: grey;} 
+.rating-list li i:hover, .rating-list li i.hover  { color:#FFC926; cursor: pointer; }
+.rating-list li i.icon-thumbs-down.hover, .rating-list li i.icon-thumbs-down:hover { color: #D93600; }
+.scoring-questions .rating-input {
+	display: none !important;
+}
+#confirmNextStage {
+	margin-top: -4px;
+}

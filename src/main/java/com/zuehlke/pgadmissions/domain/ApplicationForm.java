@@ -298,6 +298,15 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return status != ApplicationFormStatus.UNSUBMITTED;
     }
     
+    public InterviewEvaluationComment getLastInterviewEvaluationComment() {
+        for (int i= applicationComments.size()-1; i>=0; i--) {
+            if (applicationComments.get(i) instanceof InterviewEvaluationComment) {
+                return (InterviewEvaluationComment)applicationComments.get(i);
+            }
+        }
+        return null;
+    }
+    
     public boolean hasInterviewEvaluationComment() {
         for (Comment comment : this.getApplicationComments()) {
             if (comment instanceof InterviewEvaluationComment) {

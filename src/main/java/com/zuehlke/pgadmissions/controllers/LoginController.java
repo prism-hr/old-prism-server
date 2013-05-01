@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
@@ -16,6 +18,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Controller
 @RequestMapping("/login")
 public class LoginController {
+
+    private static final String CLICKED_ON_ALREADY_REGISTERED = "CLICKED_ON_ALREADY_REGISTERED";
 
     private static final String APPLY_REQUEST_SESSION_ATTRIBUTE = "applyRequest";
 
@@ -39,13 +43,14 @@ public class LoginController {
     }
     
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String getLoginPage(final HttpServletRequest request, final HttpServletResponse response) {
+	public String getLoginPage(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session) {
 		
 	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
 		if (hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(request)) {
 		    clearUserEmailInSession(request);
             clearApplyRequestInSession(request);
+            session.setAttribute(CLICKED_ON_ALREADY_REGISTERED, true);
             return LOGIN_PAGE;
 		} 
 		
@@ -54,6 +59,12 @@ public class LoginController {
 		    clearApplyRequestInSession(request);
 	        return LOGIN_PAGE;
 		} 
+		
+		if (isAnApplyNewRequestAndLoginFailed(request, session)) {
+		    clearUserEmailInSession(request);
+            clearApplyRequestInSession(request);
+		    return LOGIN_PAGE;
+		}
 		
 		if (isAnApplyNewRequest(request)) {
 		    setApplyNewQueryStringInSession(request);
@@ -74,6 +85,10 @@ public class LoginController {
 	private boolean hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(final HttpServletRequest request) {
 	    return StringUtils.contains(getReferrerFromHeader(request), "register") 
 	            && StringUtils.contains(request.getRequestURI().toString(), "/login");
+	}
+	
+	private boolean isAnApplyNewRequestAndLoginFailed(final HttpServletRequest request, final HttpSession session) {
+	    return StringUtils.contains(getReferrerFromHeader(request), "/login") && BooleanUtils.isTrue((Boolean) session.getAttribute(CLICKED_ON_ALREADY_REGISTERED));
 	}
 	
 	private boolean doesRequestParameterIncludeAnActivationCode(final HttpServletRequest request) {

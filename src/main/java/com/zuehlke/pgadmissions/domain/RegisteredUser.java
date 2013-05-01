@@ -130,7 +130,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @JoinColumn(name = "primary_account_id", nullable = true)
     private RegisteredUser primaryAccount;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
     private List<Role> roles = new ArrayList<Role>();
 

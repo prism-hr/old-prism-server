@@ -22,7 +22,15 @@ public class RoleDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
-	public Role getRoleByAuthority(Authority authority) {
+	public Role getRoleByAuthority(final Authority authority) {
 		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", authority)).uniqueResult();
+	}
+	
+	public void save(final Role role) {
+	    sessionFactory.getCurrentSession().save(role);
+	}
+	
+	public void delete(final Role role) {
+	    sessionFactory.getCurrentSession().delete(role);
 	}
 }

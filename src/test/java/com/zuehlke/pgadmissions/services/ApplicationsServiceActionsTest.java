@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
@@ -97,6 +98,7 @@ public class ApplicationsServiceActionsTest {
     public void shouldBeAbleToInterviewIfAdminAndInterviewStage() {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, "INTERVIEW");
+        expect(applicationMock.getApplicationAdministrator()).andReturn(null);
         ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
         assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Evaluate interview feedback", "Comment" });
     }

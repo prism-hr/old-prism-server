@@ -18,7 +18,7 @@ public class InterviewBuilder {
     private String interviewTime;
     private String furtherDetails;
     private String locationURL;
-    private InterviewStage stage;
+    private InterviewStage stage = InterviewStage.INITIAL;
     private List<Interviewer> interviewers = new ArrayList<Interviewer>();
 
     public InterviewBuilder lastNotified(Date lastNotified) {

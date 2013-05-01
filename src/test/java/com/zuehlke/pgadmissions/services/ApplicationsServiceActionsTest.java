@@ -21,8 +21,10 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 
 public class ApplicationsServiceActionsTest {
@@ -231,6 +233,7 @@ public class ApplicationsServiceActionsTest {
         EasyMock.expect(applicationMock.isDecided()).andReturn(isDecided).anyTimes();
         EasyMock.expect(applicationMock.isWithdrawn()).andReturn(isWithdrawn).anyTimes();
         EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(isPendingApprovalRestart).anyTimes();
+        EasyMock.expect(applicationMock.getLatestInterview()).andReturn(new InterviewBuilder().stage(InterviewStage.SCHEDULED).build()).anyTimes();
 
         Supervisor supervisor = new SupervisorBuilder().isPrimary(true).confirmedSupervision(isSupervisionConfirmed).build();
         if (isSupervisor) {

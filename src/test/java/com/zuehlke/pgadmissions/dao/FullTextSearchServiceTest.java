@@ -137,6 +137,9 @@ public class FullTextSearchServiceTest {
                 
                 user1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
                 similiarToUser1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+                
+                sessionFactory.getCurrentSession().saveOrUpdate(user1);
+                sessionFactory.getCurrentSession().saveOrUpdate(similiarToUser1);
             }
         });
         

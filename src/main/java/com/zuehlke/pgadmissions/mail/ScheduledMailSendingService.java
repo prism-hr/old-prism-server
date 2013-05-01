@@ -148,14 +148,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 		String taskReminderSubject = resolveMessage(DIGEST_TASK_REMINDER, (Object[])null);
 		String updateNotificationSubject = resolveMessage(DIGEST_UPDATE_NOTIFICATION, (Object[])null);
 
-		PrismEmailMessageBuilder digestTaskNotification = new PrismEmailMessageBuilder().subject(
-		        taskNotificationSubject).emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
-
-		PrismEmailMessageBuilder digestTaskReminder = new PrismEmailMessageBuilder().subject(
-		        taskReminderSubject).emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
-
-		PrismEmailMessageBuilder digestUpdateNotification = new PrismEmailMessageBuilder().subject(
-		        updateNotificationSubject).emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
 
 		for (Integer userId : userService.getAllUsersInNeedOfADigestNotification()) {
 			try {
@@ -171,22 +163,26 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 					}
 				};
 
-				digestTaskNotification.model(modelBuilder);
-				digestTaskReminder.model(modelBuilder);
-				digestUpdateNotification.model(modelBuilder);
 
+				PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
+				messageBuilder.model(modelBuilder);
+				messageBuilder.to(user);
+				
 				switch (user.getDigestNotificationType()) {
 				case TASK_NOTIFICATION:
-					digestTaskNotification.to(user);
-					sendEmail(digestTaskNotification.build());
+				    messageBuilder.subject(taskNotificationSubject);
+				    messageBuilder.emailTemplate(EmailTemplateName.DIGEST_TASK_NOTIFICATION);
+					sendEmail(messageBuilder.build());
 					break;
 				case TASK_REMINDER:
-					digestTaskReminder.to(user);
-					sendEmail(digestTaskReminder.build());
+				    messageBuilder.subject(taskReminderSubject);
+                    messageBuilder.emailTemplate(EmailTemplateName.DIGEST_TASK_REMINDER);
+                    sendEmail(messageBuilder.build());
 					break;
 				case UPDATE_NOTIFICATION:
-					digestUpdateNotification.to(user);
-					sendEmail(digestUpdateNotification.build());
+				    messageBuilder.subject(updateNotificationSubject);
+                    messageBuilder.emailTemplate(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION);
+                    sendEmail(messageBuilder.build());
 					break;
 				case NONE:
 				default:
@@ -248,9 +244,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
         final StageDuration approvalDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalReminder()) {
-            if (!idsForWhichRequestWasFired.contains(form.getId()) && form.getLatestApprovalRound().getPrimarySupervisor().hasResponded()) {
+            if (!idsForWhichRequestWasFired.contains(form.getId())) {
                 ApprovalRound approvalRound = form.getLatestApprovalRound();
-                if (approvalRound != null) {
+                if (approvalRound != null && approvalRound.getPrimarySupervisor().hasResponded()) {
                     createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_REMINDER);
                     DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()), approvalDuration.getDurationInMinutes());
                     if (approvalRoundExpiryDate.isAfterNow()) {
@@ -697,7 +693,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
         for (ApplicationForm form : applicationDAO.getApplicationDueApprovalRestartRequestReminder()) {
             if (!idsForWhichRequestWasFired.contains(form.getId())) {
-                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+                createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
                 CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
             }
         }

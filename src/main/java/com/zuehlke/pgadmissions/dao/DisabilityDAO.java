@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Disability;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class DisabilityDAO {
 
 	private final SessionFactory sessionFactory;
@@ -25,13 +26,11 @@ public class DisabilityDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Disability> getAllDisabilities() {
         return sessionFactory.getCurrentSession().createCriteria(Disability.class).addOrder(Order.asc("id"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
-	@SuppressWarnings("unchecked")
     public List<Disability> getAllEnabledDisabilities() {
         return sessionFactory.getCurrentSession().createCriteria(Disability.class)
                 .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("id"))
@@ -45,5 +44,4 @@ public class DisabilityDAO {
 	public void save(Disability disability) {
 		sessionFactory.getCurrentSession().saveOrUpdate(disability);
 	}
-
 }

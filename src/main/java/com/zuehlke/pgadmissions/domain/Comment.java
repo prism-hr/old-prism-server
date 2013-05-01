@@ -61,7 +61,7 @@ public class Comment implements Comparable<Comment>, Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_form_id")
     private ApplicationForm application = null;
-
+	
     @Transient
     private Boolean confirmNextStage;
     

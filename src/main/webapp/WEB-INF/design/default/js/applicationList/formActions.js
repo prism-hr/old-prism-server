@@ -220,12 +220,15 @@ $(document).ready(function() {
 	// DOWNLOAD SELECTED APPLICATIONS
 	// --------------------------------------------------------------------------------
 	$('#downloadAll').click(function() {
-		var appListValue = $('#appList').val();
+		var appListValue = '';
+		$('input[name=appDownload]').each(function () {
+			if (this.checked) {
+				appListValue = appListValue + $(this).val() + ";"; 
+			}
+		});
+		
 		if (appListValue != '') {
-			window.open(
-					"/pgadmissions/print/all?appList="
-							+ $('#appList').val(),
-					'_blank');
+			window.open("/pgadmissions/print/all?appList=" + appListValue, '_blank');
 		}
 	});
 

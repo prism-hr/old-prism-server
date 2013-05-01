@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.jms;
+package com.zuehlke.pgadmissions.services;
 
 import java.util.Date;
 
@@ -19,8 +19,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.services.ThrottleService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 

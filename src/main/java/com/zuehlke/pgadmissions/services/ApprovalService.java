@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -153,6 +152,7 @@ public class ApprovalService {
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
+        form.setPendingApprovalRestart(false);
         form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
         
         approvalRound.setApplication(form);
@@ -222,6 +222,7 @@ public class ApprovalService {
         if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
             throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
         }
+        application.removeNotificationRecord(NotificationType.APPROVAL_REMINDER, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
         restartApprovalStage(application, approver, comment);
     }
 

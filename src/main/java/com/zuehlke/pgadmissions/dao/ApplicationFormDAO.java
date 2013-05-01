@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ApplicationFormDAO {
 
 	private final SessionFactory sessionFactory;
@@ -57,21 +58,18 @@ public class ApplicationFormDAO {
 		return (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getAllApplications() {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Qualification> getQualificationsByApplication(ApplicationForm application) {
 		return sessionFactory.getCurrentSession().createCriteria(Qualification.class)
 				.add(Restrictions.eq("application", application)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueUserReminder(NotificationType notificationType, ApplicationFormStatus status) {
 
 		Date today = Calendar.getInstance().getTime();
@@ -103,7 +101,6 @@ public class ApplicationFormDAO {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
 		// Kevin: This should resolve a mysterious issue we had on production. For
 		// some reason we had multiple email schedulers of the same class running in parallel
@@ -125,7 +122,6 @@ public class ApplicationFormDAO {
 		return query.setString(0, NotificationType.UPDATED_NOTIFICATION.toString()).setDate(1, oneHourAgo).list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueNotificationForStateChangeEvent(NotificationType notificationType,
 			ApplicationFormStatus newStatus) {
 		DetachedCriteria notificationCriteriaOne = DetachedCriteria
@@ -160,7 +156,6 @@ public class ApplicationFormDAO {
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueInterviewAdministration(NotificationType notificationType) {
 	    DetachedCriteria notificationCriteriaOne = DetachedCriteria
 	            .forClass(NotificationRecord.class, "notificationRecord")
@@ -191,7 +186,6 @@ public class ApplicationFormDAO {
 	            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueRejectNotifications() {
 		Session session = sessionFactory.getCurrentSession();
 		List<ApplicationForm> result = session.createCriteria(ApplicationForm.class)
@@ -223,11 +217,16 @@ public class ApplicationFormDAO {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueApprovalReminder() {
+	    Date today = Calendar.getInstance().getTime();
+        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
+                .createCriteria(ReminderInterval.class).uniqueResult();
+        Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+       
 	    DetachedCriteria approvalNotificationCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", NotificationType.APPROVAL_REMINDER))
+				.add(Restrictions.le("notificationRecord.date", subtractInterval))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		return sessionFactory
@@ -238,7 +237,6 @@ public class ApplicationFormDAO {
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueApprovedNotifications() {
 		DetachedCriteria appronalNotificationCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
@@ -254,7 +252,6 @@ public class ApplicationFormDAO {
 				.list();
 	}
 	
-    @SuppressWarnings("unchecked")
     public List<ApplicationForm> getApplicationsDueInterviewFeedbackNotification() {
         DetachedCriteria appronalNotificationCriteria = DetachedCriteria
                 .forClass(NotificationRecord.class, "notificationRecord")
@@ -270,14 +267,12 @@ public class ApplicationFormDAO {
                 .list();
     }
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueRegistryNotification() {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
 				.add(Restrictions.eq("registryUsersDueNotification", true))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueApprovalRequestNotification() {
 		DetachedCriteria approvalRestartRequestNotificationCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
@@ -293,7 +288,6 @@ public class ApplicationFormDAO {
 				.list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationDueApprovalRestartRequestReminder() {
 		Date now = Calendar.getInstance().getTime();
 		ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
@@ -333,7 +327,6 @@ public class ApplicationFormDAO {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueMovedToApprovalNotifications() {
 		DetachedCriteria mvoedToApprovalNotificationCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
@@ -343,19 +336,18 @@ public class ApplicationFormDAO {
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.or(Restrictions.isNull("pendingApprovalRestart"), Restrictions.eq("pendingApprovalRestart", false)))
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
 				.add(Subqueries.notExists(mvoedToApprovalNotificationCriteria.setProjection(Projections
 						.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getAllApplicationsByStatus(ApplicationFormStatus status) {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
 				.add(Restrictions.eq("status", status)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsByApplicantAndProgram(RegisteredUser applicant, Program program) {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
 				.add(Restrictions.eq("applicant", applicant)).add(Restrictions.eq("program", program)).list();

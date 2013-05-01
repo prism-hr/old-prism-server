@@ -42,7 +42,7 @@ public class ApplicationFormListDAO {
 
     private final SessionFactory sessionFactory;
 
-    ApplicationFormListDAO() {
+    public ApplicationFormListDAO() {
         this(null);
     }
 

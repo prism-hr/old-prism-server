@@ -20,11 +20,12 @@ import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class RefereeDAO {
 
 	private final SessionFactory sessionFactory;
 
-	RefereeDAO() {
+	public RefereeDAO() {
 		this(null);
 	}
 
@@ -43,10 +44,8 @@ public class RefereeDAO {
 
 	public void delete(Referee referee) {
 		sessionFactory.getCurrentSession().delete(referee);
-
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesDueAReminder() {
         Date today = Calendar.getInstance().getTime();
         ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
@@ -72,7 +71,6 @@ public class RefereeDAO {
         return referees;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesWhoDidntProvideReferenceYet(ApplicationForm form) {
         List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
                 .add(Restrictions.eq("declined", false)).add(Restrictions.eq("application", form))
@@ -90,7 +88,6 @@ public class RefereeDAO {
         return referees;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesDueNotification() {		
         List<Referee> referees = sessionFactory
                 .getCurrentSession()

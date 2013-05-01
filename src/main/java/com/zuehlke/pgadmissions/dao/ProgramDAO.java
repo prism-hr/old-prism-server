@@ -12,11 +12,12 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Program;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ProgramDAO {
 
     private final SessionFactory sessionFactory;
 
-    ProgramDAO() {
+	public ProgramDAO() {
         this(null);
     }
 

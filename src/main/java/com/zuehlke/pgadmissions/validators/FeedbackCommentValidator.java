@@ -42,6 +42,7 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
                     errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
                 }
+                }
 
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
             }
@@ -59,6 +60,7 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 }
                 if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
                     errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
+                }
                 }
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
             }
@@ -80,7 +82,6 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 }
             }
         }
-
     }
 
 }

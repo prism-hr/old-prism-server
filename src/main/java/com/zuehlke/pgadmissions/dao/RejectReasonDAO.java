@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class RejectReasonDAO {
 
 	private final SessionFactory sessionFactory;
@@ -24,7 +25,6 @@ public class RejectReasonDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<RejectReason> getAllReasons() {
 		return sessionFactory.getCurrentSession().createCriteria(RejectReason.class).addOrder(Order.asc("id")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}

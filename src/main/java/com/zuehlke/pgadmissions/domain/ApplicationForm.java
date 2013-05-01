@@ -52,7 +52,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private Integer id;
 
     @Column(name = "pending_approval_restart")
-    private boolean pendingApprovalRestart;
+    private boolean pendingApprovalRestart=false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approver_requested_restart_id")

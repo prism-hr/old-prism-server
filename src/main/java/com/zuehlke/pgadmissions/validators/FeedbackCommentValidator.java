@@ -42,10 +42,9 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
                     errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
                 }
+                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
                 }
 
-                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
-            }
         } else if (target instanceof InterviewComment) {
             InterviewComment comment = (InterviewComment) target;
             if (!comment.isDecline()) {
@@ -61,9 +60,8 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
                     errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
                 }
+				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
                 }
-                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
-            }
         } else if (target instanceof ReferenceComment) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);

@@ -102,24 +102,6 @@ public class FeedbackCommentValidatorTest {
         feedbackCommentValidator.validate(reviewComment, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
-    
-    @Test
-    public void shouldRejectIfConfirmationCheckboxIsNotPresent() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
-        reviewComment.setConfirmNextStage(null);
-        feedbackCommentValidator.validate(reviewComment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
-    }
-    
-    @Test
-    public void shouldRejectIfConfirmationCheckboxIsNotChecked() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
-        reviewComment.setConfirmNextStage(false);
-        feedbackCommentValidator.validate(reviewComment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
-    }
 
     @Test
     public void shouldRejectIfNotDeclinedAndInterviewCommentIsEmpty() {
@@ -222,24 +204,6 @@ public class FeedbackCommentValidatorTest {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
         reviewComment.setConfirmNextStage(null);
         feedbackCommentValidator.validate(reviewComment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
-    }
-
-    @Test
-    public void shouldRejectInterviewIfConfirmationCheckboxIsNotPresent() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "confirmNextStage");
-        interviewComment.setConfirmNextStage(null);
-        feedbackCommentValidator.validate(interviewComment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
-    }
-
-    @Test
-    public void shouldRejectInterviewIfConfirmationCheckboxIsNotChecked() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "confirmNextStage");
-        interviewComment.setConfirmNextStage(false);
-        feedbackCommentValidator.validate(interviewComment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
     }

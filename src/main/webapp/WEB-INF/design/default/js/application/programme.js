@@ -545,7 +545,7 @@ function postProgrammeData(message)
 				$('#programmeDetailsSection').html(data);
 			
 				var errorCount = $('#programmeDetailsSection .alert-error:visible').length;
-				if (message == 'close' && errorCount == 0)
+				if (message == 'close' && errorCount != 0)
 				{
 					// Close the section only if there are no errors.
 					$('#programme-H2').trigger('click');

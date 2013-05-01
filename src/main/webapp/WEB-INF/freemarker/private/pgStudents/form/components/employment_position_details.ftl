@@ -1,6 +1,6 @@
 <#assign errorCode = RequestParameters.errorCode! /> <#if applicationForm.employmentPositions?has_content> <#assign hasEmploymentPositions = true> <#else> <#assign hasEmploymentPositions = false> </#if> <#setting locale = "en_US"> <#import "/spring.ftl" as spring /> <a name="position-details"></a>
-<h2 id="position-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Employment </h2>
-<div style=" display:none;"> <#if hasEmploymentPositions>
+<h2 id="position-H2" class="empty open"> <span class="left"></span><span class="right"></span><span class="status"></span> Employment </h2>
+<div> <#if hasEmploymentPositions>
   <table class="existing table table-striped table-condensed table-bordered table-hover">
     <colgroup>
     <col>

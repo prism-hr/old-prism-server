@@ -6,8 +6,8 @@
 <#else>
   <#assign hasReferees = false>
 </#if> <a name="references-details"></a>
-<h2 id="referee-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Referees<em>*</em> </h2>
-<div style=" display:none;"> <#if hasReferees>
+<h2 id="referee-H2" class="empty open"> <span class="left"></span><span class="right"></span><span class="status"></span> Referees<em>*</em> </h2>
+<div> <#if hasReferees>
   <table class="existing table table-striped table-condensed table-bordered table-hover">
     <colgroup>
     <col/>

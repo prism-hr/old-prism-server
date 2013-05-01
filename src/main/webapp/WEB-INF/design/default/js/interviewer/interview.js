@@ -161,6 +161,9 @@ $(document).ready(function() {
                         changeYear : true,
                         yearRange : '1900:+20'
                     });
+                    
+                    	
+                    bindDatePicker('#availableDates');
                 }
                 addToolTips();
             },
@@ -200,7 +203,11 @@ function getInterviewersAndDetailsSections() {
         success : function(data) {
             $('#temp').html(data);
             $('#assignInterviewersToAppSection').html($('#section_1').html());
+            
+            $('#interviewStatus').html($('#section_interview_status').html());
+            
             $('#interviewdetailsSection').html($('#section_2').html());
+            
             $('#temp').empty();
 
             addToolTips();
@@ -211,6 +218,33 @@ function getInterviewersAndDetailsSections() {
                 changeYear : true,
                 yearRange : '1900:+20'
             });
+
+            bindDatePicker('#availableDates');
+            
+            // Interview status.
+        	var interviewStatus = $('input[name=interviewStatus]:radio');
+        	
+        	interviewStatus.change(function () {
+            	var interviewStatus = $('input[name=interviewStatus]:radio:checked').val();
+            	
+            	$('.interview-happened').hide();
+            	$('.interview-scheduled').hide();
+            	$('.interview-to-schedule').hide();
+            	
+            	switch (interviewStatus) {
+            	case 'happened':
+            		$('.interview-happened').show();
+            		break;
+            	case 'scheduled':
+            		$('.interview-scheduled').show();
+            		break;
+            	default:
+            		$('.interview-to-schedule').show();
+            		break;
+            	}
+            });
+        	
+        	interviewStatus.change();
         },
         complete : function() {
             $('#interviewsection div.ajax').remove();

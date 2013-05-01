@@ -9,7 +9,7 @@
     
       <#assign hasConviction=applicationForm.additionalInformation.convictions?? && applicationForm.additionalInformation.convictions >
       <div class="admin_row">
-        <label class="admin_row_label">Do you have any unspent Criminial Convictions?</label>
+        <label class="admin_row_label">Do you have any unspent Criminal Convictions?</label>
         <div class="field"><#if hasConviction>Yes<#else>No</#if></div>
       </div>
       

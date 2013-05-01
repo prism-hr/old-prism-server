@@ -1,6 +1,7 @@
 <#setting locale = "en_US">
 <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
 
+<h3>Scoring questions</h3>
 <#if alertForScoringQuestions??>
 	<div class="alert alert-info">
 		<i class="icon-info-sign"></i>

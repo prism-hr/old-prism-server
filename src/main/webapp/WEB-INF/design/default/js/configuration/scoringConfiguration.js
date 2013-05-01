@@ -14,6 +14,8 @@ $(document).ready(function() {
 	$(document).on('change', 'select#stageSelect', function() {
 		updateScoringDefinition();
 	});
+	
+	enableOrDisablePreviewButton();
     
     $('#save-scoring').click(function() {
     	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
@@ -40,7 +42,14 @@ $(document).ready(function() {
 			}
     	});
     });
-    
+});
+
+$('#scoring-config-preview').click(function() {
+	var html = $('#templateContentId').val();
+	html = html.replace(/\$\{host\}/g, "");
+	var header = $("#emailTemplateType option:selected").text();
+	$('#previewModalLabel').html(header);
+	$('#previewModalContent').html(html);
 });
 
 function updateScoringDefinition(){
@@ -62,5 +71,16 @@ function updateScoringDefinition(){
 	   			$('div.ajax').remove();
 			}
     	});
+	}
+}
+
+function enableOrDisablePreviewButton(){
+	debugger;
+	if($('#scoringConfigurationContent').val()==""){
+		$('#scoring-config-preview').bind('click', false);
+		$('#scoring-config-preview').attr('disabled', true);
+	}else{
+		$('#scoring-config-preview').unbind('click', false);
+		$('#scoring-config-preview').attr('disabled', false);
 	}
 }

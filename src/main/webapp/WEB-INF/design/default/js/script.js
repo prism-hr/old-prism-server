@@ -743,7 +743,7 @@ function modalPosition() {
     }).show();
 }
 
-function modalPrompt(message, okay, cancel) {
+function modalPrompt(message, okay, cancel, hide) {
     if (typeof(okay) == 'undefined') {
         okay = function() {
         };
@@ -769,7 +769,12 @@ function modalPrompt(message, okay, cancel) {
     });
     
     $('#dialog-box').on('hide', function () {
-    	cancel();
+    	if (typeof(hide) != 'undefined') {
+    		hide();
+    	}
+    	else {
+    		cancel();
+    	}
     });
 
     // Show the box.

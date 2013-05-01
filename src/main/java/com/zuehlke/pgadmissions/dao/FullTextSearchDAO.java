@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -55,6 +58,10 @@ public class FullTextSearchDAO {
     }
     
     private List<RegisteredUser> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<RegisteredUser> comparator) {
+        Criterion notAnApplicantCriterion = Restrictions.in("r.authorityEnum", new Authority[] {
+                Authority.ADMINISTRATOR, Authority.APPROVER, Authority.INTERVIEWER,
+                Authority.REFEREE, Authority.REVIEWER, Authority.SUPERADMINISTRATOR, Authority.SUPERVISOR });
+        
         String trimmedSearchTerm = StringUtils.trimToEmpty(searchTerm);
 
         if (StringUtils.isEmpty(trimmedSearchTerm)) {
@@ -63,24 +70,48 @@ public class FullTextSearchDAO {
         
         TreeSet<RegisteredUser> uniqueResults = new TreeSet<RegisteredUser>(comparator);
         
-        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+        Criteria wildcardCriteria = sessionFactory
+                .getCurrentSession()
+                .createCriteria(RegisteredUser.class)
                 .add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START))
-                .addOrder(Order.asc("lastName")).setMaxResults(25);
-        uniqueResults.addAll(wildcardCriteria.list());
+                .createAlias("roles", "r")
+                .add(notAnApplicantCriterion)
+                .addOrder(Order.asc("lastName"))
+                .setMaxResults(25);
 
+        uniqueResults.addAll(wildcardCriteria.list());
+        
         if (StringUtils.length(trimmedSearchTerm) >= 3) {
             FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
-            QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder()
-                    .forEntity(RegisteredUser.class).get();
 
-            FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(queryBuilder.keyword().fuzzy()
-                    .withThreshold(.5f).withPrefixLength(0).onField(propertyName).matching(trimmedSearchTerm)
-                    .createQuery(), RegisteredUser.class);
+            QueryBuilder queryBuilder = fullTextSession.getSearchFactory()
+                    .buildQueryBuilder()
+                    .forEntity(RegisteredUser.class)
+                    .get();
+
+            Criteria notApplicantCriteria = fullTextSession
+                    .createCriteria(RegisteredUser.class)
+                    .createAlias("roles", "r")
+                    .add(notAnApplicantCriterion);
+            
+            FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(
+                    queryBuilder
+                    .keyword()
+                    .fuzzy()
+                    .withThreshold(.5f)
+                    .withPrefixLength(0)
+                    .onField(propertyName)
+                    .matching(trimmedSearchTerm)
+                    .createQuery(), RegisteredUser.class)
+                    .setCriteriaQuery(notApplicantCriteria);
 
             uniqueResults.addAll(fuzzyQuery.list());
         }
-
         
         return new ArrayList<RegisteredUser>(uniqueResults);
+    }
+    
+    public Role getRoleByAuthority(final Authority authority) {
+        return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", authority)).uniqueResult();
     }
 }

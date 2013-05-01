@@ -172,7 +172,12 @@ public class ApplicationsService {
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState("INTERVIEW")) {
-            actions.addAction("validate", "Evaluate interview feedback");
+            if (application.getApplicationAdministrator()!=null && application.getApplicationAdministrator().getId().equals(user.getId())) {
+                actions.addAction("validate", "Administer Interview");
+            }
+            else {
+                actions.addAction("validate", "Evaluate interview feedback");
+            }
         }
 
         if (user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application)) {

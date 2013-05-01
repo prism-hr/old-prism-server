@@ -178,7 +178,6 @@ public class ApplicationFormDAO {
 	    invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
         invalidStateList.add(ApplicationFormStatus.REJECTED);
         invalidStateList.add(ApplicationFormStatus.APPROVED);
-        invalidStateList.add(ApplicationFormStatus.INTERVIEW);
 	    return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
 	            .add(Restrictions.isNotNull("applicationAdministrator"))
 	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))

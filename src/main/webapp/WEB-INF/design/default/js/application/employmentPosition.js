@@ -76,7 +76,7 @@ $(document).ready(function(){
 	$('a[name="deleteEmploymentButton"]').click( function()
 	{	
 		var id = $(this).attr("id").replace("position_", "");
-		$('#positionSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'POST',
 			statusCode: {
@@ -107,7 +107,7 @@ $(document).ready(function(){
 			},
 			completed: function()
 			{
-				$('#positionSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 				showOrHideAdPosisionButton();
 			}
 		});
@@ -169,7 +169,7 @@ $(document).ready(function(){
 	{
 		var id = this.id;
 		id = id.replace('position_', '');	
-		$('#positionSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 		 type: 'GET',
 		 statusCode: {
@@ -212,7 +212,7 @@ $(document).ready(function(){
 			},
 			completed: function()
 			{
-				$('#positionSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 //				showOrHideAdPosisionButton();
 			}
 		});
@@ -224,7 +224,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#positionclearButton').click(function()
 	{
-		$('#positionSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		loadEmploymentSection(true);
 	});
 
@@ -245,7 +245,7 @@ function postEmploymentData(message)
 		 current = true;
 	}
 
-	$('#positionSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	var acceptedTheTerms;
 	if ($("#acceptTermsEPValue").val() == 'NO')
 	{
@@ -312,7 +312,7 @@ function postEmploymentData(message)
       },
     complete: function()
     {
-      $('#positionSection div.ajax').remove();
+      $('#ajaxloader').fadeOut('fast');
       showOrHideAdPosisionButton();
     }
 	});

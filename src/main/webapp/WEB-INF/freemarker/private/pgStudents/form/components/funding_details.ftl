@@ -7,8 +7,8 @@
 
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US"> <a name="funding-details"></a>
-<h2 id="funding-H2" class="empty open"> <span class="left"></span><span class="right"></span><span class="status"></span> Funding </h2>
-<div> <#if hasFundings>
+<h2 id="funding-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Funding </h2>
+<div style=" display:none;"> <#if hasFundings>
   <table class="existing table table-striped table-condensed table-bordered table-hover">
     <colgroup>
     <col />

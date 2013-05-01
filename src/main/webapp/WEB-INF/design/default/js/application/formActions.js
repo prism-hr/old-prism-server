@@ -13,42 +13,22 @@ $(document).ready(function()
 	if ($('#timeline').length > 0)
 	{
 		// Timeline is on the page, so place the loading prompt inside the application tab.
-		$('#applicationTab').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 	}
 	else
 	{
 		// Place the loading prompt in the main section.
-		$('.content-box-inner').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 	}
 	
 	/* Programme Details. */
 	loadProgrammeSection(false, function () {
 		
-		$('#applicationTab div.ajax').remove();
+		$('#ajaxloader').fadeOut('fast');
 		
 		/* Personal Details. */
 		 loadPersonalDetails();
-		
-		/* Address. */
-		 loadAddresSection();
-		
-		/* Qualifications. */	
-		 loadQualificationsSection();
-		 
-		/* (Employment) Position. */
-		 loadEmploymentSection();
-		
-		/* Funding. */
-		 loadFundingSection();
-		
-		/* Referees. */
-		 loadReferenceSection();
-		 
-		/* Documents. */
-		 loadDocumentsSection();
-		
-		/* Additional Information. */
-		 loadAdditionalInformationSection();
+
 		 
 		/* Terms and conditions. */
 		$.ajax({
@@ -127,7 +107,7 @@ $(document).ready(function()
 		{*/
 			$("span[name='nonAccepted']").html('');
 			$('#submitApplicationForm').append('<input type="hidden" name="acceptedTermsOnSubmission" value="'+$('#acceptTermsValue').val() +'"/>');
-			$('div.content-box-inner').append('<div class="ajax" />');
+			$('#ajaxloader').show();
 			
 			$('#submitApplicationForm').submit();
 			
@@ -229,12 +209,12 @@ function checkLoadedSections()
 		if ($('#timeline').length > 0)
 		{
 			// Timeline is on the page, so place the loading prompt inside the application tab.
-			$('#applicationTab div.ajax').remove();
+			$$('#ajaxloader').fadeOut('fast');
 		}
 		else
 		{
 			// Place the loading prompt in the main section.
-			$('.content-box-inner div.ajax').remove();
+			$('#ajaxloader').fadeOut('fast');
 		}
 	}
 }
@@ -286,8 +266,6 @@ function loadProgrammeSection(clear, onComplete){
 					$("#awareYes").prop('checked', false);
 					$("#awareNo").prop('checked', false);
 				}
-				
-				onComplete();
 			},
 		  complete: function() {
 			  onComplete();
@@ -349,12 +327,16 @@ function loadPersonalDetails(clear){
 			        $("#passportExpiryDate").val("");
 			        disablePassportInformation();
 				}else{
-					if ($('#personalDetailsSection.error').length == 0)
+					if ($('#personalDetailsSection.error').length != 0)
 					{
 						$('#personalDetails-H2').trigger('click');
 					}
 				}
 				
+			}, 
+			complete: function() {
+				/* Address. */
+				loadAddresSection();
 			}
 	});
 }
@@ -401,11 +383,15 @@ function loadAddresSection(clear){
 					$('#contactAddress1, #contactAddress2, #contactAddress3, #contactAddress4, #contactAddress5').removeAttr('disabled');
 					$('#sameAddressCB').prop('checked', false);
 				}else{
-					if ($('#addressSection.error').length == 0)
+					if ($('#addressSection.error').length != 0)
 					{
 						$('#address-H2').trigger('click');
 					}
 				}
+			}, 
+			complete: function() {
+				/* Qualifications. */	
+				loadQualificationsSection();
 			}
 	});
 }
@@ -447,12 +433,17 @@ function loadQualificationsSection(clear){
 				
 			}else{
 			
-				if ($('#qualificationsSection.error').length == 0)
+				if ($('#qualificationsSection.error').length != 0)
 				{
 					$('#qualifications-H2').trigger('click');
 				}
 			}
-		}
+		}, 
+			complete: function() {
+				/* (Employment) Position. */
+				loadEmploymentSection();
+
+			}
 	});
 }
 
@@ -487,12 +478,16 @@ function loadEmploymentSection(clear){
 			$('#positionSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-				if ($('#positionSection.error').length == 0)		
+				if ($('#positionSection.error').length != 0)		
 				{
 					$('#position-H2').trigger('click');
 				}
 			}
-		}
+		}, 
+			complete: function() {
+				/* Funding. */
+				loadFundingSection();
+			}
 	});
 }
 
@@ -527,11 +522,15 @@ function loadFundingSection(clear){
 			$('#fundingSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-				if ($('#fundingSection.error').length == 0)
+				if ($('#fundingSection.error').length != 0)
 				{
 					$('#funding-H2').trigger('click');
 				}
 			}
+		}, 
+		complete: function() {
+			/* Referees. */
+			loadReferenceSection();
 		}
 	});
 }
@@ -568,12 +567,16 @@ function loadReferenceSection(clear){
 			$('#referencesSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-			if ($('#referencesSection.error').length == 0)
+			if ($('#referencesSection.error').length != 0)
 				{
 					$('#referee-H2').trigger('click');
 				}
 			}
-		}
+		}, 
+		complete: function() {
+				/* Documents. */
+				loadDocumentsSection();
+			}
 	});
 
 }
@@ -617,11 +620,15 @@ function loadDocumentsSection(clear){
 				$('#document_CV').val('');
 				$('#cvLink').remove();
 			}else{
-				if ($('#documentSection.error').length == 0)
+				if ($('#documentSection.error').length != 0)
 				{
 					$('#documents-H2').trigger('click');
 				}
 			}
+		},
+		complete: function() {
+			/* Additional Information. */
+			loadAdditionalInformationSection();
 		}
 	});
 }
@@ -664,7 +671,7 @@ function loadAdditionalInformationSection(clear){
 				$('#convictionsText').attr("disabled","disabled");
 			}
 			else{
-				if ($('#additionalInformationSection.error').length == 0)
+				if ($('#additionalInformationSection.error').length != 0)
 				{
 					$('#additional-H2').trigger('click');
 				}

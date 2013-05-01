@@ -23,7 +23,7 @@ $(document).ready(function(){
 	
 	$('#informationClearButton').click(function()
 	{
-		$('#additionalInformationSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		loadAdditionalInformationSection(true);
 	});
 	
@@ -101,7 +101,7 @@ $(document).ready(function(){
 		}
 			
 		$("span[name='nonAcceptedAID']").html('');
-		$('#additionalInformationSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 
 		$.ajax({
 			type: 'POST',
@@ -151,7 +151,7 @@ $(document).ready(function(){
 			},
 			complete: function()
 			{
-				$('#additionalInformationSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});

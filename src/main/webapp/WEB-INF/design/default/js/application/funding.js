@@ -47,7 +47,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('a[name="deleteFundingButton"]').click( function(){	
 		var id = $(this).attr("id").replace("funding_", "");
-		$('#fundingSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -77,7 +77,7 @@ $(document).ready(function(){
 				},
 			completed: function()
 			{
-				$('#fundingSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});
@@ -137,7 +137,7 @@ $(document).ready(function(){
 	{
 		var id = this.id;
 		id = id.replace('funding_', '');	
-		$('#fundingSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'GET',
 			statusCode: {
@@ -171,7 +171,7 @@ $(document).ready(function(){
 			},
 			completed: function()
 			{
-				$('#fundingSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});
@@ -182,7 +182,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#fundingClearButton').click(function()
 	{
-		$('#fundingSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		loadFundingSection(true);
 	});
 	
@@ -197,7 +197,7 @@ $(document).ready(function(){
 
 function postFundingData(message)
 {
-	$('#fundingSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	var acceptedTheTerms;
 	if ($("#acceptTermsFDValue").val() == 'NO'){
 		acceptedTheTerms = false;
@@ -254,7 +254,7 @@ function postFundingData(message)
 		},
     complete: function()
     {
-			$('#fundingSection div.ajax').remove();
+			$('#ajaxloader').fadeOut('fast');
     }
 	});
 }

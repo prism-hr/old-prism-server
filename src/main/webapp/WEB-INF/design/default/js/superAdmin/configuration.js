@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-	$('.content-box-inner').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	$.ajax({
 		type: 'GET',
 		statusCode: {
@@ -30,7 +30,7 @@ $(document).ready(function()
 		},
 		complete: function()
 		{
-			$('div.ajax').remove();
+			$('#ajaxloader').fadeOut('fast');
 			updateRegistryForm();
 
 			// -----------------------------------------------------------------------------

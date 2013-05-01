@@ -67,8 +67,7 @@ $(document)
 					// -------------------------------------------------------------------------------
 					$('#personalDetailsClearButton').click(
 							function() {
-								$('#personalDetailsSection > div').append(
-										'<div class="ajax" />');
+								$('#ajaxloader').show();
 								loadPersonalDetails(true);
 							});
 
@@ -659,7 +658,7 @@ function postPersonalDetailsData(message) {
 	}
 
 	// do the post!
-	$('#personalDetailsSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 
 	$
 			.ajax({
@@ -698,7 +697,7 @@ function postPersonalDetailsData(message) {
 					}
 				},
 				complete : function() {
-					$('#personalDetailsSection div.ajax').remove();
+					$('#ajaxloader').fadeOut('fast');
 				}
 			});
 }

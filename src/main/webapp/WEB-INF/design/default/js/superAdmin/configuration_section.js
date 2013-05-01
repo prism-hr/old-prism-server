@@ -110,7 +110,7 @@ $(document).ready(function()
 		if (!stageValidationErrors && !reminderValidationErrors)
 		{
 			// Post the data.
-			$('#configForm').append('<div class="ajax" />');
+			$('#ajaxloader').show();
 			$.ajax({
 					type: 'POST',
 					statusCode: {
@@ -140,7 +140,7 @@ $(document).ready(function()
 					},
 					complete: function()
 					{
-						$('#configForm div.ajax').remove();
+						$('#ajaxloader').fadeOut('fast');
 						updateRegistryForm();
 					}
 				});

@@ -68,9 +68,9 @@
 											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 										</div>
-										<div class="textContainer"><p><em>${timelineObject.interview.furtherDetails?html}</em></p></div>                
+										<div class="textContainer"><p><em>${(timelineObject.interview.furtherDetails?html)!}</em></p></div>                
 										<p class="datetime"><span data-desc="Date and Time"></span> ${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
-										<#if timelineObject.interview.locationURL?length &gt; 0><p class="location"><span data-desc="Location"></span><a href="${timelineObject.interview.locationURL}" target="_blank">Directions to interview</a></p></#if>
+										<#if timelineObject.interview.locationURL?? && timelineObject.interview.locationURL?length &gt; 0><p class="location"><span data-desc="Location"></span><a href="${timelineObject.interview.locationURL}" target="_blank">Directions to interview</a></p></#if>
 									</div>
 								</li>
 							</ul>

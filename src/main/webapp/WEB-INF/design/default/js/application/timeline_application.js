@@ -62,10 +62,10 @@ $(document).ready(function()
 						jumpToTimeline = true;
 					}
 					addToolTips();
-					toggleScores();
-             complete: function() {
+					toggleScores();	
+				}, complete: function() {
                  $('#ajaxloader').fadeOut('fast');
-             }		
+             }	
 		});
 		
 		return false;

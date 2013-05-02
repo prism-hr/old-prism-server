@@ -69,11 +69,12 @@ $(document).ready(function() {
 	$items.mouseout(function(){
 	    rating('out', $(this));
 	});
+	rating('check', $(this));
 });
 
 function rating(type, item){
-	value = item.parent().index();
 	if (type == 'select') {
+	    value = item.parent().index();
 		// value for input
 		item.closest('.field').find('.rating-input').val(value);
 		// clear selected starts
@@ -92,6 +93,7 @@ function rating(type, item){
 		}
 	}
 	if (type == 'hover') {
+	    value = item.parent().index();
 		item.closest('.rating-list').find('li i.icon-star-empty').removeClass('hover');
 		// hover previous starts
 		for (var i = 1; i < value+1; i++) {
@@ -100,6 +102,22 @@ function rating(type, item){
 		}
 	}
 	if (type == 'out') {
+	    value = item.parent().index();
 	    item.closest('.rating-list').find('li i.icon-star-empty').removeClass('hover');
+	}
+	if (type == 'check'){
+	    
+	    $('.rating-list').each(function() {
+	        cvalue = $(this).parent().find('.rating-input').val();
+    		if (cvalue == 0) {
+    		    $(this).find('li:first-child').find('i').addClass('hover'); 
+    	    } else {
+    	        numb = parseInt(cvalue)+1;
+        	    for (var i = 1; i < numb; i++) {
+                     var it = 'li:nth-child('+ (i+1) +')';
+                     $(this).find(it).find('i').removeClass('icon-star-empty').addClass('icon-star hover'); 
+                }
+    	    }
+        });
 	}
 }

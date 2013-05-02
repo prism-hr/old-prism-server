@@ -140,7 +140,7 @@ $(document).ready(function(){
 			
 				// Close the section only if there are no errors.
 				var errorCount = $('#additionalInformationSection .alert-error:visible').length;
-				if (errorCount == 0)
+				if (errorCount != 0)
 				{
 					$('#additional-H2').trigger('click');
 				}

@@ -209,7 +209,7 @@ function checkLoadedSections()
 		if ($('#timeline').length > 0)
 		{
 			// Timeline is on the page, so place the loading prompt inside the application tab.
-			$$('#ajaxloader').fadeOut('fast');
+			$('#ajaxloader').fadeOut('fast');
 		}
 		else
 		{
@@ -327,7 +327,7 @@ function loadPersonalDetails(clear){
 			        $("#passportExpiryDate").val("");
 			        disablePassportInformation();
 				}else{
-					if ($('#personalDetailsSection.error').length != 0)
+					if ($('#personalDetailsSection.error').length == 0)
 					{
 						$('#personalDetails-H2').trigger('click');
 					}
@@ -383,7 +383,7 @@ function loadAddresSection(clear){
 					$('#contactAddress1, #contactAddress2, #contactAddress3, #contactAddress4, #contactAddress5').removeAttr('disabled');
 					$('#sameAddressCB').prop('checked', false);
 				}else{
-					if ($('#addressSection.error').length != 0)
+					if ($('#addressSection.error').length == 0)
 					{
 						$('#address-H2').trigger('click');
 					}
@@ -433,7 +433,7 @@ function loadQualificationsSection(clear){
 				
 			}else{
 			
-				if ($('#qualificationsSection.error').length != 0)
+				if ($('#qualificationsSection.error').length == 0)
 				{
 					$('#qualifications-H2').trigger('click');
 				}
@@ -478,7 +478,7 @@ function loadEmploymentSection(clear){
 			$('#positionSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-				if ($('#positionSection.error').length != 0)		
+				if ($('#positionSection.error').length == 0)		
 				{
 					$('#position-H2').trigger('click');
 				}
@@ -522,7 +522,7 @@ function loadFundingSection(clear){
 			$('#fundingSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-				if ($('#fundingSection.error').length != 0)
+				if ($('#fundingSection.error').length == 0)
 				{
 					$('#funding-H2').trigger('click');
 				}
@@ -567,7 +567,7 @@ function loadReferenceSection(clear){
 			$('#referencesSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-			if ($('#referencesSection.error').length != 0)
+			if ($('#referencesSection.error').length == 0)
 				{
 					$('#referee-H2').trigger('click');
 				}
@@ -620,7 +620,7 @@ function loadDocumentsSection(clear){
 				$('#document_CV').val('');
 				$('#cvLink').remove();
 			}else{
-				if ($('#documentSection.error').length != 0)
+				if ($('#documentSection.error').length == 0)
 				{
 					$('#documents-H2').trigger('click');
 				}
@@ -671,7 +671,7 @@ function loadAdditionalInformationSection(clear){
 				$('#convictionsText').attr("disabled","disabled");
 			}
 			else{
-				if ($('#additionalInformationSection.error').length != 0)
+				if ($('#additionalInformationSection.error').length == 0)
 				{
 					$('#additional-H2').trigger('click');
 				}

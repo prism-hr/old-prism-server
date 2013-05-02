@@ -11,11 +11,5 @@
 		<li><a href="#application" id="applicationBtn">Application</a></li>
 	</ul>
 	<div class="tab-page" id="timeline"></div>
-	<div class="tab-page" id="application">
-		<div class="ajax">
-            <div class="progress progress-striped active">
-                <div class="bar" style="width: 100%;"></div>
-            </div>
-        </div>
-	</div>
+	<div class="tab-page" id="application"></div>
 </div>

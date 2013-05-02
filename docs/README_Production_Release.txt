@@ -27,6 +27,7 @@
         # cd pgadmissions
         # hg pull
         # hg update
+        (and then hg update --clean --rev <BRANCH_NAME> if you want to switch to a specific branch)
         # mvn clean package -DskipTests -Pucl-prod
         # mvn dbdeploy:update (runs the database change scripts)
         # cp target/pgadmissions.war /usr/local/jboss/current/standalone/deployments

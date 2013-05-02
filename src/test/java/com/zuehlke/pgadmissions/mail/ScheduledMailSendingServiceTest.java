@@ -760,8 +760,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		String subjectToReturn="REMINDER: "+SAMPLE_APPLICANT_NAME+" "+SAMPLE_APPLICANT_SURNAME+" "
 		+"Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request";
 		
-		expect(refereeDAOMock.getRefereesDueAReminder()).andReturn(asList(referee));
-		
 		expect(mockMailSender.resolveSubject(REFEREE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
 				.andReturn(subjectToReturn);
 		
@@ -770,9 +768,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
 		refereeDAOMock.save(referee);
 		
-		replay(mockMailSender, refereeDAOMock);
-		service.sendReferenceReminder();
-		verify(mockMailSender, refereeDAOMock);
+		replay(mockMailSender);
+		service.sendReferenceReminder(referee);
+		verify(mockMailSender);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
 		assertNotNull(message.getTo());
@@ -783,6 +781,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		assertModelEquals(model, message.getModel());
 		
 		assertNotNull(referee.getLastNotified());
+		
 	}
 	
     @Test

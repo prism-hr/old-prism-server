@@ -1108,32 +1108,31 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Notification
      * </p>
      */
-	public void sendReferenceReminder() {
-    	log.info("Running sendReferenceReminder Task");
-		PrismEmailMessage message = null;
-		try {
-    		List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
-    		for (Referee referee : refereesDueAReminder) {
-    			String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
-    			
-    			ApplicationForm applicationForm = referee.getApplication();
-    			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
-    			EmailModelBuilder modelBuilder = getModelBuilder(
-    					new String[] {"adminsEmails", "referee", "application", "applicant", "host"},
-    					new Object[] {adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName()}
-    					);
-    			
-    			message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
-    			sendEmail(message);
-    			referee.setLastNotified(new Date());
-				refereeDAO.save(referee);
-    		}
-		} catch (Exception e) {
-			throw new PrismMailMessageException("Error while sending reference reminder email to referee: ",
-					e.getCause(), message);
-		}
+	public void sendReferenceReminder(final Referee referee) {
+        log.info("Running sendReferenceReminder Task");
+        PrismEmailMessage message = null;
+        try {
+            referee.setLastNotified(new Date());
+            refereeDAO.save(referee);
+
+            String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
+            ApplicationForm applicationForm = referee.getApplication();
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
+
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" },
+                    new Object[] { adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName() });
+
+            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
+            sendEmail(message);
+        } catch (Exception e) {
+            log.error("Error while sending reference reminder email to referee: ", e.getCause(), message);
+        }
 	}
-    
+	
+	public List<Referee> getRefereesDueAReminder() {
+	    return refereeDAO.getRefereesDueAReminder();
+	}
+	
     public void sendNewUserInvitation() {
         log.info("Running sendNewUserInvitation Task");
         PrismEmailMessage message = null;

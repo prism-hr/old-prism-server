@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.mail.ScheduledMailSendingService;
 
 @Service
@@ -49,7 +50,9 @@ public class ScheduledMailSendingTimer {
     
     @Scheduled(cron = "${email.schedule.period.chron}")
     public void sendReferenceReminder() {
-        mailService.sendReferenceReminder();
+        for (Referee referee : mailService.getRefereesDueAReminder()) {
+            mailService.sendReferenceReminder(referee);
+        }
     }
     
     @Scheduled(cron = "${email.schedule.period.chron}")

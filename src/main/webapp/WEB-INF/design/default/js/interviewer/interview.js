@@ -132,7 +132,7 @@ $(document).ready(function() {
         if(stage == 'SCHEDULED'){
         	postData.furtherDetails = $('#furtherDetails').val();
         	postData.furtherInterviewerDetails = $('#furtherInterviewerDetails').val();
-        	locationURL : $('#interviewLocation').val();
+        	postData.locationURL = $('#interviewLocation').val();
         }
         
         

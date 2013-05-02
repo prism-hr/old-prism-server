@@ -17,8 +17,6 @@ $(document).ready(function() {
         $(element).find('.applicationRow').click(function() {
 			var applicationDetails = $(this).next();
 			
-			
-			
 			if (applicationDetails.attr('data-application-status') == 'UNSUBMITTED' || applicationDetails.attr('data-application-status') == 'WITHDRAWN') {
 				return;
 			} 
@@ -73,7 +71,7 @@ $(document).ready(function() {
 						//applicationDetails.find('[data-field=active-applications-link]').attr('href', '/pgadmissions/download?documentId=' + data.personalStatement);
 						
 						applicationDetails.find('[data-field=email]').text(applicant.email);
-						applicationDetails.find('[data-field=email]').attr('href', 'mailto:' + applicant.email);
+						applicationDetails.find('[data-field=email]').attr('href', 'mailto:' + applicant.email + "?subject=Question Regarding UCL Prism Application " + data.applicationNumber);
 						applicationDetails.find('[data-field=phone-number] span').text(applicant.phoneNumber);
 						applicationDetails.find('[data-field=skype] span').text(applicant.skype);
 						

@@ -1,8 +1,27 @@
 $(document).ready(function() {
     $(document).on('change', 'select.actionType', function() {
+    	
+        var name = this.name;
+        var id = name.substring(5).replace(']','');
+        
+        var skip = false;
+        
+        switch ($(this).val()) {
+        case 'emailApplicant':
+        	$('#ajaxloader').fadeOut('fast');
+        	$(this).val($("select.actionType option:first").val());
+        	var subject = "Question Regarding UCL Prism Application " + $(this).attr('data-applicationnumber');
+        	var email = $(this).attr('data-email');
+        	window.location.href ="mailto:" + email + "?subject=" + subject;
+        	skip = true;
+        	break;
+        }
+    	
+        if (skip) {
+        	return;
+        }
+        
 		$('#ajaxloader').show();
-            var name = this.name;
-            var id = name.substring(5).replace(']','');
             switch ($(this).val()) {
             case 'view':
                 window.location.href = "/pgadmissions/application?view=view&applicationId="+ id;

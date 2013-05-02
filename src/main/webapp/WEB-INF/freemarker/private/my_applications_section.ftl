@@ -16,16 +16,16 @@
       </span>
   </td>
   <td class="program-title">${application.program.title}</td>
-  <td class="status"><span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">
-    ${application.status.displayValue()}
-    </span></td>
-  <td class="centre"><select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber}]">
-      <option>Actions</option>
-      <#list actions?keys as actionName>
-      <option value="${actionName}">
-      ${actions[actionName]}
-      </option>
-      </#list>
+  <td class="status"><span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span></td>
+  <td class="centre">
+      <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
+          <option>Actions</option>
+          <#list actions?keys as actionName>
+            <option value="${actionName?html}">${actions[actionName]}</option>
+          </#list>
+          <#if !user.isInRole('APPLICANT')>
+            <option value="emailApplicant">Email Applicant</option>
+          </#if>
     </select></td>
   <td class="centre"><#if application.isWithdrawn() && !application.submittedDate??>
         Aborted

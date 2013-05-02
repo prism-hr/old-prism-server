@@ -195,7 +195,7 @@
       <!-- Contact Details -->
       <div class="admin_row">
         <span class="admin_row_label">Email</span>
-        <div class="field">${(applicationForm.applicant.email?html)!"Not Provided"}</div>
+        <div class="field"><a href="mailto:${applicationForm.applicant.email?html}?subject=Question Regarding UCL Prism Application ${applicationForm.applicationNumber?html}">${(applicationForm.applicant.email?html)!"Not Provided"}</a></div>
       </div>
       
       <div class="admin_row">

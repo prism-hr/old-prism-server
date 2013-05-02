@@ -60,6 +60,7 @@ public class ApplicationSummaryService {
         result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
         ApplicationActionsDefinition actionsDefinition = applicationsService.getActionsDefinition(userService.getCurrentUser(), form);
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(actionsDefinition.isRequiresAttention()));
+        result.put("applicationNumber", form.getApplicationNumber());
     }
 
     private void addActiveApplications(final RegisteredUser applicant, final Map<String, String> result) {

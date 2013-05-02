@@ -156,6 +156,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
+        assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
         String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
@@ -198,6 +199,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals("1", result.get("numberOfReferences"));
         String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"None provided\",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
+        assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
 
     @SuppressWarnings("unchecked")
@@ -239,6 +241,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals("1", result.get("numberOfReferences"));
         String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"None provided\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
+        assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
 
     @SuppressWarnings("unchecked")
@@ -279,6 +282,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals("1", result.get("numberOfReferences"));
         String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
+        assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
 
     @Test
@@ -316,6 +320,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals("1", result.get("numberOfReferences"));
         String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
+        assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
 
     private ApplicationForm getSampleApplicationForm() {

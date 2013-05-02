@@ -1125,7 +1125,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
             sendEmail(message);
         } catch (Exception e) {
-            log.error("Error while sending reference reminder email to referee: ", e.getCause(), message);
+            log.error("Error while sending reference reminder email to referee: ", e, message);
         }
 	}
 	

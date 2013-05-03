@@ -47,8 +47,7 @@ public class ApplicationSummaryService {
     }
 
     @Autowired
-    public ApplicationSummaryService(final ApplicationsService applicationsService, final UserService userService,
-            EncryptionHelper encryptionHelper) {
+    public ApplicationSummaryService(final ApplicationsService applicationsService, final UserService userService, EncryptionHelper encryptionHelper) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.encryptionHelper = encryptionHelper;
@@ -168,8 +167,13 @@ public class ApplicationSummaryService {
 
     private void addPersonalStatement(ApplicationForm form, Map<String, String> result) {
         Document personalStatement = form.getPersonalStatement();
-        result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));
-        result.put("personalStatementFilename", personalStatement.getFileName());
+        if (personalStatement != null) {
+            result.put("personalStatementProvided", "true");
+            result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));
+            result.put("personalStatementFilename", personalStatement.getFileName());
+        } else {
+            result.put("personalStatementProvided", "false");
+        }
 
         Document cv = form.getCv();
         if (cv != null) {

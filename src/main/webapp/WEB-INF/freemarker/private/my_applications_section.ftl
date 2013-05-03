@@ -59,7 +59,9 @@
         <div class="span4">
           <ul class="documents">
             <li><b>Documents:</b></li>
+            <#if application.personalStatement?has_content>
             <li><i class="icon-file-alt"></i> <a data-field="personal-statement-link" target="_blank" href="javascript:void(0);"></a></li>
+            </#if>
             <#if application.cv?has_content>
             <li><i class="icon-file-alt"></i> <a data-field="cv-statement-link" target="_blank" href="javascript:void(0);"></a></li>
             </#if>

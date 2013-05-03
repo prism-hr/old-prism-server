@@ -875,3 +875,30 @@ function padLeft(num, size) {
     while (s.length < size) s = "0" + s;
     return s;
 }
+
+function applyTooltip(selector) {
+  $(selector).qtip({
+    content: {
+        text: function(api) {
+          // Retrieve content from custom attribute of the $('.selector') elements.
+          return $(this).attr('data-desc');
+       } 
+     },
+     position: {
+        my: 'bottom right', // where the tooltip's pointer appears
+        at: 'top center',   // where the tooltip is positioned
+        viewport: $(window),
+        adjust: {
+           method: 'flip shift'
+        }
+     },
+     style: 'tooltip-pgr ui-tooltip-shadow'
+   });
+}
+
+function dateToDMY(date) {
+    var d = date.getDate();
+    var m = date.getMonth() + 1;
+    var y = date.getFullYear();
+    return '' + (d <= 9 ? '0' + d : d) + '/' + (m<=9 ? '0' + m : m) + '/' + y;
+}

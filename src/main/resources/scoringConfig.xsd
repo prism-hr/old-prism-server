@@ -17,7 +17,7 @@
 		<xs:sequence>
 			<xs:element name="label" type="xs:string" />
 			<xs:element name="required" type="xs:boolean" />
-			<xs:element name="tooltip" type="xs:string" minOccurs="0" />
+			<xs:element name="tooltip" type="xs:string" />
 			<xs:element name="maxLength" type="xs:integer" minOccurs="0" />
 			<xs:element name="minDate" type="xs:string" minOccurs="0" />
 			<xs:element name="maxDate" type="xs:string" minOccurs="0" />

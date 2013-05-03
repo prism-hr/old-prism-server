@@ -13,6 +13,7 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />" />
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />" />
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />" />
+
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />" />
 
 <!-- Styles for Application List Page -->
@@ -186,16 +187,16 @@
           <div id="scoringConfiguration">
             
               <section class="form-rows">
-              <h2>Scoring Configuration</h2>
+              <h2>Manage Custom Forms</h2>
               <div>
               <form>
               <div class="row-group">
                 <div class="row">
-                  <label class="plain-label" for="program">Program <em>*</em></label>
-                  <span data-desc="Select a program" class="hint"></span>
+                  <label class="plain-label" for="program">Programme <em>*</em></label>
+                  <span data-desc="Select a programme." class="hint"></span>
                   <div class="field">
                     <select name="programSelect" id="programSelect">
-                      <option value="">Please select a program</option>
+                      <option value="">Please select a programme</option>
                       <#list programs as program>
                       <option value="${program.code}">
                       ${program.title?html}
@@ -205,8 +206,8 @@
                   </div>
                 </div>
                 <div class="row">
-                  <label class="plain-label" for="stageSelect">Stage <em>*</em></label>
-                  <span data-desc="Select a stage" class="hint"></span>
+                  <label class="plain-label" for="stageSelect">Form <em>*</em></label>
+                  <span data-desc="Select a form." class="hint"></span>
                   <div class="field">
                     <select name="stageSelect" id="stageSelect">
                       <#list scoringStages as scoringStage>
@@ -218,12 +219,12 @@
                   </div>
                 </div>
                 <div class="row">
-                  <label class="plain-label" for="scoringConfigurationContent">Edit scoring configuration <em>*</em></label>
-                  <span data-desc="XML scoring configuration" class="hint"></span>
+                  <label class="plain-label" for="scoringConfigurationContent">Configuration <em>*</em></label>
+                  <span data-desc="Enter the XML configuration for your custom form. You can find guidance on writing a configuration by visiting our helpdesk." class="hint"></span>
                   <div class="field">
                     <textarea name="scoringConfigurationContent" id="scoringConfigurationContent" class="input-xxlarge" rows="15" cols="150"></textarea>
                   </div>
-	              <div class="field"> <a disabled href="#previewModal" id="scoring-config-preview" role="button" class="btn" data-toggle="modal">Preview</a> </div>
+	              <div class="field"> <a disabled id="scoring-config-preview" role="button" class="btn" data-toggle="modal">Preview</a> </div>
                 </div>
               </div>
               <div class="buttons">

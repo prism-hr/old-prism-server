@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.valueOf;
 import static java.util.Arrays.sort;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,11 +26,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
+import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Throttle;
@@ -41,15 +47,20 @@ import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
+import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
+import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.PorticoQueueService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
+import com.zuehlke.pgadmissions.validators.ScoresValidator;
 
 @Controller
 @RequestMapping("/configuration")
@@ -76,14 +87,22 @@ public class ConfigurationController {
 
 	private final ScoringDefinitionParser scoringDefinitionParser;
 
+	private final ScoreFactory scoreFactory;
+
+	private final ScoresPropertyEditor scoresPropertyEditor;
+
+	private final FeedbackCommentValidator dummyCommentValidator;
+
 	public ConfigurationController() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor, PersonPropertyEditor registryPropertyEditor,
 	                UserService userService, ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService,
-	                PorticoQueueService queueService, ProgramsService programsService, ScoringDefinitionParser scoringDefinitionParser) {
+	                PorticoQueueService queueService, ProgramsService programsService, ScoringDefinitionParser scoringDefinitionParser,
+	                ScoreFactory scoreFactory, ScoresPropertyEditor scoresPropertyEditor,
+	                FeedbackCommentValidator dummyCommentValidator) {
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
 		this.registryPropertyEditor = registryPropertyEditor;
 		this.userService = userService;
@@ -93,6 +112,9 @@ public class ConfigurationController {
 		this.queueService = queueService;
 		this.programsService = programsService;
 		this.scoringDefinitionParser = scoringDefinitionParser;
+		this.scoreFactory = scoreFactory;
+		this.scoresPropertyEditor = scoresPropertyEditor;
+		this.dummyCommentValidator = dummyCommentValidator;
 	}
 
 	@InitBinder(value = "stageDurationDTO")
@@ -178,19 +200,11 @@ public class ConfigurationController {
 	@ResponseBody
 	public Map<String, String> editScoringDefinition(@RequestParam String programCode, @RequestParam ScoringStage scoringStage,
 	                @RequestParam String scoringContent, HttpServletResponse response) {
-		Program program = programsService.getProgramByCode(programCode);
-		if (program == null) {
-			return Collections.singletonMap("programCode", "Given program code is not valid");
+		Map<String, String> errors = validateScoringDefinition(programCode, scoringContent);
+		if (errors.isEmpty()) {
+			programsService.applyScoringDefinition(programCode, scoringStage, scoringContent);
 		}
-
-		try {
-			scoringDefinitionParser.parseScoringDefinition(scoringContent);
-		} catch (ScoringDefinitionParseException e) {
-			return Collections.singletonMap("scoringContent", e.getLocalizedMessage());
-		}
-		programsService.applyScoringDefinition(programCode, scoringStage, scoringContent);
-
-		return Collections.emptyMap();
+		return errors;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/getScoringDefinition")
@@ -341,4 +355,60 @@ public class ConfigurationController {
 		return userService.getCurrentUser().getProgramsOfWhichAdministrator();
 	}
 
+	private Map<String, String> validateScoringDefinition(String programCode, String scoringContent) {
+		Program program = programsService.getProgramByCode(programCode);
+		if (program == null) {
+			return Collections.singletonMap("programCode", "Given program code is not valid");
+		}
+
+		try {
+			scoringDefinitionParser.parseScoringDefinition(scoringContent);
+		} catch (ScoringDefinitionParseException e) {
+			return Collections.singletonMap("scoringContent", e.getLocalizedMessage());
+		}
+		return Collections.emptyMap();
+	}
+
+	@InitBinder(value = "dummyComment")
+	public void registerBinders(WebDataBinder binder) {
+		binder.setValidator(dummyCommentValidator);
+		binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/fakeSubmitScores")
+	public String dummySubmitScores(@ModelAttribute("dummyComment") Comment dummyComment, @RequestParam String scoringContent, BindingResult result, Model model)
+	                throws ScoringDefinitionParseException {
+		List<Score> scores = dummyComment.getScores();
+		CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);
+		model.addAttribute("scores", scores);
+		model.addAttribute("alertForScoringQuestions", parseScoringDefinition.getAlert());
+		if (scores != null) {
+			List<Question> questions = parseScoringDefinition.getQuestion();
+			for (int i = 0; i < scores.size(); i++) {
+				Score score = scores.get(i);
+				score.setOriginalQuestion(questions.get(i));
+			}
+		}
+		dummyCommentValidator.validate(dummyComment, result);
+		model.addAttribute("errorsContainerName", "dummyComment");
+		return "/private/staff/scores";
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/previewScoringDefinition")
+	public String previewScoringDefinition(@RequestParam String programCode, @RequestParam String scoringContent, Model model, HttpServletResponse response)
+	                throws IOException {
+		String errorMessage = "";
+		try {
+			CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);
+			List<Score> scores = scoreFactory.createScores(parseScoringDefinition.getQuestion());
+			model.addAttribute("scores", scores);
+			model.addAttribute("alertForScoringQuestions", parseScoringDefinition.getAlert());
+			return "/private/staff/scores";
+		} catch (ScoringDefinitionParseException e) {
+			errorMessage = e.getLocalizedMessage();
+		}
+
+		response.sendError(418, errorMessage);
+		return null;
+	}
 }

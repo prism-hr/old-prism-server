@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.scoring;
 
-import static junit.framework.Assert.assertEquals;
-
 import java.io.File;
 import java.util.List;
 
@@ -20,47 +18,43 @@ public class ScoringDefinitionParserTest {
 	private ScoringDefinitionParser parser;
 
 	@Test
-	public void shouldValidateSingleText() throws Exception {
+	public void shouldValidateSingleTextWithoutTooltip() throws Exception {
 		File f = new File("src/test/resources/scoring/simpleText.xml");
 		String xmlContent = Files.toString(f, Charsets.UTF_8);
-
-		CustomQuestions scoreDefinition = parser
-				.parseScoringDefinition(xmlContent);
-
-		List<Question> questions = scoreDefinition.getQuestion();
-		assertEquals(1, questions.size());
-	}
-
-	@Test
-	public void shouldInvalidateSingleTextWithoutLabel() throws Exception {
-		File f = new File(
-				"src/test/resources/scoring/simpleTextWithoutLabel.xml");
-		String xmlContent = Files.toString(f, Charsets.UTF_8);
-
 		try {
 			parser.parseScoringDefinition(xmlContent);
 			Assert.fail();
 		} catch (ScoringDefinitionParseException e) {
-			Assert.assertEquals(
-					"cvc-complex-type.2.4.a: Invalid content was found starting with element 'required'. One of '{label}' is expected.",
-					e.getLocalizedMessage());
+			Assert.assertEquals("cvc-complex-type.2.4.b: The content of element 'question' is not complete. One of '{tooltip}' is expected.",
+			                e.getLocalizedMessage());
 		}
 	}
 
 	@Test
-	public void shouldInvalidateSingleTextWithoutRequiredField()
-			throws Exception {
-		File f = new File(
-				"src/test/resources/scoring/simpleTextWithoutRequiredField.xml");
+	public void shouldInvalidateSingleTextWithoutLabel() throws Exception {
+		File f = new File("src/test/resources/scoring/simpleTextWithoutLabel.xml");
 		String xmlContent = Files.toString(f, Charsets.UTF_8);
 
 		try {
 			parser.parseScoringDefinition(xmlContent);
 			Assert.fail();
 		} catch (ScoringDefinitionParseException e) {
-			Assert.assertEquals(
-					"cvc-complex-type.2.4.b: The content of element 'question' is not complete. One of '{required}' is expected.",
-					e.getLocalizedMessage());
+			Assert.assertEquals("cvc-complex-type.2.4.a: Invalid content was found starting with element 'required'. One of '{label}' is expected.",
+			                e.getLocalizedMessage());
+		}
+	}
+
+	@Test
+	public void shouldInvalidateSingleTextWithoutRequiredField() throws Exception {
+		File f = new File("src/test/resources/scoring/simpleTextWithoutRequiredField.xml");
+		String xmlContent = Files.toString(f, Charsets.UTF_8);
+
+		try {
+			parser.parseScoringDefinition(xmlContent);
+			Assert.fail();
+		} catch (ScoringDefinitionParseException e) {
+			Assert.assertEquals("cvc-complex-type.2.4.b: The content of element 'question' is not complete. One of '{required}' is expected.",
+			                e.getLocalizedMessage());
 		}
 	}
 
@@ -78,15 +72,12 @@ public class ScoringDefinitionParserTest {
 			parser.validateScoringDefinition(customQuestions);
 			Assert.fail();
 		} catch (ScoringDefinitionParseException e) {
-			Assert.assertEquals("Malformated date " + minDateForTest
-					+ ". Expected format is yyyy-mm-dd, or \"TODAY\"",
-					e.getLocalizedMessage());
+			Assert.assertEquals("Malformated date " + minDateForTest + ". Expected format is yyyy-mm-dd, or \"TODAY\"", e.getLocalizedMessage());
 		}
 	}
 
 	@Test
-	public void shouldValidateMaxDateWithCorrectFormat()
-			throws ScoringDefinitionParseException {
+	public void shouldValidateMaxDateWithCorrectFormat() throws ScoringDefinitionParseException {
 		CustomQuestions customQuestions = new CustomQuestions();
 		List<Question> questions = customQuestions.getQuestion();
 		Question question = new Question();
@@ -99,8 +90,7 @@ public class ScoringDefinitionParserTest {
 	}
 
 	@Test
-	public void shouldValidateMaxDateWithTheValueOfTODAY()
-			throws ScoringDefinitionParseException {
+	public void shouldValidateMaxDateWithTheValueOfTODAY() throws ScoringDefinitionParseException {
 		CustomQuestions customQuestions = new CustomQuestions();
 		List<Question> questions = customQuestions.getQuestion();
 		Question question = new Question();
@@ -112,26 +102,26 @@ public class ScoringDefinitionParserTest {
 		parser.validateScoringDefinition(customQuestions);
 	}
 
-//	@Test
-//	public void shouldRequireBothMinDateAndMaxDateForDateRangeField() {
-//		CustomQuestions customQuestions = new CustomQuestions();
-//		List<Question> questions = customQuestions.getQuestion();
-//		Question question = new Question();
-//		String label = "testQuestion";
-//		question.setLabel(label);
-//		question.setType(QuestionType.DATE_RANGE);
-//		question.setMinDate("TODAY");
-//		questions.add(question);
-//
-//		try {
-//			parser.validateScoringDefinition(customQuestions);
-//			Assert.fail();
-//		} catch (ScoringDefinitionParseException e) {
-//			Assert.assertEquals(
-//					"Both minDate and maxDate elements are required for dateRange type "
-//							+ label, e.getLocalizedMessage());
-//		}
-//	}
+	// @Test
+	// public void shouldRequireBothMinDateAndMaxDateForDateRangeField() {
+	// CustomQuestions customQuestions = new CustomQuestions();
+	// List<Question> questions = customQuestions.getQuestion();
+	// Question question = new Question();
+	// String label = "testQuestion";
+	// question.setLabel(label);
+	// question.setType(QuestionType.DATE_RANGE);
+	// question.setMinDate("TODAY");
+	// questions.add(question);
+	//
+	// try {
+	// parser.validateScoringDefinition(customQuestions);
+	// Assert.fail();
+	// } catch (ScoringDefinitionParseException e) {
+	// Assert.assertEquals(
+	// "Both minDate and maxDate elements are required for dateRange type "
+	// + label, e.getLocalizedMessage());
+	// }
+	// }
 
 	@Test
 	public void shouldRequireOptionsForDropdown() {
@@ -147,9 +137,7 @@ public class ScoringDefinitionParserTest {
 			parser.validateScoringDefinition(customQuestions);
 			Assert.fail();
 		} catch (ScoringDefinitionParseException e) {
-			Assert.assertEquals(
-					"Options element is required for dropdown type " + label,
-					e.getLocalizedMessage());
+			Assert.assertEquals("Options element is required for dropdown type " + label, e.getLocalizedMessage());
 		}
 	}
 

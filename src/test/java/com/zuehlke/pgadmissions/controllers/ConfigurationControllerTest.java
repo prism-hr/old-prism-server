@@ -539,7 +539,7 @@ public class ConfigurationControllerTest {
 		scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
 
 		controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock,
-		                emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock, scoringDefinitionParserMock);
+		                emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock, scoringDefinitionParserMock, null, null, null);
 
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
 		                .role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();

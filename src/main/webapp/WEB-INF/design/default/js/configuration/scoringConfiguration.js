@@ -33,50 +33,101 @@ $(document)
 					});
 
 					enableOrDisablePreviewButton();
-
+					
+					$('#scoring-config-preview').click(function (){
+						$.ajax({
+							type : 'POST',
+							statusCode : errorCodes,
+							url : "/pgadmissions/configuration/previewScoringDefinition",
+							data : {
+								programCode : $('#programSelect').val(),
+								scoringStage : $('#stageSelect').val(),
+								scoringContent : $('#scoringConfigurationContent').val()
+							},
+							success : function(data) {
+								$("#scoringConfiguration").parent().find('.alert-error').remove();
+								$('#previewModal')
+										.modal('show')
+										.addClass('large')
+										.on('hidden', function () {
+											$(this).removeClass('large');
+										});
+								var stage=$(stageSelect).find(":selected").text().trim();
+								$('#previewModalLabel').html('Programme Specific Questions ('+stage+')');
+								$('#previewModalContent').html(data);
+								$('#previewModalContent').append('<div class="buttons"><button class="btn btn-primary" id="fake-submit" type="button">Submit</button></div>');
+								applyTooltip('.hint');
+								bindFakeSubmitButtonHandler();
+							},
+							error: function (errorMsg) {
+								removeOldErrorMessage();
+								showValidationErrorMessages($(errorMsg.responseText).find('u').first().text());
+							}
+						});
+					});
+					
 					$('#save-scoring').click(
-									function() {
-										$('#ajaxloader').show();
-										
-										$.ajax({
-													type : 'POST',
-													statusCode : errorCodes,
-													url : "/pgadmissions/configuration/editScoringDefinition",
-													data : {
-														programCode : $('#programSelect').val(),
-														scoringStage : $('#stageSelect').val(),
-														scoringContent : $('#scoringConfigurationContent')
-																.val()
-													},
-													success : function(data) {
-														$("#scoringConfiguration").parent().find('.alert-error').remove();
-														if (data.scoringContent != null) {
-															$("#scoringConfigurationContent").parent().append(
-															'<div class="alert alert-error"><p><i class="icon-warning-sign"></i><b>There is an error in your XML:</b></p>'
-																	+ data.scoringContent
-																	+ ' </div>');
-														}
-														if (data.programCode != null) {
-															$("#programSelect").parent().append(
-															'<div class="alert alert-error"><i class="icon-warning-sign"></i> '
-																	+ data.programCode
-																	+ ' </div>');
-														}
-													},
-													complete : function() {
-														$('#ajaxloader').fadeOut('fast');
-													}
-												});
-									});
+						function() {
+							$('#ajaxloader').show();
+							
+							$.ajax({
+								type : 'POST',
+								statusCode : errorCodes,
+								url : "/pgadmissions/configuration/editScoringDefinition",
+								data : {
+									programCode : $('#programSelect').val(),
+									scoringStage : $('#stageSelect').val(),
+									scoringContent : $('#scoringConfigurationContent')
+											.val()
+								},
+								success : function(data) {
+									removeOldErrorMessage();
+									if (data.scoringContent != null) {
+										showValidationErrorMessages(data.scoringContent);
+									}
+									if (data.programCode != null) {
+										$("#programSelect").parent().append(
+										'<div class="alert alert-error"><i class="icon-warning-sign"></i> '
+												+ data.programCode
+												+ ' </div>');
+									}
+								},
+								complete : function() {
+									$('#ajaxloader').fadeOut('fast');
+								}
+							});
+						});
 				});
 
-$('#scoring-config-preview').click(function() {
-	var html = $('#templateContentId').val();
-	html = html.replace(/\$\{host\}/g, "");
-	var header = $("#emailTemplateType option:selected").text();
-	$('#previewModalLabel').html(header);
-	$('#previewModalContent').html(html);
-});
+function removeOldErrorMessage(){
+	$("#scoringConfiguration").parent().find('.alert-error').remove();
+}
+
+function showValidationErrorMessages(message){
+	$("#scoringConfigurationContent").parent().append(
+			'<div class="alert alert-error"><i class="icon-warning-sign"></i><b>There is an error in your XML: </b>'
+					+ message
+					+ ' </div>');
+}
+
+function bindFakeSubmitButtonHandler(){
+	$('#fake-submit').click(function(){		
+		$.ajax({
+			type : 'POST',
+			statusCode : errorCodes,
+			url : "/pgadmissions/configuration/fakeSubmitScores",
+			data : {
+				scores : getScores($('#previewModalContent').find('.scoring-questions')),
+				scoringContent:$('#scoringConfigurationContent').val()
+			},
+			success : function(data) {
+				$('#previewModalContent').html(data);
+				$('#previewModalContent').append('<div class="buttons"><button class="btn btn-primary" id="fake-submit" type="button" value="Submit">Submit</button></div>');
+				bindFakeSubmitButtonHandler();
+			}
+		});
+	});
+}
 
 function updateScoringDefinition() {
 	if ($('#programSelect').val() == "") {

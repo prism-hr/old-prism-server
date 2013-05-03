@@ -100,9 +100,11 @@ section.form-rows > div.sub_section_admin { margin-bottom: 10px; overflow: hidde
 section.form-rows .label { float: left; line-height: 1.2; width: 180px; }
 
 /* To align with label, increasing the width : Edited by Manish*/
+.modal .modal-body .field,
 section.form-rows .field { margin-left: 235px; padding: 1px 0; }
 
 /* To align with label, increasing the width : Edited by Manish*/
+.modal .modal-body .hint,
 section.form-rows .hint { 
 	/*background: url(../../images/button_question.png)
 	no-repeat; width: 25px; height: 20px;  */

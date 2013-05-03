@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum ScoringStage {
 
-    REFERENCE("Reference Request"), REVIEW("Review Evaluation Request"), INTERVIEW("Interview Evaluation Request");
+    REFERENCE("Reference"), REVIEW("Review"), INTERVIEW("Interview Feedback");
 
     private String displayValue;
 

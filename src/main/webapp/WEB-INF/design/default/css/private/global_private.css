@@ -1070,6 +1070,7 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 }
 
 /* Fixes */
+#fake-submit { margin:10px; }
 
 #content {
   padding: 15px !important;
@@ -1187,6 +1188,7 @@ h3.group-heading-label {
   width: auto;
 }
 /* New Icons */
+.modal .modal-body .hint,
 section.form-rows .hint{
   margin-top: 0px !important;
   background: none !important;
@@ -1382,6 +1384,11 @@ span.icon-status.not-submitted:before {
 #previewModal {
   width: 650px !important;
   margin-left: -318px !important;
+}
+
+#previewModal.modal.large {
+	width: 800px !important;
+	height:500px;
 }
 #psUploadFields .button-delete, #cvUploadedDocument .button-delete  {
   margin-top: 0px;

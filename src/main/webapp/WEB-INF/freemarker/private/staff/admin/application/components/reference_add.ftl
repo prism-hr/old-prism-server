@@ -29,8 +29,6 @@
                   <input type="hidden" class="file" id="document_COMMENT" value="${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}"/>
                 </span> </div>
               </div>
-        
-        
             
             <ul id="psUploadedDocument" class="uploaded-files">
             	
@@ -104,6 +102,7 @@
 <div class="row-group">
     <div id="scoring-questions_${encRefereeId}">
       <#assign errorsContainerName = "refereesAdminEditDTO">
+      <h3>Programme Specific Questions</h3>
       <#include "/private/staff/scores.ftl"/>
     </div>
     <!-- Add reference add button -->

@@ -117,36 +117,25 @@
                       </#list> </div>
                   </div>
                 </div>
-                
-                <@spring.bind "comment.confirmNextStage" />
-                <#if spring.status.errorMessages?size &gt; 0>
-                    <div class="alert alert-error" >
-                <#else>
-                    <div class="alert" >
-                </#if>
-                    <div class="row">
-                        <label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">Please confirm that you are satisfied with your comments.</label>
-                        <div class="terms-field">
-                            <input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
-                        </div>
-                        <input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
-                    </div>
-                </div>
-                
-                <div id="scoring-questions" class="row-group">
-                  <#assign scores = comment.scores>
-                  <#if comment.alert??>
-                  	<#assign alertForScoringQuestions=comment.alert>
-                  </#if>
-                  <#assign errorsContainerName = "comment">
-                  <#include "/private/staff/scores.ftl"/>
-                </div>
-                <@spring.bind "comment.confirmNextStage" />
-			    <#if spring.status.errorMessages?size &gt; 0>
-		     		<div class="alert alert-error" >
-			    <#else>
-			        <div class="alert" >
+
+                <#assign scores = comment.scores>
+                <#if (scores)?has_content>
+	                <div id="scoring-questions" class="row-group">
+	                  <#if comment.alert??>
+	                  	<#assign alertForScoringQuestions=comment.alert>
+	                  </#if>
+	                  <#assign errorsContainerName = "comment">
+	                  <h3>Programme Specific Questions</h3>
+	                  <#include "/private/staff/scores.ftl"/>
+	                </div>
+               		<@spring.bind "comment.confirmNextStage" />
+				    <#if spring.status.errorMessages?size &gt; 0>
+			     		<div class="alert alert-error" >
+				    <#else>
+				        <div class="alert" >
+				    </#if>
 			    </#if>
+			    
 					<div class="row">
 						<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
 							Please confirm that you are satisfied with your comments.				

@@ -22,7 +22,7 @@ public class FeedbackCommentValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(ReviewComment.class) || clazz.isAssignableFrom(InterviewComment.class) || clazz.isAssignableFrom(ReferenceComment.class);
+        return clazz.isAssignableFrom(ReviewComment.class) || clazz.isAssignableFrom(InterviewComment.class) || clazz.isAssignableFrom(ReferenceComment.class) || clazz.isAssignableFrom(Comment.class);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class FeedbackCommentValidator extends AbstractValidator {
                     errors.popNestedPath();
                 }
             }
-        }
-    }
+		}
+	}
 
 }

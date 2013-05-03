@@ -237,6 +237,7 @@ public class MailSendingServiceTest {
 		RegisteredUser refereeUser2 = new RegisteredUserBuilder().id(11).build();
 		Referee referee1 = new RefereeBuilder().user(refereeUser1).build();
 		Referee referee2 = new RefereeBuilder().user(refereeUser2).build();
+		Referee refereeWithoutUser = new RefereeBuilder().build();
 		
 		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(12).build();
 		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(13).build();
@@ -256,7 +257,7 @@ public class MailSendingServiceTest {
 		Supervisor supervisor2 = new SupervisorBuilder().user(supervisorUser2).build();
 		form.setLatestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisor1, supervisor2).build());
 	
-		service.scheduleWithdrawalConfirmation(asList(referee1, referee2), form);
+		service.scheduleWithdrawalConfirmation(asList(referee1, referee2, refereeWithoutUser), form);
 		
 		List<RegisteredUser> admins = form.getProgram().getAdministrators();
 		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);

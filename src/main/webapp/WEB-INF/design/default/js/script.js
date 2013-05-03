@@ -238,12 +238,10 @@ function makeFeedbackButton() {
 // ------------------------------------------------------------------------------
 // Initialise jQuery's date picker on specified fields.
 // ------------------------------------------------------------------------------
-function bindDatePicker(selector, notReadOnly) {
+function bindDatePicker(selector) {
     $(selector).each(function() {
         if (!$(this).hasClass('hasDatepicker')) {
-        	if (!notReadOnly) {
-        		$(this).attr("readonly", "readonly");
-        	}
+    		$(this).attr("readonly", "readonly");
         	
             $(this).datepicker({
                 dateFormat : 'dd M yy',
@@ -251,8 +249,6 @@ function bindDatePicker(selector, notReadOnly) {
                 changeYear : true,
                 yearRange : '1900:+20'
             });
-            
-            $(this).addClass('hasDatepicker');
         }
     });
 }
@@ -855,3 +851,27 @@ $('button.btn.btn-primary').live('click', function() {
 		$.scrollTo('#' + section[0].id, 500);
 	}
 });
+
+function stringToSlug(str) {
+  str = str.replace(/^\s+|\s+$/g, ''); // trim
+  str = str.toLowerCase();
+  
+  // remove accents, swap ñ for n, etc
+  var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+  var to   = "aaaaeeeeiiiioooouuuunc------";
+  for (var i=0, l=from.length ; i<l ; i++) {
+    str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+  }
+
+  str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-'); // collapse dashes
+
+  return str;
+}
+
+function padLeft(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}

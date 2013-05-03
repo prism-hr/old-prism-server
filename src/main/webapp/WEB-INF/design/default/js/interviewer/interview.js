@@ -122,7 +122,7 @@ $(document).ready(function() {
             applicationId : $('#applicationId').val(),
             interviewers : '',
             interviewTime : $('#hours').val() + ":" + $('#minutes').val(),
-            interviewDueDate : $('#interviewDate').val(),
+            interviewDueDate : $('#interviewDate').val()
         };
         
         if(stage != null){
@@ -133,6 +133,43 @@ $(document).ready(function() {
         	postData.furtherDetails = $('#furtherDetails').val();
         	postData.furtherInterviewerDetails = $('#furtherInterviewerDetails').val();
         	postData.locationURL = $('#interviewLocation').val();
+        }
+        
+        if (stage == 'SCHEDULING') {
+        	
+        	postData.timezone = $('#timezone option:selected').text();
+        	
+        	var duration = parseFloat($('#interviewDurationValue').val());
+        	
+        	if (duration == '') {
+        		duration = '0';
+        	}
+        	
+            if ($('#interviewDurationUnits').val() == "hours") {
+        		duration = duration *  60;
+            }
+
+        	postData.duration = duration;
+        	
+        	// Creates timeslots array.
+        	postData.timeslots = [];
+        	
+        	$.each($('#interviewPossibleStartTimes tbody tr'), function (i, e) {
+        		var dateValue = $(e).find('.dateValue').val();
+        		
+        		$.each($(this).find('input.time'), function (i, e){
+        			var startTime = $(e).val();
+        			
+        			if (startTime.length > 0) {
+        				var timeslot = {
+            					dueDate: dateValue,
+            					startTime: startTime
+                		};
+
+            			postData.timeslots.push(timeslot);
+        			}
+        		});
+        	});
         }
         
         
@@ -178,8 +215,15 @@ $(document).ready(function() {
                         yearRange : '1900:+20'
                     });
                     
-                    	
-                    bindDatePicker('#availableDates');
+//                    $('#availableDates').datepicker({
+//                    	inline: true,  
+//                        showOtherMonths: true,  
+//                        dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+//                        dateFormat : 'dd M yy',
+//                        changeMonth : true,
+//                        changeYear : true,
+//                        yearRange : '1900:+20'
+//                    });
                     
                     var interviewStatus = $('input[name=interviewStatus]:radio');
                 	interviewStatus.change(showProperInterviewArrangements);
@@ -238,8 +282,86 @@ function getInterviewersAndDetailsSections() {
                 changeYear : true,
                 yearRange : '1900:+20'
             });
-
-            bindDatePicker('#availableDates');
+            
+            $.mask.definitions['H'] = "[0-2]";
+            $.mask.definitions['h'] = "[0-9]";
+            $.mask.definitions['M'] = "[0-5]";
+            $.mask.definitions['m'] = "[0-9]";
+            
+            $('#availableDatesPicker').multiDatesPicker({
+            	maxPicks: 10,
+            	beforeShowDay: $.datepicker.noWeekends,
+            	onSelect: function(dateText, inst) {
+            		var calendar = $(this);
+            		var dates = calendar.multiDatesPicker('getDates')
+            		var dateTextId = stringToSlug(dateText);
+            		
+            		if (dates.indexOf(dateText) >= 0) {
+            			var dateLine = $('<tr></tr>').appendTo($('#interviewPossibleStartTimes tbody'));
+            			
+            			var dateCell = $('<td></td>').addClass('suggested-date').appendTo(dateLine);
+            			
+            			$('<input />', {
+            				id: dateTextId,
+            				name: dateTextId,
+            				type: 'hidden'
+            			}).val(dateText).addClass('dateValue').appendTo(dateCell);
+            			
+            			var dateString = $('<span></span>').appendTo(dateCell);
+            			dateString.text(new Date(dateText).toLocaleString('en-GB', {weekday: "long", year: "numeric", month: "long", day: "numeric"}));
+            			
+            			var removeButton = $('<a></a>', { href: 'javascript:void(0);' }).addClass('remove-date').html('<i class="icon-trash icon-large"></i>').appendTo(dateCell);
+            			
+            			removeButton.click(function () {
+                        	var dateToRemove = new Date($(this).parent().find('.dateValue').val());
+                        	
+                        	calendar.multiDatesPicker('toggleDate', dateToRemove);
+                        	$(this).closest('tr').remove();
+                        });
+            			
+            			
+            			for (var i = 0; i < $('#interviewPossibleStartTimes thead th').length - 1; i++) {
+            				var timeCell = $('<td></td>', {}).appendTo(dateLine);
+            				
+            				// Gets first invisible column so that new dates have the same number of visible time options.
+            				var firstHiddenElement = $('#interviewPossibleStartTimes thead .time-hidden').first();
+            				var hiddenElementsStartIndex =  $('#interviewPossibleStartTimes thead tr').children().index(firstHiddenElement);
+            				
+            				if (hiddenElementsStartIndex != -1 && (i + 2 > hiddenElementsStartIndex)) {
+            					timeCell.addClass('time-hidden');
+            				}
+            				
+            				var className = 'time-' + (i + 1);
+            				var time = $('<input />', {
+            					name: className,
+            					type: 'text'
+            				}).addClass('time').addClass(className);
+            				
+            				time.appendTo(timeCell);
+            				
+            				jQuery(time).mask('Hh:Mm');
+            			}
+            		}
+            		else {
+            			$('#interviewPossibleStartTimes table').find('#' + dateTextId).closest('tr').remove();
+            		}
+            	}
+            });
+            
+            $('#interviewPossibleStartTimes .add-column').click(function () {
+            	var hideAddColumnLink = false;
+            	$.each($('#interviewPossibleStartTimes tr'), function(i, e) {
+            		$(this).find('.time-hidden:first').removeClass('time-hidden');
+            		
+            		if (i == 0 && $(this).find('.time-hidden:first').length == 0) {
+            			hideAddColumnLink = true;
+            		}
+            	});
+            	
+            	if (hideAddColumnLink) {
+            		$(this).hide();
+            	}
+            });
             
             // Interview status.
         	var interviewStatus = $('input[name=interviewStatus]:radio');
@@ -327,14 +449,14 @@ function showProperInterviewArrangements() {
 	$('.interview-to-schedule').hide();
 	
 	switch (interviewStatus) {
-	case 'TAKEN_PLACE':
-		$('.interview-happened').show();
-		break;
-	case 'SCHEDULED':
-		$('.interview-scheduled').show();
-		break;
-	default:
-		$('.interview-to-schedule').show();
-		break;
+		case 'TAKEN_PLACE':
+			$('.interview-happened').show();
+			break;
+		case 'SCHEDULED':
+			$('.interview-scheduled').show();
+			break;
+		case 'SCHEDULING':
+			$('.interview-to-schedule').show();
+			break;
 	}
 }

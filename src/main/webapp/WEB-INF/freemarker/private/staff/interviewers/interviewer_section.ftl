@@ -169,14 +169,49 @@
   	<label class="plain-label normal" for="availableDates">Select Available Dates<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
     <div class="field">
-	  	<input class="half date" type="text" name="availableDates" id="availableDates" value="${(interview.interviewDueDate?string('dd MMM yyyy'))!}" />
-		  <@spring.bind "interview.interviewDueDate" />
-      	<#list spring.status.errorMessages as error>
-      		<div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
-      	</#list>									
-	  </div>
+    	<div id="availableDatesPicker" class="datepicker-inline"></div>
+  	</div>
   </div>
-  
+  <div id="interviewDuration" class="row interview-to-schedule interview-scheduled">
+	<label class="plain-label normal" for="interviewDate">Interview Duration<em>*</em></label>
+	<div class="field">
+		<input type="text" name="interviewDurationValue" id="interviewDurationValue" value="" class="half" />
+		<select name="interviewDurationUnits" id="interviewDurationUnits" class="half">
+			<option value="hours">Hours</option>
+			<option value="minutes">Minutes</option>
+		</select>
+	</div>
+  </div>
+  <div id="interviewPossibleStartTimes" class="row interview-to-schedule">
+  	<table>
+  		<thead>
+  			<tr>
+  				<th></th>
+  				<th>Time 1</th>
+  				<th>Time 2</th>
+  				<th>Time 3</th>
+  				<th class="time-hidden">Time 4</th>
+  				<th class="time-hidden">Time 5</th>
+  				<th class="time-hidden">Time 6</th>
+  				<th class="time-hidden">Time 7</th>
+  				<th class="time-hidden">Time 8</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  		</tbody>
+  		<tfoot>
+  			<td></td>
+  			<td colspan="2">
+  				<a href="javascript:void(0);" class="add-column">Add column</a>
+  			</td>
+  			<td class="time-hidden"></td>
+  			<td class="time-hidden"></td>
+  			<td class="time-hidden"></td>
+  			<td class="time-hidden"></td>
+  			<td class="time-hidden"></td>
+  		</tfoot>
+  	</table>
+  </div>
   <div class="row interview-happened interview-scheduled">
     <label class="plain-label normal" for="interviewDate">Interview Date<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
@@ -258,22 +293,22 @@
 <div id="section_interview_status">
   <h3>Interview Status</h3>
   <div class="row">
-    <label class="plain-label normal" for="interviewHappened">The interview has taken place</label>
     <div class="field">
       <input id="interviewHappened" type="radio" class="interviewHappened" name="interviewStatus" value="TAKEN_PLACE" <#if interview.stage = 'TAKEN_PLACE'>checked</#if> />
-	  </div>
+  	</div>
+  	<label class="plain-label normal" for="interviewHappened">The interview has taken place</label>
   </div>
   <div class="row">
-    <label class="plain-label normal" for="interviewScheduled">The interview has been scheduled</label>
     <div class="field">
       <input id="interviewScheduled" type="radio" class="interviewScheduled" name="interviewStatus" value="SCHEDULED" <#if interview.stage = 'SCHEDULED'>checked</#if>/>
-	  </div>
+  	</div>
+    <label class="plain-label normal" for="interviewScheduled">The interview has been scheduled</label>
   </div>
   <div class="row">
-    <label class="plain-label normal" for="interviewToBeScheduled">The interview needs to be scheduled</label>
     <div class="field">
       <input id="interviewToBeScheduled" type="radio" class="interviewScheduled" name="interviewStatus" value="SCHEDULING" <#if interview.stage = 'SCHEDULING'>checked</#if>/>
-	  </div>
+  	</div>
+    <label class="plain-label normal" for="interviewToBeScheduled">The interview needs to be scheduled</label>
   </div>
   
   <@spring.bind "interview.stage" />

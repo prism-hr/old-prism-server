@@ -42,6 +42,12 @@ public class InterviewValidator extends AbstractValidator {
             errors.rejectValue("interviewDueDate", "date.field.notpast");
         }
 
+        if (interview.getStage() == InterviewStage.SCHEDULED || interview.getStage() == InterviewStage.SCHEDULING) {
+            if(interview.getDuration() == null){
+                errors.rejectValue("duration", EMPTY_FIELD_ERROR_MESSAGE);
+            }
+        }
+
         if (interview.getInterviewers().isEmpty()) {
             errors.rejectValue("interviewers", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }

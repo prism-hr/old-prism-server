@@ -19,6 +19,7 @@ public class InterviewBuilder {
     private String furtherDetails;
     private String furtherInterviewerDetails;
     private String locationURL;
+    private Integer duration;
     private InterviewStage stage = InterviewStage.INITIAL;
     private List<Interviewer> interviewers = new ArrayList<Interviewer>();
 
@@ -59,6 +60,11 @@ public class InterviewBuilder {
         return this;
     }
 
+    public InterviewBuilder duration(Integer duration) {
+        this.duration = duration;
+        return this;
+    }
+
     public InterviewBuilder interviewTime(String interviewTime) {
         this.interviewTime = interviewTime;
         return this;
@@ -83,6 +89,7 @@ public class InterviewBuilder {
         interview.setLastNotified(lastNotified);
         interview.setLocationURL(locationURL);
         interview.setInterviewDueDate(dueDate);
+        interview.setDuration(duration);
         interview.getInterviewers().addAll(interviewers);
         interview.setInterviewTime(interviewTime);
         interview.setStage(stage);

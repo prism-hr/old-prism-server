@@ -70,7 +70,7 @@ public class InterviewValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("interviewDueDate").getCode());
     }
-    
+
     @Test
     public void shouldRejectIfInterviewStageNotSpecified() {
         interview.setStage(null);
@@ -79,7 +79,7 @@ public class InterviewValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("stage").getCode());
     }
-    
+
     @Test
     public void shouldRejectIfInterviewStageIsInitial() {
         interview.setStage(InterviewStage.INITIAL);
@@ -87,6 +87,29 @@ public class InterviewValidatorTest {
         interviewValidator.validate(interview, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("stage").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfDurationNotProvided() {
+        interview.setDuration(null);
+        interview.setStage(InterviewStage.SCHEDULED);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interview");
+        interviewValidator.validate(interview, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("duration").getCode());
+    }
+
+    @Test
+    public void shouldAcceptIfDurationNotProvidedButInterviewAlreadyTakenPlace() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+
+        interview.setDuration(null);
+        interview.setStage(InterviewStage.TAKEN_PLACE);
+        interview.setInterviewDueDate(calendar.getTime());
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interview");
+        interviewValidator.validate(interview, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
     }
 
     @Test
@@ -140,8 +163,9 @@ public class InterviewValidatorTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
-        interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).interviewTime("09:00").application(new ApplicationFormBuilder().id(2).build()).dueDate(calendar.getTime())
-                .furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).build()).build();
+        interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).interviewTime("09:00").application(new ApplicationFormBuilder().id(2).build())
+                .dueDate(calendar.getTime()).furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).build())
+                .duration(120).build();
 
         interviewValidator = new InterviewValidator();
         interviewValidator.setValidator((javax.validation.Validator) validator);

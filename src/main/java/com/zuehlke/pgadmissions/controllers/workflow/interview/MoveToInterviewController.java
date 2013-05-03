@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
@@ -42,20 +43,22 @@ public class MoveToInterviewController {
 	private final InterviewerPropertyEditor interviewerPropertyEditor;
 	private final InterviewService interviewService;
 	private final DatePropertyEditor datePropertyEditor;
+    private final InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
 
 	MoveToInterviewController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
-			InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor) {
+			InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor, InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.interviewService = interviewService;
 		this.interviewValidator = interviewValidator;
 		this.interviewerPropertyEditor = interviewerPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
+		this.interviewTimeslotsPropertyEditor = interviewTimeslotsPropertyEditor;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToInterview")
@@ -143,6 +146,7 @@ public class MoveToInterviewController {
 		binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+		binder.registerCustomEditor(null, "timeslots", interviewTimeslotsPropertyEditor);
     }
         
     public StringTrimmerEditor newStringTrimmerEditor() {

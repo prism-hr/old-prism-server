@@ -1001,6 +1001,74 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   border-radius: 4px;
   border-color: #ddd !important;
 }
+
+/* Interview arrangements */
+.datepicker-inline .ui-state-highlight {
+	border-width:0;
+}
+
+.datepicker-inline .ui-state-highlight a {
+	background-color:#27AAE1;
+}
+
+#interviewStatus.row-group .row .field {
+	float:left;
+	margin:0 10px 0 0;
+}
+
+#interviewStatus.row-group .row .field input[type=radio] {
+	margin:0;
+}
+
+#interviewStatus.row-group .row label {
+	line-height:17px;
+	width:auto;
+}
+
+#availableDatesPicker {
+	margin-bottom:20px;
+}
+
+#interviewPossibleStartTimes table th:first-child,
+#interviewPossibleStartTimes table td:first-child {
+	width:190px;
+}
+#interviewPossibleStartTimes table th,
+#interviewPossibleStartTimes table td {
+	padding:4px;
+	width:70px;
+}
+
+#interviewPossibleStartTimes .suggested-date span { display:block; float:left; }
+
+#interviewPossibleStartTimes .suggested-date .remove-date {
+	display:block;
+	float:right;
+	width:16px;
+	height:16px;
+	background-color:transparent;
+	border:0;
+	cursor:pointer;
+	color:black;
+}
+
+#interviewPossibleStartTimes .suggested-date .remove-date:hover {
+	text-decoration:none;
+}
+
+#interviewPossibleStartTimes .suggested-date .remove-date,
+#interviewPossibleStartTimes .suggested-date .remove-date i {
+	cursor:pointer;
+}
+
+#interviewPossibleStartTimes input[type=text] {
+	width:60px;
+}
+
+#interviewPossibleStartTimes .time-hidden {
+	display:none;
+}
+
 /* Fixes */
 
 #content {
@@ -1026,7 +1094,7 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   font-size: 15px;
   padding: 6px 14px;
 }
-input[readonly].date-input, input[readonly].second-date-input, input[readonly]#fundingAwardDate, .filter input[readonly].date  ,input[readonly]#recommendedStartDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate {
+input[readonly].date-input, input[readonly].second-date-input, input[readonly]#fundingAwardDate, .filter input[readonly].date  ,input[readonly]#recommendedStartDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate, input[readonly]#availableDates {
 	background-color: #FFFFFF;
 	cursor:auto;
 }

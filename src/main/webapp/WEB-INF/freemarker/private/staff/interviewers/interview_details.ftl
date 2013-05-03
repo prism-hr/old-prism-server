@@ -21,6 +21,9 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/interview.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/jquery-ui.multidatespicker.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/jquery.maskedinput.js'/>"></script>
+
 
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -71,7 +74,7 @@
                 <div class="row-group" id="assignInterviewersToAppSection"> </div>
                 <div class="row-group" id="createinterviewersection"> </div>
                 <div class="row-group" id="interviewStatus"></div>
-                <div class="row-group" id="interviewdetailsSection"> </div>
+                <div class="row-group interview-happened interview-scheduled interview-to-schedule" id="interviewdetailsSection"> </div>
                 
                 <div class="buttons">
                   <button class="btn btn-primary" type="button" id="moveToInterviewBtn">Submit</button>

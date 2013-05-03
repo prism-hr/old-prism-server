@@ -181,7 +181,7 @@ table.data-table { border-collapse: collapse; border-spacing: 0; }
 table.data-table td, table.data-table th { padding: 4px 3px 3px; text-align:left; } 
 table.data-table .odd td { background-color: #FFF; } 
 table.data-table .even td { background-color: #DDD; }
-table.data-table .deleteButton{
+table.data-table .deleteButton {
 	background-image: url("images/trash.png");
     background-repeat: no-repeat;
     display: inline-block;

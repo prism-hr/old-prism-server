@@ -152,7 +152,7 @@ $(document).ready(function() {
         	postData.duration = duration;
         	
         	// Creates timeslots array.
-        	postData.timeslots = [];
+        	var timeslots = [];
         	
         	$.each($('#interviewPossibleStartTimes tbody tr'), function (i, e) {
         		var dateValue = $(e).find('.dateValue').val();
@@ -166,10 +166,12 @@ $(document).ready(function() {
             					startTime: startTime
                 		};
 
-            			postData.timeslots.push(timeslot);
+            			timeslots.push(timeslot);
         			}
         		});
         	});
+        	
+        	postData.timeslots = JSON.stringify(timeslots);
         }
         
         

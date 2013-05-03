@@ -17,7 +17,6 @@ CREATE TABLE INTERVIEW_TIMESLOT (
   interview_id INTEGER UNSIGNED,
   due_date DATE NOT NULL,
   start_time VARCHAR(5) NOT NULL,
-  end_time VARCHAR(5) NOT NULL,
 
   CONSTRAINT timeslot_interview_fk FOREIGN KEY (interview_id) REFERENCES INTERVIEW(id),
   PRIMARY KEY(id)
@@ -31,4 +30,7 @@ CREATE TABLE INTERVIEW_TIMESLOT_VOTE (
   CONSTRAINT vote_timeslot_fk FOREIGN KEY (timeslot_id) REFERENCES INTERVIEW_TIMESLOT(id),
   UNIQUE KEY (participant_id, timeslot_id)
 ) ENGINE = InnoDB
+;
+
+ALTER TABLE INTERVIEW ADD COLUMN duration INTEGER
 ;

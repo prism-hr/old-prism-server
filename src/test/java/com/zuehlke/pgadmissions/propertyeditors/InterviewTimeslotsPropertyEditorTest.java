@@ -26,13 +26,13 @@ public class InterviewTimeslotsPropertyEditorTest {
         InterviewTimeslot timeslot1 = timeslots.get(0);
         Calendar calendar = Calendar.getInstance();
         calendar.set(1989, 7, 14);
-        assertEquals(DateUtils.round(calendar.getTime(), Calendar.DAY_OF_MONTH), timeslot1.getDueDate());
+        assertEquals(DateUtils.truncate(calendar.getTime(), Calendar.DAY_OF_MONTH), timeslot1.getDueDate());
         assertEquals("11:11", timeslot1.getStartTime());
         
         InterviewTimeslot timeslot2 = timeslots.get(1);
         Calendar calendar2 = Calendar.getInstance();
         calendar2.set(1989, 7, 16);
-        assertEquals(DateUtils.round(calendar2.getTime(), Calendar.DAY_OF_MONTH), timeslot2.getDueDate());
+        assertEquals(DateUtils.truncate(calendar2.getTime(), Calendar.DAY_OF_MONTH), timeslot2.getDueDate());
         assertEquals("12:12", timeslot2.getStartTime());
     }
     

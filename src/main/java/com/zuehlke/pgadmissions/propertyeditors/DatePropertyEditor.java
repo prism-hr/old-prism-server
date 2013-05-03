@@ -6,10 +6,14 @@ import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DatePropertyEditor extends PropertyEditorSupport {
+    
+    private static final Logger log = LoggerFactory.getLogger(DatePropertyEditor.class);
 
     @Override
     public void setAsText(String strDate) throws IllegalArgumentException {
@@ -21,7 +25,8 @@ public class DatePropertyEditor extends PropertyEditorSupport {
         try {
             setValue(DateUtils.parseDate(strDate, new String[] {"dd-MMM-yyyy", "dd MMM yyyy"}));
         } catch (ParseException e) {
-            throw new IllegalArgumentException(e);
+            log.error("Error parsing date: " + strDate, e);
+            setValue(null);
         }
     }
 

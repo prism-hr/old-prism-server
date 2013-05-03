@@ -67,11 +67,11 @@
   <h3>Interview Arrangements</h3>
   
   <div class="alert alert-info interview-to-schedule">
-  	<i class="icon-info-sign"></i>Specify your available interview slots here. All participants will be offered the choice of your suggested "Free Slots".
+  	<i class="icon-info-sign"></i> Specify your available interview slots here. All participants will be offered the choice of your suggested "Free Slots".
   </div>
-  <div class="row interview-to-schedule">
+  <div class="row interview-happened interview-scheduled interview-to-schedule">
   	<label class="plain-label normal" for="timezone">What time zone will the interview take place in?<em>*</em></label>
-    <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
+    <span class="hint" data-desc="<@spring.message 'interviewArrangements.timezone'/>"></span>
     <div class="field">
 	  	<select id="timezone" name="timezone" class="very-large">
 			<option timeZoneId="1" gmtAdjustment="GMT-12:00" useDaylightTime="0" value="-12">(GMT-12:00) International Date Line West</option>
@@ -159,7 +159,7 @@
 		</select>
 		<@spring.bind "interview.interviewDueDate" />
     	<#list spring.status.errorMessages as error>
-    		<div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
+    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
     	</#list>											
 	  </div>	
 	  	
@@ -167,19 +167,45 @@
   
   <div class="row interview-to-schedule">
   	<label class="plain-label normal" for="availableDates">Select Available Dates<em>*</em></label>
-    <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
+  	<script>
+  		var dates = [];
+  		
+  		function repositionAvailableDates() {
+  			var calendar = $('#availableDatesPicker');
+			debugger;
+			<#list interview.timeslots as date>
+				reposition(calendar, new Date('${date.dueDate?date}'), '${date.startTime}');	
+		  	</#list>
+  		}
+  		
+  		function reposition (calendar, date, time) {
+  			if (dates.indexOf(date) == -1) {
+  				dates.push(date);
+  				calendar.multiDatesPicker('toggleDate', dateToDMY(date));
+				addAvailableDate(calendar, date);
+  			}
+  			
+			addAvailableTime(calendar, date, time);
+  		}
+  	</script>
+    <span class="hint" data-desc="<@spring.message 'interviewArrangements.availableDates'/>"></span>
     <div class="field">
     	<div id="availableDatesPicker" class="datepicker-inline"></div>
   	</div>
   </div>
   <div id="interviewDuration" class="row interview-to-schedule interview-scheduled">
 	<label class="plain-label normal" for="interviewDate">Interview Duration<em>*</em></label>
+    <span class="hint" data-desc="<@spring.message 'interviewArrangements.duration'/>"></span>
 	<div class="field">
 		<input type="text" name="interviewDurationValue" id="interviewDurationValue" value="" class="half" />
 		<select name="interviewDurationUnits" id="interviewDurationUnits" class="half">
 			<option value="hours">Hours</option>
 			<option value="minutes">Minutes</option>
 		</select>
+		<@spring.bind "interview.duration" />
+    	<#list spring.status.errorMessages as error>
+    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+    	</#list>
 	</div>
   </div>
   <div id="interviewPossibleStartTimes" class="row interview-to-schedule">

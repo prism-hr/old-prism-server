@@ -174,8 +174,6 @@ $(document).ready(function() {
         	postData.timeslots = JSON.stringify(timeslots);
         }
         
-        
-        
         $.ajax({
             type : 'POST',
             statusCode : {
@@ -227,6 +225,10 @@ $(document).ready(function() {
 //                        yearRange : '1900:+20'
 //                    });
                     
+                    addControlsToSelectAvailableDatesAndTimes();
+                    repositionAvailableDates();
+                    forceDisplayFilledTimes();
+                    
                     var interviewStatus = $('input[name=interviewStatus]:radio');
                 	interviewStatus.change(showProperInterviewArrangements);
                 	interviewStatus.change();
@@ -243,6 +245,11 @@ $(document).ready(function() {
 
 function getInterviewersAndDetailsSections() {
     $('#ajaxloader').show();
+
+    $.mask.definitions['H'] = "[0-2]";
+    $.mask.definitions['h'] = "[0-9]";
+    $.mask.definitions['M'] = "[0-5]";
+    $.mask.definitions['m'] = "[0-9]";
 
     var url = "/pgadmissions/interview/interviewers_section";
 
@@ -285,85 +292,7 @@ function getInterviewersAndDetailsSections() {
                 yearRange : '1900:+20'
             });
             
-            $.mask.definitions['H'] = "[0-2]";
-            $.mask.definitions['h'] = "[0-9]";
-            $.mask.definitions['M'] = "[0-5]";
-            $.mask.definitions['m'] = "[0-9]";
-            
-            $('#availableDatesPicker').multiDatesPicker({
-            	maxPicks: 10,
-            	beforeShowDay: $.datepicker.noWeekends,
-            	onSelect: function(dateText, inst) {
-            		var calendar = $(this);
-            		var dates = calendar.multiDatesPicker('getDates')
-            		var dateTextId = stringToSlug(dateText);
-            		
-            		if (dates.indexOf(dateText) >= 0) {
-            			var dateLine = $('<tr></tr>').appendTo($('#interviewPossibleStartTimes tbody'));
-            			
-            			var dateCell = $('<td></td>').addClass('suggested-date').appendTo(dateLine);
-            			
-            			$('<input />', {
-            				id: dateTextId,
-            				name: dateTextId,
-            				type: 'hidden'
-            			}).val(dateText).addClass('dateValue').appendTo(dateCell);
-            			
-            			var dateString = $('<span></span>').appendTo(dateCell);
-            			dateString.text(new Date(dateText).toLocaleString('en-GB', {weekday: "long", year: "numeric", month: "long", day: "numeric"}));
-            			
-            			var removeButton = $('<a></a>', { href: 'javascript:void(0);' }).addClass('remove-date').html('<i class="icon-trash icon-large"></i>').appendTo(dateCell);
-            			
-            			removeButton.click(function () {
-                        	var dateToRemove = new Date($(this).parent().find('.dateValue').val());
-                        	
-                        	calendar.multiDatesPicker('toggleDate', dateToRemove);
-                        	$(this).closest('tr').remove();
-                        });
-            			
-            			
-            			for (var i = 0; i < $('#interviewPossibleStartTimes thead th').length - 1; i++) {
-            				var timeCell = $('<td></td>', {}).appendTo(dateLine);
-            				
-            				// Gets first invisible column so that new dates have the same number of visible time options.
-            				var firstHiddenElement = $('#interviewPossibleStartTimes thead .time-hidden').first();
-            				var hiddenElementsStartIndex =  $('#interviewPossibleStartTimes thead tr').children().index(firstHiddenElement);
-            				
-            				if (hiddenElementsStartIndex != -1 && (i + 2 > hiddenElementsStartIndex)) {
-            					timeCell.addClass('time-hidden');
-            				}
-            				
-            				var className = 'time-' + (i + 1);
-            				var time = $('<input />', {
-            					name: className,
-            					type: 'text'
-            				}).addClass('time').addClass(className);
-            				
-            				time.appendTo(timeCell);
-            				
-            				jQuery(time).mask('Hh:Mm');
-            			}
-            		}
-            		else {
-            			$('#interviewPossibleStartTimes table').find('#' + dateTextId).closest('tr').remove();
-            		}
-            	}
-            });
-            
-            $('#interviewPossibleStartTimes .add-column').click(function () {
-            	var hideAddColumnLink = false;
-            	$.each($('#interviewPossibleStartTimes tr'), function(i, e) {
-            		$(this).find('.time-hidden:first').removeClass('time-hidden');
-            		
-            		if (i == 0 && $(this).find('.time-hidden:first').length == 0) {
-            			hideAddColumnLink = true;
-            		}
-            	});
-            	
-            	if (hideAddColumnLink) {
-            		$(this).hide();
-            	}
-            });
+            addControlsToSelectAvailableDatesAndTimes();
             
             // Interview status.
         	var interviewStatus = $('input[name=interviewStatus]:radio');
@@ -376,6 +305,144 @@ function getInterviewersAndDetailsSections() {
 			addCounter();
         }
     });
+}
+
+function addControlsToSelectAvailableDatesAndTimes() {
+	// $.datepicker.formatDate('dd/mm/yy');
+	$.datepicker._defaults.dateFormat = 'dd/mm/yy';
+	$('#availableDatesPicker').multiDatesPicker({
+    	maxPicks: 10,
+    	dateFormat: 'dd/mm/yy',
+    	// beforeShowDay: $.datepicker.noWeekends,
+    	onSelect: function(dateText, inst) {
+    		var calendar = $(this);
+    		var dates = calendar.multiDatesPicker('getDates');
+    		
+    		var parts = dateText.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    		var selectedDate = new Date(parts[3], parts[2] - 1, parts[1]);
+    		
+    		if (dates.indexOf(dateText) >= 0) {
+    			addAvailableDate(calendar, selectedDate);
+    		}
+    		else {
+    			removeAvailableDate(calendar, selectedDate);
+    		}
+    	}
+    });
+    
+    $('#interviewPossibleStartTimes .add-column').click(function () {
+    	var hideAddColumnLink = false;
+    	$.each($('#interviewPossibleStartTimes tr'), function(i, e) {
+    		$(this).find('.time-hidden:first').removeClass('time-hidden');
+    		
+    		if (i == 0 && $(this).find('.time-hidden:first').length == 0) {
+    			hideAddColumnLink = true;
+    		}
+    	});
+    	
+    	if (hideAddColumnLink) {
+    		$(this).hide();
+    	}
+    });
+}
+
+function removeAvailableDate(calendar, date) {
+	var dateText = dateToDMY(date);
+	var dateTextId = stringToSlug(dateText).split('-').join('');
+
+	$('#interviewPossibleStartTimes table').find('#' + dateTextId).closest('tr').remove();
+}
+
+function addAvailableDate(calendar, date, times) {
+	var dateText = dateToDMY(date);
+	var dateTextId = stringToSlug(dateText).split('-').join('');
+	
+	var tr = $('#interviewPossibleStartTimes').find('#' + dateTextId).closest('tr');
+	
+	if (tr.length > 0) {
+		// If the date is already added, just leave.
+		return;
+	}
+	
+	var dateLine = $('<tr></tr>').appendTo($('#interviewPossibleStartTimes tbody'));
+	
+	var dateCell = $('<td></td>').addClass('suggested-date').appendTo(dateLine);
+	
+	var dateValueFormatted = dateToDMY(date);
+	
+	$('<input />', {
+		id: dateTextId,
+		name: dateTextId,
+		type: 'hidden'
+	}).val(dateValueFormatted).addClass('dateValue').appendTo(dateCell);
+	
+	var dateFormatted = $('<span></span>').appendTo(dateCell);
+	dateFormatted.text(date.toLocaleString('en-GB', {weekday: "long", year: "numeric", month: "long", day: "numeric"}));
+	
+	var removeButton = $('<a></a>', { href: 'javascript:void(0);' })
+		.addClass('remove-date')
+		.attr('data-desc', 'Specify the interview anticipated duration')
+		.html('<i class="icon-trash icon-large"></i>')
+		.appendTo(dateCell);
+	
+	applyTooltip(removeButton);
+	
+	removeButton.click(function () {    	
+    	calendar.multiDatesPicker('toggleDate', dateText);
+    	$(this).closest('tr').remove();
+    });
+	
+	
+	for (var i = 0; i < $('#interviewPossibleStartTimes thead th').length - 1; i++) {
+		var timeCell = $('<td></td>', {}).appendTo(dateLine);
+		
+		// Gets first invisible column so that new dates have the same number of visible time options.
+		var firstHiddenElement = $('#interviewPossibleStartTimes thead .time-hidden').first();
+		var hiddenElementsStartIndex =  $('#interviewPossibleStartTimes thead tr').children().index(firstHiddenElement);
+		
+		if (hiddenElementsStartIndex != -1 && (i + 2 > hiddenElementsStartIndex)) {
+			timeCell.addClass('time-hidden');
+		}
+		
+		var className = 'time-' + (i + 1);
+		var time = $('<input />', {
+			name: className,
+			type: 'text'
+		}).addClass('time').addClass(className);
+		
+		time.appendTo(timeCell);
+		
+		time.mask('Hh:Mm');
+	}
+}
+
+function addAvailableTime(calendar, date, time) {
+	var dateText = dateToDMY(date);
+	var dateTextId = stringToSlug(dateText).split('-').join('');
+	var tr = $('#interviewPossibleStartTimes').find('#' + dateTextId).closest('tr');
+	
+	if (tr.length > 0) {
+		var timeInput = tr.find('input:text').filter(function() { return $(this).val() == ""; }).first();
+		timeInput.val(time);		
+	}
+}
+
+function forceDisplayFilledTimes() {
+	var maxInputsFilled = 0;
+	$.each($('#interviewPossibleStartTimes tbody tr'), function (i, e) {
+		var temp = $(e).find('input:text').filter(function () { return $(this).val() != ""; }).length;
+		
+		if (temp > maxInputsFilled) {
+			maxInputsFilled = temp;
+		}
+	});
+	
+	$.each($('#interviewPossibleStartTimes tr'), function (i, e) {
+		var cells = $(e).children();
+		for (var i = 0; i < maxInputsFilled && i < cells.length; i++) {
+			$(cells[i + 1]).removeClass('time-hidden');
+		}
+	});
 }
 
 function getCreateInterviewersSection() {

@@ -150,6 +150,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
+        assertEquals("true", result.get("personalStatementProvided"));
         assertEquals("XYZ", result.get("personalStatementId"));
         assertEquals(PERSONAL_STATEMENT_FILE_NAME, result.get("personalStatementFilename"));
         assertEquals("true", result.get("cvProvided"));
@@ -190,6 +191,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
+        assertEquals("true", result.get("personalStatementProvided"));
         assertEquals("XYZ", result.get("personalStatementId"));
         assertEquals(PERSONAL_STATEMENT_FILE_NAME, result.get("personalStatementFilename"));
         assertEquals("true", result.get("cvProvided"));
@@ -231,6 +233,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
+        assertEquals("true", result.get("personalStatementProvided"));
         assertEquals("XYZ", result.get("personalStatementId"));
         assertEquals(PERSONAL_STATEMENT_FILE_NAME, result.get("personalStatementFilename"));
         assertEquals("true", result.get("cvProvided"));
@@ -271,6 +274,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
+        assertEquals("true", result.get("personalStatementProvided"));
         assertEquals("XYZ", result.get("personalStatementId"));
         assertEquals(PERSONAL_STATEMENT_FILE_NAME, result.get("personalStatementFilename"));
         assertEquals("true", result.get("cvProvided"));
@@ -310,6 +314,7 @@ public class ApplicationSumarryServiceTest {
         assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
         assertEquals("true", result.get("requiresAttention"));
         assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
+        assertEquals("true", result.get("personalStatementProvided"));
         assertEquals("XYZ", result.get("personalStatementId"));
         assertEquals(PERSONAL_STATEMENT_FILE_NAME, result.get("personalStatementFilename"));
         assertEquals("false", result.get("cvProvided"));
@@ -318,6 +323,45 @@ public class ApplicationSumarryServiceTest {
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
 
+    
+    @Test
+    public void shouldReturnSummaryWithNoPersonalStatementProvided() {
+        ApplicationForm form = getSampleApplicationForm();
+
+        form.setPersonalStatement(null);
+
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+
+        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+
+        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(
+                NUMBER_OF_APPLICATIONS);
+
+        expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
+
+        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
+        Map<String, String> result = service.getSummary("APP");
+        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
+
+        assertFalse(result.isEmpty());
+        DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+        assertEquals(dateFormat.format(dateOfSubmission), result.get("applicationSubmissionDate"));
+        assertEquals(dateFormat.format(dateOfLastUpdate), result.get("applicationUpdateDate"));
+        assertEquals("true", result.get("requiresAttention"));
+        assertEquals(NUMBER_OF_APPLICATIONS.toString(), result.get("numberOfActiveApplications"));
+        assertEquals("false", result.get("personalStatementProvided"));
+        assertEquals("true", result.get("cvProvided"));
+        assertEquals("XYZ", result.get("cvId"));
+        assertEquals(CV_FILE_NAME, result.get("cvFilename"));
+        assertEquals("1", result.get("numberOfReferences"));
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Approved\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
+        assertEquals(expectedApplicantJson, result.get("applicant"));
+    }
+    
     private ApplicationForm getSampleApplicationForm() {
         RegisteredUser applicant = new RegisteredUserBuilder().id(APPLICANT_ID).email(APPLICANT_EMAIL_ADDRESS)
                 .firstName(APPLICANT_NAME).lastName(APPLICANT_SURNAME).build();

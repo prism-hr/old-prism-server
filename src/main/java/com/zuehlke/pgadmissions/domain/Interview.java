@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,6 +22,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.IndexColumn;
 
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 
@@ -70,6 +72,19 @@ public class Interview implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "stage", nullable = false)
     private InterviewStage stage = InterviewStage.INITIAL;
+
+    @Column(name = "duration")
+    private Integer duration;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "interview_id")
+    @IndexColumn(name = "participant_position")
+    private List<InterviewParticipant> participants = new ArrayList<InterviewParticipant>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "interview_id")
+    @IndexColumn(name = "timeslot_position")
+    private List<InterviewTimeslot> timeslots = new ArrayList<InterviewTimeslot>();
 
     @Transient
     private String timeHours;
@@ -181,6 +196,30 @@ public class Interview implements Serializable {
 
     public String getTimeMinutes() {
         return timeMinutes;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public List<InterviewParticipant> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<InterviewParticipant> participants) {
+        this.participants = participants;
+    }
+
+    public List<InterviewTimeslot> getTimeslots() {
+        return timeslots;
+    }
+
+    public void setTimeslots(List<InterviewTimeslot> timeslots) {
+        this.timeslots = timeslots;
     }
 
 }

@@ -6,5 +6,7 @@ public enum InterviewStage {
 
     TAKEN_PLACE,
 
-    SCHEDULED
+    SCHEDULED,
+    
+    SCHEDULING
 }

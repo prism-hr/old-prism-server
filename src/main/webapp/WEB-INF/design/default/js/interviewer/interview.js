@@ -121,7 +121,7 @@ $(document).ready(function() {
         var postData = {
             applicationId : $('#applicationId').val(),
             interviewers : '',
-            timeZone : $('#timezone option:selected').text()
+            timeZone : $('#timezone option:selected').attr('gmtAdjustment')
         };
         
         var duration = parseFloat($('#interviewDurationValue').val());

@@ -56,6 +56,9 @@ $(document).ready(function() {
             case 'confirmSupervision':
                 window.location.href = "/pgadmissions/confirmSupervision?applicationId="+ id;
                 break;
+            case 'rejectApplication':
+            	window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
+                break;
             case 'withdraw':
                 var message = 'Are you sure you want to withdraw the application? <b>You will not be able to submit a withdrawn application.</b>';
                 var onOk = function() {

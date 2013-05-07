@@ -636,6 +636,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return false;
         }
     }
+    
+    public boolean isInState(ApplicationFormStatus enumStatus) {
+        return status == enumStatus;
+    }
 
     public List<Event> getEvents() {
         return events;

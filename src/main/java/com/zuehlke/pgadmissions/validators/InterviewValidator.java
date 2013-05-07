@@ -61,7 +61,7 @@ public class InterviewValidator extends AbstractValidator {
             }
         }
         
-        if (stage == InterviewStage.SCHEDULED || stage == InterviewStage.SCHEDULING) {
+        if (stage == InterviewStage.SCHEDULING) {
             List<InterviewTimeslot> timeslots = interview.getTimeslots();
             
             if (timeslots.size() == 0) {

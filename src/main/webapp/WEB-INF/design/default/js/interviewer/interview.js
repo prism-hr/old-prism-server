@@ -215,19 +215,11 @@ $(document).ready(function() {
                         yearRange : '1900:+20'
                     });
                     
-//                    $('#availableDates').datepicker({
-//                    	inline: true,  
-//                        showOtherMonths: true,  
-//                        dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-//                        dateFormat : 'dd M yy',
-//                        changeMonth : true,
-//                        changeYear : true,
-//                        yearRange : '1900:+20'
-//                    });
                     
                     addControlsToSelectAvailableDatesAndTimes();
                     repositionAvailableDates();
                     forceDisplayFilledTimes();
+                    recoverDuration();
                     
                     var interviewStatus = $('input[name=interviewStatus]:radio');
                 	interviewStatus.change(showProperInterviewArrangements);
@@ -242,6 +234,21 @@ $(document).ready(function() {
         });
     });
 });
+
+function recoverDuration() {
+	var durationInMinutes = parseInt($('#interviewDurationInMinutes').val());
+	
+	if (durationInMinutes > 0) {
+		if (durationInMinutes % 30 === 0) {
+			$('#interviewDurationValue').val(durationInMinutes / 60);
+			$('#interviewDurationUnits option[value=hours]').attr('selected', 'selected');
+		}
+		else {
+			$('#interviewDurationValue').val(durationInMinutes);
+			$('#interviewDurationUnits option[value=minutes]').attr('selected', 'selected');
+		}
+	}
+}
 
 function getInterviewersAndDetailsSections() {
     $('#ajaxloader').show();

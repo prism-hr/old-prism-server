@@ -136,50 +136,6 @@ $(document).ready(function()
     {
         refreshDelegationControls();
     });
-
-
-	// ------------------------------------------------------------------------------
-	// Link to request assistance from the registry.
-	// ------------------------------------------------------------------------------
-	$('#notifyRegistryButton').click(function()
-	{
-		$('#ajaxloader').show();
-		$.ajax({
-			type: 'POST',
-			 statusCode: {
-					401: function() {
-						window.location.reload();
-					},
-					  500: function() {
-						  window.location.href = "/pgadmissions/error";
-					  },
-					  404: function() {
-						  window.location.href = "/pgadmissions/404";
-					  },
-					  400: function() {
-						  window.location.href = "/pgadmissions/400";
-					  },				  
-					  403: function() {
-						  window.location.href = "/pgadmissions/404";
-					  }
-				},
-			url:"/pgadmissions/registryHelpRequest",
-			data:{
-				applicationId : $('#applicationId').val()
-			},
-			success:function(data)
-			{
-				$('#emailMessage').html(data);
-				$('#notifyRegistryButton').removeAttr('disabled');
-				$('#notifyRegistryButton').addClass("blue");
-
-				window.location.href = '/pgadmissions/applications?messageCode=registry.refer&application=' + $('#applicationId').val();
-				addToolTips();
-			}
-		});
-		
-		return false;
-	});
 });
 
 

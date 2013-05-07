@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
@@ -53,7 +55,8 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 
 public class ValidationTransitionControllerTest {
 
-	private ValidationTransitionController controller;
+	private static final String DATE_FORMAT = "yyyy/MM/dd";
+    private ValidationTransitionController controller;
 	private ApplicationsService applicationServiceMock;
 	private UserService userServiceMock;
 	private CommentFactory commentFactoryMock;
@@ -166,7 +169,7 @@ public class ValidationTransitionControllerTest {
     public void shouldAllowClosingDateInThePastWithin1MonthFromNow() {
 	    Program program = new ProgramBuilder().id(1).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
+        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
         RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
         
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
@@ -213,7 +216,7 @@ public class ValidationTransitionControllerTest {
     public void shouldAllowClosingDateInThePastIfDateExistsInBadgeClosingDate() throws ParseException {
         Program program = new ProgramBuilder().id(1).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
+        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
         RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
         Date twoMontshAgo = org.apache.commons.lang.time.DateUtils.addMonths(Calendar.getInstance().getTime(), -1);
@@ -250,10 +253,10 @@ public class ValidationTransitionControllerTest {
     }	
 	
 	@Test
-	public void shouldCreateValidationCommentWithQUestionaluesIfNoValidationErrors() {
+	public void shouldCreateValidationCommentWithQuestionaluesIfNoValidationErrors() {
 	    Program program = new ProgramBuilder().id(1).build();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-		ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
+		ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
 		RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
 		
 		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
@@ -339,7 +342,7 @@ public class ValidationTransitionControllerTest {
 	@Test
 	public void shouldAddApplicationFormClosingDateIfExistInPast() throws ParseException {
 		Program program = new Program();
-		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
+		Date pastDate = new SimpleDateFormat(DATE_FORMAT).parse("2003/09/09");
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().batchDeadline(pastDate).id(1).program(program).build();
 		controller = new ValidationTransitionController(
 		        applicationServiceMock, 
@@ -370,7 +373,7 @@ public class ValidationTransitionControllerTest {
 	@Test
 	public void shouldAddApplicationFormProjectTitleIfExistAndClosingDateInPast() throws ParseException {
 		Program program = new Program();
-		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
+		Date pastDate = new SimpleDateFormat(DATE_FORMAT).parse("2003/09/09");
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").batchDeadline(pastDate).id(1).program(program).build();
 		controller = new ValidationTransitionController(
 		        applicationServiceMock, 
@@ -426,6 +429,343 @@ public class ValidationTransitionControllerTest {
 		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains(now.toDate()));
 		EasyMock.verify(badgeServiceMock);
 	}
+	
+	@Test
+	public void shouldNotifyRegistryIfHomeOrOverseasIsUnsureAndNextStateIsNotReject() throws ParseException {
+        Program program = new ProgramBuilder().id(1).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        ValidationComment comment = new ValidationCommentBuilder()
+                .id(6)
+                .qualifiedForPhd(ValidationQuestionOptions.NO)
+                .englishCompentencyOk(ValidationQuestionOptions.NO)
+                .homeOrOverseas(HomeOrOverseas.UNSURE)
+                .nextStatus(ApplicationFormStatus.REVIEW)
+                .comment("comment")
+                .type(CommentType.VALIDATION)
+                .build();
+        
+        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+        
+        commentServiceMock.save(comment);
+        
+        controller = new ValidationTransitionController(
+                applicationServiceMock, 
+                userServiceMock, 
+                commentServiceMock, 
+                commentFactoryMock,
+                encryptionHelperMock,
+                documentServiceMock, 
+                approvalServiceMock, 
+                stateChangeValidatorMock, 
+                documentPropertyEditorMock, 
+                badgeServiceMock, 
+                messageSourceMock,
+                stateTransitionServiceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().build());
+        badgeServiceMock.save(EasyMock.anyObject(Badge.class));
+        applicationServiceMock.save(applicationForm);
+        applicationServiceMock.save(applicationForm);
+        
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+       
+        String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap(), true, delegatedInterviewer);
+        
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        
+        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
+        
+        assertTrue(BooleanUtils.isTrue(applicationForm.getRegistryUsersDueNotification()));
+	}
+	
+	@Test
+	public void shouldNotifyRegistryIfQualifiedForPhdIsUnsureAndNextStateIsNotReject() {
+        Program program = new ProgramBuilder().id(1).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        ValidationComment comment = new ValidationCommentBuilder()
+                .id(6)
+                .qualifiedForPhd(ValidationQuestionOptions.UNSURE)
+                .englishCompentencyOk(ValidationQuestionOptions.NO)
+                .homeOrOverseas(HomeOrOverseas.HOME)
+                .nextStatus(ApplicationFormStatus.REVIEW)
+                .comment("comment")
+                .type(CommentType.VALIDATION)
+                .build();
+        
+        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+        
+        commentServiceMock.save(comment);
+        
+        controller = new ValidationTransitionController(
+                applicationServiceMock, 
+                userServiceMock, 
+                commentServiceMock, 
+                commentFactoryMock,
+                encryptionHelperMock,
+                documentServiceMock, 
+                approvalServiceMock, 
+                stateChangeValidatorMock, 
+                documentPropertyEditorMock, 
+                badgeServiceMock, 
+                messageSourceMock,
+                stateTransitionServiceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().build());
+        badgeServiceMock.save(EasyMock.anyObject(Badge.class));
+        applicationServiceMock.save(applicationForm);
+        applicationServiceMock.save(applicationForm);
+        
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+       
+        String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap(), true, delegatedInterviewer);
+        
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        
+        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
+        
+        assertTrue(BooleanUtils.isTrue(applicationForm.getRegistryUsersDueNotification()));
+	}
+	
+	@Test
+	public void shouldNotifyRegistryIfEnglishCompentencyIsUnsureAndNextStateIsNotReject() {
+	    Program program = new ProgramBuilder().id(1).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        ValidationComment comment = new ValidationCommentBuilder()
+                .id(6)
+                .qualifiedForPhd(ValidationQuestionOptions.YES)
+                .englishCompentencyOk(ValidationQuestionOptions.UNSURE)
+                .homeOrOverseas(HomeOrOverseas.HOME)
+                .nextStatus(ApplicationFormStatus.REVIEW)
+                .comment("comment")
+                .type(CommentType.VALIDATION)
+                .build();
+        
+        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+        
+        commentServiceMock.save(comment);
+        
+        controller = new ValidationTransitionController(
+                applicationServiceMock, 
+                userServiceMock, 
+                commentServiceMock, 
+                commentFactoryMock,
+                encryptionHelperMock,
+                documentServiceMock, 
+                approvalServiceMock, 
+                stateChangeValidatorMock, 
+                documentPropertyEditorMock, 
+                badgeServiceMock, 
+                messageSourceMock,
+                stateTransitionServiceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().build());
+        badgeServiceMock.save(EasyMock.anyObject(Badge.class));
+        applicationServiceMock.save(applicationForm);
+        applicationServiceMock.save(applicationForm);
+        
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+       
+        String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap(), true, delegatedInterviewer);
+        
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        
+        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
+        
+        assertTrue(BooleanUtils.isTrue(applicationForm.getRegistryUsersDueNotification()));
+	}
+	
+	@Test
+    public void shouldNotNotifyRegistryIfHomeOrOverseasIsUnsureAndNextStateIsReject() {
+	       Program program = new ProgramBuilder().id(1).build();
+	        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+	        ValidationComment comment = new ValidationCommentBuilder()
+	                .id(6)
+	                .qualifiedForPhd(ValidationQuestionOptions.YES)
+	                .englishCompentencyOk(ValidationQuestionOptions.NO)
+	                .homeOrOverseas(HomeOrOverseas.UNSURE)
+	                .nextStatus(ApplicationFormStatus.REJECTED)
+	                .comment("comment")
+	                .type(CommentType.VALIDATION)
+	                .build();
+	        
+	        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
+	        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+	        
+	        commentServiceMock.save(comment);
+	        
+	        controller = new ValidationTransitionController(
+	                applicationServiceMock, 
+	                userServiceMock, 
+	                commentServiceMock, 
+	                commentFactoryMock,
+	                encryptionHelperMock,
+	                documentServiceMock, 
+	                approvalServiceMock, 
+	                stateChangeValidatorMock, 
+	                documentPropertyEditorMock, 
+	                badgeServiceMock, 
+	                messageSourceMock,
+	                stateTransitionServiceMock){
+	            @Override
+	            public ApplicationForm getApplicationForm( String applicationId) {
+	                return applicationForm;
+	            }
+	        };
+
+	        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+	        
+	        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+	        badgeServiceMock.save(EasyMock.anyObject(Badge.class));
+	        applicationServiceMock.save(applicationForm);
+	        
+	        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+	       
+	        String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap(), true, delegatedInterviewer);
+	        
+	        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+	        
+	        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
+	        
+	        assertFalse(BooleanUtils.isFalse(applicationForm.getRegistryUsersDueNotification()));
+    }
+    
+    @Test
+    public void shouldNotNotifyRegistryIfQualifiedForPhdIsUnsureAndNextStateIsReject() {
+        Program program = new ProgramBuilder().id(1).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        ValidationComment comment = new ValidationCommentBuilder()
+                .id(6)
+                .qualifiedForPhd(ValidationQuestionOptions.UNSURE)
+                .englishCompentencyOk(ValidationQuestionOptions.NO)
+                .homeOrOverseas(HomeOrOverseas.HOME)
+                .nextStatus(ApplicationFormStatus.REJECTED)
+                .comment("comment")
+                .type(CommentType.VALIDATION)
+                .build();
+        
+        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+        
+        commentServiceMock.save(comment);
+        
+        controller = new ValidationTransitionController(
+                applicationServiceMock, 
+                userServiceMock, 
+                commentServiceMock, 
+                commentFactoryMock,
+                encryptionHelperMock,
+                documentServiceMock, 
+                approvalServiceMock, 
+                stateChangeValidatorMock, 
+                documentPropertyEditorMock, 
+                badgeServiceMock, 
+                messageSourceMock,
+                stateTransitionServiceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        badgeServiceMock.save(EasyMock.anyObject(Badge.class));
+        applicationServiceMock.save(applicationForm);
+        
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+       
+        String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap(), true, delegatedInterviewer);
+        
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        
+        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
+        
+        assertFalse(BooleanUtils.isFalse(applicationForm.getRegistryUsersDueNotification()));
+    }
+    
+    @Test
+    public void shouldNotNotifyRegistryIfEnglishCompentencyIsUnsureAndNextStateIsReject() {
+        Program program = new ProgramBuilder().id(1).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        ValidationComment comment = new ValidationCommentBuilder()
+                .id(6)
+                .qualifiedForPhd(ValidationQuestionOptions.NO)
+                .englishCompentencyOk(ValidationQuestionOptions.UNSURE)
+                .homeOrOverseas(HomeOrOverseas.HOME)
+                .nextStatus(ApplicationFormStatus.REJECTED)
+                .comment("comment")
+                .type(CommentType.VALIDATION)
+                .build();
+        
+        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+        
+        commentServiceMock.save(comment);
+        
+        controller = new ValidationTransitionController(
+                applicationServiceMock, 
+                userServiceMock, 
+                commentServiceMock, 
+                commentFactoryMock,
+                encryptionHelperMock,
+                documentServiceMock, 
+                approvalServiceMock, 
+                stateChangeValidatorMock, 
+                documentPropertyEditorMock, 
+                badgeServiceMock, 
+                messageSourceMock,
+                stateTransitionServiceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        badgeServiceMock.save(EasyMock.anyObject(Badge.class));
+        applicationServiceMock.save(applicationForm);
+        
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+       
+        String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap(), true, delegatedInterviewer);
+        
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        
+        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
+        
+        assertFalse(BooleanUtils.isFalse(applicationForm.getRegistryUsersDueNotification()));
+        
+    }
 	
 	@Before
 	public void setUp() {

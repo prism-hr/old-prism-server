@@ -129,12 +129,12 @@
 	                  <#include "/private/staff/scores.ftl"/>
 	                </div>
                		<@spring.bind "comment.confirmNextStage" />
-				    <#if spring.status.errorMessages?size &gt; 0>
-			     		<div class="alert alert-error" >
-				    <#else>
-				        <div class="alert" >
-				    </#if>
-			    </#if>
+      				    <#if spring.status.errorMessages?size &gt; 0>
+      			     		<div class="alert alert-error" >
+      				    <#else>
+				            <div class="alert" >
+				          </#if>
+			          </#if>
 			    
 					<div class="row">
 						<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">

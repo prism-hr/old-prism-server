@@ -597,6 +597,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		verify(applicationFormDAOMock);
 		
 		assertNotNull(record.getDate());
+		List<RegisteredUser> admins = form.getProgram().getAdministrators();
+		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
+		assertEquals(admins.get(1).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 		assertEquals(supervisor1.getUser().getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
 	}
 	

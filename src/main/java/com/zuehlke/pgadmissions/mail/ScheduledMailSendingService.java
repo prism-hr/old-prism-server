@@ -764,11 +764,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * <b>Summary</b><br/>
      * Informs users when applications have been approved.<br/>
      * Finds all applications in the system that have recently been approved, and;<br/>
-     * Schedules their Primary Supervisors to be notified.
+     * Schedules their Primary Supervisors and Program Administrators to be notified.
      * <p/>
      * <p>
      * <b>Recipients</b><br/>
-     * Primary Supervisor
+     * Primary Supervisor and Program Administrators
      * </p>
      * <p>
      * <b>Previous Email Template Name</b><br/>
@@ -797,10 +797,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleApprovedConfirmation() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovedNotifications()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVED_NOTIFICATION);
-            RegisteredUser primarySupervisor = getPrimarySupervisorsAsUserFromLatestApprovalRound(form);
+            RegisteredUser primarySupervisor = getPrimarySupervisorAsUserFromLatestApprovalRound(form);
             if (null != primarySupervisor) {
                 setDigestNotificationType(primarySupervisor, DigestNotificationType.UPDATE_NOTIFICATION);
             }
+            CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
         }
     }
 
@@ -1409,7 +1410,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleRejectionConfirmationToAdministrator() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueRejectNotifications()) {
             form.setRejectNotificationDate(new Date());
-            RegisteredUser supervisor = getPrimarySupervisorsAsUserFromLatestApprovalRound(form);
+            RegisteredUser supervisor = getPrimarySupervisorAsUserFromLatestApprovalRound(form);
             if (supervisor != null) {
                 setDigestNotificationType(supervisor, DigestNotificationType.UPDATE_NOTIFICATION);
             }
@@ -1734,7 +1735,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         return notificationRecord;
     }
 
-    private RegisteredUser getPrimarySupervisorsAsUserFromLatestApprovalRound(final ApplicationForm form) {
+    private RegisteredUser getPrimarySupervisorAsUserFromLatestApprovalRound(final ApplicationForm form) {
         if (form.getLatestApprovalRound() != null) {
             for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {
                 if (isTrue(supervisor.getIsPrimary())) {

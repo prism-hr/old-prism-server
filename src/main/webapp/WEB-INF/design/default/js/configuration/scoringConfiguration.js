@@ -52,7 +52,7 @@ $(document)
 										.on('hidden', function () {
 											$(this).removeClass('large');
 										});
-								var stage=$(stageSelect).find(":selected").text().trim();
+								var stage=$('#stageSelect').find(":selected").text().trim();
 								$('#previewModalLabel').html('Programme Specific Questions ('+stage+')');
 								$('#previewModalContent').html(data);
 								$('#previewModalContent').append('<div class="buttons"><button class="btn btn-primary" id="fake-submit" type="button">Submit</button></div>');

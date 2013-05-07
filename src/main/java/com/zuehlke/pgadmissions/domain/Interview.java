@@ -96,6 +96,9 @@ public class Interview implements Serializable {
     @Transient
     private String timeMinutes;
 
+    @Transient
+    private Boolean takenPlace;
+
     public Date getLastNotified() {
         return lastNotified;
     }
@@ -233,9 +236,17 @@ public class Interview implements Serializable {
     public void setTimeslots(List<InterviewTimeslot> timeslots) {
         this.timeslots = timeslots;
     }
-    
-    public boolean isCompleted(){
-        return getStage() == InterviewStage.SCHEDULED || getStage() == InterviewStage.TAKEN_PLACE;
+
+    public Boolean getTakenPlace() {
+        return takenPlace;
+    }
+
+    public void setTakenPlace(Boolean takenPlace) {
+        this.takenPlace = takenPlace;
+    }
+
+    public boolean isScheduled() {
+        return getStage() == InterviewStage.SCHEDULED;
     }
 
 }

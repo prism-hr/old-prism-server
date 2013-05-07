@@ -118,10 +118,17 @@ $(document).ready(function() {
         	stage = $('input:radio[name=interviewStatus]:checked').val();
         }
         
+        var takenPlace = false;
+        if(stage == 'TAKEN_PLACE'){
+        	takenPlace = true;
+        	stage = 'SCHEDULED';
+        }
+        
         var postData = {
             applicationId : $('#applicationId').val(),
             interviewers : '',
-            timeZone : $('#timezone option:selected').attr('gmtAdjustment')
+            timeZone : $('#timezone option:selected').attr('gmtAdjustment'),
+            takenPlace : takenPlace
         };
         
         var duration = parseFloat($('#interviewDurationValue').val());

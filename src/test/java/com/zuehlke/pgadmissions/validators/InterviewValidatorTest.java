@@ -151,15 +151,15 @@ public class InterviewValidatorTest {
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("interviewers").getCode());
     }
 
-    // @Test
-    // public void shouldRejectIfNoTimezone() {
-    // interview.setTimezone(null);
-    //
-    // DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeZone");
-    // interviewValidator.validate(interview, mappingResult);
-    // Assert.assertEquals(1, mappingResult.getErrorCount());
-    // Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("timeZone").getCode());
-    // }
+     @Test
+     public void shouldRejectIfNoTimezone() {
+     interview.setTimeZone(null);
+    
+     DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeZone");
+     interviewValidator.validate(interview, mappingResult);
+     Assert.assertEquals(1, mappingResult.getErrorCount());
+     Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("timeZone").getCode());
+     }
 
     @Test
     public void shouldRejectIfNoAvailableDatesAndTimesWereProvided() {

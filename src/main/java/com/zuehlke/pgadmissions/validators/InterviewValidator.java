@@ -33,12 +33,9 @@ public class InterviewValidator extends AbstractValidator {
             errors.rejectValue("stage", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
         
-        // TODO: validate fields available in all scenarios.
-        // TODO: Timezone.
-//        TimeZone timeZone = TimeZone.getTimeZone(interview.getTimezone());
-//        if (timeZone == null) {
-//            errors.rejectValue("timeZone", EMPTY_DROPDOWN_ERROR_MESSAGE);
-//        }
+        if (interview.getTimeZone() == null) {
+            errors.rejectValue("timeZone", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
         
         if(!errors.hasFieldErrors("duration") && interview.getDuration() == null){
             errors.rejectValue("duration", EMPTY_FIELD_ERROR_MESSAGE);

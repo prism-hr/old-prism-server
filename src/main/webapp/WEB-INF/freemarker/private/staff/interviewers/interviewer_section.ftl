@@ -206,6 +206,8 @@
 			<#list interview.timeslots as date>
 				reposition(calendar, new Date('${date.dueDate?date}'), '${date.startTime}');	
 		  	</#list>
+		  	
+		  	setPossibleStartTimesVisibility(calendar);
   		}
   		
   		function reposition (calendar, date, time) {

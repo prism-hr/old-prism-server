@@ -12,6 +12,7 @@ $('a[name="refereeEditButton"]').click(function(){
 
 	var id = this.id;
 	id = id.replace('referee_', '');
+	$('#ajaxloader').show();
 
 	$("#refereeId").val($('#'+id+"_refereeId").val());
 	$("#ref_firstname").html($('#'+id+"_firstname").val());

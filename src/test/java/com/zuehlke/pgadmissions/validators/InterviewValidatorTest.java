@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -17,8 +19,10 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewTimeslotBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 
@@ -100,19 +104,6 @@ public class InterviewValidatorTest {
     }
 
     @Test
-    public void shouldAcceptIfDurationNotProvidedButInterviewAlreadyTakenPlace() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-
-        interview.setDuration(null);
-        interview.setStage(InterviewStage.TAKEN_PLACE);
-        interview.setInterviewDueDate(calendar.getTime());
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interview");
-        interviewValidator.validate(interview, mappingResult);
-        Assert.assertEquals(0, mappingResult.getErrorCount());
-    }
-
-    @Test
     public void shouldNotRejectIfDueDateToday() {
         Calendar calendar = Calendar.getInstance();
 
@@ -152,10 +143,31 @@ public class InterviewValidatorTest {
     @Test
     public void shouldRejectIfInterviewersListIsEmpty() {
         interview.getInterviewers().clear();
+        interview.setDuration(0);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewers");
         interviewValidator.validate(interview, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("interviewers").getCode());
+    }
+    
+//    @Test
+//    public void shouldRejectIfNoTimezone() {
+//        interview.setTimezone(null);
+//        
+//        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeZone");
+//        interviewValidator.validate(interview, mappingResult);
+//        Assert.assertEquals(1, mappingResult.getErrorCount());
+//        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("timeZone").getCode());
+//    }
+    
+    @Test
+    public void shouldRejectIfNoAvailableDatesAndTimesWereProvided() {
+        interview.setStage(InterviewStage.SCHEDULING);
+        interview.getTimeslots().clear();
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeslots");
+        interviewValidator.validate(interview, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("datepicker.field.mustselectdate", mappingResult.getFieldError("timeslots").getCode());
     }
 
     @Before
@@ -166,6 +178,10 @@ public class InterviewValidatorTest {
         interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).interviewTime("09:00").application(new ApplicationFormBuilder().id(2).build())
                 .dueDate(calendar.getTime()).furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).build())
                 .duration(120).build();
+
+        List<InterviewTimeslot> timeslots = new ArrayList<InterviewTimeslot>();
+        timeslots.add(new InterviewTimeslotBuilder().build());
+        interview.setTimeslots(timeslots);
 
         interviewValidator = new InterviewValidator();
         interviewValidator.setValidator((javax.validation.Validator) validator);

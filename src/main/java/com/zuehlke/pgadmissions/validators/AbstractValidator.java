@@ -26,6 +26,8 @@ public abstract class AbstractValidator implements org.springframework.validatio
     
     protected static final String MANDATORY_CHECKBOX = "checkbox.mandatory";
     
+    protected static final String MUST_SELECT_DATE_AND_TIME = "datepicker.field.mustselectdate";
+    
     @Autowired
     private Validator validator;
 

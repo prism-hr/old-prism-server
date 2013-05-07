@@ -157,6 +157,7 @@
 			<option timeZoneId="81" gmtAdjustment="GMT+12:00" useDaylightTime="0" value="12">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
 			<option timeZoneId="82" gmtAdjustment="GMT+13:00" useDaylightTime="0" value="13">(GMT+13:00) Nuku'alofa</option>
 		</select>
+		<input type="hidden" id="submittedTimezone" value="${interview.timezone!}">
 		<@spring.bind "interview.interviewDueDate" />
     	<#list spring.status.errorMessages as error>
     		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
@@ -164,7 +165,22 @@
 	  </div>	
 	  	
   </div>
-  
+  <div id="interviewDuration" class="row interview-happened interview-to-schedule interview-scheduled">
+	<label class="plain-label normal" for="interviewDate">Interview Duration<em>*</em></label>
+    <span class="hint" data-desc="<@spring.message 'interviewArrangements.duration'/>"></span>
+	<div class="field">
+		<input type="text" name="interviewDurationValue" id="interviewDurationValue" value="" class="half" />
+		<input type="hidden" id="submittedInterviewDuration" value="${interview.duration!}" />
+		<select name="interviewDurationUnits" id="interviewDurationUnits" class="half">
+			<option value="hours">Hours</option>
+			<option value="minutes">Minutes</option>
+		</select>
+		<@spring.bind "interview.duration" />
+    	<#list spring.status.errorMessages as error>
+    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+    	</#list>
+	</div>
+  </div>
   <div class="row interview-to-schedule">
   	<label class="plain-label normal" for="availableDates">Select Available Dates<em>*</em></label>
   	<script>
@@ -191,23 +207,11 @@
     <span class="hint" data-desc="<@spring.message 'interviewArrangements.availableDates'/>"></span>
     <div class="field">
     	<div id="availableDatesPicker" class="datepicker-inline"></div>
-  	</div>
-  </div>
-  <div id="interviewDuration" class="row interview-to-schedule interview-scheduled">
-	<label class="plain-label normal" for="interviewDate">Interview Duration<em>*</em></label>
-    <span class="hint" data-desc="<@spring.message 'interviewArrangements.duration'/>"></span>
-	<div class="field">
-		<input type="text" name="interviewDurationValue" id="interviewDurationValue" value="" class="half" />
-		<input type="hidden" id="interviewDurationInMinutes" value="${interview.duration!}" />
-		<select name="interviewDurationUnits" id="interviewDurationUnits" class="half">
-			<option value="hours">Hours</option>
-			<option value="minutes">Minutes</option>
-		</select>
-		<@spring.bind "interview.duration" />
+    	<@spring.bind "interview.timeslots" />
     	<#list spring.status.errorMessages as error>
     		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
-    	</#list>
-	</div>
+    	</#list>	
+  	</div>
   </div>
   <div id="interviewPossibleStartTimes" class="row interview-to-schedule">
   	<table>

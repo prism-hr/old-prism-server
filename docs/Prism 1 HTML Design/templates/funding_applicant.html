@@ -1,0 +1,103 @@
+<!--
+ ------------------------------------------------------------
+| FUNDING section
+ ------------------------------------------------------------
+   - Date fields have been changed to text fields with a "date" class.
+-->
+           <section class="folding green">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Funding
+            </h2>
+            <div>
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col style="width: 120px" />
+                  <col />
+                  <col style="width: 120px" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colspan="2">Funding Type</th>
+                    <th>Description</th>
+                    <th>Award Date</th>
+                    <th colspan="1">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>Other</td>
+                    <td>Lorem Ipsum Doctorates</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <form method="post" action="woooop">
+                <div>
+                  <!-- Award type -->
+                  <div class="row">
+                    <span class="label">Funding Type</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>Scholarship/grant</option>
+                        <option>Employer</option>
+                        <option>Industrial sponsor</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Award description -->
+                  <div class="row">
+                    <span class="label">Description</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                  
+                  <!-- Value of award -->
+                  <div class="row">
+                    <span class="label">Value of Award</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                  
+                  <!-- Award date -->
+                  <div class="row">
+                    <span class="label" data-desc="Tooltip demonstration.">Award Date</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="half date" type="text" value="" />
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button plus" href="#">Add Another</a>
+                    </div>  
+                  </div>
+
+                </div>
+
+                <div class="buttons">
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit" value="close">Save and Close</button>
+                  <button class="blue" type="submit" value="add">Save and Add</button>
+                </div>
+
+              </form>
+            </div>
+          </section>

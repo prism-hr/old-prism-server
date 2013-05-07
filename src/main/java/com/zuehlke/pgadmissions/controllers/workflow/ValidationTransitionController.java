@@ -73,7 +73,12 @@ public class ValidationTransitionController extends StateTransitionController {
     public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm) {
         return stateTransitionService.resolveView(applicationForm);
     }
-
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/submitValidationComment")
+    public String defaultGet() {
+        return "redirect:/applications";
+    }
+    
     @ModelAttribute("comment")
     public ValidationComment getComment(@RequestParam String applicationId) {
         ValidationComment validationComment = new ValidationComment();

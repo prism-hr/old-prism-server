@@ -259,7 +259,7 @@ function recoverSubmittedValues() {
 	
 	var matches = submittedTimezone.match(/gmt\+\d{2}:\d{2}/gi);
 	
-	if (matches.length > 0) {
+	if (matches != null && matches.length > 0) {
 		$('#timezone option[gmtadjustment="' + matches[0] + '"]').attr('selected', 'selected');
 	}
 }

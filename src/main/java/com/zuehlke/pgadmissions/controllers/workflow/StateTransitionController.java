@@ -55,7 +55,7 @@ public class StateTransitionController {
     public StateTransitionController() {
         this(null, null, null, null, null, null, null, null, null, null);
     }
-
+    
     @Autowired
     public StateTransitionController(ApplicationsService applicationsService, UserService userService,
             CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
@@ -73,7 +73,7 @@ public class StateTransitionController {
         this.documentPropertyEditor = documentPropertyEditor;
         this.stateTransitionService = stateTransitionService;
     }
-
+    
     @InitBinder(value = "comment")
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(stateChangeValidator);

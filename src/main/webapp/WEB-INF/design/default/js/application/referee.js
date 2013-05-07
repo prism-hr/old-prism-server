@@ -143,7 +143,7 @@ $(document).ready(function()
 	$('a[name="editRefereeLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('referee_', '');	
-		$('#ajaxloader').show();
+		
 		$.ajax({
 		 type: 'GET',
 		 statusCode: {

@@ -56,6 +56,11 @@ public class EvaluationTransitionController extends StateTransitionController {
     public StateChangeComment getComment(@RequestParam String applicationId) {
         return new StateChangeComment();
     }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/submitEvaluationComment")
+    public String defaultGet() {
+        return "redirect:/applications";
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
     public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {

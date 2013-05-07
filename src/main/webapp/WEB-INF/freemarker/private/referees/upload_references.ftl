@@ -23,6 +23,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
@@ -111,6 +112,25 @@
                       </div>
                   </div>
                 </div>
+                
+                <#assign scores = comment.scores>
+                <#if (scores)?has_content>
+                  <div id="scoring-questions" class="row-group">
+                    <#if comment.alert??>
+                      <#assign alertForScoringQuestions=comment.alert>
+                    </#if>
+                    <#assign errorsContainerName = "comment">
+                    <h3>Programme Specific Questions</h3>
+                    <#include "/private/staff/scores.ftl"/>
+                  </div>
+                  <@spring.bind "comment.confirmNextStage" />
+                  <#if spring.status.errorMessages?size &gt; 0>
+                    <div class="alert alert-error" >
+                  <#else>
+                    <div class="alert" >
+                  </#if>
+                </#if>
+                
                 
                 <@spring.bind "comment.confirmNextStage" />
 			    <#if spring.status.errorMessages?size &gt; 0>

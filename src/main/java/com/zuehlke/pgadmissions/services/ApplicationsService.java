@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
@@ -35,15 +36,15 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 @Service("applicationsService")
 @Transactional
 public class ApplicationsService {
-	
-	private final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
+
+    private final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
 
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
     private final ApplicationFormDAO applicationFormDAO;
 
     private final ApplicationFormListDAO applicationFormListDAO;
-    
+
     private final MailSendingService mailService;
 
     public ApplicationsService() {
@@ -54,7 +55,7 @@ public class ApplicationsService {
     public ApplicationsService(ApplicationFormDAO applicationFormDAO, ApplicationFormListDAO applicationFormListDAO, MailSendingService mailService) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
-		this.mailService = mailService;
+        this.mailService = mailService;
     }
 
     public ApplicationForm getApplicationById(Integer id) {
@@ -128,7 +129,8 @@ public class ApplicationsService {
         return applicationFormDAO.getApplicationsDueUpdateNotification();
     }
 
-    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sort, SortOrder order, Integer page) {
+    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sort, SortOrder order,
+            Integer page) {
         // default values
         int pageCount = page == null ? 1 : page;
         SortCategory sortCategory = sort == null ? SortCategory.APPLICATION_DATE : sort;
@@ -138,7 +140,7 @@ public class ApplicationsService {
         }
         return applicationFormListDAO.getVisibleApplications(user, filters, sortCategory, sortOrder, pageCount, APPLICATION_BLOCK_SIZE);
     }
-    
+
     public void delegateInterviewAdministration(ApplicationForm applicationForm, RegisteredUser delegate) {
         applicationForm.setSuppressStateChangeNotifications(true);
         applicationForm.setApplicationAdministrator(delegate);
@@ -156,28 +158,29 @@ public class ApplicationsService {
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState("VALIDATION")) {
-            if (application.getApplicationAdministrator()!=null && application.getApplicationAdministrator().getId().equals(user.getId())) {
+            if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
-            }
-            else {
+            } else {
                 actions.addAction("validate", "Validate");
             }
         }
         if (user.hasAdminRightsOnApplication(application) && application.isInState("REVIEW")) {
-            if (application.getApplicationAdministrator()!=null && application.getApplicationAdministrator().getId().equals(user.getId())) {
+            if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
-            }
-            else {
+            } else {
                 actions.addAction("validate", "Evaluate reviews");
             }
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState("INTERVIEW")) {
-            if (application.getApplicationAdministrator()!=null && application.getApplicationAdministrator().getId().equals(user.getId())) {
-                actions.addAction("validate", "Administer Interview");
-            }
-            else {
-                actions.addAction("validate", "Evaluate interview feedback");
+            if (application.getLatestInterview().isCompleted()) {
+                if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
+                    actions.addAction("validate", "Administer Interview");
+                } else {
+                    actions.addAction("validate", "Evaluate interview feedback");
+                }
+            } else {
+                // TODO display interview scheduling page and amend test
             }
         }
 
@@ -190,7 +193,8 @@ public class ApplicationsService {
             actions.addAction("review", "Add review");
             actions.setRequiresAttention(true);
         }
-        if (user.isInterviewerOfApplicationForm(application) && application.isInState("INTERVIEW") && application.getLatestInterview().getStage() == InterviewStage.SCHEDULED
+        if (user.isInterviewerOfApplicationForm(application) && application.isInState("INTERVIEW")
+                && application.getLatestInterview().getStage() == InterviewStage.SCHEDULED
                 && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);
@@ -208,12 +212,12 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (user.isInRoleInProgram("APPROVER", application.getProgram()) && application.isInState("APPROVAL") && !application.isPendingApprovalRestart()) {
-            Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-            if (primarySupervisor != null) {
-                actions.addAction("validate", "Approve");
-                actions.setRequiresAttention(true);
-            }
+        if (application.isInState("APPROVAL")
+                && !application.isPendingApprovalRestart()
+                && (user.isInRoleInProgram("APPROVER", application.getProgram()) || user
+                        .isInRole(Authority.SUPERADMINISTRATOR))) {
+            actions.addAction("validate", "Approve");
+            actions.setRequiresAttention(true);
         }
 
         if (application.isInState("APPROVAL")) {
@@ -223,26 +227,28 @@ public class ApplicationsService {
                 actions.setRequiresAttention(true);
             }
         }
+        
+        if (application.isInState("APPROVAL") && user.hasAdminRightsOnApplication(application)) {
+            actions.addAction("rejectApplication", "Reject Application");
+        }
 
         return actions;
     }
-    
-    public void sendSubmissionConfirmationToApplicant(ApplicationForm applicationForm) {
-    	try {
-    		mailService.sendSubmissionConfirmationToApplicant(applicationForm);
-    		NotificationRecord notificationRecord = applicationForm.getNotificationForType(APPLICANT_SUBMISSION_NOTIFICATION);
-    		if (notificationRecord == null) {
-    			notificationRecord = new NotificationRecord(APPLICANT_SUBMISSION_NOTIFICATION);
-    			applicationForm.addNotificationRecord(notificationRecord);
-    		}
-    		notificationRecord.setDate(new Date());
-    		applicationFormDAO.save(applicationForm);
-    	}
-    	catch (Exception e) {
-    		log.warn("{}", e);
-    	}
-	}
 
+    public void sendSubmissionConfirmationToApplicant(ApplicationForm applicationForm) {
+        try {
+            mailService.sendSubmissionConfirmationToApplicant(applicationForm);
+            NotificationRecord notificationRecord = applicationForm.getNotificationForType(APPLICANT_SUBMISSION_NOTIFICATION);
+            if (notificationRecord == null) {
+                notificationRecord = new NotificationRecord(APPLICANT_SUBMISSION_NOTIFICATION);
+                applicationForm.addNotificationRecord(notificationRecord);
+            }
+            notificationRecord.setDate(new Date());
+            applicationFormDAO.save(applicationForm);
+        } catch (Exception e) {
+            log.warn("{}", e);
+        }
+    }
 
     public void refresh(ApplicationForm applicationForm) {
         applicationFormDAO.refresh(applicationForm);

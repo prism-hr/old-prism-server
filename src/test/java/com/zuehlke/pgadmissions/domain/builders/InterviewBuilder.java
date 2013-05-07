@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -20,6 +21,7 @@ public class InterviewBuilder {
     private String furtherInterviewerDetails;
     private String locationURL;
     private Integer duration;
+    private TimeZone timeZone = TimeZone.getTimeZone("GMT");
     private InterviewStage stage = InterviewStage.INITIAL;
     private List<Interviewer> interviewers = new ArrayList<Interviewer>();
 
@@ -65,6 +67,12 @@ public class InterviewBuilder {
         return this;
     }
 
+
+    public InterviewBuilder timeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+        return this;
+    }
+    
     public InterviewBuilder interviewTime(String interviewTime) {
         this.interviewTime = interviewTime;
         return this;
@@ -90,6 +98,7 @@ public class InterviewBuilder {
         interview.setLocationURL(locationURL);
         interview.setInterviewDueDate(dueDate);
         interview.setDuration(duration);
+        interview.setTimeZone(timeZone);
         interview.getInterviewers().addAll(interviewers);
         interview.setInterviewTime(interviewTime);
         interview.setStage(stage);

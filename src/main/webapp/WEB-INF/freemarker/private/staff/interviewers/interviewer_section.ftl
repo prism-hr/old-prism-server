@@ -172,21 +172,21 @@
   		
   		function repositionAvailableDates() {
   			var calendar = $('#availableDatesPicker');
-			debugger;
 			<#list interview.timeslots as date>
 				reposition(calendar, new Date('${date.dueDate?date}'), '${date.startTime}');	
 		  	</#list>
   		}
   		
   		function reposition (calendar, date, time) {
-  			if (dates.indexOf(date) == -1) {
-  				dates.push(date);
-  				calendar.multiDatesPicker('toggleDate', dateToDMY(date));
+			var dateText = dateToDMY(date);
+			if (dates.indexOf(dateText) == -1) {
+				dates.push(dateText);
+				calendar.multiDatesPicker('toggleDate', dateText);
 				addAvailableDate(calendar, date);
-  			}
-  			
+			}
+			
 			addAvailableTime(calendar, date, time);
-  		}
+		}
   	</script>
     <span class="hint" data-desc="<@spring.message 'interviewArrangements.availableDates'/>"></span>
     <div class="field">
@@ -198,6 +198,7 @@
     <span class="hint" data-desc="<@spring.message 'interviewArrangements.duration'/>"></span>
 	<div class="field">
 		<input type="text" name="interviewDurationValue" id="interviewDurationValue" value="" class="half" />
+		<input type="hidden" id="interviewDurationInMinutes" value="${interview.duration!}" />
 		<select name="interviewDurationUnits" id="interviewDurationUnits" class="half">
 			<option value="hours">Hours</option>
 			<option value="minutes">Minutes</option>

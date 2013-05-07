@@ -121,37 +121,37 @@ $(document).ready(function() {
         var postData = {
             applicationId : $('#applicationId').val(),
             interviewers : '',
-            interviewTime : $('#hours').val() + ":" + $('#minutes').val(),
-            interviewDueDate : $('#interviewDate').val()
+            timeZone : $('#timezone option:selected').text()
         };
+        
+        var duration = parseFloat($('#interviewDurationValue').val());
+    	
+    	if(!isNaN(duration)){
+    		if ($('#interviewDurationUnits').val() == "hours") {
+        		duration = duration *  60;
+            }
+    		postData.duration = duration;
+    	} else {
+    		postData.duration = $('#interviewDurationValue').val();
+    	}
         
         if(stage != null){
         	postData.stage = stage;
         }
         
-        if(stage == 'SCHEDULED'){
+        if (stage == 'TAKEN_PLACE' || stage == 'SCHEDULED') {
+        	postData.interviewTime = $('#hours').val() + ":" + $('#minutes').val();
+        	postData.interviewDueDate = $('#interviewDate').val();
+        }
+        
+        if (stage == 'SCHEDULED' || stage == 'SCHEDULING') {
         	postData.furtherDetails = $('#furtherDetails').val();
         	postData.furtherInterviewerDetails = $('#furtherInterviewerDetails').val();
         	postData.locationURL = $('#interviewLocation').val();
         }
         
         if (stage == 'SCHEDULING') {
-        	
-        	postData.timezone = $('#timezone option:selected').text();
-        	
-        	var duration = parseFloat($('#interviewDurationValue').val());
-        	
-        	if (duration == '') {
-        		duration = '0';
-        	}
-        	
-            if ($('#interviewDurationUnits').val() == "hours") {
-        		duration = duration *  60;
-            }
-
-        	postData.duration = duration;
-        	
-        	// Creates timeslots array.
+        	// Creates time slots array.
         	var timeslots = [];
         	
         	$.each($('#interviewPossibleStartTimes tbody tr'), function (i, e) {
@@ -219,7 +219,7 @@ $(document).ready(function() {
                     addControlsToSelectAvailableDatesAndTimes();
                     repositionAvailableDates();
                     forceDisplayFilledTimes();
-                    recoverDuration();
+                    recoverSubmittedValues();
                     
                     var interviewStatus = $('input[name=interviewStatus]:radio');
                 	interviewStatus.change(showProperInterviewArrangements);
@@ -235,8 +235,8 @@ $(document).ready(function() {
     });
 });
 
-function recoverDuration() {
-	var durationInMinutes = parseInt($('#interviewDurationInMinutes').val());
+function recoverSubmittedValues() {
+	var durationInMinutes = parseInt($('#submittedInterviewDuration').val());
 	
 	if (durationInMinutes > 0) {
 		if (durationInMinutes % 30 === 0) {
@@ -247,6 +247,12 @@ function recoverDuration() {
 			$('#interviewDurationValue').val(durationInMinutes);
 			$('#interviewDurationUnits option[value=minutes]').attr('selected', 'selected');
 		}
+	}
+	
+	var submittedTimezone = $('#submittedInterviewDuration').val();
+	
+	if (submittedTimezone.length > 0) {
+		$('#timezone option[text=' + submittedTimezone + ']').attr('selected', 'selected');
 	}
 }
 

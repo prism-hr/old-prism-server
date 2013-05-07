@@ -7,6 +7,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -147,6 +148,7 @@ public class MoveToInterviewController {
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 		binder.registerCustomEditor(null, "timeslots", interviewTimeslotsPropertyEditor);
+		binder.registerCustomEditor(null, "duration", new CustomNumberEditor(Integer.class, true));
     }
         
     public StringTrimmerEditor newStringTrimmerEditor() {

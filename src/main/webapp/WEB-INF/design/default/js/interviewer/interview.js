@@ -202,7 +202,6 @@ $(document).ready(function() {
                 } else {
                     $('#temp').html(data);
                     $('#assignInterviewersToAppSection').html($('#section_1').html());
-                    $('#interviewStatus').html($('#section_interview_status').html());
                     $('#interviewdetailsSection').html($('#section_2').html());
                     $('#temp').empty();
                     $('#postInterviewData').empty();
@@ -290,8 +289,6 @@ function getInterviewersAndDetailsSections() {
             $('#temp').html(data);
             $('#assignInterviewersToAppSection').html($('#section_1').html());
             
-            $('#interviewStatus').html($('#section_interview_status').html());
-            
             $('#interviewdetailsSection').html($('#section_2').html());
             
             $('#temp').empty();
@@ -342,6 +339,8 @@ function addControlsToSelectAvailableDatesAndTimes() {
     		}
     	}
     });
+
+	setPossibleStartTimesVisibility($('#availableDatesPicker'));
     
     $('#interviewPossibleStartTimes .add-column').click(function () {
     	var hideAddColumnLink = false;
@@ -359,11 +358,24 @@ function addControlsToSelectAvailableDatesAndTimes() {
     });
 }
 
+function setPossibleStartTimesVisibility(calendar) {
+	var shouldBeVisible = calendar.multiDatesPicker('getDates').length > 0;
+	
+	if (shouldBeVisible) {
+		$('#interviewPossibleStartTimes').show();
+	}
+	else {
+		$('#interviewPossibleStartTimes').hide();
+	}
+}
+
 function removeAvailableDate(calendar, date) {
 	var dateText = dateToDMY(date);
 	var dateTextId = stringToSlug(dateText).split('-').join('');
 
 	$('#interviewPossibleStartTimes table').find('#' + dateTextId).closest('tr').remove();
+
+	setPossibleStartTimesVisibility(calendar);
 }
 
 function addAvailableDate(calendar, date, times) {
@@ -392,21 +404,7 @@ function addAvailableDate(calendar, date, times) {
 	var dateFormatted = $('<span></span>').appendTo(dateCell);
 	dateFormatted.text(date.toLocaleString('en-GB', {weekday: "long", year: "numeric", month: "long", day: "numeric"}));
 	
-	var removeButton = $('<a></a>', { href: 'javascript:void(0);' })
-		.addClass('remove-date')
-		.attr('data-desc', 'Specify the interview anticipated duration')
-		.html('<i class="icon-trash icon-large"></i>')
-		.appendTo(dateCell);
-	
-	applyTooltip(removeButton);
-	
-	removeButton.click(function () {    	
-    	calendar.multiDatesPicker('toggleDate', dateText);
-    	$(this).closest('tr').remove();
-    });
-	
-	
-	for (var i = 0; i < $('#interviewPossibleStartTimes thead th').length - 1; i++) {
+	for (var i = 0; i < $('#interviewPossibleStartTimes thead th').length - 2; i++) {
 		var timeCell = $('<td></td>', {}).appendTo(dateLine);
 		
 		// Gets first invisible column so that new dates have the same number of visible time options.
@@ -427,6 +425,24 @@ function addAvailableDate(calendar, date, times) {
 		
 		time.mask('Hh:Mm');
 	}
+	
+	var removeCell = $('<td></td>').addClass('remove-column').appendTo(dateLine);
+	
+	var removeButton = $('<a></a>', { href: 'javascript:void(0);' })
+		.addClass('remove-date')
+		.attr('data-desc', 'Specify the interview anticipated duration')
+		.html('<i class="icon-trash icon-large"></i>')
+		.appendTo(removeCell);
+	
+	applyTooltip(removeButton);
+	
+	removeButton.click(function () {    	
+		calendar.multiDatesPicker('toggleDate', dateText);
+		$(this).closest('tr').remove();
+		setPossibleStartTimesVisibility(calendar);
+	});
+
+	setPossibleStartTimesVisibility(calendar);
 }
 
 function addAvailableTime(calendar, date, time) {
@@ -438,6 +454,8 @@ function addAvailableTime(calendar, date, time) {
 		var timeInput = tr.find('input:text').filter(function() { return $(this).val() == ""; }).first();
 		timeInput.val(time);		
 	}
+
+	setPossibleStartTimesVisibility(calendar);
 }
 
 function forceDisplayFilledTimes() {
@@ -539,6 +557,7 @@ function showProperInterviewArrangements() {
 			break;
 		case 'SCHEDULING':
 			$('.interview-to-schedule').show();
+			setPossibleStartTimesVisibility($('#interviewPossibleStartTimes'));
 			break;
 	}
 }

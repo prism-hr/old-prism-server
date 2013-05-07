@@ -65,9 +65,24 @@
 </div>
 <div id="section_2">
   <h3>Interview Arrangements</h3>
-  
-  <div class="alert alert-info interview-to-schedule">
-  	<i class="icon-info-sign"></i> Specify your available interview slots here. All participants will be offered the choice of your suggested "Free Slots".
+  <div class="row">
+  	<label class="plain-label normal">Interview Status</label>
+  	<span class="hint" data-desc="<@spring.message 'interviewArrangements.status'/>"></span>
+    <div class="field">
+	    <label>
+		  	<input id="interviewHappened" type="radio" class="interviewHappened no-margin" name="interviewStatus" value="TAKEN_PLACE" <#if interview.stage = 'TAKEN_PLACE'>checked</#if> />
+		  	Taken place
+		</label>
+	  	<label>
+	  		<input id="interviewScheduled" type="radio" class="interviewScheduled no-margin" name="interviewStatus" value="SCHEDULED" <#if interview.stage = 'SCHEDULED'>checked</#if>/>
+	  		Scheduled
+		</label>
+		<label>
+			<input id="interviewToBeScheduled" type="radio" class="interviewScheduled no-margin" name="interviewStatus" value="SCHEDULING" <#if interview.stage = 'SCHEDULING'>checked</#if>/>
+			To be scheduled
+		</label>
+	  	<@spring.bind "interview.stage" />
+  	</div>
   </div>
   <div class="row interview-happened interview-scheduled interview-to-schedule">
   	<label class="plain-label normal" for="timezone">What time zone will the interview take place in?<em>*</em></label>
@@ -217,7 +232,7 @@
   	<table>
   		<thead>
   			<tr>
-  				<th></th>
+  				<th class="suggested-date"></th>
   				<th>Time 1</th>
   				<th>Time 2</th>
   				<th>Time 3</th>
@@ -226,12 +241,13 @@
   				<th class="time-hidden">Time 6</th>
   				<th class="time-hidden">Time 7</th>
   				<th class="time-hidden">Time 8</th>
+  				<th class="remove-column"></th>
   			</tr>
   		</thead>
   		<tbody>
   		</tbody>
   		<tfoot>
-  			<td></td>
+  			<td class="suggested-date"></td>
   			<td colspan="2">
   				<a href="javascript:void(0);" class="add-column">Add column</a>
   			</td>
@@ -240,6 +256,7 @@
   			<td class="time-hidden"></td>
   			<td class="time-hidden"></td>
   			<td class="time-hidden"></td>
+  			<td class="remove-column"></td>
   		</tfoot>
   	</table>
   </div>
@@ -319,35 +336,6 @@
       </#list>
     </div>
   </div>
-  
-</div>
-<div id="section_interview_status">
-  <h3>Interview Status</h3>
-  <div class="row">
-    <div class="field">
-      <input id="interviewHappened" type="radio" class="interviewHappened" name="interviewStatus" value="TAKEN_PLACE" <#if interview.stage = 'TAKEN_PLACE'>checked</#if> />
-  	</div>
-  	<label class="plain-label normal" for="interviewHappened">The interview has taken place</label>
-  </div>
-  <div class="row">
-    <div class="field">
-      <input id="interviewScheduled" type="radio" class="interviewScheduled" name="interviewStatus" value="SCHEDULED" <#if interview.stage = 'SCHEDULED'>checked</#if>/>
-  	</div>
-    <label class="plain-label normal" for="interviewScheduled">The interview has been scheduled</label>
-  </div>
-  <div class="row">
-    <div class="field">
-      <input id="interviewToBeScheduled" type="radio" class="interviewScheduled" name="interviewStatus" value="SCHEDULING" <#if interview.stage = 'SCHEDULING'>checked</#if>/>
-  	</div>
-    <label class="plain-label normal" for="interviewToBeScheduled">The interview needs to be scheduled</label>
-  </div>
-  
-  <@spring.bind "interview.stage" />
-  <#list spring.status.errorMessages as error>
-    <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-      ${error}
-    </div>
-  </#list>
   
 </div>
 <div id="section_4">

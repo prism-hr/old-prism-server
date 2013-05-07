@@ -73,8 +73,7 @@
                 <div id="add-info-bar-div"  class="alert alert-info"> <i class="icon-info-sign"></i> Assign interviewers to the application here. You may also create new interviewers. </div>
                 <div class="row-group" id="assignInterviewersToAppSection"> </div>
                 <div class="row-group" id="createinterviewersection"> </div>
-                <div class="row-group" id="interviewStatus"></div>
-                <div class="row-group interview-happened interview-scheduled interview-to-schedule" id="interviewdetailsSection"> </div>
+                <div class="row-group" id="interviewdetailsSection"> </div>
                 
                 <div class="buttons">
                   <button class="btn btn-primary" type="button" id="moveToInterviewBtn">Submit</button>

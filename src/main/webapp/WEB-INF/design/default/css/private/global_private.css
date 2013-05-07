@@ -1029,40 +1029,45 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 	margin-bottom:20px;
 }
 
-#interviewPossibleStartTimes table th:first-child,
-#interviewPossibleStartTimes table td:first-child {
-	width:190px;
-}
 #interviewPossibleStartTimes table th,
 #interviewPossibleStartTimes table td {
 	padding:4px;
-	width:70px;
+	width:62px;
 }
 
 #interviewPossibleStartTimes .suggested-date span { display:block; float:left; }
 
-#interviewPossibleStartTimes .suggested-date .remove-date {
+#interviewPossibleStartTimes .remove-column .remove-date {
 	display:block;
-	float:right;
 	width:16px;
 	height:16px;
 	background-color:transparent;
 	border:0;
 	cursor:pointer;
 	color:black;
+	margin:-15px 0 0 0;
 }
 
-#interviewPossibleStartTimes .suggested-date .remove-date:hover {
+#interviewPossibleStartTimes .remove-column .remove-date:hover {
 	text-decoration:none;
 }
 
-#interviewPossibleStartTimes .suggested-date .remove-date,
-#interviewPossibleStartTimes .suggested-date .remove-date i {
+#interviewPossibleStartTimes .remove-column .remove-date,
+#interviewPossibleStartTimes .remove-column .remove-date i {
 	cursor:pointer;
 }
 
 #interviewPossibleStartTimes input[type=text] {
-	width:60px;
+	width:50px;
+}
+
+#interviewPossibleStartTimes tr .suggested-date {
+	width:222px !important;
+}
+
+#interviewPossibleStartTimes tr th.remove-column,
+#interviewPossibleStartTimes tr td.remove-column {
+	width:16px !important;
 }
 
 #interviewPossibleStartTimes .time-hidden {
@@ -1070,6 +1075,7 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 }
 
 /* Fixes */
+.no-margin { margin:0 !important; }
 #fake-submit { margin:10px; }
 
 #content {

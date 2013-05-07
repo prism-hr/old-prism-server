@@ -255,10 +255,12 @@ function recoverSubmittedValues() {
 		}
 	}
 	
-	var submittedTimezone = $('#submittedInterviewDuration').val();
+	var submittedTimezone = $('#submittedTimezone')[0].innerText;
 	
-	if (submittedTimezone.length > 0) {
-		$('#timezone option[text=' + submittedTimezone + ']').attr('selected', 'selected');
+	var matches = submittedTimezone.match(/gmt\+\d{2}:\d{2}/gi);
+	
+	if (matches.length > 0) {
+		$('#timezone option[gmtadjustment="' + matches[0] + '"]').attr('selected', 'selected');
 	}
 }
 
@@ -564,7 +566,7 @@ function showProperInterviewArrangements() {
 			break;
 		case 'SCHEDULING':
 			$('.interview-to-schedule').show();
-			setPossibleStartTimesVisibility($('#interviewPossibleStartTimes'));
+			setPossibleStartTimesVisibility($('#availableDatesPicker'));
 			break;
 	}
 }

@@ -172,8 +172,8 @@
 			<option timeZoneId="81" gmtAdjustment="GMT+12:00" useDaylightTime="0" value="12">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
 			<option timeZoneId="82" gmtAdjustment="GMT+13:00" useDaylightTime="0" value="13">(GMT+13:00) Nuku'alofa</option>
 		</select>
-		<input type="hidden" id="submittedTimezone" value="${interview.timezone!}">
-		<@spring.bind "interview.interviewDueDate" />
+		<div id="submittedTimezone" style="display:none;">${interview.timeZone!}</div>
+		<@spring.bind "interview.timeZone" />
     	<#list spring.status.errorMessages as error>
     		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
     	</#list>											

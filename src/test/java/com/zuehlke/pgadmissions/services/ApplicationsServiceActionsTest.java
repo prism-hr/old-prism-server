@@ -200,6 +200,13 @@ public class ApplicationsServiceActionsTest {
         ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
         assertActionsDefinition(actionsDefinition, true, new String[] { "confirmSupervision" }, new String[] { "Confirm supervision" });
     }
+    
+    @Test
+    public void shouldBeAbleToRejectApplicationIfAdministratorAndInApproval() {
+        configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, "APPROVAL");
+        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "rejectApplication" }, new String[] { "Comment", "Confirm supervision", "Reject Application" });
+    }
 
     private ApplicationActionsDefinition executeGetActionsDefinitions() {
         EasyMock.replay(userMock, applicationMock);

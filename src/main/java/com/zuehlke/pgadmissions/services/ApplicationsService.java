@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
@@ -208,12 +209,12 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (user.isInRoleInProgram("APPROVER", application.getProgram()) && application.isInState("APPROVAL") && !application.isPendingApprovalRestart()) {
-            Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-            if (primarySupervisor != null) {
-                actions.addAction("validate", "Approve");
-                actions.setRequiresAttention(true);
-            }
+        if (application.isInState("APPROVAL")
+                && !application.isPendingApprovalRestart()
+                && (user.isInRoleInProgram("APPROVER", application.getProgram()) || user
+                        .isInRole(Authority.SUPERADMINISTRATOR))) {
+            actions.addAction("validate", "Approve");
+            actions.setRequiresAttention(true);
         }
 
         if (application.isInState("APPROVAL")) {

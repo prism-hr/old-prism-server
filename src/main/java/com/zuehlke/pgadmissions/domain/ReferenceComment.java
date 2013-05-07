@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Generated;
@@ -46,6 +47,9 @@ public class ReferenceComment extends Comment {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provided_by")
     private RegisteredUser providedBy;
+    
+    @Transient
+    private String alert;
 
     public CommentType getType() {
         return type;
@@ -99,4 +103,12 @@ public class ReferenceComment extends Comment {
         this.providedBy = providedBy;
     }
 
+    public String getAlert() {
+        return alert;
+    }
+
+    public void setAlert(String alert) {
+        this.alert = alert;
+    }
+    
 }

@@ -10,6 +10,8 @@ $(document).ready(function() {
 		
 		var onOk    = function()
 		{
+			var scores = getScores($('#scoring-questions'));
+			$('#documentUploadForm').append("<input type='hidden' name='scores' value=\'" + scores + "\'/>");
 			$('#documentUploadForm').submit();
 		};
 		

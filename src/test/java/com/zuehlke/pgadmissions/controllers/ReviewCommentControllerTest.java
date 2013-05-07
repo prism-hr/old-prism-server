@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -14,6 +13,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -183,7 +183,7 @@ public class ReviewCommentControllerTest {
         question1.setType(QuestionType.RATING);
         final CustomQuestions customQuestions = new CustomQuestions();
         customQuestions.getQuestion().add(question1);
-        ArrayList<Score> generatedScores = new ArrayList<Score>();
+        ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);

@@ -10,7 +10,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 
 @Entity(name="REVIEW_COMMENT")
 public class ReviewComment extends Comment {

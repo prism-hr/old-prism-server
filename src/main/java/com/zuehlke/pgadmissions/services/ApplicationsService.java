@@ -227,6 +227,10 @@ public class ApplicationsService {
                 actions.setRequiresAttention(true);
             }
         }
+        
+        if (application.isInState("APPROVAL") && user.hasAdminRightsOnApplication(application)) {
+            actions.addAction("rejectApplication", "Reject Application");
+        }
 
         return actions;
     }

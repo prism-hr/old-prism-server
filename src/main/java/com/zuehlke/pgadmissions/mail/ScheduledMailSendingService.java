@@ -477,22 +477,27 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     public void scheduleReviewRequestAndReminder() {
         Set<Integer> idsForWhichRequestWasFired = new HashSet<Integer>();
+        Date today = new Date();
         for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.REVIEW_REQUEST,
                 ApplicationFormStatus.REVIEW)) {
-            createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REQUEST);
-            idsForWhichRequestWasFired.add(form.getId());
-            for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
-                if (reviewer.getReview() == null) {
-                    setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+            if (form.getBatchDeadline() == null || today.after(form.getBatchDeadline())) {
+                createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REQUEST);
+                idsForWhichRequestWasFired.add(form.getId());
+                for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
+                    if (reviewer.getReview() == null) {
+                        setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
+                    }
                 }
             }
         }
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.REVIEW_REMINDER, ApplicationFormStatus.REVIEW)) {
-            if (!idsForWhichRequestWasFired.contains(form.getId())) {
-                createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
-                for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
-                    if (reviewer.getReview() == null) {
-                        setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
+            if (form.getBatchDeadline() == null || today.after(form.getBatchDeadline())) {
+                if (!idsForWhichRequestWasFired.contains(form.getId())) {
+                    createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
+                    for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
+                        if (reviewer.getReview() == null) {
+                            setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
+                        }
                     }
                 }
             }
@@ -1407,7 +1412,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      * Scheduled Digest Priority 1 (Update Notification)
      * </p>
      */
-    public void scheduleRejectionConfirmationToAdministrator() {
+    public void scheduleRejectionConfirmationToPrimarySupervisors() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueRejectNotifications()) {
             form.setRejectNotificationDate(new Date());
             RegisteredUser supervisor = getPrimarySupervisorAsUserFromLatestApprovalRound(form);

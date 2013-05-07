@@ -912,7 +912,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		expect(applicationFormDAOMock.getApplicationsDueRejectNotifications()).andReturn(asList(form));
 		
 		replay(applicationFormDAOMock);
-		service.scheduleRejectionConfirmationToAdministrator();
+		service.scheduleRejectionConfirmationToPrimarySupervisors();
 		verify(applicationFormDAOMock);
 		
 		assertNotNull(form.getRejectNotificationDate());

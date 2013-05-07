@@ -67,7 +67,8 @@ public class InterviewValidatorTest {
     public void shouldRejectIfInterviewTookPlaceInFuture() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
-        interview.setStage(InterviewStage.TAKEN_PLACE);
+        interview.setStage(InterviewStage.SCHEDULED);
+        interview.setTakenPlace(true);
         interview.setInterviewDueDate(calendar.getTime());
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewDueDate");
         interviewValidator.validate(interview, mappingResult);
@@ -149,17 +150,17 @@ public class InterviewValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("interviewers").getCode());
     }
-    
-//    @Test
-//    public void shouldRejectIfNoTimezone() {
-//        interview.setTimezone(null);
-//        
-//        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeZone");
-//        interviewValidator.validate(interview, mappingResult);
-//        Assert.assertEquals(1, mappingResult.getErrorCount());
-//        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("timeZone").getCode());
-//    }
-    
+
+    // @Test
+    // public void shouldRejectIfNoTimezone() {
+    // interview.setTimezone(null);
+    //
+    // DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeZone");
+    // interviewValidator.validate(interview, mappingResult);
+    // Assert.assertEquals(1, mappingResult.getErrorCount());
+    // Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("timeZone").getCode());
+    // }
+
     @Test
     public void shouldRejectIfNoAvailableDatesAndTimesWereProvided() {
         interview.setStage(InterviewStage.SCHEDULING);
@@ -170,14 +171,23 @@ public class InterviewValidatorTest {
         Assert.assertEquals("datepicker.field.mustselectdate", mappingResult.getFieldError("timeslots").getCode());
     }
 
+    @Test
+    public void shouldRejectIfTakenPlaceFlagNotSpecified() {
+        interview.setTakenPlace(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeslots");
+        interviewValidator.validate(interview, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("stage").getCode());
+    }
+
     @Before
     public void setup() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
-        interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).interviewTime("09:00").application(new ApplicationFormBuilder().id(2).build())
-                .dueDate(calendar.getTime()).furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).build())
-                .duration(120).build();
+        interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).takenPlace(false).interviewTime("09:00")
+                .application(new ApplicationFormBuilder().id(2).build()).dueDate(calendar.getTime()).furtherDetails("at 9 pm")
+                .locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).build()).duration(120).build();
 
         List<InterviewTimeslot> timeslots = new ArrayList<InterviewTimeslot>();
         timeslots.add(new InterviewTimeslotBuilder().build());

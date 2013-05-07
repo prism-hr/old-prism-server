@@ -22,6 +22,7 @@ public class InterviewBuilder {
     private String locationURL;
     private Integer duration;
     private TimeZone timeZone = TimeZone.getTimeZone("GMT");
+    private Boolean takenPlace;
     private InterviewStage stage = InterviewStage.INITIAL;
     private List<Interviewer> interviewers = new ArrayList<Interviewer>();
 
@@ -82,6 +83,10 @@ public class InterviewBuilder {
         this.stage = stage;
         return this;
     }
+    public InterviewBuilder takenPlace(Boolean takenPlace) {
+        this.takenPlace = takenPlace;
+        return this;
+    }
 
     public InterviewBuilder id(Integer id) {
         this.id = id;
@@ -102,6 +107,7 @@ public class InterviewBuilder {
         interview.getInterviewers().addAll(interviewers);
         interview.setInterviewTime(interviewTime);
         interview.setStage(stage);
+        interview.setTakenPlace(takenPlace);
         return interview;
     }
 

@@ -70,11 +70,11 @@
   	<span class="hint" data-desc="<@spring.message 'interviewArrangements.status'/>"></span>
     <div class="field">
 	    <label>
-		  	<input id="interviewHappened" type="radio" class="interviewHappened no-margin" name="interviewStatus" value="TAKEN_PLACE" <#if interview.stage = 'TAKEN_PLACE'>checked</#if> />
+		  	<input id="interviewHappened" type="radio" class="interviewHappened no-margin" name="interviewStatus" value="TAKEN_PLACE" <#if interview.stage = 'SCHEDULED' && interview.takenPlace?? && interview.takenPlace>checked</#if> />
 		  	Taken place
 		</label>
 	  	<label>
-	  		<input id="interviewScheduled" type="radio" class="interviewScheduled no-margin" name="interviewStatus" value="SCHEDULED" <#if interview.stage = 'SCHEDULED'>checked</#if>/>
+	  		<input id="interviewScheduled" type="radio" class="interviewScheduled no-margin" name="interviewStatus" value="SCHEDULED" <#if interview.stage = 'SCHEDULED' && interview.takenPlace?? && !interview.takenPlace>checked</#if>/>
 	  		Scheduled
 		</label>
 		<label>

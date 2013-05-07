@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class InterviewValidator extends AbstractValidator {
         Interview interview = (Interview) target;
         InterviewStage stage = interview.getStage();
 
-        if (interview.getStage() == null || stage == InterviewStage.INITIAL) {
+        if (interview.getStage() == null || stage == InterviewStage.INITIAL || interview.getTakenPlace() == null) {
             errors.rejectValue("stage", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
         
@@ -43,16 +44,18 @@ public class InterviewValidator extends AbstractValidator {
             errors.rejectValue("duration", EMPTY_FIELD_ERROR_MESSAGE);
         }
         
-        if (stage == InterviewStage.TAKEN_PLACE || stage == InterviewStage.SCHEDULED) {
+        if (stage == InterviewStage.SCHEDULED) {
             Date interviewDueDate = interview.getInterviewDueDate();
             
             if (interviewDueDate == null) {
                 errors.rejectValue("interviewDueDate", EMPTY_FIELD_ERROR_MESSAGE);
-            } else if (stage == InterviewStage.SCHEDULED && interviewDueDate.before(today)) {
-                errors.rejectValue("interviewDueDate", "date.field.notfuture");
-            } else if (stage == InterviewStage.TAKEN_PLACE && interviewDueDate.after(today)) {
-                errors.rejectValue("interviewDueDate", "date.field.notpast");
-            }
+            } else if (stage == InterviewStage.SCHEDULED) {
+                if (BooleanUtils.isTrue(interview.getTakenPlace()) && interviewDueDate.after(today)) {
+                    errors.rejectValue("interviewDueDate", "date.field.notpast");
+                } else if (BooleanUtils.isFalse(interview.getTakenPlace()) && interviewDueDate.before(today)) {
+                    errors.rejectValue("interviewDueDate", "date.field.notfuture");
+                }
+            } 
             
             if (StringUtils.isBlank(interview.getTimeHours())) {
                 errors.rejectValue("timeHours", EMPTY_FIELD_ERROR_MESSAGE);

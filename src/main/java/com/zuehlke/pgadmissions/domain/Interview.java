@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -75,6 +76,9 @@ public class Interview implements Serializable {
 
     @Column(name = "duration")
     private Integer duration;
+
+    @Column(name = "time_zone", nullable = false)
+    private TimeZone timeZone = TimeZone.getTimeZone("GMT");
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "interview_id")
@@ -206,6 +210,14 @@ public class Interview implements Serializable {
         this.duration = duration;
     }
 
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+    }
+
     public List<InterviewParticipant> getParticipants() {
         return participants;
     }
@@ -220,6 +232,10 @@ public class Interview implements Serializable {
 
     public void setTimeslots(List<InterviewTimeslot> timeslots) {
         this.timeslots = timeslots;
+    }
+    
+    public boolean isCompleted(){
+        return getStage() == InterviewStage.SCHEDULED || getStage() == InterviewStage.TAKEN_PLACE;
     }
 
 }

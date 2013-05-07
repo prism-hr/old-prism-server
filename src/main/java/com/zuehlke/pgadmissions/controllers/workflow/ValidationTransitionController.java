@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +10,8 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -42,12 +43,15 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 
 @Controller
 @RequestMapping("/progress")
 public class ValidationTransitionController extends StateTransitionController {
+
+    private static final String ERROR_CLOSING_DATE_FORMAT = "dd-MMM-yyyy";
+
+    private static final String PROVIDED_CLOSING_DATE_FORMAT = "dd MMM yyyy";
 
     private final BadgeService badgeService;
 
@@ -88,86 +92,104 @@ public class ValidationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
-    public String addComment(@RequestParam String applicationId, @RequestParam String closingDate, @RequestParam String projectTitle,
-            @Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap modelMap,
-            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+    public String addComment(@RequestParam String applicationId, @RequestParam String closingDate,
+            @RequestParam String projectTitle, @Valid @ModelAttribute("comment") ValidationComment comment,
+            BindingResult result, ModelMap model, @RequestParam(required = false) Boolean delegate,
+            @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
 
-        modelMap.put("delegate", delegate);
-        ApplicationForm application = getApplicationForm(applicationId);
+        model.put("delegate", delegate);
+        ApplicationForm form = getApplicationForm(applicationId);
         try {
-            Program programme = application.getProgram();
+            Program programme = form.getProgram();
             Date newClosingDate = null;
-
+            Date today = new Date();
+            
             if (StringUtils.isNotBlank(closingDate)) {
-                newClosingDate = new SimpleDateFormat("dd MMM yyyy").parse(closingDate);
-                modelMap.put("closingDate", newClosingDate);
+                newClosingDate = new SimpleDateFormat(PROVIDED_CLOSING_DATE_FORMAT).parse(closingDate);
+                model.put("closingDate", newClosingDate);
 
                 boolean foundMatch = false;
                 List<Date> existingClosingDates = badgeService.getAllClosingDatesByProgram(programme);
                 for (Date existingClosingDate : existingClosingDates) {
-                    if (org.apache.commons.lang.time.DateUtils.isSameDay(existingClosingDate, newClosingDate)) {
+                    if (DateUtils.isSameDay(existingClosingDate, newClosingDate)) {
                         foundMatch = true;
                         break;
                     }
                 }
 
-                if (!foundMatch && !DateUtils.isToday(newClosingDate) && newClosingDate.before(new Date())) {
-                    Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(Calendar.getInstance().getTime(), -1);
-                    if (!org.apache.commons.lang.time.DateUtils.isSameDay(newClosingDate, oneMonthAgo) && newClosingDate.before(oneMonthAgo)) {
-                        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
-                        modelMap.put("closingDate_error", messageSource.getMessage("date.field.notbefore", new Object[] { format.format(oneMonthAgo) }, null));
+                if (!foundMatch && isNotSameDay(newClosingDate, today) && newClosingDate.before(today)) {
+                    Date oneMonthAgo = new DateTime().minusMonths(1).toDate();
+                    if (isNotSameDay(newClosingDate, oneMonthAgo) && newClosingDate.before(oneMonthAgo)) {
+                        SimpleDateFormat format = new SimpleDateFormat(ERROR_CLOSING_DATE_FORMAT);
+                        model.put("closingDate_error", messageSource.getMessage("date.field.notbefore", new Object[] { format.format(oneMonthAgo) }, null));
                     }
                 }
 
-                if (!modelMap.containsKey("closingDate_error")) {
-                    application.setBatchDeadline(newClosingDate);
+                if (!model.containsKey("closingDate_error")) {
+                    form.setBatchDeadline(newClosingDate);
                 }
             }
 
             if (!StringUtils.isBlank(projectTitle)) {
-                modelMap.put("projectTitle", projectTitle);
+                model.put("projectTitle", projectTitle);
                 if (ESAPI.validator().isValidInput("input", projectTitle, "ExtendedAscii", 500, false)) {
-                    application.setProjectTitle(projectTitle);
+                    form.setProjectTitle(projectTitle);
                 } else {
-                    modelMap.put("projectTitle_error", messageSource.getMessage("text.field.nonextendedascii", null, null));
+                    model.put("projectTitle_error", messageSource.getMessage("text.field.nonextendedascii", null, null));
                 }
             }
 
-            if (modelMap.containsKey("closingDate_error") || modelMap.containsKey("projectTitle_error") || result.hasErrors()) {
+            if (model.containsKey("closingDate_error") || model.containsKey("projectTitle_error") || result.hasErrors()) {
                 return STATE_TRANSITION_VIEW;
             }
 
             if (StringUtils.isNotBlank(closingDate) || StringUtils.isNotBlank(projectTitle)) {
-                Badge newBadge = new Badge();
-                newBadge.setClosingDate(newClosingDate);
-                newBadge.setProjectTitle(projectTitle);
-                newBadge.setProgram(programme);
-                badgeService.save(newBadge);
-                applicationsService.save(application);
+                Badge badge = new Badge();
+                badge.setClosingDate(newClosingDate);
+                badge.setProjectTitle(projectTitle);
+                badge.setProgram(programme);
+                badgeService.save(badge);
+                applicationsService.save(form);
             }
 
-            validationComment.setDate(new Date());
-            commentService.save(validationComment);
+            comment.setDate(new Date());
+            commentService.save(comment);
 
-            if (validationComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
-                applicationsService.makeApplicationNotEditable(application);
+            if (comment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
+                applicationsService.makeApplicationNotEditable(form);
+            } 
+            
+            if (answeredOneOfTheQuestionsUnsure(comment) && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
+                form.setAdminRequestedRegistry(getCurrentUser());
+                form.setRegistryUsersDueNotification(true);
+                applicationsService.save(form);
             }
+            
         } catch (Exception e) {
             return STATE_TRANSITION_VIEW;
         }
-        
+
         if (BooleanUtils.isTrue(delegate)) {
-            return "redirect:/applications?messageCode=delegate.success&application="+ application.getApplicationNumber();
+            return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();
         }
 
         return stateTransitionService.resolveView(getApplicationForm(applicationId));
     }
 
+    private boolean isNotSameDay(final Date date1, final Date date2) {
+        return !DateUtils.isSameDay(date1, date2);
+    }
+    
+    private boolean answeredOneOfTheQuestionsUnsure(final ValidationComment comment) {
+        return comment.getHomeOrOverseas() == HomeOrOverseas.UNSURE
+                || comment.getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
+                || comment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
+    }
+
     @RequestMapping(value = "/getProjectTitles", method = RequestMethod.GET)
     @ResponseBody
     public String getProjectTitlesJson(@RequestParam String applicationId, @RequestParam String term) {
-        List<String> projectTitles = badgeService.getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(getApplicationForm(applicationId).getProgram(),
-                term);
+        List<String> projectTitles = badgeService.getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(getApplicationForm(applicationId).getProgram(), term);
         ApplicationForm form = getApplicationForm(applicationId);
         if (!StringUtils.isBlank(form.getProjectTitle()) && form.getBatchDeadline() != null && form.getBatchDeadline().before(new Date())) {
             projectTitles.add(form.getProjectTitle());
@@ -197,7 +219,6 @@ public class ValidationTransitionController extends StateTransitionController {
                 // do nothing
             }
         }
-
         Gson gson = new Gson();
         return gson.toJson(convertedDates);
     }
@@ -235,5 +256,4 @@ public class ValidationTransitionController extends StateTransitionController {
         }
         return projectTitles;
     }
-
 }

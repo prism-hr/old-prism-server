@@ -94,7 +94,7 @@
 							
 								<div class="alert alert-info"> <i class="icon-info-sign"></i>
 								<#if applicationForm.isInState('VALIDATION')>
-									Validate the application here. You may <a class="proceed-link" href="#" id="notifyRegistryButton">refer the application to admissions</a> if you feel unable to assess the Applicant's eligbility.
+									Validate the application here.
 								<#elseif applicationForm.isInState('REVIEW')>
 									Evaluate the reviewers' comments and decide which stage to progress the application to.
 								<#elseif applicationForm.isInState('INTERVIEW')>

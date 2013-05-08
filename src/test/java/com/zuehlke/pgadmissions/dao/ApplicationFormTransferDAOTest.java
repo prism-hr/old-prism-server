@@ -113,4 +113,52 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         assertEquals(now.plusHours(2).toString("yyy-MM-dd HH:mm:ss.0"), transfers.get(1).getTransferStartTimepoint().toString());
         assertEquals(now.plusHours(3).toString("yyy-MM-dd HH:mm:ss.0"), transfers.get(2).getTransferStartTimepoint().toString());
     }
+    
+    @Test
+    public void shouldGetAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds() {
+        ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO = new ApplicationFormTransferErrorDAO(sessionFactory);
+        for (ApplicationFormTransfer transfer : applicationFormTransferDAO.getAllTransfers()) {
+            for (ApplicationFormTransferError error : applicationFormTransferErrorDAO.getByTransfer(transfer)) {
+                sessionFactory.getCurrentSession().delete(error);
+            }
+            sessionFactory.getCurrentSession().delete(transfer);
+        }
+        flushAndClearSession();
+        
+        RegisteredUser applicant = new RegisteredUserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
+        
+        ApplicationForm approvedForm1 = new ApplicationFormBuilder().applicant(applicant).build();
+        ApplicationForm approvedForm2 = new ApplicationFormBuilder().applicant(applicant).build();
+        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().applicant(applicant).build();
+        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().applicant(applicant).build();
+        
+        approvedForm1.setStatus(ApplicationFormStatus.APPROVED);
+        approvedForm1.setApplicationNumber("1");
+        
+        approvedForm2.setStatus(ApplicationFormStatus.APPROVED);
+        approvedForm2.setApplicationNumber("2");
+        
+        withdrawnForm1.setStatus(ApplicationFormStatus.WITHDRAWN);
+        withdrawnForm1.setApplicationNumber("3");
+        
+        rejectedForm1.setStatus(ApplicationFormStatus.REJECTED);
+        rejectedForm1.setApplicationNumber("4");
+        
+        DateTime now = new DateTime();
+        
+        ApplicationFormTransfer transferApprovedForm1 = new ApplicationFormTransferBuilder().status(ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING).transferStartTimepoint(now.plusHours(1).toDate()).applicationForm(approvedForm1).build();
+        ApplicationFormTransfer transferApprovedForm2 = new ApplicationFormTransferBuilder().status(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL).transferStartTimepoint(now.plusHours(2).toDate()).applicationForm(approvedForm2).build();
+        ApplicationFormTransfer transferWithdrawnForm1 = new ApplicationFormTransferBuilder().status(ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING).transferStartTimepoint(now.plusHours(3).toDate()).applicationForm(withdrawnForm1).build();
+        ApplicationFormTransfer transferRejectedForm1 = new ApplicationFormTransferBuilder().status(ApplicationTransferStatus.CANCELLED).transferStartTimepoint(now.plusHours(4).toDate()).applicationForm(rejectedForm1).build();
+        
+        save(applicant, approvedForm1, approvedForm2, withdrawnForm1, rejectedForm1, transferApprovedForm1, transferApprovedForm2, transferWithdrawnForm1, transferRejectedForm1);
+        flushAndClearSession();
+        
+        List<Long> transfers = applicationFormTransferDAO.getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds();
+        
+        assertEquals(3, transfers.size());
+        assertEquals(transferApprovedForm1.getId(), transfers.get(0));
+        assertEquals(transferApprovedForm2.getId(), transfers.get(1));
+        assertEquals(transferWithdrawnForm1.getId(), transfers.get(2));
+    }    
 }

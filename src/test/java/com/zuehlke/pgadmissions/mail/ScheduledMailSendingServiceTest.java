@@ -33,6 +33,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
@@ -121,6 +122,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	
     private RoleDAO roleDAOMock;
     
+    private ApplicationContext applicationContextMock;
+    
     private EncryptionUtils encryptionUtilsMock;
     
     private static final String HOST = "http://localhost:8080";
@@ -131,6 +134,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	public void prepare() {
 		notificationRecordDAOMock = createMock(NotificationRecordDAO.class);
 		commentDAOMock = createMock(CommentDAO.class);
+		applicationContextMock = createMock(ApplicationContext.class);
 		supervisorDAOMock = createMock(SupervisorDAO.class);
 		stageDurationDAOMock = createMock(StageDurationDAO.class);
 		applicationsServiceMock = createMock(ApplicationsService.class);
@@ -162,10 +166,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 				roleDAOMock,
 		        encryptionUtilsMock,
 		        HOST,
-		        SERVICE_OFFER);
+		        SERVICE_OFFER,
+		        applicationContextMock);
 	}
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void shouldSendDigestToUsers() {
 		RegisteredUser user1 = new RegisteredUserBuilder().id(1)
 				.digestNotificationType(DigestNotificationType.TASK_NOTIFICATION)
@@ -210,16 +216,16 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		expect(userServiceMock.getUser(3)).andReturn(user3);
 		expect(userServiceMock.getUser(4)).andReturn(user4);
 		
-		userServiceMock.resetDigestNotificationsForAllUsers();
-		
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 		expectLastCall().times(3);
 		
+		expect(applicationContextMock.getBean(isA(Class.class)))
+		    .andReturn(service).anyTimes();
 		
-		replay(mockMailSender, userServiceMock);
+		replay(mockMailSender, applicationContextMock, userServiceMock);
 		service.sendDigestsToUsers();
-		verify(mockMailSender, userServiceMock);
+		verify(mockMailSender, applicationContextMock, userServiceMock);
 		
 		List<PrismEmailMessage> messages = messageCaptor.getValues();
 		assertEquals(3, messages.size());
@@ -718,7 +724,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		assertEquals(form.getApplicant().getDigestNotificationType(),  DigestNotificationType.UPDATE_NOTIFICATION);
 	}
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void shouldSendReferenceReminder() throws Exception {
 	       service = new ScheduledMailSendingService(
 	               mockMailSender,
@@ -739,7 +746,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 	               roleDAOMock,
 	               encryptionUtilsMock,
 	               HOST,
-	               SERVICE_OFFER) {
+	               SERVICE_OFFER,
+	               applicationContextMock) {
 	           @Override
 	           protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
 	               return null;
@@ -768,11 +776,13 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
 		mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 
+		expect(applicationContextMock.getBean(isA(Class.class)))
+		    .andReturn(service);
 		refereeDAOMock.save(referee);
 		
-		replay(mockMailSender, refereeDAOMock);
+		replay(mockMailSender, applicationContextMock, refereeDAOMock);
 		service.sendReferenceReminder();
-		verify(mockMailSender, refereeDAOMock);
+		verify(mockMailSender, applicationContextMock, refereeDAOMock);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
 		assertNotNull(message.getTo());
@@ -786,6 +796,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		
 	}
 	
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldSendNewUserInvitation() {
         ApplicationForm form = getSampleApplicationForm();
@@ -815,9 +826,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         
         userDAOMock.save(user);
         
-        replay(userDAOMock, mockMailSender);
+        expect(applicationContextMock.getBean(isA(Class.class)))
+        .andReturn(service);
+        
+        replay(userDAOMock, applicationContextMock, mockMailSender);
         service.sendNewUserInvitation();
-        verify(userDAOMock, mockMailSender);
+        verify(userDAOMock, mockMailSender, applicationContextMock);
         
         PrismEmailMessage message = messageCaptor.getValue();
         assertNotNull(message.getTo());
@@ -830,7 +844,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
     }
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void shouldSendValidationRequestToRegistry() {
 		Person person1 = new PersonBuilder().id(87)
 		.email("person1@mail.com")
@@ -883,9 +898,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		applicationsServiceMock.save(form);
 		commentServiceMock.save(comment);
 		
-		replay(mockMailSender, configurationServiceMock, commentServiceMock, applicationsServiceMock, pdfDocumentBuilderMock, commentFactoryMock);
+		expect(applicationContextMock.getBean(isA(Class.class)))
+        .andReturn(service);
+		
+		replay(mockMailSender, applicationContextMock, configurationServiceMock, commentServiceMock, applicationsServiceMock, pdfDocumentBuilderMock, commentFactoryMock);
 		service.sendValidationRequestToRegistry();
-		verify(mockMailSender, configurationServiceMock, commentServiceMock, applicationsServiceMock, pdfDocumentBuilderMock, commentFactoryMock);
+		verify(mockMailSender, applicationContextMock, configurationServiceMock, commentServiceMock, applicationsServiceMock, pdfDocumentBuilderMock, commentFactoryMock);
 		
 		PrismEmailMessage message = messageCaptor.getValue();
 		assertNotNull(message.getTo());

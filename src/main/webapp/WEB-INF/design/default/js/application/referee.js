@@ -51,8 +51,9 @@ $(document).ready(function()
 			{
 				$('#referencesSection').html(data);
 			},
-			completed: function()
+			complete: function()
 			{
+				$('#referee-H2').trigger('click');
 				$('#ajaxloader').fadeOut('fast');
 			}
 		});
@@ -141,6 +142,7 @@ $(document).ready(function()
 	// Edit a referee.
 	// -------------------------------------------------------------------------------
 	$('a[name="editRefereeLink"]').click(function(){
+		
 		var id = this.id;
 		id = id.replace('referee_', '');	
 		
@@ -173,10 +175,12 @@ $(document).ready(function()
 			},
 			success: function(data)
 			{
+				
 				$('#referencesSection').html(data);
 			},
-			completed: function()
+			complete: function()
 			{
+				$('#referee-H2').trigger('click');
 				$('#ajaxloader').fadeOut('fast');
 			}
 		});
@@ -246,17 +250,11 @@ function postRefereeData(message){
 				
 				var errorCount = $('#referencesSection .alert-error').length;
 				var referenceCount = $('#referencesSection table.existing tbody tr').length;				
-					
-				if (message == 'close')
-				{
-					if (errorCount > 0 || referenceCount < 3) {
-						$('#referee-H2').trigger('click');
-					}
-				}
-				if(errorCount > 0){
+				
+				if(errorCount > 0 || referenceCount < 3){
 					markSectionError('#referencesSection');
+					$('#referee-H2').trigger('click');
 				}
-		
 			},
 		complete: function(){
 		  $('#ajaxloader').fadeOut('fast');

@@ -90,7 +90,7 @@ $(document).ready(function() {
                 }
                 options.append($("<option />").val("OTHER").text("Other"));
             },
-            completed : function() {
+            complete : function() {
             }
         });
     });
@@ -185,7 +185,7 @@ $(document).ready(function() {
             success : function(data) {
                 $('#qualificationsSection').html(data);
             },
-            completed : function() {
+            complete : function() {
                 $('#ajaxloader').fadeOut('fast');
                 showOrHideAddQualificationButton();
             }
@@ -291,8 +291,9 @@ $(document).ready(function() {
                 $('#addQualificationButton').html('Update');
                 $("#addQualificationButton").show();
             },
-            completed : function() {
+            complete : function() {
                 $('#ajaxloader').fadeOut('fast');
+				$('#qualifications-H2').trigger('click');
                 // showOrHideAddQualificationButton();
             }
         });
@@ -366,16 +367,11 @@ function postQualificationData(message) {
         },
         success : function(data) {
             $('#qualificationsSection').html(data);
-            var errorCount = $('#qualificationsSection .alert-error:visible').length;
-
-            if (errorCount == 0 && message == 'close') {
-                // Close the section only if there are no errors.
-
-                $('#qualifications-H2').trigger('click');
-
-            }
+            var errorCount = $('#qualificationsSection .alert-error').length;
+			
             if (errorCount > 0) {
                 markSectionError('#qualificationsSection');
+				$('#qualifications-H2').trigger('click');
             }
         },
         complete : function() {

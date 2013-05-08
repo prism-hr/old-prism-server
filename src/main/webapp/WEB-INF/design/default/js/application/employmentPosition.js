@@ -105,7 +105,7 @@ $(document).ready(function(){
 			{
 				$('#positionSection').html(data);
 			},
-			completed: function()
+			complete: function()
 			{
 				$('#ajaxloader').fadeOut('fast');
 				showOrHideAdPosisionButton();
@@ -210,8 +210,9 @@ $(document).ready(function(){
 				$('#addPosisionButton').html('Update');
 				$("#addPosisionButton").show();
 			},
-			completed: function()
+			complete: function()
 			{
+				$('#positionCloseButton').trigger('click');
 				$('#ajaxloader').fadeOut('fast');
 //				showOrHideAdPosisionButton();
 			}
@@ -301,14 +302,10 @@ function postEmploymentData(message)
 				$('#positionSection').html(data);
 			
 				var errorCount = $('#positionSection .alert-error').length;
-				if (message == 'close')
-				{
-					if (errorCount > 0) {
-						$('#position-H2').trigger('click');
-					}
-				}
+
 				if (errorCount > 0)
 				{
+					$('#position-H2').trigger('click');
 					markSectionError('#positionSection');
 				}
       },

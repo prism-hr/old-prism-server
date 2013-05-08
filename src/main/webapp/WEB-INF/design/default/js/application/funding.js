@@ -75,7 +75,7 @@ $(document).ready(function(){
 			success:	function(data) {
 					$('#fundingSection').html(data);
 				},
-			completed: function()
+			complete: function()
 			{
 				$('#ajaxloader').fadeOut('fast');
 			}
@@ -169,8 +169,9 @@ $(document).ready(function(){
 				$('#fundingSection').html(data);
 				$('#addFundingButton').html('Update');
 			},
-			completed: function()
+			complete: function()
 			{
+				$('#funding-H2').trigger('click');
 				$('#ajaxloader').fadeOut('fast');
 			}
 		});
@@ -241,14 +242,8 @@ function postFundingData(message)
 		{
 			$('#fundingSection').html(data);
 			var errorCount = $('#fundingSection .alert-error').length;
-			if (message == 'close')
-			{
-				if (errorCount > 0) {
-				// open if any error	
-				$('#funding-H2').trigger('click');
-				}
-			}
 			if(errorCount > 0){
+				$('#funding-H2').trigger('click');
 				markSectionError('#fundingSection');
 				
 			}

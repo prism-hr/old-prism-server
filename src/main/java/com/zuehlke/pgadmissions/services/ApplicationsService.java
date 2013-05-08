@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
@@ -149,7 +148,7 @@ public class ApplicationsService {
 
     public ApplicationActionsDefinition getActionsDefinition(RegisteredUser user, ApplicationForm application) {
         ApplicationActionsDefinition actions = new ApplicationActionsDefinition();
-        
+
         if (user.canSee(application)) {
             if (application.isUserAllowedToSeeAndEditAsAdministrator(user) || (user == application.getApplicant() && application.isModifiable())) {
                 actions.addAction("view", "View / Edit");
@@ -165,7 +164,7 @@ public class ApplicationsService {
                 actions.addAction("validate", "Validate");
             }
         }
-        
+
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.REVIEW)) {
             if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
@@ -181,8 +180,6 @@ public class ApplicationsService {
                 } else {
                     actions.addAction("validate", "Evaluate interview feedback");
                 }
-            } else {
-                // TODO display interview scheduling page and amend test
             }
         }
 
@@ -195,30 +192,38 @@ public class ApplicationsService {
             actions.addAction("review", "Add review");
             actions.setRequiresAttention(true);
         }
-        
+
+        if ((user.isInterviewerOfApplicationForm(application) || user == application.getApplicant()) && application.isInState(ApplicationFormStatus.INTERVIEW)
+                && application.getLatestInterview().isScheduling()) {
+            actions.addAction("interviewVote", "Vote for interview time");
+            actions.setRequiresAttention(true);
+        }
+
         if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW)
-                && application.getLatestInterview().getStage() == InterviewStage.SCHEDULED
-                && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+                && application.getLatestInterview().isScheduled() && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);
         }
-        
+
         if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable()
                 && !user.getRefereeForApplicationForm(application).hasResponded()) {
             actions.addAction("reference", "Add reference");
             actions.setRequiresAttention(true);
         }
-        
+
         if (user == application.getApplicant() && !application.isDecided() && !application.isWithdrawn()) {
             actions.addAction("withdraw", "Withdraw");
         }
-        
+
         if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart()) {
             actions.addAction("restartApproval", "Approve");
             actions.setRequiresAttention(true);
-        } 
-        
-        if (application.isInState(ApplicationFormStatus.APPROVAL) && !application.isPendingApprovalRestart() && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMINISTRATOR))) {
+        }
+
+        if (application.isInState(ApplicationFormStatus.APPROVAL)
+                && !application.isPendingApprovalRestart()
+                && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR) || user
+                        .isInRole(Authority.ADMINISTRATOR))) {
             actions.addAction("validate", "Approve");
             actions.setRequiresAttention(true);
         }
@@ -230,7 +235,7 @@ public class ApplicationsService {
                 actions.setRequiresAttention(true);
             }
         }
-        
+
         if (application.isInState(ApplicationFormStatus.APPROVAL) && user.hasAdminRightsOnApplication(application)) {
             actions.addAction("rejectApplication", "Reject Application");
         }

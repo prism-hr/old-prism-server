@@ -10,11 +10,12 @@
 
         <#assign actions = actionsDefinition.actions>
          
-        <select id="actionTypeSelect" class="actionType" name="app_[${applicationForm.applicationNumber}]">
+        <select id="actionTypeSelect" class="actionType" name="app_[${applicationForm.applicationNumber}]" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">
             <option>Actions</option>
             <#list actions?keys as actionName>
                 <option value="${actionName}">${actions[actionName]}</option>
             </#list>
+            <option value="emailApplicant">Email Applicant</option>
         </select>
     
    </div>

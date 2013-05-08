@@ -37,13 +37,13 @@ public class InterviewService {
     }
 
     @Autowired
-    public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO,
-            EventFactory eventFactory, InterviewerDAO interviewerDAO, final MailSendingService mailService) {
+    public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
+            final MailSendingService mailService) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;
         this.interviewerDAO = interviewerDAO;
-		this.mailService = mailService;
+        this.mailService = mailService;
     }
 
     public Interview getInterviewById(Integer id) {
@@ -56,31 +56,32 @@ public class InterviewService {
 
     public void moveApplicationToInterview(final Interview interview, ApplicationForm applicationForm) {
         interview.setApplication(applicationForm);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(interview.getInterviewDueDate());
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        applicationForm.setDueDate(calendar.getTime());
+        if (interview.getInterviewDueDate() != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(interview.getInterviewDueDate());
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            applicationForm.setDueDate(calendar.getTime());
+        }
         interviewDAO.save(interview);
         CollectionUtils.forAllDo(interview.getInterviewers(), new Closure() {
-            
+
             @Override
             public void execute(Object input) {
-                   Interviewer interviewer = (Interviewer)input;
-                   interviewer.setInterview(interview);
-                   interviewerDAO.save(interviewer);
+                Interviewer interviewer = (Interviewer) input;
+                interviewer.setInterview(interview);
+                interviewerDAO.save(interviewer);
             }
         });
         applicationForm.setLatestInterview(interview);
-        boolean sendReferenceRequest = applicationForm.getStatus()==ApplicationFormStatus.VALIDATION;
+        boolean sendReferenceRequest = applicationForm.getStatus() == ApplicationFormStatus.VALIDATION;
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
-        //Check if the interview administration was delegated
-        if (applicationForm.getApplicationAdministrator()!=null) {
-        	//We remove the notification record so that the delegate does not receive reminders any longer
-        	applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST,
-        	        NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
-        	applicationForm.setApplicationAdministrator(null);
-        	applicationForm.setSuppressStateChangeNotifications(false);
+        // Check if the interview administration was delegated
+        if (applicationForm.getApplicationAdministrator() != null) {
+            // We remove the notification record so that the delegate does not receive reminders any longer
+            applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+            applicationForm.setApplicationAdministrator(null);
+            applicationForm.setSuppressStateChangeNotifications(false);
         }
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
@@ -92,7 +93,7 @@ public class InterviewService {
             log.warn("{}", e);
         }
         applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
-        
+
         applicationFormDAO.save(applicationForm);
     }
 

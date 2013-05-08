@@ -252,5 +252,15 @@ public class Interview implements Serializable {
     public boolean isScheduling() {
         return getStage() == InterviewStage.SCHEDULING;
     }
+    
+    public boolean isParticipant(RegisteredUser user){
+        boolean isParticipant = false;
+        for(InterviewParticipant participant : getParticipants()){
+            if(participant.getUser().getId().equals(user.getId())){
+                isParticipant = true;
+            }
+        }
+        return isParticipant;
+    }
 
 }

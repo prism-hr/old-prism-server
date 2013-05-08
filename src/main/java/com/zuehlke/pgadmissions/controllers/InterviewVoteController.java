@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
@@ -51,7 +54,7 @@ public class InterviewVoteController {
             throw new MissingApplicationFormException(applicationId);
         }
         Interview interview = applicationForm.getLatestInterview();
-        if (interview.isParticipant(currentUser) || !currentUser.canSee(applicationForm)) {
+        if (!interview.isParticipant(currentUser) || !currentUser.canSee(applicationForm)) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         if (applicationForm.isDecided() || applicationForm.isWithdrawn()) {

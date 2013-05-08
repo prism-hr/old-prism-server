@@ -225,8 +225,8 @@ public class ApplicationsService {
 
         if (application.isInState(ApplicationFormStatus.APPROVAL)
                 && !application.isPendingApprovalRestart()
-                && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR) || user
-                        .isInRole(Authority.ADMINISTRATOR))) {
+                && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram())
+                        || user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMINISTRATOR))) {
             actions.addAction("validate", "Approve");
             actions.setRequiresAttention(true);
         }
@@ -239,8 +239,8 @@ public class ApplicationsService {
             }
         }
 
-        if (application.isInState(ApplicationFormStatus.APPROVAL) && user.hasAdminRightsOnApplication(application)) {
-            actions.addAction("rejectApplication", "Reject Application");
+        if (application.isInState(ApplicationFormStatus.APPROVAL) && user.hasAdminRightsOnApplication(application) && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram())) {
+            actions.addAction("rejectApplication", "Reject");
         }
 
         return actions;

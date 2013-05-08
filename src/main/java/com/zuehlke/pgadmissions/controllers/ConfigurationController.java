@@ -200,7 +200,11 @@ public class ConfigurationController {
 	                @RequestParam String scoringContent, HttpServletResponse response) {
 		Map<String, String> errors = validateScoringDefinition(programCode, scoringContent);
 		if (errors.isEmpty()) {
-			programsService.applyScoringDefinition(programCode, scoringStage, scoringContent);
+			if (scoringContent.equals("")) {
+				programsService.removeScoringDefinition(programCode, scoringStage);
+			} else {
+				programsService.applyScoringDefinition(programCode, scoringStage, scoringContent);
+			}
 		}
 		return errors;
 	}

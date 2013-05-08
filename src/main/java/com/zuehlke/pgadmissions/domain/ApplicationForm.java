@@ -664,16 +664,29 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public List<RegisteredUser> getReviewersWillingToInterview() {
-        List<RegisteredUser> usersWillingToInterview = new ArrayList<RegisteredUser>();
+        ArrayList<RegisteredUser> usersWillingToInterview = new ArrayList<RegisteredUser>();
         for (Comment comment : applicationComments) {
             if (comment instanceof ReviewComment) {
                 ReviewComment reviewComment = (ReviewComment) comment;
-                if (reviewComment.getWillingToInterview() != null && reviewComment.getWillingToInterview()) {
+                if (BooleanUtils.isTrue(reviewComment.getWillingToInterview())) {
                     usersWillingToInterview.add(reviewComment.getUser());
                 }
             }
         }
         return usersWillingToInterview;
+    }
+    
+    public List<RegisteredUser> getReviewersWillingToWorkWithApplicant() {
+        ArrayList<RegisteredUser> usersWillingToWorkWithApplicant = new ArrayList<RegisteredUser>();
+        for (Comment comment : applicationComments) {
+            if (comment instanceof ReviewComment) {
+                ReviewComment reviewComment = (ReviewComment) comment;
+                if (BooleanUtils.isTrue(reviewComment.getWillingToWorkWithApplicant())) {
+                    usersWillingToWorkWithApplicant.add(reviewComment.getUser());
+                }
+            }
+        }
+        return usersWillingToWorkWithApplicant;
     }
 
     @Override
@@ -724,7 +737,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public List<StateChangeEvent> getStateChangeEventsSortedByDate() {
-        List<StateChangeEvent> stateChangeEvents = new ArrayList<StateChangeEvent>();
+        ArrayList<StateChangeEvent> stateChangeEvents = new ArrayList<StateChangeEvent>();
         Comparator<StateChangeEvent> dateComparator = new Comparator<StateChangeEvent>() {
             @Override
             public int compare(StateChangeEvent event1, StateChangeEvent event2) {

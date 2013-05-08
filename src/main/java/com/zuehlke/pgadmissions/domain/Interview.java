@@ -249,5 +249,8 @@ public class Interview implements Serializable {
         return getStage() == InterviewStage.SCHEDULED;
     }
     
+    public boolean isScheduling() {
+        return getStage() == InterviewStage.SCHEDULING;
+    }
 
 }

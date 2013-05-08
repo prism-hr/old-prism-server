@@ -47,6 +47,9 @@ $(document).ready(function() {
             case 'interviewFeedback':
                 window.location.href = "/pgadmissions/interviewFeedback?applicationId="+ id;
                 break;
+            case 'interviewVote':
+            	window.location.href = "/pgadmissions/interviewVote?applicationId="+ id;
+            	break;
             case 'restartApproval':
                 window.location.href = "/pgadmissions/approval/moveToApproval?applicationId="+ id;
                 break;

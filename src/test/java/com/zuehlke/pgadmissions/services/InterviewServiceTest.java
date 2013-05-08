@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -71,7 +72,7 @@ public class InterviewServiceTest {
 	public void shouldSetDueDateOnInterviewUpdateFormAndSaveBoth() throws ParseException{
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
 		Interviewer interviewer = new InterviewerBuilder().build();
-		Interview interview = new InterviewBuilder().interviewers(interviewer).dueDate(dateFormat.parse("01 04 2012")).id(1).build();
+		Interview interview = new InterviewBuilder().interviewers(interviewer).dueDate(dateFormat.parse("01 04 2012")).id(1).stage(InterviewStage.SCHEDULED).build();
 		Referee referee = new RefereeBuilder().build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
 		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_FEEDBACK_REMINDER).build());
@@ -83,15 +84,15 @@ public class InterviewServiceTest {
 		mailServiceMock.sendInterviewConfirmationToApplicant(applicationForm);
 		mailServiceMock.sendInterviewConfirmationToInterviewers(asList(interviewer));
 		mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
+
 		EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
-		
 		interviewService.moveApplicationToInterview(interview, applicationForm);
+		EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
 		
 		assertEquals(dateFormat.parse("02 04 2012"), applicationForm.getDueDate());
 		assertEquals(applicationForm, interview.getApplication());
 		assertEquals(interview, applicationForm.getLatestInterview());
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
-		EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));

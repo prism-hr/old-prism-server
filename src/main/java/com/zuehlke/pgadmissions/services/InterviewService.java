@@ -1,20 +1,21 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Calendar;
+import java.util.List;
 
-import org.apache.commons.collections.Closure;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.InterviewDAO;
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -63,19 +64,17 @@ public class InterviewService {
             applicationForm.setDueDate(calendar.getTime());
         }
         interviewDAO.save(interview);
-        CollectionUtils.forAllDo(interview.getInterviewers(), new Closure() {
 
-            @Override
-            public void execute(Object input) {
-                Interviewer interviewer = (Interviewer) input;
-                interviewer.setInterview(interview);
-                interviewerDAO.save(interviewer);
-            }
-        });
+        for (Interviewer interviewer : interview.getInterviewers()) {
+            interviewer.setInterview(interview);
+            interviewerDAO.save(interviewer);
+        }
+
         applicationForm.setLatestInterview(interview);
-        boolean sendReferenceRequest = applicationForm.getStatus() == ApplicationFormStatus.VALIDATION;
+        ApplicationFormStatus previousStatus = applicationForm.getStatus();
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
+
         // Check if the interview administration was delegated
         if (applicationForm.getApplicationAdministrator() != null) {
             // We remove the notification record so that the delegate does not receive reminders any longer
@@ -83,18 +82,38 @@ public class InterviewService {
             applicationForm.setApplicationAdministrator(null);
             applicationForm.setSuppressStateChangeNotifications(false);
         }
+        applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
+
+        applicationFormDAO.save(applicationForm);
+
+        if (interview.isScheduled()) {
+            sendConfirmationEmails(interview, applicationForm, previousStatus);
+        } else if(interview.isScheduling()){
+            List<InterviewParticipant> participants = Lists.newLinkedList();
+            InterviewParticipant applicant = new InterviewParticipant();
+            applicant.setUser(applicationForm.getApplicant());
+            participants.add(applicant);
+
+            for(Interviewer interviewer : interview.getInterviewers()){
+                InterviewParticipant participant = new InterviewParticipant();
+                participant.setUser(interviewer.getUser());
+                participants.add(participant);
+            }
+            interview.getParticipants().addAll(participants);
+        }
+
+    }
+
+    private void sendConfirmationEmails(final Interview interview, ApplicationForm applicationForm, ApplicationFormStatus previousStatus) {
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
             mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
-            if (sendReferenceRequest) {
+            if (previousStatus == ApplicationFormStatus.VALIDATION) {
                 mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
             }
         } catch (Exception e) {
             log.warn("{}", e);
         }
-        applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
-
-        applicationFormDAO.save(applicationForm);
     }
 
     public void addInterviewerInPreviousInterview(ApplicationForm applicationForm, RegisteredUser newUser) {

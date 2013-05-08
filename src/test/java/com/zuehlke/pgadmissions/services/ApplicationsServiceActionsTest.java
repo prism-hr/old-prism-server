@@ -212,8 +212,17 @@ public class ApplicationsServiceActionsTest {
     @Test
     public void shouldBeAbleToRejectApplicationIfAdministratorAndInApproval() {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, ApplicationFormStatus.APPROVAL);
+        EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, programMock)).andReturn(true).anyTimes();
         ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "rejectApplication" }, new String[] { "Comment", "Confirm supervision", "Reject Application" });
+        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "rejectApplication" }, new String[] { "Comment", "Confirm supervision", "Reject" });
+    }
+    
+    @Test
+    public void shouldNotBeAbleToRejectApplicationIfAdministratorAndInApprovalAndApproverInProgram() {
+        configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, ApplicationFormStatus.APPROVAL);
+        EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, programMock)).andReturn(true).anyTimes();
+        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "rejectApplication" }, new String[] { "Comment", "Confirm supervision", "Reject" });
     }
 
     private ApplicationActionsDefinition executeGetActionsDefinitions() {

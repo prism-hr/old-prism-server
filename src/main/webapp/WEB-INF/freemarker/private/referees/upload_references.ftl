@@ -130,14 +130,7 @@
                     <div class="alert" >
                   </#if>
                 </#if>
-                
-                
-                <@spring.bind "comment.confirmNextStage" />
-			    <#if spring.status.errorMessages?size &gt; 0>
-		     		<div class="alert alert-error" >
-			    <#else>
-			        <div class="alert" >
-			    </#if>
+
 					<div class="row">
 						<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
 							Please confirm that you are satisfied with your comments.				

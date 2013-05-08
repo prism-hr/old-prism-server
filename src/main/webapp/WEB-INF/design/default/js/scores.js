@@ -109,15 +109,17 @@ function rating(type, item){
 	    
 	    $('.rating-list').each(function() {
 	        cvalue = $(this).parent().find('.rating-input').val();
-    		if (cvalue == 0) {
-    		    $(this).find('li:first-child').find('i').addClass('hover'); 
-    	    } else {
-    	        numb = parseInt(cvalue)+1;
-        	    for (var i = 1; i < numb; i++) {
-                     var it = 'li:nth-child('+ (i+1) +')';
-                     $(this).find(it).find('i').removeClass('icon-star-empty').addClass('icon-star hover'); 
-                }
-    	    }
+			if (cvalue != ''){
+				if (cvalue == 0) {
+					$(this).find('li:first-child').find('i').addClass('hover'); 
+				} else {
+					numb = parseInt(cvalue)+1;
+					for (var i = 1; i < numb; i++) {
+						 var it = 'li:nth-child('+ (i+1) +')';
+						 $(this).find(it).find('i').removeClass('icon-star-empty').addClass('icon-star hover'); 
+					}
+				}
+			}
         });
 	}
 }

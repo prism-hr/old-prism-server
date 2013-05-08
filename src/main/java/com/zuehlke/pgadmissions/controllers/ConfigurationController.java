@@ -60,7 +60,6 @@ import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
-import com.zuehlke.pgadmissions.validators.ScoresValidator;
 
 @Controller
 @RequestMapping("/configuration")
@@ -101,8 +100,7 @@ public class ConfigurationController {
 	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor, PersonPropertyEditor registryPropertyEditor,
 	                UserService userService, ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService,
 	                PorticoQueueService queueService, ProgramsService programsService, ScoringDefinitionParser scoringDefinitionParser,
-	                ScoreFactory scoreFactory, ScoresPropertyEditor scoresPropertyEditor,
-	                FeedbackCommentValidator dummyCommentValidator) {
+	                ScoreFactory scoreFactory, ScoresPropertyEditor scoresPropertyEditor, FeedbackCommentValidator dummyCommentValidator) {
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
 		this.registryPropertyEditor = registryPropertyEditor;
 		this.userService = userService;
@@ -361,10 +359,12 @@ public class ConfigurationController {
 			return Collections.singletonMap("programCode", "Given program code is not valid");
 		}
 
-		try {
-			scoringDefinitionParser.parseScoringDefinition(scoringContent);
-		} catch (ScoringDefinitionParseException e) {
-			return Collections.singletonMap("scoringContent", e.getLocalizedMessage());
+		if (scoringContent != "") {
+			try {
+				scoringDefinitionParser.parseScoringDefinition(scoringContent);
+			} catch (ScoringDefinitionParseException e) {
+				return Collections.singletonMap("scoringContent", e.getLocalizedMessage());
+			}
 		}
 		return Collections.emptyMap();
 	}

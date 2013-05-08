@@ -1,7 +1,7 @@
 <#assign notProvided = "Not provided">
     <div class="score-results">
         <#if comment.scores?size &gt; 0>
-        	<h4>Scoring</h4>
+        	<h4></h4>
         	
         	<#list comment.scores as score>
 	            <div <#if score_index + 1 &gt; 3> class="hide-score" style="display:none;"</#if>>

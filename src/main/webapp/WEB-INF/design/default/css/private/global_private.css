@@ -1562,7 +1562,7 @@ form#removeForm {
     width: 28px;
 }
 
-.score-results h4 { margin:20px 9px 5px; }
+.score-results h4 { padding:6px 9px 5px; border-top:6px solid white; margin:10px 0 0; }
 .score-results p { margin-bottom:12px !important; }
 .score-results b { display:block; margin-bottom:10px; }
 .score-results ul { margin-top:-24px !important; margin-bottom:-11px !important; }

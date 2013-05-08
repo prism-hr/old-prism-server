@@ -196,7 +196,7 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (interview.isParticipant(user) && application.isInState(ApplicationFormStatus.INTERVIEW)
+        if (interview != null && interview.isParticipant(user) && application.isInState(ApplicationFormStatus.INTERVIEW)
                 && interview.isScheduling()) {
             actions.addAction("interviewVote", "Vote for interview time");
             actions.setRequiresAttention(true);

@@ -1076,6 +1076,11 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 
 /* Fixes */
 .no-margin { margin:0 !important; }
+
+.buttons.no-bottom-margin {
+	margin-bottom: 0px !important;
+}
+
 #fake-submit { margin:10px; }
 
 #content {
@@ -1616,4 +1621,48 @@ form#removeForm {
 }
 .fileupload-new, .fileupload-new, .uneditable-input{
 	cursor: pointer !important;
+}
+
+/* Interviews */
+.interview-votes {
+	
+}
+
+.interview-votes .votes-summary {
+	font-weight:bold;
+}
+
+.interview-votes .table.timeslots td {
+	vertical-align:middle;
+}
+
+.interview-votes .timeslots-wrapper {
+	overflow:auto;
+}
+
+.interview-votes .table.timeslots th,
+.interview-votes .table.timeslots td {
+	min-width:50px;
+}
+
+.interview-votes .timeslot .icon-ok-sign,
+.interview-votes .timeslot .icon-question-sign,
+.interview-votes .timeslot .icon-remove-sign {
+	font-size:28px;
+}
+
+.interview-votes .timeslot .icon-remove-sign {
+	color:#C3272F;
+}
+
+.interview-votes .timeslot .icon-ok-sign {
+	color:#71BF46;
+}
+
+.interview-votes .timeslot .icon-question-sign {
+	color:gray;
+}
+
+.interview-votes .timeslot input[type=checkbox] {
+	margin-left:6px;
 }

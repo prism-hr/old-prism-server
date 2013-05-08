@@ -53,9 +53,36 @@
         <div class="content-box">
           <div class="content-box-inner"> <#include "/private/common/parts/application_info.ftl"/>
             <section class="form-rows">
-              <h2>VOTING TIME!!</h2>
-              <div>
-                <#assign interview = applicationForm.latestInterview>
+              <h2>Accept Interview Time Slot(s)</h2>
+              <#assign interview = applicationForm.latestInterview>
+              <div class="row-group">
+              	<div class="row" >
+				    <label class="plain-label" for="programInterviewers">Interview Location</label>
+				    <div class="field">
+				    	<#if interview.locationURL?has_content>
+							<a style="text-decoration:none;" href="${interview.locationURL}" title="Get Directions">
+				            	<img border="0" style="border: none;" width="133" height="36" alt="Get Directions" src="${host}/pgadmissions/design/default/images/email/get_directions.png" />
+				          	</a>
+				        <#else>
+				        	<i>Not provided</i>
+				    	</#if>
+				    </div>
+				</div>
+				<#if user == applicationForm.applicant>
+					<div class="row">
+					    <label class="plain-label" for="programInterviewers">Interview Instructions for Candidate</label>
+					    <div class="field">
+					    	${interview.furtherDetails}
+					    </div>
+					</div>
+				<#else>
+					<div class="row">
+					    <label class="plain-label" for="programInterviewers">Interview Instructions for Interviewer</label>
+					    <div class="field">
+					    	${interview.furtherInterviewerDetails}
+					    </div>
+					</div>
+				</#if>
               </div>
             </section>
         </div>

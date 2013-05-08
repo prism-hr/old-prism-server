@@ -21,7 +21,7 @@
 	                        <span/>
 	                        <b>${score.question}</b>
 	                        <#if score.dateResponse??>
-	                            ${score.dateResponse}
+	                            ${score.dateResponse?string('dd MMM yy')}
 	                            <#else>
 	                                <i>${notProvided}</i>
 	                            </#if>

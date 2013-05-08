@@ -139,27 +139,26 @@
 	                  <h3>Programme Specific Questions</h3>
 	                  <#include "/private/staff/scores.ftl"/>
 	                </div>
-               		<@spring.bind "comment.confirmNextStage" />
-      				    <#if spring.status.errorMessages?size &gt; 0>
-      			     		<div class="alert alert-error" >
-      				    <#else>
-				            <div class="alert" >
-				          </#if>
-			          </#if>
-			    
-			         <div class="alert">
-					<div class="row">
-						<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
-							Please confirm that you are satisfied with your comments.				
-						</label>
-						<div class="terms-field">
-							<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+	          	</#if>
+	          	
+           		<@spring.bind "comment.confirmNextStage" />
+			    <#if spring.status.errorMessages?size &gt; 0>
+		     		<div class="alert alert-error" >
+			    <#else>
+		            <div class="alert" >
+	          	</#if>
+						<div class="row">
+							<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
+								Please confirm that you are satisfied with your comments.				
+							</label>
+							<div class="terms-field">
+								<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+							</div>
+							<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
 						</div>
-						<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/></div>
 					</div>
-				</div>
                 <div class="buttons">
-                  <button class="btn btn-primary" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>
+              		<button class="btn btn-primary" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>
                 </div>
                 </form>
               </div>

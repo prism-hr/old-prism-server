@@ -56,10 +56,14 @@
       <input type="hidden" id="appList" name="appList" />
       <div class="content-box">
         <div class="content-box-inner"> <#if alertDefinition??>
-          <div class="alert"> <#if alertDefinition.type??>
+          
+          <#if alertDefinition.type??>
             <#if alertDefinition.type.name() == "INFO"> 
-            <i class="icon-info-sign"></i> <#elseif alertDefinition.type.name() == "WARNING"> 
-            <i class="icon-warning-sign"></i> </#if>
+            <div class="alert alert-info"> 
+            	<i class="icon-info-sign"></i>
+            <#elseif alertDefinition.type.name() == "WARNING">
+            <div class="alert">  
+            	<i class="icon-warning-sign"></i> </#if>
             </#if>
             <#if alertDefinition.title??> 
             <strong>${alertDefinition.title}</strong> </#if>

@@ -1,0 +1,136 @@
+
+h1 { font-size: 14pt; margin-bottom: 1em; }
+
+div.row { margin-bottom: 10px; overflow: hidden; }
+
+form label { display: block; margin-bottom: 0.5em; }
+form input[type=text], form select, form textarea { width: 300px; }
+form select[multiple] { padding: 3px; width: 100% }
+
+div.programme label { float: left; width: 150px; }
+div.programme select { width: 300px; }
+
+/*table.data tbody td { background: #EEE; padding: 4px; }*/
+
+div.left-column { float: left; width: 380px; }
+div.right-column { float: left; text-align: left; width: 380px; }
+
+div.left-column label { width: 90px !important; }
+div.left-column .field { margin-left: 100px !important; }
+
+.pending{ color: #999999;}
+
+/* Table of existing users. */
+#existingUsers { padding: 0; position: relative; background: white; border-radius: 4px;  }
+#existingUsers td { vertical-align: middle;}
+section.form-rows #existingUsers { /*margin-bottom: 10px;*/ }
+#existingUsers .arrow { display: inline-block; height: 20px; width: 20px; }
+.scrollparent table td{
+	padding: 1px 4px !important;
+}
+/* User's roles as icons. */
+
+#existingUsers .role-icons span { /*background: url(../../../images/icon_roles.png) no-repeat; */ margin-top: 5px; border:1px solid #939598; display: inline-block; height: 21px; margin-right: 4px; position: relative; width: 22px; }
+#existingUsers .role-icons span:before {
+font-family:FontAwesome;font-weight:normal;
+  font-style:normal;
+  text-decoration:inherit;-webkit-font-smoothing:antialiased;
+  display:inline-block;
+  width:auto;
+  height:auto;
+  line-height:normal;
+  vertical-align:baseline;
+  background-image:none;
+  background-position:0 0;
+  background-repeat:repeat;
+  margin-top:0;
+  text-decoration: none;
+  text-align: center;
+  width: 23px;
+  -webkit-font-smoothing: antialiased;
+  cursor:default;
+  color: #939598;
+  position: absolute;
+}
+
+#existingUsers .role-icons .is-viewer:before {
+  cursor: default;
+  content:"\f06e";
+  font-size:20px;
+}
+#existingUsers .role-icons .is-supervisor:before {
+  cursor: default;
+  content:"\f007";
+  font-size:20px;
+}
+#existingUsers .role-icons .is-admin:before {
+  cursor: default;
+  content:"\f0ad";
+  font-size:19px;
+}
+#existingUsers .role-icons .is-interviewer:before {
+  cursor: default;
+  content:"\f03d";
+  font-size:17px;
+  top: 2px;
+}
+#existingUsers .role-icons .is-reviewer:before {
+  cursor: default;
+  content:"\f044";
+  font-size: 18px;
+  left: 1px;
+  top: 1px;
+}
+#existingUsers .role-icons .is-approver:before {
+  cursor: default;
+  content:"\f005";
+  font-size:20px;
+}
+
+#existingUsers .role-icons.viewer .is-viewer,
+#existingUsers .role-icons.supervisor .is-supervisor,
+#existingUsers .role-icons.administrator .is-admin,
+#existingUsers .role-icons.interviewer .is-interviewer,
+#existingUsers .role-icons.reviewer .is-reviewer,
+#existingUsers .role-icons.approver .is-approver {
+	border-color: black;
+}
+#existingUsers .role-icons.viewer .is-viewer:before,
+#existingUsers .role-icons.supervisor .is-supervisor:before,
+#existingUsers .role-icons.administrator .is-admin:before,
+#existingUsers .role-icons.interviewer .is-interviewer:before,
+#existingUsers .role-icons.reviewer .is-reviewer:before,
+#existingUsers .role-icons.approver .is-approver:before {
+	color: black;
+}
+
+/*#existingUsers .role-icons .is-supervisor { background-position: -22px -21px; }
+#existingUsers .role-icons .is-admin { background-position: -44px -21px; }
+#existingUsers .role-icons .is-interviewer { background-position: -66px -21px; }
+#existingUsers .role-icons .is-reviewer { background-position: -88px -21px; }
+#existingUsers .role-icons .is-approver { background-position: -110px -21px; }
+
+#existingUsers .role-icons.viewer .is-viewer { background-position: 0 0; }
+#existingUsers .role-icons.supervisor .is-supervisor { background-position: -22px 0; }
+#existingUsers .role-icons.administrator .is-admin { background-position: -44px 0; }
+#existingUsers .role-icons.interviewer .is-interviewer { background-position: -66px 0; }
+#existingUsers .role-icons.reviewer .is-reviewer { background-position: -88px 0; }
+#existingUsers .role-icons.approver .is-approver { background-position: -110px 0; }*/
+
+/* Table with scrolling content and fixed header. */
+#existingUsers table { margin-bottom: 0; width: 100% }
+#existingUsers td.scrollparent { padding: 0; }
+#existingUsers .scroll { max-height: 148px; overflow: auto; } /* roughly five rows high. */
+#superadmins #existingUsers .scroll { max-height: 135px; } /* adjustment for missing edit/delete buttons. */
+#existingUsers .scroll table { border-collapse: collapse; width: 100%; }
+
+.arrow:before{
+  cursor: default;
+  content:"\f0a9";
+  color: #3A87AD;
+  font-size:23px;
+  display: inline;
+}
+.pending .arrow:before{
+  color: #A0A0A0;
+};

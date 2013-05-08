@@ -19,18 +19,27 @@
     <span class="hint" data-desc="<@spring.message 'assignSupervisor.defaultSupervisors'/>"></span>
     <div class="field">
       <select id="programSupervisors" class="list-select-from" class="max" multiple="multiple" size="${avaliableOptionsSize}">
+      <optgroup id="nominated" label="Applicant nominated supervisors">
+	      <#list nominatedSupervisors as supervisor> <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="nominated" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
+	      ${supervisor.firstName?html}
+	      ${supervisor.lastName?html}
+	      </option>
+	      </#list>
+      </optgroup>
       <optgroup id="default" label="Default supervisors">
-      <#list programmeSupervisors as supervisor> <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default"  <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
-      ${supervisor.firstName?html}
-      ${supervisor.lastName?html}
-      </option>
+      <#list programmeSupervisors as supervisor> 
+	      <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default"  <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
+	      ${supervisor.firstName?html}
+	      ${supervisor.lastName?html}
+	      </option>
       </#list>
       </optgroup>
       <optgroup id="previous" label="Previous supervisors">
-      <#list previousSupervisors as supervisor> <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
-      ${supervisor.firstName?html}
-      ${supervisor.lastName?html}
-      </option>
+      <#list previousSupervisors as supervisor> 
+	      <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
+	      ${supervisor.firstName?html}
+	      ${supervisor.lastName?html}
+	      </option>
       </#list>
       </optgroup>
       </select>

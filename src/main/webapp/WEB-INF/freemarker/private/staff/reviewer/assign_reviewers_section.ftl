@@ -13,9 +13,14 @@
 	<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
 	<div class="field">
 	  <select id="programReviewers" class="list-select-from" multiple="multiple" size="${avaliableOptionsSize}">
+	    <optgroup id="nominated" label="Applicant nominated supervisors">
+	      <#list nominatedSupervisors as reviewer>
+	      	<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="nominated" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+	      </#list>
+	    </optgroup>
 	    <optgroup id="default" label="Default reviewers">
 	      <#list programmeReviewers as reviewer>
-	      <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+	      	<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
 	      </#list>
 	    </optgroup>
 	    <optgroup id="previous" label="Previous reviewers">

@@ -81,6 +81,11 @@ public class ApplicationFormTransferService {
     }
     
     @Transactional(readOnly = true)
+    public List<Long> getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds() {
+        return applicationFormTransferDAO.getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds();
+    }
+    
+    @Transactional(readOnly = true)
     public ApplicationFormTransfer getById(final Long id) {
         return applicationFormTransferDAO.getById(id);
     }

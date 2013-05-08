@@ -2,8 +2,8 @@
 <#assign errorCode = RequestParameters.errorCode! />
 <#assign htmlEscape = true in spring>
 <#setting locale = "en_US"> <a name="documents-details"></a>
-<h2 id="documents-H2" class="empty open"> <span class="left"></span><span class="right"></span><span class="status"></span> Documents<em>*</em> </h2>
-<div>
+<h2 id="documents-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Documents<em>*</em> </h2>
+<div style="display:none;">
   <form>
   <#if errorCode?? && errorCode=="true">
     <div class="alert alert-error"> <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 

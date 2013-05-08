@@ -1,6 +1,6 @@
 <#assign errorCode = RequestParameters.errorCode! /> <#if applicationForm.qualifications?has_content> <#assign hasQualifications = true> <#else> <#assign hasQualifications = false> </#if> <#import "/spring.ftl" as spring /> <#setting locale = "en_US"> <a name="qualification-details"></a>
-<h2 id="qualifications-H2" class="empty open"> <span class="left"></span><span class="right"></span><span class="status"></span> Qualifications </h2>
-<div> <#if hasQualifications>
+<h2 id="qualifications-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Qualifications </h2>
+<div style="display:none;"> <#if hasQualifications>
   <table class="existing table table-striped table-condensed table-bordered table-hover">
     <colgroup>
     <col />

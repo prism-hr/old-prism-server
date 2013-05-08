@@ -139,13 +139,10 @@ $(document).ready(function(){
 				$('#additionalInformationSection').html(data);
 			
 				// Close the section only if there are no errors.
-				var errorCount = $('#additionalInformationSection .alert-error:visible').length;
-				if (errorCount != 0)
+				var errorCount = $('#additionalInformationSection .alert-error').length;
+				if (errorCount > 0)
 				{
 					$('#additional-H2').trigger('click');
-				}
-				else
-				{
 					markSectionError('#additionalInformationSection');
 				}
 			},

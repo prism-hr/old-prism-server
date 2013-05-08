@@ -244,12 +244,14 @@ function postRefereeData(message){
 		success:function(data) {
 				$('#referencesSection').html(data);
 				
-				var errorCount = $('#referencesSection .alert-error:visible').length;
+				var errorCount = $('#referencesSection .alert-error').length;
 				var referenceCount = $('#referencesSection table.existing tbody tr').length;				
 					
-				if (message == 'close' && errorCount == 0 && referenceCount >= 3)
+				if (message == 'close')
 				{
-					$('#referee-H2').trigger('click');
+					if (errorCount > 0 || referenceCount < 3) {
+						$('#referee-H2').trigger('click');
+					}
 				}
 				if(errorCount > 0){
 					markSectionError('#referencesSection');

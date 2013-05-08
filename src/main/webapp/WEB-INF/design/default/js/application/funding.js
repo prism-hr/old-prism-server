@@ -240,12 +240,13 @@ function postFundingData(message)
 		success: function(data)
 		{
 			$('#fundingSection').html(data);
-			var errorCount = $('#fundingSection .alert-error:visible').length;
-			if (message == 'close' && errorCount == 0)
+			var errorCount = $('#fundingSection .alert-error').length;
+			if (message == 'close')
 			{
-				// Close the section only if there are no errors.	
+				if (errorCount > 0) {
+				// open if any error	
 				$('#funding-H2').trigger('click');
-				
+				}
 			}
 			if(errorCount > 0){
 				markSectionError('#fundingSection');

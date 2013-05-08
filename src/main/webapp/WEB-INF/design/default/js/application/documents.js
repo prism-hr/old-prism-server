@@ -130,11 +130,10 @@ function postDocumentData(message)
 			if (message == 'close')
 			{
 				// Close the section only if there are no errors.
-				var errorCount = $('#documentSection .alert-error:visible').length;
-				if (errorCount == 0)
+				var errorCount = $('#documentSection .alert-error').length;
+				if (errorCount > 0)
 				{
 					$('#documents-H2').trigger('click');
-				}else{
 					markSectionError('#documentSection');
 				}
 			}

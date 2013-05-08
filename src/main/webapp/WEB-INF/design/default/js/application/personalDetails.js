@@ -69,6 +69,7 @@ $(document)
 							function() {
 								$('#ajaxloader').show();
 								loadPersonalDetails(true);
+								
 							});
 
 					// -------------------------------------------------------------------------------
@@ -688,12 +689,12 @@ function postPersonalDetailsData(message) {
 
 					if (message == 'close') {
 						// Close the section only if there are no errors.
-						var errorCount = $('#personalDetailsSection .alert-error:visible').length;
-						if (errorCount == 0) {
+						var errorCount = $('#personalDetailsSection div.alert-error').length;
+						
+						if (errorCount > 0) {
 							$('#personalDetails-H2').trigger('click');
-						} else {
 							markSectionError('#personalDetailsSection');
-						}
+						} 
 					}
 				},
 				complete : function() {

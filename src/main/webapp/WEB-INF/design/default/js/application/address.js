@@ -167,11 +167,10 @@ function postAddressData(message)
 			if (message == 'close')
 			{
 				// Close the section only if there are no errors.
-				var errorCount = $('#addressSection .alert-error:visible').length;
-				if (errorCount == 0)
+				var errorCount = $('#addressSection .alert-error').length;
+				if (errorCount > 0)
 				{
 					$('#address-H2').trigger('click');
-				}else{
 					markSectionError('#addressSection');
 				}
 			}

@@ -7,6 +7,8 @@ import java.util.TimeZone;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
+import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 
@@ -25,16 +27,11 @@ public class InterviewBuilder {
     private Boolean takenPlace;
     private InterviewStage stage = InterviewStage.INITIAL;
     private List<Interviewer> interviewers = new ArrayList<Interviewer>();
+    private List<InterviewParticipant> participants = new ArrayList<InterviewParticipant>();
+    private List<InterviewTimeslot> timeslots = new ArrayList<InterviewTimeslot>();
 
     public InterviewBuilder lastNotified(Date lastNotified) {
         this.lastNotified = lastNotified;
-        return this;
-    }
-
-    public InterviewBuilder interviewers(Interviewer... interviewers) {
-        for (Interviewer interviewer : interviewers) {
-            this.interviewers.add(interviewer);
-        }
         return this;
     }
 
@@ -68,12 +65,11 @@ public class InterviewBuilder {
         return this;
     }
 
-
     public InterviewBuilder timeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
         return this;
     }
-    
+
     public InterviewBuilder interviewTime(String interviewTime) {
         this.interviewTime = interviewTime;
         return this;
@@ -83,6 +79,7 @@ public class InterviewBuilder {
         this.stage = stage;
         return this;
     }
+
     public InterviewBuilder takenPlace(Boolean takenPlace) {
         this.takenPlace = takenPlace;
         return this;
@@ -90,6 +87,27 @@ public class InterviewBuilder {
 
     public InterviewBuilder id(Integer id) {
         this.id = id;
+        return this;
+    }
+
+    public InterviewBuilder interviewers(Interviewer... interviewers) {
+        for (Interviewer interviewer : interviewers) {
+            this.interviewers.add(interviewer);
+        }
+        return this;
+    }
+
+    public InterviewBuilder participants(InterviewParticipant... participants) {
+        for (InterviewParticipant participant : participants) {
+            this.participants.add(participant);
+        }
+        return this;
+    }
+
+    public InterviewBuilder timeslots(InterviewTimeslot... timeslots) {
+        for (InterviewTimeslot timeslot : timeslots) {
+            this.timeslots.add(timeslot);
+        }
         return this;
     }
 
@@ -104,10 +122,12 @@ public class InterviewBuilder {
         interview.setInterviewDueDate(dueDate);
         interview.setDuration(duration);
         interview.setTimeZone(timeZone);
-        interview.getInterviewers().addAll(interviewers);
         interview.setInterviewTime(interviewTime);
         interview.setStage(stage);
         interview.setTakenPlace(takenPlace);
+        interview.getInterviewers().addAll(interviewers);
+        interview.getParticipants().addAll(participants);
+        interview.getTimeslots().addAll(timeslots);
         return interview;
     }
 

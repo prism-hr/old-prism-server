@@ -106,12 +106,23 @@
                       </#list> </div>
                   </div>
                   <div class="row multi-line"> 
-                  <label id="supervise-lbl" class="plain-label">Would you like to interview the applicant with a view to working with them?<em>*</em></label> 
+                  <label id="supervise-lbl" class="plain-label">Would you like to interview the applicant?<em>*</em></label> 
                   <span class="hint" data-desc="<@spring.message 'review.interview'/>"></span>
                     <div class="field" id="field-wouldinterview">
                       <label><input type="radio" name="willingToInterview" value="true" id="willingRB_true" <#if comment.willingToInterviewSet && comment.willingToInterview> checked="checked"</#if> /> Yes</label>
                       <label><input type="radio" name="willingToInterview" value="false" id="willingRB_false" <#if comment.willingToInterviewSet && !comment.willingToInterview> checked="checked"</#if> /> No</label>
                       <@spring.bind "comment.willingToInterview" />
+                      <#list spring.status.errorMessages as error>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+                      </#list> </div>
+                  </div>
+                  <div class="row multi-line"> 
+                  <label id="supervise-work-lbl" class="plain-label">Would you like to supervise this applicant?<em>*</em></label> 
+                  <span class="hint" data-desc="<@spring.message 'review.willingToWork'/>"></span>
+                    <div class="field" id="field-wouldwork">
+                      <label><input type="radio" name="willingToWorkWithApplicant" value="true" id="willingWorkRB_true" <#if comment.willingToWorkWithApplicantSet && comment.willingToWorkWithApplicant> checked="checked"</#if> /> Yes</label>
+                      <label><input type="radio" name="willingToWorkWithApplicant" value="false" id="willingWorkRB_false" <#if comment.willingToWorkWithApplicantSet && !comment.willingToWorkWithApplicant> checked="checked"</#if> /> No</label>
+                      <@spring.bind "comment.willingToWorkWithApplicant" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
                       </#list> </div>

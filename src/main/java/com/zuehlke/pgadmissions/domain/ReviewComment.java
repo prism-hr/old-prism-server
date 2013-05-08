@@ -24,6 +24,9 @@ public class ReviewComment extends Comment {
 	@Column(name = "willing_to_interview")
 	private Boolean willingToInterview;
 	
+	@Column(name = "willing_to_work_with_applicant")
+	private Boolean willingToWorkWithApplicant;
+	
 	@Column(name="suitable_candidate")
 	private Boolean suitableCandidateForUcl;
 	
@@ -71,6 +74,18 @@ public class ReviewComment extends Comment {
 	public void setWillingToInterview(Boolean willingToInterview) {
 		this.willingToInterview = willingToInterview;
 	}
+	
+    public Boolean getWillingToWorkWithApplicant() {
+        return willingToWorkWithApplicant;
+    }
+
+    public void setWillingToWorkWithApplicant(final Boolean willingToWorkWithApplicant) {
+        this.willingToWorkWithApplicant = willingToWorkWithApplicant;
+    }
+    
+    public boolean isWillingToWorkWithApplicantSet() {
+        return willingToWorkWithApplicant != null;
+    }
 	
 	public boolean isSuitableCandidateSet() {
 		return suitableCandidateForUcl != null;

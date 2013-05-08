@@ -1,10 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
-
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -13,24 +9,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Score;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
-import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -74,6 +61,16 @@ public class FeedbackCommentValidatorTest {
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToInterview").getCode());
     }
 
+    @Test
+    public void shouldRejectIfNotDeclinedAndWillingToWorkWithApplicantIsEmpty() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToWorkWithApplicant");
+        reviewComment.setWillingToWorkWithApplicant(null);
+        reviewComment.setConfirmNextStage(true);
+        feedbackCommentValidator.validate(reviewComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToWorkWithApplicant").getCode());
+    }
+    
     @Test
     public void shouldRejectIfNotDeclinedAndSuitableCandidateForUclIsEmpty() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "suitableCandidateForUcl");
@@ -241,10 +238,8 @@ public class FeedbackCommentValidatorTest {
 
     @Before
     public void setup() {
-        reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false)
-                .willingToInterview(true).decline(false).build();
-        interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false)
-                .willingToSupervise(true).decline(false).build();
+        reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false).willingToInterview(true).willingToWorkWithApplicant(false).decline(false).build();
+        interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervise(true).decline(false).build();
         referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).build();
 
         feedbackCommentValidator = new FeedbackCommentValidator();

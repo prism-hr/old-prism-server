@@ -22,7 +22,8 @@ public class FeedbackCommentValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(ReviewComment.class) || clazz.isAssignableFrom(InterviewComment.class) || clazz.isAssignableFrom(ReferenceComment.class) || clazz.isAssignableFrom(Comment.class);
+        return clazz.isAssignableFrom(ReviewComment.class) || clazz.isAssignableFrom(InterviewComment.class)
+                || clazz.isAssignableFrom(ReferenceComment.class) || clazz.isAssignableFrom(Comment.class);
     }
 
     @Override
@@ -39,12 +40,14 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 if (comment.getWillingToInterview() == null) {
                     errors.rejectValue("willingToInterview", EMPTY_DROPDOWN_ERROR_MESSAGE);
                 }
+                if (comment.getWillingToWorkWithApplicant() == null) {
+                    errors.rejectValue("willingToWorkWithApplicant", EMPTY_DROPDOWN_ERROR_MESSAGE);
+                }
                 if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
                     errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
                 }
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
-                }
-
+            }
         } else if (target instanceof InterviewComment) {
             InterviewComment comment = (InterviewComment) target;
             if (!comment.isDecline()) {
@@ -60,14 +63,13 @@ public class FeedbackCommentValidator extends AbstractValidator {
                 if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
                     errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
                 }
-				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
-                }
+                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
+            }
         } else if (target instanceof ReferenceComment) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", EMPTY_DROPDOWN_ERROR_MESSAGE);
-            
-            
+
             if (BooleanUtils.isNotTrue(((Comment) target).getConfirmNextStage())) {
                 errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
             }
@@ -84,7 +86,7 @@ public class FeedbackCommentValidator extends AbstractValidator {
                     errors.popNestedPath();
                 }
             }
-		}
-	}
+        }
+    }
 
 }

@@ -300,7 +300,7 @@ public class ApplicationFormTest {
     }
 
     @Test
-    public void shouldReturnUsersWilingTointerview() throws ParseException {
+    public void shouldReturnUsersWilingToInterview() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
         RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
@@ -319,6 +319,28 @@ public class ApplicationFormTest {
         List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
         assertEquals(2, users.size());
     }
+    
+    @Test
+    public void shouldReturnUsersWilingToWorkWithApplicant() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
+
+        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
+        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
+        ReviewComment review1 = new ReviewCommentBuilder().willingToWorkWithApplicant(true).willingToInterview(true).id(10).user(reviewerUserTwo).build();
+        ReviewComment review2 = new ReviewCommentBuilder().willingToWorkWithApplicant(false).willingToInterview(false).id(11).user(reviewerUserTwo).build();
+        ReviewComment review3 = new ReviewCommentBuilder().willingToWorkWithApplicant(true).willingToInterview(true).id(12).user(reviewerUserOne).build();
+        InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).build();
+        InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
+                .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1)
+                .build();
+
+        List<RegisteredUser> users = applicationForm.getReviewersWillingToWorkWithApplicant();
+        assertEquals(2, users.size());
+    }    
 
     @Test
     public void shouldReturnEmptyListIfNoUsersWillingToInterview() throws ParseException {
@@ -335,6 +357,22 @@ public class ApplicationFormTest {
         List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
         assertEquals(Collections.EMPTY_LIST, users);
     }
+    
+    @Test
+    public void shouldReturnEmptyListIfNoUsersWillingToWorkWithApplicant() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
+
+        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
+        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
+        ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review2).build();
+
+        List<RegisteredUser> users = applicationForm.getReviewersWillingToWorkWithApplicant();
+        assertEquals(Collections.EMPTY_LIST, users);
+    }    
 
     @Test
     public void shouldReturnValidationifCurretnStateFirstReviewRound() {

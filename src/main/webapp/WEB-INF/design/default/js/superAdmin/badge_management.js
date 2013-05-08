@@ -29,7 +29,7 @@ $(document).ready(function() {
     			initialiseDatepicker();
     			initialiseAutocomplete();
             },
-            completed: function() {
+            complete: function() {
 				
             }
         });
@@ -52,7 +52,7 @@ $(document).ready(function() {
 	        	selectedDates = [];
 	            selectedDates = jQuery.parseJSON(data);
 	        },
-	        completed: function() {
+	        complete: function() {
 	        }
 	    });
     });

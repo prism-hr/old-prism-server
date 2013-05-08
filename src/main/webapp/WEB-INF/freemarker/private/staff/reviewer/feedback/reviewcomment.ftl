@@ -147,6 +147,7 @@
 				          </#if>
 			          </#if>
 			    
+			         <div class="alert">
 					<div class="row">
 						<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
 							Please confirm that you are satisfied with your comments.				
@@ -154,7 +155,7 @@
 						<div class="terms-field">
 							<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
 						</div>
-						<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
+						<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/></div>
 					</div>
 				</div>
                 <div class="buttons">

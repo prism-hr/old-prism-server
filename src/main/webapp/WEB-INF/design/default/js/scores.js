@@ -109,7 +109,6 @@ function rating(type, item){
 	    
 	    $('.rating-list').each(function() {
 	        cvalue = $(this).parent().find('.rating-input').val();
-			debugger;
 			if (cvalue != ''){
 				if (cvalue == 0) {
 					$(this).find('li:first-child').find('i').addClass('hover'); 

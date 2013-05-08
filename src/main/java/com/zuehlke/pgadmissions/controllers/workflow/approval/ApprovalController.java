@@ -33,8 +33,10 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
@@ -203,28 +205,42 @@ public class ApprovalController {
 		return applicationsService.getActionsDefinition(getUser(), application);
 	}
 
+	@ModelAttribute("nominatedSupervisors")
+	public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
+		ArrayList<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+		if (latestApprovalRound == null) {
+			List<SuggestedSupervisor> suggestedSupervisors = getApplicationForm(applicationId).getProgrammeDetails().getSuggestedSupervisors();
+			for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
+				nominatedSupervisors.add(findOrCreateRegisterUserFromSuggestedSupervisorForForm(suggestedSupervisor, applicationForm));
+			}
+		}
+		return nominatedSupervisors;
+	}
+
 	@ModelAttribute("programmeSupervisors")
 	public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId) {
-		return getApplicationForm(applicationId).getProgram().getSupervisors();
+		List<RegisteredUser> programmeSupervisors = getApplicationForm(applicationId).getProgram().getSupervisors();
+		programmeSupervisors.removeAll(getNominatedSupervisors(applicationId));
+		return programmeSupervisors;
 	}
 
 	@ModelAttribute("previousSupervisors")
 	public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
 		List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		List<RegisteredUser> previousSupervisorsOfProgram = userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram());
-
-		for (RegisteredUser registeredUser : previousSupervisorsOfProgram) {
-			if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors())) {
-				availablePreviousSupervisors.add(registeredUser);
-			}
-		}
+		availablePreviousSupervisors.addAll(userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram()));
+		
 		List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
 		for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
 			if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors()) && !listContainsId(registeredUser, availablePreviousSupervisors)) {
 				availablePreviousSupervisors.add(registeredUser);
 			}
 		}
+		
+		availablePreviousSupervisors.removeAll(getNominatedSupervisors(applicationId));
+		availablePreviousSupervisors.removeAll(getProgrammeSupervisors(applicationId));
 		return availablePreviousSupervisors;
 	}
 
@@ -426,6 +442,16 @@ public class ApprovalController {
 				score.setOriginalQuestion(questions.get(i));
 			}
 		}
+	}
+
+	private RegisteredUser findOrCreateRegisterUserFromSuggestedSupervisorForForm(SuggestedSupervisor suggestedSupervisor, ApplicationForm applicationForm) {
+		String supervisorEmail = suggestedSupervisor.getEmail();
+		RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
+		if (possibleUser == null) {
+			possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
+			                Authority.SUPERVISOR, DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm);
+		}
+		return possibleUser;
 	}
 
 	public List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {

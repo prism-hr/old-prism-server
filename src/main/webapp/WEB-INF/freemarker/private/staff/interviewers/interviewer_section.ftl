@@ -16,6 +16,14 @@
       <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}">
          -->
         <select id="programInterviewers" class="list-select-from" multiple="multiple" size="8">
+        <optgroup id="nominated" label="Applicant nominated supervisors"> 
+            <#list nominatedSupervisors as interviewer> 
+                <option value="${encrypter.encrypt(interviewer.id)}" category="nominated" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
+                ${interviewer.firstName?html}
+                ${interviewer.lastName?html}
+                </option>
+            </#list>
+        </optgroup>
         <optgroup id="default" label="Default interviewers"> 
             <#list programmeInterviewers as interviewer> 
                 <option value="${encrypter.encrypt(interviewer.id)}" category="default" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
@@ -25,7 +33,7 @@
             </#list> 
         </optgroup>
         <optgroup id="previous" label="Previous interviewers"> 
-            <#list previousInterviewers as interviewer> 
+            <#list previousInterviewers as interviewer>
                 <option value="${encrypter.encrypt(interviewer.id)}" category="previous" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
                 ${interviewer.firstName?html}
                 ${interviewer.lastName?html}

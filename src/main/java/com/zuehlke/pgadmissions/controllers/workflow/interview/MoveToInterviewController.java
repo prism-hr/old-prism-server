@@ -22,6 +22,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -93,30 +95,38 @@ public class MoveToInterviewController {
         return applicationsService.getActionsDefinition(getUser(), application);
     }
 
+    @ModelAttribute("nominatedSupervisors")
+    public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
+		List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		if (applicationForm.getLatestInterview() == null) {
+			nominatedSupervisors.addAll(getOrCreateRegisteredUsersForForm(applicationForm));
+		}
+		return nominatedSupervisors;
+    }
+
     @ModelAttribute("programmeInterviewers")
     public List<RegisteredUser> getProgrammeInterviewers(@RequestParam String applicationId) {
-        return getApplicationForm(applicationId).getProgram().getInterviewers();
+		List<RegisteredUser> programmeInterviewers = getApplicationForm(applicationId).getProgram().getInterviewers();
+		List<RegisteredUser> nominatedSupervisors = getNominatedSupervisors(applicationId);
+		programmeInterviewers.removeAll(nominatedSupervisors);
+		return programmeInterviewers;
     }
 
     @ModelAttribute("previousInterviewers")
     public List<RegisteredUser> getPreviousInterviewersAndReviewersWillingToInterview(@RequestParam String applicationId) {
-        List<RegisteredUser> availablePreviousInterviewers = new ArrayList<RegisteredUser>();
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         List<RegisteredUser> previousInterviewersOfProgram = userService.getAllPreviousInterviewersOfProgram(applicationForm.getProgram());
 
-        for (RegisteredUser registeredUser : previousInterviewersOfProgram) {
-            if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers())) {
-                availablePreviousInterviewers.add(registeredUser);
-            }
-        }
         List<RegisteredUser> reviewersWillingToInterview = applicationForm.getReviewersWillingToInterview();
         for (RegisteredUser registeredUser : reviewersWillingToInterview) {
-            if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers())
-                    && !listContainsId(registeredUser, availablePreviousInterviewers)) {
-                availablePreviousInterviewers.add(registeredUser);
+			if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers()) && !listContainsId(registeredUser, previousInterviewersOfProgram)) {
+				previousInterviewersOfProgram.add(registeredUser);
             }
         }
-        return availablePreviousInterviewers;
+		previousInterviewersOfProgram.removeAll(getNominatedSupervisors(applicationId));
+		previousInterviewersOfProgram.removeAll(getProgrammeInterviewers(applicationId));
+		return previousInterviewersOfProgram;
 
     }
 
@@ -176,9 +186,29 @@ public class MoveToInterviewController {
         }
         return false;
     }
+	
+	private List<RegisteredUser> getOrCreateRegisteredUsersForForm(ApplicationForm applicationForm) {
+		List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
+		List<SuggestedSupervisor> suggestedSupervisors = applicationForm.getProgrammeDetails().getSuggestedSupervisors();
+		for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
+			nominatedSupervisors.add(findOrCreateRegisterUserFromSuggestedSupervisorForForm(suggestedSupervisor, applicationForm));
+		}
+		return nominatedSupervisors;
+	}
 
+	private RegisteredUser findOrCreateRegisterUserFromSuggestedSupervisorForForm(SuggestedSupervisor suggestedSupervisor, ApplicationForm applicationForm) {
+		String supervisorEmail = suggestedSupervisor.getEmail();
+		RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
+		if (possibleUser == null) {
+			possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
+			                Authority.REVIEWER, null, applicationForm);
+		}
+		return possibleUser;
+	}
+	
     @ModelAttribute("availableTimeZones")
     public TimeZoneList getAvailableTimeZones() {
         return TimeZoneList.getInstance();
     }
+
 }

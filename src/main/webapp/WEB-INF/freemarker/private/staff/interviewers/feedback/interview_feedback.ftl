@@ -140,17 +140,17 @@
                   </div>
                 </div>
                 
+              <#assign scores = comment.scores>
+              <#if (scores)?has_content>
               <div id="scoring-questions" class="row-group">
-                  <#assign scores = comment.scores>
                   <#if comment.alert??>
                   	<#assign alertForScoringQuestions=comment.alert>
                   </#if>
                   <#assign errorsContainerName = "comment">
-                  <#if (scores)?has_content>
                   	<h3>Programme Specific Questions</h3>
                   	<#include "/private/staff/scores.ftl"/>
-                  </#if>
         	  </div>
+              </#if>
                   
                 <@spring.bind "comment.confirmNextStage" />
 			    <#if spring.status.errorMessages?size &gt; 0>

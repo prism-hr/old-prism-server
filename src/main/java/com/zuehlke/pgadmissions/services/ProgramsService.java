@@ -15,39 +15,44 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 @Transactional
 public class ProgramsService {
 
-    private final ProgramDAO programDAO;
+	private final ProgramDAO programDAO;
 
-    ProgramsService() {
-        this(null);
-    }
+	ProgramsService() {
+		this(null);
+	}
 
-    @Autowired
-    public ProgramsService(ProgramDAO programDAO) {
-        this.programDAO = programDAO;
-    }
+	@Autowired
+	public ProgramsService(ProgramDAO programDAO) {
+		this.programDAO = programDAO;
+	}
 
-    public List<Program> getAllPrograms() {
-        return programDAO.getAllPrograms();
-    }
+	public List<Program> getAllPrograms() {
+		return programDAO.getAllPrograms();
+	}
 
-    public Program getProgramById(Integer programId) {
-        return programDAO.getProgramById(programId);
-    }
+	public Program getProgramById(Integer programId) {
+		return programDAO.getProgramById(programId);
+	}
 
-    public void save(Program program) {
-        programDAO.save(program);
-    }
+	public void save(Program program) {
+		programDAO.save(program);
+	}
 
-    public Program getProgramByCode(String code) {
-        return programDAO.getProgramByCode(code);
-    }
-    
-    public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent){
-    	Program program = programDAO.getProgramByCode(programCode);
-    	ScoringDefinition scoringDefinition = new ScoringDefinition();
-    	scoringDefinition.setContent(scoringContent);
-    	scoringDefinition.setStage(scoringStage);
-    	program.getScoringDefinitions().put(scoringStage, scoringDefinition);
-    }
-    
+	public Program getProgramByCode(String code) {
+		return programDAO.getProgramByCode(code);
+	}
+
+	public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent) {
+		Program program = programDAO.getProgramByCode(programCode);
+		ScoringDefinition scoringDefinition = new ScoringDefinition();
+		scoringDefinition.setContent(scoringContent);
+		scoringDefinition.setStage(scoringStage);
+		program.getScoringDefinitions().put(scoringStage, scoringDefinition);
+	}
+
+	public void removeScoringDefinition(String programCode, ScoringStage scoringStage) {
+		Program program = programDAO.getProgramByCode(programCode);
+		program.getScoringDefinitions().put(scoringStage, null);
+	}
+
 }

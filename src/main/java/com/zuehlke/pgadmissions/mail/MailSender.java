@@ -66,6 +66,14 @@ public class MailSender {
         enableLoggingOfSMTPCommands();
     }
     
+    public EmailTemplateService getEmailTemplateService() {
+        return emailTemplateService;
+    }
+    
+    public FreeMarkerConfig getFreemarkerConfig() {
+        return freemarkerConfig;
+    }
+    
     private void enableLoggingOfSMTPCommands() {
         if (javaMailSender instanceof JavaMailSenderImpl) {
             JavaMailSenderImpl impl = (JavaMailSenderImpl) this.javaMailSender;

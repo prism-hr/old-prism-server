@@ -47,7 +47,7 @@ public class ScheduledMailSendingTimer {
         log.info("Finished ScheduledMailSendingService Task");
     }
     
-    //@Scheduled(cron = "${email.schedule.period.chron}")
+    @Scheduled(cron = "${email.schedule.period.chron}")
     public void sendReferenceReminder() {
         mailService.sendReferenceReminder();
     }

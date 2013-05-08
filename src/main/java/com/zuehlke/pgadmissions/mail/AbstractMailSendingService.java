@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public abstract class AbstractMailSendingService {
 
-    private final MailSender mailSender;
+    private  MailSender mailSender;
     
     protected final ApplicationFormDAO applicationDAO;
     
@@ -80,6 +80,14 @@ public abstract class AbstractMailSendingService {
         this.encryptionUtils = encryptionUtils;
         this.refereeDAO = refereeDAO;
         this.host = host;
+    }
+    
+    protected void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+    
+    protected MailSender getMailSender() {
+        return this.mailSender;
     }
     
     protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {

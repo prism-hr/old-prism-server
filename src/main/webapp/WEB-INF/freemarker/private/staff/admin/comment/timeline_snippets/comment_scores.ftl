@@ -48,26 +48,25 @@
 	                    
 	
 	                <#elseif score.questionType == "RATING">
-
-	                    <p class="sQuestion">
-	                        <span/>
-	                        <b>${score.question} </b>
-	                        
-	                    </p>
-                        <#if score.ratingResponse??>
-                            <ul class="rating-list clearfix">
-                                <#if score.ratingResponse == 0>
-                                    <li><i class="icon-thumbs-down hover"></i></li>
-                                <#else>
-                                    <#list 1..score.ratingResponse as i>
-                                    <li><i class="icon-star hover"></i></li>
-                                    </#list>
-                                </#if>
-                            </ul>
-                        <#else>
-                            <i>${notProvided}</i>
-                        </#if>
-                      
+						<div class="question-rating-wrapper">
+							<p class="sQuestion">
+		                        <span/>	                        
+		                    </p>
+		                    <b>${score.question} </b>
+	                        <#if score.ratingResponse??>
+	                            <ul class="rating-list clearfix">
+	                                <#if score.ratingResponse == 0>
+	                                    <li><i class="icon-thumbs-down hover"></i></li>
+	                                <#else>
+	                                    <#list 1..score.ratingResponse as i>
+	                                    <li><i class="icon-star hover"></i></li>
+	                                    </#list>
+	                                </#if>
+	                            </ul>
+	                        <#else>
+	                            <i>${notProvided}</i>
+	                        </#if>
+						</div>
 	                </#if>
 	            </div>
 	        </#list>

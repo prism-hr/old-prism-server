@@ -105,6 +105,12 @@
 #timeline-statuses ul .box p.sQuestion,
 #timeline-statuses ul .box p.unconditional_offer { padding: 10px 10px 5px 40px; position: relative; }
 
+#timeline-statuses ul .box .question-rating-wrapper {  }
+#timeline-statuses ul .box .question-rating-wrapper p.sQuestion { display:inline-block; vertical-align:middle; padding-top:17px; padding-left:27px; }
+#timeline-statuses ul .box .question-rating-wrapper b { display:inline-block; margin:0; }
+#timeline-statuses ul .box .question-rating-wrapper ul.rating-list { display:inline-block; vertical-align:middle; margin:0; padding:12px 0 0 7px; }
+#timeline-statuses ul .box .question-rating-wrapper ul.rating-list li i:hover { cursor:auto; }
+
 #timeline-statuses ul .box p.datetime span,
 #timeline-statuses ul .box p.declined span,
 #timeline-statuses ul .box p.delegate span,

@@ -127,7 +127,7 @@ $(document).ready(function() {
         var postData = {
             applicationId : $('#applicationId').val(),
             interviewers : '',
-            timeZone : $('#timezone option:selected').attr('gmtAdjustment'),
+            timeZone : $('#timezone option:selected').val(),
             takenPlace : takenPlace
         };
         
@@ -257,10 +257,11 @@ function recoverSubmittedValues() {
 	
 	var submittedTimezone = $('#submittedTimezone')[0].innerText;
 	
-	var matches = submittedTimezone.match(/gmt\+\d{2}:\d{2}/gi);
+	var matches = submittedTimezone.match(/id=".+"/gi);
 	
 	if (matches != null && matches.length > 0) {
-		$('#timezone option[gmtadjustment="' + matches[0] + '"]').attr('selected', 'selected');
+		var match = matches[0].replace('id=', '').replace(/"/g, '');
+		$('#timezone option[value="' + match + '"]').attr('selected', 'selected');
 	}
 }
 

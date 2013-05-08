@@ -98,7 +98,7 @@ public class Interview implements Serializable {
 
     @Transient
     private Boolean takenPlace;
-
+    
     public Date getLastNotified() {
         return lastNotified;
     }
@@ -248,5 +248,6 @@ public class Interview implements Serializable {
     public boolean isScheduled() {
         return getStage() == InterviewStage.SCHEDULED;
     }
+    
 
 }

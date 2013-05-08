@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -147,6 +148,8 @@ public class ApplicationsService {
     }
 
     public ApplicationActionsDefinition getActionsDefinition(RegisteredUser user, ApplicationForm application) {
+        Interview interview = application.getLatestInterview();
+
         ApplicationActionsDefinition actions = new ApplicationActionsDefinition();
 
         if (user.canSee(application)) {
@@ -174,7 +177,7 @@ public class ApplicationsService {
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.INTERVIEW)) {
-            if (application.getLatestInterview().isScheduled()) {
+            if (interview.isScheduled()) {
                 if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                     actions.addAction("validate", "Administer Interview");
                 } else {
@@ -193,14 +196,14 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if ((user.isInterviewerOfApplicationForm(application) || user == application.getApplicant()) && application.isInState(ApplicationFormStatus.INTERVIEW)
-                && application.getLatestInterview().isScheduling()) {
+        if (interview.isParticipant(user) && application.isInState(ApplicationFormStatus.INTERVIEW)
+                && interview.isScheduling()) {
             actions.addAction("interviewVote", "Vote for interview time");
             actions.setRequiresAttention(true);
         }
 
         if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW)
-                && application.getLatestInterview().isScheduled() && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+                && interview.isScheduled() && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);
         }

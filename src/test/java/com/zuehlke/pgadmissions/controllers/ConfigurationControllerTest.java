@@ -470,6 +470,19 @@ public class ConfigurationControllerTest {
 	}
 
 	@Test
+	public void shouldAllowSavingEmptyScoringDefinition() {
+		Program program = new ProgramBuilder().build();
+		HttpServletResponse response = new MockHttpServletResponse();
+		
+		EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(program);
+		programsServiceMock.applyScoringDefinition("any_code", ScoringStage.INTERVIEW, "");
+		
+		EasyMock.replay(programsServiceMock);
+		assertEquals(Collections.emptyMap(), controller.editScoringDefinition("any_code", ScoringStage.INTERVIEW, "", response));
+		EasyMock.verify(programsServiceMock);
+	}
+
+	@Test
 	public void shouldFailToEditScoringDefinitionDueToIncorrectProgramCode() {
 		HttpServletResponse response = new MockHttpServletResponse();
 

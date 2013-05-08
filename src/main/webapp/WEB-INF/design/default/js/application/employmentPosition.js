@@ -300,10 +300,12 @@ function postEmploymentData(message)
 		 {
 				$('#positionSection').html(data);
 			
-				var errorCount = $('#positionSection .alert-error:visible').length;
-				if (message == 'close' && errorCount == 0)
+				var errorCount = $('#positionSection .alert-error').length;
+				if (message == 'close')
 				{
-					$('#position-H2').trigger('click');
+					if (errorCount > 0) {
+						$('#position-H2').trigger('click');
+					}
 				}
 				if (errorCount > 0)
 				{

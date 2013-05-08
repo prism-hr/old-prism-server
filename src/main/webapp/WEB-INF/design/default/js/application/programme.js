@@ -543,17 +543,17 @@ function postProgrammeData(message)
 		success: function(data)
 			{
 				$('#programmeDetailsSection').html(data);
-			
-				var errorCount = $('#programmeDetailsSection .alert-error:visible').length;
-				if (message == 'close' && errorCount != 0)
+				
+				var errorCount = $('#programmeDetailsSection .alert-error').length;
+				if (message == 'close')
 				{
-					// Close the section only if there are no errors.
-					$('#programme-H2').trigger('click');
+					if (errorCount == 0) {
+						// Close the section only if there are no errors.
+						$('#programme-H2').trigger('click');
+					}
 				}
-				if(errorCount >0){
-					
+				if( errorCount > 0){
 					markSectionError('#programmeDetailsSection');
-					
 				}
 			},
     complete: function()

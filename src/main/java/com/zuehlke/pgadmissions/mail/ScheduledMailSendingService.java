@@ -25,7 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -100,6 +102,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     private final UserService userService;
 
     private final String admissionsOfferServiceLevel;
+    
+    private final ApplicationContext applicationContext;
 
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
@@ -108,7 +112,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             final CommentFactory commentFactory, final CommentService commentService, final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory,
             final PdfDocumentBuilder pdfDocumentBuilder, final RefereeDAO refereeDAO, final UserService userService, final UserDAO userDAO,
             final RoleDAO roleDAO, final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host,
-            @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel) {
+            @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel,  final ApplicationContext applicationContext) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
@@ -122,10 +126,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         this.refereeDAO = refereeDAO;
         this.userService = userService;
         this.admissionsOfferServiceLevel = admissionsOfferServiceLevel;
+        this.applicationContext = applicationContext;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public void sendDigestsToUsers() {
@@ -1226,24 +1231,29 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      */
     public void sendReferenceReminder() {
         log.info("Running sendReferenceReminder Task");
-        PrismEmailMessage message = null;
         List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
         for (Referee referee : refereesDueAReminder) {
-            try {
-                String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
+           applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
+        }
+    }
 
-                ApplicationForm applicationForm = referee.getApplication();
-                String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
-                        adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName() });
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendReferenceReminder(Referee referee) {
+        PrismEmailMessage message;
+        try {
+            String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
 
-                message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
-                sendEmail(message);
-                referee.setLastNotified(new Date());
-                refereeDAO.save(referee);
-            } catch (Exception e) {
-                log.error("Error while sending reference reminder email to referee: ", e);
-            }
+            ApplicationForm applicationForm = referee.getApplication();
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
+                    adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName() });
+
+            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
+            sendEmail(message);
+            referee.setLastNotified(new Date());
+            refereeDAO.save(referee);
+        } catch (Exception e) {
+            log.error("Error while sending reference reminder email to referee: ", e);
         }
     }
 
@@ -1253,28 +1263,33 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     public void sendNewUserInvitation() {
         log.info("Running sendNewUserInvitation Task");
-        PrismEmailMessage message = null;
         List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
-        String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
         for (RegisteredUser user : users) {
-            for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
-                if (notification.getNotificationDate() == null) {
-                    notification.setNotificationDate(new Date());
-                }
+            applicationContext.getBean(this.getClass()).sendNewUserInvitation(user);
+        }
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendNewUserInvitation(RegisteredUser user) {
+        PrismEmailMessage message = null;
+        String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
+        for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
+            if (notification.getNotificationDate() == null) {
+                notification.setNotificationDate(new Date());
             }
-            RegisteredUser admin = user.getPendingRoleNotifications().get(0).getAddedByUser();
-            Program program = user.getPendingRoleNotifications().get(0).getProgram();
-            
-            try {
-                String rolesString = constructRolesString(user);
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "program", "newRoles", "host" }, new Object[] { user,
-                        admin, program, rolesString, getHostName() });
-                message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
-                sendEmail(message);
-                userDAO.save(user);
-            } catch (Exception e) {
-                log.error("Error while sending reference reminder email to referee: ", e);
-            }
+        }
+        RegisteredUser admin = user.getPendingRoleNotifications().get(0).getAddedByUser();
+        Program program = user.getPendingRoleNotifications().get(0).getProgram();
+        
+        try {
+            String rolesString = constructRolesString(user);
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "program", "newRoles", "host" }, new Object[] { user,
+                    admin, program, rolesString, getHostName() });
+            message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
+            sendEmail(message);
+            userDAO.save(user);
+        } catch (Exception e) {
+            log.error("Error while sending reference reminder email to referee: ", e);
         }
     }
 
@@ -1311,59 +1326,64 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      */
     public void sendValidationRequestToRegistry() {
         log.info("Running sendValidationRequestToRegistry Task");
-        PrismEmailMessage message = null;
         List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
-        List<Person> registryContacts = configurationService.getAllRegistryUsers();
         for (ApplicationForm applicationForm : applications) {
-            try {
-                PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
+            applicationContext.getBean(this.getClass()).sendValidationRequestToRegistry(applicationForm);
+        }
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendValidationRequestToRegistry(ApplicationForm applicationForm) {
+        PrismEmailMessage message = null;
+        List<Person> registryContacts = configurationService.getAllRegistryUsers();
+        try {
+            PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
 
-                String subject = resolveMessage(REGISTRY_VALIDATION_REQUEST, applicationForm);
-                messageBuilder.subject(subject);
+            String subject = resolveMessage(REGISTRY_VALIDATION_REQUEST, applicationForm);
+            messageBuilder.subject(subject);
 
-                RegisteredUser currentUser = applicationForm.getAdminRequestedRegistry();
+            RegisteredUser currentUser = applicationForm.getAdminRequestedRegistry();
 
-                messageBuilder.to(registryContacts, new Transformer() {
+            messageBuilder.to(registryContacts, new Transformer() {
 
-                    @Override
-                    public Object transform(final Object input) {
-                        RegisteredUser user = new RegisteredUser();
-                        Person person = (Person) input;
-                        user.setId(person.getId());
-                        user.setEmail(person.getEmail());
-                        user.setFirstName(person.getFirstname());
-                        user.setLastName(person.getLastname());
-                        return user;
-                    }
-                });
+                @Override
+                public Object transform(final Object input) {
+                    RegisteredUser user = new RegisteredUser();
+                    Person person = (Person) input;
+                    user.setId(person.getId());
+                    user.setEmail(person.getEmail());
+                    user.setFirstName(person.getFirstname());
+                    user.setLastName(person.getLastname());
+                    return user;
+                }
+            });
 
-                messageBuilder.cc(currentUser);
+            messageBuilder.cc(currentUser);
 
-                messageBuilder.templateName = REGISTRY_VALIDATION_REQUEST;
+            messageBuilder.templateName = REGISTRY_VALIDATION_REQUEST;
 
-                String recipientList = createRecipientString(registryContacts);
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "application", "sender", "host", "recipients",
-                        "admissionsValidationServiceLevel" }, new Object[] { applicationForm, currentUser, getHostName(), recipientList,
-                        admissionsOfferServiceLevel });
+            String recipientList = createRecipientString(registryContacts);
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "application", "sender", "host", "recipients",
+                    "admissionsValidationServiceLevel" }, new Object[] { applicationForm, currentUser, getHostName(), recipientList,
+                    admissionsOfferServiceLevel });
 
-                messageBuilder.model(modelBuilder);
+            messageBuilder.model(modelBuilder);
 
-                PdfAttachmentInputSource pdfAttachement = pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber()
-                        + ".pdf", pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), applicationForm));
-                messageBuilder.attachments(pdfAttachement);
+            PdfAttachmentInputSource pdfAttachement = pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber()
+                    + ".pdf", pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), applicationForm));
+            messageBuilder.attachments(pdfAttachement);
 
-                message = messageBuilder.build();
-                sendEmail(message);
+            message = messageBuilder.build();
+            sendEmail(message);
 
-                applicationForm.setRegistryUsersDueNotification(false);
-                Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts),
-                        CommentType.GENERIC, null);
-                commentService.save(comment);
-                applicationsService.save(applicationForm);
-                log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
-            } catch (Exception e) {
-                log.error("Error while sending validation request email to registry: {}", e);
-            }
+            applicationForm.setRegistryUsersDueNotification(false);
+            Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts),
+                    CommentType.GENERIC, null);
+            commentService.save(comment);
+            applicationsService.save(applicationForm);
+            log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
+        } catch (Exception e) {
+            log.error("Error while sending validation request email to registry: {}", e);
         }
     }
 

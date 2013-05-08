@@ -501,6 +501,14 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isInRoleInProgram(final String strAuthority, final Program programme) {
         return isInRoleInProgramme(programme, this, strAuthority);
     }
+    
+    public boolean isNotInRoleInProgram(final Authority authority, Program program) {
+        return !isInRoleInProgramme(program, this, authority);
+    }
+    
+    public boolean isNotInRoleInProgram(final String strAuthority, final Program programme) {
+        return !isInRoleInProgramme(programme, this, strAuthority);
+    }
 
     public boolean isInterviewerInInterview(final Interview interview) {
         return isInterviewerInInterview(interview, this);
@@ -688,7 +696,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         this.username = username;
     }
 
-
     public DigestNotificationType getDigestNotificationType() {
         return digestNotificationType;
     }
@@ -703,6 +710,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public void setStoredFilters(boolean storedFilters) {
         this.storedFilters = storedFilters;
     }
+    
     @Override
     public String toString() {
         return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName, lastName, email, enabled);

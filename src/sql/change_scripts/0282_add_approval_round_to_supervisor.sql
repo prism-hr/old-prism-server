@@ -1,0 +1,1 @@
+ALTER TABLE SUPERVISOR ADD COLUMN approval_round_id INTEGER UNSIGNED,  ADD CONSTRAINT approval_round_id_supervisor_fk FOREIGN KEY (approval_round_id) REFERENCES APPROVAL_ROUND(id);

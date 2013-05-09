@@ -171,7 +171,7 @@ public class ReviewCommentControllerTest {
     }
 
     @Test
-    public void shouldCreateNewReviewCommentForApplicationForm() throws ScoringDefinitionParseException {
+    public void shouldCreateNewReviewCommentForApplicationForm() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
@@ -209,6 +209,39 @@ public class ReviewCommentControllerTest {
         assertEquals(CommentType.REVIEW, comment.getType());
         assertEquals(reviewer, comment.getReviewer());
         assertEquals(generatedScores, comment.getScores());
+    }
+    
+    @Test
+    public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        final Reviewer reviewer = new ReviewerBuilder().id(5).build();
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
+        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
+        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock) {
+
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return applicationForm;
+            }
+
+        };
+
+        EasyMock.replay(userServiceMock, scoringDefinitionParserMock, currentUser, scoreFactoryMock);
+        ReviewComment comment = controller.getComment("5");
+        EasyMock.verify(userServiceMock, scoringDefinitionParserMock, currentUser, scoreFactoryMock);
+
+        assertNull(comment.getId());
+        assertEquals(applicationForm, comment.getApplication());
+        assertEquals(currentUser, comment.getUser());
+        assertEquals(CommentType.REVIEW, comment.getType());
+        assertEquals(reviewer, comment.getReviewer());
+        assertEquals(0, comment.getScores().size());
     }
 
     @Test

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -56,217 +58,223 @@ import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 @RequestMapping("/editApplicationFormAsProgrammeAdmin")
 public class EditApplicationFormAsProgrammeAdminController {
 
-	private static final String VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME = "/private/staff/admin/application/main_application_page_programme_administrator";
+    private static final Logger log = LoggerFactory.getLogger(EditApplicationFormAsProgrammeAdminController.class);
 
-	private static final String VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME = "/private/staff/admin/application/components/references_details_programme_admin";
+    private static final String VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME = "/private/staff/admin/application/main_application_page_programme_administrator";
 
-	private final UserService userService;
+    private static final String VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME = "/private/staff/admin/application/components/references_details_programme_admin";
 
-	private final ApplicationsService applicationService;
+    private final UserService userService;
 
-	private final DocumentPropertyEditor documentPropertyEditor;
+    private final ApplicationsService applicationService;
 
-	private final RefereeService refereeService;
+    private final DocumentPropertyEditor documentPropertyEditor;
 
-	private final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
+    private final RefereeService refereeService;
 
-	private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
+    private final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
 
-	private final EncryptionHelper encryptionHelper;
+    private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
 
-	private final CountryService countryService;
+    private final EncryptionHelper encryptionHelper;
 
-	private final CountryPropertyEditor countryPropertyEditor;
+    private final CountryService countryService;
 
-	private final MessageSource messageSource;
+    private final CountryPropertyEditor countryPropertyEditor;
 
-	private final ScoringDefinitionParser scoringDefinitionParser;
+    private final MessageSource messageSource;
 
-	private final ScoresPropertyEditor scoresPropertyEditor;
+    private final ScoringDefinitionParser scoringDefinitionParser;
 
-	private final ScoreFactory scoreFactory;
+    private final ScoresPropertyEditor scoresPropertyEditor;
 
-	public EditApplicationFormAsProgrammeAdminController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null);
-	}
+    private final ScoreFactory scoreFactory;
 
-	@Autowired
-	public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationService,
-	                final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
-	                final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-	                final EncryptionHelper encryptionHelper, final CountryService countryService, final CountryPropertyEditor countryPropertyEditor,
-	                final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
-	                ScoreFactory scoreFactory) {
-		this.userService = userService;
-		this.applicationService = applicationService;
-		this.documentPropertyEditor = documentPropertyEditor;
-		this.refereeService = refereeService;
-		this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
-		this.encryptionHelper = encryptionHelper;
-		this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
-		this.countryService = countryService;
-		this.countryPropertyEditor = countryPropertyEditor;
-		this.messageSource = messageSource;
-		this.scoringDefinitionParser = scoringDefinitionParser;
-		this.scoresPropertyEditor = scoresPropertyEditor;
-		this.scoreFactory = scoreFactory;
-	}
+    public EditApplicationFormAsProgrammeAdminController() {
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+    }
 
-	@InitBinder(value = "sendToPorticoData")
-	public void registerSendToPorticoData(WebDataBinder binder) {
-		binder.registerCustomEditor(List.class, sendToPorticoDataDTOEditor);
-	}
+    @Autowired
+    public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationService,
+            final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
+            final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
+            final EncryptionHelper encryptionHelper, final CountryService countryService, final CountryPropertyEditor countryPropertyEditor,
+            final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
+            ScoreFactory scoreFactory) {
+        this.userService = userService;
+        this.applicationService = applicationService;
+        this.documentPropertyEditor = documentPropertyEditor;
+        this.refereeService = refereeService;
+        this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
+        this.encryptionHelper = encryptionHelper;
+        this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
+        this.countryService = countryService;
+        this.countryPropertyEditor = countryPropertyEditor;
+        this.messageSource = messageSource;
+        this.scoringDefinitionParser = scoringDefinitionParser;
+        this.scoresPropertyEditor = scoresPropertyEditor;
+        this.scoreFactory = scoreFactory;
+    }
 
-	@InitBinder(value = "refereesAdminEditDTO")
-	public void registerPropertyEditors(WebDataBinder binder) {
-		binder.setValidator(refereesAdminEditDTOValidator);
-		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-		binder.registerCustomEditor(Country.class, countryPropertyEditor);
-		binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
-		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-		binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
-		binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
-	}
+    @InitBinder(value = "sendToPorticoData")
+    public void registerSendToPorticoData(WebDataBinder binder) {
+        binder.registerCustomEditor(List.class, sendToPorticoDataDTOEditor);
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String view(@ModelAttribute ApplicationForm applicationForm) {
-		return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
-	}
+    @InitBinder(value = "refereesAdminEditDTO")
+    public void registerPropertyEditors(WebDataBinder binder) {
+        binder.setValidator(refereesAdminEditDTOValidator);
+        binder.registerCustomEditor(Document.class, documentPropertyEditor);
+        binder.registerCustomEditor(Country.class, countryPropertyEditor);
+        binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
+        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
+        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
+    }
 
-	@RequestMapping(value = "/editReferenceData", method = RequestMethod.POST)
-	@ResponseBody
-	public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
-	                BindingResult result, Model model) throws ScoringDefinitionParseException {
+    @RequestMapping(method = RequestMethod.GET)
+    public String view(@ModelAttribute ApplicationForm applicationForm) {
+        return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
+    }
 
-		model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
+    @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+            BindingResult result, Model model) throws ScoringDefinitionParseException {
 
-		createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
-		refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
+        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 
-		Map<String, String> map = new HashMap<String, String>();
-		if (!result.hasErrors()) {
-			refereeService.editReferenceComment(refereesAdminEditDTO);
-			map.put("success", "true");
-		} else {
-			map.put("success", "false");
-			map.putAll(FieldErrorUtils.populateMapWithErrors(result, messageSource));
-		}
+        createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
+        refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
 
-		Gson gson = new Gson();
-		return gson.toJson(map);
-	}
+        Map<String, String> map = new HashMap<String, String>();
+        if (!result.hasErrors()) {
+            refereeService.editReferenceComment(refereesAdminEditDTO);
+            map.put("success", "true");
+        } else {
+            map.put("success", "false");
+            map.putAll(FieldErrorUtils.populateMapWithErrors(result, messageSource));
+        }
 
-	@RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-	public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
-	                BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
-	                @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
+        Gson gson = new Gson();
+        return gson.toJson(map);
+    }
 
-		String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
-		model.addAttribute("editedRefereeId", editedRefereeId);
-		createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
+    @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
+    public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+            BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
+            @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
-		// save "send to UCL" data first
-		if (sendToPorticoData.getRefereesSendToPortico() != null) {
-			refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
-		}
+        String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
+        model.addAttribute("editedRefereeId", editedRefereeId);
+        createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
 
-		if (!"newReferee".equals(editedRefereeId)) {
-			Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
-			Referee referee = refereeService.getRefereeById(decryptedId);
-			if (referee.getReference() != null) {
-				return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
-			}
-		}
+        // save "send to UCL" data first
+        if (sendToPorticoData.getRefereesSendToPortico() != null) {
+            refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
+        }
 
-		if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
+        if (!"newReferee".equals(editedRefereeId)) {
+            Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
+            Referee referee = refereeService.getRefereeById(decryptedId);
+            if (referee.getReference() != null) {
+                return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
+            }
+        }
 
-			refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
+        if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
 
-			if (referenceResult.hasErrors()) {
-				return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
-			}
+            refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
 
-			ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-			Referee referee = newComment.getReferee();
-			applicationService.refresh(applicationForm);
-			refereeService.refresh(referee);
+            if (referenceResult.hasErrors()) {
+                return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
+            }
 
-			String newRefereeId = encryptionHelper.encrypt(referee.getId());
-			model.addAttribute("editedRefereeId", newRefereeId);
-		}
+            ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+            Referee referee = newComment.getReferee();
+            applicationService.refresh(applicationForm);
+            refereeService.refresh(referee);
 
-		return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
-	}
+            String newRefereeId = encryptionHelper.encrypt(referee.getId());
+            model.addAttribute("editedRefereeId", newRefereeId);
+        }
 
-	public List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
-		ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
-		if (scoringDefinition != null) {
-			CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-			return customQuestion.getQuestion();
-		}
-		return null;
-	}
+        return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
+    }
 
-	@ModelAttribute(value = "refereesAdminEditDTO")
-	public RefereesAdminEditDTO getRefereesAdminEditDTO(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
+    public List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
+        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
+        if (scoringDefinition != null) {
+            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+            return customQuestion.getQuestion();
+        }
+        return null;
+    }
 
-		RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
-		ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
-		if (scoringDefinition != null) {
-			CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-			List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
-			refereesAdminEditDTO.getScores().addAll(scores);
-			refereesAdminEditDTO.setAlert(customQuestion.getAlert());
-		}
-		return refereesAdminEditDTO;
-	}
+    @ModelAttribute(value = "refereesAdminEditDTO")
+    public RefereesAdminEditDTO getRefereesAdminEditDTO(@RequestParam String applicationId) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
 
-	@ModelAttribute("countries")
-	public List<Country> getAllCountries() {
-		return countryService.getAllCountries();
-	}
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
+        if (scoringDefinition != null) {
+            try {
+                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
+                refereesAdminEditDTO.getScores().addAll(scores);
+                refereesAdminEditDTO.setAlert(customQuestion.getAlert());
+            } catch (ScoringDefinitionParseException e) {
+                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
+            }
+        }
+        return refereesAdminEditDTO;
+    }
 
-	private RegisteredUser getCurrentUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("countries")
+    public List<Country> getAllCountries() {
+        return countryService.getAllCountries();
+    }
 
-	public StringTrimmerEditor newStringTrimmerEditor() {
-		return new StringTrimmerEditor(false);
-	}
+    private RegisteredUser getCurrentUser() {
+        return userService.getCurrentUser();
+    }
 
-	@ModelAttribute
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null) {
-			throw new MissingApplicationFormException(applicationId);
-		}
-		if (!getCurrentUser().canSee(applicationForm) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
-			throw new InsufficientApplicationFormPrivilegesException(applicationId);
-		}
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
 
-		return applicationForm;
-	}
+    @ModelAttribute
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!getCurrentUser().canSee(applicationForm) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
 
-	@ModelAttribute("actionsDefinition")
-	public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
-		ApplicationForm application = getApplicationForm(applicationId);
-		return applicationService.getActionsDefinition(getUser(), application);
-	}
+        return applicationForm;
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return getCurrentUser();
-	}
+    @ModelAttribute("actionsDefinition")
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
+        ApplicationForm application = getApplicationForm(applicationId);
+        return applicationService.getActionsDefinition(getUser(), application);
+    }
 
-	private void createScoresWithQuestion(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
-		List<Score> scores = refereesAdminEditDTO.getScores();
-		if (scores != null) {
-			List<Question> questions = getCustomQuestions(applicationForm);
-			for (int i = 0; i < scores.size(); i++) {
-				Score score = scores.get(i);
-				score.setOriginalQuestion(questions.get(i));
-			}
-		}
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return getCurrentUser();
+    }
+
+    private void createScoresWithQuestion(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
+        List<Score> scores = refereesAdminEditDTO.getScores();
+        if (scores != null) {
+            List<Question> questions = getCustomQuestions(applicationForm);
+            for (int i = 0; i < scores.size(); i++) {
+                Score score = scores.get(i);
+                score.setOriginalQuestion(questions.get(i));
+            }
+        }
+    }
 }

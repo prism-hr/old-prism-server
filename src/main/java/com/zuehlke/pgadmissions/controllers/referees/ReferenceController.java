@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers.referees;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @RequestMapping("/referee")
 public class ReferenceController {
 
+    private static final Logger log = LoggerFactory.getLogger(ReferenceController.class);
     private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
     private final ApplicationsService applicationsService;
     private final DocumentPropertyEditor documentPropertyEditor;
@@ -60,8 +63,8 @@ public class ReferenceController {
 
     @Autowired
     public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
-            DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory) {
+            DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
+            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;
@@ -89,9 +92,9 @@ public class ReferenceController {
         }
         return applicationForm;
     }
-    
+
     @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return applicationsService.getActionsDefinition(getUser(), application);
     }
@@ -111,7 +114,7 @@ public class ReferenceController {
     }
 
     @ModelAttribute("comment")
-    public ReferenceComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
+    public ReferenceComment getComment(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser currentUser = getCurrentUser();
         Referee refereeForApplicationForm = currentUser.getRefereeForApplicationForm(applicationForm);
@@ -122,15 +125,19 @@ public class ReferenceController {
         referenceComment.setComment("");
         referenceComment.setType(CommentType.REFERENCE);
         referenceComment.setReferee(refereeForApplicationForm);
-        
+
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
-            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-            List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
-            referenceComment.getScores().addAll(scores);
-            referenceComment.setAlert(customQuestion.getAlert());
+            try {
+                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
+                referenceComment.getScores().addAll(scores);
+                referenceComment.setAlert(customQuestion.getAlert());
+            } catch (ScoringDefinitionParseException e) {
+                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
+            }
         }
-        
+
         return referenceComment;
     }
 
@@ -147,7 +154,8 @@ public class ReferenceController {
     }
 
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
-    public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult) throws ScoringDefinitionParseException {
+    public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult)
+            throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = comment.getApplication();
         List<Score> scores = comment.getScores();
         if (scores != null) {
@@ -157,7 +165,7 @@ public class ReferenceController {
                 score.setOriginalQuestion(questions.get(i));
             }
         }
-        
+
         referenceValidator.validate(comment, bindingResult);
         if (bindingResult.hasErrors()) {
             return ADD_REFERENCES_VIEW_NAME;
@@ -169,7 +177,7 @@ public class ReferenceController {
         }
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
-    
+
     private List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);

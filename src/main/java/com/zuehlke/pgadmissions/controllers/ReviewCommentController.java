@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -40,6 +42,7 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @RequestMapping(value = { "/reviewFeedback" })
 public class ReviewCommentController {
 
+    private static final Logger log = LoggerFactory.getLogger(ReviewCommentController.class);
     private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
     private final ApplicationsService applicationsService;
     private final UserService userService;
@@ -113,10 +116,14 @@ public class ReviewCommentController {
 
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
         if (scoringDefinition != null) {
+            try {
             CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
             List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
             reviewComment.getScores().addAll(scores);
             reviewComment.setAlert(customQuestion.getAlert());
+            } catch (ScoringDefinitionParseException e){
+                log.error("Incorrect scoring XML configuration for review stage in program: " + applicationForm.getProgram().getTitle());
+            }
         }
 
         return reviewComment;

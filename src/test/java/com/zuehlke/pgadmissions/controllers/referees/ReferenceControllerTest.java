@@ -132,7 +132,7 @@ public class ReferenceControllerTest {
     }
 
     @Test
-    public void shouldReturnNewReferenceComment() throws ScoringDefinitionParseException {
+    public void shouldReturnNewReferenceComment() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
@@ -162,6 +162,31 @@ public class ReferenceControllerTest {
         assertEquals(currentUser, returnedReference.getUser());
         assertEquals(CommentType.REFERENCE, returnedReference.getType());
         assertEquals(generatedScores, returnedReference.getScores());
+    }
+    
+    @Test
+    public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
+        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
+        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
+        final Referee referee = new RefereeBuilder().id(8).build();
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
+        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
+
+        EasyMock.replay(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock);
+        ReferenceComment returnedReference = controller.getComment("1");
+        EasyMock.verify(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock);
+
+        assertNull(returnedReference.getId());
+        assertEquals(referee, returnedReference.getReferee());
+        assertEquals(applicationForm, returnedReference.getApplication());
+        assertEquals(currentUser, returnedReference.getUser());
+        assertEquals(CommentType.REFERENCE, returnedReference.getType());
+        assertEquals(0, returnedReference.getScores().size());
     }
 
     @Test
@@ -246,6 +271,7 @@ public class ReferenceControllerTest {
 
     @Before
     public void setUp() {
+        currentUser = EasyMock.createMock(RegisteredUser.class);
         commentServiceMock = EasyMock.createMock(CommentService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         documentPropertyEditor = EasyMock.createMock(DocumentPropertyEditor.class);
@@ -255,10 +281,10 @@ public class ReferenceControllerTest {
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
+
         controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator,
                 commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock);
 
-        currentUser = EasyMock.createMock(RegisteredUser.class);
     }
 
 }

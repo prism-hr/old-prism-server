@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
+import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgrammeAdminController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -66,11 +70,14 @@ import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 
+
 @SessionAttributes("approvalRound")
 @Controller
 @RequestMapping("/approval")
 public class ApprovalController {
 
+    private static final Logger log = LoggerFactory.getLogger(EditApplicationFormAsProgrammeAdminController.class);
+    
 	private static final String REQUEST_RESTART_APPROVE_PAGE = "/private/staff/approver/request_restart_approve_page";
 	private static final String SUPERVISORS_SECTION = "/private/staff/supervisors/supervisors_section";
 	private static final String PORTICO_VALIDATION_SECTION = "/private/staff/supervisors/portico_validation_section";
@@ -167,10 +174,14 @@ public class ApprovalController {
 		RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 		ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
 		if (scoringDefinition != null) {
+		    try {
 			CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
 			List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
 			refereesAdminEditDTO.getScores().addAll(scores);
 			refereesAdminEditDTO.setAlert(customQuestion.getAlert());
+		    } catch (ScoringDefinitionParseException e){
+		        log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
+		    }
 		}
 		return refereesAdminEditDTO;
 	}

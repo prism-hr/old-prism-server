@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -40,152 +42,135 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @RequestMapping(value = { "/interviewFeedback" })
 public class InterviewCommentController {
 
-	private static final String INTERVIEW_FEEDBACK_PAGE = "private/staff/interviewers/feedback/interview_feedback";
-	private final ApplicationsService applicationsService;
-	private final UserService userService;
-	private final FeedbackCommentValidator feedbackCommentValidator;
-	private final CommentService commentService;
-	private final DocumentPropertyEditor documentPropertyEditor;
-	private final ScoringDefinitionParser scoringDefinitionParser;
-	private final ScoresPropertyEditor scoresPropertyEditor;
-	private final ScoreFactory scoreFactory;
+    private static final Logger log = LoggerFactory.getLogger(InterviewCommentController.class);
+    private static final String INTERVIEW_FEEDBACK_PAGE = "private/staff/interviewers/feedback/interview_feedback";
+    private final ApplicationsService applicationsService;
+    private final UserService userService;
+    private final FeedbackCommentValidator feedbackCommentValidator;
+    private final CommentService commentService;
+    private final DocumentPropertyEditor documentPropertyEditor;
+    private final ScoringDefinitionParser scoringDefinitionParser;
+    private final ScoresPropertyEditor scoresPropertyEditor;
+    private final ScoreFactory scoreFactory;
 
-	public InterviewCommentController() {
-		this(null, null, null, null, null, null, null, null);
-	}
+    public InterviewCommentController() {
+        this(null, null, null, null, null, null, null, null);
+    }
 
-	@Autowired
-	public InterviewCommentController(ApplicationsService applicationsService,
-			UserService userService, CommentService commentService,
-			FeedbackCommentValidator reviewFeedbackValidator,
-			DocumentPropertyEditor documentPropertyEditor,
-			ScoringDefinitionParser scoringDefinitionParser,
-			ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory) {
-		this.applicationsService = applicationsService;
-		this.userService = userService;
-		this.commentService = commentService;
-		this.feedbackCommentValidator = reviewFeedbackValidator;
-		this.documentPropertyEditor = documentPropertyEditor;
-		this.scoringDefinitionParser = scoringDefinitionParser;
-		this.scoresPropertyEditor = scoresPropertyEditor;
-		this.scoreFactory = scoreFactory;
-	}
+    @Autowired
+    public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
+            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory) {
+        this.applicationsService = applicationsService;
+        this.userService = userService;
+        this.commentService = commentService;
+        this.feedbackCommentValidator = reviewFeedbackValidator;
+        this.documentPropertyEditor = documentPropertyEditor;
+        this.scoringDefinitionParser = scoringDefinitionParser;
+        this.scoresPropertyEditor = scoresPropertyEditor;
+        this.scoreFactory = scoreFactory;
+    }
 
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService
-				.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null) {
-			throw new MissingApplicationFormException(applicationId);
-		}
-		if (!currentUser.isInterviewerOfApplicationForm(applicationForm)
-				|| !currentUser.canSee(applicationForm)) {
-			throw new InsufficientApplicationFormPrivilegesException(
-					applicationId);
-		}
-		if (applicationForm.isDecided()
-				|| applicationForm.isWithdrawn()
-				|| currentUser
-						.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
-			throw new ActionNoLongerRequiredException(
-					applicationForm.getApplicationNumber());
-		}
-		return applicationForm;
-	}
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
+        if (applicationForm.isDecided() || applicationForm.isWithdrawn()
+                || currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        }
+        return applicationForm;
+    }
 
-	@ModelAttribute("actionsDefinition")
-	public ApplicationActionsDefinition getActionsDefinition(
-			@RequestParam String applicationId) {
-		ApplicationForm application = getApplicationForm(applicationId);
-		return applicationsService.getActionsDefinition(getUser(), application);
-	}
+    @ModelAttribute("actionsDefinition")
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
+        ApplicationForm application = getApplicationForm(applicationId);
+        return applicationsService.getActionsDefinition(getUser(), application);
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getInterviewFeedbackPage() {
-		return INTERVIEW_FEEDBACK_PAGE;
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    public String getInterviewFeedbackPage() {
+        return INTERVIEW_FEEDBACK_PAGE;
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
 
-	@ModelAttribute("comment")
-	public InterviewComment getComment(@RequestParam String applicationId)
-			throws ScoringDefinitionParseException {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		RegisteredUser currentUser = getUser();
+    @ModelAttribute("comment")
+    public InterviewComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser currentUser = getUser();
 
-		InterviewComment interviewComment = new InterviewComment();
-		interviewComment.setApplication(applicationForm);
-		interviewComment.setUser(currentUser);
-		interviewComment.setComment("");
-		interviewComment.setType(CommentType.INTERVIEW);
-		interviewComment.setInterviewer(currentUser
-				.getInterviewersForApplicationForm(applicationForm).get(0));
+        InterviewComment interviewComment = new InterviewComment();
+        interviewComment.setApplication(applicationForm);
+        interviewComment.setUser(currentUser);
+        interviewComment.setComment("");
+        interviewComment.setType(CommentType.INTERVIEW);
+        interviewComment.setInterviewer(currentUser.getInterviewersForApplicationForm(applicationForm).get(0));
 
-		ScoringDefinition scoringDefinition = applicationForm.getProgram()
-				.getScoringDefinitions().get(ScoringStage.INTERVIEW);
+        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.INTERVIEW);
 
-		if (scoringDefinition != null) {
-			CustomQuestions customQuestion = scoringDefinitionParser
-					.parseScoringDefinition(scoringDefinition.getContent());
-			List<Score> scores = scoreFactory.createScores(customQuestion
-					.getQuestion());
-			interviewComment.getScores().addAll(scores);
-			interviewComment.setAlert(customQuestion.getAlert());
-		}
+        if (scoringDefinition != null) {
+            try {
+            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+            List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
+            interviewComment.getScores().addAll(scores);
+            interviewComment.setAlert(customQuestion.getAlert());
+            } catch (ScoringDefinitionParseException e){
+                log.error("Incorrect scoring XML configuration for interview stage in program: " + applicationForm.getProgram().getTitle());
+            }
+        }
 
-		return interviewComment;
-	}
+        return interviewComment;
+    }
 
-	@InitBinder(value = "comment")
-	public void registerBinders(WebDataBinder binder) {
-		binder.setValidator(feedbackCommentValidator);
-		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-		binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
-	}
+    @InitBinder(value = "comment")
+    public void registerBinders(WebDataBinder binder) {
+        binder.setValidator(feedbackCommentValidator);
+        binder.registerCustomEditor(Document.class, documentPropertyEditor);
+        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
+    }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String addComment(
-			@ModelAttribute("comment") InterviewComment comment,
-			BindingResult result) throws ScoringDefinitionParseException {
-		ApplicationForm applicationForm = comment.getApplication();
-		List<Score> scores = comment.getScores();
-		if (scores != null) {
-			List<Question> questions = getCustomQuestions(applicationForm
-					.getApplicationNumber());
-			for (int i = 0; i < scores.size(); i++) {
-				Score score = scores.get(i);
-				score.setOriginalQuestion(questions.get(i));
-			}
-		}
+    @RequestMapping(method = RequestMethod.POST)
+    public String addComment(@ModelAttribute("comment") InterviewComment comment, BindingResult result) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = comment.getApplication();
+        List<Score> scores = comment.getScores();
+        if (scores != null) {
+            List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
+            for (int i = 0; i < scores.size(); i++) {
+                Score score = scores.get(i);
+                score.setOriginalQuestion(questions.get(i));
+            }
+        }
 
-		feedbackCommentValidator.validate(comment, result);
-		
-		if (result.hasErrors()) {
-			return INTERVIEW_FEEDBACK_PAGE;
-		}
-		commentService.save(comment);
+        feedbackCommentValidator.validate(comment, result);
 
-		applicationForm.setApplicationAdministrator(null);
-		applicationsService.save(applicationForm);
+        if (result.hasErrors()) {
+            return INTERVIEW_FEEDBACK_PAGE;
+        }
+        commentService.save(comment);
 
-		return "redirect:/applications?messageCode=interview.feedback&application="
-				+ applicationForm.getApplicationNumber();
-	}
-	
-	private List<Question> getCustomQuestions(String applicationId)
-			throws ScoringDefinitionParseException {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		ScoringDefinition scoringDefinition = applicationForm.getProgram()
-				.getScoringDefinitions().get(ScoringStage.INTERVIEW);
-		if (scoringDefinition != null) {
-			CustomQuestions customQuestion = scoringDefinitionParser
-					.parseScoringDefinition(scoringDefinition.getContent());
-			return customQuestion.getQuestion();
-		}
-		return null;
-	}
+        applicationForm.setApplicationAdministrator(null);
+        applicationsService.save(applicationForm);
+
+        return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
+    }
+
+    private List<Question> getCustomQuestions(String applicationId) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.INTERVIEW);
+        if (scoringDefinition != null) {
+            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+            return customQuestion.getQuestion();
+        }
+        return null;
+    }
 }

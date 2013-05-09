@@ -254,6 +254,10 @@ function postRefereeData(message){
 				if(errorCount > 0 || referenceCount < 3){
 					markSectionError('#referencesSection');
 					$('#referee-H2').trigger('click');
+				} else {
+					if (message == 'add') {
+						$('#referee-H2').trigger('click');
+					}
 				}
 			},
 		complete: function(){

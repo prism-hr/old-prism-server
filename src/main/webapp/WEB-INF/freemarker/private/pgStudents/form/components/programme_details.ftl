@@ -195,7 +195,7 @@
         <label class="plain-label" for="supervisorFirstname">Supervisor First Name<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
         <div class="field">
-          <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
+          <input class="full" type="text" placeholder="First Name" autocomplete="off" id="supervisorFirstname" name="supervisorFirstname"/>
         </div>
       </div>
       
@@ -203,7 +203,7 @@
         <label class="plain-label" for="supervisorLastname">Supervisor Last Name<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
         <div class="field"> 
-          <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
+          <input class="full" type="text" placeholder="Last Name" autocomplete="off" id="supervisorLastname" name="supervisorLastname"/>
         </div>
       </div>
   
@@ -211,7 +211,7 @@
         <label class="plain-label" for="supervisorEmail">Supervisor Email<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
         <div class="field">
-          <input class="full" type="email" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
+          <input class="full" type="email" placeholder="Email address" autocomplete="off" id="supervisorEmail" name="supervisorEmail"/>
         </div>
       </div>
   

@@ -139,10 +139,10 @@ public class ApplicationSummaryService {
     }
 
     private void addFundings(final ApplicationForm form, Map<String, String> result, final Gson gson) {
-        Integer fundingSum = 0;
+        Long fundingSum = 0L;
         for (Funding funding : form.getFundings()) {
             if (StringUtils.isNumericSpace(funding.getValue())) {
-                fundingSum = fundingSum + Integer.valueOf(funding.getValue());
+                fundingSum = fundingSum + Long.valueOf(funding.getValue());
             }
         }
         result.put("fundingRequirements", fundingSum.toString());

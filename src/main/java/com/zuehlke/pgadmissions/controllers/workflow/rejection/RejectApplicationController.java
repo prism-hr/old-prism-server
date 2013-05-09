@@ -66,7 +66,7 @@ public class RejectApplicationController {
         return REJECT_VIEW_NAME;
     }
     
-    @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
+    @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.GET)
     public void defaultGet() {
         return;
     }

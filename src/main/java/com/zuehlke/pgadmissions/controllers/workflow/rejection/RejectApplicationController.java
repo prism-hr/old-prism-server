@@ -65,6 +65,11 @@ public class RejectApplicationController {
     public String getRejectPage() {
         return REJECT_VIEW_NAME;
     }
+    
+    @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
+    public void defaultGet() {
+        return;
+    }
 
     @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,

@@ -153,6 +153,11 @@ public class ReferenceController {
         return new StringTrimmerEditor(false);
     }
 
+    @RequestMapping(value = "/submitReference", method = RequestMethod.GET)
+    public void defaultGet() {
+        return;
+    }
+    
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
     public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult)
             throws ScoringDefinitionParseException {

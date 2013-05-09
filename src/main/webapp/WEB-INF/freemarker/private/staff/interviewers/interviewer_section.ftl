@@ -74,7 +74,7 @@
 <div id="section_2">
   <h3>Interview Arrangements</h3>
   <div class="row">
-  	<label class="plain-label normal">Interview Status</label>
+  	<label class="plain-label normal">Interview Status<em>*</em></label>
   	<span class="hint" data-desc="<@spring.message 'interviewArrangements.status'/>"></span>
     <div class="field">
 	    <label>
@@ -93,7 +93,7 @@
   	</div>
   </div>
   <div class="row interview-happened interview-scheduled interview-to-schedule">
-  	<label class="plain-label normal" for="timezone">What time zone will the interview take place in?<em>*</em></label>
+  	<label class="plain-label normal" for="timezone">Time Zone<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'interviewArrangements.timezone'/>"></span>
     <div class="field">
 	  	<select id="timezone" name="timezone" class="very-large">
@@ -209,7 +209,7 @@
   </div>
   
   <div class="row interview-happened interview-scheduled">
-    <label class="plain-label normal">Interview Time (GMT/BST)<em>*</em></label>
+    <label class="plain-label normal">Interview Time<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewTime'/>"></span>
     <div class="field"> <#include "/private/staff/interviewers/time_dropdown.ftl"/> </div>
   </div>

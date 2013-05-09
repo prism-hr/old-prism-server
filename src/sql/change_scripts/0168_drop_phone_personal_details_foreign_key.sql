@@ -1,0 +1,1 @@
+ALTER TABLE TELEPHONE DROP FOREIGN KEY details_phone_fk;

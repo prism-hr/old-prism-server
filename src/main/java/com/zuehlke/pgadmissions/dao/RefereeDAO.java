@@ -48,9 +48,10 @@ public class RefereeDAO {
 		sessionFactory.getCurrentSession().delete(referee);
 	}
 
-	public List<Referee> getRefereesDueAReminder() {
+    public List<Integer> getRefereesIdsDueAReminder() {
         Date today = Calendar.getInstance().getTime();
-        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
+        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
+                .createCriteria(ReminderInterval.class).uniqueResult();
         Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
         List<Referee> referees = (List<Referee>) sessionFactory
                 .getCurrentSession()
@@ -63,44 +64,19 @@ public class RefereeDAO {
                         ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED })))
                 .add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-        
-        CollectionUtils.filter(referees, new Predicate() {
+        final List<Integer> result = new ArrayList<Integer>(referees.size());
+        CollectionUtils.forAllDo(referees, new Closure() {
             @Override
-            public boolean evaluate(final Object object) {
-                return !((Referee) object).hasProvidedReference();
+            public void execute(Object input) {
+                Referee referee = (Referee) input;
+                if (!referee.hasProvidedReference()) {
+                    result.add(referee.getId());
+                }
             }
         });
-        return referees;
-	}
-	
-	   public List<Integer> getRefereesIdsDueAReminder() {
-	        Date today = Calendar.getInstance().getTime();
-	        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
-	        Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-	        List<Referee> referees = (List<Referee>) sessionFactory
-	                .getCurrentSession()
-	                .createCriteria(Referee.class)
-	                .createAlias("application", "application")
-	                .add(Restrictions.eq("declined", false))
-	                .add(Restrictions.isNotNull("user"))
-	                .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[] {
-	                        ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED,
-	                        ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED })))
-	                        .add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
-	                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-	        final List<Integer> result = new ArrayList<Integer>(referees.size());
-	        CollectionUtils.forAllDo(referees, new Closure() {
-	            @Override
-	            public void execute(Object input) {
-	                Referee referee = (Referee) input;
-	                if (!referee.hasProvidedReference()) {
-	                     result.add(referee.getId());
-	                }
-	            }
-	        });
-	        return result;
-	    }
-	
+        return result;
+    }
+
 	public List<Referee> getRefereesWhoDidntProvideReferenceYet(ApplicationForm form) {
         List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
                 .add(Restrictions.eq("declined", false)).add(Restrictions.eq("application", form))

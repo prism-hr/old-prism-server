@@ -1361,17 +1361,18 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendValidationRequestToRegistry() {
         log.info("Running sendValidationRequestToRegistry Task");
-        List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
-        for (ApplicationForm applicationForm : applications) {
+        List<Integer> applications = applicationsService.getApplicationsIdsDueRegistryNotification();
+        for (Integer applicationForm : applications) {
             applicationContext.getBean(this.getClass()).sendValidationRequestToRegistry(applicationForm);
         }
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendValidationRequestToRegistry(ApplicationForm applicationForm) {
+    public boolean sendValidationRequestToRegistry(Integer applicationFormId) {
         PrismEmailMessage message = null;
         List<Person> registryContacts = configurationService.getAllRegistryUsers();
         try {
+            ApplicationForm applicationForm = applicationsService.getApplicationById(applicationFormId);
             PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
 
             String subject = resolveMessage(REGISTRY_VALIDATION_REQUEST, applicationForm);

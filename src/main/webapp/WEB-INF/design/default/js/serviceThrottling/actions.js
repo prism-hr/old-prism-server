@@ -45,7 +45,9 @@ $(document).ready(function() {
 		 success : function(data) {
 			 var index = data.enabled == true ? 0 : 1;
 			 if (data.enabled!=null) {
-			 	$('input:radio[name=switch]')[index].checked=true;
+				 if ($('#edit-throttle-section').length > 0) {
+			 		$('input:radio[name=switch]')[index].checked=true;
+				 }
 		 	}
 			 $('#batchSizeId').val(data.batchSize);
 			 $('#throttleId').val(data.throttleId);

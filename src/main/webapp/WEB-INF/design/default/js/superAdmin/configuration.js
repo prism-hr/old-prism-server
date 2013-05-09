@@ -31,7 +31,9 @@ $(document).ready(function()
 		complete: function()
 		{
 			$('#ajaxloader').fadeOut('fast');
-			updateRegistryForm();
+			if ($('#registryUsers').length > 0) {
+				updateRegistryForm();
+			}
 
 			// -----------------------------------------------------------------------------
 			// Restrict some text fields to numbers only.

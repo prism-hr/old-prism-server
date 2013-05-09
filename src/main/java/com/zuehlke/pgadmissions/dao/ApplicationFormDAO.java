@@ -272,6 +272,13 @@ public class ApplicationFormDAO {
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
+	public List<Integer> getApplicationsIdsDueRegistryNotification() {
+	    return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+	            .setProjection(Projections.property("id"))
+	            .add(Restrictions.eq("registryUsersDueNotification", true))
+	            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	}
+
 	public List<ApplicationForm> getApplicationsDueApprovalRequestNotification() {
 		DetachedCriteria approvalRestartRequestNotificationCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")

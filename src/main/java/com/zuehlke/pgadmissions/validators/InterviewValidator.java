@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -62,10 +64,44 @@ public class InterviewValidator extends AbstractValidator {
         }
         
         if (stage == InterviewStage.SCHEDULING) {
+            boolean hasRejectedTime = false, hasRejectedPastDates = false;
             List<InterviewTimeslot> timeslots = interview.getTimeslots();
             
             if (timeslots.size() == 0) {
                 errors.rejectValue("timeslots", MUST_SELECT_DATE_AND_TIME);
+            }
+            
+            for (int i = 0; i < timeslots.size(); i++) {
+                InterviewTimeslot timeslot = timeslots.get(i);
+                
+                Matcher timePatternMatcher = timePattern.matcher(timeslot.getStartTime());
+                
+                if (!timePatternMatcher.matches()) {
+                    if (!hasRejectedTime) {
+                        hasRejectedTime = true;
+                        errors.rejectValue("timeslots", INVALID_TIME);
+                    }
+                }
+                else {
+                    Calendar dueDate = Calendar.getInstance();
+                    dueDate.setTime(timeslot.getDueDate());
+                    
+                    String startTime = timeslot.getStartTime();
+                    int hours = Integer.parseInt(startTime.substring(0, 2));
+                    int minutes = Integer.parseInt(startTime.substring(3, 5));
+                    
+                    dueDate.set(Calendar.HOUR_OF_DAY, hours);
+                    dueDate.set(Calendar.MINUTE, minutes);
+                    
+                    Calendar now = Calendar.getInstance();
+                    
+                    if (dueDate.getTime().before(now.getTime())) {
+                        if (!hasRejectedPastDates) {
+                            hasRejectedPastDates = true;
+                            errors.rejectValue("timeslots", MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE);
+                        }
+                    }
+                }
             }
         }
         

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
@@ -27,6 +28,12 @@ public abstract class AbstractValidator implements org.springframework.validatio
     protected static final String MANDATORY_CHECKBOX = "checkbox.mandatory";
     
     protected static final String MUST_SELECT_DATE_AND_TIME = "datepicker.field.mustselectdate";
+    
+    protected static final String MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE = "datepicker.field.mustselectdatetimesinfuture";
+    
+    protected static final String INVALID_TIME = "time.field.invalid"; 
+    
+    protected static final Pattern timePattern = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
     
     @Autowired
     private Validator validator;

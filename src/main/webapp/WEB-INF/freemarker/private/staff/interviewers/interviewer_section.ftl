@@ -154,9 +154,9 @@
     <div class="field">
     	<div id="availableDatesPicker" class="datepicker-inline"></div>
     	<@spring.bind "interview.timeslots" />
-    	<#list spring.status.errorMessages as error>
-    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
-    	</#list>	
+	      <#list spring.status.errorMessages as error>
+		      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+	      </#list>	
   	</div>
   </div>
   <div id="interviewPossibleStartTimes" class="row interview-to-schedule">

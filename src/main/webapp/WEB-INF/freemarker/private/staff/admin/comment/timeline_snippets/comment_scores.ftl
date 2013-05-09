@@ -8,22 +8,22 @@
 	                <#if score.questionType == "TEXT" || score.questionType == "TEXTAREA">
 	                    <p class="sQuestion">
 	                        <span/>
-	                        <b>${score.question} </b>
-	                        <#if score.textResponse??>
+	                        <b>${score.question}:</b>
+	                        <#if score.textResponse?has_content>
 	                            ${score.textResponse}
 	                            <#else>
-	                                <i>${notProvided}</i>
+	                                <i>Not Provided</i>
 	                            </#if>
 	                    </p>
 	
 	                <#elseif score.questionType == "DATE">
 	                    <p class="sQuestion">
 	                        <span/>
-	                        <b>${score.question}</b>
+	                        <b>${score.question}:</b>
 	                        <#if score.dateResponse??>
 	                            ${score.dateResponse?string('dd MMM yy')}
 	                            <#else>
-	                                <i>${notProvided}</i>
+	                                <i>Not Provided</i>
 	                            </#if>
 	                    </p>
 	
@@ -31,18 +31,18 @@
 	                <#elseif score.questionType == "DATE_RANGE">
 	                    <p class="sQuestion">
 	                        <span/>
-	                        <b>${score.question} </b>From ${score.dateResponse} to ${score.secondDateResponse}
+	                        <b>${score.question}:</b> From ${score.dateResponse} to ${score.secondDateResponse}
 	                    </p>
 	                    -->
 	
 	                <#elseif score.questionType == "DROPDOWN">
 	                    <p class="sQuestion">
 	                        <span/>
-	                        <b>${score.question} </b>
+	                        <b>${score.question}:</b>
 	                        <#if score.textResponse??>
 	                            <#list score.textResponse?split("|") as value><#if value_index + 1 &gt; 1>, </#if>${value}</#list>
 	                        <#else>
-	                            <i>${notProvided}</i>
+	                            <i>Not Provided</i>
 	                        </#if>
 	                    </p>
 	                    
@@ -52,7 +52,7 @@
 							<p class="sQuestion">
 		                        <span/>	                        
 		                    </p>
-		                    <b>${score.question} </b>
+		                    <b>${score.question}:</b>
 	                        <#if score.ratingResponse??>
 	                            <ul class="rating-list clearfix">
 	                                <#if score.ratingResponse == 0>
@@ -64,7 +64,7 @@
 	                                </#if>
 	                            </ul>
 	                        <#else>
-	                            <i>${notProvided}</i>
+	                            <i>Not Provided</i>
 	                        </#if>
 						</div>
 	                </#if>

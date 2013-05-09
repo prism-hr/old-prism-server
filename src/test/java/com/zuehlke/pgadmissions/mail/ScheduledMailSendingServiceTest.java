@@ -877,8 +877,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		model.put("recipients", "Ivo, Ektor");
 		model.put("admissionsValidationServiceLevel", SERVICE_OFFER);
 		
-		expect(applicationsServiceMock.getApplicationsDueRegistryNotification()).andReturn(asList(form));
+		expect(applicationsServiceMock.getApplicationsIdsDueRegistryNotification()).andReturn(asList(form.getId()));
 		expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
+		expect(applicationsServiceMock.getApplicationById(form.getId())).andReturn(form);
 		
 		String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE
 				+ " - Validation Request";

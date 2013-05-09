@@ -23,6 +23,7 @@ $(document).ready(function() {
         }
     });
 
+	
     // -----------------------------------------------------------------------------------------
     // Create interviewer button.
     // -----------------------------------------------------------------------------------------
@@ -255,14 +256,13 @@ function recoverSubmittedValues() {
 		}
 	}
 	
-	var submittedTimezone = $('#submittedTimezone')[0].innerText;
+	var submittedTimezone = $('#submittedTimezone').text();
 	
 	var matches = submittedTimezone.match(/id=".+"/gi);
-	
 	if (matches != null && matches.length > 0) {
 		var match = matches[0].replace('id=', '').replace(/"/g, '');
 		$('#timezone option[value="' + match + '"]').attr('selected', 'selected');
-	}
+	} 
 }
 
 function getInterviewersAndDetailsSections() {
@@ -319,6 +319,7 @@ function getInterviewersAndDetailsSections() {
         	
         	interviewStatus.change(showProperInterviewArrangements);
         	interviewStatus.change();
+			setDefaultGTM();
         },
         complete : function() {
             $('#ajaxloader').fadeOut('fast');
@@ -550,10 +551,16 @@ function resetInterviwersErrors() {
         $('#interviewersErrorSpan').remove();
     }
 }
-
+// Timezone select by default the GTM London
+function setDefaultGTM() {
+	var defaultGTM = '(GMT) Dublin, Edinburgh, Lisbon, London';
+	$("#timezone option").filter(function() {
+		//may want to use $.trim in here
+		return $(this).text() == defaultGTM; 
+	}).prop('selected', true);
+}
 function showProperInterviewArrangements() {
 	var interviewStatus = $('input[name=interviewStatus]:radio:checked').val();
-	
 	$('.interview-happened').hide();
 	$('.interview-scheduled').hide();
 	$('.interview-to-schedule').hide();

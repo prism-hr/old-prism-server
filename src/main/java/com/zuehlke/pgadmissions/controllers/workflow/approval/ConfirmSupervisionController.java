@@ -124,6 +124,11 @@ public class ConfirmSupervisionController {
     public String confirmSupervision(ApplicationForm applicationForm) {
         return CONFIRM_SUPERVISION_PAGE;
     }
+    
+    @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.GET)
+    public void defaultGet() {
+        return;
+    }
 
     @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.POST)
     public String applyConfirmSupervision(ApplicationForm applicationForm, @Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result) {

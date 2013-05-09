@@ -267,6 +267,10 @@ public class ApplicationsService {
     public List<ApplicationForm> getApplicationsDueRegistryNotification() {
         return applicationFormDAO.getApplicationsDueRegistryNotification();
     }
+    
+    public List<Integer> getApplicationsIdsDueRegistryNotification() {
+        return applicationFormDAO.getApplicationsIdsDueRegistryNotification();
+    }
 
     public List<ApplicationForm> getApplicationsDueApprovalRestartRequestNotification() {
         return applicationFormDAO.getApplicationsDueApprovalRequestNotification();

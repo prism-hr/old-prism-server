@@ -74,6 +74,7 @@ $(document).ready(function(){
 				
 			success:	function(data) {
 					$('#fundingSection').html(data);
+					$('#funding-H2').trigger('click');
 				},
 			complete: function()
 			{
@@ -245,7 +246,10 @@ function postFundingData(message)
 			if(errorCount > 0){
 				$('#funding-H2').trigger('click');
 				markSectionError('#fundingSection');
-				
+			} else {
+				if (message == 'add') {
+					$('#funding-H2').trigger('click');
+				}
 			}
 		},
     complete: function()

@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,10 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
@@ -75,8 +78,18 @@ public class InterviewVoteController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getInterviewFeedbackPage() {
+    public String getInterviewVotePage() {
         return INTERVIEW_VOTE_PAGE;
+    }
+    
+    @RequestMapping(method = RequestMethod.POST)
+    public String submitInterviewVotes(@ModelAttribute ApplicationForm applicationForm, @RequestParam String timeslots) {
+        Gson gson = new Gson();
+        Type collectionType = new TypeToken<Set<Integer>>(){}.getType();
+        Set<Integer> fromJson = gson.fromJson(timeslots, collectionType);
+//        applicationForm.getLatestInterview().getParticipants()
+//        applicationForm.getLatestInterview().getTimeslots()
+        return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
     }
 
 }

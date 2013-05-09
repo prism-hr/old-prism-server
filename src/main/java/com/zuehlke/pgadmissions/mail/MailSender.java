@@ -32,31 +32,27 @@ import freemarker.template.Template;
 
 @Service
 public class MailSender {
-	
-	 private static final String PLAIN_TEXT_NOTE = "\n\nIf the links do not work in your email client copy and paste them into your browser.";
+
+    private static final String PLAIN_TEXT_NOTE = "\n\nIf the links do not work in your email client copy and paste them into your browser.";
 
     private final Logger log = LoggerFactory.getLogger(MailSender.class);
-    
+
     protected final JavaMailSender javaMailSender;
-    
+
     protected final boolean emailProductionSwitch;
-    
+
     protected final String emailAddressFrom;
-    
+
     protected final String emailAddressTo;
-    
+
     private final EmailTemplateService emailTemplateService;
-    
+
     private final FreeMarkerConfig freemarkerConfig;
-    
+
     @Autowired
-    public MailSender(
-            final JavaMailSender javaMailSender, 
-            @Value("${email.prod}") final String production,
-            @Value("${email.address.from}") final String emailAddressFrom,  
-            @Value("${email.address.to}") final String emailAddressTo,
-            final EmailTemplateService emailTemplateService,
-            final FreeMarkerConfig freemarkerConfig) {
+    public MailSender(final JavaMailSender javaMailSender, @Value("${email.prod}") final String production,
+            @Value("${email.address.from}") final String emailAddressFrom, @Value("${email.address.to}") final String emailAddressTo,
+            final EmailTemplateService emailTemplateService, final FreeMarkerConfig freemarkerConfig) {
         this.javaMailSender = javaMailSender;
         this.emailProductionSwitch = BooleanUtils.toBoolean(production);
         this.emailAddressFrom = emailAddressFrom;
@@ -65,7 +61,7 @@ public class MailSender {
         this.freemarkerConfig = freemarkerConfig;
         enableLoggingOfSMTPCommands();
     }
-    
+
     private void enableLoggingOfSMTPCommands() {
         if (javaMailSender instanceof JavaMailSenderImpl) {
             JavaMailSenderImpl impl = (JavaMailSenderImpl) this.javaMailSender;
@@ -82,12 +78,12 @@ public class MailSender {
             }
         }
     }
-    
+
     protected String resolveSubject(final EmailTemplateName templateName, final Object... args) {
         String subjectFormat = emailTemplateService.getSubjectForTemplate(templateName);
-        return args == null ? subjectFormat :String.format(subjectFormat, args);
+        return args == null ? subjectFormat : String.format(subjectFormat, args);
     }
-    
+
     public void sendEmail(final PrismEmailMessage... emailMessage) {
         sendEmail(Arrays.asList(emailMessage));
     }
@@ -101,99 +97,110 @@ public class MailSender {
             }
         }
     }
-    
-    protected void sendEmailAsProductionMessage(final PrismEmailMessage message) {
-         log.info(String.format("Sending PRODUCTION Email: %s", message.toString()));
-         try {
-             javaMailSender.send(new MimeMessagePreparator() {
-                 @Override
-                 public void prepare(final MimeMessage mimeMessage) throws Exception {
-                     final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
-                     
-                     messageHelper.setFrom(emailAddressFrom);
-                     
-                     for (InternetAddress addresses : message.getToAsInternetAddresses()) {
-                         messageHelper.addTo(addresses);
-                     }
-                     
-                     for (InternetAddress addresses : message.getCcAsInternetAddresses()) {
-                         messageHelper.addCc(addresses);
-                     }
-                     
-                     for (InternetAddress addresses : message.getBccAsInternetAddresses()) {
-                         messageHelper.addBcc(addresses);
-                     }
-                     
-                     if (StringUtils.isNotBlank(message.getReplyToAddress())) {
-                         messageHelper.setReplyTo(message.getReplyToAddress());
-                     }
-                     
-                     messageHelper.setSubject(message.getSubjectCode());
-                     
-                     for (PdfAttachmentInputSource attachment : message.getAttachments()) {
-                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
-                     }
-     
-                     EmailTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
-                     Template template = new Template(message.getTemplateName().displayValue(), new StringReader(activeEmailTemplate.getContent()), freemarkerConfig.getConfiguration());
-                     
-                     HtmlToPlainText htmlFormatter = new HtmlToPlainText();
-                     String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, message.getModel());
-                     String plainText = htmlFormatter.getPlainText(htmlText);
-                     plainText = plainText + PLAIN_TEXT_NOTE;
-                     
-                     messageHelper.setText(plainText, htmlText);
-                 }
-             });
-         } catch (Exception e) {
-             log.error(String.format("Failed to send email message %s", message.toString()), e);
-             throw new PrismMailMessageException(message);
-         }
-    }
-    
-    protected void sendEmailAsDevelopmentMessage(final PrismEmailMessage message) {
-    	 log.info(String.format("Sending DEVELOPMENT Email: %s", message.toString()));
-         try {
-             javaMailSender.send(new MimeMessagePreparator() {
-                 @Override
-                 public void prepare(final MimeMessage mimeMessage) throws Exception {
-                     final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
-                     
-                     messageHelper.setFrom(emailAddressFrom);
 
-                     messageHelper.setTo(emailAddressTo);
-                     
-                     if (StringUtils.isNotBlank(message.getReplyToAddress())) {
-                         messageHelper.setReplyTo(message.getReplyToAddress());
-                     }
-                     
-                     StringBuilder subjectBuilder = new StringBuilder();
-                     //the subject should be built anywhere else even with the new editable subject!!
-                     subjectBuilder.append(message.getSubjectCode());
-                     subjectBuilder.append("<NON-PROD-Message: TO: ").append(message.getToAsInternetAddresses().toString());
-                     subjectBuilder.append(" CC: ").append(message.getCcAsInternetAddresses().toString());
-                     subjectBuilder.append(" BCC: ").append(message.getBccAsInternetAddresses().toString());
-                     
-                     messageHelper.setSubject(subjectBuilder.toString());
-                     
-                     for (PdfAttachmentInputSource attachment : message.getAttachments()) {
-                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
-                     }
-     
-                     EmailTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
-                     Template template = new Template(message.getTemplateName().displayValue(), new StringReader(activeEmailTemplate.getContent()), freemarkerConfig.getConfiguration());
-                     
-                     HtmlToPlainText htmlFormatter = new HtmlToPlainText();
-                     String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, message.getModel());
-                     String plainText = htmlFormatter.getPlainText(htmlText);
-                     plainText = plainText + PLAIN_TEXT_NOTE;
-                     
-                     messageHelper.setText(plainText, htmlText);
-                 }
-             });
-         } catch (Exception e) {
-             log.error(String.format("Failed to send email message %s", message.toString()), e);
-             throw new PrismMailMessageException(message);
-         }
+    protected void sendEmailAsProductionMessage(final PrismEmailMessage message) {
+        log.info(String.format("Sending PRODUCTION Email: %s", message.toString()));
+        try {
+            javaMailSender.send(new MimeMessagePreparator() {
+                @Override
+                public void prepare(final MimeMessage mimeMessage) throws Exception {
+                    final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+
+                    messageHelper.setFrom(emailAddressFrom);
+
+                    for (InternetAddress addresses : message.getToAsInternetAddresses()) {
+                        messageHelper.addTo(addresses);
+                    }
+
+                    for (InternetAddress addresses : message.getCcAsInternetAddresses()) {
+                        messageHelper.addCc(addresses);
+                    }
+
+                    for (InternetAddress addresses : message.getBccAsInternetAddresses()) {
+                        messageHelper.addBcc(addresses);
+                    }
+
+                    if (StringUtils.isNotBlank(message.getReplyToAddress())) {
+                        messageHelper.setReplyTo(message.getReplyToAddress());
+                    }
+
+                    messageHelper.setSubject(message.getSubjectCode());
+
+                    for (PdfAttachmentInputSource attachment : message.getAttachments()) {
+                        messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
+                    }
+
+                    EmailTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
+                    Template template = new Template(message.getTemplateName().displayValue(), new StringReader(activeEmailTemplate.getContent()),
+                            freemarkerConfig.getConfiguration());
+
+                    HtmlToPlainText htmlFormatter = new HtmlToPlainText();
+                    String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, message.getModel());
+                    String plainText = htmlFormatter.getPlainText(htmlText);
+                    plainText = plainText + PLAIN_TEXT_NOTE;
+
+                    messageHelper.setText(plainText, htmlText);
+                }
+            });
+        } catch (Exception e) {
+            log.error(String.format("Failed to send email message %s", message.toString()), e);
+            throw new PrismMailMessageException(message);
+        }
     }
+
+    protected void sendEmailAsDevelopmentMessage(final PrismEmailMessage message) {
+        log.info(String.format("Sending DEVELOPMENT Email: %s", message.toString()));
+        try {
+            javaMailSender.send(new MimeMessagePreparator() {
+                @Override
+                public void prepare(final MimeMessage mimeMessage) throws Exception {
+                    final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+
+                    messageHelper.setFrom(emailAddressFrom);
+
+                    messageHelper.setTo(emailAddressTo);
+
+                    if (StringUtils.isNotBlank(message.getReplyToAddress())) {
+                        messageHelper.setReplyTo(message.getReplyToAddress());
+                    }
+
+                    StringBuilder subjectBuilder = new StringBuilder();
+                    // the subject should be built anywhere else even with the new editable subject!!
+                    subjectBuilder.append(message.getSubjectCode());
+                    subjectBuilder.append("<NON-PROD-Message: TO: ").append(message.getToAsInternetAddresses().toString());
+                    subjectBuilder.append(" CC: ").append(message.getCcAsInternetAddresses().toString());
+                    subjectBuilder.append(" BCC: ").append(message.getBccAsInternetAddresses().toString());
+
+                    messageHelper.setSubject(subjectBuilder.toString());
+
+                    for (PdfAttachmentInputSource attachment : message.getAttachments()) {
+                        messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
+                    }
+
+                    EmailTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
+                    Template template = new Template(message.getTemplateName().displayValue(), new StringReader(activeEmailTemplate.getContent()),
+                            freemarkerConfig.getConfiguration());
+
+                    HtmlToPlainText htmlFormatter = new HtmlToPlainText();
+                    String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, message.getModel());
+                    String plainText = htmlFormatter.getPlainText(htmlText);
+                    plainText = plainText + PLAIN_TEXT_NOTE;
+
+                    messageHelper.setText(plainText, htmlText);
+                }
+            });
+        } catch (Exception e) {
+            log.error(String.format("Failed to send email message %s", message.toString()), e);
+            throw new PrismMailMessageException(message);
+        }
+    }
+
+    public EmailTemplateService getEmailTemplateService() {
+        return emailTemplateService;
+    }
+
+    public FreeMarkerConfig getFreemarkerConfig() {
+        return freemarkerConfig;
+    }
+
 }

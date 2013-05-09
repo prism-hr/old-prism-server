@@ -184,6 +184,7 @@ $(document).ready(function() {
             },
             success : function(data) {
                 $('#qualificationsSection').html(data);
+				$('#qualifications-H2').trigger('click');
             },
             complete : function() {
                 $('#ajaxloader').fadeOut('fast');
@@ -372,7 +373,11 @@ function postQualificationData(message) {
             if (errorCount > 0) {
                 markSectionError('#qualificationsSection');
 				$('#qualifications-H2').trigger('click');
-            }
+            } else {
+				if (message == 'add') {
+					$('#qualifications-H2').trigger('click');
+				}
+			}
         },
         complete : function() {
             $('#ajaxloader').fadeOut('fast');

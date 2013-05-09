@@ -768,7 +768,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 		String subjectToReturn="REMINDER: "+SAMPLE_APPLICANT_NAME+" "+SAMPLE_APPLICANT_SURNAME+" "
 		+"Application "+SAMPLE_APPLICATION_NUMBER+" for UCL "+SAMPLE_PROGRAM_TITLE+" - Reference Request";
 		
-		expect(refereeDAOMock.getRefereesDueAReminder()).andReturn(asList(referee));
+		expect(refereeDAOMock.getRefereesIdsDueAReminder()).andReturn(asList(0));
+		
+		expect(refereeDAOMock.getRefereeById(0)).andReturn(referee);
 		
 		expect(mockMailSender.resolveSubject(REFEREE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME, SAMPLE_APPLICANT_SURNAME))
 				.andReturn(subjectToReturn);
@@ -816,7 +818,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         model.put("newRoles", "Administrator for MRes Security Science");
         model.put("host", HOST);
 
-        expect(userDAOMock.getUsersWithPendingRoleNotifications()).andReturn(asList(user));
+        expect(userDAOMock.getUsersIdsWithPendingRoleNotifications()).andReturn(asList(1));
+        expect(userDAOMock.get(1)).andReturn(user);
         String subjectToReturn = "Invitation to Join UCL Prism";
         expect(mockMailSender.resolveSubject(EmailTemplateName.NEW_USER_SUGGESTION, (Object[])null))
             .andReturn(subjectToReturn);

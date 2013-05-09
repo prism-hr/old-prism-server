@@ -1256,30 +1256,33 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendReferenceReminder() {
         log.info("Running sendReferenceReminder Task");
-        List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
-        for (Referee referee : refereesDueAReminder) {
-           if (applicationContext.getBean(this.getClass()).sendReferenceReminder(referee)) {
-               referee.setLastNotified(new Date());
-               refereeDAO.save(referee);
-           }
+        List<Integer> refereesDueAReminder = refereeDAO.getRefereesIdsDueAReminder();
+        for (Integer referee : refereesDueAReminder) {
+           applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
         }
     }
     
    
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendReferenceReminder(Referee referee) {
+    public boolean sendReferenceReminder(Integer refereeId) {
         PrismEmailMessage message;
         try {
+            Referee referee = refereeDAO.getRefereeById(refereeId);
             String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
 
             ApplicationForm applicationForm = referee.getApplication();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
-                    adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName() });
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram()
+                    .getAdministrators());
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application",
+                    "applicant", "host" },
+                    new Object[] { adminsEmails, referee, applicationForm, applicationForm.getApplicant(),
+                            getHostName() });
 
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
             sendEmail(message);
+            referee.setLastNotified(new Date());
+            refereeDAO.save(referee);
         } catch (Exception e) {
             log.error("Error while sending reference reminder email to referee: ", e);
             return false;
@@ -1291,17 +1294,16 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendNewUserInvitation() {
         log.info("Running sendNewUserInvitation Task");
-        List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
-        for (RegisteredUser user : users) {
-            if (applicationContext.getBean(this.getClass()).sendNewUserInvitation(user)) {
-                userDAO.save(user);
-            }
+        List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
+        for (Integer user : users) {
+            applicationContext.getBean(this.getClass()).sendNewUserInvitation(user);
         }
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendNewUserInvitation(RegisteredUser user) {
+    public boolean sendNewUserInvitation(Integer userId) {
         PrismEmailMessage message = null;
+        RegisteredUser user = userDAO.get(userId);
         String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
         for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
             if (notification.getNotificationDate() == null) {
@@ -1317,6 +1319,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                     admin, program, rolesString, getHostName() });
             message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
             sendEmail(message);
+            userDAO.save(user);
         } catch (Exception e) {
             log.error("Error while sending reference reminder email to referee: ", e);
             return false;
@@ -1360,9 +1363,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         log.info("Running sendValidationRequestToRegistry Task");
         List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
         for (ApplicationForm applicationForm : applications) {
-            if (applicationContext.getBean(this.getClass()).sendValidationRequestToRegistry(applicationForm)) {
-                applicationsService.save(applicationForm);
-            }
+            applicationContext.getBean(this.getClass()).sendValidationRequestToRegistry(applicationForm);
         }
     }
     
@@ -1414,6 +1415,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts),
                     CommentType.GENERIC, null);
             commentService.save(comment);
+            applicationsService.save(applicationForm);
             log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
         } catch (Exception e) {
             log.error("Error while sending validation request email to registry: {}", e);

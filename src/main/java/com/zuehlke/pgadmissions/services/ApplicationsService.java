@@ -196,14 +196,13 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (interview != null && interview.isParticipant(user) && application.isInState(ApplicationFormStatus.INTERVIEW)
-                && interview.isScheduling()) {
+        if (application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduling() && interview.isParticipant(user)) {
             actions.addAction("interviewVote", "Vote for interview time");
             actions.setRequiresAttention(true);
         }
 
-        if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW)
-                && interview.isScheduled() && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+        if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduled()
+                && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);
         }

@@ -328,7 +328,10 @@ function loadPersonalDetails(clear){
 			        $("#nameOnPassport").val("");
 			        $("#passportIssueDate").val("");
 			        $("#passportExpiryDate").val("");
+					$("input[name='languageQualificationAvailable']").prop('checked', false);
+					$("input[name='passportAvailable']").prop('checked', false);
 			        disablePassportInformation();
+					disableLanguageQualifications();
 					$('#personalDetails-H2').trigger('click');
 				}else{
 					if ($('#personalDetailsSection.error').length > 0)

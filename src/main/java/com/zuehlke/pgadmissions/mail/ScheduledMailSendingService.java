@@ -820,6 +820,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleApprovedConfirmation() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovedNotifications()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPROVED_NOTIFICATION);
+            CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
             RegisteredUser primarySupervisor = getPrimarySupervisorsAsUserFromLatestApprovalRound(form);
             if (null != primarySupervisor) {
                 setDigestNotificationType(primarySupervisor, DigestNotificationType.UPDATE_NOTIFICATION);
@@ -1361,17 +1362,18 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendValidationRequestToRegistry() {
         log.info("Running sendValidationRequestToRegistry Task");
-        List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
-        for (ApplicationForm applicationForm : applications) {
+        List<Integer> applications = applicationsService.getApplicationsIdsDueRegistryNotification();
+        for (Integer applicationForm : applications) {
             applicationContext.getBean(this.getClass()).sendValidationRequestToRegistry(applicationForm);
         }
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendValidationRequestToRegistry(ApplicationForm applicationForm) {
+    public boolean sendValidationRequestToRegistry(Integer applicationFormId) {
         PrismEmailMessage message = null;
         List<Person> registryContacts = configurationService.getAllRegistryUsers();
         try {
+            ApplicationForm applicationForm = applicationsService.getApplicationById(applicationFormId);
             PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
 
             String subject = resolveMessage(REGISTRY_VALIDATION_REQUEST, applicationForm);
@@ -1468,6 +1470,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueRejectNotifications()) {
             form.setRejectNotificationDate(new Date());
             RegisteredUser supervisor = getPrimarySupervisorsAsUserFromLatestApprovalRound(form);
+            CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
             if (supervisor != null) {
                 setDigestNotificationType(supervisor, DigestNotificationType.UPDATE_NOTIFICATION);
             }

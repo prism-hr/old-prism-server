@@ -4,8 +4,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomBooleanEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,8 +25,10 @@ import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.propertyeditors.InterviewParticipantAcceptedSTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.ParticipantValidator;
 
 @Controller
 @RequestMapping(value = { "/interviewVote" })
@@ -30,15 +37,20 @@ public class InterviewVoteController {
 	private static final String INTERVIEW_VOTE_PAGE = "private/staff/interviewers/interview_vote";
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
-
+	private final ParticipantValidator interviewParticipantValidator;
+    private final InterviewParticipantAcceptedSTimeslotsPropertyEditor interviewParticipantAcceptedSTimeslotsPropertyEditor;
+    
 	public InterviewVoteController() {
-		this(null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public InterviewVoteController(ApplicationsService applicationsService, UserService userService) {
+	public InterviewVoteController(ApplicationsService applicationsService, UserService userService, ParticipantValidator interviewParticipantValidator,
+	        InterviewParticipantAcceptedSTimeslotsPropertyEditor interviewParticipantAcceptedSTimeslotsPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
+		this.interviewParticipantValidator = interviewParticipantValidator;
+		this.interviewParticipantAcceptedSTimeslotsPropertyEditor = interviewParticipantAcceptedSTimeslotsPropertyEditor;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -56,6 +68,41 @@ public class InterviewVoteController {
 			throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
 		}
 		return applicationForm;
+	}
+	
+	@ModelAttribute("interview")
+	public Interview getInterview(@RequestParam String applicationId) {
+	    ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        
+        return applicationForm.getLatestInterview();
+	}
+	
+	@InitBinder("interviewParticipant")
+    public void registerValidatorAndPropertyEditor(WebDataBinder binder) {
+        binder.setValidator(this.interviewParticipantValidator);
+        binder.registerCustomEditor(null, "acceptedTimeslots", interviewParticipantAcceptedSTimeslotsPropertyEditor);
+        binder.registerCustomEditor(null, "responded", new CustomBooleanEditor(false));
+	}
+	
+	@ModelAttribute("interviewParticipant")
+	public InterviewParticipant getInterviewParticipant(@RequestParam String applicationId) {
+	    List<InterviewParticipant> participants = getApplicationForm(applicationId).getLatestInterview().getParticipants();
+        RegisteredUser currentUser = getUser();
+        InterviewParticipant currentParticipant = null;
+        for (InterviewParticipant interviewParticipant : participants) {
+            if (interviewParticipant.getUser().getId().equals(currentUser.getId())) {
+                currentParticipant = interviewParticipant;
+            }
+        }
+        
+        if (currentParticipant == null) {
+            throw new RuntimeException("Unable to find interview participant corresponding to current user: " + currentUser.getUsername());
+        }
+        
+        return currentParticipant;
 	}
 
 	@ModelAttribute("user")
@@ -75,17 +122,7 @@ public class InterviewVoteController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String submitInterviewVotes(@ModelAttribute ApplicationForm applicationForm, @RequestParam List<Integer> acceptedTimeslotIds) {
-
-		List<InterviewParticipant> participants = applicationForm.getLatestInterview().getParticipants();
-		RegisteredUser currentUser = getUser();
-		InterviewParticipant currentParticipant = null;
-		for (InterviewParticipant interviewParticipant : participants) {
-			if (interviewParticipant.getUser().getId().equals(currentUser.getId())) {
-				currentParticipant = interviewParticipant;
-			}
-		}
-
+	public String submitInterviewVotes(@Valid @ModelAttribute InterviewParticipant currentParticipant, @ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) List<Integer> acceptedTimeslotIds) {
 		Set<InterviewTimeslot> acceptedTimeslots = new HashSet<InterviewTimeslot>();
 		List<InterviewTimeslot> timeslots = applicationForm.getLatestInterview().getTimeslots();
 		for (InterviewTimeslot interviewTimeslot : timeslots) {
@@ -94,11 +131,7 @@ public class InterviewVoteController {
 			}
 		}
 
-		if (currentParticipant != null) {
-			currentParticipant.setAcceptedTimeslots(acceptedTimeslots);
-		} else {
-			throw new RuntimeException("Unable to find interview participant corresponding to current user: " + currentUser.getUsername());
-		}
+		currentParticipant.setAcceptedTimeslots(acceptedTimeslots);
 
 		return "redirect:/applications?messageCode=interview.vote.feedback&application=" + applicationForm.getApplicationNumber();
 	}

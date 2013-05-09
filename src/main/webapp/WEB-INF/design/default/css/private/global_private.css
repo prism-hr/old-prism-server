@@ -1637,13 +1637,16 @@ form#removeForm {
 }
 
 .interview-votes .timeslots-wrapper {
+	position:relative;
+}
+.interview-votes .timeslots-scrollable {
 	overflow:auto;
 }
 
-.interview-votes .timeslots-wrapper::-webkit-scrollbar {
-width: 15px; // to adjust width
+.interview-votes .timeslots-scrollable::-webkit-scrollbar {
+	width: 15px; // to adjust width
 }
-.interview-votes .timeslots-wrapper::-webkit-scrollbar-track {
+.interview-votes .timeslots-scrollable::-webkit-scrollbar-track {
 	background: #FFFFFF;
 	-webkit-box-shadow: inset 1px 1px 2px #E0E0E0;   
 	border: 1px solid #D8D8D8;  //color of the track of scroll bar
@@ -1651,28 +1654,87 @@ width: 15px; // to adjust width
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
 }
-.interview-votes .timeslots-wrapper::-webkit-scrollbar-thumb {
+.interview-votes .timeslots-scrollable::-webkit-scrollbar-thumb {
 	background: #6B6B6B;
 	-webkit-box-shadow: inset 1px 1px 2px rgba(155, 155, 155, 0.4);
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
 }
-.interview-votes .timeslots-wrapper::-webkit-scrollbar-thumb:hover {
+.interview-votes .timeslots-scrollable::-webkit-scrollbar-thumb:hover {
 	background: #aaaaaa;
 }
-.interview-votes .timeslots-wrapper::-webkit-scrollbar-thumb:active {
+.interview-votes .timeslots-scrollable::-webkit-scrollbar-thumb:active {
 	background: #888;
 	-webkit-box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3);
 }
 
+.interview-votes .table {
+	margin-left:235px;
+}
 .interview-votes .table.timeslots th,
 .interview-votes .table.timeslots td {
-	min-width:50px;
+	min-width:59px;
+	height:27px;
+}
+
+.interview-votes .table.timeslots th.participant,
+.interview-votes .table.timeslots td.participant {
+	width:220px;
+	position:absolute;
+	left:0;
+	background-color:white;
+	line-height:27px;
+}
+
+.interview-votes .table.timeslots tr.info td.participant {
+	background-color:#d9edf7;
+}
+
+.interview-votes .table.timeslots tfoot td.participant {
+	background:transparent;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions {
+	position:relative;
+}
+.interview-votes .table.timeslots td.participant .traversal-actions a {
+	border:0;
+	background:none;
+	cursor:pointer;
+	position:absolute;
+	right:2px;
+	bottom:-2px;
+	color:black;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a.can-make-anytime {
+	right:35px;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a.maybe-can-make-some {
+	display:none;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a:hover i {
+	color:#0066B3;
+	text-decoration:none;
+}
+.interview-votes .table.timeslots td.participant .traversal-actions a.cant-make-it:hover i {
+	color:#C3272F;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a.maybe-can-make-some:hover i {
+	color:#71BF46;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a i {
+	font-size:20px;
+	cursor:pointer;
 }
 
 .interview-votes .timeslot .icon-ok-sign,
-.interview-votes .timeslot .icon-question-sign,
+.interview-votes .timeslot .icon-circle,
 .interview-votes .timeslot .icon-remove-sign {
 	font-size:28px;
 }
@@ -1685,8 +1747,8 @@ width: 15px; // to adjust width
 	color:#71BF46;
 }
 
-.interview-votes .timeslot .icon-question-sign {
-	color:gray;
+.interview-votes .timeslot .icon-circle {
+	color:#ccc;
 }
 
 .interview-votes .timeslot input[type=checkbox] {

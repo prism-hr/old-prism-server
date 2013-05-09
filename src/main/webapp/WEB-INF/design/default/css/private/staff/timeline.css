@@ -1,0 +1,292 @@
+
+/* Timeline tab ------------------------------------------------------------------------------------------- */
+#timelineview { clear: both; margin-top: 20px; }
+#timelineview ul.tabs { background: url(../../../images/tab_line.gif) repeat-x 0 100%; list-style: none; margin: 0; height: 33px; overflow: hidden; }
+#timelineview ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; float: left; margin: 5px 5px 0 3px; padding: 0; }
+#timelineview ul.tabs li.current { background-position: 0 -31px; }
+#timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; margin-bottom: -5px; padding: 0 10px; }
+#timelineview ul.tabs li.current a { margin-bottom: 0; }
+
+#timelineview .tab-page { clear: both; padding-top: 10px; position: relative; }
+
+
+/* Timeline comments -------------------------------------------------------------------------------------- */
+#timeline-statuses { list-style: none; margin: 0; padding: 0; }
+#timeline-statuses ul { list-style: none; margin-left: 90px; }
+
+#timeline-statuses .box { background: #C8C8C8; margin-bottom: 10px; position: relative; border-radius: 4px;}
+#timeline-statuses>li:last-child {  margin-bottom: -10px;}
+#timeline-statuses .box .title { border-radius: 4px 4px 0 0; background: #999; font-weight: bold; line-height: 24px; overflow: hidden; padding: 5px; }
+#timeline-statuses .box .title .name { margin-left: 4px; }
+#timeline-statuses .box .title .datetime { float: right; margin-right: 5px; }
+#timeline-statuses .box .title em { color: black; font-weight: normal; font-size: 12px; }
+#timeline-statuses .box p { line-height: 1.2; margin: 0; padding: 5px 10px 0 30px; }
+#timeline-statuses .box p.highlight {  border-radius: 0 0 4px 4px; background-image: url(../../../images/bg_status_default.gif); font-size: 16px; font-weight: bold; margin: 0; padding: 10px 25px 10px 10px; }
+#timeline-statuses .box h3 {font-size:13px; line-height: 1.2; margin-bottom: 0; margin-top: .5em; padding: 0 10px; }
+#timeline-statuses .box label { display: inline-block; margin-right: 1em; }
+#timeline-statuses .box label input { vertical-align: middle; }
+#timeline-statuses .box ul { margin: 0 30px; padding: 10px 0; }
+#timeline-statuses .box ul li { margin-bottom: .25em; }
+
+#timeline-statuses .box h3.answer { line-height: 1; margin-top: 0; padding: 6px 10px 0 40px; }
+#timeline-statuses .box h3.answer span { background: url(../../../images/icon_answers.png) no-repeat; display: inline-block; height: 17px; margin: 0 10px 0 -30px; vertical-align: text-top; width: 19px; }
+#timeline-statuses .box h3.answer.unsure span { background-position: 0 0; }
+#timeline-statuses .box h3.answer.no span { background-position: -19px 0; }
+#timeline-statuses .box h3.answer.home span { background-position: -38px 0; }
+#timeline-statuses .box h3.answer.overseas span { background-position: -57px 0; }
+#timeline-statuses .box h3.answer.yes span { background-position: -76px 0; }
+
+#timeline-statuses ul .box { padding-bottom: 10px; }
+#timeline-statuses ul .box .title { background: #AAA; }
+#timeline-statuses ul .box p { font-size: 12px; font-weight: normal; padding: 10px 10px 5px; }
+#timeline-statuses ul .box p:last-child { padding-bottom: 0 !important; }
+
+#timeline-statuses .box ul.uploads { padding: 5px 0 5px 10px; }
+#timeline-statuses .box ul.uploads li { background: url(../../../images/icon_downloads.png) no-repeat 1px 0; display: block; line-height: 15px; margin-bottom: 10px; padding-left: 32px; }
+#timeline-statuses .box ul.uploads li:last-child { margin-bottom: 0; }
+
+#timeline-statuses ul.status-info .box h3 { margin: 0; padding: 10px; }
+#timeline-statuses ul.status-info .added { background: url(../../../images/icon_added_users.png) no-repeat 12px 11px; padding: 10px 10px 10px 40px; }
+
+#timeline-statuses ul .box ul { margin: 0; padding: 10px 0 20px 40px; }
+#timeline-statuses ul .box li { display: inline-block; margin-right: 20px; }
+#timeline-statuses .rating-list li {
+  margin-right: 2px !important;
+}
+
+
+#timeline-statuses .validation .box { background: #FDDB91; }
+#timeline-statuses .validation .box .title { background: #FBBE1E; }
+#timeline-statuses .validation .box p.highlight { background-image: url(../../../images/bg_status_validation.gif); }
+#timeline-statuses .validation ul .box { background-color: #FFECBF; }
+#timeline-statuses .validation ul .box .title { background: #FECB61; }
+
+#timeline-statuses .review .box { background: #C2DCEB; }
+#timeline-statuses .review .box .title { background: #A8CBDE; }
+#timeline-statuses .review .box p.highlight { background-image: url(../../../images/bg_status_review.gif); }
+#timeline-statuses .review ul .box { background-color: #E6F2F8; }
+#timeline-statuses .review ul .box .title { background: #AED5E7; }
+
+#timeline-statuses .interview .box { background: #D6DFAE; }
+#timeline-statuses .interview .box .title { background: #C5CE88; }
+#timeline-statuses .interview .box p.highlight { background-image: url(../../../images/bg_status_interview.gif); }
+#timeline-statuses .interview ul .box { background-color: #E8EDD1; padding-bottom: 10px; }
+#timeline-statuses .interview ul .box .title { background: #CCD495; }
+
+#timeline-statuses .approval .box { background: #EAEB93; }
+#timeline-statuses .approval .box .title { background: #DCDD28; }
+#timeline-statuses .approval .box p.highlight { background-image: url(../../../images/bg_status_approval.gif); }
+#timeline-statuses .approval ul .box { background-color: #F5F7CF; }
+#timeline-statuses .approval ul .box .title { background: #E4E466; }
+
+#timeline-statuses .rejected .box { background: #E0CED7; }
+#timeline-statuses .rejected .box .title { background: #C3ABBB; }
+#timeline-statuses .rejected .box p.highlight { background-image: url(../../../images/bg_status_rejected.gif); }
+#timeline-statuses .rejected ul .box { background-color: #EEE3E8; }
+#timeline-statuses .rejected ul .box .title { background: #D6BFCA; }
+
+#timeline-statuses .approved .box { background: #B6DDE9; }
+#timeline-statuses .approved .box .title { background: #74C0D2; }
+#timeline-statuses .approved .box p.highlight { background-image: url(../../../images/bg_status_approved.gif); }
+#timeline-statuses .approved ul .box { background-color: #DBEEF5; }
+#timeline-statuses .approved ul .box .title { background: #B6DDE9; }
+
+
+#timeline-statuses ul .box p.datetime,
+#timeline-statuses ul .box p.declined,
+#timeline-statuses ul .box p.delegate,
+#timeline-statuses ul .box p.location,
+#timeline-statuses ul .box p.referral,
+#timeline-statuses ul .box p.rejection,
+#timeline-statuses ul .box p.restart,
+#timeline-statuses ul .box p.project_title,
+#timeline-statuses ul .box p.start_date,
+#timeline-statuses ul .box p.conditional_offer,
+#timeline-statuses ul .box p.sQuestion,
+#timeline-statuses ul .box p.unconditional_offer { padding: 10px 10px 5px 40px; position: relative; }
+
+#timeline-statuses ul .box .question-rating-wrapper {  }
+#timeline-statuses ul .box .question-rating-wrapper p.sQuestion { display:inline-block; vertical-align:middle; padding-top:17px; padding-left:27px; }
+#timeline-statuses ul .box .question-rating-wrapper b { display:inline-block; margin:0; }
+#timeline-statuses ul .box .question-rating-wrapper ul.rating-list { display:inline-block; vertical-align:middle; margin:0; padding:12px 0 0 7px; }
+#timeline-statuses ul .box .question-rating-wrapper ul.rating-list li i:hover { cursor:auto; }
+
+#timeline-statuses ul .box p.datetime span,
+#timeline-statuses ul .box p.declined span,
+#timeline-statuses ul .box p.delegate span,
+#timeline-statuses ul .box p.location span,
+#timeline-statuses ul .box p.referral span,
+#timeline-statuses ul .box p.rejection span,
+#timeline-statuses ul .box p.restart span { position: absolute; left: 10px; top: 6px; width: 20px; height: 22px; display: block; }
+#timeline-statuses ul .box p.project_title span,
+#timeline-statuses ul .box p.start_date span,
+#timeline-statuses ul .box p.conditional_offer span,
+#timeline-statuses ul .box p.sQuestion span,
+#timeline-statuses ul .box p.unconditional_offer span { position: absolute; left: 10px; top: 6px; width: 25px; height: 27px; display: block; }
+
+#timeline-statuses ul .box p.datetime span { background: url(../../../images/icon_calendar.png) no-repeat 2px 0; }
+#timeline-statuses ul .box p.declined span { background: url(../../../images/icon_declined.png) no-repeat; }
+#timeline-statuses ul .box p.delegate span { background: url(../../../images/icon_delegation.png) no-repeat 0 3px; }
+#timeline-statuses ul .box p.location span { background: url(../../../images/icon_location.png) no-repeat 2px 0; }
+#timeline-statuses ul .box p.referral span { background: url(../../../images/icon_referral.png) no-repeat 0 4px; }
+#timeline-statuses ul .box p.rejection span { background: url(../../../images/icon_rejection.png) no-repeat; }
+#timeline-statuses ul .box p.restart span { background: url(../../../images/icon_restart.png) no-repeat 0 0; }
+#timeline-statuses ul .box p.project_title span { background: url(../../../images/project_description.png) no-repeat 0 -2px; }
+#timeline-statuses ul .box p.start_date span { background: url(../../../images/provisional_start_date.png) no-repeat 0 -2px; }
+#timeline-statuses ul .box p.conditional_offer span { background: url(../../../images/conditional_offer_recommended.png) no-repeat 0 -4px ; }
+#timeline-statuses ul .box p.unconditional_offer span { background: url(../../../images/unconditional_offer_recommended.png) no-repeat 0 -4px ; }
+
+#timeline-statuses ul .box p.sQuestion span:before {
+  content: "\f0e6";
+  font-size: 20px !important;
+  color: #E96C37;
+}
+
+
+
+/* Application tab ---------------------------------------------------------------------------------------- */
+#application div.admin_row .admin_row_label,
+#application div.admin_row .admin_header { line-height: 1.2; }
+#application div.admin_row .admin_row_label { margin: 4px 0; }
+#application div.admin_row .field { line-height: 1.2; margin: 4px 0 4px 235px; padding: 0; }
+
+#application div.buttons { display: none !important; }
+
+/* Dropdown css */
+#timeline-statuses .box .textContainer {
+	overflow: hidden;
+}
+.expandable {
+	margin-bottom: 24px;
+}
+
+.more-scores {
+	width: 712px;
+  text-align: right;
+  border-top: 1px solid #999;
+	cursor: pointer;
+	display: block;
+	color: #333333;
+	font-weight: bold;
+	line-height: 24px;
+  margin-bottom: -16px;
+}
+.expander {
+	position: absolute;
+	right: 12px;
+	width: 712px;
+  text-align: right;
+  border-top: 1px solid #999;
+	cursor: pointer;
+	display: block;
+	top: 92px;
+	color: #333333;
+	font-weight: bold;
+	line-height: 24px;
+}
+.expander.expand:after, .expander.collapsed:after,.more-scores.expand:after, .more-scores.collapsed:after, #timeline-statuses ul .box p.sQuestion span:before  {
+  font-family:FontAwesome;
+  font-weight:normal;
+  font-style:normal;
+  text-decoration:inherit;-webkit-font-smoothing:antialiased;
+  display:inline-block;
+  width:auto;
+  height:auto;
+  line-height:normal;
+  vertical-align:baseline;
+  background-image:none;
+  background-position:0 0;
+  background-repeat:repeat;
+  margin-top:0;
+  text-decoration: none;
+  text-align: center;
+  width: 25px;
+  -webkit-font-smoothing: antialiased;
+  cursor:default;
+  font-size: 17px;
+}
+/*.expander.expand {
+	background: url('../../../images/icon_expand.png') center right no-repeat;
+}
+.expander.collapsed {
+  background: url('../../../images/icon_collapse.png') center right no-repeat;
+}*/
+.expander.expand:after, .more-scores.expand:after {
+content:"\f0ab";
+color:grey;
+}
+.expander.collapsed:after, .more-scores.collapsed:after {
+  content:"\f0aa";
+color:grey;
+}
+
+
+/* Tabs tineline view */
+#timelineview {
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  padding: 10px;
+  position: relative;
+  margin-top: 40px;
+}
+#timelineview section:last-child {
+	margin-bottom:0px;
+}
+#timelineview ul.tabs {
+  margin-top: -43px;
+  background: none;
+  margin-bottom: 10px;
+}
+#timelineview ul.tabs li {
+  box-shadow: none;
+  font-size: 12px;
+  display: block;
+  float: left;
+  font-weight: bold;
+  -webkit-transition: 0.6s ease-in-out left;
+  -moz-transition: 0.6s ease-in-out left;
+  -o-transition: 0.6s ease-in-out left;
+  transition: 0.6s ease-in-out left;
+}
+#timelineview ul.tabs li.current a {
+  border: 1px solid #ddd;
+  background: white;
+  color: black;
+  text-shadow: none;
+}
+#timelineview ul.tabs li.current a:hover {
+  background: white;
+  border: 1px solid #ddd;
+}
+#timelineview ul.tabs li a {
+  line-height: 27px;
+  display: block;
+  background: #B0B1B3;
+  border-radius: 2px 2px 0 0;
+  color: #FFFFFF;
+  padding: 0px 10px;
+  font-size:13px;
+  text-shadow: 0 1px #26538C;
+}
+#timelineview ul.tabs li a:hover {
+  text-decoration: none;
+  background: #C6C7C9;
+  border-color: transparent;
+}
+#timelineview h2 {
+  font-size: 15px;
+  padding: 4px 14px;
+  margin-top: 0px;
+}
+#timelineview .tab-page {
+  padding-top: 0px;
+}
+#timelineview input[type="radio"],
+#timelineview input[type="checkbox"] {
+  margin-top: -3px;
+}
+#timelineview .field>label {
+  margin-top: 4px;
+}

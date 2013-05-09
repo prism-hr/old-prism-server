@@ -4,7 +4,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
@@ -169,6 +171,57 @@ public class InterviewValidatorTest {
         interviewValidator.validate(interview, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("datepicker.field.mustselectdate", mappingResult.getFieldError("timeslots").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfAnyDateIsInThePast() {
+        interview.setStage(InterviewStage.SCHEDULING);
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        
+        InterviewTimeslot timeslot = interview.getTimeslots().get(0);
+        timeslot.setDueDate(calendar.getTime());
+        timeslot.setStartTime("10:00");
+        
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeslots");
+        interviewValidator.validate(interview, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("datepicker.field.mustselectdatetimesinfuture", mappingResult.getFieldError("timeslots").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfDateIsPresentDayButTimeIsInThePast() {
+        interview.setStage(InterviewStage.SCHEDULING);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, -1);
+        
+        InterviewTimeslot timeslot = interview.getTimeslots().get(0);
+        timeslot.setDueDate(calendar.getTime());
+        timeslot.setStartTime("10:00");
+        
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeslots");
+        interviewValidator.validate(interview, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("datepicker.field.mustselectdatetimesinfuture", mappingResult.getFieldError("timeslots").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfAnyTimeIsNotProperlyFormatted() {
+        interview.setStage(InterviewStage.SCHEDULING);
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        
+        InterviewTimeslot timeslot = interview.getTimeslots().get(0);
+        timeslot.setDueDate(calendar.getTime());
+        timeslot.setStartTime("29:10");
+        
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeslots");
+        interviewValidator.validate(interview, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("time.field.invalid", mappingResult.getFieldError("timeslots").getCode());
     }
 
     @Test

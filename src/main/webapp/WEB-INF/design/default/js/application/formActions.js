@@ -1,9 +1,10 @@
 
 var sections = 9;  // as in sections to load.
-
+var firstTimeLoading = true;
 
 $(document).ready(function()
 {	
+	
 	$("#acceptTermsValue").val("NO");
 	
 	// --------------------------------------------------------------------------------
@@ -268,7 +269,9 @@ function loadProgrammeSection(clear, onComplete){
 				}
 			},
 		  complete: function() {
-			  onComplete();
+			  if (firstTimeLoading == true) {
+			 	 onComplete();
+			  }
 		  }
 	});
 	
@@ -337,7 +340,9 @@ function loadPersonalDetails(clear){
 			}, 
 			complete: function() {
 				/* Address. */
-				loadAddresSection();
+			  if (firstTimeLoading == true) {
+			 	 loadAddresSection();
+			  }
 			}
 	});
 }
@@ -392,8 +397,10 @@ function loadAddresSection(clear){
 				}
 			}, 
 			complete: function() {
-				/* Qualifications. */	
-				loadQualificationsSection();
+				/* Qualifications. */
+				if (firstTimeLoading == true) {	
+					loadQualificationsSection();
+				}
 			}
 	});
 }
@@ -432,7 +439,7 @@ function loadQualificationsSection(clear){
 			$('#qualificationsSection').html(data);
 			checkLoadedSections();
 			if(clear){
-				
+				$('#qualifications-H2').trigger('click');
 			}else{
 			
 				if ($('#qualificationsSection.error').length > 0)
@@ -443,7 +450,9 @@ function loadQualificationsSection(clear){
 		}, 
 			complete: function() {
 				/* (Employment) Position. */
-				loadEmploymentSection();
+				if (firstTimeLoading == true) {
+					loadEmploymentSection();
+				}
 
 			}
 	});
@@ -490,7 +499,9 @@ function loadEmploymentSection(clear){
 		}, 
 			complete: function() {
 				/* Funding. */
-				loadFundingSection();
+				if (firstTimeLoading == true) {
+					loadFundingSection();
+				}
 			}
 	});
 }
@@ -536,7 +547,9 @@ function loadFundingSection(clear){
 		}, 
 		complete: function() {
 			/* Referees. */
-			loadReferenceSection();
+			if (firstTimeLoading == true) {
+				loadReferenceSection();
+			}
 		}
 	});
 }
@@ -583,7 +596,9 @@ function loadReferenceSection(clear){
 		}, 
 		complete: function() {
 				/* Documents. */
-				loadDocumentsSection();
+				if (firstTimeLoading == true) {
+					loadDocumentsSection();
+				}
 			}
 	});
 
@@ -637,7 +652,9 @@ function loadDocumentsSection(clear){
 		},
 		complete: function() {
 			/* Additional Information. */
-			loadAdditionalInformationSection();
+			if (firstTimeLoading == true) {
+				loadAdditionalInformationSection();
+			}
 		}
 	});
 }
@@ -686,6 +703,8 @@ function loadAdditionalInformationSection(clear){
 					$('#additional-H2').trigger('click');
 				}
 			}
+		}, complete: function() {
+			firstTimeLoading = false;
 		}
 });
 }

@@ -104,6 +104,7 @@ $(document).ready(function(){
 			success: function(data)
 			{
 				$('#positionSection').html(data);
+				$('#position-H2').trigger('click');
 			},
 			complete: function()
 			{
@@ -307,6 +308,10 @@ function postEmploymentData(message)
 				{
 					$('#position-H2').trigger('click');
 					markSectionError('#positionSection');
+				} else {
+					if (message == 'add') {
+						$('#position-H2').trigger('click');
+					}
 				}
       },
     complete: function()

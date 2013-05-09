@@ -197,6 +197,14 @@ public class UserDAO {
                 .add(Restrictions.isNull("pendingRoleNotification.notificationDate"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
+    
+    public List<Integer> getUsersIdsWithPendingRoleNotifications() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user").setProjection(Projections.property("id"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("enabled", false))
+                .createAlias("pendingRoleNotifications", "pendingRoleNotification")
+                .add(Restrictions.isNull("pendingRoleNotification.notificationDate"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
 
     public List<RegisteredUser> getAllPreviousInterviewersOfProgram(Program program) {
         List<Interviewer> interviewers = sessionFactory.getCurrentSession().createCriteria(Interviewer.class)

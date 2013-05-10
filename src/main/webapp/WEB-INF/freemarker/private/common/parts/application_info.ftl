@@ -15,7 +15,6 @@
             <#list actions?keys as actionName>
                 <option value="${actionName}">${actions[actionName]}</option>
             </#list>
-            <option value="emailApplicant">Email Applicant</option>
         </select>
     
    </div>

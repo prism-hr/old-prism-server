@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
@@ -14,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -100,7 +102,7 @@ public class StateTransitionController {
     }
 
     @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
+    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return applicationsService.getActionsDefinition(getUser(), application);
     }
@@ -110,8 +112,23 @@ public class StateTransitionController {
     }
 
     @ModelAttribute("stati")
-    public ApplicationFormStatus[] getAvailableNextStati(@RequestParam String applicationId) {
-        return stateTransitionService.getAvailableNextStati(getApplicationForm(applicationId).getStatus());
+    public List<ApplicationFormStatus> getAvailableNextStati(@RequestParam String applicationId) {
+        final ApplicationForm form = getApplicationForm(applicationId);
+        final RegisteredUser currentUser = getCurrentUser();
+        List<ApplicationFormStatus> availableNextStatuses = stateTransitionService.getAvailableNextStati(getApplicationForm(applicationId).getStatus());
+        CollectionUtils.filter(availableNextStatuses, new Predicate() {
+            @Override
+            public boolean evaluate(final Object object) {
+                ApplicationFormStatus status = (ApplicationFormStatus) object;
+                if (status.equals(ApplicationFormStatus.APPROVED)) {
+                    if (currentUser.isInRoleInProgram(Authority.ADMINISTRATOR, form.getProgram()) && currentUser.isNotInRoleInProgram(Authority.APPROVER, form.getProgram())) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+        return availableNextStatuses;
     }
 
     @ModelAttribute("user")

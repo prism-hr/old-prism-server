@@ -205,7 +205,7 @@ public class StateTransitionControllerTest {
     }
 
 	@Test
-	public void shouldReturnAvaialableNextStati() {
+	public void shouldReturnAvaialableNextStatuses() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
 		controller = new StateTransitionController(
 		        applicationServiceMock, 
@@ -224,7 +224,7 @@ public class StateTransitionControllerTest {
 				return applicationForm;
 			}
 		};
-		assertArrayEquals(new StateTransitionService().getAvailableNextStati(ApplicationFormStatus.VALIDATION), controller.getAvailableNextStati("5"));
+		assertArrayEquals(new StateTransitionService().getAvailableNextStati(ApplicationFormStatus.VALIDATION).toArray(), controller.getAvailableNextStati("5").toArray());
 	}
 
 	@Before

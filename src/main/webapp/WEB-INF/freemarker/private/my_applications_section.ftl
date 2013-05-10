@@ -21,11 +21,11 @@
       <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
           <option>Actions</option>
           <#list actions?keys as actionName>
-            <option value="${actionName?html}">${actions[actionName]}</option>
+            <#if user.isInRole('APPLICANT') && actionName == "emailApplicant">
+            <#else>
+                <option value="${actionName?html}">${actions[actionName]}</option>
+            </#if>
           </#list>
-          <#if !user.isInRole('APPLICANT')>
-            <option value="emailApplicant">Email Applicant</option>
-          </#if>
     </select></td>
   <td class="centre"><#if application.isWithdrawn() && !application.submittedDate??>
         Aborted

@@ -203,8 +203,6 @@
                                      </div>
 								</div><!-- close .row-group -->
 								
-								
-								
 								</#if>
 	
 								<div class="row-group">
@@ -215,10 +213,7 @@
 											<select class="max" name="status" id="status">
 												<option value="">Select...</option>
 												<#list stati as status>
-												<option value="${status}"
-												<#if  comment.nextStatus?? && comment.nextStatus == status>
-													selected="selected"
-												</#if> >${status.displayValue()}</option>               
+												    <option value="${status}" <#if comment.nextStatus?? && comment.nextStatus == status> selected="selected" </#if> >${status.displayValue()}</option>               
 												</#list>
 											</select>	
 											<@spring.bind "comment.nextStatus" /> 
@@ -227,7 +222,6 @@
                                               </div></#list>
 										</div>
 									</div>
-									
 								</div><!-- close .row-group -->
 								
 								<div class="row-group" id="interviewDelegation" style="display:none">

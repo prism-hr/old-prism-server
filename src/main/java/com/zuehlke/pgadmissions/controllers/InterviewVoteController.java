@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -111,7 +111,7 @@ public class InterviewVoteController {
 	}
 
 	@ModelAttribute("actionsDefinition")
-	public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
+	public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		return applicationsService.getActionsDefinition(userService.getCurrentUser(), application);
 	}

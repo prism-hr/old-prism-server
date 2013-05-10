@@ -53,6 +53,9 @@ $(document).ready(function() {
             case 'restartApproval':
                 window.location.href = "/pgadmissions/approval/moveToApproval?applicationId="+ id;
                 break;
+            case 'restartApprovalAsAdministrator':
+            	window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id;
+                break;
             case 'progress':
                 window.location.href = "/pgadmissions/viewprogress?applicationId="+ id;
                 break;

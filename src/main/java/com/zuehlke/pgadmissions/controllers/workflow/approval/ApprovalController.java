@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +41,7 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -211,7 +210,7 @@ public class ApprovalController {
 	}
 
 	@ModelAttribute("actionsDefinition")
-	public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
+	public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		return applicationsService.getActionsDefinition(getUser(), application);
 	}
@@ -425,15 +424,23 @@ public class ApprovalController {
 		return countryService.getAllCountries();
 	}
 
-	@RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)
-	public String requestRestart(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
-	                @Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result) {
-		if (result.hasErrors()) {
-			return REQUEST_RESTART_APPROVE_PAGE;
-		}
-		approvalService.requestApprovalRestart(applicationForm, getUser(), comment);
-		return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
-	}
+    @RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)
+    public String requestRestart(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
+            @Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result) {
+        if (result.hasErrors()) {
+            return REQUEST_RESTART_APPROVE_PAGE;
+        }
+
+        RegisteredUser currentUser = getUser();
+        approvalService.requestApprovalRestart(applicationForm, currentUser, comment);
+
+        if (currentUser.isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram())) {
+            return "redirect:/approval/moveToApproval?applicationId=" + applicationForm.getApplicationNumber();
+        }
+
+        return "redirect:/applications?messageCode=request.approval.restart&application="
+                + applicationForm.getApplicationNumber();
+    }
 
 	private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
 		for (RegisteredUser entry : users) {

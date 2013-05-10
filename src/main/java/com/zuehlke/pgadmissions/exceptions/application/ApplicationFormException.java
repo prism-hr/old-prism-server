@@ -15,5 +15,4 @@ public abstract class ApplicationFormException extends PgadmissionsException {
     public String getApplicationNumber() {
         return applicationNumber;
     }
-
 }

@@ -34,10 +34,10 @@ public class ParticipantValidatorTest {
         interviewParticipant.getAcceptedTimeslots().clear();
         interviewParticipant.setCantMakeIt(false);
         
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "responded");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "cantMakeIt");
         participantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("responded").getCode());
+        Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("cantMakeIt").getCode());
     }
     
     @Test
@@ -45,10 +45,10 @@ public class ParticipantValidatorTest {
         interviewParticipant.getAcceptedTimeslots().clear();
         interviewParticipant.setCantMakeIt(false);
         
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "responded");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "cantMakeIt");
         participantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("responded").getCode());
+        Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("cantMakeIt").getCode());
     }
 
     @Before

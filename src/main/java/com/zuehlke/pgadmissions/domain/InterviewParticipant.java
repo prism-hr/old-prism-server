@@ -38,7 +38,7 @@ public class InterviewParticipant implements Serializable {
     private Set<InterviewTimeslot> acceptedTimeslots = new HashSet<InterviewTimeslot>();
     
     @Transient
-    private Boolean cantMakeIt = false;
+    private Boolean canMakeIt = false;
     
     @Column(name = "last_notified")
     @Temporal(TemporalType.TIMESTAMP)
@@ -80,12 +80,12 @@ public class InterviewParticipant implements Serializable {
         this.acceptedTimeslots = acceptedTimeslots;
     }
     
-    public Boolean getCantMakeIt() {
-        return cantMakeIt;
+    public Boolean getCanMakeIt() {
+        return canMakeIt;
     }
     
-    public void setCantMakeIt(Boolean cantMakeIt) {
-        this.cantMakeIt = cantMakeIt;
+    public void setCanMakeIt(Boolean canMakeIt) {
+        this.canMakeIt = canMakeIt;
     }
     
     public Date getLastNotified() {

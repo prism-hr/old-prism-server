@@ -1,16 +1,10 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
 import java.beans.PropertyEditorSupport;
-import java.lang.reflect.Type;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.zuehlke.pgadmissions.dao.InterviewTimeslotDAO;
 import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 

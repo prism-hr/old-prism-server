@@ -164,7 +164,7 @@
 				            	  	</div>
 		            	  		</div>
 		            	  	</div>
-		            	  	<@spring.bind "interviewParticipant.cantMakeIt" />
+		            	  	<@spring.bind "interviewParticipant.canMakeIt" />
   							<#list spring.status.errorMessages as error>
 		            	  		<br />
 					    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
@@ -180,8 +180,8 @@
 						  	</div>
 		            	</div>
 		              	<div class="buttons no-bottom-margin">
-					        <button id="submitVoteYes" type="submit" class="btn btn-danger">I can't make it</button>
-					        <button id="submitVoteYes" type="submit" class="btn btn-primary">Submit</button>
+					        <button id="submitVoteYes" type="submit" class="btn btn-danger" name="canMakeIt" value="false">I can't make it</button>
+					        <button id="submitVoteYes" type="submit" class="btn btn-primary" name="canMakeIt" value="true">Submit</button>
 					    </div>
 		              </div>
 	              </form>

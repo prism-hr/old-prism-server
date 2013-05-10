@@ -33,7 +33,7 @@ public abstract class AbstractValidator implements org.springframework.validatio
     
     protected static final String INVALID_TIME = "time.field.invalid";
     
-    protected static final Pattern timePattern = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
+    protected static final Pattern TIME_PATTERN = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
     
     @Autowired
     private Validator validator;

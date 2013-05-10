@@ -1028,12 +1028,19 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 #availableDatesPicker {
 	margin-bottom:20px;
 }
-
+#interviewPossibleStartTimes {
+	margin-top: -15px;
+	margin-bottom: 20px;
+}
+.field.mpt {
+	margin-top: -10px;
+}
 #interviewPossibleStartTimes table th,
 #interviewPossibleStartTimes table td {
 	padding:4px;
 	width:62px;
 }
+#interviewPossibleStartTimes table input { margin-bottom:0px !important;}
 
 #interviewPossibleStartTimes .suggested-date span { display:block; float:left; }
 

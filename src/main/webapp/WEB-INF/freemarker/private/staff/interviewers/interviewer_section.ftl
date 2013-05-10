@@ -129,7 +129,7 @@
 	</div>
   </div>
   <div class="row interview-to-schedule">
-  	<label class="plain-label normal" for="availableDates">Select Available Dates<em>*</em></label>
+  	<label class="plain-label normal" for="availableDates">Prefered Dates<em>*</em></label>
   	<script>
   		var dates = [];
   		
@@ -156,10 +156,6 @@
     <span class="hint" data-desc="<@spring.message 'interviewArrangements.availableDates'/>"></span>
     <div class="field">
     	<div id="availableDatesPicker" class="datepicker-inline"></div>
-    	<@spring.bind "interview.timeslots" />
-	      <#list spring.status.errorMessages as error>
-		      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
-	      </#list>	
   	</div>
   </div>
   <div id="interviewPossibleStartTimes" class="row interview-to-schedule">
@@ -194,6 +190,14 @@
   		</tfoot>
   	</table>
   </div>
+  
+  	<@spring.bind "interview.timeslots" />
+	      <#list spring.status.errorMessages as error>
+          <div class="field mpt">
+		      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+              </div>
+	      </#list>	
+  
   <div class="row interview-happened interview-scheduled">
     <label class="plain-label normal" for="interviewDate">Interview Date<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
@@ -218,7 +222,7 @@
   </div>
   
   <div class="row interview-scheduled interview-to-schedule">
-    <label class="plain-label normal" for="instructionsForInterviewer">Interview Instructions for Interviewer</label>
+    <label class="plain-label normal" for="instructionsForInterviewer">Interview Instructions (Interviewer)</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewerInstructions'/>"></span>
     <div class="field">
     	<#if assignOnly?? && assignOnly>
@@ -236,7 +240,7 @@
   </div>
 
   <div class="row interview-scheduled interview-to-schedule">
-    <label class="plain-label normal" for="furtherDetails">Interview Instructions for Candidate</label>
+    <label class="plain-label normal" for="furtherDetails">Interview Instructions  (Applicant)</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.candidateInstructions'/>"></span>
     <div class="field"> <#if assignOnly?? && assignOnly>
       <textarea id="furtherDetails" readonly disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherDetails!}</textarea>

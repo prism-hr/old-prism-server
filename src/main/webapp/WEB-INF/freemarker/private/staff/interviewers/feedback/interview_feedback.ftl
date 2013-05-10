@@ -68,8 +68,16 @@
               <h2>Interview Outcome</h2>
               <div>
                 <form id="interviewForm" method="POST" action="<@spring.url '/interviewFeedback'/>"/>
+                <@spring.bind "comment.confirmNextStage" />
+			    <#if spring.status.errorMessages?size &gt; 0>
+		     		<div class="alert alert-error" >
+                    <i class="icon-warning-sign"></i>
+			    <#else>
+		            <div class="alert alert-info">
+          			<i class="icon-info-sign"></i>
+	          	</#if>
                 
-                <div class="alert alert-info"> <i class="icon-info-sign"></i> Following their interview, reassess the applicant's suitability for postgraduate research and their chosen study programme. </div>
+                Following their interview, reassess the applicant's suitability for postgraduate research and their chosen study programme. </div>
                 <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
                 <div class="row-group">
                   <div class="row">

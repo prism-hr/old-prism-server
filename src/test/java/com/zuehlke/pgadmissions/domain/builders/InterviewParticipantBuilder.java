@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +23,8 @@ public class InterviewParticipantBuilder {
     private Set<InterviewTimeslot> acceptedTimeslots = new HashSet<InterviewTimeslot>();
     
     private Interview interview;
+    
+    private Boolean canMakeIt = false;
 
     public InterviewParticipantBuilder id(Integer id) {
         this.id = id;
@@ -43,13 +46,18 @@ public class InterviewParticipantBuilder {
         return this;
     }
 
-    public InterviewParticipantBuilder acceptedTimeslots(Set<InterviewTimeslot> acceptedTimeslots) {
-        this.acceptedTimeslots = acceptedTimeslots;
+    public InterviewParticipantBuilder acceptedTimeslots(InterviewTimeslot... acceptedTimeslots) {
+        this.acceptedTimeslots.addAll(Arrays.asList(acceptedTimeslots));
         return this;
     }
 
     public InterviewParticipantBuilder interview(Interview interview) {
         this.interview = interview;
+        return this;
+    }
+
+    public InterviewParticipantBuilder canMakeIt(Boolean canMakeIt) {
+        this.canMakeIt = canMakeIt;
         return this;
     }
 
@@ -61,6 +69,7 @@ public class InterviewParticipantBuilder {
         interviewParticipant.setLastNotified(lastNotified);
         interviewParticipant.setAcceptedTimeslots(acceptedTimeslots);
         interviewParticipant.setInterview(interview);
+        interviewParticipant.setCanMakeIt(canMakeIt);
         return interviewParticipant;
     }
 }

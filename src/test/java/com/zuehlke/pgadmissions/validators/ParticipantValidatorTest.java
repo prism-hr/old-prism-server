@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.HashSet;
-import java.util.Set;
+import static org.junit.Assert.assertTrue;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -16,7 +15,6 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewTimeslotBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -27,47 +25,48 @@ public class ParticipantValidatorTest {
 
     private InterviewParticipant interviewParticipant;
 
-    private InterviewParticipantValidator participantValidator;
+    private InterviewParticipantValidator interviewParticipantValidator;
+
+    @Test
+    public void shouldSupportParticipant() {
+        assertTrue(interviewParticipantValidator.supports(InterviewParticipant.class));
+    }
 
     @Test
     public void shouldRejectIfCanMakeItAndNoTimeSlotsSelected() {
         interviewParticipant.setCanMakeIt(true);
         interviewParticipant.getAcceptedTimeslots().clear();
-        
+
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
-        participantValidator.validate(interviewParticipant, mappingResult);
+        interviewParticipantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("canMakeIt").getCode());
     }
-    
+
     @Test
     public void shouldAcceptIfCantMakeIt() {
         interviewParticipant.setCanMakeIt(false);
-        
+
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
-        participantValidator.validate(interviewParticipant, mappingResult);
+        interviewParticipantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
-    
+
     @Test
     public void shouldAcceptIfCanMakeItAndTimeSlotsSelected() {
         interviewParticipant.setCanMakeIt(true);
-        
+
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
-        participantValidator.validate(interviewParticipant, mappingResult);
+        interviewParticipantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
 
     @Before
     public void setup() {
-        Set<InterviewTimeslot> acceptedTimeslots = new HashSet<InterviewTimeslot>();
-        
-        acceptedTimeslots.add(new InterviewTimeslotBuilder().build());
-        acceptedTimeslots.add(new InterviewTimeslotBuilder().build());
-        
-        interviewParticipant = new InterviewParticipantBuilder().acceptedTimeslots(acceptedTimeslots).build();
+
+        interviewParticipant = new InterviewParticipantBuilder().acceptedTimeslots(new InterviewTimeslot(), new InterviewTimeslot()).build();
         interviewParticipant.setResponded(true);
-        participantValidator = new InterviewParticipantValidator();
-        participantValidator.setValidator((javax.validation.Validator) validator);
+        interviewParticipantValidator = new InterviewParticipantValidator();
+        interviewParticipantValidator.setValidator((javax.validation.Validator) validator);
     }
 }

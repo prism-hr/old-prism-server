@@ -31,6 +31,7 @@ public class InterviewValidator extends AbstractValidator {
 
         if (interview.getStage() == null || stage == InterviewStage.INITIAL || interview.getTakenPlace() == null) {
             errors.rejectValue("stage", EMPTY_DROPDOWN_ERROR_MESSAGE);
+            return; // no other validation necessary
         }
         
         if (interview.getTimeZone() == null) {
@@ -72,7 +73,7 @@ public class InterviewValidator extends AbstractValidator {
             for (int i = 0; i < timeslots.size(); i++) {
                 InterviewTimeslot timeslot = timeslots.get(i);
                 
-                Matcher timePatternMatcher = timePattern.matcher(timeslot.getStartTime());
+                Matcher timePatternMatcher = TIME_PATTERN.matcher(timeslot.getStartTime());
                 
                 if (!timePatternMatcher.matches()) {
                     if (!hasRejectedTime) {

@@ -177,7 +177,7 @@
 							  	<label class="plain-label normal" for="comments">Comments</label>
 							    <span class="hint" data-desc="<@spring.message 'interviewVote.comments'/>"></span>
 							    <div class="field">
-								  	<textarea id="comments" name="comments" class="max" rows="6" cols="80" maxlength="2000"></textarea>			
+								  	<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength="2000"></textarea>			
 							  	</div>	
 						  	</div>
 		            	</div>

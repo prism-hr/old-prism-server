@@ -136,7 +136,7 @@
 			           		</#if>
 			            <#elseif comment.type == 'REVIEW'>
 			            	<#assign role = "reviewer"/>
-			            <#elseif comment.type == 'INTERVIEW'>
+			            <#elseif comment.type == 'INTERVIEW' || comment.type == 'INTERVIEW_VOTE'>
 			            	<#assign role = "interviewer"/>    
 			            <#elseif comment.type == 'APPROVAL'>
 			            	<#assign role = "administrator"/>                
@@ -182,6 +182,17 @@
     			                	<#include "timeline_snippets/review_comment.ftl"/>
     			                <#elseif comment.type == 'INTERVIEW'>
     			                	<#include "timeline_snippets/interview_comment.ftl"/>
+			                	<#elseif comment.type == 'INTERVIEW_VOTE'>
+			                		<#assign interviewVoteParticipant=comment.interviewParticipant>
+			                		<#assign user=interviewVoteParticipant.user>
+			                		<#if interviewVoteParticipant.responded && interviewVoteParticipant.acceptedTimeslots?has_content>
+			                			Timeslot selected by ${user.firstName?html} ${user.lastName?html}: 
+			                			<#list interviewVoteParticipant.acceptedTimeslots as timeslot>
+			                				<br>${timeslot.dueDate} ${timeslot.startTime}
+			                			</#list>
+			                		<#elseif interviewVoteParticipant.responded>
+			                			None of the timeslots provided works for ${user.firstName?html} ${user.lastName?html}. 
+			                		</#if>
     			                </#if>
     			              </div>
     			            </li>

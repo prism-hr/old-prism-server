@@ -106,9 +106,7 @@ public class InterviewService {
 	public void postVote(InterviewParticipant interviewParticipant, InterviewVoteComment interviewVoteComment) {
 		interviewParticipant.setResponded(true);
 		interviewParticipantDAO.save(interviewParticipant);
-		if (interviewVoteComment != null) {
-			interviewVoteCommentDAO.save(interviewVoteComment);
-		}
+		interviewVoteCommentDAO.save(interviewVoteComment);
 	}
 
 	private void createParticipants(final Interview interview) {

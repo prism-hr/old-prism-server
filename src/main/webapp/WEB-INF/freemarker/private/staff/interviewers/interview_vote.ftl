@@ -182,8 +182,8 @@
 						  	</div>
 		            	</div>
 		              	<div class="buttons">
-					        <button id="submitVoteYes" type="submit" class="btn btn-danger">I cannot make it</button>
-					        <button id="submitVoteYes" type="submit" class="btn btn-primary">Submit Preferences</button>
+		              		<button id="submitVoteYes" type="submit" class="btn btn-danger" name="canMakeIt" value="false">I cannot make it</button>
+					        <button id="submitVoteYes" type="submit" class="btn btn-primary" name="canMakeIt" value="true">Submit Preferences</button>
 					    </div>
 	              </form>
             	</div>

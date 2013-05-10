@@ -254,13 +254,16 @@ public class Interview implements Serializable {
     }
     
     public boolean isParticipant(RegisteredUser user){
-        boolean isParticipant = false;
+        return getParticipant(user) != null;
+    }
+    
+    public InterviewParticipant getParticipant(RegisteredUser user){
         for(InterviewParticipant participant : getParticipants()){
             if(participant.getUser().getId().equals(user.getId())){
-                isParticipant = true;
+                return participant;
             }
         }
-        return isParticipant;
+        return null;
     }
 
 }

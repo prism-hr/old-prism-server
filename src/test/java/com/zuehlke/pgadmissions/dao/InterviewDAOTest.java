@@ -131,13 +131,14 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
         Interview returnedInterview = dao.getInterviewById(interview.getId());
         assertEquals(2, returnedInterview.getParticipants().size());
         assertEquals(2, returnedInterview.getTimeslots().get(0).getAcceptedParticipants().size());
+        returnedInterview.getTimeslots().clear();
         returnedInterview.getParticipants().clear();
         
         flushAndClearSession();
         
         Interview returnedInterview2 = dao.getInterviewById(interview.getId());
         assertEquals(0, returnedInterview2.getParticipants().size());
-        assertEquals(0, returnedInterview2.getTimeslots().get(0).getAcceptedParticipants().size());
+        assertEquals(0, returnedInterview2.getTimeslots().size());
     }
 
     @Before

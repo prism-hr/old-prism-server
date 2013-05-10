@@ -28,6 +28,9 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Before
 	public void prepare() {
 		dao = new EmailTemplateDAO(sessionFactory);
+		for (EmailTemplate template : dao.getAll()) {
+		    dao.remove(template);
+		}
 	}
 
 	@Test
@@ -129,7 +132,7 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldReturnLatestEmailTemplate() {
-		DateTime version = new DateTime(2020, 3, 12, 00, 00);
+		DateTime version = new DateTime(2013, 3, 12, 00, 00);
 		EmailTemplate template1 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)
 				.content("You have been approved!").version(version.toDate()).build();
 		EmailTemplate template2 = new EmailTemplateBuilder().subject("subject").name(EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION)

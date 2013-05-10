@@ -200,8 +200,7 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduling() && interview.isParticipant(user)
-                && !interview.getParticipant(user).getResponded()) {
+        if (application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduling() && interview.isParticipant(user) && !interview.getParticipant(user).getResponded()) {
             actions.addAction("interviewVote", "Vote for interview time");
             actions.setRequiresAttention(true);
         }
@@ -227,10 +226,9 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.APPROVAL) && !application.isPendingApprovalRestart()
-                && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
+        if (application.isInState(ApplicationFormStatus.APPROVAL) && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
             actions.addAction("validate", "Approve");
-            if (user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
+            if (user.isNotInRole(Authority.SUPERADMINISTRATOR) && !application.isPendingApprovalRestart()) {
                 actions.setRequiresAttention(true);
             }
         }

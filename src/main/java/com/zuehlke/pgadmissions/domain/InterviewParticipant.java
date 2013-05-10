@@ -47,7 +47,7 @@ public class InterviewParticipant implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "interview_id", updatable = false, insertable = false)
-    private Interview interview;    
+    private Interview interview;   
 
     public Integer getId() {
         return id;
@@ -104,4 +104,5 @@ public class InterviewParticipant implements Serializable {
     public void setInterview(Interview interview) {
         this.interview = interview;
     }
+
 }

@@ -74,6 +74,12 @@ public class InterviewVoteController {
         binder.setValidator(this.interviewParticipantValidator);
         binder.registerCustomEditor(null, "acceptedTimeslots", acceptedTimeslotsPropertyEditor);
     }
+    
+    @ModelAttribute("interviewParticipant")
+    public InterviewParticipant getInterviewParticipant(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        return applicationForm.getLatestInterview().getParticipant(getUser());
+    }
 
     @ModelAttribute("user")
     public RegisteredUser getUser() {

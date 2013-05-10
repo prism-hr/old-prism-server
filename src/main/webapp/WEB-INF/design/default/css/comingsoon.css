@@ -1,0 +1,67 @@
+#cs-message {
+	background: #FFF;
+	border-radius: 10px;
+	box-shadow: 0 0 5px 0 #999;
+	height: 300px;
+	left: 50%;
+	margin: -150px 0 0 -300px;
+	position: absolute;
+	top: 50%;
+	width: 600px;
+}
+
+#cs-content-box-inner{
+	
+	height: 300px;
+		
+}
+
+#cs-message .header {
+	height: 60px;
+	left: 130px;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+}
+#cs-message .header .logo {
+	bottom: 0;
+	height: 43px;
+	overflow: hidden;
+	position: absolute;
+}
+#cs-message .header .logo img { height: 41px; }
+#cs-message .header .tagline {
+	bottom: 0;
+	color: #999;
+	font-size: 12pt;
+	font-weight: bold;
+	left: 230px;
+	line-height: 1.2;
+	position: absolute;
+}
+
+#cs-message .content {
+	background: none no-repeat scroll 10px 1em transparent;
+	border-top: 2px solid #AAA;
+	color: #666;
+	font-size: 18pt;
+	left: 20px;
+	min-height: 200px;
+	padding: 1em 5px 0 160px;
+	position: absolute;
+	right: 20px;
+	top: 100px;
+}
+#cs-message .content h1 { font-weight: bold; margin-bottom: .5em; width: 400px;}
+#cs-message .content p { color: #666; line-height: 1.2; margin-bottom: 0.5em; }
+#cs-message .content p:last-child { margin-bottom: 0; }
+#cs-message .content p.buttons { line-height: 1; text-align: right; }
+
+#cs-message.success .content { background-image: url(../images/circle_lrg_grn.png); }
+#cs-message.notice .content { background-image: url(../images/circle_lrg_org.png); }
+#cs-message.error .content { background-image: url(../images/circle_lrg_red.png); }
+#cs-message.comingsoon .content { background-image: url(../images/circle_lrg_org.png); }
+
+#cs-message.success .content h1 { color: #AFBD21; }
+#cs-message.notice .content h1 { color: #FFC220; }
+#cs-message.error .content h1 { color: #B60050; }

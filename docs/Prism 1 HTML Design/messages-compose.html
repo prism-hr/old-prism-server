@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<!-- Let Internet Explorer 8 and below recognise HTML5 tags. -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<link type="text/css" rel="stylesheet" href="css/private/global_private.css" />
+<link type="text/css" rel="stylesheet" href="css/messages.css" />
+</head>
+
+<!-- UPDATED: using conditional comments for IE to add a class to the body tag, based on the IE version number. -->
+<!--[if IE 9]>
+<body class="ie9">
+<![endif]-->
+<!--[if lt IE 9]>
+<body class="old-ie">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<body>
+<!--<![endif]-->
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+      <!-- App logo and tagline. -->
+      <div class="logo"><img src="images/ph_logo_login.png" alt="" /></div>
+      <div class="tagline">Your Gateway to<br />Research Opportunities</div>
+    </header>
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+          
+      <!-- Options -->
+      <div id="message-options">
+        <ul class="left">
+          <li class="compose"><a href="">Compose</a></li>
+          <li class="back"><a href="">Back</a></li>
+          <li class="reply"><a href="">Reply</a></li>
+          <li class="send"><a href="">Send</a></li>
+        </ul>
+        <ul class="right">
+          <li>Show me</li>
+          <li class="alerts"><a href="">Alerts</a></li>
+          <li class="messages"><a href="">Messages</a></li>
+          <li class="all current"><a href="">All</a></li>
+        </ul>
+      </div>
+      
+      <!-- Message section -->
+      <div class="content-box">
+        <div class="content-box-inner"><!-- Pagination -->
+        
+        	<div id="message-compose">
+          
+          	<form>
+            
+            	<div class="row">
+              	<label>
+                	<span>To</span>
+                  <input type="text" size="30" />
+                </label>
+                &nbsp;or&nbsp;
+                <select>
+                	<option>Programme Admin</option>
+                	<option>Reviewers</option>
+                	<option>Approvers</option>
+                </select>
+
+                <div class="carbon-copy">
+                  <a href="#" class="button">Add Cc</a>
+                  <a href="#" class="button">Add Bcc</a>
+                </div>
+              </div>
+
+
+            	<div class="row">
+              	<label>
+                	<span>Subject</span>
+                  <input type="text" size="60" />
+                </label>
+              </div>
+
+            	<hr />
+              
+            	<div class="row">
+              	<textarea rows="8" cols="120"></textarea>
+              </div>
+            </form>
+            
+          </div>
+          
+        </div><!-- .content-box-inner -->  
+      </div><!-- .content-box -->
+
+		</article>
+            
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>

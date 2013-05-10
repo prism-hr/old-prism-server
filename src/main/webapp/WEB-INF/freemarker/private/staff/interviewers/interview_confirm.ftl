@@ -55,6 +55,7 @@
         <div class="content-box">
           <div class="content-box-inner"> <#include "/private/common/parts/application_info.ftl"/>
             <section class="interview-votes form-rows">
+            	<h2 class="no-arrow">Interview Confirmation</h2>
             	<div>
             		<form method="post">
 		              <#assign interview = applicationForm.latestInterview>
@@ -95,7 +96,7 @@
 			              		</#list>
 			              		
 		            	  	
-		            	  		<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i> Please select your interview preferences.</div>
+		            	  		<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i> Please confirm the interview slot.</div>
 		            	  		
 		            	  		<div class="timeslots-wrapper">
 			            	  		<div class="timeslots-scrollable">
@@ -121,9 +122,9 @@
 					            	  						<#list interview.timeslots as timeslot>
 					            	  							<td class="timeslot"> <div>
 					            	  								<#if acceptedTimeslots?seq_contains(timeslot)>
-						            	  								<i class="icon-ok-sign sign-tooltip"></i>
+						            	  								<i class="icon-ok-sign sign-tooltip" data-desc="Available"></i>
 						            	  							<#else>
-						            	  								<i class="icon-remove-sign sign-tooltip"></i>
+						            	  								<i class="icon-remove-sign sign-tooltip" data-desc="Not Available"></i>
 						            	  							</#if> </div>
 					            	  							</td>
 					            	  						</#list>
@@ -136,9 +137,9 @@
 					            	  					</#if>
 			        	  							</tr>
 				            	  				</#list>
-				            	  				<tr>
+				            	  				<!--tr>
 				            	  					<td class="participant">
-				            	  						<div>Number of participants</div>
+				            	  						
 				            	  					</td>
 				            	  					<#list interview.timeslots as timeslot>
 				            	  						<#assign numberOfParticipantsAvailable = 0>
@@ -149,10 +150,10 @@
 				            	  							</#if>
 				            	  						</#list>
 				            	  						<td class="timeslot">
-				            	  							<div>${numberOfParticipantsAvailable}</div>
+				            	  							<div class="numb">${numberOfParticipantsAvailable}</div>
 				            	  						</td>
 				            	  					</#list>
-				            	  				</tr>
+				            	  				</tr-->
 				            	  			</tbody>
 				            	  			<tfoot>
 				            	  				<tr>
@@ -161,7 +162,7 @@
 				            	  					<#list interview.timeslots as timeslot>
 				            	  						<td class="timeslot">
 				            	  							<div>
-				            	  								<input type="radio" name="timeslotId" value=${timeslot.id}<#if timeslot_index == 0> checked="checked"</#if> />
+				            	  								<input type="radio" name="timeslotId" value=${timeslot.id} />
 				            	  							</div>
 				            	  						</td>
 				            	  					</#list>
@@ -182,8 +183,8 @@
 						  	</div>
 		            	</div>
 		              	<div class="buttons">
-		              		<button type="button" class="btn btn-danger" id="restart-interview">Restart</button>
-					        <button type="submit" class="btn btn-primary">Confirm interview</button>
+		              		<button type="button" class="btn btn-danger" id="restart-interview">Start Again</button>
+					        <button type="submit" class="btn btn-primary">Confirm Interview</button>
 					    </div>
 	              </form>
 	              <form id="restart-interview-form" method="post" action="<@spring.url '/interviewConfirm/restart' />?applicationId=${applicationForm.applicationNumber}"></form>

@@ -158,12 +158,6 @@ public class ApprovalControllerTest {
 		Assert.assertEquals("/private/staff/supervisors/supervisors_section", controller.getSupervisorSection());
 	}
 
-	// @Test
-	// public void shouldGetRequestApprovalPage() {
-	// Assert.assertEquals("/private/staff/approver/request_restart_approve_page",
-	// controller.getRequestRestartPage());
-	// }
-
 	@Test
 	public void shouldGetProgrammeSupervisors() {
 		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
@@ -587,8 +581,22 @@ public class ApprovalControllerTest {
 		assertEquals("redirect:/applications?messageCode=request.approval.restart&application=LALALA",
 		                controller.requestRestart(applicationForm, comment, bindingResultMock));
 		EasyMock.verify(approvalServiceMock);
-
 	}
+	
+    @Test
+    public void shouldRequestRestartOfApprovalAndRedirectToADifferentPageForAdmin() {
+        Program program = new ProgramBuilder().build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").program(program).build();
+        RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
+        approvalServiceMock.requestApprovalRestart(applicationForm, currentUserMock, comment);
+        EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
+        
+        EasyMock.replay(approvalServiceMock, currentUserMock);
+        
+        assertEquals("redirect:/approval/moveToApproval?applicationId=LALALA", controller.requestRestart(applicationForm, comment, bindingResultMock));
+        
+        EasyMock.verify(approvalServiceMock, currentUserMock);
+    }
 
 	@Test
 	public void shouldReturnToReequestRestartPageIfErrors() {
@@ -602,7 +610,6 @@ public class ApprovalControllerTest {
 		EasyMock.replay(approvalServiceMock);
 		assertEquals("/private/staff/approver/request_restart_approve_page", controller.requestRestart(applicationForm, comment, bindingResultMock));
 		EasyMock.verify(approvalServiceMock);
-
 	}
 
 	@Test

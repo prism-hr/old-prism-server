@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 public class ApplicationSumarryServiceTest {
@@ -77,7 +77,7 @@ public class ApplicationSumarryServiceTest {
 
     private RegisteredUser currentUser;
 
-    private ApplicationActionsDefinition actionsDefinitionMock;
+    private ActionsDefinitions actionsDefinitionMock;
 
     private UserService userServiceMock;
 
@@ -92,7 +92,7 @@ public class ApplicationSumarryServiceTest {
         dateOfSubmission = new DateTime(2013, 4, 23, 9, 20).toDate();
         dateOfLastUpdate = new DateTime(2013, 4, 20, 9, 20).toDate();
         currentUser = getCurrentUser();
-        actionsDefinitionMock = createMock(ApplicationActionsDefinition.class);
+        actionsDefinitionMock = createMock(ActionsDefinitions.class);
         userServiceMock = createMock(UserService.class);
         encryptionHelperMock = createMock(EncryptionHelper.class);
         applicationsServiceMock = createMock(ApplicationsService.class);

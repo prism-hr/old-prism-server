@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service("applicationsService")
@@ -147,10 +147,10 @@ public class ApplicationsService {
         applicationFormDAO.save(applicationForm);
     }
 
-    public ApplicationActionsDefinition getActionsDefinition(RegisteredUser user, ApplicationForm application) {
+    public ActionsDefinitions getActionsDefinition(RegisteredUser user, ApplicationForm application) {
         Interview interview = application.getLatestInterview();
 
-        ApplicationActionsDefinition actions = new ApplicationActionsDefinition();
+        ActionsDefinitions actions = new ActionsDefinitions();
 
         if (user.canSee(application)) {
             if (application.isUserAllowedToSeeAndEditAsAdministrator(user) || (user == application.getApplicant() && application.isModifiable())) {
@@ -190,25 +190,22 @@ public class ApplicationsService {
             actions.addAction("comment", "Comment");
         }
 
-        if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState(ApplicationFormStatus.REVIEW)
-                && !user.hasRespondedToProvideReviewForApplicationLatestRound(application)) {
+        if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState(ApplicationFormStatus.REVIEW) && !user.hasRespondedToProvideReviewForApplicationLatestRound(application)) {
             actions.addAction("review", "Add review");
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduling() && interview.isParticipant(user)) {
-            actions.addAction("interviewVote", "Provide Availability For Interview");
+        if (interview != null && interview.isParticipant(user) && application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduling()) {
+            actions.addAction("interviewVote", "Vote for interview time");
             actions.setRequiresAttention(true);
         }
 
-        if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduled()
-                && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+        if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduled() && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);
         }
 
-        if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable()
-                && !user.getRefereeForApplicationForm(application).hasResponded()) {
+        if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable() && !user.getRefereeForApplicationForm(application).hasResponded()) {
             actions.addAction("reference", "Add reference");
             actions.setRequiresAttention(true);
         }
@@ -218,18 +215,26 @@ public class ApplicationsService {
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart()) {
-            actions.addAction("restartApproval", "Approve");
+            actions.addAction("restartApproval", "Revise Approval");
             actions.setRequiresAttention(true);
-        }
+        } 
 
-        if (application.isInState(ApplicationFormStatus.APPROVAL)
-                && !application.isPendingApprovalRestart()
-                && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram())
-                        || user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMINISTRATOR))) {
+        if (application.isInState(ApplicationFormStatus.APPROVAL) && !application.isPendingApprovalRestart() && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
             actions.addAction("validate", "Approve");
+            if (user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
+                actions.setRequiresAttention(true);
+            }
+        }
+        
+        if (application.isInState(ApplicationFormStatus.APPROVAL) 
+                && !application.isPendingApprovalRestart() 
+                && user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram()) 
+                && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) 
+                && user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
+            actions.addAction("restartApprovalAsAdministrator", "Revise Approval");
             actions.setRequiresAttention(true);
         }
-
+        
         if (application.isInState(ApplicationFormStatus.APPROVAL)) {
             Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
             if (primarySupervisor != null && user == primarySupervisor.getUser() && !primarySupervisor.hasResponded()) {
@@ -238,11 +243,9 @@ public class ApplicationsService {
             }
         }
 
-        if (application.isInState(ApplicationFormStatus.APPROVAL) && user.hasAdminRightsOnApplication(application) && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram())) {
-            actions.addAction("rejectApplication", "Reject");
-        }
+        actions.addAction("emailApplicant", "Email applicant");
 
-        return actions;
+        return actions.sort();
     }
 
     public void sendSubmissionConfirmationToApplicant(ApplicationForm applicationForm) {
@@ -259,6 +262,10 @@ public class ApplicationsService {
             log.warn("{}", e);
         }
     }
+    
+    public List<Integer> getApplicationsIdsDueRegistryNotification() {
+        return applicationFormDAO.getApplicationsIdsDueRegistryNotification();
+    }
 
     public void refresh(ApplicationForm applicationForm) {
         applicationFormDAO.refresh(applicationForm);
@@ -266,10 +273,6 @@ public class ApplicationsService {
 
     public List<ApplicationForm> getApplicationsDueRegistryNotification() {
         return applicationFormDAO.getApplicationsDueRegistryNotification();
-    }
-    
-    public List<Integer> getApplicationsIdsDueRegistryNotification() {
-        return applicationFormDAO.getApplicationsIdsDueRegistryNotification();
     }
 
     public List<ApplicationForm> getApplicationsDueApprovalRestartRequestNotification() {

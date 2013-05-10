@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 
 public class ApplicationsServiceActionsTest {
 
@@ -52,32 +52,32 @@ public class ApplicationsServiceActionsTest {
     public void shouldApplicantBeAbleEditAndWithdrawHisApplication() {
         configureUserAndApplicationExpectations(true, false, false, false, false, false, false, false, false, false, true, false, false, false, true, false,
                 false, false, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "view", "withdraw" }, new String[] { "View / Edit", "Withdraw" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "view", "withdraw", "emailApplicant" }, new String[] { "View / Edit", "Withdraw", "Email applicant" });
     }
 
     @Test
     public void shouldNotApplicantBeAbleToEditAndWithdrawIfDecided() {
         configureUserAndApplicationExpectations(true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, true,
                 false, false, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "view" }, new String[] { "View" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "view", "emailApplicant" }, new String[] { "View", "Email applicant" });
     }
 
     @Test
     public void shouldNotBeAbleToEditAndWithdrawIfNotApplicant() {
         configureUserAndApplicationExpectations(true, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false,
                 false, false, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "view" }, new String[] { "View" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "view", "emailApplicant" }, new String[] { "View", "Email applicant" });
     }
 
     @Test
     public void shouldNotBeAbleToViewIfCannotSee() {
         configureUserAndApplicationExpectations(false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] {}, new String[] {});
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] {"emailApplicant"}, new String[] {"Email applicant"});
     }
 
     @Ignore
@@ -85,8 +85,8 @@ public class ApplicationsServiceActionsTest {
     public void shouldBeAbleToValidateIfAdminAndInvalidationStage() {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, ApplicationFormStatus.VALIDATION);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Validate", "Comment" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment", "emailApplicant" }, new String[] { "Validate", "Comment", "Email applicant" });
     }
 
     @Ignore
@@ -94,8 +94,8 @@ public class ApplicationsServiceActionsTest {
     public void shouldBeAbleToReviewIfAdminAndReviewStage() {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, ApplicationFormStatus.REVIEW);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Evaluate reviews", "Comment" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment", "emailApplicant" }, new String[] { "Evaluate reviews", "Comment", "Email applicant" });
     }
 
     @Test
@@ -103,135 +103,143 @@ public class ApplicationsServiceActionsTest {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, ApplicationFormStatus.INTERVIEW);
         expect(applicationMock.getApplicationAdministrator()).andReturn(null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment" }, new String[] { "Evaluate interview feedback", "Comment" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment", "emailApplicant" }, new String[] { "Evaluate interview feedback", "Comment", "Email applicant" });
     }
 
     @Test
     public void shouldBeAbleToCommentIfIsViewer() {
         configureUserAndApplicationExpectations(false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "comment" }, new String[] { "Comment" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "comment", "emailApplicant" }, new String[] { "Comment", "Email applicant" });
     }
 
     @Test
     public void shouldBeAbleToAddReviewIfReviewer() {
         configureUserAndApplicationExpectations(false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, ApplicationFormStatus.REVIEW);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "review" }, new String[] { "Add review" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "review", "emailApplicant" }, new String[] { "Add review", "Email applicant" });
     }
 
     @Test
     public void shouldNotBeAbleToAddReviewIfAlreadyProvided() {
         configureUserAndApplicationExpectations(false, false, false, true, false, false, false, true, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, ApplicationFormStatus.REVIEW);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] {}, new String[] {});
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] {"emailApplicant"}, new String[] {"Email applicant"});
     }
 
     @Test
     public void shouldBeAbleToAddInterviewFeedbackIfInterviewer() {
         configureUserAndApplicationExpectations(false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, ApplicationFormStatus.INTERVIEW);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "interviewFeedback" }, new String[] { "Add interview feedback" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "interviewFeedback", "emailApplicant" }, new String[] { "Add interview feedback", "Email applicant" });
     }
 
     @Test
     public void shouldNotBeAbleToAddInterviewFeedbackIfAlreadyProvided() {
         configureUserAndApplicationExpectations(false, false, false, false, true, false, false, false, true, false, false, false, false, false, false, false,
                 false, false, false, false, false, ApplicationFormStatus.INTERVIEW);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] {}, new String[] {});
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] {"emailApplicant"}, new String[] {"Email applicant"});
     }
 
     @Test
     public void shouldBeAbleToAddReferenceIfReferee() {
         configureUserAndApplicationExpectations(false, false, false, false, false, true, false, false, false, false, false, false, false, true, true, false,
                 false, false, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "reference" }, new String[] { "Add reference" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "reference", "emailApplicant" }, new String[] { "Add reference", "Email applicant" });
     }
 
     @Test
     public void shouldNotBeAbleToAddReferenceIfAlreadyProvided() {
         configureUserAndApplicationExpectations(false, false, false, false, false, true, false, false, false, true, false, false, false, true, true, false,
                 false, false, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] {}, new String[] {});
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] {"emailApplicant"}, new String[] {"Email applicant"});
     }
 
     @Test
     public void shouldNotBeAbleToWithdrawIfApplicantAndApplicationNotDecitedNorWithdrawn() {
         configureUserAndApplicationExpectations(false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false,
                 false, false, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, false, new String[] { "withdraw" }, new String[] { "Withdraw" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "withdraw", "emailApplicant" }, new String[] { "Withdraw", "Email applicant" });
     }
 
     @Test
     public void shouldNotBeAbleToRestartApprovalIfAdminAndPendingRestart() {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, true, false, false, false, null);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "restartApproval" }, new String[] { "Comment", "Approve" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "restartApproval", "emailApplicant" }, new String[] { "Comment", "Revise Approval", "Email applicant" });
     }
 
     @Test
     public void shouldBeAbleToApproveIfApproverAndInApproveStateAndPrimarySupervisorHasConfirmedSupervision() {
-        configureUserAndApplicationExpectations(false, false, false, false, false, false, true, false, false, false, false, false, false, true, true, false,
-                false, false, true, false, false, ApplicationFormStatus.APPROVAL);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "validate" }, new String[] { "Approve" });
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, programMock)).andReturn(false);
+        EasyMock.expect(userMock.isNotInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+        configureUserAndApplicationExpectations(false, false, false, false, false, false, true, false, false, false, false, false, false, true, true, false, false, false, true, false, false, ApplicationFormStatus.APPROVAL);
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "emailApplicant" }, new String[] { "Approve", "Email applicant" });
     }
 
     @Test
     public void shouldBeAbleToApproveIfSupervisorHasNotConfirmedSupervision() {
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, programMock)).andReturn(false);
+        EasyMock.expect(userMock.isNotInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
         configureUserAndApplicationExpectations(false, false, false, false, false, false, true, false, false, false, false, false, false, true, true, false, false, false, false, false, false, ApplicationFormStatus.APPROVAL);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] {"validate"}, new String[] {"Approve"});
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, false, new String[] {"validate", "emailApplicant"}, new String[] {"Approve", "Email applicant"});
     }
     
     @Test
-    public void shouldBeAbleToRestartApprovalIfSupervisorHasNotConfirmedSupervisionAndUserIsAdministrator() {
-        configureUserAndApplicationExpectations(false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, true, ApplicationFormStatus.APPROVAL);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] {"validate"}, new String[] {"Approve"});
-    }
-
-    @Test
     public void shouldBeNotAbleToSupervisionIfSupervisionAndNotConfirmedYet() {
-        configureUserAndApplicationExpectations(false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false,
-                false, false, false, false, false, ApplicationFormStatus.APPROVAL);
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "confirmSupervision" }, new String[] { "Confirm supervision" });
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, programMock)).andReturn(false);
+        configureUserAndApplicationExpectations(false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, ApplicationFormStatus.APPROVAL);
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "confirmSupervision", "emailApplicant" }, new String[] { "Confirm supervision", "Email applicant" });
     }
     
     @Test
     public void shouldBeAbleToRejectApplicationIfAdministratorAndInApproval() {
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, programMock)).andReturn(false);
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, ApplicationFormStatus.APPROVAL);
         EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, programMock)).andReturn(true).anyTimes();
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "rejectApplication" }, new String[] { "Comment", "Confirm supervision", "Reject" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "emailApplicant" }, new String[] { "Comment", "Confirm supervision", "Email applicant" });
     }
     
     @Test
     public void shouldNotBeAbleToRejectApplicationIfAdministratorAndInApprovalAndApproverInProgram() {
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, programMock)).andReturn(false);
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, ApplicationFormStatus.APPROVAL);
         EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, programMock)).andReturn(true).anyTimes();
-        ApplicationActionsDefinition actionsDefinition = executeGetActionsDefinitions();
-        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "rejectApplication" }, new String[] { "Comment", "Confirm supervision", "Reject" });
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "emailApplicant" }, new String[] { "Comment", "Confirm supervision", "Email applicant" });
+    }
+    
+    @Test
+    public void shouldBeAbleToRestartTheApprovalProcessIfApplicationInApprovalIsNotPendingApprovalRestartAndUserIsAdministrator() {
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, programMock)).andReturn(true);
+        configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, ApplicationFormStatus.APPROVAL);
+        EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, programMock)).andReturn(true).anyTimes();
+        EasyMock.expect(userMock.isNotInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
+        ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
+        assertActionsDefinition(actionsDefinition, true, new String[] { "comment", "confirmSupervision", "restartApprovalAsAdministrator", "emailApplicant"}, new String[] { "Comment", "Confirm supervision", "Revise Approval", "Email applicant" });
     }
 
-    private ApplicationActionsDefinition executeGetActionsDefinitions() {
+    private ActionsDefinitions executeGetActionsDefinitions() {
         EasyMock.replay(userMock, applicationMock);
-        ApplicationActionsDefinition actionsDefinition = applicationsService.getActionsDefinition(userMock, applicationMock);
+        ActionsDefinitions actionsDefinition = applicationsService.getActionsDefinition(userMock, applicationMock);
         EasyMock.verify(userMock, applicationMock);
         return actionsDefinition;
     }
-
+    
     private void configureUserAndApplicationExpectations(boolean canSee, boolean hasAdminRights, boolean isViewer, boolean isReviewer, boolean isInterviewer,
             boolean isReferee, boolean isApprover, boolean hasProvidedReview, boolean hasProvidedInterviewFeedback, boolean hasProvidedReference,
             boolean isApplicant, boolean isSupervisor, boolean canEditAsAdministrator, boolean isSubmitted, boolean isModifiable, boolean isDecided,
@@ -274,7 +282,7 @@ public class ApplicationsServiceActionsTest {
         EasyMock.expect(applicationMock.isInState(EasyMock.isA(ApplicationFormStatus.class))).andReturn(false).anyTimes();
     }
 
-    private void assertActionsDefinition(ApplicationActionsDefinition actionsDefinition, boolean requiresAttention, String[] actionsNames,
+    private void assertActionsDefinition(ActionsDefinitions actionsDefinition, boolean requiresAttention, String[] actionsNames,
             String[] actionDisplayValues) {
         Preconditions.checkArgument(actionsNames.length == actionDisplayValues.length);
 

@@ -71,7 +71,9 @@
 					<div class="content-box-inner">
                         <#include "/private/common/parts/application_info.ftl"/>
                         <div id="approve-content">
-                            <#if applicationForm.isCompleteForSendingToPortico(false)>
+                            <#if applicationForm.pendingApprovalRestart>
+                                <#include "/private/staff/supervisors/portico_validation_section.ftl"/>
+                            <#elseif applicationForm.isCompleteForSendingToPortico(false)>
                                 <#include "/private/staff/supervisors/supervisors_section.ftl"/>
                             <#else>
                                 <#include "/private/staff/supervisors/portico_validation_section.ftl"/>

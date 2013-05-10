@@ -19,8 +19,12 @@ public class ParticipantValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         InterviewParticipant interviewParticipant = (InterviewParticipant) target;
         
-        if(interviewParticipant.getAcceptedTimeslots().isEmpty() && !interviewParticipant.getCantMakeIt()){
-            errors.rejectValue("cantMakeIt", INTERVIEW_VOTE_NO_OPTION_SELECTED);
+        if (!interviewParticipant.getCanMakeIt()) {
+            return;
+        }
+        
+        if(interviewParticipant.getAcceptedTimeslots().isEmpty()){
+            errors.rejectValue("canMakeIt", INTERVIEW_VOTE_NO_OPTION_SELECTED);
         }
     }
 

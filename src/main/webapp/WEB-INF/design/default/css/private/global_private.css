@@ -1688,7 +1688,8 @@ form#removeForm {
 }
 
 .interview-votes .table.timeslots th.check-all-cell {
-	padding:0;
+	padding:4px 0 10px;
+	height:35px;
 }
 
 .interview-votes .table.timeslots th.check-all-cell,

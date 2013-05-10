@@ -30,25 +30,32 @@ public class ParticipantValidatorTest {
     private ParticipantValidator participantValidator;
 
     @Test
-    public void shouldRejectIfNoTimeSlotsSelected() {
+    public void shouldRejectIfCanMakeItAndNoTimeSlotsSelected() {
+        interviewParticipant.setCanMakeIt(true);
         interviewParticipant.getAcceptedTimeslots().clear();
-        interviewParticipant.setCantMakeIt(false);
         
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "cantMakeIt");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
         participantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("cantMakeIt").getCode());
+        Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("canMakeIt").getCode());
     }
     
     @Test
-    public void shouldRejectIfNoTimeSlotsAndNoCantMakeItSelected() {
-        interviewParticipant.getAcceptedTimeslots().clear();
-        interviewParticipant.setCantMakeIt(false);
+    public void shouldAcceptIfCantMakeIt() {
+        interviewParticipant.setCanMakeIt(false);
         
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "cantMakeIt");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
         participantValidator.validate(interviewParticipant, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("cantMakeIt").getCode());
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptIfCanMakeItAndTimeSlotsSelected() {
+        interviewParticipant.setCanMakeIt(true);
+        
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
+        participantValidator.validate(interviewParticipant, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
     }
 
     @Before

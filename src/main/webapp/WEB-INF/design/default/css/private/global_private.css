@@ -1767,6 +1767,10 @@ form#removeForm {
 	color: #CCC;
 	padding: 3px;
 }
+.interview-votes .timeslot .numb {
+	font-size: 16px;
+	color: #333333;
+}
 .interview-votes .timeslot .icon-ok-sign,
 .interview-votes .timeslot .icon-circle,
 .interview-votes .timeslot .icon-remove-sign,
@@ -1786,7 +1790,9 @@ form#removeForm {
 .interview-votes .timeslot .icon-circle {
 	color:#ccc;
 }
-
+.interview-votes .timeslot input{
+	margin-top: -2px;
+}
 .interview-votes .timeslot input[type=checkbox] {
 	margin-left:0px;
 	margin-top: 0px;

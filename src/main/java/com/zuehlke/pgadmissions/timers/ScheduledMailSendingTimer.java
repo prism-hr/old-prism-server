@@ -53,6 +53,11 @@ public class ScheduledMailSendingTimer {
     }
     
     @Scheduled(cron = "${email.schedule.period.chron}")
+    public void sendInterviewParticipantVoteReminder() {
+        mailService.sendInterviewParticipantVoteReminder();
+    }
+    
+    @Scheduled(cron = "${email.schedule.period.chron}")
     public void sendNewUserInvitation() {
         mailService.sendNewUserInvitation();
     }

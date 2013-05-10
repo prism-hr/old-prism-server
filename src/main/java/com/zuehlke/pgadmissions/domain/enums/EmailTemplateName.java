@@ -5,6 +5,8 @@ public enum EmailTemplateName {
 	REFEREE_NOTIFICATION("Reference Request"),
 	REFEREE_REMINDER("Reference Request Reminder"),//sent by timer
 	INTERVIEWER_NOTIFICATION("Interview Confirmation - Staff"),
+	INTERVIEW_VOTE_NOTIFICATION("Interview Scheduling Request"),
+	INTERVIEW_VOTE_REMINDER("Interview Scheduling Reminder"),
 	NEW_PASSWORD_CONFIRMATION("New Password Confirmation"),//send on event
 	REGISTRY_VALIDATION_REQUEST("Eligibility Assessment Request"),
 	REGISTRATION_CONFIRMATION("Confirmation of Registration"),

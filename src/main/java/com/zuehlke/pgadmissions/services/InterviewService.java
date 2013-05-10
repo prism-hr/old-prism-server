@@ -87,24 +87,30 @@ public class InterviewService {
         applicationFormDAO.save(applicationForm);
 
         if (interview.isScheduled()) {
-            sendConfirmationEmails(interview, applicationForm, previousStatus);
+            sendConfirmationEmails(interview, previousStatus);
         } else if(interview.isScheduling()){
-            List<InterviewParticipant> participants = Lists.newLinkedList();
-            InterviewParticipant applicant = new InterviewParticipant();
-            applicant.setUser(applicationForm.getApplicant());
-            participants.add(applicant);
-
-            for(Interviewer interviewer : interview.getInterviewers()){
-                InterviewParticipant participant = new InterviewParticipant();
-                participant.setUser(interviewer.getUser());
-                participants.add(participant);
-            }
-            interview.getParticipants().addAll(participants);
+            createParticipants(interview);
+            mailService.sendInterviewVoteNotificationToInterviewerParticipants(interview);
         }
 
     }
 
-    private void sendConfirmationEmails(final Interview interview, ApplicationForm applicationForm, ApplicationFormStatus previousStatus) {
+    private void createParticipants(final Interview interview) {
+        List<InterviewParticipant> participants = Lists.newLinkedList();
+        InterviewParticipant applicant = new InterviewParticipant();
+        applicant.setUser(interview.getApplication().getApplicant());
+        participants.add(applicant);
+
+        for(Interviewer interviewer : interview.getInterviewers()){
+            InterviewParticipant participant = new InterviewParticipant();
+            participant.setUser(interviewer.getUser());
+            participants.add(participant);
+        }
+        interview.getParticipants().addAll(participants);
+    }
+
+    private void sendConfirmationEmails(final Interview interview, ApplicationFormStatus previousStatus) {
+        final ApplicationForm applicationForm = interview.getApplication();
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
             mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());

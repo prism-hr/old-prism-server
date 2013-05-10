@@ -186,7 +186,7 @@
 					        <button type="submit" class="btn btn-primary">Confirm interview</button>
 					    </div>
 	              </form>
-	              <form id="restart-interview-form" method="post" action="<@spring.url '/interviewConfirm/restart' />"></form>
+	              <form id="restart-interview-form" method="post" action="<@spring.url '/interviewConfirm/restart' />?applicationId=${applicationForm.applicationNumber}"></form>
             	</div>
             </section>
         </div>

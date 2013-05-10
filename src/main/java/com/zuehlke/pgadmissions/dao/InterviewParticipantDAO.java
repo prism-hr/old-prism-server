@@ -7,11 +7,11 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
@@ -35,15 +35,11 @@ public class InterviewParticipantDAO {
         Date today = Calendar.getInstance().getTime();
         ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
         Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-        List<InterviewParticipant> participants = (List<InterviewParticipant>) sessionFactory.getCurrentSession().createCriteria(InterviewParticipant.class)
+        List<Integer> participants = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(InterviewParticipant.class)
                 .createAlias("interview", "interview").add(Restrictions.eq("interview.stage", InterviewStage.SCHEDULING))
                 .add(Restrictions.eq("responded", false)).add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-        final List<Integer> result = Lists.newArrayListWithCapacity(participants.size());
-        for (InterviewParticipant participant : participants) {
-            result.add(participant.getId());
-        }
-        return result;
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setProjection(Projections.property("id")).list();
+        return participants;
     }
 
     public InterviewParticipant getParticipantById(Integer id) {

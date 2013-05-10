@@ -76,6 +76,8 @@
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
 					
+                    
+                    
 					<section id="commentsection" class="form-rows">
 						<h2 class="no-arrow">
 						<#if applicationForm.isInState('VALIDATION')>
@@ -91,8 +93,14 @@
 		
 						<div>
 							<form>
-							
-								<div class="alert alert-info"> <i class="icon-info-sign"></i>
+								<@spring.bind "comment.confirmNextStage" />
+							    <#if spring.status.errorMessages?size &gt; 0>
+						     		<div class="alert alert-error" > <i class="icon-warning-sign"></i>
+							    <#else>
+							        <div class="alert alert-info"> <i class="icon-info-sign"></i>
+							    </#if>
+                                
+								
 								<#if applicationForm.isInState('VALIDATION')>
 									Validate the application here.
 								<#elseif applicationForm.isInState('REVIEW')>

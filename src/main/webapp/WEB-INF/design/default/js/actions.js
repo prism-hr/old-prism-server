@@ -50,6 +50,9 @@ $(document).ready(function() {
             case 'interviewVote':
             	window.location.href = "/pgadmissions/interviewVote?applicationId="+ id;
             	break;
+            case 'interviewConfirm':
+            	window.location.href = "/pgadmissions/interviewConfirm?applicationId="+ id;
+            	break;
             case 'restartApproval':
                 window.location.href = "/pgadmissions/approval/moveToApproval?applicationId="+ id;
                 break;

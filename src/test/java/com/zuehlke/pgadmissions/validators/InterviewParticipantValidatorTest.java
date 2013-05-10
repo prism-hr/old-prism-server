@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
-public class ParticipantValidatorTest {
+public class InterviewParticipantValidatorTest {
 
     @Autowired
     private Validator validator;

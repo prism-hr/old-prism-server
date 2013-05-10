@@ -26,11 +26,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.ApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.CourseApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplicationRequest;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.AdmissionsApplicationResponse;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.ApplicationTp;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.CourseApplicationTp;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.SubmitAdmissionsApplicationRequest;
+
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -90,7 +90,7 @@ public class AdmissionsApplicationsServiceTest {
         EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);       
         EasyMock.replay(programInstanceDAOMock);
         
-        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory());
+        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder();
         SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).build();
         
         StringWriter writer = new StringWriter();
@@ -119,7 +119,7 @@ public class AdmissionsApplicationsServiceTest {
         EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);       
         EasyMock.replay(programInstanceDAOMock);
         
-        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory());
+        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder();
         SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).build();
         
         assertEquals("+44 7500934 2", request.getApplication().getApplicant().getCorrespondenceAddress().getLandline());
@@ -135,7 +135,7 @@ public class AdmissionsApplicationsServiceTest {
         EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(applicationForm.getProgram(), applicationForm.getProgrammeDetails().getStudyOption())).andReturn(applicationForm.getProgram().getInstances().get(0));
         EasyMock.replay(programInstanceDAOMock);
         
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()).applicationForm(applicationForm).build();
+        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder().applicationForm(applicationForm).build();
         
         AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
         

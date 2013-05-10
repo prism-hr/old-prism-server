@@ -16,7 +16,7 @@
 
     <wsdl:types>
         <schema targetNamespace="http://ucl.ac.uk/isd/registry/studentrecordsdata_V1.0" xmlns="http://www.w3.org/2001/XMLSchema">        	
-            <include schemaLocation="../registryws/xsd/admissionsApplicationsService_v1.xsd" />
+            <include schemaLocation="admissionsApplicationsService_v1.xsd" />
         </schema>
     </wsdl:types>
 
@@ -70,12 +70,6 @@
             <wsdl:input>
                 <soap:body use="literal" />
             </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal" />
-            </wsdl:output>           
-            <wsdl:fault name="FaultDtlMsg_v1_0">
-                <soap:fault name="FaultDtlMsg_v1_0" use="literal" />
-            </wsdl:fault>
         </wsdl:operation>
     </wsdl:binding>
 

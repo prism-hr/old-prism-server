@@ -19,20 +19,21 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.WebServiceIOException;
-import org.springframework.ws.client.core.WebServiceMessageCallback;
-import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.AdmissionsApplicationResponse;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.AdmissionsApplicationsServiceV10;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.FaultDtlMsgV10;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.ReferenceTp;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.SubmitAdmissionsApplicationRequest;
+
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.ReferenceTp;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
@@ -79,7 +80,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
     private boolean hasBeenCalled = false;
 
-    private WebServiceTemplate webServiceTemplateMock;
+    private AdmissionsApplicationsServiceV10 webServiceMock;
 
     private JSchFactory jschfactoryMock;
 
@@ -113,7 +114,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldReportWebServiceUnreachableAndRescheduleForLaterTransmission() {
+    public void shouldReportWebServiceUnreachableAndRescheduleForLaterTransmission() throws FaultDtlMsgV10 {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
@@ -152,17 +153,15 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         
         EasyMock.expect(applicationFormDAOMock.get(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
-        EasyMock.expect(
-                webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
-                        EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(new WebServiceIOException("Error"));
+        EasyMock.expect(webServiceMock.submitAdmissionsApplicationV10(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class))).andThrow(new WebServiceIOException("Error"));
 
         EasyMock.expect(commentDAOMock.getValidationCommentForApplication(applicationForm)).andReturn(
                 new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.HOME).build());
 
-        EasyMock.replay(webServiceTemplateMock, applicationFormTransferServiceMock, commentDAOMock, applicationFormDAOMock);
+        EasyMock.replay(webServiceMock, applicationFormTransferServiceMock, commentDAOMock, applicationFormDAOMock);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, attachmentsSendingService, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, attachmentsSendingService, applicationFormTransferService, webServiceMock);
 
         try {
             exportService.sendWebServiceRequest(applicationForm, applicationFormTransfer, listener);
@@ -171,11 +170,11 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
             assertEquals("The web service is unreachable because of network issues [applicationNumber=TMRMBISING01-2012-999999]", e.getMessage());
         }
 
-        EasyMock.verify(webServiceTemplateMock, commentDAOMock, applicationFormDAOMock);
+        EasyMock.verify(webServiceMock, commentDAOMock, applicationFormDAOMock);
     }
 
     @Test
-    public void shouldReportWebServiceSoapFaultAndGiveUpThisTransferOnly() throws IOException {
+    public void shouldReportWebServiceSoapFaultAndGiveUpThisTransferOnly() throws IOException, FaultDtlMsgV10 {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
 
@@ -187,7 +186,6 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
             @Override
             public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
                 Assert.fail("The web service call should not complete but throw an exception instead");
-
             }
 
             @Override
@@ -230,19 +228,17 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         SoapFaultClientException e = new SoapFaultClientException(mockFaultMessage);
 
-        EasyMock.expect(
-                webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
-                        EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(e);
-
+        EasyMock.expect(webServiceMock.submitAdmissionsApplicationV10(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class))).andThrow(e);
+        
         EasyMock.expect(commentDAOMock.getValidationCommentForApplication(applicationForm)).andReturn(
                 new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.HOME).build());
 
         EasyMock.expect(applicationFormDAOMock.get(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
         
-        EasyMock.replay(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
+        EasyMock.replay(webServiceMock, applicationFormDAOMock, commentDAOMock);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, attachmentsSendingService, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, attachmentsSendingService, applicationFormTransferService, webServiceMock);
 
         try {
             exportService.sendWebServiceRequest(applicationForm, applicationFormTransfer, listener);
@@ -251,17 +247,16 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
             assertEquals("The web service refused our request [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
         
-        EasyMock.verify(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
+        EasyMock.verify(webServiceMock, applicationFormDAOMock, commentDAOMock);
 
         assertEquals(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE, applicationFormTransfer.getStatus());
     }
 
     @Test
-    public void shouldReportWebServiceSoapFaultAndGiveUpCompletelyAfterConfiguredRetries() throws IOException {
+    public void shouldReportWebServiceSoapFaultAndGiveUpCompletelyAfterConfiguredRetries() throws IOException, FaultDtlMsgV10 {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock,
-                attachmentsSendingService, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock, commentDAOMock, attachmentsSendingService, applicationFormTransferService, webServiceMock);
 
         SoapFault mockFault = EasyMock.createMock(SoapFault.class);
         EasyMock.expect(mockFault.getFaultStringOrReason()).andReturn("Authentication Failed");
@@ -280,14 +275,12 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         EasyMock.expect(applicationFormDAOMock.get(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
         
-        EasyMock.expect(
-                webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
-                        EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(e);
+        EasyMock.expect(webServiceMock.submitAdmissionsApplicationV10(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class))).andThrow(e);
 
         EasyMock.expect(commentDAOMock.getValidationCommentForApplication(applicationForm)).andReturn(
                 new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.HOME).build());
 
-        EasyMock.replay(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
+        EasyMock.replay(applicationFormDAOMock, commentDAOMock, webServiceMock);
 
         try {
             exportService.sendWebServiceRequest(applicationForm, applicationFormTransfer, new DeafListener());
@@ -296,11 +289,11 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
             assertEquals("The web service refused our request [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
         
-        EasyMock.verify(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
+        EasyMock.verify(applicationFormDAOMock, commentDAOMock, webServiceMock);
     }
 
     @Test
-    public void shouldSuccessfullyCallWebServiceAndRetrieveAResponse() throws PorticoExportServiceException {
+    public void shouldSuccessfullyCallWebServiceAndRetrieveAResponse() throws PorticoExportServiceException, FaultDtlMsgV10 {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
 
@@ -339,19 +332,17 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         AdmissionsApplicationResponse response = new AdmissionsApplicationResponse();
         response.setReference(referenceTp);
 
-        EasyMock.expect(
-                webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
-                        EasyMock.anyObject(WebServiceMessageCallback.class))).andReturn(response);
+        EasyMock.expect(webServiceMock.submitAdmissionsApplicationV10(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class))).andReturn(response);
 
         EasyMock.expect(commentDAOMock.getValidationCommentForApplication(applicationForm)).andReturn(
                 new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.HOME).build());
         
         EasyMock.expect(applicationFormDAOMock.get(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
         
-        EasyMock.replay(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
+        EasyMock.replay(applicationFormDAOMock, commentDAOMock, webServiceMock);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, attachmentsSendingService, applicationFormTransferService) {
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, attachmentsSendingService, applicationFormTransferService, webServiceMock) {
             @Override
             public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener) throws PorticoExportServiceException {
                 hasBeenCalled = true;
@@ -360,7 +351,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService.sendToPortico(applicationForm, applicationFormTransfer, listener);
 
-        EasyMock.verify(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
+        EasyMock.verify(applicationFormDAOMock, commentDAOMock, webServiceMock);
 
         assertEquals(uclUserId, applicationForm.getApplicant().getUclUserId());
         assertEquals(uclBookingReferenceNumber, applicationForm.getApplication().getUclBookingReferenceNumber());
@@ -372,7 +363,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
     }
     
     @Test
-    public void shouldSuccessfullyCallWebServiceWithOverseasStudent() throws PorticoExportServiceException {
+    public void shouldSuccessfullyCallWebServiceWithOverseasStudent() throws PorticoExportServiceException, FaultDtlMsgV10 {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         applicationFormTransfer.getApplicationForm().setLatestApprovalRound(new ApprovalRoundBuilder().id(4).projectAbstract("abstract").build());
         applicationFormTransfer.getApplicationForm().getProgram().setAtasRequired(true);
@@ -413,19 +404,17 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         AdmissionsApplicationResponse response = new AdmissionsApplicationResponse();
         response.setReference(referenceTp);
         
-        EasyMock.expect(
-                webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
-                        EasyMock.anyObject(WebServiceMessageCallback.class))).andReturn(response);
+        EasyMock.expect(webServiceMock.submitAdmissionsApplicationV10(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class))).andReturn(response);
         
         EasyMock.expect(commentDAOMock.getValidationCommentForApplication(applicationForm)).andReturn(
                 new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.OVERSEAS).build());
         
         EasyMock.expect(applicationFormDAOMock.get(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
         
-        EasyMock.replay(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
+        EasyMock.replay(applicationFormDAOMock, commentDAOMock, webServiceMock);
         
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, attachmentsSendingService, applicationFormTransferService) {
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, attachmentsSendingService, applicationFormTransferService, webServiceMock) {
             @Override
             public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener) throws PorticoExportServiceException {
                 hasBeenCalled = true;
@@ -434,7 +423,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         
         exportService.sendToPortico(applicationForm, applicationFormTransfer, listener);
         
-        EasyMock.verify(webServiceTemplateMock, applicationFormDAOMock, commentDAOMock);
+        EasyMock.verify(applicationFormDAOMock, commentDAOMock, webServiceMock);
         
         assertEquals(uclUserId, applicationForm.getApplicant().getUclUserId());
         assertEquals(uclBookingReferenceNumber, applicationForm.getApplication().getUclBookingReferenceNumber());
@@ -488,8 +477,8 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService, webServiceMock);
 
         EasyMock.replay(jschfactoryMock);
 
@@ -561,8 +550,8 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService, webServiceMock);
 
         EasyMock.replay(jschfactoryMock, sessionMock);
 
@@ -645,8 +634,8 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService, webServiceMock);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
 
@@ -731,8 +720,8 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService, webServiceMock);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
 
@@ -820,8 +809,8 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost,
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, sftpAttachmentsSendingService, applicationFormTransferService, webServiceMock);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
         
@@ -880,8 +869,8 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, sftpAttachmentsSendingServiceMock, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock,
+                commentDAOMock, sftpAttachmentsSendingServiceMock, applicationFormTransferService, webServiceMock);
 
         sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
 
@@ -948,8 +937,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
 
-        exportService = new PorticoExportService(webServiceTemplateMock, applicationFormDAOMock,
-                commentDAOMock, sftpAttachmentsSendingServiceMock, applicationFormTransferService);
+        exportService = new PorticoExportService(applicationFormDAOMock, commentDAOMock, sftpAttachmentsSendingServiceMock, applicationFormTransferService, webServiceMock);
 
         EasyMock.expect(sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener)).andReturn("abc.zip");
 
@@ -966,11 +954,11 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
     public void shouldPrepareApplicationIfItIsRejectedOrWithdrawn() throws PorticoExportServiceException {
         applicationForm = new ValidApplicationFormBuilder().build();
         exportService = new PorticoExportService(
-                webServiceTemplateMock, 
                 applicationFormDAOMock,
                 commentDAOMock, 
                 attachmentsSendingService, 
-                applicationFormTransferService) {
+                applicationFormTransferService,
+                webServiceMock) {
             @Override
             public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws PorticoExportServiceException {
                 prepareApplicationForm(applicationForm);
@@ -995,11 +983,11 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
     public void shouldPrepareApplicationIfItIsRejectedOrWithdrawnAndRefereeHasNotProvidedReference() throws PorticoExportServiceException {
         applicationForm = new ValidApplicationFormBuilder().build();
         exportService = new PorticoExportService(
-                webServiceTemplateMock, 
                 applicationFormDAOMock,
                 commentDAOMock, 
                 attachmentsSendingService, 
-                applicationFormTransferService) {
+                applicationFormTransferService,
+                webServiceMock) {
             @Override
             public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws PorticoExportServiceException {
                 prepareApplicationForm(applicationForm);
@@ -1034,7 +1022,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         
         attachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
-        webServiceTemplateMock = EasyMock.createMock(WebServiceTemplate.class);
+        webServiceMock = EasyMock.createMock(AdmissionsApplicationsServiceV10.class);
 
         attachmentsZipCreatorMock = EasyMock.createMock(PorticoAttachmentsZipCreator.class);
 
@@ -1047,11 +1035,11 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         
         exportService = new PorticoExportService(
-                webServiceTemplateMock, 
                 applicationFormDAOMock, 
                 commentDAOMock, 
                 attachmentsSendingService,
-                applicationFormTransferService);
+                applicationFormTransferService, 
+                webServiceMock);
 
         hasBeenCalled = false;
     }

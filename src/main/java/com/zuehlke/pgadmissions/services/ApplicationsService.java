@@ -228,11 +228,8 @@ public class ApplicationsService {
         }
 
         if (application.isInState(ApplicationFormStatus.APPROVAL) && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
-        if (application.isInState(ApplicationFormStatus.APPROAL) && !application.isPendingApprovalRestart()
-                && (user.isInRoleInProgram(Authority.APPROVER application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
             actions.addAction("validate", "Approve");
             if (user.isNotInRole(Authority.SUPERADMINISTRATOR) && !application.isPendingApprovalRestart()) {
-            if (user.isNotInRole(Authority.SUPERADMINISTRATOR) {
                 actions.setRequiresAttention(true);
             }
         }

@@ -165,7 +165,7 @@
 		            	  		</div>
 		            	  	</div>
                             <div class="field">
-		            	  	<@spring.bind "interviewParticipant.cantMakeIt" />
+		            	  	<@spring.bind "interviewParticipant.canMakeIt" />
   							<#list spring.status.errorMessages as error>
 		            	  		
 					    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>

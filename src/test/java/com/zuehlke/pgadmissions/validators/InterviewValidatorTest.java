@@ -2,15 +2,15 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -194,12 +194,15 @@ public class InterviewValidatorTest {
     public void shouldRejectIfDateIsPresentDayButTimeIsInThePast() {
         interview.setStage(InterviewStage.SCHEDULING);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR, -1);
+        DateTime today = new DateTime(2013, 3, 1, 12, 00);
+        
+        DateTime datePicked = today.minusHours(1);
+        
         
         InterviewTimeslot timeslot = interview.getTimeslots().get(0);
-        timeslot.setDueDate(calendar.getTime());
-        timeslot.setStartTime("10:00");
+        timeslot.setDueDate(today.toDate());
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
+        timeslot.setStartTime(formatter.format(datePicked.toDate()));
         
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "timeslots");
         interviewValidator.validate(interview, mappingResult);

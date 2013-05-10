@@ -56,10 +56,8 @@
             <section class="interview-votes form-rows">
             	<div>
             		<form method="post">
-		              <h2>Accept Interview Time Slot(s)</h2>
 		              <#assign interview = applicationForm.latestInterview>
-		              <div>
-		              	<div class="row-group">
+		              	<!--div class="row-group">
 			              	<div class="row" >
 							    <label class="plain-label" for="programInterviewers">Interview Location</label>
 							    <div class="field">
@@ -85,7 +83,7 @@
 								    </div>
 								</div>
 							</#if>
-		              	</div>
+		              	</div-->
 		              	<div class="row-group">
 			              	<div class="row">
 			              		<#assign responded = 0>
@@ -94,74 +92,80 @@
 			              				<#assign responded = responded + 1>
 			              			</#if>
 			              		</#list>
-			              		<p class="votes-summary">${responded} of ${interview.participants?size } participants have responded</p>
+			              		
 		            	  	
-		            	  		<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i> Please select the times below that you would can attend the interview.</div>
+		            	  		<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i> Please select your interview preferences.</div>
 		            	  		
 		            	  		<div class="timeslots-wrapper">
 			            	  		<div class="timeslots-scrollable">
 				            	  		<table class="table timeslots">
 				            	  			<thead>
 				            	  				<th class="participant">&nbsp;</th>
+				            	  				
 				            	  				<#list interview.timeslots as timeslot>
-				            	  					<th>${timeslot.dueDate?string("dd MMM yy")}<br />${timeslot.startTime}</th>
+				            	  					<th><strong>${timeslot.dueDate?string("dd MMM yy")}</strong> <br />${timeslot.startTime}</th>
 				            	  				</#list>
 				            	  			</thead>
 				            	  			<tbody>
 				            	  				<#list interview.participants as participant>
-				        	  						<#if user == participant.user>
-				        	  							<tr class="info">
-				        	  								<td class="participant">
-				        	  									<span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
-				        	  									${participant.user.firstName!} ${participant.user.lastName!}
-				        	  									<div class="traversal-actions">
-				        	  										<a href="javascript:void(0);" class="can-make-anytime sign-tooltip" data-desc="<@spring.message 'interviewVote.canmakeanytime'/>"><i class="icon-large icon-check"></i></a>
-					        	  									<a href="javascript:void(0);" class="cant-make-it sign-tooltip" data-desc="<@spring.message 'interviewVote.cantmakeit'/>"><i class="icon-large icon-thumbs-down"></i></a>
-					        	  									<a href="javascript:void(0);" class="maybe-can-make-some sign-tooltip" data-desc="<@spring.message 'interviewVote.maybecanmakesome'/>"><i class="icon-large icon-thumbs-up"></i></a>
-					        	  									<input id="cantMakeIt" type="hidden" name="cantMakeIt" value="false" />
-				        	  									</div>
-			        	  									</td>
-					        	  							
-					        	  							<#assign acceptedTimeslots = participant.acceptedTimeslots>
+			        	  							<tr>
+			        	  								<td class="participant">
+			        	  									<div><span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
+			        	  									${participant.user.firstName!} ${participant.user.lastName!} </div>
+		        	  									</td>
+		        	  									
+				            	  						
+				            	  						<#if participant.responded>
+					            	  						<#assign acceptedTimeslots = participant.acceptedTimeslots>
 					            	  						<#list interview.timeslots as timeslot>
-					            	  							<td class="timeslot">
+					            	  							<td class="timeslot"> <div>
 					            	  								<#if acceptedTimeslots?seq_contains(timeslot)>
-					            	  								<input type="checkbox" name="acceptedTimeslotIds" value="${timeslot.id}" checked="checked" />
+						            	  								<i class="icon-ok-sign sign-tooltip"></i>
 						            	  							<#else>
-					            	  								<input type="checkbox" name="acceptedTimeslotIds" value="${timeslot.id}" />
-						            	  							</#if>
+						            	  								<i class="icon-remove-sign sign-tooltip"></i>
+						            	  							</#if> </div>
 					            	  							</td>
 					            	  						</#list>
-				        	  							</tr>
-				        	  						<#else>
-				        	  							<tr>
-				        	  								<td class="participant">
-				        	  									<span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
-				        	  									${participant.user.firstName!} ${participant.user.lastName!}
-			        	  									</td>
-					            	  						
-					            	  						<#if participant.responded>
-						            	  						<#assign acceptedTimeslots = participant.acceptedTimeslots>
-						            	  						<#list interview.timeslots as timeslot>
-						            	  							<td class="timeslot">
-						            	  								<#if acceptedTimeslots?seq_contains(timeslot)>
-							            	  								<i class="icon-ok-sign sign-tooltip"></i>
-							            	  							<#else>
-							            	  								<i class="icon-remove-sign sign-tooltip"></i>
-							            	  							</#if>
-						            	  							</td>
-						            	  						</#list>
-						            	  					<#else>
-						            	  						<#list interview.timeslots as timeslot>
-						            	  							<td class="timeslot">
-				            	  										<i class="icon-circle sign-tooltip" data-desc="<@spring.message 'interviewVote.notvotedyet'/>"></i>
-						            	  							</td>
-						            	  						</#list>
-						            	  					</#if>
-				        	  							</tr>
-				        	  						</#if>
+					            	  					<#else>
+					            	  						<#list interview.timeslots as timeslot>
+					            	  							<td class="timeslot"><div>
+			            	  										<i class="icon-time sign-tooltip" data-desc="<@spring.message 'interviewVote.notvotedyet'/>"></i> </div>
+					            	  							</td>
+					            	  						</#list>
+					            	  					</#if>
+			        	  							</tr>
 				            	  				</#list>
+				            	  				<tr>
+				            	  					<td class="participant">
+				            	  						<div>Number of participants</div>
+				            	  					</td>
+				            	  					<#list interview.timeslots as timeslot>
+				            	  						<#assign numberOfParticipantsAvailable = 0>
+				            	  						<#list interview.participants as participant>
+				            	  							<#assign acceptedTimeslots = participant.acceptedTimeslots>
+				            	  							<#if acceptedTimeslots?seq_contains(timeslot)>
+				            	  								<#assign numberOfParticipantsAvailable = numberOfParticipantsAvailable + 1>				            	  								
+				            	  							</#if>
+				            	  						</#list>
+				            	  						<td class="timeslot">
+				            	  							<div>${numberOfParticipantsAvailable}</div>
+				            	  						</td>
+				            	  					</#list>
+				            	  				</tr>
 				            	  			</tbody>
+				            	  			<tfoot>
+				            	  				<tr>
+				            	  					<td class="participant">
+				            	  					</td>
+				            	  					<#list interview.timeslots as timeslot>
+				            	  						<td class="timeslot">
+				            	  							<div>
+				            	  								<input type="radio" name="timeslotId" value=${timeslot.id}<#if timeslot_index == 0> checked="checked"</#if> />
+				            	  							</div>
+				            	  						</td>
+				            	  					</#list>
+				            	  				</tr>
+				            	  			</tfoot>
 				            	  		</table>
 				            	  	</div>
 		            	  		</div>
@@ -170,20 +174,15 @@
 		            	<div class="row-group">
 		        			<div class="row">
 							  	<label class="plain-label normal" for="comments">Comments</label>
-							    <span class="hint" data-desc="<@spring.message 'interviewVote.comments'/>"></span>
+							    <span class="hint" data-desc="<@spring.message 'interviewConfirm.comments'/>"></span>
 							    <div class="field">
-								  	<textarea id="comments" name="comments" class="max" rows="6" cols="80" maxlength="2000"></textarea>
-									<#--<@spring.bind "interview.timeZone" />
-							    	<#list spring.status.errorMessages as error>
-							    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
-							    	</#list>								-->			
+								  	<textarea id="comments" name="comments" class="max" rows="6" cols="80" maxlength="2000"></textarea>			
 							  	</div>	
 						  	</div>
 		            	</div>
-		              	<div class="buttons no-bottom-margin">
-					        <button id="submitVoteYes" type="submit" class="btn btn-primary">Submit</button>
+		              	<div class="buttons">
+					        <button type="submit" class="btn btn-primary">Confirm interview</button>
 					    </div>
-		              </div>
 	              </form>
             	</div>
             </section>

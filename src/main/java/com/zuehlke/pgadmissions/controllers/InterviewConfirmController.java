@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
+import org.bouncycastle.i18n.MissingEntryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
 import org.springframework.stereotype.Controller;
@@ -95,7 +96,10 @@ public class InterviewConfirmController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm) {
+    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm, Integer timeslotId) {
+//        interview.setInterviewDueDate(timeslot.getDueDate());
+//        interview.setInterviewTime(timeslot.getStartTime());
+        
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }
 

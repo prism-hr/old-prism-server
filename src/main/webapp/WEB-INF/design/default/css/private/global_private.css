@@ -1762,13 +1762,12 @@ form#removeForm {
 }
 .interview-votes .timeslot .icon-ok-sign,
 .interview-votes .timeslot .icon-circle,
-.interview-votes .timeslot .icon-remove-sign {
-	font-size:28px;
-}
+.interview-votes .timeslot .icon-remove-sign,
 .interview-votes .timeslot .icon-time {
 	font-size:23px;
 	display: block;
 }
+
 .interview-votes .timeslot .icon-remove-sign {
 	color:#C3272F;
 }

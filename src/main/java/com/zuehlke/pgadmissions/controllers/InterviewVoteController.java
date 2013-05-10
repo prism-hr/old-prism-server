@@ -106,14 +106,12 @@ public class InterviewVoteController {
 			return INTERVIEW_VOTE_PAGE;
 		}
 
-		InterviewVoteComment interviewVoteComment = null;
-		if (comment != null) {
-			interviewVoteComment = new InterviewVoteComment();
-			interviewVoteComment.setComment(comment);
-			interviewVoteComment.setApplication(applicationForm);
-			interviewVoteComment.setUser(currentParticipant.getUser());
-		}
-		
+		InterviewVoteComment interviewVoteComment = new InterviewVoteComment();
+		interviewVoteComment.setComment(comment);
+		interviewVoteComment.setApplication(applicationForm);
+		interviewVoteComment.setUser(currentParticipant.getUser());
+		interviewVoteComment.setInterviewParticipant(currentParticipant);
+
 		interviewService.postVote(currentParticipant, interviewVoteComment);
 
 		return "redirect:/applications?messageCode=interview.vote.feedback&application=" + applicationForm.getApplicationNumber();

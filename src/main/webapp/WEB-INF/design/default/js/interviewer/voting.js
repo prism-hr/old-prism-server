@@ -17,4 +17,8 @@ $(function () {
 	$('.timeslot-to-accept').change(function () {
 		$(this).closest('tr').find('.check-all').removeAttr('checked');
 	});
+	
+	$('#restart-interview').click(function() {
+		$('#restart-interview-form').submit();
+	});
 });

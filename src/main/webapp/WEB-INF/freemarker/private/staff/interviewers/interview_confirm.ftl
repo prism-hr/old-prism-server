@@ -24,6 +24,7 @@
   
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/voting.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/jquery.mousewheel.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
@@ -181,9 +182,11 @@
 						  	</div>
 		            	</div>
 		              	<div class="buttons">
+		              		<button type="button" class="btn btn-danger" id="restart-interview">Restart</button>
 					        <button type="submit" class="btn btn-primary">Confirm interview</button>
 					    </div>
 	              </form>
+	              <form id="restart-interview-form" method="post" action="<@spring.url '/interviewConfirm/restart' />"></form>
             	</div>
             </section>
         </div>

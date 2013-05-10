@@ -231,6 +231,7 @@ $(document).ready(function() {
                     var interviewStatus = $('input[name=interviewStatus]:radio');
                 	interviewStatus.change(showProperInterviewArrangements);
                 	interviewStatus.change();
+					interviewStatus.change(clearErrors);
                 }
                 addToolTips();
             },
@@ -413,7 +414,7 @@ function addAvailableDate(calendar, date, times) {
 	}).val(dateValueFormatted).addClass('dateValue').appendTo(dateCell);
 	
 	var dateFormatted = $('<span></span>').appendTo(dateCell);
-	dateFormatted.text(date.toLocaleString('en-GB', {weekday: "long", year: "numeric", month: "long", day: "numeric"}));
+	dateFormatted.text(date.toLocaleDateString('en-GB', {weekday: "long", year: "numeric", month: "long", day: "numeric"}));
 	
 	for (var i = 0; i < $('#interviewPossibleStartTimes thead th').length - 2; i++) {
 		var timeCell = $('<td></td>', {}).appendTo(dateLine);
@@ -486,7 +487,6 @@ function forceDisplayFilledTimes() {
 		}
 	});
 }
-
 function getCreateInterviewersSection() {
     $('#ajaxloader').show();
 
@@ -559,12 +559,13 @@ function setDefaultGTM() {
 		return $(this).text() == defaultGTM; 
 	}).prop('selected', true);
 }
+
 function showProperInterviewArrangements() {
+	
 	var interviewStatus = $('input[name=interviewStatus]:radio:checked').val();
 	$('.interview-happened').hide();
 	$('.interview-scheduled').hide();
 	$('.interview-to-schedule').hide();
-	
 	switch (interviewStatus) {
 		case 'TAKEN_PLACE':
 			$('.interview-happened').show();
@@ -577,4 +578,7 @@ function showProperInterviewArrangements() {
 			setPossibleStartTimesVisibility($('#availableDatesPicker'));
 			break;
 	}
+}
+function clearErrors() {
+	$('#interviewdetailsSection').find('div.alert-error').remove();
 }

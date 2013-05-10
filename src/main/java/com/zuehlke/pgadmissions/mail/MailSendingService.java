@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATIO
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
@@ -32,6 +33,8 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -412,7 +415,27 @@ public class MailSendingService extends AbstractMailSendingService {
             sendEmail(message);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new PrismMailMessageException("Error while sending interview confirmation email to applicant: ", e.getCause(), message);
+            throw new PrismMailMessageException("Error while sending interview confirmation email to applicant: ", e, message);
+        }
+    }
+
+    public void sendInterviewVoteNotificationToInterviewerParticipants(Interview interview) {
+        ApplicationForm applicationForm = interview.getApplication();
+
+        String subject = resolveMessage(INTERVIEW_VOTE_NOTIFICATION, applicationForm);
+
+        PrismEmailMessage message = null;
+        for (InterviewParticipant participant : interview.getParticipants()) {
+            try {
+                List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
+                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
+                        getAdminsEmailsCommaSeparatedAsString(admins), participant, applicationForm, getHostName() });
+                message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
+                sendEmail(message);
+                participant.setLastNotified(new Date());
+            } catch (Exception e) {
+                log.error("Error while sending interview vote notification email to interview participant: " + participant.getUser().getEmail(), e);
+            }
         }
     }
 

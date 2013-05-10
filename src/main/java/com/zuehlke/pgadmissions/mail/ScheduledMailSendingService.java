@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.mail;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.NotificationRecordDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
@@ -101,8 +104,10 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     private final UserService userService;
 
     private final String admissionsOfferServiceLevel;
-    
+
     private final ApplicationContext applicationContext;
+
+    private final InterviewParticipantDAO interviewParticipantDAO;
 
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
@@ -111,7 +116,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             final CommentFactory commentFactory, final CommentService commentService, final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory,
             final PdfDocumentBuilder pdfDocumentBuilder, final RefereeDAO refereeDAO, final UserService userService, final UserDAO userDAO,
             final RoleDAO roleDAO, final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host,
-            @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel,  final ApplicationContext applicationContext) {
+            @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel, final ApplicationContext applicationContext,
+            InterviewParticipantDAO interviewParticipantDAO) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.notificationRecordDAO = notificationRecordDAO;
         this.commentDAO = commentDAO;
@@ -126,10 +132,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         this.userService = userService;
         this.admissionsOfferServiceLevel = admissionsOfferServiceLevel;
         this.applicationContext = applicationContext;
+        this.interviewParticipantDAO = interviewParticipantDAO;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Transactional
@@ -144,11 +151,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             if (applicationContext.getBean(this.getClass()).sendDigestToUser(user, taskNotificationSubject, taskReminderSubject, updateNotificationSubject)) {
                 setDigestNotificationType(user, DigestNotificationType.NONE);
             }
-         }
+        }
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendDigestToUser( final RegisteredUser user, String taskNotificationSubject, String taskReminderSubject, String updateNotificationSubject) {
+    public boolean sendDigestToUser(final RegisteredUser user, String taskNotificationSubject, String taskReminderSubject, String updateNotificationSubject) {
         try {
             EmailModelBuilder modelBuilder = new EmailModelBuilder() {
 
@@ -1259,11 +1266,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         log.info("Running sendReferenceReminder Task");
         List<Integer> refereesDueAReminder = refereeDAO.getRefereesIdsDueAReminder();
         for (Integer referee : refereesDueAReminder) {
-           applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
+            applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
         }
     }
-    
-   
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendReferenceReminder(Integer refereeId) {
@@ -1273,12 +1278,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
 
             ApplicationForm applicationForm = referee.getApplication();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram()
-                    .getAdministrators());
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application",
-                    "applicant", "host" },
-                    new Object[] { adminsEmails, referee, applicationForm, applicationForm.getApplicant(),
-                            getHostName() });
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
+                    adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName() });
 
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
             sendEmail(message);
@@ -1291,6 +1293,36 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         return true;
     }
 
+    @Transactional
+    public void sendInterviewParticipantVoteReminder() {
+        log.info("Running interviewParticipantVoteReminder Task");
+        List<Integer> participantsDueAReminder = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
+        for (Integer participantId : participantsDueAReminder) {
+            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean sendInterviewParticipantVoteReminder(Integer participantId) {
+        PrismEmailMessage message;
+        InterviewParticipant participant = interviewParticipantDAO.getParticipantById(participantId);
+        ApplicationForm application = participant.getInterview().getApplication();
+        try {
+            String subject = resolveMessage(INTERVIEW_VOTE_REMINDER, application);
+
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
+                    adminsEmails, participant, application, getHostName() });
+
+            message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
+            sendEmail(message);
+            participant.setLastNotified(new Date());
+        } catch (Exception e) {
+            log.error("Error while sending interview vote reminder email to interview participant: " + participant.getUser().getDisplayName(), e);
+            return false;
+        }
+        return true;
+    }
 
     @Transactional
     public void sendNewUserInvitation() {
@@ -1300,7 +1332,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             applicationContext.getBean(this.getClass()).sendNewUserInvitation(user);
         }
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendNewUserInvitation(Integer userId) {
         PrismEmailMessage message = null;
@@ -1313,11 +1345,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
         RegisteredUser admin = user.getPendingRoleNotifications().get(0).getAddedByUser();
         Program program = user.getPendingRoleNotifications().get(0).getProgram();
-        
+
         try {
             String rolesString = constructRolesString(user);
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "program", "newRoles", "host" }, new Object[] { user,
-                    admin, program, rolesString, getHostName() });
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "program", "newRoles", "host" }, new Object[] { user, admin,
+                    program, rolesString, getHostName() });
             message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
             sendEmail(message);
             userDAO.save(user);
@@ -1367,7 +1399,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             applicationContext.getBean(this.getClass()).sendValidationRequestToRegistry(applicationForm);
         }
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendValidationRequestToRegistry(Integer applicationFormId) {
         PrismEmailMessage message = null;
@@ -1400,14 +1432,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             messageBuilder.templateName = REGISTRY_VALIDATION_REQUEST;
 
             String recipientList = createRecipientString(registryContacts);
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "application", "sender", "host", "recipients",
-                    "admissionsValidationServiceLevel" }, new Object[] { applicationForm, currentUser, getHostName(), recipientList,
-                    admissionsOfferServiceLevel });
+            EmailModelBuilder modelBuilder = getModelBuilder(
+                    new String[] { "application", "sender", "host", "recipients", "admissionsValidationServiceLevel" }, new Object[] { applicationForm,
+                            currentUser, getHostName(), recipientList, admissionsOfferServiceLevel });
 
             messageBuilder.model(modelBuilder);
 
-            PdfAttachmentInputSource pdfAttachement = pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber()
-                    + ".pdf", pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), applicationForm));
+            PdfAttachmentInputSource pdfAttachement = pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber() + ".pdf",
+                    pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), applicationForm));
             messageBuilder.attachments(pdfAttachement);
 
             message = messageBuilder.build();
@@ -1875,4 +1907,5 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
         return messageBuilder.toString();
     }
+
 }

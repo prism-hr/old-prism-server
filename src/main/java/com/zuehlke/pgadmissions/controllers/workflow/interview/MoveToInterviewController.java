@@ -79,11 +79,11 @@ public class MoveToInterviewController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-
+        RegisteredUser currentUser = userService.getCurrentUser();
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+
         if (application == null//
-                || (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()//
-                        .isInterviewerOfApplicationForm(application))) {
+                || (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isInterviewerOfApplicationForm(application))) {
             throw new ResourceNotFoundException();
         }
         return application;
@@ -97,20 +97,20 @@ public class MoveToInterviewController {
 
     @ModelAttribute("nominatedSupervisors")
     public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
-		List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		if (applicationForm.getLatestInterview() == null) {
-			nominatedSupervisors.addAll(getOrCreateRegisteredUsersForForm(applicationForm));
-		}
-		return nominatedSupervisors;
+        List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        if (applicationForm.getLatestInterview() == null) {
+            nominatedSupervisors.addAll(getOrCreateRegisteredUsersForForm(applicationForm));
+        }
+        return nominatedSupervisors;
     }
 
     @ModelAttribute("programmeInterviewers")
     public List<RegisteredUser> getProgrammeInterviewers(@RequestParam String applicationId) {
-		List<RegisteredUser> programmeInterviewers = getApplicationForm(applicationId).getProgram().getInterviewers();
-		List<RegisteredUser> nominatedSupervisors = getNominatedSupervisors(applicationId);
-		programmeInterviewers.removeAll(nominatedSupervisors);
-		return programmeInterviewers;
+        List<RegisteredUser> programmeInterviewers = getApplicationForm(applicationId).getProgram().getInterviewers();
+        List<RegisteredUser> nominatedSupervisors = getNominatedSupervisors(applicationId);
+        programmeInterviewers.removeAll(nominatedSupervisors);
+        return programmeInterviewers;
     }
 
     @ModelAttribute("previousInterviewers")
@@ -120,13 +120,14 @@ public class MoveToInterviewController {
 
         List<RegisteredUser> reviewersWillingToInterview = applicationForm.getReviewersWillingToInterview();
         for (RegisteredUser registeredUser : reviewersWillingToInterview) {
-			if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers()) && !listContainsId(registeredUser, previousInterviewersOfProgram)) {
-				previousInterviewersOfProgram.add(registeredUser);
+            if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers())
+                    && !listContainsId(registeredUser, previousInterviewersOfProgram)) {
+                previousInterviewersOfProgram.add(registeredUser);
             }
         }
-		previousInterviewersOfProgram.removeAll(getNominatedSupervisors(applicationId));
-		previousInterviewersOfProgram.removeAll(getProgrammeInterviewers(applicationId));
-		return previousInterviewersOfProgram;
+        previousInterviewersOfProgram.removeAll(getNominatedSupervisors(applicationId));
+        previousInterviewersOfProgram.removeAll(getProgrammeInterviewers(applicationId));
+        return previousInterviewersOfProgram;
 
     }
 
@@ -186,26 +187,26 @@ public class MoveToInterviewController {
         }
         return false;
     }
-	
-	private List<RegisteredUser> getOrCreateRegisteredUsersForForm(ApplicationForm applicationForm) {
-		List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
-		List<SuggestedSupervisor> suggestedSupervisors = applicationForm.getProgrammeDetails().getSuggestedSupervisors();
-		for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
-			nominatedSupervisors.add(findOrCreateRegisterUserFromSuggestedSupervisorForForm(suggestedSupervisor, applicationForm));
-		}
-		return nominatedSupervisors;
-	}
 
-	private RegisteredUser findOrCreateRegisterUserFromSuggestedSupervisorForForm(SuggestedSupervisor suggestedSupervisor, ApplicationForm applicationForm) {
-		String supervisorEmail = suggestedSupervisor.getEmail();
-		RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
-		if (possibleUser == null) {
-			possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
-			                Authority.REVIEWER, null, applicationForm);
-		}
-		return possibleUser;
-	}
-	
+    private List<RegisteredUser> getOrCreateRegisteredUsersForForm(ApplicationForm applicationForm) {
+        List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
+        List<SuggestedSupervisor> suggestedSupervisors = applicationForm.getProgrammeDetails().getSuggestedSupervisors();
+        for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
+            nominatedSupervisors.add(findOrCreateRegisterUserFromSuggestedSupervisorForForm(suggestedSupervisor, applicationForm));
+        }
+        return nominatedSupervisors;
+    }
+
+    private RegisteredUser findOrCreateRegisterUserFromSuggestedSupervisorForForm(SuggestedSupervisor suggestedSupervisor, ApplicationForm applicationForm) {
+        String supervisorEmail = suggestedSupervisor.getEmail();
+        RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
+        if (possibleUser == null) {
+            possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
+                    Authority.REVIEWER, null, applicationForm);
+        }
+        return possibleUser;
+    }
+
     @ModelAttribute("availableTimeZones")
     public TimeZoneList getAvailableTimeZones() {
         return TimeZoneList.getInstance();

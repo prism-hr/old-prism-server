@@ -12,8 +12,11 @@
     
     <#assign actions = actionsDefinition.actions>
     <#list actions?keys as actionName>
-        <option value="${actionName?html}">${actions[actionName]}</option>
+        <#if !user.isInRole('APPLICANT') && actionName == "emailApplicant">
+            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">${actions[actionName]}</option>
+        <#else>
+            <option value="${actionName?html}">${actions[actionName]}</option>
+        </#if>
     </#list>
-    <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">Email Applicant</option>
     
 </select>

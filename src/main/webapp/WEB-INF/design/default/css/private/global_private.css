@@ -1680,14 +1680,27 @@ form#removeForm {
 
 .interview-votes .table.timeslots th.participant,
 .interview-votes .table.timeslots td.participant {
-	width:220px;
+	width:170px;
 	position:absolute;
 	left:0;
 	background-color:white;
 	line-height:27px;
 }
 
-.interview-votes .table.timeslots tr.info td.participant {
+.interview-votes .table.timeslots th.check-all-cell {
+	padding:0;
+}
+
+.interview-votes .table.timeslots th.check-all-cell,
+.interview-votes .table.timeslots td.check-all-cell {
+	width:50px;
+	position:absolute;
+	left:170px;
+	background-color:white;
+	line-height:27px;
+}
+
+.interview-votes .table.timeslots tr.info td {
 	background-color:#d9edf7;
 }
 
@@ -1695,42 +1708,13 @@ form#removeForm {
 	background:transparent;
 }
 
-.interview-votes .table.timeslots td.participant .traversal-actions {
-	position:relative;
-}
-.interview-votes .table.timeslots td.participant .traversal-actions a {
-	border:0;
-	background:none;
-	cursor:pointer;
-	position:absolute;
-	right:2px;
-	bottom:-2px;
-	color:black;
+.interview-votes .table.timeslots th:not(.participant) {
+	vertical-align:top;
 }
 
-.interview-votes .table.timeslots td.participant .traversal-actions a.can-make-anytime {
-	right:35px;
-}
-
-.interview-votes .table.timeslots td.participant .traversal-actions a.maybe-can-make-some {
-	display:none;
-}
-
-.interview-votes .table.timeslots td.participant .traversal-actions a:hover i {
-	color:#0066B3;
-	text-decoration:none;
-}
-.interview-votes .table.timeslots td.participant .traversal-actions a.cant-make-it:hover i {
-	color:#C3272F;
-}
-
-.interview-votes .table.timeslots td.participant .traversal-actions a.maybe-can-make-some:hover i {
-	color:#71BF46;
-}
-
-.interview-votes .table.timeslots td.participant .traversal-actions a i {
-	font-size:20px;
-	cursor:pointer;
+.interview-votes .table.timeslots th:not(.participant),
+.interview-votes .table.timeslots td:not(.participant) {
+	text-align:center;
 }
 
 .interview-votes .timeslot .icon-ok-sign,
@@ -1749,8 +1733,4 @@ form#removeForm {
 
 .interview-votes .timeslot .icon-circle {
 	color:#ccc;
-}
-
-.interview-votes .timeslot input[type=checkbox] {
-	margin-left:6px;
 }

@@ -1643,6 +1643,7 @@ form#removeForm {
 	margin-left: 232px;
     overflow: auto;
     width: 608px;
+    margin-bottom: 10px;
 }
 
 .interview-votes .timeslots-scrollable::-webkit-scrollbar {
@@ -1673,9 +1674,11 @@ form#removeForm {
 
 .interview-votes .table {
 	width: auto;
+	margin-bottom: 2px !important;
 }
 .interview-votes .table.timeslots thead th, .interview-votes .table.timeslots thead td{
 	text-align: center;
+	min-width: 60px;
 }
 .interview-votes .table.timeslots th,
 .interview-votes .table.timeslots td {

@@ -104,6 +104,7 @@
 				            	  		<table class="table timeslots">
 				            	  			<thead>
 				            	  				<th class="participant">&nbsp;</th>
+				            	  				<th class="check-all-cell">Check All</th>
 				            	  				<#list interview.timeslots as timeslot>
 				            	  					<th>${timeslot.dueDate?string("dd MMM yy")}<br />${timeslot.startTime}</th>
 				            	  				</#list>
@@ -115,21 +116,16 @@
 				        	  								<td class="participant">
 				        	  									<span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
 				        	  									${participant.user.firstName!} ${participant.user.lastName!}
-				        	  									<div class="traversal-actions">
-				        	  										<a href="javascript:void(0);" class="can-make-anytime sign-tooltip" data-desc="<@spring.message 'interviewVote.canmakeanytime'/>"><i class="icon-large icon-check"></i></a>
-					        	  									<a href="javascript:void(0);" class="cant-make-it sign-tooltip" data-desc="<@spring.message 'interviewVote.cantmakeit'/>"><i class="icon-large icon-thumbs-down"></i></a>
-					        	  									<a href="javascript:void(0);" class="maybe-can-make-some sign-tooltip" data-desc="<@spring.message 'interviewVote.maybecanmakesome'/>"><i class="icon-large icon-thumbs-up"></i></a>
-					        	  									<input id="cantMakeIt" type="hidden" name="cantMakeIt" value="false" />
-				        	  									</div>
 			        	  									</td>
+			        	  									<td class="check-all-cell"><input type="checkbox" class="check-all"></td>
 					        	  							
 					        	  							<#assign acceptedTimeslots = participant.acceptedTimeslots>
 					            	  						<#list interview.timeslots as timeslot>
 					            	  							<td class="timeslot">
 					            	  								<#if acceptedTimeslots?seq_contains(timeslot)>
-					            	  								<input type="checkbox" name="acceptedTimeslotIds" value="${timeslot.id}" checked="checked" />
+					            	  								<input type="checkbox" name="acceptedTimeslotIds" class="timeslot-to-accept" value="${timeslot.id}" checked="checked" />
 						            	  							<#else>
-					            	  								<input type="checkbox" name="acceptedTimeslotIds" value="${timeslot.id}" />
+					            	  								<input type="checkbox" name="acceptedTimeslotIds" class="timeslot-to-accept" value="${timeslot.id}" />
 						            	  							</#if>
 					            	  							</td>
 					            	  						</#list>
@@ -140,6 +136,7 @@
 				        	  									<span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
 				        	  									${participant.user.firstName!} ${participant.user.lastName!}
 			        	  									</td>
+			        	  									<td class="check-all-cell">&nbsp;</td>
 					            	  						
 					            	  						<#if participant.responded>
 						            	  						<#assign acceptedTimeslots = participant.acceptedTimeslots>
@@ -163,36 +160,27 @@
 				        	  						</#if>
 				            	  				</#list>
 				            	  			</tbody>
-				            	  			<@spring.bind "interviewParticipant.responded" />
-				            	  			<#if spring.status.errorMessages?size &gt; 0>
-				            	  				<tfoot>
-					            	  				<td class="participant">&nbsp;</td>
-													<td colspan="${interview.timeslots?size}">
-			            	  							<#list spring.status.errorMessages as error>
-												    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
-												    	</#list>				            	  							
-			            	  						</td>
-					            	  			</tfoot>
-				            	  			</#if>
 				            	  		</table>
 				            	  	</div>
 		            	  		</div>
 		            	  	</div>
+		            	  	<@spring.bind "interviewParticipant.cantMakeIt" />
+  							<#list spring.status.errorMessages as error>
+		            	  		<br />
+					    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+					    	</#list>
 		            	</div>
 		            	<div class="row-group">
 		        			<div class="row">
 							  	<label class="plain-label normal" for="comments">Comments</label>
 							    <span class="hint" data-desc="<@spring.message 'interviewVote.comments'/>"></span>
 							    <div class="field">
-								  	<textarea id="comments" name="comments" class="max" rows="6" cols="80" maxlength="2000"></textarea>
-									<#--<@spring.bind "interview.timeZone" />
-							    	<#list spring.status.errorMessages as error>
-							    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
-							    	</#list>								-->			
+								  	<textarea id="comments" name="comments" class="max" rows="6" cols="80" maxlength="2000"></textarea>			
 							  	</div>	
 						  	</div>
 		            	</div>
 		              	<div class="buttons no-bottom-margin">
+					        <button id="submitVoteYes" type="submit" class="btn btn-danger">I can't make it</button>
 					        <button id="submitVoteYes" type="submit" class="btn btn-primary">Submit</button>
 					    </div>
 		              </div>

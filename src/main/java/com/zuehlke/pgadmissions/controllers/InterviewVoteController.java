@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -84,7 +85,6 @@ public class InterviewVoteController {
     public void registerValidatorAndPropertyEditor(WebDataBinder binder) {
         binder.setValidator(this.interviewParticipantValidator);
         binder.registerCustomEditor(null, "acceptedTimeslots", interviewParticipantAcceptedSTimeslotsPropertyEditor);
-        binder.registerCustomEditor(null, "responded", new CustomBooleanEditor(false));
 	}
 	
 	@ModelAttribute("interviewParticipant")
@@ -122,16 +122,10 @@ public class InterviewVoteController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String submitInterviewVotes(@Valid @ModelAttribute InterviewParticipant currentParticipant, @ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) List<Integer> acceptedTimeslotIds) {
-		Set<InterviewTimeslot> acceptedTimeslots = new HashSet<InterviewTimeslot>();
-		List<InterviewTimeslot> timeslots = applicationForm.getLatestInterview().getTimeslots();
-		for (InterviewTimeslot interviewTimeslot : timeslots) {
-			if (acceptedTimeslotIds.contains(interviewTimeslot.getId())) {
-				acceptedTimeslots.add(interviewTimeslot);
-			}
-		}
-
-		currentParticipant.setAcceptedTimeslots(acceptedTimeslots);
+	public String submitInterviewVotes(@Valid @ModelAttribute InterviewParticipant currentParticipant, BindingResult bindingResult, @ModelAttribute ApplicationForm applicationForm) {
+	    if (bindingResult.hasErrors()) {
+            return INTERVIEW_VOTE_PAGE;
+        }
 
 		return "redirect:/applications?messageCode=interview.vote.feedback&application=" + applicationForm.getApplicationNumber();
 	}

@@ -30,8 +30,20 @@ public class ParticipantValidatorTest {
     private ParticipantValidator participantValidator;
 
     @Test
-    public void shouldRejectIfNoTimeSlotsOrCantMakeItSelected() {
-        interviewParticipant.setResponded(false);
+    public void shouldRejectIfNoTimeSlotsSelected() {
+        interviewParticipant.getAcceptedTimeslots().clear();
+        interviewParticipant.setCantMakeIt(false);
+        
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "responded");
+        participantValidator.validate(interviewParticipant, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("responded").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfNoTimeSlotsAndNoCantMakeItSelected() {
+        interviewParticipant.getAcceptedTimeslots().clear();
+        interviewParticipant.setCantMakeIt(false);
         
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "responded");
         participantValidator.validate(interviewParticipant, mappingResult);

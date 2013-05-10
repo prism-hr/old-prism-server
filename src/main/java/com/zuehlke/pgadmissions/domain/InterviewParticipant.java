@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity(name = "INTERVIEW_PARTICIPANT")
 public class InterviewParticipant implements Serializable {
@@ -32,6 +33,9 @@ public class InterviewParticipant implements Serializable {
     @ManyToMany
     @JoinTable(name = "INTERVIEW_TIMESLOT_VOTE", joinColumns = { @JoinColumn(name = "participant_id") }, inverseJoinColumns = { @JoinColumn(name = "timeslot_id") })
     private Set<InterviewTimeslot> acceptedTimeslots = new HashSet<InterviewTimeslot>();
+    
+    @Transient
+    private Boolean cantMakeIt = false;
 
     public Integer getId() {
         return id;
@@ -63,5 +67,13 @@ public class InterviewParticipant implements Serializable {
 
     public void setAcceptedTimeslots(Set<InterviewTimeslot> acceptedTimeslots) {
         this.acceptedTimeslots = acceptedTimeslots;
+    }
+    
+    public Boolean getCantMakeIt() {
+        return cantMakeIt;
+    }
+    
+    public void setCantMakeIt(Boolean cantMakeIt) {
+        this.cantMakeIt = cantMakeIt;
     }
 }

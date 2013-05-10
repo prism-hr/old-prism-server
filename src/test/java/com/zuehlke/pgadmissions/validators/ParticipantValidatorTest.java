@@ -27,7 +27,7 @@ public class ParticipantValidatorTest {
 
     private InterviewParticipant interviewParticipant;
 
-    private ParticipantValidator participantValidator;
+    private InterviewParticipantValidator participantValidator;
 
     @Test
     public void shouldRejectIfCanMakeItAndNoTimeSlotsSelected() {
@@ -67,7 +67,7 @@ public class ParticipantValidatorTest {
         
         interviewParticipant = new InterviewParticipantBuilder().acceptedTimeslots(acceptedTimeslots).build();
         interviewParticipant.setResponded(true);
-        participantValidator = new ParticipantValidator();
+        participantValidator = new InterviewParticipantValidator();
         participantValidator.setValidator((javax.validation.Validator) validator);
     }
 }

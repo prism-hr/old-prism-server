@@ -46,4 +46,8 @@ public class InterviewParticipantDAO {
         return (InterviewParticipant) sessionFactory.getCurrentSession().get(InterviewParticipant.class, id);
     }
     
+    public void save(InterviewParticipant participant) {
+        sessionFactory.getCurrentSession().saveOrUpdate(participant);
+    }
+    
 }

@@ -40,4 +40,19 @@ public class InterviewTest {
         assertFalse(interview.isParticipant(user3));
     }
 
+    @Test
+    public void shouldReturnUserIfParticipant() {
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).build();
+        RegisteredUser user3 = new RegisteredUserBuilder().id(3).build();
+
+        InterviewParticipant participant1 = new InterviewParticipantBuilder().user(user1).build();
+        InterviewParticipant participant2 = new InterviewParticipantBuilder().user(user2).build();
+
+        Interview interview = new InterviewBuilder().participants(participant1, participant2).build();
+        assertEquals(participant1, interview.getParticipant(user1));
+        assertNull(interview.getParticipant(user3));
+    }
+
+    
 }

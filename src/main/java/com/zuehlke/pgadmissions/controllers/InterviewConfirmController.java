@@ -26,10 +26,10 @@ import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.propertyeditors.InterviewParticipantAcceptedSTimeslotsPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ParticipantValidator;
+import com.zuehlke.pgadmissions.validators.InterviewParticipantValidator;
 
 @Controller
 @RequestMapping(value = { "/interviewConfirm" })

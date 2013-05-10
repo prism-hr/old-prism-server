@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.dao.InterviewTimeslotDAO;
 import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 
 @Component
-public class InterviewParticipantAcceptedSTimeslotsPropertyEditor extends PropertyEditorSupport {
+public class AcceptedTimeslotsPropertyEditor extends PropertyEditorSupport {
 
     @Autowired
     private InterviewTimeslotDAO timeslotDAO;

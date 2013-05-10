@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.InterviewDAO;
+import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -31,19 +32,21 @@ public class InterviewService {
     private final ApplicationFormDAO applicationFormDAO;
     private final EventFactory eventFactory;
     private final InterviewerDAO interviewerDAO;
+    private final InterviewParticipantDAO interviewParticipantDAO;
     private final MailSendingService mailService;
 
     public InterviewService() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
-            final MailSendingService mailService) {
+            InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;
         this.interviewerDAO = interviewerDAO;
+        this.interviewParticipantDAO = interviewParticipantDAO;
         this.mailService = mailService;
     }
 
@@ -93,6 +96,11 @@ public class InterviewService {
             mailService.sendInterviewVoteNotificationToInterviewerParticipants(interview);
         }
 
+    }
+    
+    public void postVote(InterviewParticipant interviewParticipant) {
+        interviewParticipant.setResponded(true);
+        interviewParticipantDAO.save(interviewParticipant);
     }
 
     private void createParticipants(final Interview interview) {
@@ -146,4 +154,6 @@ public class InterviewService {
     public Interview newInterview() {
         return new Interview();
     }
+
+
 }

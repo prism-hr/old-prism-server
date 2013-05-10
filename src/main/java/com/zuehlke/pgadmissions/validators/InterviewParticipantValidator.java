@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 
 @Component
-public class ParticipantValidator extends AbstractValidator {
+public class InterviewParticipantValidator extends AbstractValidator {
     
     protected static final String INTERVIEW_VOTE_NO_OPTION_SELECTED = "interviewVote.nooptionselected";
 

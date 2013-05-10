@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ public class InterviewParticipant implements Serializable {
     @Column(name = "responded")
     private Boolean responded = false;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "INTERVIEW_TIMESLOT_VOTE", joinColumns = { @JoinColumn(name = "participant_id") }, inverseJoinColumns = { @JoinColumn(name = "timeslot_id") })
     private Set<InterviewTimeslot> acceptedTimeslots = new HashSet<InterviewTimeslot>();
     

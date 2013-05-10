@@ -123,9 +123,9 @@
 					            	  						<#list interview.timeslots as timeslot>
 					            	  							<td class="timeslot"> <div>
 					            	  								<#if acceptedTimeslots?seq_contains(timeslot)>
-					            	  								<input type="checkbox" name="acceptedTimeslotIds" class="timeslot-to-accept" value="${timeslot.id}" checked="checked" />
+					            	  								<input type="checkbox" name="acceptedTimeslots" class="timeslot-to-accept" value="${timeslot.id}" checked="checked" />
 						            	  							<#else>
-					            	  								<input type="checkbox" name="acceptedTimeslotIds" class="timeslot-to-accept" value="${timeslot.id}" />
+					            	  								<input type="checkbox" name="acceptedTimeslots" class="timeslot-to-accept" value="${timeslot.id}" />
 						            	  							</#if> </div>
 					            	  							</td>
 					            	  						</#list>

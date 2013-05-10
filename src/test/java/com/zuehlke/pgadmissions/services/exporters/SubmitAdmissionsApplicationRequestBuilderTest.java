@@ -24,10 +24,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.EnglishLanguageScoreTp;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.EnglishLanguageTp;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplicationRequest;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.EnglishLanguageScoreTp;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.EnglishLanguageTp;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.SubmitAdmissionsApplicationRequest;
+
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -56,7 +56,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     @Before
     public void prepare() {
         applicationForm = new ValidApplicationFormBuilder().build();
-        requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory());
+        requestBuilder = new SubmitAdmissionsApplicationRequestBuilder();
     }
     
     @Test
@@ -191,7 +191,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
         applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
         
-        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()) {
+        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder() {
             @Override
             protected XMLGregorianCalendar buildXmlDate(Date date) {
                 if (date != null) {
@@ -245,7 +245,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
         applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
         
-        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()) {
+        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder() {
             @Override
             protected XMLGregorianCalendar buildXmlDate(Date date) {
                 if (date != null) {
@@ -299,7 +299,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         applicationForm.getProgram().setAtasRequired(true);
         
         
-        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()) {
+        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder() {
             @Override
             protected XMLGregorianCalendar buildXmlDate(Date date) {
                 if (date != null) {
@@ -355,7 +355,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         applicationForm.getProgram().setAtasRequired(false);
         
         
-        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()) {
+        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder() {
             @Override
             protected XMLGregorianCalendar buildXmlDate(Date date) {
                 if (date != null) {

@@ -1,25 +1,21 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
-
-import javax.xml.transform.TransformerException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.WebServiceIOException;
-import org.springframework.ws.client.core.WebServiceMessageCallback;
-import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplicationRequest;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.AdmissionsApplicationResponse;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.AdmissionsApplicationsServiceV10;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.FaultDtlMsgV10;
+import uk.ac.ucl.isd.registry.studentrecordsdata_v1.SubmitAdmissionsApplicationRequest;
+
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -42,8 +38,6 @@ public class PorticoExportService {
     
     private final Logger log = LoggerFactory.getLogger(PorticoExportService.class);
 
-    private final WebServiceTemplate webServiceTemplate;
-
     private final CommentDAO commentDAO;
 
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
@@ -65,6 +59,8 @@ public class PorticoExportService {
     private static final String SFTP_CALL_FAILED_NETWORK = "The SFTP service is unreachable because of network issues [applicationNumber=%s]";
 
     private static final String SFTP_CALL_FAILED_DIRECTORY = "The SFTP target directory is not accessible [applicationNumber=%s]";
+
+    private final AdmissionsApplicationsServiceV10 webService;
     
     public PorticoExportService() {
         this(null, null, null, null, null);
@@ -72,16 +68,16 @@ public class PorticoExportService {
 
     @Autowired
     public PorticoExportService(
-            WebServiceTemplate webServiceTemplate,
             ApplicationFormDAO applicationFormDAO,
             CommentDAO commentDAO,
             SftpAttachmentsSendingService sftpAttachmentsSendingService,
-            ApplicationFormTransferService applicationFormTransferService) {
-        this.webServiceTemplate = webServiceTemplate;
+            ApplicationFormTransferService applicationFormTransferService,
+            AdmissionsApplicationsServiceV10 webService) {
         this.commentDAO = commentDAO;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.applicationFormTransferService = applicationFormTransferService;
         this.applicationFormDAO = applicationFormDAO;
+        this.webService = webService;
     }
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
@@ -129,17 +125,13 @@ public class PorticoExportService {
         
         AdmissionsApplicationResponse response = null;
         try {
-            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(
-                    new ObjectFactory()).applicationForm(form).isOverseasStudent(isOverseasStudent).build();
+            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder().applicationForm(form).isOverseasStudent(isOverseasStudent).build();
             
             listener.webServiceCallStarted(request, form);
             
             log.info(String.format("Calling PORTICO web service [applicationNumber=%s]", form.getApplicationNumber()));
             
-            response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, new WebServiceMessageCallback() {
-                public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
-                    webServiceMessage.writeTo(requestMessageBuffer);
-                }});
+            response = webService.submitAdmissionsApplicationV10(request);
             
             log.info(String.format("Sent web service request [applicationNumber=%s, request=%s]", form.getApplicationNumber(), requestMessageBuffer.toString()));
             
@@ -168,6 +160,17 @@ public class PorticoExportService {
                             .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
                             .problemClassification(ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT)
                             .responseCopy(e.getWebServiceMessage()).requestCopy(requestMessageBuffer.toString())
+                            .transfer(transfer));
+            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
+            listener.webServiceCallFailed(e, transferError, form);
+            log.error(String.format(WS_CALL_FAILED_REFUSED, form.getApplicationNumber()), e);
+            throw new PorticoExportServiceException(String.format(WS_CALL_FAILED_REFUSED, form.getApplicationNumber()), e, transferError);
+        } catch (FaultDtlMsgV10 e) {
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(e)
+                            .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
+                            .problemClassification(ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT)
+                            .responseCopy(e.getMessage()).requestCopy(requestMessageBuffer.toString())
                             .transfer(transfer));
             applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
             listener.webServiceCallFailed(e, transferError, form);

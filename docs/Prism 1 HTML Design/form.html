@@ -1,0 +1,1375 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<link type="text/css" rel="stylesheet" href="css/private/global_private.css" />
+<link type="text/css" rel="stylesheet" href="css/private/application.css" />
+
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/programme.css" />
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/personal_details.css" />
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/address.css" />
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/qualifications.css" />
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/employment.css" />
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/funding.css" />
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/references.css" />
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/documents.css" />
+<link type="text/css" rel="stylesheet" href="css/private/pgStudents/form/additional_information.css" />
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<!--[if IE 9]>
+<body class="ie9">
+<![endif]-->
+<!--[if lt IE 9]>
+<body class="old-ie">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<body>
+<!--<![endif]-->
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+
+      <!-- App logo and tagline -->
+      <div class="logo"><img src="images/ph_logo_app.png" alt="" /></div>
+
+      <div class="tagline">Your Gateway to Research Opportunities</div>
+
+      <!-- Main tabbed menu -->
+      <nav>
+        <ul>
+          <li><a href="#">My account</a></li>    
+          <li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+          <li><a href="#">Messages</a></li>    
+          <li><a href="#">Help</a></li>    
+        </ul>
+        
+        <div class="user">
+          Jonathan Smith
+          <a class="button user-logout">Logout</a>
+        </div>
+      </nav>
+      
+    </header>
+    
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+      
+      <!-- "Tools" -->
+      <div id="tools">
+        <ul class="left">
+          <li class="icon-pdf"><a href="#">Generate PDF</a></li>
+          <li class="icon-print"><a href="#">Print Page</a></li>
+        </ul>
+        <ul class="right">
+          <li class="icon-progress"><a href="#">Progress</a></li>
+          <li class="current icon-application"><a href="#">View Application</a></li>
+        </ul>
+      </div>
+          
+      <!-- content box -->
+      <div class="content-box">
+        <div class="content-box-inner">
+          
+          <!-- FLOATING TOOLBAR -->
+          <ul id="view-toolbar">
+          	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+          	<li class="pdf"><a href="#" title="Download as PDF">Download as PDF</a></li>
+          	<li class="print"><a href="#" title="Print">Print</a></li>
+          </ul>
+          
+          <div id="programme-details">
+          
+            <div class="row">
+              <label>Programme Name</label>
+              <input disabled size="109" value="W3P7 - Some Study On Some Course" />
+            </div>
+            
+            <div class="row half">
+              <label>Application Number</label>
+              <input disabled size="20" value="3273334B" />
+            </div>
+
+            <div class="row half">
+              <label>Submission deadline</label>
+              <input disabled size="20" value="01/08/2011" />
+            </div>
+
+            <div class="row half">
+              <label>Have you discussed with potential supervisor?</label>
+              <label class="checkbox"><input type="checkbox" /> Yes</label>
+            </div>
+
+            <div class="row half">
+              <label>Enter email address</label>
+              <input size="29" value="" />
+            </div>
+          </div>
+          
+          <hr />
+
+          <section class="folding violet">
+            <h2 class="tick">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Programme
+            </h2>
+            <div>
+              <form method="post" action="woooop">
+
+                <div>
+                  <!-- Programme name (disabled) -->
+                  <div class="row">
+                    <label class="label">Programme</label>
+                    <span class="hint" title="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" value="Programme of interest" disabled="disabled" />
+                    </div>
+                  </div>
+                  
+                  <!-- Study option -->
+                  <div class="row">
+                    <label class="label">Study Option</label>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>e.g. full time, part-time, distance</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Project -->
+                  <div class="row">
+                    <label class="label">Project</label>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="Project of interest" />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3>Supervision</h3>
+                  
+                  <!-- supervisor rows -->
+	<table class="data-table">
+		<colgroup>
+    	<col />
+    	<col style="width: 80px;" />
+    	<col style="width: 80px;" />
+    	<col style="width: 120px;" />
+    </colgroup>
+		<thead>
+			<tr>
+				<th>Email</th>
+				<th class="centre">Primary</th>
+				<th class="centre">Aware</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+
+	<tfoot>
+	
+		<tr>
+			<td>
+				<input name="email" type="text" size="40" placeholder="Email Address"/>
+			</td>
+			<td class="centre">
+				<input type="radio" name="isPrimary"/>
+			</td>
+			<td class="centre">
+				<input type="checkbox" name="isAware"/>
+			</td>	
+			<td>
+				<button type="button" name="add">Add Another</button>
+			</td>
+		</tr>	
+	</tfoot>
+	
+	<tbody>
+	
+	</tbody>
+	
+</table>
+                </div>
+
+                <div>
+                  <!-- Start date -->
+                  <div class="row">
+                    <label class="label">Start Date</label>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <input class="half date" type="text" value="" />
+                  </div>
+
+                  <!-- Referrer -->
+                  <div class="row">
+                    <label class="label">Referrer</label>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>UCL graduate study website</option>
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="buttons">
+                  <a class="button blue" href="#">Close</a>
+                  <button class="blue" type="submit">Save</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+          <!-- Personal details -->
+          <section class="folding purple">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Personal Details
+            </h2>
+            <div class="open">
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col style="width: 170px" />
+                  <col style="width: 200px" />
+                  <col style="width: auto" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col" colspan="2">First name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>Bob</td>
+                    <td>Smith</td>
+                    <td>bob.smith@test.com</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              <form method="post" action="woooop">
+
+                <div>
+                  <!-- First name -->
+                  <div class="row">
+                    <label class="label">First Name</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="Bob" />
+                    </div>
+                  </div>
+
+                  <!-- Last name -->
+                  <div class="row">
+                    <label class="label">Last Name</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="Smith" />
+                    </div>
+                  </div>
+
+                  <!-- Gender / Sex -->
+                  <div class="row">
+                    <label class="label">Gender</label>
+                    <div class="field">
+                      <label><input type="radio" name="gender" /> Male</label>
+                      <label><input type="radio" name="gender" /> Female</label>
+                      <label><input type="radio" name="gender" /> prefer not to say</label>
+                    </div>
+                  </div>
+
+                  <!-- Date of birth -->
+                  <div class="row">
+                    <label class="label">Date of Birth</label>
+                    <span class="hint"></span>
+                    <input class="half date" type="text" value="" />
+                  </div>
+
+                  <!-- Country of birth -->
+                  <div class="row">
+                    <label class="label">Country of Birth</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>United Kingdom</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Candidate's nationality -->
+                <div>
+                  <h3>Nationality</h3>
+                  
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>British</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Primary country? -->
+                  <div class="row">
+                    <span class="label">&nbsp;</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <label><input type="radio" /> This is my primary nationality</label>
+                    </div>
+                  </div>
+                  
+                  <!-- Document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field"><a class="button" href="#">Add a nationality</a></div>
+                  </div>
+                </div>
+
+                <!-- Maternal guardian's nationality -->
+                <div>
+                  <h3>Maternal Guardian Nationality</h3>
+                  
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>British</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Primary country? -->
+                  <div class="row">
+                    <span class="label">&nbsp;</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <label><input type="radio" /> 
+                      This is their primary nationality</label>
+                    </div>
+                  </div>
+                  
+                  <!-- Document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field"><a class="button" href="#">Add a nationality</a></div>
+                  </div>
+                </div>
+
+                <!-- Paternal guardian's nationality -->
+                <div>
+                  <h3>Paternal Guardian Nationality</h3>
+                  
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>British</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Primary country? -->
+                  <div class="row">
+                    <span class="label">&nbsp;</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <label><input type="radio" /> 
+                      This is their primary nationality</label>
+                    </div>
+                  </div>
+                  
+                  <!-- Document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field"><a class="button" href="#">Add a nationality</a></div>
+                  </div>
+                </div>
+
+                <!-- Residence -->
+                <div>
+                  <h3>Residence</h3>
+                  
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>United Kingdom</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Status -->
+                  <div class="row">
+                    <span class="label">Status</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>National</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <!-- Language -->
+                  <div class="row">
+                    <span class="label">Language</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>English</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <!-- Language competency -->
+                  <div class="row">
+                    <span class="label">Competency</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>Native Speaker</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field"><a class="button" href="#">Add a language</a></div>
+                  </div>
+                </div>
+
+                <!-- Contact details -->
+                <div>
+                  <h3>Contact Details</h3>
+                  
+                  <!-- Email address -->
+                  <div class="row">
+                    <span class="label">Email</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="email" value="info@hotmail.com" />
+                      <a class="button" href="#" style="width: 110px;">Add Email</a>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <!-- Telephone -->
+                  <div class="row">
+                    <span class="label">Telephone</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="half">
+                        <option>Home</option>
+                      </select>
+                      <input class="half" type="text" placeholder="Number" />
+                      <a class="button" href="#" style="width: 110px;">Add Phone</a>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <!-- Messenger -->
+                  <div class="row">
+                    <span class="label">Messenger</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="half">
+                        <option>Skype</option>
+                      </select>
+                      <input class="half" type="text" placeholder="Address" />
+                      <a class="button" href="#" style="width: 110px;">Add Messenger</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="buttons">
+                  <a class="button blue" href="#">Close</a>
+                  <button class="blue" type="submit">Save</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+          <!-- Address -->
+          <section class="folding red">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Address
+            </h2>
+            <div>
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col style="width: auto" />
+                  <col style="width: 100px" />
+                  <col style="width: 100px" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colspan="2">Address</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>123 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
+                    <td>21/07/11</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>124 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
+                    <td>18/07/10</td>
+                    <td>19/07/11</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              <form method="post" action="woooop">
+
+                <div>
+                  <h3>Address</h3>
+                  
+                  <!-- Address body -->
+                  <div class="row">
+                    <span class="label">Location</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <textarea class="max" rows="6" cols="80"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Postcode -->
+                  <div class="row">
+                    <span class="label">Postal Code</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="half" type="text" value="" />
+                    </div>
+                  </div>
+
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <div class="field">
+                      <select class="full">
+                        <option>United Kingdom</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3>Residency Period</h3>
+                  
+                  <!-- Residency period -->
+                  <div class="row">
+                    <span class="label">Dates</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <label>from <input class="half date" type="text" value="" /></label> <label>to <input class="half date" type="text" value="" /></label>
+                    </div>
+                  </div>
+
+                  <!-- Purpose -->
+                  <div class="row">
+                    <span class="label">Purpose</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="e.g. work, travel" />
+                    </div>
+                  </div>
+
+                  <!-- Supporting document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add a document</a>
+                    </div>  
+                  </div>
+                  <div class="row">
+                    <div class="field">                      <a class="button" href="#">Add residency period</a>
+</div>
+                  </div>
+                </div>
+
+                <div>
+                  <!-- Is contact address? -->
+                  <div class="row">
+                    <span class="label">&nbsp;</span>
+                    <div class="field">
+                      <label><input type="checkbox" /> This is my contact address</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="buttons">
+                  <a class="button blue" href="#">Close</a>
+                  <button class="blue" type="submit">Save</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+          <section class="folding orange">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Qualifications
+            </h2>
+            <div>
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col style="width: auto" />
+                  <col style="width: 80px" />
+                  <col style="width: auto" />
+                  <col style="width: auto" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colspan="2">Qualification</th>
+                    <th>Grade</th>
+                    <th>Awarding Body</th>
+                    <th>Date Completed</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>MRes</td>
+                    <td>8.6 GPA</td>
+                    <td>MiT</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>MSC Electronic Engineering</td>
+                    <td>83%</td>
+                    <td>UCLA Berkeley</td>
+                    <td>19/07/11</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>BSC Mechanical &amp; Electronic Engineering</td>
+                    <td>1st</td>
+                    <td>University of Durham</td>
+                    <td>04/07/99</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                   </tr>
+                </tbody>
+              </table>
+              
+              <form method="post" action="woooop">
+                <div>
+                  <!-- Provider -->
+                  <div class="row">
+                    <span class="label">Provider</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="e.g. UCL" />
+                    </div>
+                  </div>
+                  
+                  <!-- Name (of programme) -->
+                  <div class="row">
+                    <span class="label">Programme</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="e.g. Civil Engineering" />
+                    </div>
+                  </div>
+                  
+                  <!-- Start date -->
+                  <div class="row">
+                    <span class="label">Start Date</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="half date" type="text" value="" />
+                    </div>
+                  </div>
+
+                  <!-- Language (in which programme was undertaken) -->
+                  <div class="row">
+                    <span class="label">Language of Study</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>English</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <!-- Qualification level -->
+                  <div class="row">
+                    <span class="label">Level</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>School</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Qualification type -->
+                  <div class="row">
+                    <span class="label">Type</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>Employer</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Qualification grade -->
+                  <div class="row">
+                    <span class="label">Grade</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="e.g. 2.1, Distinction" />
+                    </div>
+                  </div>
+
+                  <!-- Qualification score -->
+                  <div class="row">
+                    <span class="label">Score</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="e.g. 114" />
+                    </div>
+                  </div>
+                  
+                  <!-- Award date -->
+                  <div class="row">
+                    <span class="label">Award Date</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="half date" type="text" value="" />
+                    </div>
+                  </div>
+
+                  <!-- Attachment / supporting document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>  
+                  </div>
+
+                </div>
+
+                <div class="buttons">
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit" value="close">Save and Close</button>
+                  <button class="blue" type="submit" value="add">Save and Add</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+           <section class="folding yellow">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Employment
+            </h2>
+            <div>
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col style="width: auto" />
+                  <col style="width: 140px" />
+                  <col style="width: 140px" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colspan="2">Title</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>Job Title</td>
+                    <td>21/07/11</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <form method="post" action="woooop">
+                <div>
+                
+                  <!-- Employer (company name) -->
+                  <div class="row">
+                    <span class="label">Employer</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="Provider of employment" />
+                    </div>
+                  </div>
+                
+                  <!-- Position -->
+                  <div class="row">
+                    <span class="label">Position</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="Title of position" />
+                    </div>
+                  </div>
+                
+                  <!-- Remit (job description) -->
+                  <div class="row">
+                    <span class="label">Remit</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <textarea cols="70" rows="3" class="max" placeholder="Summary of responsibilities"></textarea>
+                    </div>
+                  </div>
+                
+                  <!-- Start date -->
+                  <div class="row">
+                    <span class="label">Start Date</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="half date" type="text" value="" />
+                    </div>
+                  </div>
+                
+                  <!-- End date -->
+                  <div class="row">
+                    <span class="label">End date</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="half date" type="text" value="" />
+                    </div>
+                  </div>
+                
+                  <!-- Language -->
+                  <div class="row">
+                    <span class="label">Language of work</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>English</option>
+                      </select>
+                    </div>
+                  </div>
+                
+                  <!-- Document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>  
+                  </div>
+
+                </div>
+
+                <div class="buttons">
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit" value="close">Save and Close</button>
+                  <button class="blue" type="submit" value="add">Save and Add</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+           <section class="folding green">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Funding
+            </h2>
+            <div>
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col style="width: 120px" />
+                  <col style="width: auto" />
+                  <col style="width: 120px" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colspan="2">Funding Type</th>
+                    <th>Awarding Body</th>
+                    <th>Issue Date</th>
+                    <th colspan="1">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>Other</td>
+                    <td>Lorem Ipsum Doctorates</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <form method="post" action="woooop">
+                <div>
+                  <!-- Award type -->
+                  <div class="row">
+                    <span class="label">Funding Type</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>Scholarship/grant</option>
+                        <option>Employer</option>
+                        <option>Industrial sponsor</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Award description -->
+                  <div class="row">
+                    <span class="label">Description</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                  
+                  <!-- Value of award -->
+                  <div class="row">
+                    <span class="label">Value of Award</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                  
+                  <!-- Award date -->
+                  <div class="row">
+                    <span class="label" data-desc="Tooltip demonstration.">Award Date</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="half date" type="text" value="" />
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button plus" href="#">Add Another</a>
+                    </div>  
+                  </div>
+
+                </div>
+
+                <div class="buttons">
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit" value="close">Save and Close</button>
+                  <button class="blue" type="submit" value="add">Save and Add</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+          <section class="folding navy">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              References
+            </h2>
+            <div class="open">
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col style="width: 160px" />
+                  <col style="width: 160px" />
+                  <col style="width: 260px" />
+                  <col style="width: auto" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colspan="2">First name</th>
+                    <th>Surname</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>Bob</td>
+                    <td>Smith</td>
+                    <td>0800 5555555</td>
+                    <td>bob.smith@test.com</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <form method="post" action="woooop">
+                <div>
+                
+                  <!-- First name -->
+                  <div class="row">
+                    <span class="label">First Name</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full invalid" type="text" value="" />
+                      <span class="invalid">This ain't right.</span>
+                    </div>
+                  </div>
+                
+                  <!-- Last name -->
+                  <div class="row">
+                    <span class="label">Last Name</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                
+                  <!-- Relationship name -->
+                  <div class="row">
+                    <span class="label">Relationship</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <p><strong>Position</strong></p>
+                
+                  <!-- Employer / company name -->
+                  <div class="row">
+                    <span class="label">Employer</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                
+                  <!-- Position title -->
+                  <div class="row">
+                    <span class="label">Title</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <p><strong>Address</strong></p>
+                  
+                  <!-- Address body -->
+                  <div class="row">
+                    <span class="label">Location</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <textarea class="max" rows="6" cols="70"></textarea>
+                    </div>
+                  </div>
+                
+                  <!-- Postcode -->
+                  <div class="row">
+                    <span class="label">Postal Code</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="half" type="text" value="" />
+                    </div>
+                  </div>
+                
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>United Kingdom</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <p><strong>Contact Details</strong></p>
+                
+                  <!-- Email address -->
+                  <div class="row">
+                    <span class="label">Email</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="email" value="info@hotmail.com" />
+                    </div>
+                  </div>
+
+                  <!-- Telephone -->
+                  <div class="row">
+                    <span class="label">Telephone</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="half">
+                        <option>Home</option>
+                      </select>
+                      <input class="half" type="text" placeholder="Number" />
+                      <a class="button" href="#" style="width: 110px;">Add Phone</a>
+                    </div>
+                  </div>
+
+                  <!-- Skype address -->
+                  <div class="row">
+                    <span class="label">Skype</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" placeholder="Skype address" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="buttons">
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit" value="close">Save and Close</button>
+                  <button class="blue" type="submit" value="add">Save and Add</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+           <section class="folding blue">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Documents
+            </h2>
+            <div>
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col style="width: 150px" />
+                  <col style="width: auto" />
+                  <col style="width: 120px" />
+                  <col style="width: 30px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colspan="2">Document Type</th>
+                    <th>Document Name</th>
+                    <th>Date Uploaded</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>Personal Statement</td>
+                    <td>Applicant_Dash_Review_Funding</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <form method="post" action="woooop">
+                <div>
+                
+                  <!-- Document type -->
+                  <div class="row">
+                    <span class="label">Type</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>CV / resume</option>
+                        <option>Personal statement</option>
+                      </select>
+                    </div>  
+                  </div>
+
+                  <!-- Document upload -->
+                  <div class="row">
+                    <span class="label">Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                    </div>  
+                  </div>
+                </div>
+
+                <div class="buttons">
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit" value="close">Save and Close</button>
+                  <button class="blue" type="submit" value="add">Save and Add</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+           <section class="folding lightblue">
+            <h2 class="empty">
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Additional Information
+            </h2>
+            <div>
+              <form method="post" action="woooop">
+              
+              	<!-- Free text field for info. -->
+                <div>
+                  <textarea class="max" rows="5" cols="90"></textarea>
+                </div>
+
+                <div class="buttons">
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit">Save</button>
+                </div>
+
+              </form>
+            </div>
+          </section>
+
+          <hr />
+          
+          <div class="buttons">
+            <a class="button blue" href="#">Share</a>
+            <a class="button-question" href="#">?</a>
+            <a class="button" href="#">Close</a>
+            <button type="submit">Submit</button>
+          </div>
+          
+        </div><!-- .content-box-inner -->
+      </div><!-- .content-box -->
+      
+    </article>
+    
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function(){
+	
+		$('table.data-table button').click(function(){
+		
+			var $copiedRow = $(this).parent().parent().clone();
+		
+			$('table.data-table tbody').append($copiedRow);
+			
+			return false;
+		
+		});
+	
+	});
+
+</script>
+</body>
+</html>

@@ -90,6 +90,9 @@
 			To be scheduled
 		</label>
 	  	<@spring.bind "interview.stage" />
+	  	<#list spring.status.errorMessages as error>
+        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+      </#list>  
   	</div>
   </div>
   <div class="row interview-happened interview-scheduled interview-to-schedule">

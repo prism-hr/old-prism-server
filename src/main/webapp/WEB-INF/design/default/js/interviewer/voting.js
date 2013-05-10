@@ -5,38 +5,16 @@ $(function () {
 		event.preventDefault();
    });
 	
-	$('.can-make-anytime').click(function() {
-		var checkboxes = selectCheckboxes($(this));
-		
-		checkboxes.removeAttr('disabled').attr('checked', 'checked');
-		
-		$('#cantMakeIt').val('false');
-		$(this).siblings('.cant-make-it').show();
-		$(this).siblings('.maybe-can-make-some').hide();
+	$('.check-all').change(function () {
+		if ($(this)[0].checked) {
+			$(this).closest('tr').find('input[type=checkbox].timeslot-to-accept').attr('checked', 'checked');
+		}
+		else {
+			$(this).closest('tr').find('input[type=checkbox].timeslot-to-accept').removeAttr('checked');
+		}
 	});
 	
-	$('.cant-make-it').click(function() {
-		var checkboxes = selectCheckboxes($(this));
-		
-		checkboxes.removeAttr('checked');
-		checkboxes.attr('disabled', 'disabled');
-		
-		$('#cantMakeIt').val('true');
-		$(this).hide();
-		$(this).siblings('.maybe-can-make-some').show();
+	$('.timeslot-to-accept').change(function () {
+		$(this).closest('tr').find('.check-all').removeAttr('checked');
 	});
-	
-	$('.maybe-can-make-some').click(function () {
-		var checkboxes = selectCheckboxes($(this));
-		
-		checkboxes.removeAttr('disabled');
-		
-		$('#cantMakeIt').val('false');
-		$(this).hide();
-		$(this).siblings('.cant-make-it').show();
-	});
-	
-	function selectCheckboxes (element) {
-		return element.closest('tr').find('input[type=checkbox]');
-	}
 });

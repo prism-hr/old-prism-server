@@ -133,6 +133,8 @@
 			           		    <#assign role = "administrator"/> 
 			           		<#elseif comment.user.isInterviewerOfApplicationForm(comment.application)>
 			           		    <#assign role = "interviewer"/> 
+			           		<#elseif comment.user.id == applicationForm.applicant.id>
+			           		    <#assign role = "applicant"/> 
 			           		<#else>
 			           			<#assign role = "viewer"/>
 			           		</#if>
@@ -189,9 +191,9 @@
 			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
 			                		<#if interviewVoteParticipant.responded>
 			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
-			                				${interviewVoteParticipantAsUser.firstName?html} ${interviewVoteParticipantAsUser.lastName?html} has responded to the interview timeslot vote. 
+			                				<p>Has responded to the interview timeslot vote.</p> 
 			                			<#else>
-			                			None of the timeslots works for ${interviewVoteParticipantAsUser.firstName?html} ${interviewVoteParticipantAsUser.lastName?html}.
+			                				<p>None of the timeslots works.</p>
 			                			</#if>
 			                		</#if>
     			                </#if>

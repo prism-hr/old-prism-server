@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.interview;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -139,8 +141,11 @@ public class MoveToInterviewController {
         if (latestInterview != null) {
             interview.setInterviewers(latestInterview.getInterviewers());
         }
-        List<RegisteredUser> reviewersWillingToInterview = applicationForm.getReviewersWillingToInterview();
-        for (RegisteredUser registeredUser : reviewersWillingToInterview) {
+        Set<RegisteredUser> defaultInterviewers = Sets.newLinkedHashSet(applicationForm.getReviewersWillingToInterview());
+        if(applicationForm.getApplicationAdministrator() != null){
+            defaultInterviewers.add(applicationForm.getApplicationAdministrator());
+        }
+        for (RegisteredUser registeredUser : defaultInterviewers) {
             if (!registeredUser.isInterviewerInInterview(interview)) {
                 Interviewer interviewer = new Interviewer();
                 interviewer.setUser(registeredUser);

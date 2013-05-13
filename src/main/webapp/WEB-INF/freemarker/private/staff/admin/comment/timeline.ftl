@@ -68,7 +68,13 @@
 											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 										</div>
-										<div class="textContainer"><p><em>${(timelineObject.interview.furtherDetails?html)!}</em></p></div>                
+											<div class="textContainer"><p><em>
+											<#if user.id == applicationForm.applicant.id>
+												${(timelineObject.interview.furtherDetails?html)!}
+											<#elseif user.isInterviewerOfApplicationForm(applicationForm.application)>                
+												${(timelineObject.interview.furtherInterviewerDetails?html)!}
+											</#if>            
+											</em></p></div>   
 										<p class="datetime">
 										  <span data-desc="Date and Time"></span>
 										  <#if timelineObject.interview.stage == 'SCHEDULED'>

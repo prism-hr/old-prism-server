@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.easymock.EasyMock;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -214,7 +215,7 @@ public class MoveToInterviewControllerTest {
         assertThat(returnedInterview.getInterviewers(), hasItems(interviewerOne, interviewerTwo));
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldReturnNewInterviewWithApplicationAdministratorIfAny() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
@@ -233,7 +234,7 @@ public class MoveToInterviewControllerTest {
         };
         Interview returnedInterview = controller.getInterview("bob");
         assertNull(returnedInterview.getId());
-        assertThat((List) returnedInterview.getInterviewers(), hasItems(hasProperty("user", sameInstance(user))));
+        assertThat(returnedInterview.getInterviewers(), Matchers.<Interviewer> hasItems(hasProperty("user", sameInstance(user))));
     }
 
     @Test

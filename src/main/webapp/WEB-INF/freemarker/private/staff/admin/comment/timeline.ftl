@@ -76,7 +76,7 @@
   										  at ${timelineObject.interview.interviewTime}
   										  (${timelineObject.interview.timeZone.getDisplayName(false, 1)})
 										  <#else>
-										    Scheduling in progress
+										    Scheduling in progress.
 										  </#if>
 									  </p>
 										<#if timelineObject.interview.locationURL?? && timelineObject.interview.locationURL?length &gt; 0><p class="location"><span data-desc="Location"></span><a href="${timelineObject.interview.locationURL}" target="_blank">Directions to interview</a></p></#if>

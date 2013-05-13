@@ -120,11 +120,11 @@ public class InterviewCommentController {
 
         if (scoringDefinition != null) {
             try {
-            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-            List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
-            interviewComment.getScores().addAll(scores);
-            interviewComment.setAlert(customQuestion.getAlert());
-            } catch (ScoringDefinitionParseException e){
+                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
+                interviewComment.getScores().addAll(scores);
+                interviewComment.setAlert(customQuestion.getAlert());
+            } catch (ScoringDefinitionParseException e) {
                 log.error("Incorrect scoring XML configuration for interview stage in program: " + applicationForm.getProgram().getTitle());
             }
         }

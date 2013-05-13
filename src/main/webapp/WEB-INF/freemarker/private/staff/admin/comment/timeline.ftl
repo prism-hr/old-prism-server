@@ -126,17 +126,19 @@
 		          <#if timelineObject.comments??>
 		          <ul>
 		            <#list timelineObject.comments as comment>
-			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION'>                                                    
+			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
 			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>
-			           		    <#assign role = "administrator"/>     
+			           		    <#assign role = "administrator"/> 
+			           		<#elseif comment.user.isInterviewerOfApplicationForm(comment.application)>
+			           		    <#assign role = "interviewer"/> 
 			           		<#else>
 			           			<#assign role = "viewer"/>
 			           		</#if>
 			            <#elseif comment.type == 'REVIEW'>
 			            	<#assign role = "reviewer"/>
-			            <#elseif comment.type == 'INTERVIEW' || comment.type == 'INTERVIEW_VOTE'>
+			            <#elseif comment.type == 'INTERVIEW'>
 			            	<#assign role = "interviewer"/>    
 			            <#elseif comment.type == 'APPROVAL'>
 			            	<#assign role = "administrator"/>                
@@ -184,14 +186,13 @@
     			                	<#include "timeline_snippets/interview_comment.ftl"/>
 			                	<#elseif comment.type == 'INTERVIEW_VOTE'>
 			                		<#assign interviewVoteParticipant=comment.interviewParticipant>
-			                		<#assign user=interviewVoteParticipant.user>
-			                		<#if interviewVoteParticipant.responded && interviewVoteParticipant.acceptedTimeslots?has_content>
-			                			Timeslot selected by ${user.firstName?html} ${user.lastName?html}: 
-			                			<#list interviewVoteParticipant.acceptedTimeslots as timeslot>
-			                				<br>${timeslot.dueDate} ${timeslot.startTime}
-			                			</#list>
-			                		<#elseif interviewVoteParticipant.responded>
-			                			None of the timeslots provided works for ${user.firstName?html} ${user.lastName?html}. 
+			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
+			                		<#if interviewVoteParticipant.responded>
+			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
+			                				${interviewVoteParticipantAsUser.firstName?html} ${interviewVoteParticipantAsUser.lastName?html} has responded to the interview timeslot vote. 
+			                			<#else>
+			                			None of the timeslots works for ${interviewVoteParticipantAsUser.firstName?html} ${interviewVoteParticipantAsUser.lastName?html}.
+			                			</#if>
 			                		</#if>
     			                </#if>
     			              </div>

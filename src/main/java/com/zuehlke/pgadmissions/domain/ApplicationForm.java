@@ -465,6 +465,13 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public List<Comment> getVisibleComments(RegisteredUser user) {
         ArrayList<Comment> returnList = new ArrayList<Comment>();
+        if (user.isInRole(Authority.APPLICANT)) {
+            for (Comment comment : applicationComments) {
+                if (comment instanceof InterviewVoteComment && comment.getUser().getId().equals(user.getId())) {
+                    returnList.add(comment);
+                }
+            }
+        }
 
         if (user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)) {
             for (Comment comment : applicationComments) {
@@ -476,15 +483,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return returnList;
         }
 
-        if (user.isInRole(Authority.APPLICANT)) {
-            for (Comment comment : applicationComments) {
-                if (comment instanceof InterviewVoteComment && comment.getUser().getId().equals(user.getId())) {
-                    returnList.add(comment);
-                }
-            }
-            Collections.sort(returnList);
-            return returnList;
-        }
 
         if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user)) {
             returnList.addAll(applicationComments);

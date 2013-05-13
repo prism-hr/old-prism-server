@@ -143,7 +143,7 @@ public class InterviewCommentController {
     public String addComment(@ModelAttribute("comment") InterviewComment comment, BindingResult result) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = comment.getApplication();
         List<Score> scores = comment.getScores();
-        if (scores != null) {
+        if (!scores.isEmpty()) {
             List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
             for (int i = 0; i < scores.size(); i++) {
                 Score score = scores.get(i);

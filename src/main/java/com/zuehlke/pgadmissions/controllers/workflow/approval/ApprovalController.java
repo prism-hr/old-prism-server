@@ -453,7 +453,7 @@ public class ApprovalController {
 
 	private void createScoresWithQuestion(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
 		List<Score> scores = refereesAdminEditDTO.getScores();
-		if (scores != null) {
+		if (!scores.isEmpty()) {
 			List<Question> questions = getCustomQuestions(applicationForm);
 			for (int i = 0; i < scores.size(); i++) {
 				Score score = scores.get(i);

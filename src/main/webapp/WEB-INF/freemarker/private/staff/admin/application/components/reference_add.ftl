@@ -85,6 +85,14 @@
             <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
             </#list>
         </div>
+        <#if scores!?size == 0>
+        <!-- Add reference add button -->
+        <div class="row">
+            <div class="field">
+                <button id="addReferenceButton" type="button" class="btn btn-primary">Add Reference</button>
+            </div>
+        </div>
+        </#if>
     </div>
     	<@spring.bind "refereesAdminEditDTO.*" />
      

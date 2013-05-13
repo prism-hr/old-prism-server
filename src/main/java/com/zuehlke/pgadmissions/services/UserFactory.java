@@ -26,16 +26,16 @@ public class UserFactory {
         this.encryptionUtils = encryptionUtils;
     }
 
+    public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email, Authority... authorities) {
+        return createNewUserInRoles(firstname, lastname, email, Arrays.asList(authorities));
+    }
+    
     public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email, List<Authority> authorities) {
         RegisteredUser user = buildRegisteredUser(firstname, lastname, email);
         for (Authority authority : authorities) {
             user.getRoles().add(roleService.getRoleByAuthority(authority));
         }
         return user;
-    }
-    
-    public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email, Authority... authorities) {
-        return createNewUserInRoles(firstname, lastname, email, Arrays.asList(authorities));
     }
     
     private RegisteredUser buildRegisteredUser(final String firstname, final String lastname, final String email) {

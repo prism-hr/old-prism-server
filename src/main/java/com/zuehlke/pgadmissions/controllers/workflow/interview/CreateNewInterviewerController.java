@@ -61,7 +61,7 @@ public class CreateNewInterviewerController {
 		
 		modelAndView.getModel().put("isNew", true);
 		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewInterviewerUser.getFirstName(), suggestedNewInterviewerUser.getLastName(), suggestedNewInterviewerUser.getEmail(),
-				Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm);
+				DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm, Authority.INTERVIEWER);
 		modelAndView.getModel().put("user", newUser);
 		return modelAndView;
 	}

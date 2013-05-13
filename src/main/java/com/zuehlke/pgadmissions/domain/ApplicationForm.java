@@ -486,7 +486,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return returnList;
         }
 
-        if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user)) {
+        if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user) || user.isInRole(Authority.ADMITTER)) {
             returnList.addAll(applicationComments);
             Collections.sort(returnList);
             return returnList;
@@ -1090,5 +1090,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setWithdrawnBeforeSubmit(final Boolean withdrawnBeforeSubmit) {
         this.withdrawnBeforeSubmit = withdrawnBeforeSubmit;
+    }
+
+    public boolean isNotInState(ApplicationFormStatus status) {
+        return !isInState(status);
     }
 }

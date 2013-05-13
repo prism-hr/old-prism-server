@@ -65,7 +65,7 @@
 				        <div class="content-box-inner">
 				         <#include "/private/common/parts/application_info.ftl"/>
 				        
-				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) || user.isViewerOfProgramme(applicationForm) >
+				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) || user.isViewerOfProgramme(applicationForm) || user.isInRole('ADMITTER')>
 									<section class="form-rows">
 										<h2 class="no-arrow">Add comment</h2>
 										<div>

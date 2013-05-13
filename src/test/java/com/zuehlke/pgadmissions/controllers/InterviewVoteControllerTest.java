@@ -31,7 +31,7 @@ public class InterviewVoteControllerTest {
 
 	private InterviewVoteController controller;
 
-	private ApplicationsService applicationServiceMock;
+	private ApplicationsService applicationsServiceMock;
 
 	private UserService userServiceMock;
 
@@ -45,11 +45,11 @@ public class InterviewVoteControllerTest {
 	public void shouldThrowExceptionWhenApptlicationIsNull() {
 		RegisteredUser user = new RegisteredUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(null);
 
-		EasyMock.replay(userServiceMock, applicationServiceMock);
+		EasyMock.replay(userServiceMock, applicationsServiceMock);
 		controller.getApplicationForm("app1");
-		EasyMock.verify(userServiceMock, applicationServiceMock);
+		EasyMock.verify(userServiceMock, applicationsServiceMock);
 	}
 
 	@Test(expected = InsufficientApplicationFormPrivilegesException.class)
@@ -58,11 +58,11 @@ public class InterviewVoteControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).build();
 		RegisteredUser user = new RegisteredUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
 
-		EasyMock.replay(userServiceMock, applicationServiceMock);
+		EasyMock.replay(userServiceMock, applicationsServiceMock);
 		controller.getApplicationForm("app1");
-		EasyMock.verify(userServiceMock, applicationServiceMock);
+		EasyMock.verify(userServiceMock, applicationsServiceMock);
 	}
 
 	@Test(expected = ActionNoLongerRequiredException.class)
@@ -73,11 +73,11 @@ public class InterviewVoteControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).latestInterview(interview).applicant(user)
 		                .build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
 
-		EasyMock.replay(userServiceMock, applicationServiceMock);
+		EasyMock.replay(userServiceMock, applicationsServiceMock);
 		controller.getApplicationForm("app1");
-		EasyMock.verify(userServiceMock, applicationServiceMock);
+		EasyMock.verify(userServiceMock, applicationsServiceMock);
 	}
 
 	@Test
@@ -121,13 +121,13 @@ public class InterviewVoteControllerTest {
 
 	@Before
 	public void prepare() {
-		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		interviewServiceMock = EasyMock.createMock(InterviewService.class);
 		interviewParticipantValidatorMock = EasyMock.createMock(InterviewParticipantValidator.class);
 		acceptedTimeslotsPropertyEditorMock = EasyMock.createMock(AcceptedTimeslotsPropertyEditor.class);
 
-		controller = new InterviewVoteController(applicationServiceMock, userServiceMock, interviewParticipantValidatorMock, interviewServiceMock,
+		controller = new InterviewVoteController(applicationsServiceMock, userServiceMock, interviewParticipantValidatorMock, interviewServiceMock,
 		                acceptedTimeslotsPropertyEditorMock);
 
 	}

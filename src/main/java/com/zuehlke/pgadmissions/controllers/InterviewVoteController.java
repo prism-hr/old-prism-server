@@ -31,90 +31,98 @@ import com.zuehlke.pgadmissions.validators.InterviewParticipantValidator;
 @RequestMapping(value = { "/interviewVote" })
 public class InterviewVoteController {
 
-	private static final String INTERVIEW_VOTE_PAGE = "private/staff/interviewers/interview_vote";
-	private final ApplicationsService applicationsService;
-	private final UserService userService;
-	private final InterviewService interviewService;
-	private final InterviewParticipantValidator interviewParticipantValidator;
-	private final AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor;
+    private static final String INTERVIEW_VOTE_PAGE = "private/staff/interviewers/interview_vote";
+    private final ApplicationsService applicationsService;
+    private final UserService userService;
+    private final InterviewService interviewService;
+    private final InterviewParticipantValidator interviewParticipantValidator;
+    private final AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor;
 
-	public InterviewVoteController() {
-		this(null, null, null, null, null);
-	}
+    public InterviewVoteController() {
+        this(null, null, null, null, null);
+    }
 
-	@Autowired
-	public InterviewVoteController(ApplicationsService applicationsService, UserService userService,
-	                InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
-	                AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor) {
-		this.applicationsService = applicationsService;
-		this.userService = userService;
-		this.interviewService = interviewService;
-		this.interviewParticipantValidator = interviewParticipantValidator;
-		this.acceptedTimeslotsPropertyEditor = acceptedTimeslotsPropertyEditor;
-	}
+    @Autowired
+    public InterviewVoteController(ApplicationsService applicationsService, UserService userService,
+                    InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
+                    AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor) {
+        this.applicationsService = applicationsService;
+        this.userService = userService;
+        this.interviewService = interviewService;
+        this.interviewParticipantValidator = interviewParticipantValidator;
+        this.acceptedTimeslotsPropertyEditor = acceptedTimeslotsPropertyEditor;
+    }
 
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null) {
-			throw new MissingApplicationFormException(applicationId);
-		}
-		Interview interview = applicationForm.getLatestInterview();
-		if (!interview.isParticipant(currentUser) || !currentUser.canSee(applicationForm)) {
-			throw new InsufficientApplicationFormPrivilegesException(applicationId);
-		}
-		InterviewParticipant participant = interview.getParticipant(currentUser);
-		if (participant.getResponded() || applicationForm.isDecided() || applicationForm.isWithdrawn()) {
-			throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
-		}
-		return applicationForm;
-	}
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        Interview interview = applicationForm.getLatestInterview();
+        if (!interview.isParticipant(currentUser) || !currentUser.canSee(applicationForm)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
+        InterviewParticipant participant = interview.getParticipant(currentUser);
+        if (participant.getResponded() || applicationForm.isDecided() || applicationForm.isWithdrawn()) {
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        }
+        return applicationForm;
+    }
 
-	@InitBinder("interviewParticipant")
-	public void registerValidatorAndPropertyEditor(WebDataBinder binder) {
-		binder.setValidator(this.interviewParticipantValidator);
-		binder.registerCustomEditor(null, "acceptedTimeslots", acceptedTimeslotsPropertyEditor);
-	}
+    @InitBinder("interviewParticipant")
+    public void registerValidatorAndPropertyEditor(WebDataBinder binder) {
+        binder.setValidator(this.interviewParticipantValidator);
+        binder.registerCustomEditor(null, "acceptedTimeslots", acceptedTimeslotsPropertyEditor);
+    }
 
-	@ModelAttribute("interviewParticipant")
-	public InterviewParticipant getInterviewParticipant(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		return applicationForm.getLatestInterview().getParticipant(getUser());
-	}
+    @ModelAttribute("interviewParticipant")
+    public InterviewParticipant getInterviewParticipant(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        return applicationForm.getLatestInterview().getParticipant(getUser());
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
 
-	@ModelAttribute("actionsDefinition")
-	public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
-		ApplicationForm application = getApplicationForm(applicationId);
-		return applicationsService.getActionsDefinition(userService.getCurrentUser(), application);
-	}
+    @ModelAttribute("actionsDefinition")
+    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
+        ApplicationForm application = getApplicationForm(applicationId);
+        return applicationsService.getActionsDefinition(userService.getCurrentUser(), application);
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getInterviewVotePage() {
-		return INTERVIEW_VOTE_PAGE;
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    public String getInterviewVotePage() {
+        return INTERVIEW_VOTE_PAGE;
+    }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String submitInterviewVotes(@Valid @ModelAttribute InterviewParticipant currentParticipant, BindingResult bindingResult,
-	                @ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String comment) {
-		if (bindingResult.hasErrors()) {
-			return INTERVIEW_VOTE_PAGE;
-		}
+    @RequestMapping(method = RequestMethod.POST)
+    public String submitInterviewVotes(@Valid @ModelAttribute InterviewParticipant currentParticipant, BindingResult bindingResult,
+                    @ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String comment) {
+        if (bindingResult.hasErrors()) {
+            return INTERVIEW_VOTE_PAGE;
+        }
 
-		InterviewVoteComment interviewVoteComment = new InterviewVoteComment();
-		interviewVoteComment.setComment(comment);
-		interviewVoteComment.setApplication(applicationForm);
-		interviewVoteComment.setUser(currentParticipant.getUser());
-		interviewVoteComment.setInterviewParticipant(currentParticipant);
+        if (!currentParticipant.getCanMakeIt()) {
+            currentParticipant.getAcceptedTimeslots().clear();
+        }
 
-		interviewService.postVote(currentParticipant, interviewVoteComment);
+        InterviewVoteComment interviewVoteComment = new InterviewVoteComment();
+        if (comment == null) {
+            interviewVoteComment.setComment("");
+        } else {
+            interviewVoteComment.setComment(comment);
+        }
+        interviewVoteComment.setApplication(applicationForm);
+        interviewVoteComment.setUser(currentParticipant.getUser());
+        interviewVoteComment.setInterviewParticipant(currentParticipant);
 
-		return "redirect:/applications?messageCode=interview.vote.feedback&application=" + applicationForm.getApplicationNumber();
-	}
+        interviewService.postVote(currentParticipant, interviewVoteComment);
+
+        return "redirect:/applications?messageCode=interview.vote.feedback&application=" + applicationForm.getApplicationNumber();
+    }
 
 }

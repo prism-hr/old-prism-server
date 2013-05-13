@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -26,15 +27,18 @@ public class InterviewConfirmController {
     private final ApplicationsService applicationsService;
 
     private final UserService userService;
+    
+    private final InterviewService interviewService;
 
     public InterviewConfirmController() {
-        this(null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public InterviewConfirmController(ApplicationsService applicationsService, UserService userService) {
+    public InterviewConfirmController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
+        this.interviewService = interviewService;
     }
 
     @ModelAttribute("applicationForm")
@@ -54,16 +58,6 @@ public class InterviewConfirmController {
         return application;
     }
 
-    @ModelAttribute("interview")
-    public Interview getInterview(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
-
-        return applicationForm.getLatestInterview();
-    }
-
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -81,9 +75,9 @@ public class InterviewConfirmController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm, Integer timeslotId) {
-//        interview.setInterviewDueDate(timeslot.getDueDate());
-//        interview.setInterviewTime(timeslot.getStartTime());
+    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm, @RequestParam Integer timeslotId) {
+        Interview interview = applicationForm.getLatestInterview();
+        interviewService.confirmInterview(interview, timeslotId);
         
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }

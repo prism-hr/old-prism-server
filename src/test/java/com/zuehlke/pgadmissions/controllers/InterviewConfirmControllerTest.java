@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -72,12 +75,25 @@ public class InterviewConfirmControllerTest {
     public void shouldSubmitInterviewConfirmation() {
         Interview interview = new Interview();
         ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).build();
-
+        Model model = new ExtendedModelMap();
+        
         interviewServiceMock.confirmInterview(interview, 2);
         
         EasyMock.replay(interviewServiceMock);
-        controller.submitInterviewConfirmation(applicationForm, 2);
+        controller.submitInterviewConfirmation(applicationForm, 2, model);
         EasyMock.verify(interviewServiceMock);
+        
+        Assert.assertFalse(model.containsAttribute("timeslotIdError"));
+    }
+    
+    @Test
+    public void shouldRejectInterviewConfirmationIfNoTimeslotId() {
+        ApplicationForm applicationForm = new ApplicationForm();
+        Model model = new ExtendedModelMap();
+        
+        controller.submitInterviewConfirmation(applicationForm, null, model);
+        
+        Assert.assertEquals("dropdown.radio.select.none", model.asMap().get("timeslotIdError"));
     }
 
     @Before

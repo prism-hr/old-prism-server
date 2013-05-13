@@ -59,7 +59,7 @@ public class EvaluationTransitionController extends StateTransitionController {
     
     @RequestMapping(method = RequestMethod.GET, value = "/submitEvaluationComment")
     public String defaultGet() {
-        return "redirect:/applications";
+        return MY_APPLICATIONS_VIEW;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")

@@ -45,16 +45,40 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Date now = Calendar.getInstance().getTime();
         Date eightDaysAgo = DateUtils.addDays(now, -8);
 
-        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(eightDaysAgo).build();
         interview.getParticipants().add(participant);
-
+        
+        application.getInterviews().add(interview);
+        application.setLatestInterview(interview);
+        
         save(interview);
         flushAndClearSession();
 
         List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
         assertNotNull(participants);
         assertTrue(participants.contains(participant.getId()));
+    }
+    
+    @Test
+    public void shouldNotRemindParticipantsIfDontBelongToLatestInterview() {
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+        save(application);
+        Date now = Calendar.getInstance().getTime();
+        Date eightDaysAgo = DateUtils.addDays(now, -8);
+
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).application(application).build();
+        InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(eightDaysAgo).build();
+        interview.getParticipants().add(participant);
+        
+        application.getInterviews().add(interview);
+        
+        save(interview);
+        flushAndClearSession();
+
+        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
+        assertNotNull(participants);
+        assertFalse(participants.contains(participant.getId()));
     }
 
     @Test
@@ -64,9 +88,11 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Date now = Calendar.getInstance().getTime();
         Date eightDaysAgo = DateUtils.addDays(now, -8);
 
-        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(eightDaysAgo).responded(true).build();
         interview.getParticipants().add(participant);
+        
+        application.getInterviews().add(interview);
 
         save(interview);
         flushAndClearSession();
@@ -83,9 +109,11 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Date now = Calendar.getInstance().getTime();
         Date eightDaysAgo = DateUtils.addDays(now, -8);
 
-        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(eightDaysAgo).build();
         interview.getParticipants().add(participant);
+        
+        application.getInterviews().add(interview);
 
         save(interview);
         flushAndClearSession();
@@ -102,9 +130,11 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Date now = Calendar.getInstance().getTime();
         Date threeDaysAgo = DateUtils.addDays(now, -3);
 
-        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(threeDaysAgo).build();
         interview.getParticipants().add(participant);
+        
+        application.getInterviews().add(interview);
 
         save(interview);
         flushAndClearSession();

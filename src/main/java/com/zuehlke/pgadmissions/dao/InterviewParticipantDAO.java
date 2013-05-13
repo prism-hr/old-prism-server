@@ -36,8 +36,12 @@ public class InterviewParticipantDAO {
         ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
         Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
         List<Integer> participants = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(InterviewParticipant.class)
-                .createAlias("interview", "interview").add(Restrictions.eq("interview.stage", InterviewStage.SCHEDULING))
-                .add(Restrictions.eq("responded", false)).add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
+                .createAlias("interview", "interview") //
+                .createAlias("interview.application", "application") //
+                .add(Restrictions.eqProperty("application.latestInterview", "interview")) //
+                .add(Restrictions.eq("interview.stage", InterviewStage.SCHEDULING)) //
+                .add(Restrictions.eq("responded", false)) //
+                .add(Restrictions.le("lastNotified", dateWithSubtractedInterval)) //
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setProjection(Projections.property("id")).list();
         return participants;
     }
@@ -45,9 +49,9 @@ public class InterviewParticipantDAO {
     public InterviewParticipant getParticipantById(Integer id) {
         return (InterviewParticipant) sessionFactory.getCurrentSession().get(InterviewParticipant.class, id);
     }
-    
+
     public void save(InterviewParticipant participant) {
         sessionFactory.getCurrentSession().saveOrUpdate(participant);
     }
-    
+
 }

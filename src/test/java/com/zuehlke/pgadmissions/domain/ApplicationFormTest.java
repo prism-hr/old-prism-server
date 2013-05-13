@@ -16,6 +16,7 @@ import junit.framework.Assert;
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -185,8 +186,7 @@ public class ApplicationFormTest {
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
         RegisteredUser reviewerUserTwo = new RegisteredUserBuilder()
                 .referees()
-                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build(),
-                        new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
+                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();

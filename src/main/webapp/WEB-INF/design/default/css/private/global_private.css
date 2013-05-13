@@ -156,7 +156,7 @@ div.button { cursor: pointer; display: inline-block; vertical-align: top; } /* u
 
 span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical-align: middle; }
 
-.button-edit, .button-delete, .button-question, .button-responded, .button-show {
+.button-edit, .remove-date, .button-delete, .button-question, .button-responded, .button-show, .clone-times {
 	background: url(../../images/icon_round.png) no-repeat;
 	border: none;
 	border-radius: 0;
@@ -1038,31 +1038,12 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 #interviewPossibleStartTimes table th,
 #interviewPossibleStartTimes table td {
 	padding:4px;
-	width:62px;
+	width:60px;
 }
 #interviewPossibleStartTimes table input { margin-bottom:0px !important;}
 
 #interviewPossibleStartTimes .suggested-date span { display:block; float:left; }
 
-#interviewPossibleStartTimes .remove-column .remove-date {
-	display:block;
-	width:16px;
-	height:16px;
-	background-color:transparent;
-	border:0;
-	cursor:pointer;
-	color:black;
-	margin:-15px 0 0 0;
-}
-
-#interviewPossibleStartTimes .remove-column .remove-date:hover {
-	text-decoration:none;
-}
-
-#interviewPossibleStartTimes .remove-column .remove-date,
-#interviewPossibleStartTimes .remove-column .remove-date i {
-	cursor:pointer;
-}
 
 #interviewPossibleStartTimes input[type=text] {
 	width:50px;
@@ -1072,8 +1053,10 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 	width:222px !important;
 }
 
+#interviewPossibleStartTimes tr th.clone-column,
+#interviewPossibleStartTimes tr td.clone-column,
 #interviewPossibleStartTimes tr th.remove-column,
-#interviewPossibleStartTimes tr td.remove-column {
+#interviewPossibleStartTimes tr td.remove-column  {
 	width:16px !important;
 }
 
@@ -1211,7 +1194,7 @@ section.form-rows .hint{
   margin-top: 0px !important;
   background: none !important;
 }
-.hint:before, .arrow:before, .button-delete:before, .button-show:before, .button-edit:before, .button-responded:before, span.icon-status:before {
+.hint:before, .remove-date:before, .clone-times:before, .arrow:before, .button-delete:before, .button-show:before, .button-edit:before, .button-responded:before, span.icon-status:before {
   font-family:FontAwesome;font-weight:normal;
   font-style:normal;
   text-decoration:inherit;-webkit-font-smoothing:antialiased;
@@ -1230,6 +1213,9 @@ section.form-rows .hint{
   -webkit-font-smoothing: antialiased;
   cursor:default;
 }
+.remove-date:before {
+	width: 26px;
+}
 .hint:before{
   cursor: default;
   content:"\f059";
@@ -1239,17 +1225,17 @@ section.form-rows .hint{
 .hint.grey:before{
 	color: #DDE4E2;
 }
-.button-delete.grey {
+.button-delete.grey, .clone-times.grey {
 	background:#DDE4E2;
 	cursor: default !important;
 }
 .button-delete.grey:before {
 	cursor: default !important;
 }
-.button-delete:before, .button-edit:before, .button-show:before, .button-responded:before {
+.button-delete:before, .remove-date:before, .clone-times:before, .button-edit:before, .button-show:before, .button-responded:before {
   cursor: pointer;
 }
-.button-delete, .button-edit, .button-show, .button-responded {
+.button-delete, .button-edit, .button-show, .button-responded, .remove-date, .clone-times {
   overflow: hidden;
   line-height: 25px;
   background: #9B9DA0;
@@ -1266,25 +1252,30 @@ section.form-rows .hint{
   font-size: 17px;
   line-height: 24px;
 }
-.button-delete:hover, .button-edit:hover, .button-show:hover, .button-responded:hover {
+.button-delete:hover, .clone-times:hover, .button-edit:hover, .button-show:hover, .button-responded:hover, .remove-date:hover {
   color: #9B9DA0;
   text-decoration: none;
 }
-.button-delete:before {
-  content:"\f014 ";
+.button-delete:before, .remove-date:before {
+  content:"\f014";
   color: white;
 }
+.clone-times:before {
+  content:"\f0c5";
+  color: white;
+  font-size: 16px;
+}
 .button-edit:before {
-  content:"\f040 ";
+  content:"\f040";
   color: white;
 }
 .button-show:before {
-  content:"\f06e ";
+  content:"\f06e";
   color: white;
   width: 25px;
 }
 .button-responded:before {
-  content:"\f00c ";
+  content:"\f00c";
   color: white;
   width: 25px;
 }

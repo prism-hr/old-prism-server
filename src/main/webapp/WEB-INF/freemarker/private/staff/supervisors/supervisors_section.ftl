@@ -113,9 +113,7 @@
                         <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
       disabled="disabled"
       </#if>
-      value="
-      ${(approvalRound.projectTitle?html)!}
-      " /> 
+      value="${(approvalRound.projectTitle?html)!}" /> 
       <@spring.bind "approvalRound.projectTitle" />
     <#list spring.status.errorMessages as error >
     <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>

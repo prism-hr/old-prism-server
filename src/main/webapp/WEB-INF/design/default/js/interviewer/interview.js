@@ -372,7 +372,7 @@ function addControlsToSelectAvailableDatesAndTimes() {
 
 function setPossibleStartTimesVisibility(calendar) {
 	var shouldBeVisible = calendar.multiDatesPicker('getDates').length > 0;
-	
+	addGreyCopy();
 	if (shouldBeVisible) {
 		$('#interviewPossibleStartTimes').show();
 	}
@@ -380,7 +380,10 @@ function setPossibleStartTimesVisibility(calendar) {
 		$('#interviewPossibleStartTimes').hide();
 	}
 }
-
+function addGreyCopy() {
+	$('#interviewPossibleStartTimes tbody tr .grey').removeClass('grey');
+	$('#interviewPossibleStartTimes tbody tr:last-child .clone-times').addClass('grey');
+}
 function removeAvailableDate(calendar, date) {
 	var dateText = dateToDMY(date);
 	var dateTextId = stringToSlug(dateText).split('-').join('');
@@ -438,15 +441,49 @@ function addAvailableDate(calendar, date, times) {
 		time.mask('Hh:Mm');
 	}
 	
+	var cloneCell = $('<td></td>').addClass('clone-column').appendTo(dateLine);
+	
+	var cloneTimes = $('<a></a>', { href: 'javascript:void(0);' })
+	.addClass('clone-times')
+	.attr('data-desc', 'Copy times down')
+	.html('clone')
+	.appendTo(cloneCell);
+	
+	applyTooltip(cloneTimes);
+	
+	cloneTimes.click(function () {    	
+		// dupicate times down
+		selectedTimesRow = $(this).closest('tr');
+		selectedTimesRowIndex = $(this).closest('tr').prevAll().length;
+		visTD = $(this).closest('tr').find('td:visible').length;
+		visTR = $(this).closest('tbody').find('tr').length;
+		
+		var rows = $(this).closest('tbody').find('tr');
+		
+		rows.each(function(index) {
+			$(this).children("td:visible").each(function() {
+				var trindex = $(this).find('input.time').closest('tr').prevAll().length + 1;
+				if (trindex > selectedTimesRowIndex) {
+					var tdindex = $(this).find('input.time').parent().prevAll().length + 1;
+					var toprowVal = selectedTimesRow.find('td:nth-child('+tdindex+') input.time').val();
+					$(this).find('input.time').val(toprowVal);
+				}
+			});
+		});
+		
+	});
+	
 	var removeCell = $('<td></td>').addClass('remove-column').appendTo(dateLine);
 	
 	var removeButton = $('<a></a>', { href: 'javascript:void(0);' })
 		.addClass('remove-date')
 		.attr('data-desc', 'Specify the interview anticipated duration')
-		.html('<i class="icon-trash icon-large"></i>')
+		.html('delete')
 		.appendTo(removeCell);
-	
+
 	applyTooltip(removeButton);
+	
+	
 	
 	removeButton.click(function () {    	
 		calendar.multiDatesPicker('toggleDate', dateText);

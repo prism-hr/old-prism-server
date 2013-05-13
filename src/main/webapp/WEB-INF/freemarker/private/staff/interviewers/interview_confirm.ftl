@@ -126,15 +126,18 @@
 				            	  			</tfoot>
 				            	  		</table>
 				            	  		
-                            <#if timeslotIdError??>
-                              <div class="alert alert-error" id="interviewersErrorSpan"> <i class="icon-warning-sign"></i>
-                                <@spring.message timeslotIdError /> 
-                              </div>
-                            </#if>
+                            
 				            	  		
 				            	  	</div>
 		            	  		</div>
 		            	  	</div>
+                            <#if timeslotIdError??>
+                            <div class="field">
+                              <div class="alert alert-error" id="interviewersErrorSpan"> <i class="icon-warning-sign"></i>
+                                <@spring.message timeslotIdError /> 
+                              </div>
+                            </div>
+                            </#if>
 		            	</div>
 		            	<div class="row-group">
 		        			<div class="row">

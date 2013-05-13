@@ -59,33 +59,6 @@
             	<div>
             		<form method="post">
 		              <#assign interview = applicationForm.latestInterview>
-		              	<!--div class="row-group">
-			              	<div class="row" >
-							    <label class="plain-label" for="programInterviewers">Interview Location</label>
-							    <div class="field">
-							    	<#if interview.locationURL?has_content>
-										<a style="text-decoration:none;" href="${interview.locationURL}" title="Get Directions">${interview.locationURL}</a>
-							        <#else>
-							        	<i>Not provided</i>
-							    	</#if>
-							    </div>
-							</div>
-							<#if user == applicationForm.applicant>
-								<div class="row">
-								    <label class="plain-label" for="programInterviewers">Interview Instructions for Candidate</label>
-								    <div class="field">
-								    	<#if interview.furtherDetails?has_content>${interview.furtherDetails!}<#else><i>Not provided</i></#if>
-								    </div>
-								</div>
-							<#else>
-								<div class="row">
-								    <label class="plain-label" for="programInterviewers">Interview Instructions for Interviewer</label>
-								    <div class="field">
-								    	<#if interview.furtherInterviewerDetails?has_content>${interview.furtherInterviewerDetails!}<#else><i>Not provided</i></#if>
-								    </div>
-								</div>
-							</#if>
-		              	</div-->
 		              	<div class="row-group">
 			              	<div class="row">
 			              		<#assign responded = 0>
@@ -137,23 +110,6 @@
 					            	  					</#if>
 			        	  							</tr>
 				            	  				</#list>
-				            	  				<!--tr>
-				            	  					<td class="participant">
-				            	  						
-				            	  					</td>
-				            	  					<#list interview.timeslots as timeslot>
-				            	  						<#assign numberOfParticipantsAvailable = 0>
-				            	  						<#list interview.participants as participant>
-				            	  							<#assign acceptedTimeslots = participant.acceptedTimeslots>
-				            	  							<#if acceptedTimeslots?seq_contains(timeslot)>
-				            	  								<#assign numberOfParticipantsAvailable = numberOfParticipantsAvailable + 1>				            	  								
-				            	  							</#if>
-				            	  						</#list>
-				            	  						<td class="timeslot">
-				            	  							<div class="numb">${numberOfParticipantsAvailable}</div>
-				            	  						</td>
-				            	  					</#list>
-				            	  				</tr-->
 				            	  			</tbody>
 				            	  			<tfoot>
 				            	  				<tr>
@@ -169,6 +125,13 @@
 				            	  				</tr>
 				            	  			</tfoot>
 				            	  		</table>
+				            	  		
+                            <#if timeslotIdError??>
+                              <div class="alert alert-error" id="interviewersErrorSpan"> <i class="icon-warning-sign"></i>
+                                <@spring.message timeslotIdError /> 
+                              </div>
+                            </#if>
+				            	  		
 				            	  	</div>
 		            	  		</div>
 		            	  	</div>

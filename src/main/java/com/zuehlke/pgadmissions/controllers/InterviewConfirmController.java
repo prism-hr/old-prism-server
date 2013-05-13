@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +28,7 @@ public class InterviewConfirmController {
     private final ApplicationsService applicationsService;
 
     private final UserService userService;
-    
+
     private final InterviewService interviewService;
 
     public InterviewConfirmController() {
@@ -75,16 +76,20 @@ public class InterviewConfirmController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm, @RequestParam Integer timeslotId) {
+    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer timeslotId,
+            Model model) {
+        if (timeslotId == null) {
+            model.addAttribute("timeslotIdError", "dropdown.radio.select.none");
+            return INTERVIEW_CONFIRM_PAGE;
+        }
         Interview interview = applicationForm.getLatestInterview();
         interviewService.confirmInterview(interview, timeslotId);
-        
+
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }
-    
+
     @RequestMapping(value = "/restart", method = RequestMethod.POST)
-    public String restartInterview(@ModelAttribute ApplicationForm applicationForm) {
-//      interviewService.clearScheduling();
+    public String restartInterviewScheduling(@ModelAttribute ApplicationForm applicationForm) {
         return "redirect:/interview/moveToInterview?applicationId=" + applicationForm.getApplicationNumber();
     }
 }

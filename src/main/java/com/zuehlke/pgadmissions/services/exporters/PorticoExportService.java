@@ -9,6 +9,7 @@ import javax.xml.transform.TransformerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.WebServiceMessage;
@@ -52,6 +53,8 @@ public class PorticoExportService {
     
     private final ApplicationFormTransferService applicationFormTransferService;
     
+    private final ApplicationContext context;
+    
     private static final String PRISM_EXCEPTION = "There was an internal PRISM exception [applicationNumber=%s]";
 
     private static final String WS_CALL_FAILED_NETWORK = "The web service is unreachable because of network issues [applicationNumber=%s]";
@@ -67,7 +70,7 @@ public class PorticoExportService {
     private static final String SFTP_CALL_FAILED_DIRECTORY = "The SFTP target directory is not accessible [applicationNumber=%s]";
     
     public PorticoExportService() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
@@ -76,12 +79,14 @@ public class PorticoExportService {
             ApplicationFormDAO applicationFormDAO,
             CommentDAO commentDAO,
             SftpAttachmentsSendingService sftpAttachmentsSendingService,
-            ApplicationFormTransferService applicationFormTransferService) {
+            ApplicationFormTransferService applicationFormTransferService,
+            ApplicationContext context) {
         this.webServiceTemplate = webServiceTemplate;
         this.commentDAO = commentDAO;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.applicationFormTransferService = applicationFormTransferService;
         this.applicationFormDAO = applicationFormDAO;
+        this.context = context;
     }
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
@@ -93,9 +98,10 @@ public class PorticoExportService {
     public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws PorticoExportServiceException {
         try {
             log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
-            prepareApplicationForm(form);
-            sendWebServiceRequest(form, transfer, listener);
-            uploadDocuments(form, transfer, listener);
+            PorticoExportService proxy = context.getBean(this.getClass());
+            proxy.prepareApplicationForm(form);
+            proxy.sendWebServiceRequest(form, transfer, listener);
+            proxy.uploadDocuments(form, transfer, listener);
         } catch (PorticoExportServiceException e) {
             throw e;
         } catch (Exception e) {

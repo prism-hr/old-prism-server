@@ -73,6 +73,9 @@
 												${(timelineObject.interview.furtherDetails?html)!}
 											<#elseif user.isInterviewerOfApplicationForm(applicationForm.application)>                
 												${(timelineObject.interview.furtherInterviewerDetails?html)!}
+											<#elseif user.isInRole('SUPERADMINISTRATOR')>
+												<#if timelineObject.interview.furtherInterviewerDetails!= "">Instructions for interviewers: ${(timelineObject.interview.furtherInterviewerDetails?html)!}<br></#if>
+												<#if timelineObject.interview.furtherDetails!= "">Instructions for applicant: ${(timelineObject.interview.furtherDetails?html)!}<br></#if>
 											</#if>            
 											</em></p></div>   
 										<p class="datetime">

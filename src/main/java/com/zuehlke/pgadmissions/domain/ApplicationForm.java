@@ -233,24 +233,24 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "is_editable_by_applicant")
     private Boolean isEditableByApplicant = true;
-    
+
     @Column(name = "suppress_state_change_notifications")
     private Boolean suppressStateChangeNotifications = false;
-    
+
     @Column(name = "withdrawn_before_submit")
     private Boolean withdrawnBeforeSubmit = false;
 
     public List<Qualification> getQualifications() {
         return qualifications;
     }
-    
+
     public Boolean getSuppressStateChangeNotifications() {
-		return suppressStateChangeNotifications;
-	}
-    
+        return suppressStateChangeNotifications;
+    }
+
     public void setSuppressStateChangeNotifications(Boolean suppressStateChangeNotifications) {
-		this.suppressStateChangeNotifications = suppressStateChangeNotifications;
-	}
+        this.suppressStateChangeNotifications = suppressStateChangeNotifications;
+    }
 
     public void setQualifications(List<Qualification> qualifications) {
         this.qualifications.clear();
@@ -291,7 +291,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isModifiable() {
         if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN
-                || !getIsEditableByApplicant()) {
+                        || !getIsEditableByApplicant()) {
             return false;
         }
         return true;
@@ -300,16 +300,16 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isSubmitted() {
         return status != ApplicationFormStatus.UNSUBMITTED;
     }
-    
+
     public InterviewEvaluationComment getLastInterviewEvaluationComment() {
-        for (int i= applicationComments.size()-1; i>=0; i--) {
+        for (int i = applicationComments.size() - 1; i >= 0; i--) {
             if (applicationComments.get(i) instanceof InterviewEvaluationComment) {
-                return (InterviewEvaluationComment)applicationComments.get(i);
+                return (InterviewEvaluationComment) applicationComments.get(i);
             }
         }
         return null;
     }
-    
+
     public boolean hasInterviewEvaluationComment() {
         for (Comment comment : this.getApplicationComments()) {
             if (comment instanceof InterviewEvaluationComment) {
@@ -318,7 +318,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return false;
     }
-    
+
     public boolean hasReviewEvaluationComment() {
         for (Comment comment : this.getApplicationComments()) {
             if (comment instanceof ReviewEvaluationComment) {
@@ -340,15 +340,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean isUserAllowedToSeeAndEditAsAdministrator(final RegisteredUser user) {
-        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) // 
-                || user.isInterviewerOfApplicationForm(this)
-                || user.isAdminInProgramme(getProgram());
+        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
+                        || user.isInterviewerOfApplicationForm(this) || user.isAdminInProgramme(getProgram());
         return hasPermissionToEdit //
-                && isSubmitted() //
-                && !isInValidationStage() //
-                && !isInApprovalStage() //
-                && !isDecided() //
-                && !isWithdrawn();
+                        && isSubmitted() //
+                        && !isInValidationStage() //
+                        && !isInApprovalStage() //
+                        && !isDecided() //
+                        && !isWithdrawn();
     }
 
     public List<Comment> getApplicationComments() {
@@ -466,7 +465,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public List<Comment> getVisibleComments(RegisteredUser user) {
         ArrayList<Comment> returnList = new ArrayList<Comment>();
-        
+
         if (user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)) {
             for (Comment comment : applicationComments) {
                 if (comment instanceof ReferenceComment && ((ReferenceComment) comment).getReferee().getUser().getId().equals(user.getId())) {
@@ -476,7 +475,17 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             Collections.sort(returnList);
             return returnList;
         }
-        
+
+        if (user.isInRole(Authority.APPLICANT)) {
+            for (Comment comment : applicationComments) {
+                if (comment instanceof InterviewVoteComment && comment.getUser().getId().equals(user.getId())) {
+                    returnList.add(comment);
+                }
+            }
+            Collections.sort(returnList);
+            return returnList;
+        }
+
         if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user)) {
             returnList.addAll(applicationComments);
             Collections.sort(returnList);
@@ -487,10 +496,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean shouldOpenFirstSection() {
-        return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv,
-                additionalInformation) && isEmpty(fundings, referees, employmentPositions, qualifications);
+        return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv, additionalInformation)
+                        && isEmpty(fundings, referees, employmentPositions, qualifications);
     }
-    
+
     private boolean isEmpty(List<?>... objects) {
         for (List<?> obj : objects) {
             if (obj.isEmpty()) {
@@ -499,7 +508,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return false;
     }
-    
+
     private boolean isNull(Object... objects) {
         for (Object obj : objects) {
             if (obj == null) {
@@ -579,7 +588,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return getNotificationForType(NotificationType.valueOf(strType));
     }
 
-    public boolean addNotificationRecord(NotificationRecord record) {        
+    public boolean addNotificationRecord(NotificationRecord record) {
         for (NotificationRecord existingRecord : notificationRecords) {
             if (existingRecord.getNotificationType() == record.getNotificationType()) {
                 existingRecord.setDate(record.getDate());
@@ -593,12 +602,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean removeNotificationRecord(NotificationRecord record) {
         return notificationRecords.remove(record);
     }
-    
+
     public void removeNotificationRecord(final NotificationType... recordTypes) {
         CollectionUtils.filter(notificationRecords, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
-                NotificationRecord existingRecord  = (NotificationRecord) object;
+                NotificationRecord existingRecord = (NotificationRecord) object;
                 for (NotificationType type : recordTypes) {
                     if (type == existingRecord.getNotificationType()) {
                         return false;
@@ -636,7 +645,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return false;
         }
     }
-    
+
     public boolean isInState(ApplicationFormStatus enumStatus) {
         return status == enumStatus;
     }
@@ -675,7 +684,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return usersWillingToInterview;
     }
-    
+
     public List<RegisteredUser> getReviewersWillingToWorkWithApplicant() {
         ArrayList<RegisteredUser> usersWillingToWorkWithApplicant = new ArrayList<RegisteredUser>();
         for (Comment comment : applicationComments) {
@@ -1045,7 +1054,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
-    
+
     public List<Referee> getRefereessToSendToPortico() {
         List<Referee> result = new ArrayList<Referee>(2);
         for (Referee refree : getReferees()) {

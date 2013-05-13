@@ -157,14 +157,13 @@ public class ReferenceController {
     public void defaultGet() {
         return;
     }
-    
+
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
-    public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult)
-            throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = comment.getApplication();
+    public String handleReferenceSubmission(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("comment") ReferenceComment comment,
+            BindingResult bindingResult) throws ScoringDefinitionParseException {
         List<Score> scores = comment.getScores();
-        if (scores != null) {
-            List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
+        if (!scores.isEmpty()) {
+            List<Question> questions = getCustomQuestions(applicationForm);
             for (int i = 0; i < scores.size(); i++) {
                 Score score = scores.get(i);
                 score.setOriginalQuestion(questions.get(i));
@@ -183,8 +182,7 @@ public class ReferenceController {
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
 
-    private List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+    private List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
             CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());

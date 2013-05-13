@@ -204,24 +204,13 @@ public class ReferenceControllerTest {
 
     @Test
     public void shouldReturnToFormViewIfValidationErrors() throws ScoringDefinitionParseException {
-        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+        final Program program = new ProgramBuilder().build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("app1").program(program).build();
         final ReferenceComment comment = new ReferenceCommentBuilder().application(applicationForm).build();
-        final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        final Referee referee = new RefereeBuilder().build();
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
-        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(new CustomQuestions());
 
         BindingResult errors = new DirectFieldBindingResult(comment, "comment");
         errors.reject("error");
-        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock, scoringDefinitionParserMock);
-        assertEquals("private/referees/upload_references", controller.handleReferenceSubmission(comment, errors));
-        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock, scoringDefinitionParserMock);
+        assertEquals("private/referees/upload_references", controller.handleReferenceSubmission(applicationForm, comment, errors));
     }
 
     @Test
@@ -229,44 +218,17 @@ public class ReferenceControllerTest {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").program(program).build();
-        final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         final Referee referee = new RefereeBuilder().id(1).build();
         final ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("12")).andReturn(application);
         commentServiceMock.save(reference);
         refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(application)).andReturn(true);
-        EasyMock.expect(currentUser.getRefereeForApplicationForm(application)).andReturn(referee);
-        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(new CustomQuestions());
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
 
-        EasyMock.replay(userServiceMock, currentUser, commentServiceMock, refereeServiceMock, applicationsServiceMock, scoringDefinitionParserMock);
-        assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors));
-        EasyMock.verify(userServiceMock, currentUser, commentServiceMock, refereeServiceMock, applicationsServiceMock, scoringDefinitionParserMock);
-    }
-
-    @Test(expected = ActionNoLongerRequiredException.class)
-    public void shouldPreventFromSavingDuplicateReferences() throws ScoringDefinitionParseException {
-        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
-        Referee referee = new RefereeBuilder().id(1).build();
-        ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").program(program).build();
-        ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();
-        referee.setReference(reference);
-
-        BindingResult errors = new DirectFieldBindingResult(reference, "comment");
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("12")).andReturn(application);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(application)).andReturn(true);
-        EasyMock.expect(currentUser.getRefereeForApplicationForm(application)).andReturn(referee);
-        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(new CustomQuestions());
-
-        EasyMock.replay(userServiceMock, currentUser, applicationsServiceMock, commentServiceMock, refereeServiceMock);
-        controller.handleReferenceSubmission(reference, errors);
+        EasyMock.replay(commentServiceMock, refereeServiceMock);
+        assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(application, reference, errors));
+        EasyMock.verify(commentServiceMock, refereeServiceMock);
     }
 
     @Before

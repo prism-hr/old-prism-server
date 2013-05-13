@@ -100,7 +100,7 @@ public class PorticoQueueListener implements MessageListener {
         }
     }
     
-    @Transactional(readOnly = true)
+    @Transactional
     public ApplicationForm getApplicationForm(final String applicationNumber) {
         return formDAO.getApplicationByApplicationNumber(applicationNumber);
     }

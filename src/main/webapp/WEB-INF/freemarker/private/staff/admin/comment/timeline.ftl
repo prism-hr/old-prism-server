@@ -191,9 +191,9 @@
 			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
 			                		<#if interviewVoteParticipant.responded>
 			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
-			                				<p><h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</class></p> 
+			                				<h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</class></h3> 
 			                			<#else>
-			                				<p><h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</class></p>
+			                				<h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</class></h3>
 			                			</#if>
 			                		</#if>
     			                </#if>

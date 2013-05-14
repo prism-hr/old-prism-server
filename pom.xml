@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<name>UCL Postgraduate Admissions</name>
 	<groupId>com.zuehlke</groupId>
 	<artifactId>pgadmissions</artifactId>
 	<packaging>war</packaging>
-	<version>2.6.0-SNAPSHOT</version>
+	<version>2.6.0</version>
 
 	<properties>
 		<spring.version>3.1.0.RELEASE</spring.version>
@@ -524,13 +523,9 @@
 						<id>default-cli</id>
 						<configuration>
 							<tasks>
-								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}"
-									userid="root" password="root" src="src/sql/setup/dropdatabase.sql" />
-								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}"
-									userid="root" password="root" src="src/sql/setup/createdatabase.sql" />
-								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}/pgadmissions"
-									userid="pgadmissions" password="pgadmissions"
-									src="src/sql/setup/createSchemaVersionTable.mysql.sql" />
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root" password="root" src="src/sql/setup/dropdatabase.sql" />
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root" password="root" src="src/sql/setup/createdatabase.sql" />
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}/pgadmissions" userid="pgadmissions" password="pgadmissions" src="src/sql/setup/createSchemaVersionTable.mysql.sql" />
 							</tasks>
 						</configuration>
 						<goals>
@@ -594,10 +589,8 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete
-											file="${project.build.outputDirectory}/environment.properties" />
-										<copy file="src/environments/environment.sit.properties"
-											tofile="${project.build.outputDirectory}/environment.properties" />
+										<delete file="${project.build.outputDirectory}/environment.properties" />
+										<copy file="src/environments/environment.sit.properties" tofile="${project.build.outputDirectory}/environment.properties" />
 									</tasks>
 								</configuration>
 							</execution>
@@ -625,10 +618,8 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete
-											file="${project.build.outputDirectory}/environment.properties" />
-										<copy file="src/environments/environment.uat.properties"
-											tofile="${project.build.outputDirectory}/environment.properties" />
+										<delete file="${project.build.outputDirectory}/environment.properties" />
+										<copy file="src/environments/environment.uat.properties" tofile="${project.build.outputDirectory}/environment.properties" />
 									</tasks>
 								</configuration>
 							</execution>
@@ -656,10 +647,8 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete
-											file="${project.build.outputDirectory}/environment.properties" />
-										<copy file="src/environments/environment.support.properties"
-											tofile="${project.build.outputDirectory}/environment.properties" />
+										<delete file="${project.build.outputDirectory}/environment.properties" />
+										<copy file="src/environments/environment.support.properties" tofile="${project.build.outputDirectory}/environment.properties" />
 									</tasks>
 								</configuration>
 							</execution>
@@ -687,10 +676,8 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete
-											file="${project.build.outputDirectory}/environment.properties" />
-										<copy file="src/environments/environment.ci.properties"
-											tofile="${project.build.outputDirectory}/environment.properties" />
+										<delete file="${project.build.outputDirectory}/environment.properties" />
+										<copy file="src/environments/environment.ci.properties" tofile="${project.build.outputDirectory}/environment.properties" />
 									</tasks>
 								</configuration>
 							</execution>
@@ -718,10 +705,8 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete
-											file="${project.build.outputDirectory}/environment.properties" />
-										<copy file="src/environments/environment.ucl.test.properties"
-											tofile="${project.build.outputDirectory}/environment.properties" />
+										<delete file="${project.build.outputDirectory}/environment.properties" />
+										<copy file="src/environments/environment.ucl.test.properties" tofile="${project.build.outputDirectory}/environment.properties" />
 									</tasks>
 								</configuration>
 							</execution>
@@ -749,10 +734,8 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete
-											file="${project.build.outputDirectory}/environment.properties" />
-										<copy file="src/environments/environment.ucl.prod.properties"
-											tofile="${project.build.outputDirectory}/environment.properties" />
+										<delete file="${project.build.outputDirectory}/environment.properties" />
+										<copy file="src/environments/environment.ucl.prod.properties" tofile="${project.build.outputDirectory}/environment.properties" />
 									</tasks>
 								</configuration>
 							</execution>

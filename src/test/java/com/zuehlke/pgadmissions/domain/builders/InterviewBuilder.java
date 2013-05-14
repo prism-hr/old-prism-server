@@ -24,7 +24,7 @@ public class InterviewBuilder {
     private String locationURL;
     private Integer duration;
     private TimeZone timeZone = TimeZone.getTimeZone("GMT");
-    private Boolean takenPlace;
+    private Boolean takenPlace = false;
     private InterviewStage stage = InterviewStage.INITIAL;
     private List<Interviewer> interviewers = new ArrayList<Interviewer>();
     private List<InterviewParticipant> participants = new ArrayList<InterviewParticipant>();

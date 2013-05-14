@@ -107,9 +107,39 @@ public class InterviewServiceTest {
         assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));
         assertTrue(applicationForm.getNotificationRecords().isEmpty());
     }
+    
+    @Test
+    public void shouldMoveApplicationToInterviewStageWhenInterviewAlreadyHasTakenPlace() throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
+        Interviewer interviewer = new InterviewerBuilder().build();
+        Interview interview = new InterviewBuilder().interviewers(interviewer).dueDate(dateFormat.parse("01 04 2012")).id(1).stage(InterviewStage.SCHEDULED).takenPlace(true)
+                .build();
+        Referee referee = new RefereeBuilder().build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
+        applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_FEEDBACK_REMINDER).build());
+
+        interviewDAOMock.save(interview);
+        applicationFormDAOMock.save(applicationForm);
+        InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
+        EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
+        mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
+
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
+        interviewService.moveApplicationToInterview(interview, applicationForm);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
+
+        assertEquals(dateFormat.parse("02 04 2012"), applicationForm.getDueDate());
+        assertEquals(applicationForm, interview.getApplication());
+        assertEquals(interview, applicationForm.getLatestInterview());
+        assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
+
+        assertEquals(1, applicationForm.getEvents().size());
+        assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));
+        assertTrue(applicationForm.getNotificationRecords().isEmpty());
+    }
 
     @Test
-    public void shouldMoveToItnerviewIfInReview() throws ParseException {
+    public void shouldMoveToInterviewIfInReview() throws ParseException {
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
         interviewDAOMock.save(interview);
@@ -121,7 +151,7 @@ public class InterviewServiceTest {
     }
 
     @Test
-    public void shouldMoveToItnerviewIfInInterview() throws ParseException {
+    public void shouldMoveToInterviewIfInInterview() throws ParseException {
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
         interviewDAOMock.save(interview);
@@ -133,7 +163,7 @@ public class InterviewServiceTest {
     }
 
     @Test
-    public void shouldMoveToItnerviewAndRemoveReminderForInterviewAdministrationDelegate() throws ParseException {
+    public void shouldMoveToInterviewAndRemoveReminderForInterviewAdministrationDelegate() throws ParseException {
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
         RegisteredUser delegate = new RegisteredUserBuilder().id(12).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationAdministrator(delegate).status(ApplicationFormStatus.REVIEW).id(1)

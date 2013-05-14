@@ -66,7 +66,7 @@ public class InterviewService {
 
     public void moveApplicationToInterview(final Interview interview, ApplicationForm applicationForm) {
         interview.setApplication(applicationForm);
-        if (interview.getInterviewDueDate() != null) {
+        if (interview.isScheduled()) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(interview.getInterviewDueDate());
             calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -95,9 +95,11 @@ public class InterviewService {
 
         applicationFormDAO.save(applicationForm);
 
-        if (interview.isScheduled()) {
+        if (interview.isScheduled() && !interview.getTakenPlace()) {
             sendConfirmationEmails(interview);
-        } else if (interview.isScheduling()) {
+        } 
+        
+        if (interview.isScheduling()) {
             createParticipants(interview);
             mailService.sendInterviewVoteNotificationToInterviewerParticipants(interview);
         }

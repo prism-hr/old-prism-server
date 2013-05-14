@@ -97,7 +97,7 @@ public class Interview implements Serializable {
     private String timeMinutes;
 
     @Transient
-    private Boolean takenPlace;
+    private Boolean takenPlace = false;
     
     public Date getLastNotified() {
         return lastNotified;

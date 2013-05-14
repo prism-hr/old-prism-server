@@ -902,3 +902,10 @@ function dateToDMY(date) {
     var y = date.getFullYear();
     return '' + (d <= 9 ? '0' + d : d) + '/' + (m<=9 ? '0' + m : m) + '/' + y;
 }
+// Info bar top to change to error if errors in page
+function checkIfErrors() {
+	errors = $('.alert-error:visible').length;
+	if (errors > 0) {
+		$('#add-info-bar-div').removeClass('alert-info').addClass('alert-error');
+	} 
+}

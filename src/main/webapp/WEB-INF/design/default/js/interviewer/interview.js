@@ -106,7 +106,6 @@ $(document).ready(function() {
     // Submit button.
     // -----------------------------------------------------------------------------------------
     $('#moveToInterviewBtn').click(function() {
-        $('#interviewsection div.alert-error').remove();
         $('#ajaxloader').show();
         var url = "/pgadmissions/interview/move";
 
@@ -237,12 +236,12 @@ $(document).ready(function() {
             },
             complete : function() {
                 $('#ajaxloader').fadeOut('fast');
+				checkIfErrors();
 				addCounter();
             }
         });
     });
 });
-
 function recoverSubmittedValues() {
 	var durationInMinutes = parseInt($('#submittedInterviewDuration').val());
 	

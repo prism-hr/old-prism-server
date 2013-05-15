@@ -44,7 +44,7 @@ public class QualificationInstitutionsController {
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
     }
     
-    @RequestMapping(value = "/getInstitutionInformation", method = RequestMethod.GET)
+    @RequestMapping(value = "/getInstitutionInformation", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getInstitutions(@RequestParam String country_id) throws IOException {
         if (StringUtils.isBlank(country_id)) {

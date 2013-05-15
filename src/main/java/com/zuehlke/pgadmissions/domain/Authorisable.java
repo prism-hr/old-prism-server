@@ -97,8 +97,16 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
         if (isProgrammeAdministrator(form, user)) {
             return true;
         }
+        
+        if (isApplicationAdmitter(form, user)) {
+            return true;
+        }
 
         return false;
+    }
+    
+    public boolean isApplicationAdmitter(ApplicationForm form, RegisteredUser user) {
+        return form.isRegistryUsersDueNotification() && user.isInRole(Authority.ADMITTER);
     }
     
     public boolean hasStaffRightsOnApplication(final ApplicationForm form, final RegisteredUser user) {

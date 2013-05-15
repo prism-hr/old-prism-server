@@ -33,6 +33,9 @@ public enum NotificationType {
     
     REGISTRY_HELP_REQUEST,
     
+    @Deprecated
+    INTERVIEW_REMINDER,
+    
     REVIEW_REMINDER,
     REVIEW_REQUEST,
     REVIEW_EVALUATION_REMINDER,
@@ -41,6 +44,7 @@ public enum NotificationType {
     
     VALIDATION_REMINDER,
     
-    @Deprecated
-    INTERVIEW_REMINDER;
+    REPEAT_VALIDATION_REMINDER,
+    
+    REPEAT_VALIDATION_REQUEST;
 }

@@ -284,12 +284,12 @@ $(document).ready(function() {
 	
 	// Remover current filter
 	$(".remove").live('click', function() {
-		var existingFilter=$(this).parent();
+		var existingFilter= $(this).parent();
 		if ($("#search-box").find("div.filter").length > 1) {
 			if(existingFilter.find(".filterInput").val()!=""){
 				$('#search-go').click();
 			}
-			existingFilter.parent().remove();
+			existingFilter.remove();
 		}
 	});
 

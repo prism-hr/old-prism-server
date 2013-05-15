@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -35,8 +36,10 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -82,11 +85,23 @@ public class ValidationTransitionControllerTest {
 	
 	@Test
 	public void shouldResolveViewForApplicationForm() {
+	    RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).build();
 		EasyMock.expect(stateTransitionServiceMock.resolveView(applicationForm)).andReturn("view");
-		EasyMock.replay(stateTransitionServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+		EasyMock.replay(stateTransitionServiceMock, userServiceMock);
 		assertEquals("view", controller.getStateTransitionView(applicationForm));
-		EasyMock.verify(stateTransitionServiceMock);
+		EasyMock.verify(stateTransitionServiceMock, userServiceMock);
+	}
+	
+	@Test
+	public void shouldResolveViewForApplicationFormAsAdmitter() {
+	    RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.ADMITTER).build()).build();
+	    ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).build();
+	    EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+	    EasyMock.replay(userServiceMock);
+	    assertEquals("private/staff/admin/state_transition", controller.getStateTransitionView(applicationForm));
+	    EasyMock.verify(userServiceMock);
 	}
 	
 	@Test
@@ -483,7 +498,7 @@ public class ValidationTransitionControllerTest {
         
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
         
-        assertTrue(BooleanUtils.isTrue(applicationForm.isRegistryUsersDueNotification()));
+        assertNotNull(applicationForm.getAdminRequestedRegistry());
 	}
 	
 	@Test
@@ -539,8 +554,8 @@ public class ValidationTransitionControllerTest {
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
         
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
-        
-        assertTrue(BooleanUtils.isTrue(applicationForm.isRegistryUsersDueNotification()));
+
+        assertNotNull(applicationForm.getAdminRequestedRegistry());
 	}
 	
 	@Test
@@ -596,8 +611,8 @@ public class ValidationTransitionControllerTest {
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
         
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
-        
-        assertTrue(BooleanUtils.isTrue(applicationForm.isRegistryUsersDueNotification()));
+
+        assertNotNull(applicationForm.getAdminRequestedRegistry());
 	}
 	
 	@Test

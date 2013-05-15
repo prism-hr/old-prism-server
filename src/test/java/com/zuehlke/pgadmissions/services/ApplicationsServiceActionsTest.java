@@ -246,6 +246,7 @@ public class ApplicationsServiceActionsTest {
         EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(isSuperAdmin).anyTimes();
         EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(isAdministrator).anyTimes();
         EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(false).anyTimes();
+        EasyMock.expect(userMock.isNotInRole(Authority.ADMITTER)).andReturn(true).anyTimes();
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(hasAdminRights).anyTimes();
         EasyMock.expect(userMock.isViewerOfProgramme(applicationMock)).andReturn(isViewer).anyTimes();
         EasyMock.expect(userMock.isReviewerInLatestReviewRoundOfApplicationForm(applicationMock)).andReturn(isReviewer).anyTimes();

@@ -212,11 +212,15 @@ public class InterviewServiceTest {
     @Test
     public void shouldPostVote() {
         InterviewParticipant participant = new InterviewParticipant();
-        interviewParticipantDAOMock.save(participant);
         InterviewVoteComment interviewVoteComment = new InterviewVoteComment();
-        EasyMock.replay(interviewParticipantDAOMock);
+
+        interviewParticipantDAOMock.save(participant);
+        interviewVoteCommentDAOMock.save(interviewVoteComment);
+        mailServiceMock.sendInterviewVoteConfirmationToAdministrators(participant);
+        
+        EasyMock.replay(interviewParticipantDAOMock, interviewVoteCommentDAOMock, mailServiceMock);
         interviewService.postVote(participant, interviewVoteComment);
-        EasyMock.verify(interviewParticipantDAOMock);
+        EasyMock.verify(interviewParticipantDAOMock, interviewVoteCommentDAOMock, mailServiceMock);
 
         assertTrue(participant.getResponded());
     }

@@ -10,7 +10,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_V
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,14 +106,13 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     private final InterviewParticipantDAO interviewParticipantDAO;
 
     @Autowired
-    public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
-            final CommentDAO commentDAO, final SupervisorDAO supervisorDAO,
-            final StageDurationDAO stageDurationDAO, final ApplicationsService applicationsService, final ConfigurationService configurationService,
-            final CommentFactory commentFactory, final CommentService commentService, final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory,
-            final PdfDocumentBuilder pdfDocumentBuilder, final RefereeDAO refereeDAO, final UserService userService, final UserDAO userDAO,
-            final RoleDAO roleDAO, final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host,
-            @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel, final ApplicationContext applicationContext,
-            InterviewParticipantDAO interviewParticipantDAO) {
+    public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO, final CommentDAO commentDAO,
+            final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO, final ApplicationsService applicationsService,
+            final ConfigurationService configurationService, final CommentFactory commentFactory, final CommentService commentService,
+            final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, final PdfDocumentBuilder pdfDocumentBuilder, final RefereeDAO refereeDAO,
+            final UserService userService, final UserDAO userDAO, final RoleDAO roleDAO, final EncryptionUtils encryptionUtils,
+            @Value("${application.host}") final String host, @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel,
+            final ApplicationContext applicationContext, InterviewParticipantDAO interviewParticipantDAO) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
@@ -707,7 +705,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_NOTIFICATION);
             }
         }
-        
+
         for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
             if (!idsForWhichRequestWasFired.contains(form.getId()) && interviewAdministrationRequestHasToBeSent(form)) {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
@@ -715,7 +713,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             }
         }
     }
-    
+
     private boolean interviewAdministrationRequestHasToBeSent(ApplicationForm form) {
         if (form.getApplicationAdministrator() == null) {
             return false;
@@ -724,7 +722,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         if (latestInterview == null) {
             return true;
         }
-        return latestInterview.getInterviewDueDate().before(new Date());
+        Date interviewDueDate = latestInterview.getInterviewDueDate();
+        return interviewDueDate != null && interviewDueDate.before(new Date());
     }
 
     /**
@@ -1249,7 +1248,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
     }
 
-
     /**
      * <p>
      * <b>Summary</b><br/>
@@ -1416,10 +1414,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             createNotificationRecordIfNotExists(form, NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION);
             setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
         }
-    }
-
-    private Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm form) {
-        return form.getProgram().getAdministrators();
     }
 
     @Transactional

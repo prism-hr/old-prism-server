@@ -520,8 +520,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return dueDate;
     }
 
-    public void setDueDate(Date validationDueDate) {
-        this.dueDate = validationDueDate;
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
     public Program getProgram() {

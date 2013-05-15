@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -56,18 +57,21 @@ public class SubmitApplicationFormController {
 
     private final UserService userService;
 
+    private final CommentService commentService;
+
     public SubmitApplicationFormController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory) {
+            StageDurationService stageDurationService, EventFactory eventFactory, CommentService commentService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
         this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
+        this.commentService = commentService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -95,15 +99,17 @@ public class SubmitApplicationFormController {
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 
-    public void calculateAndSetValidationDueDate(ApplicationForm applicationForm) {
-        DateTime dueDate = new DateTime(applicationForm.getBatchDeadline());
+    public void calculateAndSetValidationDueDate(ApplicationForm application) {
+        DateTime dueDate = new DateTime(application.getBatchDeadline());
         StageDuration validationDuration = stageDurationService.getByStatus(ApplicationFormStatus.VALIDATION);
         if (validationDuration.getUnit().equals(DurationUnitEnum.MINUTES)) {
             dueDate = DateUtils.addWorkingDaysInMinutes(dueDate, validationDuration.getDurationInMinutes()).minusDays(1);
         } else {
             dueDate = DateUtils.addWorkingDaysInMinutes(dueDate, validationDuration.getDurationInMinutes());
-        }        
-        applicationForm.setDueDate(dueDate.toDate());
+        }
+        application.setDueDate(dueDate.toDate());
+
+        commentService.createDueDateComment(application, userService.getCurrentUser(), dueDate.toDate());
     }
 
     @InitBinder("applicationForm")
@@ -143,9 +149,9 @@ public class SubmitApplicationFormController {
         }
         return applicationForm;
     }
-    
+
     @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
+    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return applicationService.getActionsDefinition(getUser(), application);
     }

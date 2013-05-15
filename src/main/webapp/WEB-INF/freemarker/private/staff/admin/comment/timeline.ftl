@@ -135,7 +135,7 @@
 		          <#if timelineObject.comments??>
 		          <ul>
 		            <#list timelineObject.comments as comment>
-			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE'>                                                    
+			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE' || comment.type == 'APPROVAL' || comment.type == 'DUE_DATE'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
 			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>
@@ -151,8 +151,6 @@
 			            	<#assign role = "reviewer"/>
 			            <#elseif comment.type == 'INTERVIEW'>
 			            	<#assign role = "interviewer"/>    
-			            <#elseif comment.type == 'APPROVAL'>
-			            	<#assign role = "administrator"/>                
 			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
 			            	<#assign role = "approver"/>
 		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
@@ -182,29 +180,33 @@
     											<#elseif comment.comment?length &gt; 0>
     												<div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
     											</#if>
-    							<#if comment.documents?? && comment.documents?size &gt; 0>
-    				                <ul class="uploads">                
-    				                <#list comment.documents as document>
-    				                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
-    				                </#list>
-    				                </ul>
-    							</#if>
+    											
+            							<#if comment.documents?? && comment.documents?size &gt; 0>
+            				                <ul class="uploads">                
+            				                <#list comment.documents as document>
+            				                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
+            				                </#list>
+            				                </ul>
+            							</#if>
+            							
     			                <#if comment.type == 'VALIDATION'>                                                    
     			                	<#include "timeline_snippets/validation_comment.ftl"/>
     			                <#elseif comment.type == 'REVIEW'>
     			                	<#include "timeline_snippets/review_comment.ftl"/>
     			                <#elseif comment.type == 'INTERVIEW'>
     			                	<#include "timeline_snippets/interview_comment.ftl"/>
-			                	<#elseif comment.type == 'INTERVIEW_VOTE'>
-			                		<#assign interviewVoteParticipant=comment.interviewParticipant>
-			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
-			                		<#if interviewVoteParticipant.responded>
-			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
-			                				<h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
-			                			<#else>
-			                				<h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
-			                			</#if>
-			                		</#if>
+			                	  <#elseif comment.type == 'INTERVIEW_VOTE'>
+  			                		<#assign interviewVoteParticipant=comment.interviewParticipant>
+  			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
+  			                		<#if interviewVoteParticipant.responded>
+  			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
+  			                				<h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
+  			                			<#else>
+  			                				<h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
+  			                			</#if>
+  			                		</#if>
+			                		<#elseif comment.type == 'DUE_DATE'>
+			                		  <h3 class="answer yes"><span data-desc="Target" aria-describedby="ui-tooltip-150"></span>Our target for completing the stage: ${comment.dueDate?string('dd MMM yy')}.</h3>
     			                </#if>
     			              </div>
     			            </li>

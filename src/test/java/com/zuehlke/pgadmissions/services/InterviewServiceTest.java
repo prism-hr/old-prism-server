@@ -164,7 +164,7 @@ public class InterviewServiceTest {
 
     @Test
     public void shouldMoveToInterviewAndRemoveReminderForInterviewAdministrationDelegate() throws ParseException {
-        Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
+        Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).stage(InterviewStage.SCHEDULED).id(1).build();
         RegisteredUser delegate = new RegisteredUserBuilder().id(12).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationAdministrator(delegate).status(ApplicationFormStatus.REVIEW).id(1)
                 .notificationRecords(new NotificationRecordBuilder().notificationType(INTERVIEW_ADMINISTRATION_REMINDER).build()).build();
@@ -225,7 +225,7 @@ public class InterviewServiceTest {
     public void shouldConfirmInterview() {
         Date date = new Date();
 
-        ApplicationForm applicationForm = new ApplicationForm();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationAdministrator(new RegisteredUser()).build();
         Interviewer interviewer = new Interviewer();
 
         InterviewTimeslot timeslot1 = new InterviewTimeslotBuilder().id(1).build();
@@ -244,6 +244,7 @@ public class InterviewServiceTest {
         assertEquals(date, interview.getInterviewDueDate());
         assertEquals("11:11", interview.getInterviewTime());
         assertEquals(InterviewStage.SCHEDULED, interview.getStage());
+        assertNull(applicationForm.getApplicationAdministrator());
     }
 
     @Before

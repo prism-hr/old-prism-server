@@ -60,7 +60,7 @@ public class CreateNewReviewerController {
 		
 		modelAndView.getModel().put("isNew", true);
 		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewReviewerUser.getFirstName(), suggestedNewReviewerUser.getLastName(), suggestedNewReviewerUser.getEmail(),
-				Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, applicationForm);
+				DirectURLsEnum.ADD_REVIEW, applicationForm, Authority.REVIEWER);
 		modelAndView.getModel().put("user", newUser);
 		return modelAndView;
 	}

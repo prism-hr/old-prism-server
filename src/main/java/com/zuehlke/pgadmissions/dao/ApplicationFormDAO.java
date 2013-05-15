@@ -251,6 +251,61 @@ public class ApplicationFormDAO {
 				.list();
 	}
 	
+	public List<ApplicationForm> getApplicationsDueRevalidationRequest() {
+	    DetachedCriteria revalidationNotificationCriteria = DetachedCriteria
+	            .forClass(NotificationRecord.class, "notificationRecord")
+	            .add(Restrictions.eq("notificationType", NotificationType.REPEAT_VALIDATION_REQUEST))
+	            .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+	    
+	    List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
+        invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
+        invalidStateList.add(ApplicationFormStatus.REJECTED);
+        invalidStateList.add(ApplicationFormStatus.APPROVED);
+        
+	    return sessionFactory
+	            .getCurrentSession()
+	            .createCriteria(ApplicationForm.class, "applicationForm")
+	            .add(Restrictions.isNotNull("adminRequestedRegistry"))
+	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
+	            .add(Subqueries.notExists(revalidationNotificationCriteria.setProjection(Projections
+	                    .property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+	                    .list();
+	}
+	
+	public List<ApplicationForm> getApplicationsDueRevalidationReminder() {
+	    Date today = Calendar.getInstance().getTime();
+        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
+                .createCriteria(ReminderInterval.class).uniqueResult();
+        Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+        
+	    DetachedCriteria revalidationReminderCriteria = DetachedCriteria
+	            .forClass(NotificationRecord.class, "notificationRecord")
+	            .add(Restrictions.eq("notificationType", NotificationType.REPEAT_VALIDATION_REMINDER))
+	            .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+	    
+	    DetachedCriteria overDueRemindersCriteria = DetachedCriteria
+                .forClass(NotificationRecord.class, "notificationRecord")
+                .add(Restrictions.eq("notificationType", NotificationType.REPEAT_VALIDATION_REMINDER))
+                .add(Restrictions.le("notificationRecord.date", subtractInterval))
+                .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+	    
+	    List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
+	    invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
+	    invalidStateList.add(ApplicationFormStatus.REJECTED);
+	    invalidStateList.add(ApplicationFormStatus.APPROVED);
+	    
+	    return sessionFactory
+	            .getCurrentSession()
+	            .createCriteria(ApplicationForm.class, "applicationForm")
+	            .add(Restrictions.isNotNull("adminRequestedRegistry"))
+	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
+	            .add(Restrictions.or(Subqueries.exists(overDueRemindersCriteria.setProjection(Projections
+                        .property("notificationRecord.id"))), Subqueries.notExists(revalidationReminderCriteria
+                        .setProjection(Projections.property("notificationRecord.id")))))
+	            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+	                    .list();
+	}
+	
     public List<ApplicationForm> getApplicationsDueInterviewFeedbackNotification() {
         DetachedCriteria appronalNotificationCriteria = DetachedCriteria
                 .forClass(NotificationRecord.class, "notificationRecord")

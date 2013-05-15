@@ -95,7 +95,7 @@ public class StateTransitionController {
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        if (!currentUser.hasAdminRightsOnApplication(applicationForm) && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
+        if (!currentUser.isInRole(Authority.ADMITTER) && !currentUser.hasAdminRightsOnApplication(applicationForm) && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;

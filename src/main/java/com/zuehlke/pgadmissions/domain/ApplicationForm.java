@@ -65,7 +65,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private String applicationNumber;
 
     @Column(name = "registry_users_notified")
-    private Boolean registryUsersDueNotification;
+    private Boolean registryUsersDueNotification = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "app_administrator_id")
@@ -484,7 +484,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
 
 
-        if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user)) {
+        if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user) || user.isInRole(Authority.ADMITTER)) {
             returnList.addAll(applicationComments);
             Collections.sort(returnList);
             return returnList;
@@ -827,7 +827,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.researchHomePage = researchHomePage;
     }
 
-    public Boolean getRegistryUsersDueNotification() {
+    public Boolean isRegistryUsersDueNotification() {
         return registryUsersDueNotification;
     }
 
@@ -1088,5 +1088,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setWithdrawnBeforeSubmit(final Boolean withdrawnBeforeSubmit) {
         this.withdrawnBeforeSubmit = withdrawnBeforeSubmit;
+    }
+
+    public boolean isNotInState(ApplicationFormStatus status) {
+        return !isInState(status);
     }
 }

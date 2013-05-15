@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -52,7 +53,7 @@ public class ValidationTransitionController extends StateTransitionController {
     private static final String ERROR_CLOSING_DATE_FORMAT = "dd-MMM-yyyy";
 
     private static final String PROVIDED_CLOSING_DATE_FORMAT = "dd MMM yyyy";
-
+    
     private final BadgeService badgeService;
 
     private final MessageSource messageSource;
@@ -75,6 +76,9 @@ public class ValidationTransitionController extends StateTransitionController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
     public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm) {
+        if (getCurrentUser().isInRole(Authority.ADMITTER)) {
+            return "private/staff/admin/state_transition";
+        }
         return stateTransitionService.resolveView(applicationForm);
     }
     
@@ -161,7 +165,6 @@ public class ValidationTransitionController extends StateTransitionController {
             
             if (answeredOneOfTheQuestionsUnsure(comment) && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
                 form.setAdminRequestedRegistry(getCurrentUser());
-                form.setRegistryUsersDueNotification(true);
                 applicationsService.save(form);
             }
             

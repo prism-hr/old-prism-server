@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
-import com.zuehlke.pgadmissions.hibernate.ConcatenableIlikeCriterion;
 
 @Repository
 public class ApplicationFormListDAO {
@@ -67,10 +66,10 @@ public class ApplicationFormListDAO {
         criteria.setReadOnly(true);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+        if (user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMITTER)) {
             criteria.add(getAllApplicationsForSuperAdministrator());
             criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
-        } else {
+        }  else {
             Disjunction disjunction = Restrictions.disjunction();
 
             if (user.isInRole(Authority.APPLICANT)) {

@@ -11,7 +11,7 @@
       <ul id="timeline-statuses">
       
         <#list timelineObjects as timelineObject>  
-	        <#if timelineObject.type != 'reference' || user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
+	        <#if timelineObject.type != 'reference' || user.isInRole('ADMITTER') || user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
 		        <li class="${timelineObject.type}">
 		          <div class="box">
 		            <div class="title">
@@ -28,7 +28,7 @@
 		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p>  
 							</div>
 		        
-							<#if timelineObject.reviewRound?? && user.hasStaffRightsOnApplicationForm(applicationForm)>
+							<#if timelineObject.reviewRound?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isInRole('ADMITTER'))>
 							<#if timelineObject.reviewRound.reviewers?? && timelineObject.reviewRound.reviewers?size &gt; 0>
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
@@ -135,11 +135,13 @@
 		          <#if timelineObject.comments??>
 		          <ul>
 		            <#list timelineObject.comments as comment>
-			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE' || comment.type == 'APPROVAL' || comment.type == 'DUE_DATE'>                                                    
+			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION || comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
 			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>
 			           		    <#assign role = "administrator"/> 
+			           		<#elseif comment.user.isInRole('ADMITTER')>
+			           		    <#assign role = "admitter"/> 
 			           		<#elseif comment.user.isInterviewerOfApplicationForm(comment.application)>
 			           		    <#assign role = "interviewer"/> 
 			           		<#elseif comment.user.id == applicationForm.applicant.id>
@@ -189,7 +191,7 @@
             				                </ul>
             							</#if>
             							
-    			                <#if comment.type == 'VALIDATION'>                                                    
+    			                <#if comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT'>                                                    
     			                	<#include "timeline_snippets/validation_comment.ftl"/>
     			                <#elseif comment.type == 'REVIEW'>
     			                	<#include "timeline_snippets/review_comment.ftl"/>

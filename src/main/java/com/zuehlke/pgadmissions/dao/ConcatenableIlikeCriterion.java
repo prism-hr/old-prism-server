@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.hibernate;
+package com.zuehlke.pgadmissions.dao;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;

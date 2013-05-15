@@ -33,20 +33,27 @@ import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 public class GenericCommentController {
 
 	private static final String GENERIC_COMMENT_PAGE = "private/staff/admin/comment/genericcomment";
+	
 	private final ApplicationsService applicationsService;
+	
 	private final UserService userService;
+	
 	private final GenericCommentValidator genericCommentValidator;
+	
 	private final CommentService commentService;
+	
 	private final DocumentPropertyEditor documentPropertyEditor;
 
-	GenericCommentController() {
+	public GenericCommentController() {
 		this(null, null, null, null, null);
 	}
 
-	@Autowired
-	public GenericCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor) {
-		this.applicationsService = applicationsService;
+    @Autowired
+    public GenericCommentController(ApplicationsService applicationsService,
+            UserService userService, CommentService commentService,
+            GenericCommentValidator genericCommentValidator,
+            DocumentPropertyEditor documentPropertyEditor) {
+	this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
 		this.genericCommentValidator = genericCommentValidator;

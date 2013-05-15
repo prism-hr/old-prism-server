@@ -201,13 +201,12 @@ public class UserService {
         return Arrays.asList(newAuthorities).contains(authority);
     }
 
-    public RegisteredUser createNewUserInRole(String firstName, String lastName, String email, Authority authority, DirectURLsEnum directURL,
-            ApplicationForm application) {
+    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, final DirectURLsEnum directURL, final ApplicationForm application, final Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
         if (newUser != null) {
             throw new IllegalStateException(String.format("user with email: %s already exists!", email));
         }
-        newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authority);
+        newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
         setDirectURLAndSaveUser(directURL, application, newUser);
         return newUser;
     }
@@ -219,8 +218,7 @@ public class UserService {
         userDAO.save(newUser);
     }
 
-    public RegisteredUser createNewUserForProgramme(final String firstName, final String lastName, final String email, final Program program,
-            final Authority... authorities) {
+    public RegisteredUser createNewUserForProgramme(final String firstName, final String lastName, final String email, final Program program, final Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
 
         if (newUser != null) {

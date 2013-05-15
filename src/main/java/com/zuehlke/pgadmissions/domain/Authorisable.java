@@ -24,6 +24,10 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
             return true;
         }
         
+        if (isInRole(user, Authority.ADMITTER)) {
+            return true;
+        }
+        
         if (isApplicationAdministrator(form, user)) {
             return true;
         }
@@ -95,6 +99,10 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
         }
 
         return false;
+    }
+    
+    public boolean isApplicationAdmitter(ApplicationForm form, RegisteredUser user) {
+        return form.getAdminRequestedRegistry() != null && user.isInRole(Authority.ADMITTER);
     }
     
     public boolean hasStaffRightsOnApplication(final ApplicationForm form, final RegisteredUser user) {

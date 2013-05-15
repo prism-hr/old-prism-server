@@ -39,7 +39,7 @@ public class ApplicationFormBuilder {
 	private RegisteredUser applicant;
 	private String projectTitle;
 	private String researchHomePage;
-	private Boolean registryUsersNotified;
+	private Boolean registryUsersNotified=false;
 	private Program program;
 	private Date appDate;
 	private Date submittedDate;

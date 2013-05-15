@@ -143,8 +143,7 @@
                   <label id="lbl_projectAbstract" class="plain-label" for="projectAbstract">Project Abstract (ATAS)<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
                   <div class="field">
-                    <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6"  >${(confirmSupervisionDTO.projectAbstract?html)!}
-</textarea>
+                    <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6">${(confirmSupervisionDTO.projectAbstract?html)!}</textarea>
                     <@spring.bind "confirmSupervisionDTO.projectAbstract" />
                     <#list spring.status.errorMessages as error >
                     <div class="alert alert-error"> <i class="icon-warning-sign"></i>

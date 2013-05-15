@@ -42,7 +42,7 @@ public class FieldErrorUtilsTest {
 		expect(mockMessageSource.getMessage(eq("code"), (Object[]) eq(null), eq(Locale.getDefault()))).andReturn("error message").times(2);
 		
 		replay(mockBindingResult, mockMessageSource);
-		Map<String, String> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
+		Map<String, Object> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
 		verify(mockBindingResult, mockMessageSource);
 		
 		assertNotNull(result);
@@ -60,7 +60,7 @@ public class FieldErrorUtilsTest {
 		expect(mockBindingResult.getFieldErrors()).andReturn(fieldErrors);
 		
 		replay(mockBindingResult);
-		Map<String, String> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
+		Map<String, Object> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
 		verify(mockBindingResult);
 		
 		assertNotNull(result);
@@ -80,7 +80,7 @@ public class FieldErrorUtilsTest {
 		expect(mockMessageSource.getMessage(eq("code"), (Object[]) eq(null), eq(Locale.getDefault()))).andReturn("error message").times(1);
 		
 		replay(mockBindingResult, mockMessageSource);
-		Map<String, String> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
+		Map<String, Object> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
 		verify(mockBindingResult, mockMessageSource);
 		
 		assertNotNull(result);

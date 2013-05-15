@@ -236,6 +236,10 @@
 								  <#include "/private/staff/admin/interview_delegation.ftl"/>
 								</div>
 								
+								<div id="approvedDetails" style="display:none">
+								    <#include "/private/staff/admin/approved_details.ftl"/>
+								</div>
+								
 							    <@spring.bind "comment.confirmNextStage" />
 							    <#if spring.status.errorMessages?size &gt; 0>
 						     		<div class="alert alert-error" >

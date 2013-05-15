@@ -186,7 +186,7 @@ public class ValidationTransitionController extends StateTransitionController {
                 || comment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
     }
 
-    @RequestMapping(value = "/getProjectTitles", method = RequestMethod.GET)
+    @RequestMapping(value = "/getProjectTitles", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getProjectTitlesJson(@RequestParam String applicationId, @RequestParam String term) {
         List<String> projectTitles = badgeService.getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(getApplicationForm(applicationId).getProgram(), term);
@@ -200,7 +200,7 @@ public class ValidationTransitionController extends StateTransitionController {
         return gson.toJson(projectTitles);
     }
 
-    @RequestMapping(value = "/getClosingDates", method = RequestMethod.GET)
+    @RequestMapping(value = "/getClosingDates", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getClosingDatesJson(@RequestParam String applicationId) {
         List<Date> allClosingDates = new ArrayList<Date>();

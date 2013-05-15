@@ -137,7 +137,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
 
-    @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST)
+    @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
             BindingResult result, Model model) throws ScoringDefinitionParseException {
@@ -147,7 +147,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
         refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, Object> map = new HashMap<String, Object>();
         if (!result.hasErrors()) {
             refereeService.editReferenceComment(refereesAdminEditDTO);
             map.put("success", "true");

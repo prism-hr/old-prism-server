@@ -81,9 +81,9 @@ public class DelegateToApplicationAdministratorController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, String> delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
+    public Map<String, Object> delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
             @Valid @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer, BindingResult delegatedInterviewerResult) {
-        Map<String, String> result = Maps.newHashMap();
+        Map<String, Object> result = Maps.newHashMap();
 
         if (delegatedInterviewerResult.hasErrors()) {
             result.put("success", "false");

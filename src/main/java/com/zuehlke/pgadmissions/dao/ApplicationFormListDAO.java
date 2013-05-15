@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
-import com.zuehlke.pgadmissions.hibernate.ConcatenableIlikeCriterion;
 
 @Repository
 public class ApplicationFormListDAO {
@@ -70,6 +69,8 @@ public class ApplicationFormListDAO {
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
             criteria.add(getAllApplicationsForSuperAdministrator());
             criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
+        } else if (user.isInRole(Authority.ADMITTER)) {
+            criteria.add(getAllApplicationsWhichNeedRegistryAttention());
         } else {
             Disjunction disjunction = Restrictions.disjunction();
 
@@ -120,6 +121,10 @@ public class ApplicationFormListDAO {
         criteria = setOrderCriteria(sortCategory, sortOrder, criteria);
 
         return criteria.list();
+    }
+
+    private Criterion getAllApplicationsWhichNeedRegistryAttention() {
+        return Restrictions.and(Restrictions.isNotNull("adminRequestedRegistry"));
     }
 
     private Criteria setAliases(final Criteria criteria) {

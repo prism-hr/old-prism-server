@@ -365,6 +365,99 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     }
 
     @Test
+    public void shouldScheduleRegistryRevalidationRequestAndNoReminder() {
+        RegisteredUser registryContactUser1 = new RegisteredUserBuilder().id(564).build();
+        RegisteredUser registryContactUser2 = new RegisteredUserBuilder().id(565).build();
+        Person registryContact1 = new PersonBuilder().email("amanda@mail.com").build();
+        Person registryContact2 = new PersonBuilder().email("mirkos@mail.com").build();
+        
+        ApplicationForm form = getSampleApplicationForm();
+        expect(configurationServiceMock.getAllRegistryUsers()).andReturn(asList(registryContact1, registryContact2));
+        applicationFormDAOMock.save(form);
+        expect(applicationFormDAOMock.getApplicationsDueRevalidationRequest()).andReturn(asList(form));
+        expect(applicationFormDAOMock.getApplicationsDueRevalidationReminder())
+        .andReturn(asList(form));
+        
+        expect(userDAOMock.getUserByEmail("amanda@mail.com")).andReturn(registryContactUser1);
+        expect(userDAOMock.getUserByEmail("mirkos@mail.com")).andReturn(registryContactUser2);
+        
+        userDAOMock.save(registryContactUser1);
+        userDAOMock.save(registryContactUser2);
+        
+        replay(configurationServiceMock, applicationFormDAOMock, userDAOMock);
+        service.scheduleRegistryRevalidationRequestAndReminder();
+        verify(applicationFormDAOMock, configurationServiceMock, userDAOMock);
+        
+        assertEquals(DigestNotificationType.TASK_NOTIFICATION, registryContactUser1.getDigestNotificationType());
+        assertEquals(DigestNotificationType.TASK_NOTIFICATION, registryContactUser2.getDigestNotificationType());
+        assertNotNull(form.getNotificationForType(NotificationType.REPEAT_VALIDATION_REQUEST));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldScheduleRegistryRevalidationReminderAndnoRequest() {
+        RegisteredUser registryContactUser1 = new RegisteredUserBuilder().id(564).build();
+        RegisteredUser registryContactUser2 = new RegisteredUserBuilder().id(565).build();
+        Person registryContact1 = new PersonBuilder().email("amanda@mail.com").build();
+        Person registryContact2 = new PersonBuilder().email("mirkos@mail.com").build();
+        
+        ApplicationForm form = getSampleApplicationForm();
+        expect(configurationServiceMock.getAllRegistryUsers()).andReturn(asList(registryContact1, registryContact2));
+        applicationFormDAOMock.save(form);
+        expect(applicationFormDAOMock.getApplicationsDueRevalidationRequest()).andReturn(Collections.EMPTY_LIST);
+        expect(applicationFormDAOMock.getApplicationsDueRevalidationReminder())
+        .andReturn(asList(form));
+        
+        expect(userDAOMock.getUserByEmail("amanda@mail.com")).andReturn(registryContactUser1);
+        expect(userDAOMock.getUserByEmail("mirkos@mail.com")).andReturn(registryContactUser2);
+        
+        userDAOMock.save(registryContactUser1);
+        userDAOMock.save(registryContactUser2);
+        
+        replay(configurationServiceMock, applicationFormDAOMock, userDAOMock);
+        service.scheduleRegistryRevalidationRequestAndReminder();
+        verify(applicationFormDAOMock, configurationServiceMock, userDAOMock);
+        
+        assertEquals(DigestNotificationType.TASK_REMINDER, registryContactUser1.getDigestNotificationType());
+        assertEquals(DigestNotificationType.TASK_REMINDER, registryContactUser2.getDigestNotificationType());
+        assertNotNull(form.getNotificationForType(NotificationType.REPEAT_VALIDATION_REMINDER));
+    }
+    
+    @Test
+    public void shouldScheduleRegistryRevalidationReminderAndnoRequest2() {
+        RegisteredUser registryContactUser1 = new RegisteredUserBuilder().id(564).build();
+        RegisteredUser registryContactUser2 = new RegisteredUserBuilder().id(565).build();
+        Person registryContact1 = new PersonBuilder().email("amanda@mail.com").build();
+        Person registryContact2 = new PersonBuilder().email("mirkos@mail.com").build();
+        
+        ApplicationForm form1 = getSampleApplicationForm();
+        ApplicationForm form2 = getSampleApplicationForm();
+        form2.setId(986786);
+        expect(configurationServiceMock.getAllRegistryUsers()).andReturn(asList(registryContact1, registryContact2));
+        applicationFormDAOMock.save(form1);
+        applicationFormDAOMock.save(form2);
+        expect(applicationFormDAOMock.getApplicationsDueRevalidationRequest()).andReturn(asList(form1));
+        expect(applicationFormDAOMock.getApplicationsDueRevalidationReminder()).andReturn(asList(form1, form2));
+        
+        expect(userDAOMock.getUserByEmail("amanda@mail.com")).andReturn(registryContactUser1).times(2);
+        expect(userDAOMock.getUserByEmail("mirkos@mail.com")).andReturn(registryContactUser2).times(2);
+        
+        userDAOMock.save(registryContactUser1);
+        expectLastCall().times(2);
+        userDAOMock.save(registryContactUser2);
+        expectLastCall().times(2);
+        
+        replay(configurationServiceMock, applicationFormDAOMock, userDAOMock);
+        service.scheduleRegistryRevalidationRequestAndReminder();
+        verify(applicationFormDAOMock, configurationServiceMock, userDAOMock);
+        
+        assertEquals(DigestNotificationType.TASK_REMINDER, registryContactUser1.getDigestNotificationType());
+        assertEquals(DigestNotificationType.TASK_REMINDER, registryContactUser2.getDigestNotificationType());
+        assertNotNull(form1.getNotificationForType(NotificationType.REPEAT_VALIDATION_REQUEST));
+        assertNotNull(form2.getNotificationForType(NotificationType.REPEAT_VALIDATION_REMINDER));
+    }
+    
+    @Test
     public void shouldScheduleInterviewFeedbackRequestAndNoReminder() {
         RegisteredUser interviewerUser1 = new RegisteredUserBuilder().id(564).build();
         RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(565).build();
@@ -1360,7 +1453,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         assertEquals(subjectToReturn, message.getSubjectCode());
         assertModelEquals(model, message.getModel());
 
-        assertFalse(form.getRegistryUsersDueNotification());
+        assertFalse(form.isRegistryUsersDueNotification());
     }
 
     @Test

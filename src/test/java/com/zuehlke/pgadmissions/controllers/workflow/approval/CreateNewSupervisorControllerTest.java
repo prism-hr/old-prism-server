@@ -43,7 +43,7 @@ public class CreateNewSupervisorControllerTest {
 		RegisteredUser suggestedUser = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
 		RegisteredUser user = new RegisteredUserBuilder().id(6).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, application, Authority.SUPERVISOR)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		ModelAndView modelAndView = controller.createNewSupervisorUser(suggestedUser, bindingResultMock, application);

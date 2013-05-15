@@ -106,6 +106,202 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertEquals(inApplication.getId(), reloadedApplication.getId());
 		assertEquals(inApplication.getApplicant().getId(), user.getId());
 	}
+	
+	@Test
+	public void shouldReturnApplicationsDueRevalidationRequest() {
+	    ApplicationForm form1 = new ApplicationFormBuilder()
+	        .applicant(user)
+	        .program(program)
+	        .registryUsersDueNotification(true)
+	        .status(ApplicationFormStatus.REVIEW)
+	        .build();
+	    ApplicationForm form2 = new ApplicationFormBuilder()
+	        .applicant(user)
+	        .program(program)
+    	    .registryUsersDueNotification(false)
+    	    .status(ApplicationFormStatus.REVIEW)
+    	    .build();
+	    NotificationRecord record = new NotificationRecord(NotificationType.REPEAT_VALIDATION_REQUEST);
+	    ApplicationForm form3 = new ApplicationFormBuilder()
+	        .applicant(user)
+	        .program(program)
+    	    .registryUsersDueNotification(true)
+    	    .notificationRecords(record)
+    	    .status(ApplicationFormStatus.REVIEW)
+    	    .build();
+	    
+	    save(form1, form2, form3);
+	    flushAndClearSession();
+	    List<ApplicationForm> result = applicationDAO.getApplicationsDueRevalidationRequest();
+	    
+	    assertTrue(listContainsId(form1, result));
+	    assertFalse(listContainsId(form2, result));
+	    assertFalse(listContainsId(form3, result));
+	    
+	}
+	
+	@Test
+	public void shouldReturnNoApplicationsDueRevalidationRequest() {
+	    ApplicationForm form1 = new ApplicationFormBuilder()
+    	    .applicant(user)
+    	    .program(program)
+    	    .registryUsersDueNotification(true)
+    	    .status(ApplicationFormStatus.REJECTED)
+    	    .build();
+	    ApplicationForm form2 = new ApplicationFormBuilder()
+    	    .applicant(user)
+    	    .program(program)
+    	    .registryUsersDueNotification(false)
+    	    .status(ApplicationFormStatus.REVIEW)
+    	    .build();
+	    NotificationRecord record = new NotificationRecord(NotificationType.REPEAT_VALIDATION_REQUEST);
+	    ApplicationForm form3 = new ApplicationFormBuilder()
+    	    .applicant(user)
+    	    .program(program)
+    	    .registryUsersDueNotification(true)
+    	    .notificationRecords(record)
+    	    .status(ApplicationFormStatus.REVIEW)
+    	    .build();
+	    
+	    save(form1, form2, form3);
+	    flushAndClearSession();
+	    List<ApplicationForm> result = applicationDAO.getApplicationsDueRevalidationRequest();
+	    
+	    assertFalse(listContainsId(form1, result));
+	    assertFalse(listContainsId(form2, result));
+	    assertFalse(listContainsId(form3, result));
+	    
+	}
+	
+	@Test
+	public void shouldReturnNoApplicationsDueRevalidationReminder() {
+	    ReminderInterval reminderInterval = new ReminderInterval();
+	    reminderInterval.setId(1);
+        reminderInterval.setDuration(2);
+        reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+        
+        Date notificationDate = new DateTime(new Date()).minusMinutes(1).toDate();
+        
+        sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+	    
+	    ApplicationForm form1 = new ApplicationFormBuilder()
+    	    .applicant(user)
+    	    .program(program)
+    	    .registryUsersDueNotification(true)
+    	    .status(ApplicationFormStatus.REJECTED)
+    	    .build();
+	    ApplicationForm form2 = new ApplicationFormBuilder()
+    	    .applicant(user)
+    	    .program(program)
+    	    .registryUsersDueNotification(false)
+    	    .status(ApplicationFormStatus.REVIEW)
+    	    .build();
+        NotificationRecord record = new NotificationRecordBuilder()
+	        .notificationType(NotificationType.REPEAT_VALIDATION_REMINDER)
+	        .notificationDate(notificationDate).build();
+	    ApplicationForm form3 = new ApplicationFormBuilder()
+    	    .applicant(user)
+    	    .program(program)
+    	    .registryUsersDueNotification(true)
+    	    .notificationRecords(record)
+    	    .status(ApplicationFormStatus.REVIEW)
+    	    .build();
+	    
+	    save(form1, form2, form3);
+	    flushAndClearSession();
+	    List<ApplicationForm> result = applicationDAO.getApplicationsDueRevalidationReminder();
+	    
+	    assertFalse(listContainsId(form1, result));
+	    assertFalse(listContainsId(form2, result));
+	    assertFalse(listContainsId(form3, result));
+	    
+	}
+	
+	@Test
+	public void shouldReturnApplicationsDueRevalidationReminderThatHaveOverDueReminder() {
+	    ReminderInterval reminderInterval = new ReminderInterval();
+	    reminderInterval.setId(1);
+	    reminderInterval.setDuration(2);
+	    reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+	    
+	    Date notificationDate = new DateTime(new Date()).minusMinutes(4).toDate();
+	    
+	    sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+	    
+	    ApplicationForm form1 = new ApplicationFormBuilder()
+	    .applicant(user)
+	    .program(program)
+	    .registryUsersDueNotification(true)
+	    .status(ApplicationFormStatus.REJECTED)
+	    .build();
+	    ApplicationForm form2 = new ApplicationFormBuilder()
+	    .applicant(user)
+	    .program(program)
+	    .registryUsersDueNotification(false)
+	    .status(ApplicationFormStatus.REVIEW)
+	    .build();
+	    NotificationRecord record = new NotificationRecordBuilder()
+	    .notificationType(NotificationType.REPEAT_VALIDATION_REMINDER)
+	    .notificationDate(notificationDate).build();
+	    ApplicationForm form3 = new ApplicationFormBuilder()
+	    .applicant(user)
+	    .program(program)
+	    .registryUsersDueNotification(true)
+	    .notificationRecords(record)
+	    .status(ApplicationFormStatus.REVIEW)
+	    .build();
+	    
+	    save(form1, form2, form3);
+	    flushAndClearSession();
+	    List<ApplicationForm> result = applicationDAO.getApplicationsDueRevalidationReminder();
+	    
+	    assertFalse(listContainsId(form1, result));
+	    assertFalse(listContainsId(form2, result));
+	    assertTrue(listContainsId(form3, result));
+	}
+	
+	@Test
+	public void shouldReturnApplicationsDueRevalidationReminderThatHaveNoReminder() {
+	    ReminderInterval reminderInterval = new ReminderInterval();
+	    reminderInterval.setId(1);
+	    reminderInterval.setDuration(2);
+	    reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+	    
+	    Date notificationDate = new DateTime(new Date()).minusMinutes(1).toDate();
+	    
+	    sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+	    
+	    ApplicationForm form1 = new ApplicationFormBuilder()
+	    .applicant(user)
+	    .program(program)
+	    .registryUsersDueNotification(true)
+	    .status(ApplicationFormStatus.REVIEW)
+	    .build();
+	    ApplicationForm form2 = new ApplicationFormBuilder()
+	    .applicant(user)
+	    .program(program)
+	    .registryUsersDueNotification(false)
+	    .status(ApplicationFormStatus.REVIEW)
+	    .build();
+	    NotificationRecord record = new NotificationRecordBuilder()
+	    .notificationType(NotificationType.REPEAT_VALIDATION_REMINDER)
+	    .notificationDate(notificationDate).build();
+	    ApplicationForm form3 = new ApplicationFormBuilder()
+	    .applicant(user)
+	    .program(program)
+	    .registryUsersDueNotification(false)
+	    .notificationRecords(record)
+	    .status(ApplicationFormStatus.REVIEW)
+	    .build();
+	    
+	    save(form1, form2, form3);
+	    flushAndClearSession();
+	    List<ApplicationForm> result = applicationDAO.getApplicationsDueRevalidationReminder();
+	    
+	    assertTrue(listContainsId(form1, result));
+	    assertFalse(listContainsId(form2, result));
+	    assertFalse(listContainsId(form3, result));
+	}
 
 	@Test
 	public void shouldFindAllQualificationsBelongingToSameApplication() throws ParseException {

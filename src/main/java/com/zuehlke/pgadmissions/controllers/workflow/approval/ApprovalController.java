@@ -467,7 +467,7 @@ public class ApprovalController {
 		RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
 		if (possibleUser == null) {
 			possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
-			                Authority.SUPERVISOR, DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm);
+			                DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm, Authority.SUPERVISOR);
 		}
 		return possibleUser;
 	}

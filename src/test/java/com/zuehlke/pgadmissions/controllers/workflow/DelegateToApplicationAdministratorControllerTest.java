@@ -107,8 +107,8 @@ public class DelegateToApplicationAdministratorControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("cs@zuhlke.com")).andReturn(null);
         EasyMock.expect(
-                userServiceMock.createNewUserInRole("Claudia", "Scanduro", "cs@zuhlke.com", Authority.INTERVIEWER,
-                        DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm)).andReturn(applicationAdmin);
+                userServiceMock.createNewUserInRole("Claudia", "Scanduro", "cs@zuhlke.com", DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW,
+                        applicationForm, Authority.INTERVIEWER)).andReturn(applicationAdmin);
         applicationServiceMock.delegateInterviewAdministration(applicationForm, applicationAdmin);
 
         EasyMock.replay(userServiceMock, applicationServiceMock);

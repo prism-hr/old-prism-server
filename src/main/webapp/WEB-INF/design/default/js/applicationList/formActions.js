@@ -289,7 +289,7 @@ $(document).ready(function() {
 			if(existingFilter.find(".filterInput").val()!=""){
 				$('#search-go').click();
 			}
-			existingFilter.parent().remove();
+			existingFilter.remove();
 		}
 	});
 

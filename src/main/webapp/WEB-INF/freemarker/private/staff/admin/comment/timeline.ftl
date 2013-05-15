@@ -135,11 +135,13 @@
 		          <#if timelineObject.comments??>
 		          <ul>
 		            <#list timelineObject.comments as comment>
-			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE'>                                                    
+			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
 			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>
 			           		    <#assign role = "administrator"/> 
+			           		<#elseif comment.user.isInRole('ADMITTER')>
+			           		    <#assign role = "admitter"/> 
 			           		<#elseif comment.user.isInterviewerOfApplicationForm(comment.application)>
 			           		    <#assign role = "interviewer"/> 
 			           		<#elseif comment.user.id == applicationForm.applicant.id>
@@ -189,7 +191,7 @@
     				                </#list>
     				                </ul>
     							</#if>
-    			                <#if comment.type == 'VALIDATION'>                                                    
+    			                <#if comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT'>                                                    
     			                	<#include "timeline_snippets/validation_comment.ftl"/>
     			                <#elseif comment.type == 'REVIEW'>
     			                	<#include "timeline_snippets/review_comment.ftl"/>

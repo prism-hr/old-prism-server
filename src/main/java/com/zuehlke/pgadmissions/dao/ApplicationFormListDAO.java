@@ -66,12 +66,10 @@ public class ApplicationFormListDAO {
         criteria.setReadOnly(true);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+        if (user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMITTER)) {
             criteria.add(getAllApplicationsForSuperAdministrator());
             criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
-        } else if (user.isInRole(Authority.ADMITTER)) {
-            criteria.add(getAllApplicationsWhichNeedRegistryAttention());
-        } else {
+        }  else {
             Disjunction disjunction = Restrictions.disjunction();
 
             if (user.isInRole(Authority.APPLICANT)) {
@@ -121,10 +119,6 @@ public class ApplicationFormListDAO {
         criteria = setOrderCriteria(sortCategory, sortOrder, criteria);
 
         return criteria.list();
-    }
-
-    private Criterion getAllApplicationsWhichNeedRegistryAttention() {
-        return Restrictions.and(Restrictions.isNotNull("adminRequestedRegistry"));
     }
 
     private Criteria setAliases(final Criteria criteria) {

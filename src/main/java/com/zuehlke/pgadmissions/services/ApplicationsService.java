@@ -163,27 +163,20 @@ public class ApplicationsService {
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.VALIDATION)) {
             if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
-            } else {
+            } else if (user.isNotInRole(Authority.ADMITTER)){
                 actions.addAction("validate", "Validate");
             }
         }
         
-        if (user.isInRole(Authority.ADMITTER)) {
-            actions.addAction("validate", "Validate");
-            if (application.getAdminRequestedRegistry() != null && (application.isNotInState(ApplicationFormStatus.WITHDRAWN) && application.isNotInState(ApplicationFormStatus.REJECTED))) {
-                actions.setRequiresAttention(true);
-            }
-        }
-
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.REVIEW)) {
             if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
-            } else {
+            } else if (user.isNotInRole(Authority.ADMITTER)) {
                 actions.addAction("validate", "Evaluate reviews");
             }
         }
 
-        if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.INTERVIEW)) {
+        if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && user.isNotInRole(Authority.ADMITTER)) {
             if (interview.isScheduled()) {
                 if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                     actions.addAction("validate", "Administer Interview");
@@ -194,6 +187,15 @@ public class ApplicationsService {
             if (interview.isScheduling()) {
                 actions.addAction("interviewConfirm", "Confirm interview time");
                 actions.setRequiresAttention(true);
+            }
+        }
+        
+        if (user.isInRole(Authority.ADMITTER)) {
+            actions.addAction("validate", "Confirm Eligibility");
+            if (application.getAdminRequestedRegistry() != null && (application.isNotInState(ApplicationFormStatus.WITHDRAWN) && application.isNotInState(ApplicationFormStatus.REJECTED))) {
+                actions.setRequiresAttention(true);
+            }else {
+                actions.setRequiresAttention(false);
             }
         }
 

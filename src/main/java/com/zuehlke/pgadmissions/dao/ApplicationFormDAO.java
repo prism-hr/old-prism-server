@@ -265,7 +265,7 @@ public class ApplicationFormDAO {
 	    return sessionFactory
 	            .getCurrentSession()
 	            .createCriteria(ApplicationForm.class, "applicationForm")
-	            .add(Restrictions.eq("registryUsersDueNotification", true))
+	            .add(Restrictions.isNotNull("adminRequestedRegistry"))
 	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
 	            .add(Subqueries.notExists(revalidationNotificationCriteria.setProjection(Projections
 	                    .property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
@@ -297,7 +297,7 @@ public class ApplicationFormDAO {
 	    return sessionFactory
 	            .getCurrentSession()
 	            .createCriteria(ApplicationForm.class, "applicationForm")
-	            .add(Restrictions.eq("registryUsersDueNotification", true))
+	            .add(Restrictions.isNotNull("adminRequestedRegistry"))
 	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
 	            .add(Restrictions.or(Subqueries.exists(overDueRemindersCriteria.setProjection(Projections
                         .property("notificationRecord.id"))), Subqueries.notExists(revalidationReminderCriteria

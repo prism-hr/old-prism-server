@@ -7,6 +7,7 @@ import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Component
 public class StateChangeValidator extends AbstractValidator {
@@ -33,12 +34,14 @@ public class StateChangeValidator extends AbstractValidator {
 
         StateChangeComment comment = (StateChangeComment) target;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
-        if (comment.getNextStatus() == null) {
-            errors.rejectValue("nextStatus", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        }
-
-        if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
-            errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
+        if (comment.getType() != CommentType.ADMITTER_COMMENT) {
+            if (comment.getNextStatus() == null) {
+                errors.rejectValue("nextStatus", EMPTY_DROPDOWN_ERROR_MESSAGE);
+            }
+    
+            if (BooleanUtils.isNotTrue(comment.getConfirmNextStage())) {
+                errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
+            }
         }
     }
 

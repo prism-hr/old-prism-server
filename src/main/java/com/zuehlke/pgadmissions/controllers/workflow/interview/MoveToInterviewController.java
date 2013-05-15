@@ -207,7 +207,7 @@ public class MoveToInterviewController {
         RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
         if (possibleUser == null) {
             possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
-                    Authority.REVIEWER, null, applicationForm);
+                    null, applicationForm, Authority.REVIEWER);
         }
         return possibleUser;
     }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
@@ -1054,6 +1055,37 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
         return true;
     }
+    
+    @Transactional
+    public void scheduleRegistryRevalidationRequestAndReminder() {
+        Set<Integer> idsForWitchRequestHasBeenFired = new HashSet<Integer>();
+        List<Person> registryContacts = configurationService.getAllRegistryUsers();
+        List<ApplicationForm> forms = applicationDAO.getApplicationsDueRevalidationRequest();
+        for (ApplicationForm form : forms) {
+            idsForWitchRequestHasBeenFired.add(form.getId());
+            createNotificationRecordIfNotExists(form, NotificationType.REPEAT_VALIDATION_REQUEST);
+            CollectionUtils.forAllDo(registryContacts, new Closure() {
+                @Override
+                public void execute(final Object person) {
+                    RegisteredUser user = userDAO.getUserByEmail(((Person)person).getEmail());
+                    setDigestNotificationType(user, DigestNotificationType.TASK_NOTIFICATION);
+                }
+            });
+        }
+        forms = applicationDAO.getApplicationsDueRevalidationReminder();
+        for (ApplicationForm form : forms) {
+            if (!idsForWitchRequestHasBeenFired.contains(form.getId())) {
+                createNotificationRecordIfNotExists(form, NotificationType.REPEAT_VALIDATION_REMINDER);
+                CollectionUtils.forAllDo(registryContacts, new Closure() {
+                    @Override
+                    public void execute(final Object person) {
+                        RegisteredUser user = userDAO.getUserByEmail(((Person)person).getEmail());
+                        setDigestNotificationType(user, DigestNotificationType.TASK_REMINDER);
+                    }
+                });
+            }
+        }
+    }
 
     /**
      * <p>
@@ -1094,7 +1126,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             applicationContext.getBean(this.getClass()).sendValidationRequestToRegistry(applicationForm);
         }
     }
-
+    
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendValidationRequestToRegistry(Integer applicationFormId) {
         PrismEmailMessage message = null;

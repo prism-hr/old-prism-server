@@ -50,14 +50,23 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class UserServiceTest {
 
     private UserDAO userDAOMock;
+    
     private RegisteredUser currentUser;
+    
     private UserService userService;
+    
     private RoleDAO roleDAOMock;
+    
     private ApplicationsFilterDAO applicationsFilterDAOMock;
+    
     private UserService userServiceWithCurrentUserOverride;
+    
     private RegisteredUser currentUserMock;
+    
     private UserFactory userFactoryMock;
+    
     private EncryptionUtils encryptionUtilsMock;
+    
     private MailSendingService mailServiceMock;
 
 	@Test
@@ -552,7 +561,7 @@ public class UserServiceTest {
 
 		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(existingUser);
 		EasyMock.replay(userDAOMock);
-		userService.createNewUserInRole("la", "le", "some@email.com", Authority.APPROVER, null, null);
+		userService.createNewUserInRole("la", "le", "some@email.com", null, null, Authority.APPROVER);
 	}
 
 	@Test
@@ -566,8 +575,7 @@ public class UserServiceTest {
 
 		EasyMock.replay(userDAOMock, userFactoryMock);
 
-		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole("la", "le",
-				"some@email.com", Authority.REVIEWER, null, null);
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole("la", "le", "some@email.com", null, null, Authority.REVIEWER);
 
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);
@@ -591,9 +599,7 @@ public class UserServiceTest {
 
 		EasyMock.replay(userDAOMock, userFactoryMock);
 
-		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole("la", "le",
-				"some@email.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, new ApplicationFormBuilder().id(1)
-						.applicationNumber("bob").build());
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole("la", "le", "some@email.com", DirectURLsEnum.ADD_REVIEW, new ApplicationFormBuilder().id(1).applicationNumber("bob").build(), Authority.REVIEWER);
 
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);
@@ -618,9 +624,7 @@ public class UserServiceTest {
 
 		EasyMock.replay(userDAOMock, userFactoryMock);
 
-		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole("la", "le",
-				"some@email.com", Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW,
-				new ApplicationFormBuilder().id(1).applicationNumber("bob").build());
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole("la", "le", "some@email.com", DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, new ApplicationFormBuilder().id(1).applicationNumber("bob").build(), Authority.INTERVIEWER);
 
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);

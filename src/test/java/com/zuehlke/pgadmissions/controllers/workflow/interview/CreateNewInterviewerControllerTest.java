@@ -43,7 +43,7 @@ public class CreateNewInterviewerControllerTest {
 		RegisteredUser suggestedUser = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
 		RegisteredUser user = new RegisteredUserBuilder().id(6).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, application, Authority.INTERVIEWER)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		ModelAndView modelAndView = controller.createNewInterviewerUser(suggestedUser, bindingResultMock, application);

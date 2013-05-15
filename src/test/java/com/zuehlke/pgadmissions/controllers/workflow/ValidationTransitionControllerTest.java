@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
@@ -484,7 +483,7 @@ public class ValidationTransitionControllerTest {
         
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
         
-        assertTrue(BooleanUtils.isTrue(applicationForm.getRegistryUsersDueNotification()));
+        assertTrue(BooleanUtils.isTrue(applicationForm.isRegistryUsersDueNotification()));
 	}
 	
 	@Test
@@ -541,7 +540,7 @@ public class ValidationTransitionControllerTest {
         
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
         
-        assertTrue(BooleanUtils.isTrue(applicationForm.getRegistryUsersDueNotification()));
+        assertTrue(BooleanUtils.isTrue(applicationForm.isRegistryUsersDueNotification()));
 	}
 	
 	@Test
@@ -598,7 +597,7 @@ public class ValidationTransitionControllerTest {
         
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
         
-        assertTrue(BooleanUtils.isTrue(applicationForm.getRegistryUsersDueNotification()));
+        assertTrue(BooleanUtils.isTrue(applicationForm.isRegistryUsersDueNotification()));
 	}
 	
 	@Test
@@ -653,7 +652,7 @@ public class ValidationTransitionControllerTest {
 	        
 	        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
 	        
-	        assertFalse(BooleanUtils.isFalse(applicationForm.getRegistryUsersDueNotification()));
+	        assertTrue(BooleanUtils.isFalse(applicationForm.isRegistryUsersDueNotification()));
     }
     
     @Test
@@ -708,7 +707,7 @@ public class ValidationTransitionControllerTest {
         
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
         
-        assertFalse(BooleanUtils.isFalse(applicationForm.getRegistryUsersDueNotification()));
+        assertTrue(BooleanUtils.isFalse(applicationForm.isRegistryUsersDueNotification()));
     }
     
     @Test
@@ -763,7 +762,7 @@ public class ValidationTransitionControllerTest {
         
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
         
-        assertFalse(BooleanUtils.isFalse(applicationForm.getRegistryUsersDueNotification()));
+        assertTrue(BooleanUtils.isFalse(applicationForm.isRegistryUsersDueNotification()));
         
     }
 	

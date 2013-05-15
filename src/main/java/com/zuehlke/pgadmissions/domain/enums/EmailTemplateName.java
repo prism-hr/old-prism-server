@@ -7,6 +7,7 @@ public enum EmailTemplateName {
 	INTERVIEWER_NOTIFICATION("Interview Confirmation - Staff"),
 	INTERVIEW_VOTE_NOTIFICATION("Interview Scheduling Request"),
 	INTERVIEW_VOTE_REMINDER("Interview Scheduling Reminder"),
+	INTERVIEW_VOTE_CONFIRMATION("Interview Availability Confirmation"),
 	NEW_PASSWORD_CONFIRMATION("New Password Confirmation"),//send on event
 	REGISTRY_VALIDATION_REQUEST("Eligibility Assessment Request"),
 	REGISTRATION_CONFIRMATION("Confirmation of Registration"),

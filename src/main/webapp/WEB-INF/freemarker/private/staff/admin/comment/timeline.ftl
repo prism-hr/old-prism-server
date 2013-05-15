@@ -15,7 +15,9 @@
 		        <li class="${timelineObject.type}">
 		          <div class="box">
 		            <div class="title">
-		              <span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
+		              <span class="icon-role 
+		              <#if timelineObject.userCapacity == 'admin'>administrator
+		              <#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
 		              <#if timelineObject.type == 'reference' && timelineObject.referee?? && timelineObject.referee.reference?? && timelineObject.referee.reference.providedBy??>
 		                  <#assign comment = timelineObject.referee.reference/>
                           <span class="name">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
@@ -135,7 +137,7 @@
 		          <#if timelineObject.comments??>
 		          <ul>
 		            <#list timelineObject.comments as comment>
-			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION || comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE'>                                                    
+			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
 			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>

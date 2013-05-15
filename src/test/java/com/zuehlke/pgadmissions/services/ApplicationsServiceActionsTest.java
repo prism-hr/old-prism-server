@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
@@ -102,7 +101,6 @@ public class ApplicationsServiceActionsTest {
     public void shouldBeAbleToInterviewIfAdminAndInterviewStage() {
         configureUserAndApplicationExpectations(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, ApplicationFormStatus.INTERVIEW);
-        expect(applicationMock.getApplicationAdministrator()).andReturn(null);
         ActionsDefinitions actionsDefinition = executeGetActionsDefinitions();
         assertActionsDefinition(actionsDefinition, false, new String[] { "validate", "comment", "emailApplicant" }, new String[] { "Evaluate interview feedback", "Comment", "Email applicant" });
     }
@@ -267,7 +265,8 @@ public class ApplicationsServiceActionsTest {
         EasyMock.expect(applicationMock.isWithdrawn()).andReturn(isWithdrawn).anyTimes();
         EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(isPendingApprovalRestart).anyTimes();
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(new InterviewBuilder().stage(InterviewStage.SCHEDULED).build()).anyTimes();
-
+        EasyMock.expect(applicationMock.getApplicationAdministrator()).andReturn(null).anyTimes();
+        
         Supervisor supervisor = new SupervisorBuilder().isPrimary(true).confirmedSupervision(isSupervisionConfirmed).build();
         if (isSupervisor) {
             supervisor.setUser(userMock);

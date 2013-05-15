@@ -148,6 +148,21 @@ public class InterviewCommentControllerTest {
         EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
         controller.getApplicationForm("5");
     }
+    
+    @Test(expected = ActionNoLongerRequiredException.class)
+    public void shouldThrowExceptionIfApplicationHasBeenDelegated() {
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).applicationAdministrator(new RegisteredUser()).build();
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        controller.getApplicationForm("5");
+    }
 
     @Test
     public void shouldReturnGenericCommentPage() {

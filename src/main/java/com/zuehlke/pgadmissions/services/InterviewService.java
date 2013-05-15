@@ -109,6 +109,8 @@ public class InterviewService {
         interviewParticipant.setResponded(true);
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
+        
+        mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 
     public void confirmInterview(Interview interview, Integer timeslotId) {

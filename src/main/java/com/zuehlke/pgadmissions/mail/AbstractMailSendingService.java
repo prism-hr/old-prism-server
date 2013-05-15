@@ -164,6 +164,17 @@ public abstract class AbstractMailSendingService {
         return Collections.emptyList();
     }
 
+    protected Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm application) {
+        return application.getProgram().getAdministrators();
+    }
+
+    protected Collection<RegisteredUser> getApplicationOrProgramAdministrators(final ApplicationForm application) {
+        if (application.getApplicationAdministrator() != null) {
+            return Collections.singleton(application.getApplicationAdministrator());
+        }
+        return getProgramAdministrators(application);
+    }
+
     protected PrismEmailMessage buildMessage(RegisteredUser recipient, String subject, Map<String, Object> model, EmailTemplateName templateName) {
         return buildMessage(recipient, null, subject, model, templateName);
     }

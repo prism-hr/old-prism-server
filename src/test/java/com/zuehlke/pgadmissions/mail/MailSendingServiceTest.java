@@ -1110,6 +1110,42 @@ public class MailSendingServiceTest {
         assertEquals(subjectToReturn, message.getSubjectCode());
         assertModelEquals(model2, message.getModel());
     }
+    
+    @Test
+    public void shouldSendInterviewVoteConfirmationToAdministrators() {
+        ApplicationForm form = getSampleApplicationForm();
+        RegisteredUser admin1 = form.getProgram().getAdministrators().get(0);
+        RegisteredUser admin2 = form.getProgram().getAdministrators().get(1);
+        InterviewParticipant participant1 = new InterviewParticipantBuilder().user(admin1).build();
+        Interview interview = new InterviewBuilder().application(form).participants(participant1).build();
+        participant1.setInterview(interview);
+
+        Map<String, Object> model1 = new HashMap<String, Object>();
+        model1.put("administrator", admin2);
+        model1.put("application", form);
+        model1.put("participant", participant1);
+        model1.put("host", HOST);
+
+        String subjectToReturn = SAMPLE_APPLICANT_NAME + " " + SAMPLE_APPLICANT_SURNAME + " Application " + SAMPLE_APPLICATION_NUMBER + " for UCL "
+                + SAMPLE_PROGRAM_TITLE + " - Interview Confirmation";
+        expect(
+                mockMailSender.resolveSubject(EmailTemplateName.INTERVIEW_VOTE_CONFIRMATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME,
+                        SAMPLE_APPLICANT_SURNAME)).andReturn(subjectToReturn);
+
+        Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
+        mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+
+        replay(mockMailSender);
+        service.sendInterviewVoteConfirmationToAdministrators(participant1);
+        verify(mockMailSender);
+
+        PrismEmailMessage message = messageCaptor.getValues().get(0);
+        assertNotNull(message.getTo());
+        assertEquals(1, message.getTo().size());
+        assertEquals((Integer) 3, message.getTo().get(0).getId());
+        assertEquals(subjectToReturn, message.getSubjectCode());
+        assertModelEquals(model1, message.getModel());
+    }
 
 	protected void assertModelEquals(Map<String, Object> expected, Map<String, Object> actual) {
 		assertEquals("The size of the expected and actual models don't match",
@@ -1127,15 +1163,15 @@ public class MailSendingServiceTest {
 				.firstName(SAMPLE_APPLICANT_NAME)
 				.lastName(SAMPLE_APPLICANT_SURNAME)
 				.build();
-		RegisteredUser applicant1 = new RegisteredUserBuilder().id(2)
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(2)
 				.email(SAMPLE_ADMIN1_EMAIL_ADDRESS)
 				.build();
-		RegisteredUser applicant2 = new RegisteredUserBuilder().id(3)
+		RegisteredUser admin2 = new RegisteredUserBuilder().id(3)
 				.email(SAMPLE_ADMIN2_EMAIL_ADDRESS)
 				.build();
 		Program program = new ProgramBuilder().id(4)
 				.title(SAMPLE_PROGRAM_TITLE)
-				.administrators(applicant1, applicant2)
+				.administrators(admin1, admin2)
 				.build();
 		ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(5)
 				.build();

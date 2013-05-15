@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATIO
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
@@ -82,7 +83,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending reference request mail: ", e.getCause(), message);
+            throw new PrismMailMessageException("Error while sending reference request mail: ", e, message);
         }
     }
 
@@ -174,7 +175,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(applicant, subject, model, APPLICATION_SUBMIT_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending submission confirmation to applicant: ", e.getCause(), message);
+            throw new PrismMailMessageException("Error while sending submission confirmation to applicant: ", e, message);
         }
     }
 
@@ -240,7 +241,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending rejection confirmation to applicant: ", e.getCause(), message);
+            throw new PrismMailMessageException("Error while sending rejection confirmation to applicant: ", e, message);
         }
     }
 
@@ -303,7 +304,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending approved notification email to applicant: ", e.getCause(), message);
+            throw new PrismMailMessageException("Error while sending approved notification email to applicant: ", e, message);
         }
     }
 
@@ -353,7 +354,7 @@ public class MailSendingService extends AbstractMailSendingService {
                 sendEmail(message);
             } catch (Exception e) {
                 log.error(e.getMessage());
-                throw new PrismMailMessageException("Error while sending interview confirmation email to interviewer: ", e.getCause(), message);
+                throw new PrismMailMessageException("Error while sending interview confirmation email to interviewer: ", e, message);
             }
         }
     }
@@ -440,6 +441,32 @@ public class MailSendingService extends AbstractMailSendingService {
     }
 
     /**
+     * @param participant
+     *            interview participant who has posted a vote.
+     */
+    public void sendInterviewVoteConfirmationToAdministrators(InterviewParticipant participant) {
+        Interview interview = participant.getInterview();
+        ApplicationForm application = interview.getApplication();
+        Collection<RegisteredUser> administrators = getApplicationOrProgramAdministrators(application);
+
+        PrismEmailMessage message = null;
+        String subject = resolveMessage(INTERVIEW_VOTE_CONFIRMATION, application);
+        for (RegisteredUser administrator : administrators) {
+            if(administrator.getId() == participant.getUser().getId()){
+                continue; // administrator has voted himself, no need to notify him
+            }
+            try {
+                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "administrator", "application", "participant", "host" }, new Object[] {
+                        administrator, application, participant, getHostName() });
+                message = buildMessage(administrator, subject, modelBuilder.build(), INTERVIEW_VOTE_CONFIRMATION);
+                sendEmail(message);
+            } catch (Exception e) {
+                log.error("Error while sending interview vote confirmation email to administrator: " + administrator.getDisplayName(), e.getMessage());
+            }
+        }
+    }
+
+    /**
      * <p>
      * <b>Summary</b><br/>
      * Informs users when a data export has failed.
@@ -478,7 +505,7 @@ public class MailSendingService extends AbstractMailSendingService {
                 message = buildMessage(user, subject, modelBuilder.build(), EXPORT_ERROR);
                 sendEmail(message);
             } catch (Exception e) {
-                throw new PrismMailMessageException("Error while sending export error message: ", e.getCause(), message);
+                throw new PrismMailMessageException("Error while sending export error message: ", e, message);
             }
         }
     }
@@ -668,7 +695,7 @@ public class MailSendingService extends AbstractMailSendingService {
                 message = buildMessage(user, subject, modelBuilder.build(), IMPORT_ERROR);
                 sendEmail(message);
             } catch (Exception e) {
-                throw new PrismMailMessageException("Error while sending import error message: ", e.getCause(), message);
+                throw new PrismMailMessageException("Error while sending import error message: ", e, message);
             }
         }
     }
@@ -717,7 +744,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending confirmation email to registering user: ", e.getCause(), message);
+            throw new PrismMailMessageException("Error while sending confirmation email to registering user: ", e, message);
         }
     }
 
@@ -760,7 +787,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(user, subject, modelBuilder.build(), NEW_PASSWORD_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending reset password email: ", e.getCause(), message);
+            throw new PrismMailMessageException("Error while sending reset password email: ", e, message);
         }
     }
 

@@ -124,7 +124,9 @@ $(document).ready(function()
 			},
 		      complete: function()
 		      {
+				
 				$('#ajaxloader').fadeOut('fast');
+				checkIfErrors();
 		      }
 		});
 	});

@@ -269,7 +269,6 @@ $(document).ready(function() {
 		cleanUpFilterIds();
 	});
 
-	// To be extended
 	// Duplicate filters buttons
 	$(".add").live('click', function() {
 		var existingFilter=$(this).parent();
@@ -285,11 +284,12 @@ $(document).ready(function() {
 	
 	// Remover current filter
 	$(".remove").live('click', function() {
+		var existingFilter=$(this).parent();
 		if ($("#search-box").find("div.filter").length > 1) {
-			$(this).parent().remove();
 			if(existingFilter.find(".filterInput").val()!=""){
 				$('#search-go').click();
 			}
+			existingFilter.parent().remove();
 		}
 	});
 

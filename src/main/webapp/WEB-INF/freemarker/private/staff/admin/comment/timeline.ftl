@@ -68,7 +68,16 @@
 											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 										</div>
-										<div class="textContainer"><p><em>${(timelineObject.interview.furtherDetails?html)!}</em></p></div>                
+											<div class="textContainer"><p><em>
+											<#if user.id == applicationForm.applicant.id>
+												${(timelineObject.interview.furtherDetails?html)!}
+											<#elseif user.isInterviewerOfApplicationForm(applicationForm.application)>                
+												${(timelineObject.interview.furtherInterviewerDetails?html)!}
+											<#elseif user.isInRole('SUPERADMINISTRATOR')>
+												<#if timelineObject.interview.furtherInterviewerDetails!= "">Instructions for interviewers: ${(timelineObject.interview.furtherInterviewerDetails?html)!}<br></#if>
+												<#if timelineObject.interview.furtherDetails!= "">Instructions for applicant: ${(timelineObject.interview.furtherDetails?html)!}<br></#if>
+											</#if>            
+											</em></p></div>   
 										<p class="datetime">
 										  <span data-desc="Date and Time"></span>
 										  <#if timelineObject.interview.stage == 'SCHEDULED'>
@@ -191,9 +200,9 @@
 			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
 			                		<#if interviewVoteParticipant.responded>
 			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
-			                				<p><h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</class></p> 
+			                				<h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
 			                			<#else>
-			                				<p><h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</class></p>
+			                				<h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
 			                			</#if>
 			                		</#if>
     			                </#if>

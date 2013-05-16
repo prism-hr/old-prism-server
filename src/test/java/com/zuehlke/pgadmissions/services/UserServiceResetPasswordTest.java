@@ -10,7 +10,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.ApplicationsFilterDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -23,7 +22,6 @@ public class UserServiceResetPasswordTest {
 	private UserService serviceUT;
 
 	private UserDAO userDAOMock;
-	private ApplicationsFilterDAO applicationsFilterDAOmock;
 	private EncryptionUtils encryptionUtilsMock;
 	private MailSendingService mailServiceMock;
 
@@ -33,11 +31,10 @@ public class UserServiceResetPasswordTest {
 
 		userDAOMock = EasyMock.createMock(UserDAO.class);
 		RoleDAO roleDAOMock = EasyMock.createMock(RoleDAO.class);
-		applicationsFilterDAOmock = EasyMock.createMock(ApplicationsFilterDAO.class);
 		UserFactory userFactoryMock = createMock(UserFactory.class);
 		mailServiceMock = createMock(MailSendingService.class);
 		
-		serviceUT = new UserService(userDAOMock, roleDAOMock, userFactoryMock, encryptionUtilsMock, applicationsFilterDAOmock, mailServiceMock);
+		serviceUT = new UserService(userDAOMock, roleDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock);
 	}
 
 	private void replayAllMocks() {

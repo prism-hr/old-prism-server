@@ -108,7 +108,7 @@
             />
           </div>
             
-            <#list filters as filter> 
+            <#list filtering.filters as filter> 
               <!-- Search/filter box. -->
               <div class="filter" id="filter_${filter_index}">
                 <select class="selectCategory" name="searchCategory" id="searchCategory_${filter_index}">
@@ -141,7 +141,7 @@
               </div>
               </#list> 
               
-              <#if filters?size==0>
+              <#if filtering.filters?size==0>
               <!-- New search/filter box. -->
               <div class="filter" id="filter">
                 <select class="selectCategory" name="searchCategory" id="searchCategory">

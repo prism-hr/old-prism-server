@@ -138,7 +138,7 @@
                 <ul class="status-info">
                   <li class="${timelineObject.type}">
                     <div class="box">
-                      <p class="added">
+                      <p class="target">
                         Our target for completing the stage: ${applicationForm.dueDate?string('dd MMM yy')}.
                       </p>
                     </div>

@@ -103,6 +103,8 @@ function clearRefereeForm(form) {
     
     form.find("textarea").each(function() {
         $(this).val("");
+		addCounter();
+		$(this).parent().find('.badge').html('2000 Characters left');
     });
     
     form.find("input:radio").each(function() {

@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,12 @@ import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional
@@ -39,14 +42,15 @@ public class InterviewService {
     private final InterviewParticipantDAO interviewParticipantDAO;
     private final InterviewVoteCommentDAO interviewVoteCommentDAO;
     private final MailSendingService mailService;
+    private final StageDurationService stageDurationService;
 
     public InterviewService() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
-            InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO) {
+            InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO, final StageDurationService stageDurationService) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;
@@ -54,6 +58,7 @@ public class InterviewService {
         this.interviewParticipantDAO = interviewParticipantDAO;
         this.mailService = mailService;
         this.interviewVoteCommentDAO = interviewVoteCommentDAO;
+        this.stageDurationService = stageDurationService;
     }
 
     public Interview getInterviewById(Integer id) {
@@ -67,10 +72,10 @@ public class InterviewService {
     public void moveApplicationToInterview(final Interview interview, ApplicationForm applicationForm) {
         interview.setApplication(applicationForm);
         if (interview.isScheduled()) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(interview.getInterviewDueDate());
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-            applicationForm.setDueDate(calendar.getTime());
+            DateTime baseDate = interview.getTakenPlace() ? new DateTime() : new DateTime(interview.getInterviewDueDate());
+            StageDuration duration = stageDurationService.getByStatus(ApplicationFormStatus.INTERVIEW);
+            Date dueDate = DateUtils.addWorkingDaysInMinutes(baseDate.toDate(), duration.getDurationInMinutes());
+            applicationForm.setDueDate(dueDate);
         }
         interviewDAO.save(interview);
 

@@ -39,6 +39,10 @@ public final class DateUtils {
     public static DateTime addWorkingDaysInMinutes(final DateTime date, final int numberOfMinutes) {
         DateTime startDate = new DateTime(date);
         
+        if (numberOfMinutes < ONE_DAY_IN_MINUTES) {
+            return startDate.plusMinutes(numberOfMinutes);
+        }
+        
         switch (startDate.getDayOfWeek()) {
         case DateTimeConstants.FRIDAY:
             startDate = startDate.plusDays(3);

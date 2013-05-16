@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import java.net.UnknownHostException;
@@ -13,9 +14,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
-import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.validation.BindingResult;
@@ -164,15 +163,11 @@ public class SubmitApplicationFormControllerTest {
         assertEquals("/private/pgStudents/form/main_application_page", view);
     }
 
-    @Ignore
     @Test
     public void shouldChangeStatusToValidateAndSaveIfNoErrors() {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 
-        DateTime now = new DateTime(2013, 3, 8, 8, 0);
-        DateTime expectedDate = new DateTime(2013, 3, 20, 8, 0);
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).batchDeadline(now.toDate()).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).build();
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         StageDuration stageDuration = new StageDuration();
         stageDuration.setDuration(8);
@@ -191,8 +186,8 @@ public class SubmitApplicationFormControllerTest {
         EasyMock.verify(applicationsServiceMock);
         assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
 
-        assertEquals(expectedDate.toDate(), applicationForm.getDueDate());
         assertEquals(1, applicationForm.getEvents().size());
+        assertNotNull(applicationForm.getDueDate());
         assertEquals(event, applicationForm.getEvents().get(0));
     }
 
@@ -285,11 +280,10 @@ public class SubmitApplicationFormControllerTest {
         applicationController.getApplicationForm("3");
     }
 
-    @Ignore
     @Test
     public void shouldSetValidationDateAfterOneWorkingDayOfBatchDeadlineIfBatchDeadlineIsSetAndValidationStageDurationIsOneDay() throws ParseException {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED)
-                .batchDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/12")).build();
+                .submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/12")).build();
         StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
         EasyMock.expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);

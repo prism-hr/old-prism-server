@@ -1064,7 +1064,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             CollectionUtils.forAllDo(registryContacts, new Closure() {
                 @Override
                 public void execute(final Object person) {
-                    RegisteredUser user = userDAO.getUserByEmail(((Person)person).getEmail());
+                    RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(((Person)person).getEmail());
                     setDigestNotificationType(user, DigestNotificationType.TASK_NOTIFICATION);
                 }
             });
@@ -1076,7 +1076,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 CollectionUtils.forAllDo(registryContacts, new Closure() {
                     @Override
                     public void execute(final Object person) {
-                        RegisteredUser user = userDAO.getUserByEmail(((Person)person).getEmail());
+                        RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(((Person)person).getEmail());
                         setDigestNotificationType(user, DigestNotificationType.TASK_REMINDER);
                     }
                 });

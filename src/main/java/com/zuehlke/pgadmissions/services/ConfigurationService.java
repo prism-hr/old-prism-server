@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -111,8 +110,12 @@ public class ConfigurationService {
         admitter.setAuthorityEnum(Authority.ADMITTER);
         Role viewer = new Role();
         admitter.setAuthorityEnum(Authority.VIEWER);
-        PendingRoleNotification admitterNotification = new PendingRoleNotificationBuilder().addedByUser(requestedBy).role(admitter).build();
-        PendingRoleNotification viewerNotification = new PendingRoleNotificationBuilder().addedByUser(requestedBy).role(viewer).build();
+        PendingRoleNotification admitterNotification = new PendingRoleNotification();
+        admitterNotification.setAddedByUser(requestedBy);
+        admitterNotification.setRole(admitter);
+        PendingRoleNotification viewerNotification = new PendingRoleNotification();
+        admitterNotification.setAddedByUser(requestedBy);
+        admitterNotification.setRole(viewer);
         if (user == null) {
             user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(), Authority.VIEWER, Authority.ADMITTER);
             List<PendingRoleNotification> pendingRoles = new ArrayList<PendingRoleNotification>();

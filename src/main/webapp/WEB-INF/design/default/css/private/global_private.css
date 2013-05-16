@@ -848,6 +848,7 @@ span.icon-role.approver { background-image: url(../../images/role_approver.png);
 span.icon-role.applicant { background-image: url(../../images/role_applicant.png);  background-position: 0 0; }
 span.icon-role.referee { background-image: url(../../images/role_referee.png);  background-position: 0 0; }
 span.icon-role.supervisor { background-image: url(../../images/role_supervisor.png); background-position: 0 0;  }
+span.icon-role.admitter { background-image: url(../../images/role_admitter.png); background-position: 0 0;  }
 span.icon-role.viewer { background-image: url(../../images/role_viewer.png); background-position: 0 0;  }
 
 

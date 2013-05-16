@@ -65,8 +65,14 @@
           <section class="form-rows">
             <h2 class="no-arrow">Reject Applicant</h2>
             <div>
-              <form method="POST" action="<@spring.url '/rejectApplication/moveApplicationToReject'/>">
-                <div class="alert alert-info"> <i class="icon-info-sign"></i> Reject the applicant. They will be prevented from reapplying for their chosen study programme in the current academic year. </div>
+              <form method="POST" action="<@spring.url '/rejectApplication/moveApplicationToReject'/>">				
+              		  <@spring.bind "rejection.rejectionReason" />
+                      <#if spring.status.errors.hasErrors()>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
+                      <#else>
+               		  <div class="alert alert-info"> <i class="icon-info-sign"></i> 
+                      </#if>
+                      Reject the applicant. They will be prevented from reapplying for their chosen study programme in the current academic year. </div>
                 <div class="row-group">
                   <div class="row">
                     <label class="plain-label">Reasons for Rejection<em>*</em></label>

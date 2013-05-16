@@ -71,8 +71,15 @@
           <div>
             <form id="confirmSupervisionForm" method ="POST" action="<@spring.url '/confirmSupervision/applyConfirmSupervision' />" >
               <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-              <div class="alert alert-info">
-          			<i class="icon-info-sign"></i> Confirm your intention to provide primary supervision.</div>
+              
+              
+             		 <@spring.bind "confirmSupervisionDTO.confirmedSupervision" />
+                      <#if spring.status.errors.hasErrors()>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
+                      <#else>
+               		  <div class="alert alert-info"> <i class="icon-info-sign"></i> 
+                      </#if>
+                       Confirm your intention to provide primary supervision.</div>
               <div class="row-group">
                 <div class="row">
                   <label class="plain-label">Confirm that you are willing to provide primary supervision<em>*</em></label>

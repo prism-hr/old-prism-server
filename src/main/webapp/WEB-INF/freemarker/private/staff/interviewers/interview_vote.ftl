@@ -86,7 +86,19 @@
 								</div>
 							</#if>
 		              	</div-->
+                        <@spring.bind "interviewParticipant.canMakeIt" />
+  							<#if spring.status.errors.hasErrors()>
+		            	  		
+					    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> 
+                            <#else>
+                            	<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i>
+					    	</#if>
+                            
+                         Please select your interview preferences.</div>
+                        
 		              	<div class="row-group">
+                        
+                        
 			              	<div class="row">
 			              		<#assign responded = 0>
 			              		<#list interview.participants as participant>
@@ -95,8 +107,8 @@
 			              			</#if>
 			              		</#list>
 			              		
-		            	  	
-		            	  		<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i> Please select your interview preferences.</div>
+		            	  			
+		            	  		
 		            	  		
 		            	  		<div class="timeslots-wrapper">
 			            	  		<div class="timeslots-scrollable">

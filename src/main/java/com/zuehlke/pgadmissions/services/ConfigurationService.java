@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -106,16 +105,12 @@ public class ConfigurationService {
     
     private void saveRegistryContactsAsUsers(final Person registryContact, RegisteredUser requestedBy) {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(registryContact.getEmail());
-        Role admitter = new Role();
-        admitter.setAuthorityEnum(Authority.ADMITTER);
-        Role viewer = new Role();
-        admitter.setAuthorityEnum(Authority.VIEWER);
         PendingRoleNotification admitterNotification = new PendingRoleNotification();
         admitterNotification.setAddedByUser(requestedBy);
-        admitterNotification.setRole(admitter);
+        admitterNotification.setRole(roleDAO.getRoleByAuthority(Authority.ADMITTER));
         PendingRoleNotification viewerNotification = new PendingRoleNotification();
         admitterNotification.setAddedByUser(requestedBy);
-        admitterNotification.setRole(viewer);
+        admitterNotification.setRole(roleDAO.getRoleByAuthority(Authority.VIEWER));
         if (user == null) {
             user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(), Authority.VIEWER, Authority.ADMITTER);
             List<PendingRoleNotification> pendingRoles = new ArrayList<PendingRoleNotification>();
@@ -149,8 +144,10 @@ public class ConfigurationService {
 
     private boolean containsRegistryUser(Person person, List<Person> persons) {
         for (Person entry : persons) {
-            if (entry.getId().equals(person.getId())) {
-                return true;
+            if (entry.getId()!=null) {
+                if (entry.getId().equals(person.getId())) {
+                    return true;
+                }
             }
         }
         return false;

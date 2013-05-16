@@ -49,7 +49,6 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -1040,12 +1039,10 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             }
         }
         RegisteredUser admin = user.getPendingRoleNotifications().get(0).getAddedByUser();
-        Program program = user.getPendingRoleNotifications().get(0).getProgram();
 
         try {
-            String rolesString = constructRolesString(user);
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "program", "newRoles", "host" }, new Object[] { user, admin,
-                    program, rolesString, getHostName() });
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "host" }, new Object[] { user, admin,
+                    getHostName() });
             message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
             sendEmail(message);
             userDAO.save(user);

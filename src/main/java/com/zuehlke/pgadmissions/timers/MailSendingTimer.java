@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 import com.zuehlke.pgadmissions.mail.ScheduledMailSendingService;
 
 @Service
-public class ScheduledMailSendingTimer {
+public class MailSendingTimer {
 
-    private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingTimer.class);
+    private final Logger log = LoggerFactory.getLogger(MailSendingTimer.class);
     
     private final ScheduledMailSendingService mailService;
     
-    public ScheduledMailSendingTimer() {
+    public MailSendingTimer() {
         this(null);
     }
     
     @Autowired
-    public ScheduledMailSendingTimer(final ScheduledMailSendingService mailService) {
+    public MailSendingTimer(final ScheduledMailSendingService mailService) {
         this.mailService = mailService;
     }
     

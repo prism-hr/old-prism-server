@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class DateUtilsTest {
@@ -103,6 +104,7 @@ public class DateUtilsTest {
         assertEquals(2013, endDate.getYear());
     }
     
+    @Ignore
     @Test
     public void shouldAddTheCorrectNumberOfWorkingDaysToA5MinuteInterval() {
         // Monday 4. March 2013 8am

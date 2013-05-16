@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -86,9 +85,10 @@ public class SubmitApplicationFormController {
             log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
         }
 
+        //also batchDeadline needs to be set here once we got it working
         applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
-        calculateAndSetValidationDueDate(applicationForm);
         applicationForm.setSubmittedDate(new Date());
+        calculateAndSetValidationDueDate(applicationForm);
         applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
@@ -96,13 +96,9 @@ public class SubmitApplicationFormController {
     }
 
     public void calculateAndSetValidationDueDate(ApplicationForm applicationForm) {
-        DateTime dueDate = new DateTime(applicationForm.getBatchDeadline());
+        DateTime dueDate = new DateTime(applicationForm.getSubmittedDate());
         StageDuration validationDuration = stageDurationService.getByStatus(ApplicationFormStatus.VALIDATION);
-        if (validationDuration.getUnit().equals(DurationUnitEnum.MINUTES)) {
-            dueDate = DateUtils.addWorkingDaysInMinutes(dueDate, validationDuration.getDurationInMinutes()).minusDays(1);
-        } else {
-            dueDate = DateUtils.addWorkingDaysInMinutes(dueDate, validationDuration.getDurationInMinutes());
-        }        
+        dueDate = DateUtils.addWorkingDaysInMinutes(dueDate, validationDuration.getDurationInMinutes());
         applicationForm.setDueDate(dueDate.toDate());
     }
 

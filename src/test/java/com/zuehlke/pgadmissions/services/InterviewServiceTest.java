@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.enums.NotificationType.INTERVIEW_A
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertNull;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
@@ -40,7 +42,9 @@ import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -56,6 +60,7 @@ public class InterviewServiceTest {
     private MailSendingService mailServiceMock;
     private Interview interview;
     private Interviewer interviewer;
+    private StageDurationService stageDurationServiceMock;
     private InterviewVoteCommentDAO interviewVoteCommentDAOMock;
 
     @Test
@@ -86,6 +91,10 @@ public class InterviewServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
         applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_FEEDBACK_REMINDER).build());
 
+        StageDuration duration = new StageDurationBuilder().duration(1).unit(DurationUnitEnum.DAYS).build();
+        
+        expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
         InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
@@ -94,11 +103,11 @@ public class InterviewServiceTest {
         mailServiceMock.sendInterviewConfirmationToInterviewers(asList(interviewer));
         mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
 
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock);
         interviewService.moveApplicationToInterview(interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, stageDurationServiceMock, mailServiceMock);
 
-        assertEquals(dateFormat.parse("02 04 2012"), applicationForm.getDueDate());
+        assertEquals(dateFormat.parse("03 04 2012"), applicationForm.getDueDate());
         assertEquals(applicationForm, interview.getApplication());
         assertEquals(interview, applicationForm.getLatestInterview());
         assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
@@ -118,17 +127,21 @@ public class InterviewServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
         applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_FEEDBACK_REMINDER).build());
 
+        StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
+        
+        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
         InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
         mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
 
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock);
         interviewService.moveApplicationToInterview(interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock);
 
-        assertEquals(dateFormat.parse("02 04 2012"), applicationForm.getDueDate());
+        Assert.assertNotNull(applicationForm.getDueDate());
         assertEquals(applicationForm, interview.getApplication());
         assertEquals(interview, applicationForm.getLatestInterview());
         assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
@@ -168,11 +181,16 @@ public class InterviewServiceTest {
         RegisteredUser delegate = new RegisteredUserBuilder().id(12).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationAdministrator(delegate).status(ApplicationFormStatus.REVIEW).id(1)
                 .notificationRecords(new NotificationRecordBuilder().notificationType(INTERVIEW_ADMINISTRATION_REMINDER).build()).build();
+        
+        StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
+        
+        expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock);
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
         interviewService.moveApplicationToInterview(interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
 
         assertNull(applicationForm.getApplicationAdministrator());
         assertNull(applicationForm.getNotificationForType(INTERVIEW_ADMINISTRATION_REMINDER));
@@ -262,8 +280,9 @@ public class InterviewServiceTest {
         mailServiceMock = createMock(MailSendingService.class);
         interviewParticipantDAOMock = createMock(InterviewParticipantDAO.class);
         interviewVoteCommentDAOMock = createMock(InterviewVoteCommentDAO.class);
+        stageDurationServiceMock = createMock(StageDurationService.class);
         interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, interviewerDAOMock, interviewParticipantDAOMock,
-                mailServiceMock, interviewVoteCommentDAOMock) {
+                mailServiceMock, interviewVoteCommentDAOMock, stageDurationServiceMock) {
             @Override
             public Interview newInterview() {
                 return interview;

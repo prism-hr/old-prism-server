@@ -76,7 +76,9 @@ public class ApplicationFormDAO {
 		ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
 				.createCriteria(ReminderInterval.class).uniqueResult();
 		Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-
+		
+		today = DateUtils.truncate(today, Calendar.DAY_OF_MONTH);
+		    
 		DetachedCriteria anyRemindersCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", notificationType))
@@ -307,7 +309,7 @@ public class ApplicationFormDAO {
 	}
 	
     public List<ApplicationForm> getApplicationsDueInterviewFeedbackNotification() {
-        DetachedCriteria appronalNotificationCriteria = DetachedCriteria
+        DetachedCriteria approvalNotificationCriteria = DetachedCriteria
                 .forClass(NotificationRecord.class, "notificationRecord")
                 .add(Restrictions.eq("notificationType", NotificationType.INTERVIEW_FEEDBACK_REQUEST))
                 .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
@@ -317,7 +319,7 @@ public class ApplicationFormDAO {
                 .createCriteria(ApplicationForm.class, "applicationForm")
                 .add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
                 .add(Restrictions.lt("dueDate", new DateTime().toDate()))
-                .add(Subqueries.notExists(appronalNotificationCriteria.setProjection(Projections.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Subqueries.notExists(approvalNotificationCriteria.setProjection(Projections.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .list();
     }
 

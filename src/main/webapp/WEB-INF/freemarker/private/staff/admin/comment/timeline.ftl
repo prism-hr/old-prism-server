@@ -132,7 +132,20 @@
 								</li>
 							</ul>
 		        
-							</#if>                       
+							</#if> 
+							
+		          <#if timelineObject_index == 0 && (applicationForm.status == 'VALIDATION' || applicationForm.status == 'REVIEW' || applicationForm.status == 'APPROVAL')> 
+                <ul class="status-info">
+                  <li class="${timelineObject.type}">
+                    <div class="box">
+                      <p class="added">
+                        Our target for completing the stage: ${applicationForm.dueDate?string('dd MMM yy')}.
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </#if>							          
+							                      
 		          
 		          <#if timelineObject.comments??>
 		          <ul>
@@ -155,6 +168,8 @@
 			            	<#assign role = "reviewer"/>
 			            <#elseif comment.type == 'INTERVIEW'>
 			            	<#assign role = "interviewer"/>    
+			            <#elseif comment.type == 'APPROVAL'>
+			            	<#assign role = "administrator"/>                
 			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
 			            	<#assign role = "approver"/>
 		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
@@ -199,18 +214,16 @@
     			                	<#include "timeline_snippets/review_comment.ftl"/>
     			                <#elseif comment.type == 'INTERVIEW'>
     			                	<#include "timeline_snippets/interview_comment.ftl"/>
-			                	  <#elseif comment.type == 'INTERVIEW_VOTE'>
-  			                		<#assign interviewVoteParticipant=comment.interviewParticipant>
-  			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
-  			                		<#if interviewVoteParticipant.responded>
-  			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
-  			                				<h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
-  			                			<#else>
-  			                				<h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
-  			                			</#if>
-  			                		</#if>
-			                		<#elseif comment.type == 'DUE_DATE'>
-			                		  <h3 class="answer yes"><span data-desc="Target" aria-describedby="ui-tooltip-150"></span>Our target for completing the stage: ${comment.dueDate?string('dd MMM yy')}.</h3>
+			                	<#elseif comment.type == 'INTERVIEW_VOTE'>
+			                		<#assign interviewVoteParticipant=comment.interviewParticipant>
+			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
+			                		<#if interviewVoteParticipant.responded>
+			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
+			                				<h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
+			                			<#else>
+			                				<h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
+			                			</#if>
+			                		</#if>
     			                </#if>
     			              </div>
     			            </li>

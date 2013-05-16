@@ -115,7 +115,7 @@ public class Comment implements Comparable<Comment>, Serializable {
         if (dateComparison != 0) {
             return dateComparison;
         }
-        return getType().compareTo(otherComment.getType());
+        return otherComment.getId().compareTo(id);
     }
 
     public List<Document> getDocuments() {

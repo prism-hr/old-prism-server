@@ -28,25 +28,21 @@ public class ReviewService {
 	private final EventFactory eventFactory;
 	private final ReviewerDAO reviewerDAO;
 	private final MailSendingService mailService;
-	private final UserService userService;
-	private final CommentService commentService;
 
 	public ReviewService() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
     public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO,
             StageDurationService stageDurationService, EventFactory eventFactory, ReviewerDAO reviewerDAO,
-            MailSendingService mailService, UserService userService, CommentService commentService) {
+            MailSendingService mailService) {
 		this.applicationDAO = applicationDAO;
 		this.reviewRoundDAO = reviewRoundDAO;
 		this.stageDurationService = stageDurationService;
 		this.eventFactory = eventFactory;
 		this.reviewerDAO = reviewerDAO;
         this.mailService = mailService;
-        this.userService = userService;
-        this.commentService = commentService;
 	}
 
 	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound) {
@@ -56,9 +52,6 @@ public class ReviewService {
 		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), reviewStageDuration.getDurationInMinutes());
         application.setDueDate(dueDate.toDate());
-        
-        commentService.createDueDateComment(application, userService.getCurrentUser(), dueDate.toDate());
-        
         boolean sendReferenceRequest = application.getStatus()==ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));

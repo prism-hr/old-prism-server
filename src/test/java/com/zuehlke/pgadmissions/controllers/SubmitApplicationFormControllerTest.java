@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -59,8 +58,6 @@ public class SubmitApplicationFormControllerTest {
     private UserService userServiceMock;
 
     private MockHttpServletRequest httpServletRequestMock;
-    
-    private CommentService commentServiceMock;
 
     @Test
     public void shouldReturnCurrentUser() {
@@ -291,18 +288,12 @@ public class SubmitApplicationFormControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED)
                 .batchDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/12")).build();
         StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
-        Date oneDayMore = new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/14");
-        
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
         EasyMock.expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);
         EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
-        EasyMock.expect(commentServiceMock.createDueDateComment(applicationForm, student, oneDayMore)).andReturn(null);
-        
-        EasyMock.replay(stageDurationServiceMock, stageDurationMock, commentServiceMock);
+        EasyMock.replay(stageDurationServiceMock, stageDurationMock);
         applicationController.calculateAndSetValidationDueDate(applicationForm);
-        EasyMock.verify(stageDurationServiceMock, stageDurationMock, commentServiceMock);
-
-        
+        Date oneDayMore = new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/14");
         Assert.assertEquals(String.format("Dates are not the same [%s] [%s]", oneDayMore, applicationForm.getDueDate()), oneDayMore,
                 applicationForm.getDueDate());
     }
@@ -311,17 +302,12 @@ public class SubmitApplicationFormControllerTest {
     public void shouldSetValidationDateToCurrentDatePlusValidationStageIntervalWorkingDayIfBatchDeadlineIsNotSet() throws ParseException {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
         StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
-        Date dayAfterTomorrow = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 1440);
-        
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
         EasyMock.expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);
         EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
-        EasyMock.expect(commentServiceMock.createDueDateComment(EasyMock.same(applicationForm), EasyMock.same(student), EasyMock.isA(Date.class))).andReturn(null);
-
-        EasyMock.replay(stageDurationServiceMock, stageDurationMock, commentServiceMock);
+        EasyMock.replay(stageDurationServiceMock, stageDurationMock);
         applicationController.calculateAndSetValidationDueDate(applicationForm);
-        EasyMock.verify(stageDurationServiceMock, stageDurationMock, commentServiceMock);
-
+        Date dayAfterTomorrow = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 1440);
         Assert.assertTrue(String.format("Dates are not on the same day [%s] [%s]", dayAfterTomorrow, applicationForm.getDueDate()),
                 DateUtils.isSameDay(dayAfterTomorrow, applicationForm.getDueDate()));
     }
@@ -334,11 +320,8 @@ public class SubmitApplicationFormControllerTest {
         applicationFormValidatorMock = EasyMock.createMock(ApplicationFormValidator.class);
         stageDurationServiceMock = EasyMock.createMock(StageDurationService.class);
         eventFactoryMock = EasyMock.createMock(EventFactory.class);
-        commentServiceMock = EasyMock.createMock(CommentService.class);
-        
         applicationController = new SubmitApplicationFormController(applicationsServiceMock, userServiceMock, applicationFormValidatorMock,
-                stageDurationServiceMock, eventFactoryMock, commentServiceMock);
-        
+                stageDurationServiceMock, eventFactoryMock);
         httpServletRequestMock = new MockHttpServletRequest();
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

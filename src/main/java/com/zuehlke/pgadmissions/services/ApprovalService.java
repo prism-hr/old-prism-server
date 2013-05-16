@@ -64,18 +64,16 @@ public class ApprovalService {
     private final SupervisorDAO supervisorDAO;
 
     private final MailSendingService mailSendingService;
-    
-    private final CommentService commentService;
 
     public ApprovalService() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO,
             ApprovalRoundDAO approvalRoundDAO, StageDurationService stageDurationService, EventFactory eventFactory,
             CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,
-            PorticoQueueService approvedSenderService, MailSendingService mailSendingService, CommentService commentService) {
+            PorticoQueueService approvedSenderService, MailSendingService mailSendingService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
@@ -86,7 +84,6 @@ public class ApprovalService {
         this.programmeDetailDAO = programmeDetailDAO;
         this.approvedSenderService = approvedSenderService;
         this.mailSendingService = mailSendingService;
-        this.commentService = commentService;
     }
 
     public void confirmOrDeclineSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
@@ -168,9 +165,6 @@ public class ApprovalService {
     public void moveApplicationToApproval(ApplicationForm form, ApprovalRound approvalRound) {
         checkApplicationStatus(form);
         checkSendToPorticoStatus(form, approvalRound);
-        
-        RegisteredUser user = userService.getCurrentUser();
-
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
         form.setPendingApprovalRestart(false);
@@ -182,8 +176,6 @@ public class ApprovalService {
         StageDuration approveStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.APPROVAL);
         DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), approveStageDuration.getDurationInMinutes());
         form.setDueDate(dueDate.toDate());
-        
-        commentService.createDueDateComment(form, user, dueDate.toDate());
         
         form.getEvents().add(eventFactory.createEvent(approvalRound));
         
@@ -205,7 +197,7 @@ public class ApprovalService {
         approvalComment.setRecommendedConditions(approvalRound.getRecommendedConditions());
         approvalComment.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
         approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
-        approvalComment.setUser(user);
+        approvalComment.setUser(userService.getCurrentUser());
 
         if (sendReferenceRequest) {
             mailSendingService.sendReferenceRequest(form.getReferees(), form);

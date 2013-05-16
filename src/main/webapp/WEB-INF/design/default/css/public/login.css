@@ -3,7 +3,7 @@
 /* LOGIN page -------------------------------------------------------------------------------------------- */
 #login-box {
 	background: white;
-	border-radius: 10px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: auto; position: absolute; right: 35px; top: 35px; width: 240px;
+	border-radius: 10px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: auto; position: absolute; right: 25px; top: 35px; width: 240px;
 	padding-bottom: 10px;
 }
 

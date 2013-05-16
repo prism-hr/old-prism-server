@@ -378,8 +378,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         expect(applicationFormDAOMock.getApplicationsDueRevalidationReminder())
         .andReturn(asList(form));
         
-        expect(userDAOMock.getUserByEmail("amanda@mail.com")).andReturn(registryContactUser1);
-        expect(userDAOMock.getUserByEmail("mirkos@mail.com")).andReturn(registryContactUser2);
+        expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("amanda@mail.com")).andReturn(registryContactUser1);
+        expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("mirkos@mail.com")).andReturn(registryContactUser2);
         
         userDAOMock.save(registryContactUser1);
         userDAOMock.save(registryContactUser2);
@@ -408,8 +408,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         expect(applicationFormDAOMock.getApplicationsDueRevalidationReminder())
         .andReturn(asList(form));
         
-        expect(userDAOMock.getUserByEmail("amanda@mail.com")).andReturn(registryContactUser1);
-        expect(userDAOMock.getUserByEmail("mirkos@mail.com")).andReturn(registryContactUser2);
+        expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("amanda@mail.com")).andReturn(registryContactUser1);
+        expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("mirkos@mail.com")).andReturn(registryContactUser2);
         
         userDAOMock.save(registryContactUser1);
         userDAOMock.save(registryContactUser2);
@@ -439,8 +439,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         expect(applicationFormDAOMock.getApplicationsDueRevalidationRequest()).andReturn(asList(form1));
         expect(applicationFormDAOMock.getApplicationsDueRevalidationReminder()).andReturn(asList(form1, form2));
         
-        expect(userDAOMock.getUserByEmail("amanda@mail.com")).andReturn(registryContactUser1).times(2);
-        expect(userDAOMock.getUserByEmail("mirkos@mail.com")).andReturn(registryContactUser2).times(2);
+        expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("amanda@mail.com")).andReturn(registryContactUser1).times(2);
+        expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("mirkos@mail.com")).andReturn(registryContactUser2).times(2);
         
         userDAOMock.save(registryContactUser1);
         expectLastCall().times(2);

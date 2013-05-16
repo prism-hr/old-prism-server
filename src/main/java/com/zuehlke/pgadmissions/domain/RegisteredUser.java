@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -19,6 +20,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
@@ -87,6 +89,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Enumerated(EnumType.STRING)
     private DigestNotificationType digestNotificationType = DigestNotificationType.NONE;
 
+    @JoinColumn(name = "filtering_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private ApplicationsFiltering filtering;
+
     private boolean enabled;
 
     private boolean accountNonExpired;
@@ -94,9 +100,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     private boolean accountNonLocked;
 
     private boolean credentialsNonExpired;
-
-    @Column(name = "stored_filters")
-    private boolean storedFilters;
 
     private String activationCode;
 
@@ -158,9 +161,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @JoinTable(name = "PROGRAM_VIEWER_LINK", joinColumns = { @JoinColumn(name = "viewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<ApplicationsFilter> applicationsFilters = new ArrayList<ApplicationsFilter>();
-
     @Column(name = "ucl_user_id")
     private String uclUserId;
 
@@ -199,10 +199,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
             }
         }
         return linkedAccountsList;
-    }
-
-    public List<ApplicationsFilter> getApplicationsFilters() {
-        return applicationsFilters;
     }
 
     @Override
@@ -501,11 +497,11 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isInRoleInProgram(final String strAuthority, final Program programme) {
         return isInRoleInProgramme(programme, this, strAuthority);
     }
-    
+
     public boolean isNotInRoleInProgram(final Authority authority, Program program) {
         return !isInRoleInProgramme(program, this, authority);
     }
-    
+
     public boolean isNotInRoleInProgram(final String strAuthority, final Program programme) {
         return !isInRoleInProgramme(programme, this, strAuthority);
     }
@@ -525,7 +521,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isViewerOfProgramme(final ApplicationForm form) {
         return isViewerOfProgramme(form, this);
     }
-    
+
     public boolean isProgrammeAdministrator(final ApplicationForm form) {
         return isProgrammeAdministrator(form, this);
     }
@@ -576,10 +572,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
-    }
-
-    public void setApplicationsFilters(final List<ApplicationsFilter> applicationsFilters) {
-        this.applicationsFilters = applicationsFilters;
     }
 
     public void setComments(List<Comment> comments) {
@@ -703,14 +695,15 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public void setDigestNotificationType(final DigestNotificationType type) {
         this.digestNotificationType = type;
     }
-    public boolean isStoredFilters() {
-        return storedFilters;
+
+    public ApplicationsFiltering getFiltering() {
+        return filtering;
     }
 
-    public void setStoredFilters(boolean storedFilters) {
-        this.storedFilters = storedFilters;
+    public void setFiltering(ApplicationsFiltering filtering) {
+        this.filtering = filtering;
     }
-    
+
     @Override
     public String toString() {
         return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName, lastName, email, enabled);

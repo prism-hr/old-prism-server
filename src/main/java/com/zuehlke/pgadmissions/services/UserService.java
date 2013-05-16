@@ -12,11 +12,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ApplicationsFilterDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -30,30 +29,26 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Transactional
 public class UserService {
 
-	private final Logger log = LoggerFactory.getLogger(UserService.class);
-    
-	private final UserDAO userDAO;
+    private final Logger log = LoggerFactory.getLogger(UserService.class);
+
+    private final UserDAO userDAO;
     private final RoleDAO roleDAO;
     private final UserFactory userFactory;
     private final EncryptionUtils encryptionUtils;
-    private final ApplicationsFilterDAO applicationsFilterDAO;
     private final MailSendingService mailService;
 
-	public UserService() {
-		this(null, null, null, null, null, null);
-	}
+    public UserService() {
+        this(null, null, null, null, null);
+    }
 
-	@Autowired
-	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory,
-			EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO,
-			MailSendingService mailService) {
-		this.userDAO = userDAO;
-		this.roleDAO = roleDAO;
-		this.userFactory = userFactory;
-		this.encryptionUtils = encryptionUtils;
-		this.applicationsFilterDAO=applicationsFilterDAO;
-		this.mailService = mailService;
-	}
+    @Autowired
+    public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, EncryptionUtils encryptionUtils, MailSendingService mailService) {
+        this.userDAO = userDAO;
+        this.roleDAO = roleDAO;
+        this.userFactory = userFactory;
+        this.encryptionUtils = encryptionUtils;
+        this.mailService = mailService;
+    }
 
     public RegisteredUser getUser(Integer id) {
         return userDAO.get(id);
@@ -201,7 +196,8 @@ public class UserService {
         return Arrays.asList(newAuthorities).contains(authority);
     }
 
-    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, final DirectURLsEnum directURL, final ApplicationForm application, final Authority... authorities) {
+    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, final DirectURLsEnum directURL,
+            final ApplicationForm application, final Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
         if (newUser != null) {
             throw new IllegalStateException(String.format("user with email: %s already exists!", email));
@@ -218,7 +214,8 @@ public class UserService {
         userDAO.save(newUser);
     }
 
-    public RegisteredUser createNewUserForProgramme(final String firstName, final String lastName, final String email, final Program program, final Authority... authorities) {
+    public RegisteredUser createNewUserForProgramme(final String firstName, final String lastName, final String email, final Program program,
+            final Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
 
         if (newUser != null) {
@@ -308,9 +305,9 @@ public class UserService {
         }
         try {
             String newPassword = encryptionUtils.generateUserPassword();
-            
+
             mailService.sendResetPasswordMessage(storedUser, newPassword);
-            
+
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);
             storedUser.setPassword(hashPassword);
             userDAO.save(storedUser);
@@ -399,29 +396,19 @@ public class UserService {
         return false;
     }
 
-    public void setFilters(RegisteredUser user, List<ApplicationsFilter> filters) {
-        for (ApplicationsFilter existingFilter : user.getApplicationsFilters()) {
-            applicationsFilterDAO.removeFilter(existingFilter);
-        }
-        user.setStoredFilters(true);
-        user.getApplicationsFilters().clear();
-
-        for (ApplicationsFilter filter : filters) {
-            filter.setUser(user);
-            user.getApplicationsFilters().add(filter);
-            applicationsFilterDAO.save(filter);
-        }
+    public void setFiltering(RegisteredUser user, ApplicationsFiltering filtering) {
+        user.setFiltering(filtering);
         userDAO.save(user);
     }
-    
+
     public void resetDigestNotificationsForAllUsers() {
         userDAO.resetDigestNotificationsForAllUsers();
     }
-    
+
     public List<Integer> getAllUsersInNeedOfADigestNotification() {
         return userDAO.getAllUserIdsInNeedOfADigestNotification();
     }
-    
+
     public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
     }

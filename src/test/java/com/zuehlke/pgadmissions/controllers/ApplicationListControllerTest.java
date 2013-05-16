@@ -34,13 +34,14 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
@@ -50,7 +51,6 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
-import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
@@ -73,14 +73,12 @@ public class ApplicationListControllerTest {
     public void shouldReturnViewForApplicationListPageWithStoredFiltersWhenSessionFiltersNotInitialized() {
 
         // GIVEN
-        Model model = new ExtendedModelMap();
-        model.addAttribute("applicationSearchDTO", new ApplicationSearchDTO());
+        ModelMap model = new ExtendedModelMap();
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
-        ArrayList<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
-        user.setStoredFilters(true);
-        user.setApplicationsFilters(filters);
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        user.setFiltering(filtering);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
@@ -90,23 +88,19 @@ public class ApplicationListControllerTest {
         EasyMock.verify(userServiceMock);
 
         // THEN
-        Object actualFilters = model.asMap().get("filters");
-        assertSame(filters, actualFilters);
-        assertSame(alert, model.asMap().get("alertDefinition"));
+        Object actualFiltering = model.get("filtering");
+        assertSame(filtering, actualFiltering);
+        assertSame(alert, model.get("alertDefinition"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void shouldReturnViewForApplicationListPageWithActiveApplicationFiltersWhenSessionFiltersNotInitialized() {
 
         // GIVEN
-        Model model = new ExtendedModelMap();
-        model.addAttribute("applicationSearchDTO", new ApplicationSearchDTO());
+        ModelMap model = new ExtendedModelMap();
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
-        ArrayList<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
-        user.setApplicationsFilters(filters);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
@@ -117,25 +111,24 @@ public class ApplicationListControllerTest {
 
         // THEN
         List<ApplicationsFilter> defaultFilters = getFiltersForActiveApplications();
-        List<ApplicationsFilter> actualFilters = (List<ApplicationsFilter>) model.asMap().get("filters");
-        assertThat(actualFilters, CoreMatchers.hasItems(defaultFilters.toArray(new ApplicationsFilter[0])));
-        assertSame(alert, model.asMap().get("alertDefinition"));
+        ApplicationsFiltering actualFiltering = (ApplicationsFiltering) model.get("filtering");
+        assertThat(actualFiltering.getFilters(), CoreMatchers.hasItems(defaultFilters.toArray(new ApplicationsFilter[0])));
+        assertSame(alert, model.get("alertDefinition"));
     }
 
     @Test
     public void shouldReturnViewForApplicationListPageWithDefaultFiltersWhenFilterReloadRequested() {
 
         // GIVEN
-        Model model = new ExtendedModelMap();
-        ApplicationSearchDTO sessionDTO = new ApplicationSearchDTO();
-        sessionDTO.setFilters(Arrays.asList(new ApplicationsFilter()));
-        model.addAttribute("applicationSearchDTO", sessionDTO);
+        ModelMap model = new ExtendedModelMap();
+        
+        model.addAttribute("filtering", new ApplicationsFiltering());
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
-        ArrayList<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
-        user.setApplicationsFilters(filters);
-        user.setStoredFilters(true);
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        user.setFiltering(filtering);
+        
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
@@ -145,20 +138,19 @@ public class ApplicationListControllerTest {
         EasyMock.verify(userServiceMock);
 
         // THEN
-        Object actualFilters = model.asMap().get("filters");
-        assertSame(filters, actualFilters);
-        assertSame(alert, model.asMap().get("alertDefinition"));
+        Object actualFiltering = model.get("filtering");
+        assertSame(filtering, actualFiltering);
+        assertSame(alert, model.get("alertDefinition"));
     }
 
     @Test
     public void shouldReturnViewForApplicationListPageWhenSessionFiltersInitialized() {
 
         // GIVEN
-        Model model = new ExtendedModelMap();
-        ApplicationSearchDTO sessionDTO = new ApplicationSearchDTO();
-        List<ApplicationsFilter> sessionfFilters = Arrays.asList(new ApplicationsFilter());
-        sessionDTO.setFilters(sessionfFilters);
-        model.addAttribute("applicationSearchDTO", sessionDTO);
+        ModelMap model = new ExtendedModelMap();
+        
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        model.addAttribute("filtering", filtering);
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
@@ -167,22 +159,22 @@ public class ApplicationListControllerTest {
         assertEquals("private/my_applications_page", controller.getApplicationListPage(false, model, httpSession));
 
         // THEN
-        assertSame(sessionfFilters, model.asMap().get("filters"));
-        assertSame(alert, model.asMap().get("alertDefinition"));
+        assertSame(filtering, model.get("filtering"));
+        assertSame(alert, model.get("alertDefinition"));
     }
 
     @Test
     public void shouldReturnVisibleAndMatchedApplicationsWithLimitedSize() {
 
         // GIVEN
-        Model model = new ExtendedModelMap();
+        ModelMap model = new ExtendedModelMap();
 
-        ApplicationSearchDTO dto = new ApplicationSearchDTO();
-        ArrayList<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
-        dto.setFilters(filters);
-        dto.setBlockCount(8);
-        dto.setOrder(SortOrder.DESCENDING);
-        dto.setSortCategory(SortCategory.APPLICATION_DATE);
+        List<ApplicationsFilter> filters = Lists.newArrayList();
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setFilters(filters);
+        filtering.setBlockCount(8);
+        filtering.setOrder(SortOrder.DESCENDING);
+        filtering.setSortCategory(SortCategory.APPLICATION_DATE);
 
         List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
         expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 8)).andReturn(
@@ -192,22 +184,22 @@ public class ApplicationListControllerTest {
 
         // WHEN
         EasyMock.replay(userServiceMock, applicationsServiceMock);
-        assertEquals("private/my_applications_section", controller.getApplicationListSection(dto, model));
+        assertEquals("private/my_applications_section", controller.getApplicationListSection(filtering, model));
         EasyMock.verify(userServiceMock, applicationsServiceMock);
 
         // THEN
-        assertSame(applications, model.asMap().get("applications"));
+        assertSame(applications, model.get("applications"));
     }
 
     @Test
     public void shouldReturnApplicationReport() throws IOException {
 
         // GIVEN
-        ApplicationSearchDTO dto = new ApplicationSearchDTO();
-        ArrayList<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
-        dto.setFilters(filters);
-        dto.setOrder(SortOrder.DESCENDING);
-        dto.setSortCategory(SortCategory.APPLICATION_DATE);
+        List<ApplicationsFilter> filters = Lists.newArrayList();
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setFilters(filters);
+        filtering.setOrder(SortOrder.DESCENDING);
+        filtering.setSortCategory(SortCategory.APPLICATION_DATE);
 
         MockHttpServletRequest requestMock = new MockHttpServletRequest();
         requestMock.setParameter("tqx", "out:html");
@@ -220,7 +212,7 @@ public class ApplicationListControllerTest {
 
         // WHEN
         EasyMock.replay(userServiceMock, applicationsReportServiceMock);
-        controller.getApplicationsReport(dto, requestMock, responseMock);
+        controller.getApplicationsReport(filtering, requestMock, responseMock);
         EasyMock.verify(userServiceMock, applicationsReportServiceMock);
 
         assertEquals("text/html; charset=UTF-8", responseMock.getContentType());
@@ -275,31 +267,33 @@ public class ApplicationListControllerTest {
 
     @Test
     public void shouldSaveNoFiltersAsDefault() {
-        ApplicationSearchDTO dto = new ApplicationSearchDTO();
+        
         List<ApplicationsFilter> emptyFilters = Collections.<ApplicationsFilter> emptyList();
-        dto.setFilters(emptyFilters);
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setFilters(emptyFilters);
 
         expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
-        userServiceMock.setFilters(user, emptyFilters);
+        userServiceMock.setFiltering(user, filtering);
 
         replay(userServiceMock);
-        controller.saveFiltersAsDefault(dto);
+        controller.saveFiltersAsDefault(filtering);
         verify(userServiceMock);
     }
 
     @Test
     public void shouldSaveTwoFiltersAsDefault() {
-        ApplicationSearchDTO dto = new ApplicationSearchDTO();
+        
         ApplicationsFilter filter1 = new ApplicationsFilterBuilder().id(1).build();
         ApplicationsFilter filter2 = new ApplicationsFilterBuilder().id(2).build();
         List<ApplicationsFilter> filters = Arrays.asList(filter1, filter2);
-        dto.setFilters(filters);
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setFilters(filters);
 
         expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
-        userServiceMock.setFilters(user, filters);
+        userServiceMock.setFiltering(user, filtering);
 
         replay(userServiceMock);
-        controller.saveFiltersAsDefault(dto);
+        controller.saveFiltersAsDefault(filtering);
         verify(userServiceMock);
     }
 

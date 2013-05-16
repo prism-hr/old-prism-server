@@ -1367,8 +1367,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("newUser", user);
         model.put("admin", form.getProgram().getAdministrators().get(0));
-        model.put("program", form.getProgram());
-        model.put("newRoles", "Administrator for MRes Security Science");
         model.put("host", HOST);
 
         expect(userDAOMock.getUsersIdsWithPendingRoleNotifications()).andReturn(asList(1));

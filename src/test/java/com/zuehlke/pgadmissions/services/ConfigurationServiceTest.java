@@ -113,7 +113,7 @@ public class ConfigurationServiceTest {
 		
 		EasyMock.replay(stageDurationDAOMock, personDAOMock, reminderIntervalDAOMock, userDAOMock);
 		
-		service.saveConfigurations(Arrays.asList(validationDuration, interviewDuration), Arrays.asList(registryUserOne, registryUserTwo), reminderInterval);	
+		service.saveConfigurations(Arrays.asList(validationDuration, interviewDuration), Arrays.asList(registryUserOne, registryUserTwo), reminderInterval, new RegisteredUser());	
 		
 		EasyMock.verify(stageDurationDAOMock, personDAOMock, reminderIntervalDAOMock, userDAOMock);
 		assertEquals((Integer) 1, oldValidationDuration.getDuration());
@@ -155,7 +155,7 @@ public class ConfigurationServiceTest {
         
         EasyMock.replay(stageDurationDAOMock, personDAOMock, reminderIntervalDAOMock, userDAOMock, roleServiceMock);
         
-        service.saveConfigurations(Collections.<StageDuration>emptyList(), Arrays.asList(registryUserOne, registryUserTwo), reminderInterval);    
+        service.saveConfigurations(Collections.<StageDuration>emptyList(), Arrays.asList(registryUserOne, registryUserTwo), reminderInterval, new RegisteredUser());    
         
         EasyMock.verify(stageDurationDAOMock, personDAOMock, reminderIntervalDAOMock, userDAOMock, roleServiceMock);
         
@@ -202,7 +202,7 @@ public class ConfigurationServiceTest {
         
         EasyMock.replay(stageDurationDAOMock, personDAOMock, reminderIntervalDAOMock, userDAOMock, roleServiceMock,roleDAOMock);
         
-        service.saveConfigurations(Collections.<StageDuration>emptyList(), Arrays.asList(registryUserOne, registryUserTwo), reminderInterval);    
+        service.saveConfigurations(Collections.<StageDuration>emptyList(), Arrays.asList(registryUserOne, registryUserTwo), reminderInterval, new RegisteredUser());    
         
         EasyMock.verify(stageDurationDAOMock, personDAOMock, reminderIntervalDAOMock, userDAOMock, roleServiceMock, roleDAOMock);
         

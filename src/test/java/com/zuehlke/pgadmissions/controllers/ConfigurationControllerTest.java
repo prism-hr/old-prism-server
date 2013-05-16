@@ -54,8 +54,8 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.PorticoQueueService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -193,6 +193,7 @@ public class ConfigurationControllerTest {
 		Person registryUserOne = new PersonBuilder().id(1).build();
 		Person registryUserTwo = new PersonBuilder().id(2).build();
 
+		
 		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
 		List<Person> registryContactList = Arrays.asList(registryUserOne, registryUserTwo);
 		registryUserDTO.setRegistryUsers(registryContactList);
@@ -200,7 +201,8 @@ public class ConfigurationControllerTest {
 		ReminderInterval reminderInterval = new ReminderInterval();
 		reminderInterval.setId(1);
 
-		configurationServiceMock.saveConfigurations(stageDurationList, registryContactList, reminderInterval);
+		
+		configurationServiceMock.saveConfigurations(stageDurationList, registryContactList, reminderInterval, superAdmin);
 
 		replay(configurationServiceMock);
 

@@ -147,7 +147,7 @@ public class ConfigurationController {
 		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
-		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
+		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval, getUser());
 		return "redirect:/configuration/config_section";
 	}
 

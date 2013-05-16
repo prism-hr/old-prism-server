@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.DueDateComment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -87,16 +85,5 @@ public class CommentService {
 
     public ReviewComment getNewReviewComment() {
         return new ReviewComment();
-    }
-    
-    public DueDateComment createDueDateComment(ApplicationForm application, RegisteredUser user, Date dueDate){
-        DueDateComment dueDateComment = new DueDateComment();
-        dueDateComment.setApplication(application);
-        dueDateComment.setComment(StringUtils.EMPTY);
-        dueDateComment.setType(CommentType.DUE_DATE);
-        dueDateComment.setUser(user);
-        dueDateComment.setDueDate(dueDate);
-        commentDAO.save(dueDateComment);
-        return dueDateComment;
     }
 }

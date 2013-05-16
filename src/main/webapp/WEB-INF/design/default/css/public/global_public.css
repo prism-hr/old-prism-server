@@ -368,3 +368,204 @@ div#ajaxloader {
 .loading {
   background: #FFFFFF url(../../images/ajax-loader-file.gif) 96px 135px no-repeat !important;
 }
+
+
+/* RSS box container */
+#pContainer {
+  box-shadow: 0 0 3px 1px #888888;
+  width: 530px;
+  background: white;
+  border-radius:  4px 4px 0 0;
+  position: relative;
+  top: 35px;
+  left: 25px;
+  padding: 0px 7px;
+}
+#pContainer.small {
+  width: 220px;
+}
+/* RSS feed box */
+/* Current style for the RSS box */
+#pholder {
+  background: white;
+  padding: 6px 7px;
+  border-radius:4px;
+  border: 1px solid #DDD;
+}
+#pholder .readmore {
+  display: none;
+}
+#pContainer #pholder {
+  border: none;
+}
+#pholder h1{
+  font-size: 16px;
+  color: #58585A;
+  line-height: 29px;
+  border-bottom: 1px solid #DDD;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+#pholder footer {
+  border-top: 1px solid #DDD;
+  padding-top: 4px;
+  margin-top: 4px;
+  padding-bottom: 4px;
+}
+#pholder footer .left{
+  float: left;
+  display: block;
+
+}
+#pholder footer .right{
+  float: right;
+  display: block;
+}
+#pholder #plist {
+  height: 400px;
+  margin: 4px 0 0 0;
+  overflow-y: auto;
+}
+#pholder #plist ul{
+  margin: 0;
+}
+#pholder #plist ul li {
+  color: #58585A;
+  display: block;
+  margin-bottom: 6px;
+  border: 1px solid #DDDDDD;
+  border-radius: 4px;
+  margin-right: 4px;
+}
+#pholder #plist ul li:last-child {
+  margin-bottom: 0px;
+}
+.program .pdetails {
+  border-radius: 4px 4px 0 0 ;
+  padding: 4px 10px;
+}
+.program .pdetails h3{
+  font-size: 14px;
+  font-style: italic;
+  color: #26AADF;
+  font-weight: bold;
+  line-height: 14px;
+  margin: 6px 0;
+}
+.program .pdetails .duration { 
+  margin-left: 14px;
+}
+.program .pdetails .cdate, .program .pdetails .duration {
+  display: inline-block;
+  float: left;
+  padding-bottom: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #9797A5;
+}
+.program .pdetails .cdate:before, .program .pdetails .duration:before {
+  content: "•";
+  color: #26AADF;
+  margin-right: 3px;
+  font-size: 14px;
+}
+.program .pdetails .cdate span, .program .pdetails .duration span {
+  color: #26AADF;
+}
+.program .pdetails .pdescription, .program .pdetails .fdescription {
+  clear: both;
+  font-size: 12px;
+}
+.program .pdetails .pdescription p, .program .pdetails .fdescription p{
+  line-height: 15px;
+}
+.program .pactions {
+  display: block;
+  background: #E7F5FC;
+  border-radius: 0 0 4px 4px;
+  border-top: 1px solid #DDD;
+  padding: 6px 10px;
+}
+.program .pactions .social{
+  float: left;
+  margin-top: 5px;
+}
+.program .pactions .applyBox{
+  float: right;
+}
+.program .pactions .applyBox a.question{ 
+   background: url(../../images/email-ico.jpg)  0 2px no-repeat !important;
+   padding-left: 20px;
+  font-size: 12px;
+  display: inline-block;
+  line-height: 20px;
+  vertical-align: middle;
+  font-weight: bold;
+  margin-right: 10px;
+}
+.program.selected .pdetails {
+  background: #F8FCFE;
+}
+.program.selected {
+  color: #212121;
+}
+
+#pholder #plist ul li.selected {
+  border-color: #057FAD;
+  border-radius: 4px;
+}
+.program.selected h3,
+.program.selected .cdate span,
+.program.selected .duration span,
+.program.selected .pdetails .cdate:before,
+.program.selected .pdetails .duration:before  {
+  color: #057FAD;
+}
+.program.selected .pactions {
+  background: #C0E6F8;
+}
+.program.selected .pdetails .cdate, .program.selected .pdetails .duration {
+  color: #212121;
+}
+
+#conections {
+  margin-left: 600px;
+  position: relative;
+  top:-41px;
+}
+#conections li {
+  display: block;
+  list-style:none;
+  margin-bottom: 10px;
+}
+#conections li span{
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  margin-left: 6px;
+}
+/* Small variation of the feeder */
+#pholder.small .readmore {
+  display: block;
+}
+#pholder.small h1 {
+  line-height: 20px;
+ padding-bottom: 4px;
+}
+#pholder.small h3 {
+  line-height: 18px;
+  margin: 2px 0;
+  font-size: 13px;
+}
+#pholder.small .social, #pholder.small .duration, #pholder.small .question, #pholder.small .btn.apply,#pholder.small .fdescription, #pholder.small .pdescription {
+  display: none;
+}
+#pholder.small footer .left a, #pholder.small footer .right a {
+  width: 100px;
+  display: block;
+}
+#pholder.small .cdate, #pholder.small .duration {
+  margin-left: 0px;
+  padding-bottom: 0px;
+  float: none;
+}

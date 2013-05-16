@@ -184,7 +184,7 @@
 	font-weight: bold;
 	line-height: 24px;
 }
-.expander.expand:after, .expander.collapsed:after,.more-scores.expand:after, .more-scores.collapsed:after, #timeline-statuses ul .box p.sQuestion span:before  {
+.expander.expand:after, .expander.collapsed:after,.more-scores.expand:after, .more-scores.collapsed:after, #timeline-statuses ul .box p.sQuestion span:before, #timeline-statuses ul.status-info .target:before   {
   font-family:FontAwesome;
   font-weight:normal;
   font-style:normal;
@@ -211,6 +211,12 @@
 .expander.collapsed {
   background: url('../../../images/icon_collapse.png') center right no-repeat;
 }*/
+#timeline-statuses ul.status-info .target:before {
+  content:"\f140";
+  color:#008C00;
+  margin-right: 4px;
+  width: 22px;
+}
 .expander.expand:after, .more-scores.expand:after {
 content:"\f0ab";
 color:grey;

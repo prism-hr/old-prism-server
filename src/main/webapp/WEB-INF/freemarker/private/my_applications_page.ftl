@@ -167,7 +167,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="#" id="storeFiltersBtn">Save as Default Filter</a></li>
                             <li><a href="<@spring.url '/applications?reloadFilters=true'/>">Load Default Filter</a></li>
-                            <li><a href="#" id="loadActiveApplication">Display my Active Applications</a></li>
+                            <li><a href="#" id="loadActiveApplication">Display Active Applications</a></li>
               
                         </ul>
                       </div>

@@ -59,6 +59,12 @@
             	<div>
             		<form method="post">
 		              <#assign interview = applicationForm.latestInterview>
+                      <#if timeslotIdError??>
+                          <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                      <#else>
+                      <div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i> 					
+                      </#if>
+                      Please confirm the interview slot.</div>
 		              	<div class="row-group">
 			              	<div class="row">
 			              		<#assign responded = 0>
@@ -69,7 +75,7 @@
 			              		</#list>
 			              		
 		            	  	
-		            	  		<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i> Please confirm the interview slot.</div>
+		            	  		
 		            	  		
 		            	  		<div class="timeslots-wrapper">
 			            	  		<div class="timeslots-scrollable">

@@ -1,11 +1,18 @@
 <input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
 <input type="hidden" id="approvalRoundId" name="approvalRoundId" value="<#if approvalRound.id??>${encrypter.encrypt(approvalRound.id)}</#if>" />
 <section class="form-rows"  id="approvalsection">
-<h2 class="no-arrow"> Confirm project details </h2>
-<div>
-<form>
-<div class="alert alert-info" id="add-info-bar-div"><i class="icon-info-sign"></i> Confirm project details. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant. </div>
-<div class="row-group" id="assignSupervisorsToAppSection"> <#import "/spring.ftl" as spring />
+    <h2 class="no-arrow"> Confirm project details </h2>
+    <div>
+    	<form>
+					  <@spring.bind "approvalRound.supervisors" />
+                      <#if spring.status.errors.hasErrors()>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
+                      <#else>
+               		  <div class="alert alert-info"> <i class="icon-info-sign"></i> 
+                      </#if>
+					  Confirm project details. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant. </div>
+                      
+  <div class="row-group" id="assignSupervisorsToAppSection"> <#import "/spring.ftl" as spring />
   <#assign avaliableOptionsSize = (programmeSupervisors?size + previousSupervisors?size + 4)/>
   <#if (avaliableOptionsSize > 25)>
   <#assign avaliableOptionsSize = 25 />

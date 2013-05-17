@@ -65,6 +65,7 @@ public class AdmitterCommentController extends StateTransitionController {
         comment.setApplication(form);
         comment.setNextStatus(form.getStatus());
         form.setAdminRequestedRegistry(null);
+        form.setRegistryUsersDueNotification(false);
        
         applicationsService.save(form);
         commentService.save(comment);

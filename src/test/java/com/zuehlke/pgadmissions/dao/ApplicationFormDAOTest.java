@@ -112,6 +112,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	    ApplicationForm form1 = new ApplicationFormBuilder()
 	        .applicant(user)
 	        .program(program)
+	        .registryUsersDueNotification(true)
 	        .adminRequestedRegistry(user)
 	        .status(ApplicationFormStatus.REVIEW)
 	        .build();
@@ -228,12 +229,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	    ApplicationForm form1 = new ApplicationFormBuilder()
 	    .applicant(user)
 	    .program(program)
+	    .registryUsersDueNotification(false)
 	    .adminRequestedRegistry(user)
 	    .status(ApplicationFormStatus.REJECTED)
 	    .build();
 	    ApplicationForm form2 = new ApplicationFormBuilder()
 	    .applicant(user)
 	    .program(program)
+	    .registryUsersDueNotification(null)
 	    .status(ApplicationFormStatus.REVIEW)
 	    .build();
 	    NotificationRecord record = new NotificationRecordBuilder()
@@ -243,6 +246,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	    .applicant(user)
 	    .program(program)
 	    .adminRequestedRegistry(user)
+	    .registryUsersDueNotification(true)
 	    .notificationRecords(record)
 	    .status(ApplicationFormStatus.REVIEW)
 	    .build();
@@ -270,6 +274,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	    ApplicationForm form1 = new ApplicationFormBuilder()
 	    .applicant(user)
 	    .program(program)
+	    .registryUsersDueNotification(true)
 	    .adminRequestedRegistry(user)
 	    .status(ApplicationFormStatus.REVIEW)
 	    .build();

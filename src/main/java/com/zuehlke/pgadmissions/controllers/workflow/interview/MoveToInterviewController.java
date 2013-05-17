@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -175,12 +176,16 @@ public class MoveToInterviewController {
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult) {
+    public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult, ModelMap model) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         if (bindingResult.hasErrors()) {
             return INTERVIEWERS_SECTION;
         }
         interviewService.moveApplicationToInterview(interview, applicationForm);
+        if(interview.isParticipant(getUser())){
+            model.addAttribute("message", "redirectToVote");
+            return "/private/common/simpleResponse";
+        }
         return "/private/common/ajax_OK";
     }
 

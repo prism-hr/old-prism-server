@@ -20,11 +20,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -33,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
@@ -353,7 +357,8 @@ public class MoveToInterviewControllerTest {
     public void shouldMoveApplicationToInterview() {
         Interview interview = new InterviewBuilder().id(4).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
-
+        ModelMap model = new ExtendedModelMap(); 
+        
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
                 interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
             @Override
@@ -366,16 +371,44 @@ public class MoveToInterviewControllerTest {
         interviewServiceMock.moveApplicationToInterview(interview, application);
         EasyMock.replay(interviewServiceMock);
 
-        String view = controller.moveToInterview("abc", interview, bindingResultMock);
+        String view = controller.moveToInterview("abc", interview, bindingResultMock, model);
         assertEquals("/private/common/ajax_OK", view);
         EasyMock.verify(interviewServiceMock);
+    }
+    
+    @Test
+    public void shouldMoveApplicationToInterviewAndRedirectToVotePage() {
+        InterviewParticipant participant = new InterviewParticipantBuilder().user(currentUserMock).build();
+        Interview interview = new InterviewBuilder().id(4).participants(participant).build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
+        ModelMap model = new ExtendedModelMap(); 
+        
+        controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+            @Override
+            public ApplicationForm getApplicationForm(String applicationId) {
+                return application;
+            }
 
+        };
+        EasyMock.expect(currentUserMock.getId()).andReturn(3).anyTimes();
+
+        interviewServiceMock.moveApplicationToInterview(interview, application);
+        
+        EasyMock.replay(interviewServiceMock, currentUserMock);
+        String view = controller.moveToInterview("abc", interview, bindingResultMock, model);
+        EasyMock.verify(interviewServiceMock, currentUserMock);
+
+        assertEquals("/private/common/simpleResponse", view);
+        assertEquals("redirectToVote", model.get("message"));
     }
 
     @Test
     public void shouldNotSaveInterviewAndReturnToInterviewPageIfHasErrors() {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        ModelMap model = new ExtendedModelMap(); 
+        
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
                 interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
             @Override
@@ -388,7 +421,7 @@ public class MoveToInterviewControllerTest {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
         EasyMock.replay(errorsMock, applicationServiceMock);
-        assertEquals("/private/staff/interviewers/interviewer_section", controller.moveToInterview("abc", interview, errorsMock));
+        assertEquals("/private/staff/interviewers/interviewer_section", controller.moveToInterview("abc", interview, errorsMock, model));
 
     }
 

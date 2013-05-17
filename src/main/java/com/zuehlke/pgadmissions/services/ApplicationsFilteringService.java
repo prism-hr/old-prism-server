@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 @Transactional
 public class ApplicationsFilteringService {
 
-    public ApplicationsFiltering getStoredOrDefaultFilter(RegisteredUser user) {
+    public ApplicationsFiltering getStoredOrDefaultFiltering(RegisteredUser user) {
         ApplicationsFiltering filtering;
         if (user.getFiltering() != null) {
             filtering = user.getFiltering();

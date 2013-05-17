@@ -19,14 +19,14 @@ public class ApplicationsFilteringServiceTest {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         RegisteredUser user = new RegisteredUserBuilder().filtering(filtering).build();
         
-        ApplicationsFiltering actualFiltering = service.getStoredOrDefaultFilter(user);
+        ApplicationsFiltering actualFiltering = service.getStoredOrDefaultFiltering(user);
         
         assertSame(filtering, actualFiltering);
     }
     @Test
     public void shouldReturnActiveApplicationFiltering() {
         RegisteredUser user = new RegisteredUserBuilder().build();
-        ApplicationsFiltering actualFiltering = service.getStoredOrDefaultFilter(user);
+        ApplicationsFiltering actualFiltering = service.getStoredOrDefaultFiltering(user);
         Assert.assertEquals(3, actualFiltering.getFilters().size());
     }
     

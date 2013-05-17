@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -121,14 +122,13 @@ public class ApplicationListControllerTest {
 
         // GIVEN
         ModelMap model = new ExtendedModelMap();
-        
+
         model.addAttribute("filtering", new ApplicationsFiltering());
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         user.setFiltering(filtering);
-        
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
@@ -148,7 +148,7 @@ public class ApplicationListControllerTest {
 
         // GIVEN
         ModelMap model = new ExtendedModelMap();
-        
+
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         model.addAttribute("filtering", filtering);
         HttpSession httpSession = new MockHttpSession();
@@ -169,15 +169,10 @@ public class ApplicationListControllerTest {
         // GIVEN
         ModelMap model = new ExtendedModelMap();
 
-        List<ApplicationsFilter> filters = Lists.newArrayList();
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        filtering.setFilters(filters);
-        filtering.setBlockCount(8);
-        filtering.setOrder(SortOrder.DESCENDING);
-        filtering.setSortCategory(SortCategory.APPLICATION_DATE);
 
         List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
-        expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 8)).andReturn(
+        expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(
                 applications);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
@@ -195,18 +190,14 @@ public class ApplicationListControllerTest {
     public void shouldReturnApplicationReport() throws IOException {
 
         // GIVEN
-        List<ApplicationsFilter> filters = Lists.newArrayList();
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        filtering.setFilters(filters);
-        filtering.setOrder(SortOrder.DESCENDING);
-        filtering.setSortCategory(SortCategory.APPLICATION_DATE);
 
         MockHttpServletRequest requestMock = new MockHttpServletRequest();
         requestMock.setParameter("tqx", "out:html");
         MockHttpServletResponse responseMock = new MockHttpServletResponse();
 
         DataTable dataTable = new DataTable();
-        expect(applicationsReportServiceMock.getApplicationsReport(user, filters, SortCategory.APPLICATION_DATE, SortOrder.DESCENDING)).andReturn(dataTable);
+        expect(applicationsReportServiceMock.getApplicationsReport(user, filtering)).andReturn(dataTable);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
@@ -267,7 +258,7 @@ public class ApplicationListControllerTest {
 
     @Test
     public void shouldSaveNoFiltersAsDefault() {
-        
+
         List<ApplicationsFilter> emptyFilters = Collections.<ApplicationsFilter> emptyList();
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         filtering.setFilters(emptyFilters);
@@ -282,7 +273,7 @@ public class ApplicationListControllerTest {
 
     @Test
     public void shouldSaveTwoFiltersAsDefault() {
-        
+
         ApplicationsFilter filter1 = new ApplicationsFilterBuilder().id(1).build();
         ApplicationsFilter filter2 = new ApplicationsFilterBuilder().id(2).build();
         List<ApplicationsFilter> filters = Arrays.asList(filter1, filter2);
@@ -319,19 +310,15 @@ public class ApplicationListControllerTest {
         applicationsReportServiceMock = EasyMock.createMock(ApplicationsReportService.class);
         filtersPropertyEditorMock = createMock(ApplicationsFiltersPropertyEditor.class);
         applicationSummaryServiceMock = createMock(ApplicationSummaryService.class);
-        controller = new ApplicationListController(applicationsServiceMock,
-                applicationsReportServiceMock,
-                userServiceMock,
-                filtersPropertyEditorMock,
+        controller = new ApplicationListController(applicationsServiceMock, applicationsReportServiceMock, userServiceMock, filtersPropertyEditorMock,
                 applicationSummaryServiceMock);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void shouldCallSummaryServiceToGetApplicationSummary() {
-        EasyMock.expect(applicationSummaryServiceMock.getSummary("appID"))
-        .andReturn(Collections.EMPTY_MAP);
-        
+        EasyMock.expect(applicationSummaryServiceMock.getSummary("appID")).andReturn(Collections.EMPTY_MAP);
+
         replay(applicationSummaryServiceMock);
         Assert.assertTrue(controller.getApplicationDetails("appID").isEmpty());
         EasyMock.verify(applicationSummaryServiceMock);
@@ -352,4 +339,5 @@ public class ApplicationListControllerTest {
         notApprovedFilter.setSearchTerm(status.displayValue());
         return notApprovedFilter;
     }
+
 }

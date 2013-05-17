@@ -104,8 +104,7 @@ public class ApplicationListController {
     @RequestMapping(value = "/section", method = RequestMethod.GET)
     public String getApplicationListSection(@ModelAttribute("filtering") ApplicationsFiltering filtering, ModelMap model) {
         RegisteredUser user = getUser();
-        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering.getFilters(), filtering.getSortCategory(),
-                filtering.getOrder(), filtering.getBlockCount());
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
         Map<String, ActionsDefinitions> actionDefinitions = new LinkedHashMap<String, ActionsDefinitions>();
         for (ApplicationForm applicationForm : applications) {
             ActionsDefinitions actionsDefinition = applicationsService.getActionsDefinition(user, applicationForm);
@@ -119,7 +118,7 @@ public class ApplicationListController {
     @RequestMapping(value = "/report", method = RequestMethod.GET)
     public void getApplicationsReport(@ModelAttribute("filtering") ApplicationsFiltering filtering, HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), filtering.getFilters(), filtering.getSortCategory(), filtering.getOrder());
+        DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), filtering);
         DataSourceRequest dsRequest;
         try {
             dsRequest = new DataSourceRequest(req);

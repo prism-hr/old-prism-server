@@ -25,8 +25,10 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
@@ -51,25 +53,23 @@ public class ApplicationFormListDAO {
     }
 
     public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
-        return this.getVisibleApplications(user, Collections.<ApplicationsFilter> emptyList(), SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 50);
+        return this.getVisibleApplications(user, new ApplicationsFiltering(), 50);
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sortCategory, SortOrder sortOrder, Integer pageCount, Integer itemsPerPage) {
+    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, ApplicationsFiltering filtering, int itemsPerPage) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
-        
-        if (pageCount != null && itemsPerPage != null) {
-            criteria.setFirstResult((pageCount - 1) * itemsPerPage);
-            criteria.setMaxResults(itemsPerPage);
-        }
-        
+
+        criteria.setFirstResult((filtering.getBlockCount() - 1) * itemsPerPage);
+        criteria.setMaxResults(itemsPerPage);
+
         criteria.setReadOnly(true);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         if (user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMITTER)) {
             criteria.add(getAllApplicationsForSuperAdministrator());
             criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
-        }  else {
+        } else {
             Disjunction disjunction = Restrictions.disjunction();
 
             if (user.isInRole(Authority.APPLICANT)) {
@@ -91,8 +91,10 @@ public class ApplicationFormListDAO {
                 disjunction.add(Subqueries.propertyIn("id", getApprovedApplicationsInProgramsOfWhichApprover(user)));
             }
 
-            if (!user.getProgramsOfWhichViewer().isEmpty()) {
-                disjunction.add(Subqueries.propertyIn("id", getApplicationsInProgramsOfWhichViewer(user)));
+            if (filtering.getPreFilter() == ApplicationsPreFilter.ALL) {
+                if (!user.getProgramsOfWhichViewer().isEmpty()) {
+                    disjunction.add(Subqueries.propertyIn("id", getApplicationsInProgramsOfWhichViewer(user)));
+                }
             }
 
             disjunction.add(Subqueries.propertyIn("id", getSubmittedApplicationsOfWhichApplicationAdministrator(user)));
@@ -108,7 +110,7 @@ public class ApplicationFormListDAO {
 
         criteria = setAliases(criteria);
 
-        for (ApplicationsFilter filter : filters) {
+        for (ApplicationsFilter filter : filtering.getFilters()) {
             criteria = setSearchCriteria(filter.getSearchCategory(), filter.getSearchPredicate(), filter.getSearchTerm(), criteria);
         }
 
@@ -116,7 +118,7 @@ public class ApplicationFormListDAO {
             return Collections.emptyList();
         }
 
-        criteria = setOrderCriteria(sortCategory, sortOrder, criteria);
+        criteria = setOrderCriteria(filtering.getSortCategory(), filtering.getOrder(), criteria);
 
         return criteria.list();
     }
@@ -139,8 +141,7 @@ public class ApplicationFormListDAO {
                     newCriterion = Restrictions.ilike("applicationNumber", term, MatchMode.ANYWHERE);
                     break;
                 case PROGRAMME_NAME:
-                    newCriterion = Restrictions.disjunction()
-                            .add(Restrictions.like("p.title", StringUtils.upperCase(term), MatchMode.ANYWHERE))
+                    newCriterion = Restrictions.disjunction().add(Restrictions.like("p.title", StringUtils.upperCase(term), MatchMode.ANYWHERE))
                             .add(Restrictions.like("p.title", StringUtils.lowerCase(term), MatchMode.ANYWHERE))
                             .add(Restrictions.like("p.code", StringUtils.upperCase(term), MatchMode.ANYWHERE))
                             .add(Restrictions.like("p.code", StringUtils.lowerCase(term), MatchMode.ANYWHERE));
@@ -240,7 +241,7 @@ public class ApplicationFormListDAO {
             return Order.desc(propertyName);
         }
     }
-    
+
     private Criterion getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit() {
         return Restrictions.eq("withdrawnBeforeSubmit", false);
     }

@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -34,7 +35,9 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCase {
 
@@ -69,7 +72,12 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         save(applicationFormOne, applicationFormTwo);
         flushAndClearSession();
         RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
-        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin);
+        
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setPreFilter(ApplicationsPreFilter.ALL);
+        filtering.setOrder(SortOrder.DESCENDING);
+        
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin, filtering, 5);
         assertTrue(contains(applicationFormOne, applications));
         assertFalse(contains(applicationFormTwo, applications));
     }
@@ -613,7 +621,9 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
 
         flushAndClearSession();
 
-        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(viewer);
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setPreFilter(ApplicationsPreFilter.ALL);
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(viewer, filtering, 10);
 
         assertTrue(contains(applicationFormOne, applications));
         assertTrue(contains(applicationFormTwo, applications));

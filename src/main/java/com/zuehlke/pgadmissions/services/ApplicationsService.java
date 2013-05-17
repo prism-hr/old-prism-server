@@ -20,16 +20,15 @@ import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -129,16 +128,13 @@ public class ApplicationsService {
         return applicationFormDAO.getApplicationsDueUpdateNotification();
     }
 
-    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sort, SortOrder order,
-            Integer page) {
-        // default values
-        int pageCount = page == null ? 1 : page;
-        SortCategory sortCategory = sort == null ? SortCategory.APPLICATION_DATE : sort;
-        SortOrder sortOrder = order == null ? SortOrder.ASCENDING : order;
-        if (pageCount < 0) {
-            pageCount = 0;
+    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user, ApplicationsFiltering filtering) {
+        if (filtering.getPreFilter() == ApplicationsPreFilter.URGENT) {
+            // TODO Kevin application requiring attention
+            return null;
+        } else {
+            return applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
         }
-        return applicationFormListDAO.getVisibleApplications(user, filters, sortCategory, sortOrder, pageCount, APPLICATION_BLOCK_SIZE);
     }
 
     public void delegateInterviewAdministration(ApplicationForm applicationForm, RegisteredUser delegate) {
@@ -163,11 +159,11 @@ public class ApplicationsService {
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.VALIDATION)) {
             if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
-            } else if (user.isNotInRole(Authority.ADMITTER)){
+            } else if (user.isNotInRole(Authority.ADMITTER)) {
                 actions.addAction("validate", "Validate");
             }
         }
-        
+
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.REVIEW)) {
             if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
@@ -189,49 +185,41 @@ public class ApplicationsService {
                 actions.setRequiresAttention(true);
             }
         }
-        
+
         if (user.isInRole(Authority.ADMITTER)) {
             actions.addAction("validate", "Confirm Eligibility");
-            if (application.getAdminRequestedRegistry() != null && (application.isNotInState(ApplicationFormStatus.WITHDRAWN) && application.isNotInState(ApplicationFormStatus.REJECTED))) {
+            if (application.getAdminRequestedRegistry() != null
+                    && (application.isNotInState(ApplicationFormStatus.WITHDRAWN) && application.isNotInState(ApplicationFormStatus.REJECTED))) {
                 actions.setRequiresAttention(true);
-            }else {
+            } else {
                 actions.setRequiresAttention(false);
             }
         }
 
-        if (user.hasAdminRightsOnApplication(application)
-                || user.isViewerOfProgramme(application)
-                || user.isInRole(Authority.ADMITTER)) {
+        if (user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application) || user.isInRole(Authority.ADMITTER)) {
             actions.addAction("comment", "Comment");
         }
 
-        if (user.isReviewerInLatestReviewRoundOfApplicationForm(application)
-                && application.isInState(ApplicationFormStatus.REVIEW)
+        if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState(ApplicationFormStatus.REVIEW)
                 && !user.hasRespondedToProvideReviewForApplicationLatestRound(application)) {
             actions.addAction("review", "Add review");
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW)
-                && interview.isScheduling() && interview.isParticipant(user)
+        if (application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduling() && interview.isParticipant(user)
                 && !interview.getParticipant(user).getResponded()) {
             actions.addAction("interviewVote", "Provide Availability For Interview");
             actions.setRequiresAttention(true);
         }
 
-        if (user.isInterviewerOfApplicationForm(application)
-                && application.isInState(ApplicationFormStatus.INTERVIEW)
-                && interview.isScheduled()
+        if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduled()
                 && application.getApplicationAdministrator() == null && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);
         }
 
-        if (user.isRefereeOfApplicationForm(application)
-                && application.isSubmitted()
-                && application.isModifiable()
-                && !user.getRefereeForApplicationForm(application)
-                        .hasResponded()) {
+        if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable()
+                && !user.getRefereeForApplicationForm(application).hasResponded()) {
             actions.addAction("reference", "Add reference");
             actions.setRequiresAttention(true);
         }
@@ -246,20 +234,16 @@ public class ApplicationsService {
         }
 
         if (application.isInState(ApplicationFormStatus.APPROVAL)
-                && (user.isInRoleInProgram(Authority.APPROVER,
-                        application.getProgram()) || user
-                        .isInRole(Authority.SUPERADMINISTRATOR))) {
+                && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
             actions.addAction("validate", "Approve");
             if (user.isNotInRole(Authority.SUPERADMINISTRATOR) && !application.isPendingApprovalRestart()) {
                 actions.setRequiresAttention(true);
             }
         }
 
-        if (application.isInState(ApplicationFormStatus.APPROVAL)
-                && !application.isPendingApprovalRestart()
+        if (application.isInState(ApplicationFormStatus.APPROVAL) && !application.isPendingApprovalRestart()
                 && user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
-                && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram())
-                && user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
+                && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) && user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
             actions.addAction("restartApprovalAsAdministrator", "Revise Approval");
             actions.setRequiresAttention(true);
         }

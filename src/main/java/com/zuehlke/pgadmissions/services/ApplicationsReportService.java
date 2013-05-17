@@ -26,7 +26,7 @@ import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
@@ -44,8 +44,6 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @Service("applicationsReportService")
 @Transactional
@@ -62,11 +60,11 @@ public class ApplicationsReportService {
         this.applicationsService = applicationsService;
     }
 
-    public DataTable getApplicationsReport(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sort, SortOrder order) {
-        Integer pageCount = 0;
-        
+    public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering) {
+        filtering.setBlockCount(0);
+
         DataTable data = new DataTable();
-        
+
         ArrayList<ColumnDescription> cd = Lists.newArrayList();
         cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
         cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
@@ -102,11 +100,11 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
         cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
         data.addColumns(cd);
-        
+
         List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
         do {
-            applications = applicationsService.getAllVisibleAndMatchedApplications(user, filters, sort, order, pageCount);
-            pageCount++;
+            applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
+            filtering.setBlockCount(filtering.getBlockCount() + 1);
 
             // Fill the data table.
             for (ApplicationForm app : applications) {
@@ -118,11 +116,11 @@ public class ApplicationsReportService {
                 int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
                 int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);
                 int[] interviewEndorsements = getNumberOfPositiveAndNegativeInterviewEndorsements(app);
-    
+
                 Date approveDate = getApproveDate(app);
-    
+
                 TableRow row = new TableRow();
-    
+
                 row.addCell(app.getApplicationNumber());
                 row.addCell(firstNames);
                 row.addCell(applicant.getLastName());
@@ -156,7 +154,7 @@ public class ApplicationsReportService {
                 row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
                 row.addCell(approveDate != null ? getConditionalType(app) : "");
                 row.addCell(approveDate != null ? getOfferConditions(app) : "");
-    
+
                 try {
                     data.addRow(row);
                 } catch (TypeMismatchException e) {

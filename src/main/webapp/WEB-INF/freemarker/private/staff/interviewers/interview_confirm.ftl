@@ -57,7 +57,8 @@
             <section class="interview-votes form-rows">
             	<h2 class="no-arrow">Interview Confirmation</h2>
             	<div>
-            		<form method="post">
+            		<form method="post" action= "<@spring.url '/interviewConfirm'/>" />
+            		  <input type="hidden" id="applicationId" name ="applicationId" value ="${(applicationForm.applicationNumber)!}"/>
 		              <#assign interview = applicationForm.latestInterview>
                       <#if timeslotIdError??>
                           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -162,6 +163,12 @@
 	              <form id="restart-interview-form" method="post" action="<@spring.url '/interviewConfirm/restart' />?applicationId=${applicationForm.applicationNumber}"></form>
             	</div>
             </section>
+        </div>
+        
+        <div class="content-box"> 
+          <div class="content-box-inner">
+            <#include "/private/staff/admin/comment/timeline_application.ftl"/>
+          </div>
         </div>
         
       </article>

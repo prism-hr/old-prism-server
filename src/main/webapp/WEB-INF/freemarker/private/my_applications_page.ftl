@@ -80,6 +80,7 @@
             <#assign args = ["${messageApplication.applicationNumber}"] />
           <div class="alert alert-info"> <i class="icon-info-sign"></i>
             <@spring.messageArgs '${RequestParameters.messageCode}' args />
+            <a href='/pgadmissions/application?view=view&applicationId=${messageApplication.applicationNumber}'> Re-open the application </a>
           </div>
           <#else>
           <div class="alert alert-info"> <i class="icon-info-sign"></i>

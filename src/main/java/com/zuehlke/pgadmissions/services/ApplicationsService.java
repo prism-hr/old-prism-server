@@ -173,13 +173,11 @@ public class ApplicationsService {
         }
 
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.INTERVIEW)) {
-            if (interview.isScheduled()) {
                 if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                     actions.addAction("validate", "Administer Interview");
                 } else {
                     actions.addAction("validate", "Evaluate interview feedback");
                 }
-            }
             if (interview.isScheduling()) {
                 actions.addAction("interviewConfirm", "Confirm interview time");
                 actions.setRequiresAttention(true);

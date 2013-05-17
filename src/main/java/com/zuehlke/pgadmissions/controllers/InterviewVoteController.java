@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
@@ -65,7 +66,7 @@ public class InterviewVoteController {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         InterviewParticipant participant = interview.getParticipant(currentUser);
-        if (participant.getResponded() || applicationForm.isDecided() || applicationForm.isWithdrawn()) {
+        if (!applicationForm.isInState(ApplicationFormStatus.INTERVIEW) || participant.getResponded() ) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
         return applicationForm;

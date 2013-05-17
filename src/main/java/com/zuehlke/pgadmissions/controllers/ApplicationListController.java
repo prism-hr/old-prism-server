@@ -29,7 +29,6 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.base.DataSourceException;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -38,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
+import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -59,19 +59,22 @@ public class ApplicationListController {
     private final ApplicationsFiltersPropertyEditor filtersPropertyEditor;
 
     private final ApplicationSummaryService applicationSummaryService;
+    
+    private final ApplicationsFilteringService filteringService;
 
     public ApplicationListController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
-            ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService) {
+            ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService, ApplicationsFilteringService filteringService) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
         this.applicationSummaryService = applicationSummaryService;
+        this.filteringService = filteringService;
     }
 
     @InitBinder(value = "filtering")
@@ -86,18 +89,12 @@ public class ApplicationListController {
             model.addAttribute("alertDefinition", alertDefinition);
             session.removeAttribute("alertDefinition");
         }
-
-        ApplicationsFiltering applicationsFiltering = (ApplicationsFiltering) model.get("filtering");
-        if (applicationsFiltering == null || reloadFilters) {
-            // filters not initialized in session or filter reload requested
-            RegisteredUser user = getUser();
-            if (user.getFiltering() != null) {
-                applicationsFiltering = user.getFiltering();
-            } else {
-                applicationsFiltering = getActiveApplicationFiltering();
-            }
+        
+        ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
+        if (filtering == null || reloadFilters) {
+            filtering = filteringService.getStoredOrDefaultFilter(getUser());
         }
-        model.addAttribute("filtering", applicationsFiltering);
+        model.addAttribute("filtering", filtering);
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }
 
@@ -203,20 +200,4 @@ public class ApplicationListController {
         return applicationsService.getApplicationByApplicationNumber(application);
     }
 
-    private ApplicationsFiltering getActiveApplicationFiltering() {
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
-        List<ApplicationsFilter> filters = filtering.getFilters();
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPROVED));
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.REJECTED));
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.WITHDRAWN));
-        return filtering;
-    }
-
-    private ApplicationsFilter getFilterForNonStatus(ApplicationFormStatus status) {
-        ApplicationsFilter filter = new ApplicationsFilter();
-        filter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
-        filter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
-        filter.setSearchTerm(status.displayValue());
-        return filter;
-    }
 }

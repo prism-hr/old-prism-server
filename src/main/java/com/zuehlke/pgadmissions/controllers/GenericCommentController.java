@@ -82,7 +82,7 @@ public class GenericCommentController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.getActionsDefinition(getUser(), application);
+        return applicationsService.calculateActions(getUser(), application);
     }
 	
 	@RequestMapping(method = RequestMethod.GET)

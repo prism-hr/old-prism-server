@@ -259,7 +259,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationService.getActionsDefinition(getUser(), application);
+        return applicationService.calculateActions(getUser(), application);
     }
 
     @ModelAttribute("user")

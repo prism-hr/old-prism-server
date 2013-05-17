@@ -25,7 +25,6 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/scrollpagination.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
@@ -112,6 +111,7 @@
             <div class="field">
               <input type="radio" name="preFilterRadio" <#if filtering.preFilter == "ALL">checked</#if> value="ALL">All applications</input>
               <input type="radio" name="preFilterRadio" <#if filtering.preFilter == "MY">checked</#if> value="MY">My applications</input>
+              <input type="radio" name="preFilterRadio" <#if filtering.preFilter == "URGENT">checked</#if> value="URGENT">Applications that Require Attention</input>
             </div>
             
             <#list filtering.filters as filter> 

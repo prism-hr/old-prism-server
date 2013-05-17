@@ -68,7 +68,7 @@ public class InterviewConfirmController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.getActionsDefinition(userService.getCurrentUser(), application);
+        return applicationsService.calculateActions(userService.getCurrentUser(), application);
     }
 
     @RequestMapping(method = RequestMethod.GET)

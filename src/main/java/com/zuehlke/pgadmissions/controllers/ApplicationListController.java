@@ -107,7 +107,7 @@ public class ApplicationListController {
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
         Map<String, ActionsDefinitions> actionDefinitions = new LinkedHashMap<String, ActionsDefinitions>();
         for (ApplicationForm applicationForm : applications) {
-            ActionsDefinitions actionsDefinition = applicationsService.getActionsDefinition(user, applicationForm);
+            ActionsDefinitions actionsDefinition = applicationsService.calculateActions(user, applicationForm);
             actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
         }
         model.addAttribute("applications", applications);

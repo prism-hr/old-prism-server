@@ -1,13 +1,17 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
@@ -35,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Repository
 public class ApplicationFormListDAO {
@@ -55,9 +60,98 @@ public class ApplicationFormListDAO {
     public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
         return this.getVisibleApplications(user, new ApplicationsFiltering(), 50);
     }
+    
+    public List<ApplicationForm> getApplicationsWorthConsideringForAttentionFlag(final RegisteredUser user,
+            final ApplicationsFiltering filtering, final ApplicationsService service) {
+        HashSet<ApplicationForm> applicationsWhichNeedAttention = new LinkedHashSet<ApplicationForm>();
+        
+        StringBuilder queryBuilder = new StringBuilder(""
+                + "SELECT apform.id " 
+                + "FROM application_form apform "
+                + "JOIN program prog ON apform.program_id = prog.id "
+                + "JOIN registered_user ru ON apform.applicant_id = ru.id "
+                + "WHERE apform.status NOT IN (\"UNSUBMITTED\", \"REJECTED\", \"WITHDRAWN\", \"APPROVED\")" 
+                + "AND apform.program_id IN "
+                + "( "
+                + "     SELECT program_id " 
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN program_administrator_link pal ON ru.id = pal.administrator_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + "     UNION "
+                + ""
+                + "     SELECT program_id " 
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN program_approver_link papl ON ru.id = papl.registered_user_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + "     UNION " 
+                + ""
+                + "     SELECT program_id "
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN program_interviewer_link pil ON ru.id = pil.interviewer_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + "     UNION " 
+                + ""
+                + "     SELECT program_id "
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN program_reviewer_link prl ON ru.id = prl.reviewer_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + "     UNION "
+                + ""
+                + "     SELECT program_id " 
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN program_supervisor_link psl ON ru.id = psl.supervisor_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + ") ORDER BY ");
+
+        switch (filtering.getSortCategory()) {
+            case APPLICANT_NAME:
+                queryBuilder.append("ru.lastName");
+                getSqlOrder(filtering, queryBuilder);
+                queryBuilder.append(", ru.firstName");
+                getSqlOrder(filtering, queryBuilder);
+                break;
+
+            case PROGRAMME_NAME:
+                queryBuilder.append("prog.title");
+                getSqlOrder(filtering, queryBuilder);
+                break;
+
+            case APPLICATION_STATUS:
+                queryBuilder.append("apform.status");
+                getSqlOrder(filtering, queryBuilder);
+                break;
+
+            default:
+            case APPLICATION_DATE:
+                queryBuilder.append("apform.submitted_on_timestamp");
+                getSqlOrder(filtering, queryBuilder);
+                queryBuilder.append(", apform.app_date_time");
+                break;
+        }
+
+        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(queryBuilder.toString());
+        query.setInteger("user_id", user.getId());
+
+        for (Object id : query.list()) {
+            ApplicationForm form = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id);
+            if (service.calculateActions(user, form).isRequiresAttention()) {
+                applicationsWhichNeedAttention.add(form);
+            }
+        }
+        return new ArrayList<ApplicationForm>(applicationsWhichNeedAttention);
+    }
+    
+    private StringBuilder getSqlOrder(final ApplicationsFiltering filtering, final StringBuilder builder) {
+        return filtering.getOrder() == SortOrder.DESCENDING ? builder.append(" DESC ") : builder.append(" ASC ");
+    }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, ApplicationsFiltering filtering, int itemsPerPage) {
+    public List<ApplicationForm> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
 
         criteria.setFirstResult((filtering.getBlockCount() - 1) * itemsPerPage);
@@ -171,7 +265,7 @@ public class ApplicationFormListDAO {
         return criteria;
     }
 
-    public Criteria setOrderCriteria(SortCategory sortCategory, SortOrder order, Criteria criteria) {
+    public Criteria setOrderCriteria(final SortCategory sortCategory, final SortOrder order, final Criteria criteria) {
         boolean ascending = true;
         if (order == SortOrder.DESCENDING) {
             ascending = false;

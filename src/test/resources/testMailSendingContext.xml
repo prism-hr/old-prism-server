@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd      
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+    <context:property-placeholder location="classpath:environment.properties" />
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >      
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:${db.schema}" />
+        <property name="username" value="sa" />
+        <property name="password" value="sa" />
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="com.zuehlke.pgadmissions.domain"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="javax.persistence.validation.mode">NONE</prop>
+                <prop key="hibernate.search.default.directory_provider">filesystem</prop>
+                <prop key="hibernate.search.default.indexBase">testIndexes/</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="hibernate.cache.use_second_level_cache">true</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    
+    <bean id="defaultTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+    
+    <bean id="ScheduledMailSendingService" class="com.zuehlke.pgadmissions.mail.ScheduledMailSendingService" />
+<!--         <constructor-arg index="0" ref="sessionFactory" /> -->
+<!--         <constructor-arg index="1" ref="fullTextSearchDAO" /> -->
+<!--     </bean> -->
+
+
+    <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSender" />
+
+   <bean id="javaMailSender" class="${email.sender}">
+        <property name="host">
+            <value>${email.server}</value>
+        </property>
+        <property name="port">
+            <value>${email.port}</value>
+        </property>
+        <property name="protocol">
+            <value>smtp</value>
+        </property>
+        <property name="username">
+            <value>${email.username}</value>
+        </property>
+        <property name="password">
+            <value>${email.password}</value>
+        </property>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">${mail.smtp.auth}</prop>
+                <prop key="mail.smtp.starttls.enable">${mail.smtp.starttls.enable}</prop>
+                <prop key="mail.smtp.quitwait">${mail.smtp.quitwait}</prop>
+                <prop key="mail.smtp.connectiontimeout">${mail.smtp.connectiontimeout}</prop>
+                <prop key="mail.smtp.timeout">${mail.smtp.timeout}</prop>
+                <prop key="mail.debug">${mail.debug}</prop>
+            </props>
+        </property>
+    </bean>    
+    
+    <bean id="emailTemplateService" class="com.zuehlke.pgadmissions.services.EmailTemplateService" />
+
+    <bean id="freemarkerConfig"
+        class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"
+         />    
+
+    <bean id="applicationsService" class="com.zuehlke.pgadmissions.services.ApplicationsService" />
+
+    <bean id="mailSendingService" class="com.zuehlke.pgadmissions.mail.MailSendingService" />
+    
+    <bean id="configurationService" class="com.zuehlke.pgadmissions.services.ConfigurationService" />
+
+    <bean id="encryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils" />
+
+    <bean id="commentFactory" class="com.zuehlke.pgadmissions.utils.CommentFactory" />
+
+    <bean id="commentService" class="com.zuehlke.pgadmissions.services.CommentService" />
+
+    <bean id="pdfAttachmentInputSourceFactory" class="com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory" />
+
+    <bean id="pdfdocumentBuilder" class="com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder" />
+    
+    <bean id="userService" class="com.zuehlke.pgadmissions.services.UserService" />
+    
+    <bean id="userFactory" class="com.zuehlke.pgadmissions.services.UserFactory" />
+
+    <bean id="roleService" class="com.zuehlke.pgadmissions.services.RoleService" />
+    
+    <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
+
+    <context:component-scan base-package="com.zuehlke.pgadmissions.dao" />
+</beans>

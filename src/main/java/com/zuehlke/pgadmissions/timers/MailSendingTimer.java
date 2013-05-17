@@ -62,9 +62,4 @@ public class MailSendingTimer {
     public void sendNewUserInvitation() {
         mailService.sendNewUserInvitation();
     }
-    
-    @Scheduled(cron = "${email.schedule.period.chron}")
-    public void sendValidationRequestToRegistry() {
-        mailService.sendValidationRequestToRegistry();
-    }
 }

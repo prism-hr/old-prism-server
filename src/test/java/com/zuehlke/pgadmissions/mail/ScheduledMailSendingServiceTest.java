@@ -4,17 +4,14 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TAS
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
@@ -45,7 +42,6 @@ import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
@@ -62,7 +58,6 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
@@ -81,18 +76,11 @@ import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
-import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
-import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
@@ -102,16 +90,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     private SupervisorDAO supervisorDAOMock;
 
     private StageDurationDAO stageDurationDAOMock;
-
-    private ApplicationsService applicationsServiceMock;
-
-    private CommentFactory commentFactoryMock;
-
-    private CommentService commentServiceMock;
-
-    private PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactoryMock;
-
-    private PdfDocumentBuilder pdfDocumentBuilderMock;
 
     private RefereeDAO refereeDAOMock;
 
@@ -129,7 +107,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
     private static final String HOST = "http://localhost:8080";
 
-    private static final String SERVICE_OFFER = "5 working days";
 
     @Before
     public void prepare() {
@@ -137,11 +114,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         applicationContextMock = createMock(ApplicationContext.class);
         supervisorDAOMock = createMock(SupervisorDAO.class);
         stageDurationDAOMock = createMock(StageDurationDAO.class);
-        applicationsServiceMock = createMock(ApplicationsService.class);
-        commentFactoryMock = createMock(CommentFactory.class);
-        commentServiceMock = createMock(CommentService.class);
-        pdfAttachmentInputSourceFactoryMock = createMock(PdfAttachmentInputSourceFactory.class);
-        pdfDocumentBuilderMock = createMock(PdfDocumentBuilder.class);
         refereeDAOMock = createMock(RefereeDAO.class);
         userServiceMock = createMock(UserService.class);
         userDAOMock = createMock(UserDAO.class);
@@ -149,9 +121,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         encryptionUtilsMock = createMock(EncryptionUtils.class);
         interviewParticipantDAOMock = createMock(InterviewParticipantDAO.class);
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, commentDAOMock, supervisorDAOMock,
-                stageDurationDAOMock, applicationsServiceMock, configurationServiceMock, commentFactoryMock, commentServiceMock,
-                pdfAttachmentInputSourceFactoryMock, pdfDocumentBuilderMock, refereeDAOMock, userServiceMock, userDAOMock, roleDAOMock, encryptionUtilsMock,
-                HOST, SERVICE_OFFER, applicationContextMock, interviewParticipantDAOMock);
+                stageDurationDAOMock, configurationServiceMock,
+                refereeDAOMock, userServiceMock, userDAOMock, roleDAOMock, encryptionUtilsMock,
+                HOST, applicationContextMock, interviewParticipantDAOMock);
     }
 
     @SuppressWarnings("unchecked")
@@ -1257,9 +1229,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     @Test
     public void shouldSendReferenceReminder() throws Exception {
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, commentDAOMock, supervisorDAOMock,
-                stageDurationDAOMock, applicationsServiceMock, configurationServiceMock, commentFactoryMock, commentServiceMock,
-                pdfAttachmentInputSourceFactoryMock, pdfDocumentBuilderMock, refereeDAOMock, userServiceMock, userDAOMock, roleDAOMock, encryptionUtilsMock,
-                HOST, SERVICE_OFFER, applicationContextMock, interviewParticipantDAOMock) {
+                stageDurationDAOMock, configurationServiceMock,
+                refereeDAOMock, userServiceMock, userDAOMock, roleDAOMock, encryptionUtilsMock,
+                HOST, applicationContextMock, interviewParticipantDAOMock) {
             @Override
             protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
                 return null;
@@ -1396,64 +1368,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldSendValidationRequestToRegistry() {
-        Person person1 = new PersonBuilder().id(87).email("person1@mail.com").firstname("Ivo").lastname("avido").email("ivo.avido@mail.com").build();
-        Person person2 = new PersonBuilder().id(78).email("person2@mail.com").firstname("Ektor").lastname("Baboden").email("ektor.baboden@mail.com").build();
-        List<Person> registryUsers = asList(person1, person2);
-        ApplicationForm form = getSampleApplicationForm();
-        RegisteredUser currentUser = new RegisteredUserBuilder().id(15).firstName("Ennio").lastName("annio").email("ennio.annio@mail.com").build();
-        form.setAdminRequestedRegistry(currentUser);
-        Map<String, Object> model = new HashMap<String, Object>();
-        model.put("application", form);
-        model.put("sender", form.getAdminRequestedRegistry());
-        model.put("host", HOST);
-        model.put("recipients", "Ivo, Ektor");
-        model.put("admissionsValidationServiceLevel", SERVICE_OFFER);
-
-        expect(applicationsServiceMock.getApplicationsIdsDueRegistryNotification()).andReturn(asList(form.getId()));
-        expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryUsers);
-        expect(applicationsServiceMock.getApplicationById(form.getId())).andReturn(form);
-
-        String subjectToReturn = "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL " + SAMPLE_PROGRAM_TITLE + " - Validation Request";
-        expect(
-                mockMailSender.resolveSubject(REGISTRY_VALIDATION_REQUEST, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME,
-                        SAMPLE_APPLICANT_SURNAME)).andReturn(subjectToReturn);
-
-        byte[] document = new byte[] { 'a', 'b', 'c' };
-        expect(pdfDocumentBuilderMock.build(EasyMock.isA(PdfModelBuilder.class), eq(form))).andReturn(document);
-        expect(pdfAttachmentInputSourceFactoryMock.getAttachmentDataSource(SAMPLE_APPLICATION_NUMBER + ".pdf", document)).andReturn(null);
-
-        Comment comment = new CommentBuilder().id(45).build();
-        expect(
-                commentFactoryMock.createComment(eq(form), eq(currentUser), isA(String.class), eq(CommentType.GENERIC),
-                        EasyMock.isNull(ApplicationFormStatus.class))).andReturn(comment);
-
-        Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
-        mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
-
-        applicationsServiceMock.save(form);
-        commentServiceMock.save(comment);
-
-        expect(applicationContextMock.getBean(isA(Class.class))).andReturn(service);
-
-        replay(mockMailSender, applicationContextMock, configurationServiceMock, commentServiceMock, applicationsServiceMock, pdfDocumentBuilderMock,
-                commentFactoryMock);
-        service.sendValidationRequestToRegistry();
-        verify(mockMailSender, applicationContextMock, configurationServiceMock, commentServiceMock, applicationsServiceMock, pdfDocumentBuilderMock,
-                commentFactoryMock);
-
-        PrismEmailMessage message = messageCaptor.getValue();
-        assertNotNull(message.getTo());
-        assertNotNull(message.getCc());
-        assertEquals(2, message.getTo().size());
-        assertEquals(subjectToReturn, message.getSubjectCode());
-        assertModelEquals(model, message.getModel());
-
-        assertFalse(form.isRegistryUsersDueNotification());
-    }
-
+   
     @Test
     public void shouldScheduleRejectionConfirmationToAdministrators() {
         ApprovalRound round = new ApprovalRoundBuilder().build();

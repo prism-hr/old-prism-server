@@ -6,10 +6,8 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPD
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +36,6 @@ import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
@@ -56,20 +51,11 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
-import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
-import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
-import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -84,21 +70,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     private final StageDurationDAO stageDurationDAO;
 
-    private final ApplicationsService applicationsService;
-
-    private final CommentFactory commentFactory;
-
-    private final CommentService commentService;
-
-    private final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory;
-
-    private final PdfDocumentBuilder pdfDocumentBuilder;
-
     private final RefereeDAO refereeDAO;
 
     private final UserService userService;
-
-    private final String admissionsOfferServiceLevel;
 
     private final ApplicationContext applicationContext;
 
@@ -106,30 +80,24 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO, final CommentDAO commentDAO,
-            final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO, final ApplicationsService applicationsService,
-            final ConfigurationService configurationService, final CommentFactory commentFactory, final CommentService commentService,
-            final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory, final PdfDocumentBuilder pdfDocumentBuilder, final RefereeDAO refereeDAO,
+            final SupervisorDAO supervisorDAO, final StageDurationDAO stageDurationDAO, 
+            final ConfigurationService configurationService, 
+            final RefereeDAO refereeDAO,
             final UserService userService, final UserDAO userDAO, final RoleDAO roleDAO, final EncryptionUtils encryptionUtils,
-            @Value("${application.host}") final String host, @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel,
+            @Value("${application.host}") final String host,
             final ApplicationContext applicationContext, InterviewParticipantDAO interviewParticipantDAO) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
         this.stageDurationDAO = stageDurationDAO;
-        this.applicationsService = applicationsService;
-        this.commentService = commentService;
-        this.commentFactory = commentFactory;
-        this.pdfAttachmentInputSourceFactory = pdfAttachmentInputSourceFactory;
-        this.pdfDocumentBuilder = pdfDocumentBuilder;
         this.refereeDAO = refereeDAO;
         this.userService = userService;
-        this.admissionsOfferServiceLevel = admissionsOfferServiceLevel;
         this.applicationContext = applicationContext;
         this.interviewParticipantDAO = interviewParticipantDAO;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Transactional
@@ -1077,103 +1045,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs registry staff that they are required to confirm validation decisions.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Registry Staff
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Administrators can ask Registry Staff to confirm validation decisions, while:
-     * <ol>
-     * <li>Applications are in the validation state.</li>
-     * </ol>
-     * </li>
-     * <li>Registry staff are notified to confirm validation decisions, when:
-     * <ol>
-     * <li>Requested to do so by Administrators.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    @Transactional
-    public void sendValidationRequestToRegistry() {
-        log.info("Running sendValidationRequestToRegistry Task");
-        List<Integer> applications = applicationsService.getApplicationsIdsDueRegistryNotification();
-        for (Integer applicationForm : applications) {
-            applicationContext.getBean(this.getClass()).sendValidationRequestToRegistry(applicationForm);
-        }
-    }
-    
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendValidationRequestToRegistry(Integer applicationFormId) {
-        PrismEmailMessage message = null;
-        List<Person> registryContacts = configurationService.getAllRegistryUsers();
-        try {
-            ApplicationForm applicationForm = applicationsService.getApplicationById(applicationFormId);
-            PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
-
-            String subject = resolveMessage(REGISTRY_VALIDATION_REQUEST, applicationForm);
-            messageBuilder.subject(subject);
-
-            RegisteredUser currentUser = applicationForm.getAdminRequestedRegistry();
-
-            messageBuilder.to(registryContacts, new Transformer() {
-
-                @Override
-                public Object transform(final Object input) {
-                    RegisteredUser user = new RegisteredUser();
-                    Person person = (Person) input;
-                    user.setId(person.getId());
-                    user.setEmail(person.getEmail());
-                    user.setFirstName(person.getFirstname());
-                    user.setLastName(person.getLastname());
-                    return user;
-                }
-            });
-
-            messageBuilder.cc(currentUser);
-
-            messageBuilder.templateName = REGISTRY_VALIDATION_REQUEST;
-
-            String recipientList = createRecipientString(registryContacts);
-            EmailModelBuilder modelBuilder = getModelBuilder(
-                    new String[] { "application", "sender", "host", "recipients", "admissionsValidationServiceLevel" }, new Object[] { applicationForm,
-                            currentUser, getHostName(), recipientList, admissionsOfferServiceLevel });
-
-            messageBuilder.model(modelBuilder);
-
-            PdfAttachmentInputSource pdfAttachement = pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber() + ".pdf",
-                    pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), applicationForm));
-            messageBuilder.attachments(pdfAttachement);
-
-            message = messageBuilder.build();
-            sendEmail(message);
-
-            applicationForm.setRegistryUsersDueNotification(false);
-            Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts),
-                    CommentType.GENERIC, null);
-            commentService.save(comment);
-            applicationsService.save(applicationForm);
-            log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
-        } catch (Exception e) {
-            log.error("Error while sending validation request email to registry: {}", e);
-            return false;
-        }
-        return true;
-    }
 
     /**
      * <p>
@@ -1460,68 +1331,4 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
         return null;
     }
-
-    private String createRecipientString(List<Person> registryContacts) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (Person person : registryContacts) {
-            if (!first) {
-                sb.append(", ");
-            }
-            sb.append(person.getFirstname());
-            first = false;
-        }
-        return sb.toString();
-    }
-
-    private String getCommentText(List<Person> registryContacts) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Referred to UCL Admissions for advice on eligibility and fees status. Referral send to ");
-        for (int i = 0; i < registryContacts.size(); i++) {
-            Person contact = registryContacts.get(i);
-            if (i > 0 && i < registryContacts.size() - 1) {
-                sb.append(", ");
-            }
-            if (registryContacts.size() > 1 && i == (registryContacts.size() - 1)) {
-                sb.append(" and ");
-            }
-            sb.append(contact.getFirstname() + " " + contact.getLastname() + " (" + contact.getEmail() + ")");
-        }
-        sb.append(".");
-        return sb.toString();
-    }
-
-    private String constructRolesString(RegisteredUser user) {
-        List<String> rolesList = new ArrayList<String>();
-        String programTitle = null;
-
-        for (PendingRoleNotification roleNotification : user.getPendingRoleNotifications()) {
-            Authority authority = roleNotification.getRole().getAuthorityEnum();
-            String roleAsString = StringUtils.capitalize(authority.toString().toLowerCase());
-
-            if (authority != Authority.SUPERADMINISTRATOR && StringUtils.isBlank(programTitle)) {// looks like a bug
-                programTitle = roleNotification.getProgram().getTitle();
-            }
-
-            switch (authority) {
-            case INTERVIEWER:
-            case REVIEWER:
-            case SUPERVISOR:
-                rolesList.add("Default " + roleAsString);
-                break;
-            default:
-                rolesList.add(roleAsString);
-                break;
-            }
-        }
-
-        StringBuilder messageBuilder = new StringBuilder(StringUtils.join(rolesList.toArray(new String[] {}), ", ", 0, rolesList.size() - 1));
-        messageBuilder.append(rolesList.get(rolesList.size() - 1));
-        if (StringUtils.isNotBlank(programTitle)) {
-            messageBuilder.append(" for ").append(programTitle);
-        }
-
-        return messageBuilder.toString();
-    }
-
 }

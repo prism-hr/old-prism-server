@@ -165,6 +165,7 @@ public class ValidationTransitionController extends StateTransitionController {
             
             if (answeredOneOfTheQuestionsUnsure(comment) && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
                 form.setAdminRequestedRegistry(getCurrentUser());
+                form.setRegistryUsersDueNotification(true);
                 applicationsService.save(form);
             }
             

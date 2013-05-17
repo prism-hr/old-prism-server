@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
@@ -53,7 +54,7 @@ public class InterviewConfirmController {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         Interview interview = application.getLatestInterview();
-        if (application.isDecided() || application.isWithdrawn() || !interview.isScheduling()) {
+        if (!application.isInState(ApplicationFormStatus.INTERVIEW) || !interview.isScheduling()) {
             throw new ActionNoLongerRequiredException(application.getApplicationNumber());
         }
         return application;

@@ -10,11 +10,14 @@ import org.springframework.ui.Model;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
@@ -63,6 +66,21 @@ public class InterviewConfirmControllerTest {
         Interviewer interviewer = new InterviewerBuilder().user(user).build();
         Interview interview = new InterviewBuilder().interviewers(interviewer).stage(InterviewStage.SCHEDULED).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
+
+        EasyMock.replay(userServiceMock, applicationsServiceMock);
+        controller.getApplicationForm("app1");
+        EasyMock.verify(userServiceMock, applicationsServiceMock);
+    }
+    
+    @Test(expected = ActionNoLongerRequiredException.class)
+    public void shouldThrowExceptionWhenApplicationNotInInterviewStage() {
+        RegisteredUser user = new RegisteredUserBuilder().id(8).build();
+        Interviewer interviewer = new InterviewerBuilder().user(user).build();
+        Interview interview = new InterviewBuilder().interviewers(interviewer).stage(InterviewStage.SCHEDULING).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).status(ApplicationFormStatus.APPROVAL).program(program).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
 

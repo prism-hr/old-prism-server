@@ -94,7 +94,7 @@ public class MoveToInterviewController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.getActionsDefinition(getUser(), application);
+        return applicationsService.calculateActions(getUser(), application);
     }
 
     @ModelAttribute("nominatedSupervisors")

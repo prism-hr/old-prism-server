@@ -51,7 +51,8 @@ public class ApplicationsService {
     }
 
     @Autowired
-    public ApplicationsService(ApplicationFormDAO applicationFormDAO, ApplicationFormListDAO applicationFormListDAO, MailSendingService mailService) {
+    public ApplicationsService(final ApplicationFormDAO applicationFormDAO,
+            final ApplicationFormListDAO applicationFormListDAO, final MailSendingService mailService) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
@@ -69,8 +70,8 @@ public class ApplicationsService {
         applicationFormDAO.save(application);
     }
 
-    public ApplicationForm createOrGetUnsubmittedApplicationForm(RegisteredUser user, Program program, Date programDeadline, String projectTitle,
-            String researchHomePage) {
+    public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser user, final Program program,
+            final Date programDeadline, final String projectTitle, final String researchHomePage) {
 
         ApplicationForm applicationForm = findMostRecentApplication(user, program);
         if (applicationForm != null) {
@@ -92,7 +93,7 @@ public class ApplicationsService {
         return applicationForm;
     }
 
-    private ApplicationForm findMostRecentApplication(RegisteredUser user, Program program) {
+    private ApplicationForm findMostRecentApplication(final RegisteredUser user, final Program program) {
         List<ApplicationForm> applications = applicationFormDAO.getApplicationsByApplicantAndProgram(user, program);
 
         Iterable<ApplicationForm> filteredApplications = Iterables.filter(applications, new Predicate<ApplicationForm>() {
@@ -128,22 +129,60 @@ public class ApplicationsService {
         return applicationFormDAO.getApplicationsDueUpdateNotification();
     }
 
-    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user, ApplicationsFiltering filtering) {
+    public List<ApplicationForm> getAllVisibleAndMatchedApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
         if (filtering.getPreFilter() == ApplicationsPreFilter.URGENT) {
-            // TODO Kevin application requiring attention
-            return null;
+            return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, this);
         } else {
             return applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
         }
     }
 
-    public void delegateInterviewAdministration(ApplicationForm applicationForm, RegisteredUser delegate) {
+    public void delegateInterviewAdministration(final ApplicationForm applicationForm, final RegisteredUser delegate) {
         applicationForm.setSuppressStateChangeNotifications(true);
         applicationForm.setApplicationAdministrator(delegate);
         applicationFormDAO.save(applicationForm);
     }
 
-    public ActionsDefinitions getActionsDefinition(RegisteredUser user, ApplicationForm application) {
+    public void sendSubmissionConfirmationToApplicant(final ApplicationForm applicationForm) {
+        try {
+            mailService.sendSubmissionConfirmationToApplicant(applicationForm);
+            NotificationRecord notificationRecord = applicationForm.getNotificationForType(APPLICANT_SUBMISSION_NOTIFICATION);
+            if (notificationRecord == null) {
+                notificationRecord = new NotificationRecord(APPLICANT_SUBMISSION_NOTIFICATION);
+                applicationForm.addNotificationRecord(notificationRecord);
+            }
+            notificationRecord.setDate(new Date());
+            applicationFormDAO.save(applicationForm);
+        } catch (Exception e) {
+            log.warn("{}", e);
+        }
+    }
+
+    public List<Integer> getApplicationsIdsDueRegistryNotification() {
+        return applicationFormDAO.getApplicationsIdsDueRegistryNotification();
+    }
+
+    public void refresh(final ApplicationForm applicationForm) {
+        applicationFormDAO.refresh(applicationForm);
+    }
+
+    public List<ApplicationForm> getApplicationsDueRegistryNotification() {
+        return applicationFormDAO.getApplicationsDueRegistryNotification();
+    }
+
+    public List<ApplicationForm> getApplicationsDueApprovalRestartRequestNotification() {
+        return applicationFormDAO.getApplicationsDueApprovalRequestNotification();
+    }
+
+    public List<ApplicationForm> getApplicationsDueApprovalRestartRequestReminder() {
+        return applicationFormDAO.getApplicationDueApprovalRestartRequestReminder();
+    }
+
+    public List<ApplicationForm> getAllApplicationsByStatus(final ApplicationFormStatus status) {
+        return applicationFormDAO.getAllApplicationsByStatus(status);
+    }
+    
+    public ActionsDefinitions calculateActions(final RegisteredUser user, final ApplicationForm application) {
         Interview interview = application.getLatestInterview();
 
         ActionsDefinitions actions = new ActionsDefinitions();
@@ -258,44 +297,4 @@ public class ApplicationsService {
 
         return actions.sort();
     }
-
-    public void sendSubmissionConfirmationToApplicant(ApplicationForm applicationForm) {
-        try {
-            mailService.sendSubmissionConfirmationToApplicant(applicationForm);
-            NotificationRecord notificationRecord = applicationForm.getNotificationForType(APPLICANT_SUBMISSION_NOTIFICATION);
-            if (notificationRecord == null) {
-                notificationRecord = new NotificationRecord(APPLICANT_SUBMISSION_NOTIFICATION);
-                applicationForm.addNotificationRecord(notificationRecord);
-            }
-            notificationRecord.setDate(new Date());
-            applicationFormDAO.save(applicationForm);
-        } catch (Exception e) {
-            log.warn("{}", e);
-        }
-    }
-
-    public List<Integer> getApplicationsIdsDueRegistryNotification() {
-        return applicationFormDAO.getApplicationsIdsDueRegistryNotification();
-    }
-
-    public void refresh(ApplicationForm applicationForm) {
-        applicationFormDAO.refresh(applicationForm);
-    }
-
-    public List<ApplicationForm> getApplicationsDueRegistryNotification() {
-        return applicationFormDAO.getApplicationsDueRegistryNotification();
-    }
-
-    public List<ApplicationForm> getApplicationsDueApprovalRestartRequestNotification() {
-        return applicationFormDAO.getApplicationsDueApprovalRequestNotification();
-    }
-
-    public List<ApplicationForm> getApplicationsDueApprovalRestartRequestReminder() {
-        return applicationFormDAO.getApplicationDueApprovalRestartRequestReminder();
-    }
-
-    public List<ApplicationForm> getAllApplicationsByStatus(ApplicationFormStatus status) {
-        return applicationFormDAO.getAllApplicationsByStatus(status);
-    }
-
 }

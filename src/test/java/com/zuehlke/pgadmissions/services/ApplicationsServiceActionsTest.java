@@ -233,7 +233,7 @@ public class ApplicationsServiceActionsTest {
 
     private ActionsDefinitions executeGetActionsDefinitions() {
         EasyMock.replay(userMock, applicationMock);
-        ActionsDefinitions actionsDefinition = applicationsService.getActionsDefinition(userMock, applicationMock);
+        ActionsDefinitions actionsDefinition = applicationsService.calculateActions(userMock, applicationMock);
         EasyMock.verify(userMock, applicationMock);
         return actionsDefinition;
     }

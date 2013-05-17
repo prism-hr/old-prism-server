@@ -56,5 +56,5 @@ public class ActionsDefinitions {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
         return sortedMap;
-    } 
+    }
 }

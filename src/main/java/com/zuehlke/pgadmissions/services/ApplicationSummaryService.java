@@ -57,7 +57,7 @@ public class ApplicationSummaryService {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
         result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
-        ActionsDefinitions actionsDefinition = applicationsService.getActionsDefinition(userService.getCurrentUser(), form);
+        ActionsDefinitions actionsDefinition = applicationsService.calculateActions(userService.getCurrentUser(), form);
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(actionsDefinition.isRequiresAttention()));
         result.put("applicationNumber", form.getApplicationNumber());
     }

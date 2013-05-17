@@ -10,6 +10,12 @@ $(document).ready(function() {
 	    bindDatePicker($(this));
     });
 
+	if ($("input[name=preFilterRadio]:checked").val() == "URGENT") {
+		$("#loadMoreApplications").hide();
+	} else {
+		$("#loadMoreApplications").show();
+	}
+	
 	$.fn.jExpand = function(){
         var element = this;
 

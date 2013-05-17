@@ -131,7 +131,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -173,7 +173,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -215,7 +215,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -258,7 +258,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -299,7 +299,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -339,7 +339,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.getActionsDefinition(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 

@@ -58,7 +58,7 @@ public abstract class ReviewController {
 	@ModelAttribute("actionsDefinition")
 	public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
 		ApplicationForm application = getApplicationForm(applicationId);
-		return applicationsService.getActionsDefinition(getUser(), application);
+		return applicationsService.calculateActions(getUser(), application);
 	}
 
 	public abstract ReviewRound getReviewRound(@RequestParam Object id);

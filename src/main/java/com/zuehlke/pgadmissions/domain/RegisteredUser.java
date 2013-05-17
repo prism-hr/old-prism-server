@@ -90,7 +90,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     private DigestNotificationType digestNotificationType = DigestNotificationType.NONE;
 
     @JoinColumn(name = "filtering_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
     private ApplicationsFiltering filtering;
 
     private boolean enabled;

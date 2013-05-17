@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
@@ -77,11 +78,11 @@ public class ApplicationListControllerTest {
         user.setFiltering(filtering);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFilter(user)).andReturn(filtering);
+        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFiltering(user)).andReturn(filtering);
 
         // WHEN
         EasyMock.replay(userServiceMock, filteringServiceMock);
-        assertEquals("private/my_applications_page", controller.getApplicationListPage(false, model, httpSession));
+        assertEquals("private/my_applications_page", controller.getApplicationListPage(null, model, httpSession));
         EasyMock.verify(userServiceMock, filteringServiceMock);
 
         // THEN
@@ -99,13 +100,13 @@ public class ApplicationListControllerTest {
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        
+
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFilter(user)).andReturn(filtering);
+        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFiltering(user)).andReturn(filtering);
 
         // WHEN
         EasyMock.replay(userServiceMock, filteringServiceMock);
-        assertEquals("private/my_applications_page", controller.getApplicationListPage(false, model, httpSession));
+        assertEquals("private/my_applications_page", controller.getApplicationListPage(null, model, httpSession));
         EasyMock.verify(userServiceMock, filteringServiceMock);
 
         // THEN
@@ -128,17 +129,55 @@ public class ApplicationListControllerTest {
         user.setFiltering(filtering);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFilter(user)).andReturn(filtering);
+        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFiltering(user)).andReturn(filtering);
 
         // WHEN
         EasyMock.replay(userServiceMock, filteringServiceMock);
-        assertEquals("private/my_applications_page", controller.getApplicationListPage(true, model, httpSession));
+        assertEquals("private/my_applications_page", controller.getApplicationListPage("reload", model, httpSession));
         EasyMock.verify(userServiceMock, filteringServiceMock);
 
         // THEN
         Object actualFiltering = model.get("filtering");
         assertSame(filtering, actualFiltering);
         assertSame(alert, model.get("alertDefinition"));
+    }
+
+    @Test
+    public void shouldReturnViewForApplicationListPageWithDefaultFiltersWhenMyApplicationsRequested() {
+
+        // GIVEN
+        ModelMap model = new ExtendedModelMap();
+
+        model.addAttribute("filtering", new ApplicationsFiltering());
+        HttpSession httpSession = new MockHttpSession();
+        AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
+        httpSession.setAttribute("alertDefinition", alert);
+
+        // WHEN
+        assertEquals("private/my_applications_page", controller.getApplicationListPage("my", model, httpSession));
+
+        // THEN
+        ApplicationsFiltering actualFiltering = (ApplicationsFiltering) model.get("filtering");
+        assertEquals(ApplicationsPreFilter.MY, actualFiltering.getPreFilter());
+    }
+
+    @Test
+    public void shouldReturnViewForApplicationListPageWithDefaultFiltersWhenUrgentApplicationsRequested() {
+
+        // GIVEN
+        ModelMap model = new ExtendedModelMap();
+
+        model.addAttribute("filtering", new ApplicationsFiltering());
+        HttpSession httpSession = new MockHttpSession();
+        AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
+        httpSession.setAttribute("alertDefinition", alert);
+
+        // WHEN
+        assertEquals("private/my_applications_page", controller.getApplicationListPage("urgent", model, httpSession));
+
+        // THEN
+        ApplicationsFiltering actualFiltering = (ApplicationsFiltering) model.get("filtering");
+        assertEquals(ApplicationsPreFilter.URGENT, actualFiltering.getPreFilter());
     }
 
     @Test
@@ -154,7 +193,7 @@ public class ApplicationListControllerTest {
         httpSession.setAttribute("alertDefinition", alert);
 
         // WHEN
-        assertEquals("private/my_applications_page", controller.getApplicationListPage(false, model, httpSession));
+        assertEquals("private/my_applications_page", controller.getApplicationListPage(null, model, httpSession));
 
         // THEN
         assertSame(filtering, model.get("filtering"));
@@ -170,8 +209,7 @@ public class ApplicationListControllerTest {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
 
         List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
-        expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(
-                applications);
+        expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 

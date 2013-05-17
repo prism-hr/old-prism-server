@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
@@ -59,7 +60,7 @@ public class ApplicationListController {
     private final ApplicationsFiltersPropertyEditor filtersPropertyEditor;
 
     private final ApplicationSummaryService applicationSummaryService;
-    
+
     private final ApplicationsFilteringService filteringService;
 
     public ApplicationListController() {
@@ -68,7 +69,8 @@ public class ApplicationListController {
 
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
-            ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService, ApplicationsFilteringService filteringService) {
+            ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
+            ApplicationsFilteringService filteringService) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
@@ -83,17 +85,31 @@ public class ApplicationListController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getApplicationListPage(boolean reloadFilters, ModelMap model, HttpSession session) {
+    public String getApplicationListPage(@RequestParam(required = false) String applyFilters, ModelMap model, HttpSession session) {
         Object alertDefinition = session.getAttribute("alertDefinition");
         if (alertDefinition != null) {
             model.addAttribute("alertDefinition", alertDefinition);
             session.removeAttribute("alertDefinition");
         }
-        
+
         ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
-        if (filtering == null || reloadFilters) {
-            filtering = filteringService.getStoredOrDefaultFilter(getUser());
+
+        if (applyFilters != null) { // custom apply filters action
+            if ("reload".equals(applyFilters)) {
+                filtering = filteringService.getStoredOrDefaultFiltering(getUser());
+            } else if ("my".equals(applyFilters)) {
+                filtering = new ApplicationsFiltering();
+                filtering.setPreFilter(ApplicationsPreFilter.MY);
+            } else if ("urgent".equals(applyFilters)) {
+                filtering = new ApplicationsFiltering();
+                filtering.setPreFilter(ApplicationsPreFilter.URGENT);
+            } 
         }
+        
+        if (filtering == null) {
+            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
+        }
+        
         model.addAttribute("filtering", filtering);
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }

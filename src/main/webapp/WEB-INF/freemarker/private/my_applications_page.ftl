@@ -172,7 +172,7 @@
                         <button class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="#" id="storeFiltersBtn">Save as Default Filter</a></li>
-                            <li><a href="<@spring.url '/applications?reloadFilters=true'/>">Load Default Filter</a></li>
+                            <li><a href="<@spring.url '/applications?applyFilters=reload'/>">Load Default Filter</a></li>
                             <li><a href="#" id="loadActiveApplication">Display Active Applications</a></li>
               
                         </ul>

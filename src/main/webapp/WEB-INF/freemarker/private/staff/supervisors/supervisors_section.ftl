@@ -5,11 +5,11 @@
     <div>
     	<form>
 					  <@spring.bind "approvalRound.supervisors" />
-                      <#if spring.status.errors.hasErrors()>
-                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
-                      <#else>
-               		  <div class="alert alert-info"> <i class="icon-info-sign"></i> 
-                      </#if>
+            <#if spring.status.errors.hasErrors()>
+              <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
+            <#else>
+     		      <div class="alert alert-info"> <i class="icon-info-sign"></i> 
+            </#if>
 					  Confirm project details. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant. </div>
                       
   <div class="row-group" id="assignSupervisorsToAppSection"> <#import "/spring.ftl" as spring />

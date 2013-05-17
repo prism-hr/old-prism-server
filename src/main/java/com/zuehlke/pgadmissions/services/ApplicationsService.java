@@ -159,7 +159,7 @@ public class ApplicationsService {
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.VALIDATION)) {
             if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
-            } else if (user.isNotInRole(Authority.ADMITTER)) {
+            } else {
                 actions.addAction("validate", "Validate");
             }
         }
@@ -167,12 +167,12 @@ public class ApplicationsService {
         if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.REVIEW)) {
             if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                 actions.addAction("validate", "Administer Interview");
-            } else if (user.isNotInRole(Authority.ADMITTER)) {
+            } else {
                 actions.addAction("validate", "Evaluate reviews");
             }
         }
 
-        if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && user.isNotInRole(Authority.ADMITTER)) {
+        if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.INTERVIEW)) {
             if (interview.isScheduled()) {
                 if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
                     actions.addAction("validate", "Administer Interview");

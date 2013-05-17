@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -33,18 +34,20 @@ public class UserService {
 
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
+    private final ApplicationsFilteringDAO filteringDAO;
     private final UserFactory userFactory;
     private final EncryptionUtils encryptionUtils;
     private final MailSendingService mailService;
 
     public UserService() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, EncryptionUtils encryptionUtils, MailSendingService mailService) {
+    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, UserFactory userFactory, EncryptionUtils encryptionUtils, MailSendingService mailService) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
+        this.filteringDAO = filteringDAO;
         this.userFactory = userFactory;
         this.encryptionUtils = encryptionUtils;
         this.mailService = mailService;
@@ -398,6 +401,8 @@ public class UserService {
 
     public void setFiltering(RegisteredUser user, ApplicationsFiltering filtering) {
         user.setFiltering(filtering);
+
+        filteringDAO.merge(filtering);
         userDAO.save(user);
     }
 

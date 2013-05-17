@@ -18,9 +18,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Entity(name = "PROGRAM")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Program extends Authorisable implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;

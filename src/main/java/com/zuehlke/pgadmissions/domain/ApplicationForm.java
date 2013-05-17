@@ -32,6 +32,8 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -41,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity(name = "APPLICATION_FORM")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationForm implements Comparable<ApplicationForm>, FormSectionObject, Serializable {
 
     private static final int CONSIDERATION_PERIOD_MONTHS = 1;
@@ -207,6 +210,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
     @Valid
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private AdditionalInformation additionalInformation;
 
     @Column(name = "reject_notification_date")

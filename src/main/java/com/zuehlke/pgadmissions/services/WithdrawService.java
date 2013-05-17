@@ -41,7 +41,7 @@ public class WithdrawService {
 	
     @Transactional
     public void sendToPortico(final ApplicationForm form) {
-        if (form.isSubmitted()) {
+        if (!form.getWithdrawnBeforeSubmit()) {
             porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
         }
     }

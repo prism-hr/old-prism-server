@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
@@ -1061,25 +1060,19 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : forms) {
             idsForWitchRequestHasBeenFired.add(form.getId());
             createNotificationRecordIfNotExists(form, NotificationType.REPEAT_VALIDATION_REQUEST);
-            CollectionUtils.forAllDo(registryContacts, new Closure() {
-                @Override
-                public void execute(final Object person) {
-                    RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(((Person)person).getEmail());
-                    setDigestNotificationType(user, DigestNotificationType.TASK_NOTIFICATION);
-                }
-            });
+            for (Person person : registryContacts) {
+                RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(person.getEmail());
+                setDigestNotificationType(user, DigestNotificationType.TASK_NOTIFICATION);
+            }
         }
         forms = applicationDAO.getApplicationsDueRevalidationReminder();
         for (ApplicationForm form : forms) {
             if (!idsForWitchRequestHasBeenFired.contains(form.getId())) {
                 createNotificationRecordIfNotExists(form, NotificationType.REPEAT_VALIDATION_REMINDER);
-                CollectionUtils.forAllDo(registryContacts, new Closure() {
-                    @Override
-                    public void execute(final Object person) {
-                        RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(((Person)person).getEmail());
-                        setDigestNotificationType(user, DigestNotificationType.TASK_REMINDER);
-                    }
-                });
+                for (Person person : registryContacts) {
+                    RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(person.getEmail());
+                    setDigestNotificationType(user, DigestNotificationType.TASK_REMINDER);
+                }
             }
         }
     }

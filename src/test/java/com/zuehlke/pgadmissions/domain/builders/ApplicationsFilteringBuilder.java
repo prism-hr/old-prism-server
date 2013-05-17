@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
@@ -15,7 +16,7 @@ public class ApplicationsFilteringBuilder {
 
     private List<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
 
-    private String preFilter = "MY";
+    private ApplicationsPreFilter preFilter = ApplicationsPreFilter.MY;
     
     private SortCategory sortCategory;
 
@@ -33,7 +34,7 @@ public class ApplicationsFilteringBuilder {
         return this;
     }
 
-    public ApplicationsFilteringBuilder preFilter(String  preFilter) {
+    public ApplicationsFilteringBuilder preFilter(ApplicationsPreFilter  preFilter) {
         this.preFilter = preFilter;
         return this;
     }

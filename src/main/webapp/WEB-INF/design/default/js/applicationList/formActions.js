@@ -292,6 +292,10 @@ $(document).ready(function() {
 			existingFilter.remove();
 		}
 	});
+	
+	$("input[name=preFilterRadio]").click(function() {
+		$('#search-go').click();
+	});
 
 });
 // ------------------------------------------------------------------------------
@@ -361,6 +365,7 @@ function populateApplicationList() {
 
 	options = {
 		filters : JSON.stringify(filters),
+		preFilter : $("input[name=preFilterRadio]:checked").val(),
 		sortCategory : $('#sort-column').val(),
 		order : $('#sort-order').val(),
 		blockCount : $('#block-index').val()

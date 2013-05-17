@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.IndexColumn;
 
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
@@ -33,16 +36,17 @@ public class ApplicationsFiltering implements Serializable {
     private List<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
 
     @Column(name = "pre_filter")
-    private String preFilter = "MY";
+    @Enumerated(EnumType.STRING)
+    private ApplicationsPreFilter preFilter = ApplicationsPreFilter.MY;
     
     @Transient
-    private SortCategory sortCategory;
+    private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
 
     @Transient
-    private SortOrder order;
+    private SortOrder order = SortOrder.ASCENDING;
 
     @Transient
-    private Integer blockCount;
+    private Integer blockCount = 1;
 
     public Integer getId() {
         return id;
@@ -60,11 +64,11 @@ public class ApplicationsFiltering implements Serializable {
         this.filters = filters;
     }
 
-    public String getPreFilter() {
+    public ApplicationsPreFilter getPreFilter() {
         return preFilter;
     }
 
-    public void setPreFilter(String preFilter) {
+    public void setPreFilter(ApplicationsPreFilter preFilter) {
         this.preFilter = preFilter;
     }
 

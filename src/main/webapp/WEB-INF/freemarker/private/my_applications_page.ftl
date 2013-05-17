@@ -108,6 +108,11 @@
             />
           </div>
             
+            <div class="field">
+              <input type="radio" name="preFilterRadio" <#if filtering.preFilter == "ALL">checked</#if> value="ALL">All applications</input>
+              <input type="radio" name="preFilterRadio" <#if filtering.preFilter == "MY">checked</#if> value="MY">My applications</input>
+            </div>
+            
             <#list filtering.filters as filter> 
               <!-- Search/filter box. -->
               <div class="filter" id="filter_${filter_index}">

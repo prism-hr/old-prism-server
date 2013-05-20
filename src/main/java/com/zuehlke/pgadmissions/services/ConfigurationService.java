@@ -109,20 +109,16 @@ public class ConfigurationService {
         admitterNotification.setAddedByUser(requestedBy);
         admitterNotification.setRole(roleDAO.getRoleByAuthority(Authority.ADMITTER));
         PendingRoleNotification viewerNotification = new PendingRoleNotification();
-        admitterNotification.setAddedByUser(requestedBy);
-        admitterNotification.setRole(roleDAO.getRoleByAuthority(Authority.VIEWER));
+        viewerNotification.setAddedByUser(requestedBy);
+        viewerNotification.setRole(roleDAO.getRoleByAuthority(Authority.VIEWER));
         if (user == null) {
             user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(), Authority.VIEWER, Authority.ADMITTER);
-            List<PendingRoleNotification> pendingRoles = new ArrayList<PendingRoleNotification>();
-            pendingRoles.add(admitterNotification);
-            pendingRoles.add(viewerNotification);
-            user.setPendingRoleNotifications(pendingRoles);
+            user.getPendingRoleNotifications().add(viewerNotification);
+            user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
         } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
             user.getRoles().add(roleDAO.getRoleByAuthority(Authority.ADMITTER));
-            List<PendingRoleNotification> pendingRoles = new ArrayList<PendingRoleNotification>();
-            pendingRoles.add(admitterNotification);
-            user.setPendingRoleNotifications(pendingRoles);
+            user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
         }
     }

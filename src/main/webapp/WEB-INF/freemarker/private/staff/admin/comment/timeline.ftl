@@ -70,17 +70,18 @@
 											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 										</div>
-											<div class="textContainer"><p><em>
+											<div class="textContainer">
 											<#if user.id == applicationForm.applicant.id>
 												${(timelineObject.interview.furtherDetails?html)!}
 											<#elseif user.isInterviewerOfApplicationForm(applicationForm.application)>                
 												${(timelineObject.interview.furtherInterviewerDetails?html)!}
 											<#elseif user.isInRole('SUPERADMINISTRATOR')>
-												<#if timelineObject.interview.furtherInterviewerDetails!= "">Instructions for interviewers: ${(timelineObject.interview.furtherInterviewerDetails?html)!}<br></#if>
-												<#if timelineObject.interview.furtherDetails!= "">Instructions for applicant: ${(timelineObject.interview.furtherDetails?html)!}<br></#if>
+												<#if timelineObject.interview.furtherInterviewerDetails!= ""><p><strong>Instructions for interviewers:</strong> <em>${(timelineObject.interview.furtherInterviewerDetails?html)!}</em></p></#if>
+												<#if timelineObject.interview.furtherDetails!= "">
+                                                <p><strong>Instructions for applicant:</strong> <em> ${(timelineObject.interview.furtherDetails?html)!}</em></p></#if>
 											</#if>            
-											</em></p></div>   
-										<p class="datetime">
+											</div>   
+										<p class="datetime" style="margin-top:6px;">
 										  <span data-desc="Date and Time"></span>
 										  <#if timelineObject.interview.stage == 'SCHEDULED'>
   										  ${timelineObject.interview.interviewDueDate?string('dd MMM yy')}

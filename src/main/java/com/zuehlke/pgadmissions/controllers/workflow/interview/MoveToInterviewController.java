@@ -28,7 +28,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
@@ -84,11 +85,11 @@ public class MoveToInterviewController {
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         RegisteredUser currentUser = userService.getCurrentUser();
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-
-        if (application == null//
-                || (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isApplicationAdministrator(application) && !currentUser
-                        .isInterviewerOfApplicationForm(application))) {
-            throw new ResourceNotFoundException();
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isApplicationAdministrator(application)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return application;
     }

@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testFullTextSearchContext.xml")
+@ContextConfiguration("/testApplicationsServiceContext.xml")
 public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagTest extends AutomaticRollbackTestCase {
 
     @Autowired
@@ -109,11 +109,15 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
         template.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                sessionFactory.getCurrentSession().createSQLQuery("DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE").executeUpdate();
+                sessionFactory
+                        .getCurrentSession()
+                        .createSQLQuery(
+                                "DELETE FROM APPLICATION_FORM;DELETE FROM PROGRAM_APPROVER_LINK;DELETE FROM PROGRAM_ADMINISTRATOR_LINK;DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
+                                .executeUpdate();
             }
         });
     }
-
+    
     @Test
     public void shouldReturnApplicationsAUserIsInterestedIn() throws ParseException {
         TransactionTemplate template = new TransactionTemplate(transactionManager);

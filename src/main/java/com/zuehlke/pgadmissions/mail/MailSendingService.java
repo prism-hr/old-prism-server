@@ -804,4 +804,8 @@ public class MailSendingService extends AbstractMailSendingService {
         return Collections.emptyList();
     }
 
+    public void scheduleAdmitterProvidedCommentNotification(ApplicationForm form) {
+        CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
+    }
+
 }

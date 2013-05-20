@@ -5,8 +5,12 @@
     <#assign actions = actionsDefinition.actions>
     <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow" >
   <td class="centre"><input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" /></td>
-  <td <#if actionsDefinition.requiresAttention>data-desc="This application requires your attention" class="applicant-name flagred" <#else> class="applicant-name flaggreen"</#if>>
-  <#if actionsDefinition.requiresAttention> <i class="icon-bell-alt"></i> <#else> <i class="icon-circle-blank"></i> </#if>
+  <td <#if actionsDefinition.requiresAttention>data-desc="This application requires your attention"
+	  <#elseif updateApplications[application.applicationNumber]> data-desc="This application has been updated"
+	  <#else> class="applicant-name flaggreen"</#if>>
+  <#if actionsDefinition.requiresAttention> <i class="icon-bell-alt"></i> 
+  <#elseif updateApplications[application.applicationNumber]> <i class="icon-refresh"></i>
+  <#else> <i class="icon-circle-blank"></i> </#if>
   
   <#if !user.isInRole('APPLICANT')>
   ${application.applicant.firstName}

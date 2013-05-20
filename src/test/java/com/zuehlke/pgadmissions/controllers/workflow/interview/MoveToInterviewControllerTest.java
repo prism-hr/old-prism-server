@@ -317,6 +317,7 @@ public class MoveToInterviewControllerTest {
 
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
         EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock, currentUserMock);
 
@@ -341,6 +342,7 @@ public class MoveToInterviewControllerTest {
 
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
         EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
+        EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock, currentUserMock);

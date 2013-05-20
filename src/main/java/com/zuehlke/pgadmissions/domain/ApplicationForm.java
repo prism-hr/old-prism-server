@@ -70,6 +70,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "registry_users_notified")
     private Boolean registryUsersDueNotification = false;
 
+    /**
+     * This field indicates that user is application interview organiser.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "app_administrator_id")
     private RegisteredUser applicationAdministrator;

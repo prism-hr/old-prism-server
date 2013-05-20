@@ -33,37 +33,35 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class StateTransitionController {
 
     protected static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
-    
+
     protected final ApplicationsService applicationsService;
-    
+
     protected final UserService userService;
-    
+
     protected final CommentService commentService;
-    
+
     protected final CommentFactory commentFactory;
-    
+
     protected final EncryptionHelper encryptionHelper;
-    
+
     protected final DocumentService documentService;
-    
+
     protected final ApprovalService approvalService;
-    
+
     protected final StateChangeValidator stateChangeValidator;
-    
+
     protected final DocumentPropertyEditor documentPropertyEditor;
 
     protected final StateTransitionService stateTransitionService;
-    
+
     public StateTransitionController() {
         this(null, null, null, null, null, null, null, null, null, null);
     }
-    
+
     @Autowired
-    public StateTransitionController(ApplicationsService applicationsService, UserService userService,
-            CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
-            DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
-            StateTransitionService stateTransitionService) {
+    public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -75,7 +73,7 @@ public class StateTransitionController {
         this.documentPropertyEditor = documentPropertyEditor;
         this.stateTransitionService = stateTransitionService;
     }
-    
+
     @InitBinder(value = "comment")
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(stateChangeValidator);
@@ -95,7 +93,8 @@ public class StateTransitionController {
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        if (!currentUser.isInRole(Authority.ADMITTER) && !currentUser.hasAdminRightsOnApplication(applicationForm) && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
+        if (!currentUser.isInRole(Authority.ADMITTER) && !currentUser.hasAdminRightsOnApplication(applicationForm)
+                && !currentUser.isApplicationAdministrator(applicationForm) && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
@@ -121,7 +120,8 @@ public class StateTransitionController {
             public boolean evaluate(final Object object) {
                 ApplicationFormStatus status = (ApplicationFormStatus) object;
                 if (status.equals(ApplicationFormStatus.APPROVED)) {
-                    if (currentUser.isInRoleInProgram(Authority.ADMINISTRATOR, form.getProgram()) && currentUser.isNotInRoleInProgram(Authority.APPROVER, form.getProgram())) {
+                    if (currentUser.isInRoleInProgram(Authority.ADMINISTRATOR, form.getProgram())
+                            && currentUser.isNotInRoleInProgram(Authority.APPROVER, form.getProgram())) {
                         return false;
                     }
                 }

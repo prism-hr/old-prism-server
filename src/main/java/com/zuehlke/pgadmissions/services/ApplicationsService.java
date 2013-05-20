@@ -46,16 +46,19 @@ public class ApplicationsService {
 
     private final MailSendingService mailService;
 
+    private final StateTransitionViewResolver stateTransitionViewResolver;
+
     public ApplicationsService() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public ApplicationsService(final ApplicationFormDAO applicationFormDAO,
-            final ApplicationFormListDAO applicationFormListDAO, final MailSendingService mailService) {
+    public ApplicationsService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormListDAO applicationFormListDAO,
+            final MailSendingService mailService, final StateTransitionViewResolver stateTransitionViewResolver) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
+        this.stateTransitionViewResolver = stateTransitionViewResolver;
     }
 
     public ApplicationForm getApplicationById(Integer id) {
@@ -70,8 +73,8 @@ public class ApplicationsService {
         applicationFormDAO.save(application);
     }
 
-    public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser user, final Program program,
-            final Date programDeadline, final String projectTitle, final String researchHomePage) {
+    public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser user, final Program program, final Date programDeadline,
+            final String projectTitle, final String researchHomePage) {
 
         ApplicationForm applicationForm = findMostRecentApplication(user, program);
         if (applicationForm != null) {
@@ -181,7 +184,7 @@ public class ApplicationsService {
     public List<ApplicationForm> getAllApplicationsByStatus(final ApplicationFormStatus status) {
         return applicationFormDAO.getAllApplicationsByStatus(status);
     }
-    
+
     public ActionsDefinitions calculateActions(final RegisteredUser user, final ApplicationForm application) {
         Interview interview = application.getLatestInterview();
 
@@ -195,32 +198,31 @@ public class ApplicationsService {
             }
         }
 
-        if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.VALIDATION)) {
-            if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
-                actions.addAction("validate", "Administer Interview");
-            } else {
+        if (application.isInState(ApplicationFormStatus.VALIDATION)) {
+            if (user.hasAdminRightsOnApplication(application)) {
                 actions.addAction("validate", "Validate");
             }
         }
 
-        if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.REVIEW)) {
-            if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
-                actions.addAction("validate", "Administer Interview");
-            } else {
+        if (application.isInState(ApplicationFormStatus.REVIEW)) {
+            if (user.hasAdminRightsOnApplication(application)) {
                 actions.addAction("validate", "Evaluate reviews");
             }
         }
 
-        if (user.hasAdminRightsOnApplication(application) && application.isInState(ApplicationFormStatus.INTERVIEW)) {
-                if (application.getApplicationAdministrator() != null && application.getApplicationAdministrator().getId().equals(user.getId())) {
-                    actions.addAction("validate", "Administer Interview");
-                } else {
-                    actions.addAction("validate", "Evaluate interview feedback");
-                }
-            if (interview.isScheduling()) {
+        if (application.isInState(ApplicationFormStatus.INTERVIEW)) {
+            if (user.hasAdminRightsOnApplication(application)) {
+                actions.addAction("validate", "Evaluate interview feedback");
+            }
+            if (interview.isScheduling() && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application))) {
                 actions.addAction("interviewConfirm", "Confirm interview time");
                 actions.setRequiresAttention(true);
             }
+        }
+
+        if (user.isApplicationAdministrator(application) && stateTransitionViewResolver.getNextStatus(application) == ApplicationFormStatus.INTERVIEW) {
+            // application not yet in interview stage, interview is next
+            actions.addAction("validate", "Administer Interview");
         }
 
         if (user.isInRole(Authority.ADMITTER) && !application.hasConfirmElegibilityComment()) {
@@ -250,7 +252,7 @@ public class ApplicationsService {
         }
 
         if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduled()
-                && application.getApplicationAdministrator() == null && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+                && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);
         }

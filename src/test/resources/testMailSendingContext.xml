@@ -108,6 +108,8 @@
     <bean id="roleService" class="com.zuehlke.pgadmissions.services.RoleService" />
     
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
+    
+    <bean id="stateTransitionViewResolver" class="com.zuehlke.pgadmissions.services.StateTransitionViewResolver" />
 
     <context:component-scan base-package="com.zuehlke.pgadmissions.dao" />
 </beans>

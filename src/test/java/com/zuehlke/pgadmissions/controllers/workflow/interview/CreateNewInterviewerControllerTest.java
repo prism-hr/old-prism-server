@@ -126,6 +126,7 @@ public class CreateNewInterviewerControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
+		EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUserMock);
 
@@ -150,6 +151,7 @@ public class CreateNewInterviewerControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
+		EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
 
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUserMock);

@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -26,107 +27,58 @@ public class StateTransitionViewResolver {
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
     public String resolveView(ApplicationForm applicationForm) {
-        
+
         if (!applicationForm.isProgrammeStillAvailable()) {
             return REJECTION_VIEW + applicationForm.getApplicationNumber() + "&rejectionId=7&rejectionIdForced=true";
         }
-        
-        switch(applicationForm.getStatus()) {
-        case APPROVAL:
-            return resolveViewForApprovalState(applicationForm);
-        case APPROVED:
+
+        if (applicationForm.isInState(ApplicationFormStatus.APPROVED)) {
             return MY_APPLICATIONS_VIEW;
+        }
+
+        ApplicationFormStatus nextStatus = getNextStatus(applicationForm);
+        if(nextStatus == null){
+            return STATE_TRANSITION_VIEW;
+        }
+        
+        switch (nextStatus) {
         case REVIEW:
-            return resolveViewForReviewState(applicationForm);
+            return REVIEW_VIEW + applicationForm.getApplicationNumber();
+        case INTERVIEW:
+            return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
+        case APPROVAL:
+            return APPROVAL_VIEW + applicationForm.getApplicationNumber();
+        case REJECTED:
+            return REJECTION_VIEW + applicationForm.getApplicationNumber();
+        default:
+            return STATE_TRANSITION_VIEW;
+        }
+
+    }
+
+    public ApplicationFormStatus getNextStatus(ApplicationForm applicationForm) {
+        StateChangeComment stateChangeComment = null;
+        switch (applicationForm.getStatus()) {
+        case APPROVAL:
+            stateChangeComment = getEvaluationCommentForLatestApprovalRound(applicationForm);
+            break;
+        case REVIEW:
+            stateChangeComment = getEvaluationCommentForLatestRoundOfReview(applicationForm);
+            break;
         case VALIDATION:
-            return resolveViewForValidationState(applicationForm);
+            stateChangeComment = getValidationComment(applicationForm);
+            break;
+        case INTERVIEW:
+            stateChangeComment = getEvaluationCommentForLatestInterview(applicationForm);
+            break;
         default:
-            return resolveViewForInterviewState(applicationForm);
         }
+        if (stateChangeComment != null) {
+            return stateChangeComment.getNextStatus();
+        }
+        return null;
     }
 
-    private String resolveViewForApprovalState(ApplicationForm applicationForm) {
-        ApprovalEvaluationComment evaluationCommentForLatestApprovalRound = getEvaluationCommentForLatestApprovalRound(applicationForm);
-    
-        if (evaluationCommentForLatestApprovalRound == null) {
-            return STATE_TRANSITION_VIEW;
-        }
-        
-        if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
-            return MY_APPLICATIONS_VIEW;
-        }
-        
-        if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
-            return STATE_TRANSITION_VIEW;
-        }
-        
-        if (ApplicationFormStatus.REVIEW == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
-            return REVIEW_VIEW + applicationForm.getApplicationNumber();
-        }
-        
-        if (ApplicationFormStatus.INTERVIEW == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
-            return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
-        }
-        
-        return REJECTION_VIEW + applicationForm.getApplicationNumber();
-    }
-    
-    private String resolveViewForInterviewState(ApplicationForm applicationForm) {
-        InterviewEvaluationComment evaluationCommentForLatestInterview = getEvaluationCommentForLatestInterview(applicationForm);
-        
-        if (evaluationCommentForLatestInterview == null) {
-            return STATE_TRANSITION_VIEW;
-        }
-        
-        switch(evaluationCommentForLatestInterview.getNextStatus()) {
-        case REVIEW:
-            return REVIEW_VIEW + applicationForm.getApplicationNumber();
-        case INTERVIEW:
-            return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
-        case APPROVAL:
-            return APPROVAL_VIEW + applicationForm.getApplicationNumber();
-        default:
-            return REJECTION_VIEW + applicationForm.getApplicationNumber();
-        }
-    }
-
-    private String resolveViewForReviewState(ApplicationForm applicationForm) {
-        ReviewEvaluationComment evaluationCommentForLatestRoundOfReview = getEvaluationCommentForLatestRoundOfReview(applicationForm);
-        if (evaluationCommentForLatestRoundOfReview == null) {
-            return STATE_TRANSITION_VIEW;
-        }
-        
-        switch(evaluationCommentForLatestRoundOfReview.getNextStatus()) {
-        case APPROVAL:
-            return APPROVAL_VIEW + applicationForm.getApplicationNumber();
-        case REVIEW:
-            return REVIEW_VIEW + applicationForm.getApplicationNumber();
-        case INTERVIEW:
-            return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
-        default:
-            return REJECTION_VIEW + applicationForm.getApplicationNumber();
-        }
-    }
-
-    private String resolveViewForValidationState(ApplicationForm applicationForm) {
-        ValidationComment validationComment = getValidationComment(applicationForm);
-        
-        if (validationComment == null) {
-            return STATE_TRANSITION_VIEW;
-        }
-        
-        switch(validationComment.getNextStatus()) {
-        case APPROVAL:
-            return APPROVAL_VIEW + applicationForm.getApplicationNumber();
-        case REVIEW:
-            return REVIEW_VIEW + applicationForm.getApplicationNumber();
-        case INTERVIEW:
-            return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
-        default:
-            return REJECTION_VIEW + applicationForm.getApplicationNumber();
-        }
-    }
-    
     private ReviewEvaluationComment getEvaluationCommentForLatestRoundOfReview(final ApplicationForm applicationForm) {
         ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
         if (latestReviewRound != null) {
@@ -143,7 +95,7 @@ public class StateTransitionViewResolver {
         }
         return null;
     }
-    
+
     private ApprovalEvaluationComment getEvaluationCommentForLatestApprovalRound(final ApplicationForm applicationForm) {
         ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
         if (latestApprovalRound != null) {
@@ -160,7 +112,7 @@ public class StateTransitionViewResolver {
         }
         return null;
     }
-    
+
     private InterviewEvaluationComment getEvaluationCommentForLatestInterview(final ApplicationForm applicationForm) {
         Interview latestInterview = applicationForm.getLatestInterview();
         if (latestInterview != null) {
@@ -177,7 +129,7 @@ public class StateTransitionViewResolver {
         }
         return null;
     }
-    
+
     private ValidationComment getValidationComment(final ApplicationForm applicationForm) {
         List<Comment> applicationComments = applicationForm.getApplicationComments();
         for (Comment comment : applicationComments) {

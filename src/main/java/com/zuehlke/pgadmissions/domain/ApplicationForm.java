@@ -166,6 +166,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
     @Valid
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private ProgrammeDetails programmeDetails;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })

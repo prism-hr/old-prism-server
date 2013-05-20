@@ -69,7 +69,7 @@ public class ApplicationFormListDAO {
         for (Object id : criteria.list()) {
             ApplicationForm form = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id);
             if (service.calculateActions(user, form).isRequiresAttention()) {
-                results.add((ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id));
+                results.add(form);
             }
         }
         return results;

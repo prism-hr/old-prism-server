@@ -10,11 +10,7 @@ $(document).ready(function() {
 	    bindDatePicker($(this));
     });
 
-	if ($("input[name=preFilterRadio]:checked").val() == "URGENT") {
-		$("#loadMoreApplications").hide();
-	} else {
-		$("#loadMoreApplications").show();
-	}
+	showOrHideTheDisplayNextButton();
 	
 	$.fn.jExpand = function(){
         var element = this;
@@ -419,6 +415,7 @@ function populateApplicationList() {
 			 $('#ajaxloader').fadeOut('fast');
 			addToolTips();
 			loading = false;
+			showOrHideTheDisplayNextButton();
 		}
 	});
 }
@@ -551,6 +548,14 @@ function cleanUpFilterIds(){
 		$(filters[i]).find(".selectCategory").attr("id","searchCategory_"+i);
 		$(filters[i]).find(".selectPredicate").attr("id","searchPredicate_"+i);
 		$(filters[i]).find(".filterInput").attr("id","searchTerm_"+i);
+	}
+}
+
+function showOrHideTheDisplayNextButton() {
+	if ($("input[name=preFilterRadio]:checked").val() == "URGENT") {
+		$("#loadMoreApplications").hide();
+	} else {
+		$("#loadMoreApplications").show();
 	}
 }
 

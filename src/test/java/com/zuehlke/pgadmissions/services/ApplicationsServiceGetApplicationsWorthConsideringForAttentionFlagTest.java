@@ -85,7 +85,7 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
 
                 applicationFormListDAO = new ApplicationFormListDAO(sessionFactory);
                 applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-                applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null);
+                applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null);
                 roleDAO = new RoleDAO(sessionFactory);
                 user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).accountNonExpired(false).accountNonLocked(false)

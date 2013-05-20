@@ -94,7 +94,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                 sessionFactory
                         .getCurrentSession()
                         .createSQLQuery(
-                                "DELETE FROM USER_ROLE_LINK;DELETE FROM PROGRAM_ADMINISTRATOR_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
+                                "DELETE FROM APPLICATION_FORM;DELETE FROM PROGRAM_ADMINISTRATOR_LINK;DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
                                 .executeUpdate();
             }
         });

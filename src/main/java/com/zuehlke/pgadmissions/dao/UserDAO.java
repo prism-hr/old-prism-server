@@ -199,7 +199,7 @@ public class UserDAO {
     }
     
     public List<Integer> getUsersIdsWithPendingRoleNotifications() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user").setProjection(Projections.property("id"))
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user").setProjection(Projections.distinct(Projections.property("id")))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("enabled", false))
                 .createAlias("pendingRoleNotifications", "pendingRoleNotification")
                 .add(Restrictions.isNull("pendingRoleNotification.notificationDate"))

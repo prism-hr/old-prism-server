@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
@@ -65,6 +66,7 @@ public class ApplicationListControllerTest {
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
     private ApplicationSummaryService applicationSummaryServiceMock;
     private ApplicationsFilteringService filteringServiceMock;
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test
     public void shouldReturnViewForApplicationListPageWithStoredFiltersWhenSessionFiltersNotInitialized() {
@@ -347,8 +349,9 @@ public class ApplicationListControllerTest {
         filtersPropertyEditorMock = createMock(ApplicationsFiltersPropertyEditor.class);
         applicationSummaryServiceMock = createMock(ApplicationSummaryService.class);
         filteringServiceMock = EasyMock.createMock(ApplicationsFilteringService.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controller = new ApplicationListController(applicationsServiceMock, applicationsReportServiceMock, userServiceMock, filtersPropertyEditorMock,
-                applicationSummaryServiceMock, filteringServiceMock);
+                applicationSummaryServiceMock, filteringServiceMock, accessServiceMock);
     }
 
     @SuppressWarnings("unchecked")

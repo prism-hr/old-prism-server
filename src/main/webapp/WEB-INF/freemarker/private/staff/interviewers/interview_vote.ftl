@@ -57,7 +57,8 @@
             <section class="interview-votes form-rows">
             	<h2>Accept Interview Time Slot(s)</h2>
             	<div>
-            		<form method="post">
+		      		<form method="post" action= "<@spring.url '/interviewVote'/>" />
+		      		<input type="hidden" id="applicationId" name ="applicationId" value ="${(applicationForm.applicationNumber)!}"/>
 		              <#assign interview = applicationForm.latestInterview>
 		              	<!--div class="row-group">
 			              	<div class="row" >
@@ -202,11 +203,18 @@
             </section>
         </div>
         
+        <div class="content-box">
+          <div class="content-box-inner">
+            <#include "/private/staff/admin/comment/timeline_application.ftl"/>
+          </div>
+        </div>
+        
       </article>
       </section>
     </div>
     <!-- Middle Ends --> 
     
+
     <#include "/private/common/global_footer.ftl"/> </div>
   <!-- Wrapper Ends -->
   

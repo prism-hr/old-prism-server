@@ -65,9 +65,9 @@
             	<i class="icon-warning-sign"></i> </#if>
             </#if>
             <#if alertDefinition.title??> 
-            <strong>${alertDefinition.title}</strong> </#if>
+            <strong>${alertDefinition.title}.</strong> </#if>
             <#if alertDefinition.description??>
-            <p>${alertDefinition.description}</p>
+            ${alertDefinition.description}
             </#if> </div>
           </#if>
           
@@ -79,7 +79,7 @@
             <#assign args = ["${messageApplication.applicationNumber}"] />
           <div class="alert alert-info"> <i class="icon-info-sign"></i>
             <@spring.messageArgs '${RequestParameters.messageCode}' args />
-            <a href='/pgadmissions/application?view=view&applicationId=${messageApplication.applicationNumber}'> Re-open the application </a>
+            <a href='/pgadmissions/application?view=view&applicationId=${messageApplication.applicationNumber}'> <i class="icon-reply"></i> Re-open the application.</a>
           </div>
           <#else>
           <div class="alert alert-info"> <i class="icon-info-sign"></i>

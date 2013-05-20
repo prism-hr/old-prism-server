@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <section class="form-rows">
-	<h2>Configuration</h2>
+	<h2>Manage Service Levels</h2>
 	
 	<div>
 		<form id="configForm">

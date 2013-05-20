@@ -1182,7 +1182,7 @@ span.count {
     padding: 6px;
     padding-left: 26px !important;
 }
-.field .alert i, .alert-info i, form>.alert-error  i.icon-warning-sign {
+.field .alert>i, .alert-info>i, form>.alert-error  i.icon-warning-sign {
   margin-left: -17px;
   font-size: 14px;
 }
@@ -1795,4 +1795,7 @@ form#removeForm {
 .interview-votes .timeslot input[type=checkbox] {
 	margin-left:0px;
 	margin-top: -1px;
+}
+.alert-info a{
+	font-weight: bold;
 }

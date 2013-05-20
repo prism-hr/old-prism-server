@@ -2,7 +2,7 @@
 <input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
 <input type="hidden" id="approvalRoundId" name="approvalRoundId" value="<#if approvalRound.id??>${encrypter.encrypt(approvalRound.id)}</#if>" />
 <section class="form-rows"  id="approvalsection">
-    <h2 class="no-arrow"> Confirm project details </h2>
+    <h2 class="no-arrow">Assign Supervisors</h2>
     <div>
     	<form>
 			  <@spring.bind "approvalRound.supervisors" />
@@ -11,7 +11,7 @@
         <#else>
  		      <div class="alert alert-info"> <i class="icon-info-sign"></i> 
         </#if>
-			  Confirm project details. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant. </div>
+			  Assign Supervisors. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant. </div>
                       
   <div class="row-group" id="assignSupervisorsToAppSection"> 
   <#assign avaliableOptionsSize = (programmeSupervisors?size + previousSupervisors?size + 4)/>

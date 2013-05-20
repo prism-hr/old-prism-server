@@ -295,7 +295,11 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("input[name=preFilterRadio]").click(function() {
+	$("#preFilterOptions li a").click(function(event) {
+		event.preventDefault();
+		filterVal = $(this).attr('href');
+		filterHtml = $(this).html();
+		$('#preFilter').val(filterVal).html(filterHtml);
 		$('#search-go').click();
 	});
 
@@ -367,7 +371,7 @@ function populateApplicationList() {
 
 	options = {
 		filters : JSON.stringify(filters),
-		preFilter : $("input[name=preFilterRadio]:checked").val(),
+		preFilter : $("#preFilter").val(),
 		sortCategory : $('#sort-column').val(),
 		order : $('#sort-order').val(),
 		blockCount : $('#block-index').val()
@@ -552,10 +556,11 @@ function cleanUpFilterIds(){
 }
 
 function showOrHideTheDisplayNextButton() {
-	if ($("input[name=preFilterRadio]:checked").val() == "URGENT") {
+	if ($("#preFilter").val() == "URGENT") {
 		$("#loadMoreApplications").hide();
 	} else {
 		$("#loadMoreApplications").show();
 	}
+
 }
 

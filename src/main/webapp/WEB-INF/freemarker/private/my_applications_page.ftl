@@ -87,7 +87,30 @@
           </div>
           </#if> </#if>
           <div id="table-bar"> 
+            <div class="applyOptions">
             
+            <span>Displaying:</span>
+              <div class="btn-group">
+              
+              <#if filtering.preFilter == "ALL">
+              <button class="btn" id="preFilter" disabled value="ALL">All applications</button>
+              <#elseif filtering.preFilter == "MY">
+              <button class="btn"  id="preFilter" disabled value="MY">My applications</button>	
+              <#elseif filtering.preFilter == "URGENT">
+              <button class="btn"  id="preFilter" disabled value="URGENT"><i class="icon-bell-alt"></i> Applications that Require Attention</button>                
+              </#if>
+              </button>
+              <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+                  <ul class="dropdown-menu" id="preFilterOptions">
+                    <li><a href="ALL">All applications</a></li>
+                    <li><a href="MY">My applications</a></li>
+                    <li><a href="URGENT"><i class="icon-bell-alt"></i> Applications that Require Attention</a></li>
+                  </ul>
+              </div>
+             
+            </div>
             <div id="search-box" class="clearfix"> 
             <div class="actions">
           	<!-- Download button. --> 
@@ -107,12 +130,6 @@
               value='<#list applicationStatusValues as value>${value.displayValue()}<#if value_has_next>,</#if></#list>'
             />
           </div>
-            
-            <div class="field">
-              <input type="radio" name="preFilterRadio" <#if filtering.preFilter == "ALL">checked</#if> value="ALL">All applications</input>
-              <input type="radio" name="preFilterRadio" <#if filtering.preFilter == "MY">checked</#if> value="MY">My applications</input>
-              <input type="radio" name="preFilterRadio" <#if filtering.preFilter == "URGENT">checked</#if> value="URGENT">Applications that Require Attention</input>
-            </div>
             
             <#list filtering.filters as filter> 
               <!-- Search/filter box. -->

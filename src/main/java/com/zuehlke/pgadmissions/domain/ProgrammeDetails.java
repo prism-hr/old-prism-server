@@ -18,11 +18,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 @Entity(name = "APPLICATION_FORM_PROGRAMME_DETAIL")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ProgrammeDetails implements FormSectionObject, Serializable {
 
     private static final long serialVersionUID = -5997103825068065955L;

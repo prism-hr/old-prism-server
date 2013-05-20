@@ -14,7 +14,33 @@
   <cache name="com.zuehlke.pgadmissions.domain.ApprovalRound" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
 
   <cache name="com.zuehlke.pgadmissions.domain.ReviewRound" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
- 
-  <cache name="com.zuehlke.pgadmissions.domain.ProgrammeDetails" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
 
+  <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichAdministrator" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichReviewer" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichInterviewer" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichSupervisor" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichViewer" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.Role" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+  
+  <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.roles" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.Program.approvers" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.Program.administrators" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.Program.programReviewers" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.Program.interviewers" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
+  <cache name="com.zuehlke.pgadmissions.domain.Program.supervisors" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+  
+  <cache name="com.zuehlke.pgadmissions.domain.Program.viewers" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+  
 </ehcache>

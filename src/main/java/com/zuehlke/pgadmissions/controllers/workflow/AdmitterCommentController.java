@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -31,8 +32,10 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 @RequestMapping("/progress")
 public class AdmitterCommentController extends StateTransitionController {
     
+    private final MailSendingService mailService;
+    
     public AdmitterCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -40,9 +43,10 @@ public class AdmitterCommentController extends StateTransitionController {
             CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
             DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
-            StateTransitionService stateTransitionService) {
+            StateTransitionService stateTransitionService, final MailSendingService mailService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService,
                 approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService);
+        this.mailService = mailService;
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "/submitRegistryValidationComment")
@@ -58,7 +62,6 @@ public class AdmitterCommentController extends StateTransitionController {
             return STATE_TRANSITION_VIEW;
         }
         
-        
         ApplicationForm form = getApplicationForm(applicationId);
         comment.setUser(getCurrentUser());
         comment.setDate(new Date());
@@ -70,7 +73,7 @@ public class AdmitterCommentController extends StateTransitionController {
         applicationsService.save(form);
         commentService.save(comment);
         
-        
+        mailService.scheduleAdmitterProvidedCommentNotification(form);
         
         return "redirect:/applications?messageCode=validation.comment.success&application=" + form.getApplicationNumber();
     }

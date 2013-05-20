@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.approval;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -107,10 +109,13 @@ public class CreateNewApprovalCommentController {
         return gson.toJson(Collections.singletonMap("success", true));
     }
     
-    @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment/validate", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment/validate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String validate(final @PathVariable("applicationNumber") String applicationNumber, @Valid final ApprovalComment approvalComment, final BindingResult bindingResult) {
+    public String validate(final @PathVariable("applicationNumber") String applicationNumber,
+            @Valid final ApprovalComment approvalComment, @RequestParam final String comment,
+            @RequestParam final String confirmNextStage, final BindingResult bindingResult) {
         Gson gson = new Gson();
+        Map<String, Object> fieldErrorMap = new HashMap<String, Object>();
         RegisteredUser currentUser = getCurrentUser();
         ApplicationForm form = applicationsService.getApplicationByApplicationNumber(applicationNumber);
 
@@ -127,7 +132,18 @@ public class CreateNewApprovalCommentController {
         
         validator.validate(approvalComment, bindingResult);
         if (bindingResult.hasErrors()) {
-            Map<String, Object> fieldErrorMap = FieldErrorUtils.populateMapWithErrors(bindingResult, messageSource);
+            fieldErrorMap = FieldErrorUtils.populateMapWithErrors(bindingResult, messageSource);
+        }
+        
+        if (StringUtils.isEmpty(comment)) {
+            fieldErrorMap.put("comment", FieldErrorUtils.resolveMessage("text.field.empty", messageSource));
+        }
+        
+        if (StringUtils.equalsIgnoreCase("false", confirmNextStage)) {
+            fieldErrorMap.put("confirmNextStage", FieldErrorUtils.resolveMessage("checkbox.mandatory", messageSource));
+        }
+        
+        if (!fieldErrorMap.isEmpty()) {
             fieldErrorMap.put("success", false);
             return gson.toJson(fieldErrorMap);
         }
@@ -154,13 +170,6 @@ public class CreateNewApprovalCommentController {
         approvalComment.setConfirmNextStage(true);
         approvalComment.setDate(new Date());
         approvalComment.setUser(currentUser);
-        
-        validator.validate(approvalComment, bindingResult);
-        if (bindingResult.hasErrors()) {
-            Map<String, Object> fieldErrorMap = FieldErrorUtils.populateMapWithErrors(bindingResult, messageSource);
-            fieldErrorMap.put("success", false);
-            return gson.toJson(fieldErrorMap);
-        }
         
         latestApprovalRound.setProjectAbstract(approvalComment.getProjectAbstract());
         latestApprovalRound.setProjectDescriptionAvailable(approvalComment.getProjectDescriptionAvailable());

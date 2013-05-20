@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
+import java.util.Arrays;
+
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
@@ -8,10 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalCommentBuilder;
@@ -133,6 +137,37 @@ public class CreateNewApprovalCommentControllerTest {
     }
     
     @Test
+    public void shouldNotValidateIfCommentOrNextStageIsEmpty() {
+        DateTime now = new DateTime();
+        
+        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        
+        ApplicationForm form = new ApplicationFormBuilder()
+                .applicationNumber("ABCD-XXX")
+                .status(ApplicationFormStatus.REVIEW)
+                .latestApprovalRound(
+                        new ApprovalRoundBuilder().projectTitle("projectTitle").projectAbstract("projectAbstract")
+                                .projectDescriptionAvailable(true).recommendedConditions("recommendedConditions")
+                                .recommendedConditionsAvailable(true).recommendedStartDate(now.toDate()).build())
+                .build();
+        
+        ApprovalComment newComment = new ApprovalCommentBuilder().projectTitle("1").projectAbstract("1")
+                .projectDescriptionAvailable(false).recommendedConditions("1")
+                .recommendedConditionsAvailable(false).recommendedStartDate(now.plusDays(1).toDate()).build();
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber(form.getApplicationNumber())).andReturn(form);
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
+        EasyMock.expect(bindingResultMock.getFieldErrors()).andReturn(Arrays.asList(new FieldError(Comment.class.getName(), "comment", "")));
+        EasyMock.replay(userServiceMock, applicationsServiceMock, bindingResultMock, approvalServiceMock, commentServiceMock);
+        
+        String json = controller.validate(form.getApplicationNumber(), newComment, "", "", bindingResultMock);
+        Assert.assertEquals("{\"success\":false}", json);
+        
+        EasyMock.verify(userServiceMock, applicationsServiceMock, bindingResultMock, approvalServiceMock, commentServiceMock);
+    }
+    
+    @Test
     public void shouldUpdateTheLatestApprovalRoundWithNewestValues() {
         DateTime now = new DateTime();
         
@@ -156,7 +191,6 @@ public class CreateNewApprovalCommentControllerTest {
         
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber(form.getApplicationNumber())).andReturn(form);
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         approvalServiceMock.save(EasyMock.capture(approvalRoundCapture));
         commentServiceMock.save(EasyMock.capture(approvalCommentCapture));
         EasyMock.replay(userServiceMock, applicationsServiceMock, bindingResultMock, approvalServiceMock, commentServiceMock);

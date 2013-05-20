@@ -29,7 +29,7 @@ public class FieldErrorUtils {
         return result;
     }
 
-    private static String resolveMessage(final String code, final MessageSource messageSource) {
+    public static String resolveMessage(final String code, final MessageSource messageSource) {
         try {
             return messageSource.getMessage(code, null, Locale.getDefault());
         } catch (NoSuchMessageException e) {
@@ -37,7 +37,7 @@ public class FieldErrorUtils {
         }
     }
 
-    private static String getDefaultMessage(final FieldError error) {
+    public static String getDefaultMessage(final FieldError error) {
         return StringUtils.trimToEmpty(error.getDefaultMessage());
     }
 }

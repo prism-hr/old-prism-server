@@ -56,7 +56,8 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
                 sessionFactory.getCurrentSession()
-                                .createSQLQuery("" + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (1,'ADMINISTRATOR');"
+                                .createSQLQuery("" 
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (1,'ADMINISTRATOR');"
                                                 + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (2,'APPLICANT');"
                                                 + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (4,'APPROVER');"
                                                 + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (7,'INTERVIEWER');"
@@ -90,7 +91,10 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
         template.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                sessionFactory.getCurrentSession().createSQLQuery("DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
+                sessionFactory
+                        .getCurrentSession()
+                        .createSQLQuery(
+                                "DELETE FROM USER_ROLE_LINK;DELETE FROM PROGRAM_ADMINISTRATOR_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
                                 .executeUpdate();
             }
         });

@@ -18,7 +18,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
@@ -90,10 +91,12 @@ public class CreateNewInterviewerController {
 
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
         RegisteredUser user = userService.getCurrentUser();
-        if (application == null
-                || (!user.hasAdminRightsOnApplication(application) && !user.isApplicationAdministrator(application) && !user
-                        .isInterviewerOfApplicationForm(application))) {
-            throw new ResourceNotFoundException();
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+
+        if (!user.hasAdminRightsOnApplication(application) && !user.isApplicationAdministrator(application)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return application;
     }

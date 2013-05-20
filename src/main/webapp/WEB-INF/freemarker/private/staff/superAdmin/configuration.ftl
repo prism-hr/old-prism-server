@@ -80,7 +80,7 @@
               </div>
             </div>
             <section class="form-rows">
-              <h2>Email templates</h2>
+              <h2>Manage Email Templates</h2>
               <div>
                 <div class="alert alert-info"> <i class="icon-info-sign"></i> Customise the e-mail templates </div>
                 <div class="row-group">
@@ -140,7 +140,7 @@
           </div>
           <div id="edit-throttle-section">
             <section class="form-rows">
-              <h2>Portico Interface</h2>
+              <h2>Manage Portico Interface</h2>
               <div>
                 <div class="alert alert-info"> <i class="icon-info-sign"></i> Configure how many rejected and withdrawn applications should be sent to Portico every night. </div>
                 <form>

@@ -63,7 +63,7 @@
           <@spring.bind "applicationForm.*" />
           <@spring.bind "availableReasons.*" />
           <section class="form-rows">
-            <h2 class="no-arrow">Reject Applicant</h2>
+            <h2 class="no-arrow">Reject</h2>
             <div>
               <form method="POST" action="<@spring.url '/rejectApplication/moveApplicationToReject'/>">				
               		  <@spring.bind "rejection.rejectionReason" />

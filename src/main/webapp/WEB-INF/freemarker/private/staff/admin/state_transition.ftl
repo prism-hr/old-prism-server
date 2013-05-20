@@ -84,13 +84,13 @@
 							Confirm Eligibility
 						<#else>
 							<#if applicationForm.isInState('VALIDATION')>
-								Validate Application
+								Complete Validation Stage
 							<#elseif applicationForm.isInState('REVIEW')>
-								Evaluate Application Reviews
+								Complete Review Stage
 							<#elseif applicationForm.isInState('INTERVIEW')>
-								Evaluate Interview Outcomes
+								Complete Interview Stage
 							<#elseif applicationForm.isInState('APPROVAL')>
-								Approve Application
+								Compete Approval Stage
 							</#if>
 						</#if>
 						</h2>

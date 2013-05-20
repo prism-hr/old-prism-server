@@ -286,11 +286,11 @@ function addCounter() {
     $.each($textArea, function() {
         if ($(this).attr('id') == 'convictionsText') {
 			$(this).data("maxlength", 400);
-		} else if  ($(this).attr('id') == 'projectAbstract') {
+		} else if  ($(this).attr('id') == 'projectAbstract'||$(this).attr('id') == 'programmeDescription') {
 			$(this).data("maxlength", 1000);
 		} else if  ($(this).attr('id') == 'position_remit') {
 			$(this).data("maxlength", 250);
-		} else if  ($(this).attr('id') == 'explanationText') {
+		} else if  ($(this).attr('id') == 'explanationText'||$(this).attr('id') == 'fundingInformation') {
 		    $(this).data("maxlength", 500);
 		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'scoringConfigurationContent') {
 			return false;

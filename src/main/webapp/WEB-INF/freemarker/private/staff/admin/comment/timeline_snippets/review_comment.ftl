@@ -10,7 +10,13 @@
 </h3>
 
 <h3 class="answer <#if comment.willingToInterview?? && comment.willingToInterview?string == 'true'>yes<#else>no</#if>">
-	<span data-desc="<#if comment.willingToInterview?? && comment.willingToInterview?string == 'true'>Yes<#else>No</#if>"></span>Would you like to interview the applicant with a view to working with them? 
+	<span data-desc="<#if comment.willingToInterview?? && comment.willingToInterview?string == 'true'>Yes<#else>No</#if>"></span>Would you like to interview the applicant? 
+</h3>
+
+<h3 class="answer <#if comment.willingToWorkWithApplicant?? && comment.willingToWorkWithApplicant?string == 'true'>yes<#else>no</#if>">
+    <span data-desc="<#if comment.willingToWorkWithApplicant?? && comment.willingToWorkWithApplicant?string == 'true'>Yes<#else>No</#if>"></span>Would you like to supervise this applicant? 
 </h3>
 
 </#if>
+
+<#include "comment_scores.ftl"/>

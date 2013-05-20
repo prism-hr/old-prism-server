@@ -8,9 +8,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.Valid;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -25,11 +22,6 @@ public class ApplicationsFilter implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @Valid
-    private RegisteredUser user;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "search_predicate")
     private SearchPredicate searchPredicate;
@@ -42,14 +34,6 @@ public class ApplicationsFilter implements Serializable {
     private String searchTerm;
 
     public ApplicationsFilter() {
-    }
-
-    public RegisteredUser getUser() {
-        return user;
-    }
-
-    public void setUser(RegisteredUser user) {
-        this.user = user;
     }
 
     public SearchPredicate getSearchPredicate() {

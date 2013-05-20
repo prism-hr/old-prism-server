@@ -47,7 +47,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('a[name="deleteFundingButton"]').click( function(){	
 		var id = $(this).attr("id").replace("funding_", "");
-		$('#fundingSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -74,10 +74,11 @@ $(document).ready(function(){
 				
 			success:	function(data) {
 					$('#fundingSection').html(data);
+					$('#funding-H2').trigger('click');
 				},
-			completed: function()
+			complete: function()
 			{
-				$('#fundingSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});
@@ -137,7 +138,7 @@ $(document).ready(function(){
 	{
 		var id = this.id;
 		id = id.replace('funding_', '');	
-		$('#fundingSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'GET',
 			statusCode: {
@@ -169,9 +170,10 @@ $(document).ready(function(){
 				$('#fundingSection').html(data);
 				$('#addFundingButton').html('Update');
 			},
-			completed: function()
+			complete: function()
 			{
-				$('#fundingSection div.ajax').remove();
+				$('#funding-H2').trigger('click');
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});
@@ -182,7 +184,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#fundingClearButton').click(function()
 	{
-		$('#fundingSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		loadFundingSection(true);
 	});
 	
@@ -197,7 +199,7 @@ $(document).ready(function(){
 
 function postFundingData(message)
 {
-	$('#fundingSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	var acceptedTheTerms;
 	if ($("#acceptTermsFDValue").val() == 'NO'){
 		acceptedTheTerms = false;
@@ -240,21 +242,19 @@ function postFundingData(message)
 		success: function(data)
 		{
 			$('#fundingSection').html(data);
-			var errorCount = $('#fundingSection .alert-error:visible').length;
-			if (message == 'close' && errorCount == 0)
-			{
-				// Close the section only if there are no errors.	
-				$('#funding-H2').trigger('click');
-				
-			}
+			var errorCount = $('#fundingSection .alert-error').length;
 			if(errorCount > 0){
+				$('#funding-H2').trigger('click');
 				markSectionError('#fundingSection');
-				
+			} else {
+				if (message == 'add') {
+					$('#funding-H2').trigger('click');
+				}
 			}
 		},
     complete: function()
     {
-			$('#fundingSection div.ajax').remove();
+			$('#ajaxloader').fadeOut('fast');
     }
 	});
 }

@@ -10,6 +10,7 @@
 
 <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
@@ -22,6 +23,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
@@ -53,14 +55,20 @@
             <div>
               <form id="documentUploadForm" method="POST" action="<@spring.url '/referee/submitReference'/>">
                 <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
-                <div class="alert alert-info"> <i class="icon-info-sign"></i> Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme. </div>
+                <@spring.bind "comment.confirmNextStage" />
+			    <#if spring.status.errorMessages?size &gt; 0>
+		     		<div class="alert alert-error" >
+                    <i class="icon-warning-sign"></i>
+			    <#else>
+		            <div class="alert alert-info">
+          			<i class="icon-info-sign"></i>
+	          	</#if> Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme. </div>
                 <div class="row-group">
                   <div class="row">
                     <label for="comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
                     <div class="field">
-                      <textarea  name="comment" id="comment" class="max" rows="6" cols="80" >${(comment.comment?html)!}
-</textarea>
+                      <textarea  name="comment" id="comment" class="max" rows="6" cols="80" >${(comment.comment?html)!}</textarea>
                       <@spring.bind "comment.comment" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> 
@@ -111,6 +119,36 @@
                       </div>
                   </div>
                 </div>
+                
+                <#assign scores = comment.scores>
+                <#if (scores)?has_content>
+                  <div id="scoring-questions" class="row-group">
+                    <#if comment.alert??>
+                      <#assign alertForScoringQuestions=comment.alert>
+                    </#if>
+                    <#assign errorsContainerName = "comment">
+                    <h3>Programme Specific Questions</h3>
+                    <#include "/private/staff/scores.ftl"/>
+                  </div>
+                </#if>
+                
+				<@spring.bind "comment.confirmNextStage" />
+                  <#if spring.status.errorMessages?size &gt; 0>
+                    <div class="alert alert-error" >
+                  <#else>
+                    <div class="alert" >
+                  </#if>
+					<div class="row">
+						<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
+							Please confirm that you are satisfied with your comments.				
+						</label>
+						<div class="terms-field">
+							<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+						</div>
+						<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
+					</div>
+				</div>
+                
                 <div class="buttons"> <#--
                   <button class="btn" type="button" value="cancel">Clear</button>
                   -->

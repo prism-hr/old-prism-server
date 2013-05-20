@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -51,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -64,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -237,6 +240,7 @@ public class MailSendingServiceTest {
 		RegisteredUser refereeUser2 = new RegisteredUserBuilder().id(11).build();
 		Referee referee1 = new RefereeBuilder().user(refereeUser1).build();
 		Referee referee2 = new RefereeBuilder().user(refereeUser2).build();
+		Referee refereeWithoutUser = new RefereeBuilder().build();
 		
 		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(12).build();
 		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(13).build();
@@ -256,7 +260,7 @@ public class MailSendingServiceTest {
 		Supervisor supervisor2 = new SupervisorBuilder().user(supervisorUser2).build();
 		form.setLatestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisor1, supervisor2).build());
 	
-		service.scheduleWithdrawalConfirmation(asList(referee1, referee2), form);
+		service.scheduleWithdrawalConfirmation(asList(referee1, referee2, refereeWithoutUser), form);
 		
 		List<RegisteredUser> admins = form.getProgram().getAdministrators();
 		assertEquals(admins.get(0).getDigestNotificationType(), DigestNotificationType.UPDATE_NOTIFICATION);
@@ -1060,6 +1064,89 @@ public class MailSendingServiceTest {
 		assertModelEquals(model, message.getModel());
 	}
 	
+    @Test
+    public void shouldSendInterviewVoteNotificationToInterviewerParticipants() {
+        ApplicationForm form = getSampleApplicationForm();
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).build();
+        InterviewParticipant participant1 = new InterviewParticipantBuilder().user(user1).build();
+        InterviewParticipant participant2 = new InterviewParticipantBuilder().user(user2).build();
+        Interview interview = new InterviewBuilder().application(form).participants(participant1, participant2).build();
+
+        Map<String, Object> model1 = new HashMap<String, Object>();
+        model1.put("adminsEmails", SAMPLE_ADMIN1_EMAIL_ADDRESS + ", " + SAMPLE_ADMIN2_EMAIL_ADDRESS);
+        model1.put("participant", participant1);
+        model1.put("application", form);
+        model1.put("host", HOST);
+        Map<String, Object> model2 = new HashMap<String, Object>();
+        model2.putAll(model1);
+        model2.put("participant", participant2);
+
+        String subjectToReturn = SAMPLE_APPLICANT_NAME + " " + SAMPLE_APPLICANT_SURNAME + " Application " + SAMPLE_APPLICATION_NUMBER + " for UCL "
+                + SAMPLE_PROGRAM_TITLE + " - Interview Confirmation";
+        expect(
+                mockMailSender.resolveSubject(EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME,
+                        SAMPLE_APPLICANT_SURNAME)).andReturn(subjectToReturn);
+
+        Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
+        mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+        expectLastCall().times(2);
+
+        replay(mockMailSender);
+        service.sendInterviewVoteNotificationToInterviewerParticipants(interview);
+        verify(mockMailSender);
+
+        PrismEmailMessage message = messageCaptor.getValues().get(0);
+        assertNotNull(message.getTo());
+        assertEquals(1, message.getTo().size());
+        assertEquals((Integer) 1, message.getTo().get(0).getId());
+        assertEquals(subjectToReturn, message.getSubjectCode());
+        assertModelEquals(model1, message.getModel());
+
+        message = messageCaptor.getValues().get(1);
+        assertNotNull(message.getTo());
+        assertEquals(1, message.getTo().size());
+        assertEquals((Integer) 2, message.getTo().get(0).getId());
+        assertEquals(subjectToReturn, message.getSubjectCode());
+        assertModelEquals(model2, message.getModel());
+    }
+    
+    @Test
+    public void shouldSendInterviewVoteConfirmationToAdministrators() {
+        ApplicationForm form = getSampleApplicationForm();
+        RegisteredUser admin1 = form.getProgram().getAdministrators().get(0);
+        RegisteredUser admin2 = form.getProgram().getAdministrators().get(1);
+        InterviewParticipant participant1 = new InterviewParticipantBuilder().user(admin1).build();
+        Interview interview = new InterviewBuilder().application(form).participants(participant1).build();
+        participant1.setInterview(interview);
+
+        Map<String, Object> model1 = new HashMap<String, Object>();
+        model1.put("administrator", admin2);
+        model1.put("application", form);
+        model1.put("participant", participant1);
+        model1.put("host", HOST);
+
+        String subjectToReturn = SAMPLE_APPLICANT_NAME + " " + SAMPLE_APPLICANT_SURNAME + " Application " + SAMPLE_APPLICATION_NUMBER + " for UCL "
+                + SAMPLE_PROGRAM_TITLE + " - Interview Confirmation";
+        expect(
+                mockMailSender.resolveSubject(EmailTemplateName.INTERVIEW_VOTE_CONFIRMATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME,
+                        SAMPLE_APPLICANT_SURNAME)).andReturn(subjectToReturn);
+
+        Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
+        mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+
+        replay(mockMailSender);
+        service.sendInterviewVoteConfirmationToAdministrators(participant1);
+        verify(mockMailSender);
+
+        PrismEmailMessage message = messageCaptor.getValues().get(0);
+        assertNotNull(message.getTo());
+        assertEquals(1, message.getTo().size());
+        assertEquals((Integer) 3, message.getTo().get(0).getId());
+        assertEquals(subjectToReturn, message.getSubjectCode());
+        assertModelEquals(model1, message.getModel());
+    }
+
 	protected void assertModelEquals(Map<String, Object> expected, Map<String, Object> actual) {
 		assertEquals("The size of the expected and actual models don't match",
 				expected.size(), actual.size());
@@ -1076,15 +1163,15 @@ public class MailSendingServiceTest {
 				.firstName(SAMPLE_APPLICANT_NAME)
 				.lastName(SAMPLE_APPLICANT_SURNAME)
 				.build();
-		RegisteredUser applicant1 = new RegisteredUserBuilder().id(2)
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(2)
 				.email(SAMPLE_ADMIN1_EMAIL_ADDRESS)
 				.build();
-		RegisteredUser applicant2 = new RegisteredUserBuilder().id(3)
+		RegisteredUser admin2 = new RegisteredUserBuilder().id(3)
 				.email(SAMPLE_ADMIN2_EMAIL_ADDRESS)
 				.build();
 		Program program = new ProgramBuilder().id(4)
 				.title(SAMPLE_PROGRAM_TITLE)
-				.administrators(applicant1, applicant2)
+				.administrators(admin1, admin2)
 				.build();
 		ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(5)
 				.build();

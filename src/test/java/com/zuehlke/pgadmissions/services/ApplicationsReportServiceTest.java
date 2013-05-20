@@ -21,7 +21,7 @@ import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.NumberValue;
 import com.google.visualization.datasource.datatable.value.TextValue;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -51,8 +51,6 @@ import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 public class ApplicationsReportServiceTest {
@@ -68,12 +66,12 @@ public class ApplicationsReportServiceTest {
         // GIVEN
         List<ApplicationForm> applications = Lists.newArrayList();
 
-        List<ApplicationsFilter> filters = Lists.newLinkedList();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 0)).andReturn(applications);
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable dataTable = service.getApplicationsReport(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING);
+        DataTable dataTable = service.getApplicationsReport(user, filtering);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN
@@ -90,13 +88,13 @@ public class ApplicationsReportServiceTest {
                 .build();
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
-        List<ApplicationsFilter> filters = Lists.newLinkedList();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 0)).andReturn(applications);
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1)).andReturn(new ArrayList<ApplicationForm>());
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(new ArrayList<ApplicationForm>());
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable table = service.getApplicationsReport(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING);
+        DataTable table = service.getApplicationsReport(user, filtering);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN
@@ -179,13 +177,13 @@ public class ApplicationsReportServiceTest {
                 .approvalRounds(approvalRound).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).build();
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
-        List<ApplicationsFilter> filters = Lists.newLinkedList();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 0)).andReturn(applications);
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1)).andReturn(new ArrayList<ApplicationForm>());
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(new ArrayList<ApplicationForm>());
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable table = service.getApplicationsReport(user, filters, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING);
+        DataTable table = service.getApplicationsReport(user, filtering);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN

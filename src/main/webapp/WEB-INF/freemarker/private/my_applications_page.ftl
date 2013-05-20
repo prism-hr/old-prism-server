@@ -25,7 +25,6 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/scrollpagination.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
@@ -56,10 +55,14 @@
       <input type="hidden" id="appList" name="appList" />
       <div class="content-box">
         <div class="content-box-inner"> <#if alertDefinition??>
-          <div class="alert"> <#if alertDefinition.type??>
+          
+          <#if alertDefinition.type??>
             <#if alertDefinition.type.name() == "INFO"> 
-            <i class="icon-info-sign"></i> <#elseif alertDefinition.type.name() == "WARNING"> 
-            <i class="icon-warning-sign"></i> </#if>
+            <div class="alert alert-info"> 
+            	<i class="icon-info-sign"></i>
+            <#elseif alertDefinition.type.name() == "WARNING">
+            <div class="alert">  
+            	<i class="icon-warning-sign"></i> </#if>
             </#if>
             <#if alertDefinition.title??> 
             <strong>${alertDefinition.title}</strong> </#if>
@@ -76,6 +79,7 @@
             <#assign args = ["${messageApplication.applicationNumber}"] />
           <div class="alert alert-info"> <i class="icon-info-sign"></i>
             <@spring.messageArgs '${RequestParameters.messageCode}' args />
+            <a href='/pgadmissions/application?view=view&applicationId=${messageApplication.applicationNumber}'> Re-open the application </a>
           </div>
           <#else>
           <div class="alert alert-info"> <i class="icon-info-sign"></i>
@@ -83,7 +87,30 @@
           </div>
           </#if> </#if>
           <div id="table-bar"> 
+            <div class="applyOptions">
             
+            <span>Displaying:</span>
+              <div class="btn-group">
+              
+              <#if filtering.preFilter == "ALL">
+              <button class="btn" id="preFilter" disabled value="ALL">All applications</button>
+              <#elseif filtering.preFilter == "MY">
+              <button class="btn"  id="preFilter" disabled value="MY">My applications</button>	
+              <#elseif filtering.preFilter == "URGENT">
+              <button class="btn"  id="preFilter" disabled value="URGENT"><i class="icon-bell-alt"></i> Applications that Require Attention</button>                
+              </#if>
+              </button>
+              <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+                  <ul class="dropdown-menu" id="preFilterOptions">
+                    <li><a href="ALL">All applications</a></li>
+                    <li><a href="MY">My applications</a></li>
+                    <li><a href="URGENT"><i class="icon-bell-alt"></i> Applications that Require Attention</a></li>
+                  </ul>
+              </div>
+             
+            </div>
             <div id="search-box" class="clearfix"> 
             <div class="actions">
           	<!-- Download button. --> 
@@ -104,7 +131,7 @@
             />
           </div>
             
-            <#list filters as filter> 
+            <#list filtering.filters as filter> 
               <!-- Search/filter box. -->
               <div class="filter" id="filter_${filter_index}">
                 <select class="selectCategory" name="searchCategory" id="searchCategory_${filter_index}">
@@ -137,7 +164,7 @@
               </div>
               </#list> 
               
-              <#if filters?size==0>
+              <#if filtering.filters?size==0>
               <!-- New search/filter box. -->
               <div class="filter" id="filter">
                 <select class="selectCategory" name="searchCategory" id="searchCategory">
@@ -162,8 +189,8 @@
                         <button class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="#" id="storeFiltersBtn">Save as Default Filter</a></li>
-                            <li><a href="<@spring.url '/applications?reloadFilters=true'/>">Load Default Filter</a></li>
-                            <li><a href="#" id="loadActiveApplication">Display my Active Applications</a></li>
+                            <li><a href="<@spring.url '/applications?applyFilters=reload'/>">Load Default Filter</a></li>
+                            <li><a href="#" id="loadActiveApplication">Display Active Applications</a></li>
               
                         </ul>
                       </div>

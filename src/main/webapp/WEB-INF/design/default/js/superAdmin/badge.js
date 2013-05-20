@@ -50,7 +50,7 @@ function initialiseAutocomplete() {
 	                suggestions = [];
 	                suggestions = jQuery.parseJSON(data);
 	            },
-	            completed: function() {
+	            complete: function() {
 	            }               
 	        });
 	        add(suggestions);
@@ -99,7 +99,7 @@ function getClosingDates() {
 	            $("#batchdeadline").val('');
 	            suggestions = [];
 	        },
-	        completed: function() {
+	        complete: function() {
 	        }
 	    });
 	});

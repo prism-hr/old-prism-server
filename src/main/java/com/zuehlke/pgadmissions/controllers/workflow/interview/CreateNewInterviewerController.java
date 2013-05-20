@@ -27,75 +27,74 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 @RequestMapping("/interview")
 public class CreateNewInterviewerController {
 
+    private static final String CREATE_INTERVIEWER_SECTION = "/private/staff/interviewers/create_interviewer_section";
+    private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
+    private final UserService userService;
+    private final ApplicationsService applicationsService;
+    private final NewUserByAdminValidator interviewerValidator;
 
-	private static final String CREATE_INTERVIEWER_SECTION = "/private/staff/interviewers/create_interviewer_section";
-	private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
-	private final UserService userService;
-	private final ApplicationsService applicationsService;
-	private final NewUserByAdminValidator interviewerValidator;
-
-	CreateNewInterviewerController() {
-		this(null, null, null);
-	}
-
-	@Autowired
-	public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator interviewerValidator) {
-				this.applicationsService = applicationsService;
-				this.userService = userService;
-				this.interviewerValidator = interviewerValidator;
-	}
-
-	@RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
-	public ModelAndView createNewInterviewerUser(@Valid @ModelAttribute("interviewer") RegisteredUser suggestedNewInterviewerUser, BindingResult bindingResult,
-			@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
-		if (bindingResult.hasErrors()) {
-			return new ModelAndView(CREATE_INTERVIEWER_SECTION);
-		}
-		ModelAndView modelAndView = new ModelAndView(JSON_VIEW);
-		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(suggestedNewInterviewerUser.getEmail());
-		if (existingUser != null) {
-			modelAndView.getModel().put("isNew", false);		
-			modelAndView.getModel().put("user", existingUser);
-			return modelAndView;
-		}
-		
-		modelAndView.getModel().put("isNew", true);
-		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewInterviewerUser.getFirstName(), suggestedNewInterviewerUser.getLastName(), suggestedNewInterviewerUser.getEmail(),
-				Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm);
-		modelAndView.getModel().put("user", newUser);
-		return modelAndView;
-	}
-
-
-	@RequestMapping(method = RequestMethod.GET, value = "create_interviewer_section")
-	public String getCreateInterviewerSection() {
-			return CREATE_INTERVIEWER_SECTION;
-	}
-	
-	@ModelAttribute("interviewer")
-	public RegisteredUser getInterviewer() {
-		return new RegisteredUser();
-	}
-	
-	@InitBinder(value = "interviewer")
-	public void registerInterviewerValidators(WebDataBinder binder) {
-		binder.setValidator(interviewerValidator);
-		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    CreateNewInterviewerController() {
+        this(null, null, null);
     }
-        
+
+    @Autowired
+    public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator interviewerValidator) {
+        this.applicationsService = applicationsService;
+        this.userService = userService;
+        this.interviewerValidator = interviewerValidator;
+    }
+
+    @RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
+    public ModelAndView createNewInterviewerUser(@Valid @ModelAttribute("interviewer") RegisteredUser suggestedNewInterviewerUser, BindingResult bindingResult,
+            @ModelAttribute("applicationForm") ApplicationForm applicationForm) {
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView(CREATE_INTERVIEWER_SECTION);
+        }
+        ModelAndView modelAndView = new ModelAndView(JSON_VIEW);
+        RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(suggestedNewInterviewerUser.getEmail());
+        if (existingUser != null) {
+            modelAndView.getModel().put("isNew", false);
+            modelAndView.getModel().put("user", existingUser);
+            return modelAndView;
+        }
+
+        modelAndView.getModel().put("isNew", true);
+        RegisteredUser newUser = userService.createNewUserInRole(suggestedNewInterviewerUser.getFirstName(), suggestedNewInterviewerUser.getLastName(),
+                suggestedNewInterviewerUser.getEmail(), DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm, Authority.INTERVIEWER);
+        modelAndView.getModel().put("user", newUser);
+        return modelAndView;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "create_interviewer_section")
+    public String getCreateInterviewerSection() {
+        return CREATE_INTERVIEWER_SECTION;
+    }
+
+    @ModelAttribute("interviewer")
+    public RegisteredUser getInterviewer() {
+        return new RegisteredUser();
+    }
+
+    @InitBinder(value = "interviewer")
+    public void registerInterviewerValidators(WebDataBinder binder) {
+        binder.setValidator(interviewerValidator);
+        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+
     public StringTrimmerEditor newStringTrimmerEditor() {
         return new StringTrimmerEditor(false);
-    }	
-    
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+    }
 
-		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (application == null
-				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
-						.isInterviewerOfApplicationForm(application))) {
-			throw new ResourceNotFoundException();
-		}
-		return application;
-	}
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+
+        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        RegisteredUser user = userService.getCurrentUser();
+        if (application == null
+                || (!user.hasAdminRightsOnApplication(application) && !user.isApplicationAdministrator(application) && !user
+                        .isInterviewerOfApplicationForm(application))) {
+            throw new ResourceNotFoundException();
+        }
+        return application;
+    }
 }

@@ -1,10 +1,19 @@
+<#import "/spring.ftl" as spring />
 <input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
 <input type="hidden" id="approvalRoundId" name="approvalRoundId" value="<#if approvalRound.id??>${encrypter.encrypt(approvalRound.id)}</#if>" />
 <section class="form-rows"  id="approvalsection">
-<h2 class="no-arrow"> Confirm project details </h2>
-<div>
-<div class="alert alert-info" id="add-info-bar-div"><i class="icon-info-sign"></i> Confirm project details. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant. </div>
-<div class="row-group" id="assignSupervisorsToAppSection"> <#import "/spring.ftl" as spring />
+    <h2 class="no-arrow"> Confirm project details </h2>
+    <div>
+    	<form>
+			  <@spring.bind "approvalRound.supervisors" />
+        <#if spring.status.errors.hasErrors()>
+          <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
+        <#else>
+ 		      <div class="alert alert-info"> <i class="icon-info-sign"></i> 
+        </#if>
+			  Confirm project details. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant. </div>
+                      
+  <div class="row-group" id="assignSupervisorsToAppSection"> 
   <#assign avaliableOptionsSize = (programmeSupervisors?size + previousSupervisors?size + 4)/>
   <#if (avaliableOptionsSize > 25)>
   <#assign avaliableOptionsSize = 25 />
@@ -18,18 +27,27 @@
     <span class="hint" data-desc="<@spring.message 'assignSupervisor.defaultSupervisors'/>"></span>
     <div class="field">
       <select id="programSupervisors" class="list-select-from" class="max" multiple="multiple" size="${avaliableOptionsSize}">
+      <optgroup id="nominated" label="Applicant nominated supervisors">
+	      <#list nominatedSupervisors as supervisor> <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="nominated" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
+	      ${supervisor.firstName?html}
+	      ${supervisor.lastName?html}
+	      </option>
+	      </#list>
+      </optgroup>
       <optgroup id="default" label="Default supervisors">
-      <#list programmeSupervisors as supervisor> <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default"  <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
-      ${supervisor.firstName?html}
-      ${supervisor.lastName?html}
-      </option>
+      <#list programmeSupervisors as supervisor> 
+	      <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default"  <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
+	      ${supervisor.firstName?html}
+	      ${supervisor.lastName?html}
+	      </option>
       </#list>
       </optgroup>
       <optgroup id="previous" label="Previous supervisors">
-      <#list previousSupervisors as supervisor> <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
-      ${supervisor.firstName?html}
-      ${supervisor.lastName?html}
-      </option>
+      <#list previousSupervisors as supervisor> 
+	      <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
+	      ${supervisor.firstName?html}
+	      ${supervisor.lastName?html}
+	      </option>
       </#list>
       </optgroup>
       </select>
@@ -103,9 +121,7 @@
                         <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
       disabled="disabled"
       </#if>
-      value="
-      ${(approvalRound.projectTitle?html)!}
-      " /> 
+      value="${(approvalRound.projectTitle?html)!}" /> 
       <@spring.bind "approvalRound.projectTitle" />
     <#list spring.status.errorMessages as error >
     <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
@@ -177,9 +193,12 @@
     <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
     </#list> </div>
 </div>
+		<div class="buttons">
+		  <button class="btn btn-primary" type="button" id="assignSupervisorsBtn">Submit</button>
+		</div>
+	</form>
+</div>
 </section>
 <div id="postApprovalData"></div>
-<div class="buttons">
-  <button class="btn btn-primary" type="button" id="assignSupervisorsBtn">Submit</button>
-</div>
+
 <script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/supervisor.js'/>"></script>

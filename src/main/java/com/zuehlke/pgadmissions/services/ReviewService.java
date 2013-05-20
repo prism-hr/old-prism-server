@@ -46,11 +46,20 @@ public class ReviewService {
 	}
 
 	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound) {
+	    DateTime baseDate;
+	    
+	    if (application.getBatchDeadline() == null || application.getLatestReviewRound() != null) {
+	        baseDate = new DateTime();
+	    }
+	    else {
+	        baseDate = new DateTime(application.getBatchDeadline());
+	    }
+	    
 		application.setLatestReviewRound(reviewRound);
 		reviewRound.setApplication(application);
 		reviewRoundDAO.save(reviewRound);
 		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
-		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), reviewStageDuration.getDurationInMinutes());
+		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, reviewStageDuration.getDurationInMinutes());
         application.setDueDate(dueDate.toDate());
         boolean sendReferenceRequest = application.getStatus()==ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);

@@ -13,6 +13,7 @@ public class ReviewCommentBuilder {
 	private Boolean willingToInterview;
 	private Boolean suitableCandidateForUcl;
 	private Boolean suitableCandidateForProgramme;
+	private Boolean willingToWorkWithApplicant;
 	private boolean decline;
 	private boolean adminsNotified;
 	private ApplicationForm applicationForm;
@@ -22,6 +23,11 @@ public class ReviewCommentBuilder {
 	private RegisteredUser user;
 	private CommentType commentType;
 	private Reviewer reviewer;
+
+	public ReviewCommentBuilder willingToWorkWithApplicant(Boolean willingToWorkWithApplicant) {
+	    this.willingToWorkWithApplicant = willingToWorkWithApplicant;
+	    return this;
+	}
 	
 	public ReviewCommentBuilder createdTimeStamp(Date createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
@@ -95,6 +101,7 @@ public class ReviewCommentBuilder {
 		reviewComment.setAdminsNotified(adminsNotified);
 		reviewComment.setReviewer(reviewer);
 		reviewComment.setSuitableCandidateForProgramme(suitableCandidateForProgramme);
+		reviewComment.setWillingToWorkWithApplicant(willingToWorkWithApplicant);
 		return reviewComment;
 	}
 }

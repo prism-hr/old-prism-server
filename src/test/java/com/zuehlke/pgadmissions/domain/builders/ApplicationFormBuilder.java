@@ -39,7 +39,7 @@ public class ApplicationFormBuilder {
 	private RegisteredUser applicant;
 	private String projectTitle;
 	private String researchHomePage;
-	private Boolean registryUsersNotified;
+	private Boolean registryUsersNotified=false;
 	private Program program;
 	private Date appDate;
 	private Date submittedDate;
@@ -74,7 +74,13 @@ public class ApplicationFormBuilder {
 	private String uclBookingReferenceNumber;
     private String ipAddress;
     private Boolean suppressChangeStateNotifications;
+    private Boolean withdrawnBeforeSubmit = false;
 	
+    public ApplicationFormBuilder withdrawnBeforeSubmit(Boolean flag) {
+        this.withdrawnBeforeSubmit = flag;
+        return this;
+    }
+    
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
         return this;
@@ -384,6 +390,8 @@ public class ApplicationFormBuilder {
 		
 		application.getEmploymentPositions().addAll(employmentPositions);
 		application.setSuppressStateChangeNotifications(this.suppressChangeStateNotifications);
+		
+		application.setWithdrawnBeforeSubmit(withdrawnBeforeSubmit);
 		
 		try {
 		    application.setIpAddressAsString(ipAddress);

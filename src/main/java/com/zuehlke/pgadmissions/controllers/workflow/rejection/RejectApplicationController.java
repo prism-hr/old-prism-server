@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -65,6 +65,11 @@ public class RejectApplicationController {
     public String getRejectPage() {
         return REJECT_VIEW_NAME;
     }
+    
+    @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.GET)
+    public void defaultGet() {
+        return;
+    }
 
     @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,
@@ -96,9 +101,9 @@ public class RejectApplicationController {
     }
     
     @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.getActionsDefinition(getUser(), application);
+        return applicationsService.calculateActions(getUser(), application);
     }
 
     private void checkApplicationStatus(ApplicationForm application) {

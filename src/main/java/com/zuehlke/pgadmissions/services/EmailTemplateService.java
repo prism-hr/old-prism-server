@@ -162,6 +162,10 @@ public class EmailTemplateService {
 	}
 
     public String getSubjectForTemplate(EmailTemplateName templateName) {
-        return getActiveEmailTemplate(templateName).getSubject();
+        EmailTemplate activeEmailTemplate = getActiveEmailTemplate(templateName);
+        if(activeEmailTemplate != null){
+            return activeEmailTemplate.getSubject();
+        }
+        throw new RuntimeException("No email template found: " + templateName);
     }
 }

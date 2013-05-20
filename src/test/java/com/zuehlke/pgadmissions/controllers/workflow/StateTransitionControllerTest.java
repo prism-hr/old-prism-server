@@ -76,6 +76,7 @@ public class StateTransitionControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+		EasyMock.expect(currentUserMock.isInRole(Authority.ADMITTER)).andReturn(false);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
@@ -92,12 +93,31 @@ public class StateTransitionControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+		EasyMock.expect(currentUserMock.isInRole(Authority.ADMITTER)).andReturn(false);
+		EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 		
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 		
+	}
+	
+	@Test
+	public void shouldGetApplicationFromIdForAdmitter() {
+	    Program program = new ProgramBuilder().id(6).build();
+	    ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+	    RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+	    EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
+	    EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
+	    EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+	    EasyMock.expect(currentUserMock.isInRole(Authority.ADMITTER)).andReturn(true);
+	    EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+	    EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
+	    
+	    ApplicationForm returnedForm = controller.getApplicationForm("5");
+	    assertEquals(applicationForm, returnedForm);
+	    
 	}
 
 	@Test(expected = MissingApplicationFormException.class)
@@ -118,9 +138,11 @@ public class StateTransitionControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+		EasyMock.expect(currentUserMock.isInRole(Authority.ADMITTER)).andReturn(false);
+		EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
-
 		controller.getApplicationForm("5");
 	}
 
@@ -205,7 +227,7 @@ public class StateTransitionControllerTest {
     }
 
 	@Test
-	public void shouldReturnAvaialableNextStati() {
+	public void shouldReturnAvaialableNextStatuses() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
 		controller = new StateTransitionController(
 		        applicationServiceMock, 
@@ -224,7 +246,7 @@ public class StateTransitionControllerTest {
 				return applicationForm;
 			}
 		};
-		assertArrayEquals(new StateTransitionService().getAvailableNextStati(ApplicationFormStatus.VALIDATION), controller.getAvailableNextStati("5"));
+		assertArrayEquals(new StateTransitionService().getAvailableNextStati(ApplicationFormStatus.VALIDATION).toArray(), controller.getAvailableNextStati("5").toArray());
 	}
 
 	@Before

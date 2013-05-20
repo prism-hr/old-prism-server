@@ -20,7 +20,10 @@ $(document).ready(function()
 		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		$('#applicationTab').hide();
-		$('#timeline').append('<div class="ajax" />').show();
+		if ( $('#timeline').children().length == 0 ) {
+			$('#ajaxloader').show();
+		}
+		$('#timeline').show();
 		
 		$.ajax({
 			 type: 'GET',
@@ -58,8 +61,11 @@ $(document).ready(function()
 					{
 						jumpToTimeline = true;
 					}
-					addToolTips();	
-				}			
+					addToolTips();
+					toggleScores();	
+				}, complete: function() {
+                 $('#ajaxloader').fadeOut('fast');
+             }	
 		});
 		
 		return false;

@@ -62,6 +62,16 @@ public class FeedbackCommentValidatorTest {
     }
 
     @Test
+    public void shouldRejectIfNotDeclinedAndWillingToWorkWithApplicantIsEmpty() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToWorkWithApplicant");
+        reviewComment.setWillingToWorkWithApplicant(null);
+        reviewComment.setConfirmNextStage(true);
+        feedbackCommentValidator.validate(reviewComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToWorkWithApplicant").getCode());
+    }
+    
+    @Test
     public void shouldRejectIfNotDeclinedAndSuitableCandidateForUclIsEmpty() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "suitableCandidateForUcl");
         reviewComment.setSuitableCandidateForUcl(null);
@@ -142,43 +152,7 @@ public class FeedbackCommentValidatorTest {
         feedbackCommentValidator.validate(interviewComment, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
-
-    @Test
-    public void shouldRejectIfCommentIsMissing() {
-        referenceComment.setComment(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "comment");
-        feedbackCommentValidator.validate(referenceComment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
-    }
-
-    @Test
-    public void shouldRejectIfSuitableForUCLIsNotSelected() {
-        referenceComment.setSuitableForUCL(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForUCL");
-        feedbackCommentValidator.validate(referenceComment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForUCL").getCode());
-    }
-
-    @Test
-    public void shouldRejectIfSuitableForProgrammeIsNotSelected() {
-        referenceComment.setSuitableForProgramme(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForProgramme");
-        feedbackCommentValidator.validate(referenceComment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForProgramme").getCode());
-    }
-
-    @Test
-    public void shouldRejectIfConfirmationCheckboxIsNotPresent() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
-        reviewComment.setConfirmNextStage(null);
-        feedbackCommentValidator.validate(reviewComment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
-    }
-
+    
     @Test
     public void shouldRejectInterviewIfConfirmationCheckboxIsNotPresent() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "confirmNextStage");
@@ -187,7 +161,7 @@ public class FeedbackCommentValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
     }
-
+    
     @Test
     public void shouldRejectInterviewIfConfirmationCheckboxIsNotChecked() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "confirmNextStage");
@@ -198,7 +172,64 @@ public class FeedbackCommentValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfConfirmationCheckboxIsNotChecked() {
+    public void shouldRejectIfCommentIsMissing() {
+        referenceComment.setComment(null);
+        referenceComment.setConfirmNextStage(true);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "comment");
+        feedbackCommentValidator.validate(referenceComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfSuitableForUCLIsNotSelected() {
+        referenceComment.setSuitableForUCL(null);
+        referenceComment.setConfirmNextStage(true);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForUCL");
+        feedbackCommentValidator.validate(referenceComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForUCL").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfSuitableForProgrammeIsNotSelected() {
+        referenceComment.setSuitableForProgramme(null);
+        referenceComment.setConfirmNextStage(true);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForProgramme");
+        feedbackCommentValidator.validate(referenceComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForProgramme").getCode());
+    }
+    
+    @Test
+    public void shouldRejectReferenceIfConfirmationCheckboxIsNotPresent() {
+        referenceComment.setConfirmNextStage(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "confirmNextStage");
+        feedbackCommentValidator.validate(referenceComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
+
+    @Test
+    public void shouldRejectReferenceIfConfirmationCheckboxIsNotChecked() {
+        referenceComment.setConfirmNextStage(false);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "confirmNextStage");
+        feedbackCommentValidator.validate(referenceComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
+
+    @Test
+    public void shouldRejectReviewIfConfirmationCheckboxIsNotPresent() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
+        reviewComment.setConfirmNextStage(null);
+        feedbackCommentValidator.validate(reviewComment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
+    }
+
+    @Test
+    public void shouldRejectReviewIfConfirmationCheckboxIsNotChecked() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "confirmNextStage");
         reviewComment.setConfirmNextStage(false);
         feedbackCommentValidator.validate(reviewComment, mappingResult);
@@ -207,10 +238,8 @@ public class FeedbackCommentValidatorTest {
 
     @Before
     public void setup() {
-        reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false)
-                .willingToInterview(true).decline(false).build();
-        interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false)
-                .willingToSupervise(true).decline(false).build();
+        reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false).willingToInterview(true).willingToWorkWithApplicant(false).decline(false).build();
+        interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervise(true).decline(false).build();
         referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).build();
 
         feedbackCommentValidator = new FeedbackCommentValidator();

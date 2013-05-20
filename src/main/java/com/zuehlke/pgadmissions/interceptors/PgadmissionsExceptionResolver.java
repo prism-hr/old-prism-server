@@ -107,7 +107,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(CannotApplyToProgramException.class, new PgadmissionExceptionHandler<CannotApplyToProgramException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotApplyToProgramException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot apply to program", "Program \"" + ex.getProgram().getTitle() + "\" is not available at the moment.");
+                return new AlertDefinition(AlertType.INFO, ex.getProgram().getTitle() + " is no longer accepting applications." , null);
             }
         });
 

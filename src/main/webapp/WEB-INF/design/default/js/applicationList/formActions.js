@@ -10,14 +10,14 @@ $(document).ready(function() {
 	    bindDatePicker($(this));
     });
 
+	showOrHideTheDisplayNextButton();
+	
 	$.fn.jExpand = function(){
         var element = this;
 
 		$(element).find('.application-details:odd').addClass('odd').addClass('loading');
         $(element).find('.applicationRow').click(function() {
 			var applicationDetails = $(this).next();
-			
-			
 			
 			if (applicationDetails.attr('data-application-status') == 'UNSUBMITTED' || applicationDetails.attr('data-application-status') == 'WITHDRAWN') {
 				return;
@@ -73,7 +73,7 @@ $(document).ready(function() {
 						//applicationDetails.find('[data-field=active-applications-link]').attr('href', '/pgadmissions/download?documentId=' + data.personalStatement);
 						
 						applicationDetails.find('[data-field=email]').text(applicant.email);
-						applicationDetails.find('[data-field=email]').attr('href', 'mailto:' + applicant.email);
+						applicationDetails.find('[data-field=email]').attr('href', 'mailto:' + applicant.email + "?subject=Question Regarding UCL Prism Application " + data.applicationNumber);
 						applicationDetails.find('[data-field=phone-number] span').text(applicant.phoneNumber);
 						applicationDetails.find('[data-field=skype] span').text(applicant.skype);
 						
@@ -271,7 +271,6 @@ $(document).ready(function() {
 		cleanUpFilterIds();
 	});
 
-	// To be extended
 	// Duplicate filters buttons
 	$(".add").live('click', function() {
 		var existingFilter=$(this).parent();
@@ -287,12 +286,21 @@ $(document).ready(function() {
 	
 	// Remover current filter
 	$(".remove").live('click', function() {
+		var existingFilter= $(this).parent();
 		if ($("#search-box").find("div.filter").length > 1) {
-			$(this).parent().remove();
 			if(existingFilter.find(".filterInput").val()!=""){
 				$('#search-go').click();
 			}
+			existingFilter.remove();
 		}
+	});
+	
+	$("#preFilterOptions li a").click(function(event) {
+		event.preventDefault();
+		filterVal = $(this).attr('href');
+		filterHtml = $(this).html();
+		$('#preFilter').val(filterVal).html(filterHtml);
+		$('#search-go').click();
 	});
 
 });
@@ -356,19 +364,20 @@ function increasePageCount() {
 function populateApplicationList() {
 
 	loading = true;
+	
+	$('#ajaxloader').show();
 
 	filters = getFilters();
 
 	options = {
 		filters : JSON.stringify(filters),
+		preFilter : $("#preFilter").val(),
 		sortCategory : $('#sort-column').val(),
 		order : $('#sort-order').val(),
 		blockCount : $('#block-index').val()
 	};
 
 	$('#search-box div.alert-error').remove();
-
-	$('div.content-box-inner').append('<div class="ajax" />');
 
 	$('#loadMoreApplicationsTable').show();
 
@@ -407,10 +416,10 @@ function populateApplicationList() {
 			});
 		},
 		complete : function() {
-			$('.content-box-inner div.fetching, .content-box-inner div.ajax')
-					.remove();
+			 $('#ajaxloader').fadeOut('fast');
 			addToolTips();
 			loading = false;
+			showOrHideTheDisplayNextButton();
 		}
 	});
 }
@@ -544,5 +553,14 @@ function cleanUpFilterIds(){
 		$(filters[i]).find(".selectPredicate").attr("id","searchPredicate_"+i);
 		$(filters[i]).find(".filterInput").attr("id","searchTerm_"+i);
 	}
+}
+
+function showOrHideTheDisplayNextButton() {
+	if ($("#preFilter").val() == "URGENT") {
+		$("#loadMoreApplications").hide();
+	} else {
+		$("#loadMoreApplications").show();
+	}
+
 }
 

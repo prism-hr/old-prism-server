@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -23,6 +24,9 @@ public class ReviewComment extends Comment {
 	@Column(name = "willing_to_interview")
 	private Boolean willingToInterview;
 	
+	@Column(name = "willing_to_work_with_applicant")
+	private Boolean willingToWorkWithApplicant;
+	
 	@Column(name="suitable_candidate")
 	private Boolean suitableCandidateForUcl;
 	
@@ -38,6 +42,9 @@ public class ReviewComment extends Comment {
 	@Enumerated(EnumType.STRING)
 	@Column(name="comment_type")
 	private CommentType type;
+	
+    @Transient
+    private String alert;
 
 	public CommentType getType() {
 		return type;
@@ -67,6 +74,18 @@ public class ReviewComment extends Comment {
 	public void setWillingToInterview(Boolean willingToInterview) {
 		this.willingToInterview = willingToInterview;
 	}
+	
+    public Boolean getWillingToWorkWithApplicant() {
+        return willingToWorkWithApplicant;
+    }
+
+    public void setWillingToWorkWithApplicant(final Boolean willingToWorkWithApplicant) {
+        this.willingToWorkWithApplicant = willingToWorkWithApplicant;
+    }
+    
+    public boolean isWillingToWorkWithApplicantSet() {
+        return willingToWorkWithApplicant != null;
+    }
 	
 	public boolean isSuitableCandidateSet() {
 		return suitableCandidateForUcl != null;
@@ -103,4 +122,12 @@ public class ReviewComment extends Comment {
 			Boolean suitableCandidateForProgramme) {
 		this.suitableCandidateForProgramme = suitableCandidateForProgramme;
 	}
+
+	public String getAlert() {
+	    return alert;
+    }
+
+	public void setAlert(String alert) {
+	    this.alert = alert;
+    }
 }

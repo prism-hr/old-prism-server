@@ -90,7 +90,7 @@ $(document).ready(function() {
                 }
                 options.append($("<option />").val("OTHER").text("Other"));
             },
-            completed : function() {
+            complete : function() {
             }
         });
     });
@@ -158,7 +158,7 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
     $('a[name="deleteQualificationButton"]').click(function() {
         var id = $(this).attr("id").replace("qualification_", "");
-        $('#qualificationsSection > div').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         $.ajax({
             type : 'POST',
             statusCode : {
@@ -184,9 +184,10 @@ $(document).ready(function() {
             },
             success : function(data) {
                 $('#qualificationsSection').html(data);
+				$('#qualifications-H2').trigger('click');
             },
-            completed : function() {
-                $('#qualificationsSection div.ajax').remove();
+            complete : function() {
+                $('#ajaxloader').fadeOut('fast');
                 showOrHideAddQualificationButton();
             }
         });
@@ -239,7 +240,7 @@ $(document).ready(function() {
         $('#editClicked').val("1");
         var id = this.id;
         id = id.replace('qualification_', '');
-        $('#qualificationsSection > div').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         $.ajax({
             type : 'GET',
             statusCode : {
@@ -291,8 +292,9 @@ $(document).ready(function() {
                 $('#addQualificationButton').html('Update');
                 $("#addQualificationButton").show();
             },
-            completed : function() {
-                $('#qualificationsSection div.ajax').remove();
+            complete : function() {
+                $('#ajaxloader').fadeOut('fast');
+				$('#qualifications-H2').trigger('click');
                 // showOrHideAddQualificationButton();
             }
         });
@@ -302,7 +304,7 @@ $(document).ready(function() {
     // Clear button.
     // -------------------------------------------------------------------------------
     $('#qualificationClearButton').click(function() {
-        $('#qualificationsSection > div').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         loadQualificationsSection(true);
     });
 
@@ -315,7 +317,7 @@ $(document).ready(function() {
 });
 
 function postQualificationData(message) {
-    $('#qualificationsSection > div').append('<div class="ajax" />');
+    $('#ajaxloader').show();
     var acceptedTheTerms;
     if ($("#acceptTermsQDValue").val() == 'NO') {
         acceptedTheTerms = false;
@@ -366,20 +368,19 @@ function postQualificationData(message) {
         },
         success : function(data) {
             $('#qualificationsSection').html(data);
-            var errorCount = $('#qualificationsSection .alert-error:visible').length;
-
-            if (errorCount == 0 && message == 'close') {
-                // Close the section only if there are no errors.
-
-                $('#qualifications-H2').trigger('click');
-
-            }
+            var errorCount = $('#qualificationsSection .alert-error').length;
+			
             if (errorCount > 0) {
                 markSectionError('#qualificationsSection');
-            }
+				$('#qualifications-H2').trigger('click');
+            } else {
+				if (message == 'add') {
+					$('#qualifications-H2').trigger('click');
+				}
+			}
         },
         complete : function() {
-            $('#qualificationsSection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
         }
     });
 }

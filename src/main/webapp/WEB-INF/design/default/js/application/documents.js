@@ -87,7 +87,7 @@ $(document).ready(function()
 // --------------------------------------------------------------------------------
 function postDocumentData(message)
 {
-	$('#documentSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	var acceptedTheTerms;
 	if ($("#acceptTermsDDValue").val() == 'NO'){
 		acceptedTheTerms = false;
@@ -130,19 +130,17 @@ function postDocumentData(message)
 			if (message == 'close')
 			{
 				// Close the section only if there are no errors.
-				var errorCount = $('#documentSection .alert-error:visible').length;
-				if (errorCount == 0)
+				var errorCount = $('#documentSection .alert-error').length;
+				if (errorCount > 0)
 				{
 					$('#documents-H2').trigger('click');
-				}else{
 					markSectionError('#documentSection');
 				}
 			}
 		},
-    complete: function()
-    {
-			$('#documentSection div.ajax').remove();
-    }
+		complete: function(){
+			$('#ajaxloader').fadeOut('fast');
+		}
 	});
 }
 

@@ -126,7 +126,9 @@ public class PorticoQueueServiceTest {
         ApplicationFormTransfer transferApproved = new ApplicationFormTransferBuilder().applicationForm(approved).build();
         ApplicationFormTransfer transferRejected = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
         
-        EasyMock.expect(formTransferServiceMock.getAllTransfersWaitingToBeSentToPorticoOldestFirst()).andReturn(Arrays.asList(transferApproved, transferRejected));
+        EasyMock.expect(formTransferServiceMock.getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds()).andReturn(Arrays.asList(777L, 888L));
+        EasyMock.expect(formTransferServiceMock.getById(777L)).andReturn(transferApproved);
+        EasyMock.expect(formTransferServiceMock.getById(888L)).andReturn(transferRejected);
         
         EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);
         
@@ -160,8 +162,14 @@ public class PorticoQueueServiceTest {
         ApplicationFormTransfer transferRejected6 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
         ApplicationFormTransfer transferRejected7 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
         
-        EasyMock.expect(formTransferServiceMock.getAllTransfersWaitingToBeSentToPorticoOldestFirst()).andReturn(
-                Arrays.asList(transferRejected1, transferRejected2, transferRejected3, transferRejected4, transferRejected5, transferRejected6, transferRejected7));
+        EasyMock.expect(formTransferServiceMock.getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds()).andReturn(Arrays.asList(111L, 222L, 333L, 444L, 555L, 666L, 777L));
+        EasyMock.expect(formTransferServiceMock.getById(111L)).andReturn(transferRejected1);
+        EasyMock.expect(formTransferServiceMock.getById(222L)).andReturn(transferRejected2);
+        EasyMock.expect(formTransferServiceMock.getById(333L)).andReturn(transferRejected3);
+        EasyMock.expect(formTransferServiceMock.getById(444L)).andReturn(transferRejected4);
+        EasyMock.expect(formTransferServiceMock.getById(555L)).andReturn(transferRejected5);
+        EasyMock.expect(formTransferServiceMock.getById(666L)).andReturn(transferRejected6);
+        EasyMock.expect(formTransferServiceMock.getById(777L)).andReturn(transferRejected7);
         
         EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);
         
@@ -197,8 +205,14 @@ public class PorticoQueueServiceTest {
     	ApplicationFormTransfer transferRejected6 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
     	ApplicationFormTransfer transferRejected7 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
     	
-    	EasyMock.expect(formTransferServiceMock.getAllTransfersWaitingToBeSentToPorticoOldestFirst()).andReturn(
-    			Arrays.asList(transferRejected1, transferRejected2, transferRejected3, transferRejected4, transferRejected5, transferRejected6, transferRejected7));
+    	EasyMock.expect(formTransferServiceMock.getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds()).andReturn(Arrays.asList(111L, 222L, 333L, 444L, 555L, 666L, 777L));
+        EasyMock.expect(formTransferServiceMock.getById(111L)).andReturn(transferRejected1);
+        EasyMock.expect(formTransferServiceMock.getById(222L)).andReturn(transferRejected2);
+        EasyMock.expect(formTransferServiceMock.getById(333L)).andReturn(transferRejected3);
+        EasyMock.expect(formTransferServiceMock.getById(444L)).andReturn(transferRejected4);
+        EasyMock.expect(formTransferServiceMock.getById(555L)).andReturn(transferRejected5);
+        EasyMock.expect(formTransferServiceMock.getById(666L)).andReturn(transferRejected6);
+        EasyMock.expect(formTransferServiceMock.getById(777L)).andReturn(transferRejected7);
     	
     	EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);
     	

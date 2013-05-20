@@ -40,7 +40,7 @@ $(document).ready(function()
 
 function loadUsersForProgram()
 {
-	$('#editRoles').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	
 	$.ajax({
 		 type: 'GET',
@@ -83,7 +83,7 @@ function loadUsersForProgram()
 			},
 			complete: function()
 			{
-				$('#editRoles div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 	});	
 }

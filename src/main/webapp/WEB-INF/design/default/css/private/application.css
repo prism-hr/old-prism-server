@@ -100,9 +100,11 @@ section.form-rows > div.sub_section_admin { margin-bottom: 10px; overflow: hidde
 section.form-rows .label { float: left; line-height: 1.2; width: 180px; }
 
 /* To align with label, increasing the width : Edited by Manish*/
+.modal .modal-body .field,
 section.form-rows .field { margin-left: 235px; padding: 1px 0; }
 
 /* To align with label, increasing the width : Edited by Manish*/
+.modal .modal-body .hint,
 section.form-rows .hint { 
 	/*background: url(../../images/button_question.png)
 	no-repeat; width: 25px; height: 20px;  */
@@ -152,6 +154,7 @@ section.form-rows label.label { font-weight: bold; }
 .grey-label em { color: #AAA !important; }
 section.form-rows .alert { margin-bottom: 10px;}
 
+section.form-rows .field .very-large { width:440px; }
 section.form-rows .field .max { width: 330px; }
 section.form-rows .field .full { width: 240px; }
 section.form-rows .field .half { width: 120px; }
@@ -178,7 +181,7 @@ table.data-table { border-collapse: collapse; border-spacing: 0; }
 table.data-table td, table.data-table th { padding: 4px 3px 3px; text-align:left; } 
 table.data-table .odd td { background-color: #FFF; } 
 table.data-table .even td { background-color: #DDD; }
-table.data-table .deleteButton{
+table.data-table .deleteButton {
 	background-image: url("images/trash.png");
     background-repeat: no-repeat;
     display: inline-block;
@@ -262,3 +265,15 @@ select.list-select-to option { padding: 5px; }
 #applicationSupervisorsList { list-style-type: none; margin: 0; margin-bottom:10px; padding: 0; width: 400px; }
 #applicationSupervisorsList li { padding:5px; }
 .ui-widget-content { border: 0px }
+
+/* Rating system css */
+.rating-list {	margin-left: 0px;	list-style: none;}
+.rating-list li { display: inline-block; float: left; font-size: 19px; color: grey; margin-right: 4px;} 
+.rating-list li i:hover, .rating-list li i.hover  { color:#FFC926; cursor: pointer; }
+.rating-list li i.icon-thumbs-down.hover, .rating-list li i.icon-thumbs-down:hover { color: #D93600; }
+.scoring-questions .rating-input {
+	display: none !important;
+}
+#confirmNextStage {
+	margin-top: -4px;
+}

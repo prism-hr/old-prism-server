@@ -34,22 +34,22 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public abstract class AbstractMailSendingService {
 
-    private final MailSender mailSender;
-    
     protected final ApplicationFormDAO applicationDAO;
-    
+
     protected final ConfigurationService configurationService;
-    
+
     protected final UserDAO userDAO;
-    
+
     protected final RoleDAO roleDAO;
-    
+
     protected final EncryptionUtils encryptionUtils;
-    
+
     protected final RefereeDAO refereeDAO;
-    
+
     protected final String host;
-    
+
+    private MailSender mailSender;
+
     protected class UpdateDigestNotificationClosure implements Closure {
         private final DigestNotificationType type;
 
@@ -62,15 +62,9 @@ public abstract class AbstractMailSendingService {
             setDigestNotificationType((RegisteredUser) input, type);
         }
     }
-    
-    public AbstractMailSendingService(
-            final MailSender mailSender, 
-            final ApplicationFormDAO formDAO,
-            final ConfigurationService configurationService, 
-            final UserDAO userDAO, 
-            final RoleDAO roleDAO,
-            final RefereeDAO refereeDAO, 
-            final EncryptionUtils encryptionUtils,
+
+    public AbstractMailSendingService(final MailSender mailSender, final ApplicationFormDAO formDAO, final ConfigurationService configurationService,
+            final UserDAO userDAO, final RoleDAO roleDAO, final RefereeDAO refereeDAO, final EncryptionUtils encryptionUtils,
             @Value("${application.host}") final String host) {
         this.mailSender = mailSender;
         this.applicationDAO = formDAO;
@@ -81,26 +75,26 @@ public abstract class AbstractMailSendingService {
         this.refereeDAO = refereeDAO;
         this.host = host;
     }
-    
+
     protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
         Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
-        
+
         if (userExists(user) && !isUserReferee(user)) {
             user.getRoles().add(refereeRole);
         }
-        
+
         if (!userExists(user)) {
             user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
         }
-        
+
         referee.setUser(user);
-        
+
         refereeDAO.save(referee);
-        
+
         return user;
     }
-    
+
     private RegisteredUser createAndSaveNewUserWithRefereeRole(final Referee referee, final Role refereeRole) {
         RegisteredUser user = new RegisteredUser();
         user.setEmail(referee.getEmail());
@@ -125,7 +119,7 @@ public abstract class AbstractMailSendingService {
     private boolean isUserReferee(final RegisteredUser user) {
         return user.isInRole(Authority.REFEREE);
     }
-    
+
     protected void setDigestNotificationType(final RegisteredUser user, final DigestNotificationType type) {
         DigestNotificationType currentType = user.getDigestNotificationType();
         if (currentType == null || type == DigestNotificationType.NONE) {
@@ -135,15 +129,15 @@ public abstract class AbstractMailSendingService {
         }
         userDAO.save(user);
     }
-    
+
     protected String getAdminsEmailsCommaSeparatedAsString(final List<RegisteredUser> administrators) {
-		Set<String> administratorMails = new LinkedHashSet<String>();
-		for (RegisteredUser admin : administrators) {
-			administratorMails.add(admin.getEmail());
-		}
-		return StringUtils.join(administratorMails.toArray(new String[] {}), ", ");
-	}
-    
+        Set<String> administratorMails = new LinkedHashSet<String>();
+        for (RegisteredUser admin : administrators) {
+            administratorMails.add(admin.getEmail());
+        }
+        return StringUtils.join(administratorMails.toArray(new String[] {}), ", ");
+    }
+
     @SuppressWarnings("unchecked")
     protected Collection<RegisteredUser> getInterviewersFromLatestInterviewRound(final ApplicationForm form) {
         if (form.getLatestInterview() != null) {
@@ -156,7 +150,7 @@ public abstract class AbstractMailSendingService {
         }
         return Collections.emptyList();
     }
-    
+
     @SuppressWarnings("unchecked")
     protected Collection<RegisteredUser> getReviewersFromLatestReviewRound(final ApplicationForm form) {
         if (form.getLatestReviewRound() != null) {
@@ -169,17 +163,30 @@ public abstract class AbstractMailSendingService {
         }
         return Collections.emptyList();
     }
-    
+
+    protected Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm application) {
+        return application.getProgram().getAdministrators();
+    }
+
+    protected Collection<RegisteredUser> getApplicationOrProgramAdministrators(final ApplicationForm application) {
+        if (application.getApplicationAdministrator() != null) {
+            return Collections.singleton(application.getApplicationAdministrator());
+        }
+        return getProgramAdministrators(application);
+    }
+
     protected PrismEmailMessage buildMessage(RegisteredUser recipient, String subject, Map<String, Object> model, EmailTemplateName templateName) {
         return buildMessage(recipient, null, subject, model, templateName);
     }
 
-    protected PrismEmailMessage buildMessage(RegisteredUser recipient, List<RegisteredUser> ccRecipients, String subject, Map<String, Object> model, EmailTemplateName templateName) {
+    protected PrismEmailMessage buildMessage(RegisteredUser recipient, List<RegisteredUser> ccRecipients, String subject, Map<String, Object> model,
+            EmailTemplateName templateName) {
         return new PrismEmailMessageBuilder().to(recipient).cc(ccRecipients).subject(subject).model(model).emailTemplate(templateName).build();
     }
-    
-    protected PrismEmailMessage buildMessage(List<RegisteredUser> recipients, List<RegisteredUser> ccRecipients, String subject, Map<String, Object> model, EmailTemplateName templateName) {
-    	return new PrismEmailMessageBuilder().to(recipients).cc(ccRecipients).subject(subject).model(model).emailTemplate(templateName).build();
+
+    protected PrismEmailMessage buildMessage(List<RegisteredUser> recipients, List<RegisteredUser> ccRecipients, String subject, Map<String, Object> model,
+            EmailTemplateName templateName) {
+        return new PrismEmailMessageBuilder().to(recipients).cc(ccRecipients).subject(subject).model(model).emailTemplate(templateName).build();
     }
 
     protected EmailModelBuilder getModelBuilder(final String[] keys, final Object[] values) {
@@ -194,44 +201,53 @@ public abstract class AbstractMailSendingService {
             }
         };
     }
-    
-    protected String resolveMessage(EmailTemplateName templateName, ApplicationForm form, ApplicationFormStatus previousStage) {
-		if (previousStage == null) {
-			return resolveMessage(templateName, form);
-		}
-		RegisteredUser applicant = form.getApplicant();
-		if (applicant == null) {
-			throw new IllegalArgumentException("applicant must be provided!");
-		}
-		Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
-				previousStage.displayValue() };
 
-		return resolveMessage(templateName, args);
-	}
-    
+    protected String resolveMessage(EmailTemplateName templateName, ApplicationForm form, ApplicationFormStatus previousStage) {
+        if (previousStage == null) {
+            return resolveMessage(templateName, form);
+        }
+        RegisteredUser applicant = form.getApplicant();
+        if (applicant == null) {
+            throw new IllegalArgumentException("applicant must be provided!");
+        }
+        Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
+                previousStage.displayValue() };
+
+        return resolveMessage(templateName, args);
+    }
+
     protected String resolveMessage(EmailTemplateName templateName, ApplicationForm applicationForm) {
         RegisteredUser applicant = applicationForm.getApplicant();
         if (applicant == null) {
             return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getProgram().getTitle());
         } else {
-            return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm
-                    .getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName());
+            return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getProgram().getTitle(),
+                    applicant.getFirstName(), applicant.getLastName());
         }
     }
-    
+
     protected String resolveMessage(EmailTemplateName templateName, Object[] args) {
-    	return mailSender.resolveSubject(templateName, args);
+        return mailSender.resolveSubject(templateName, args);
     }
-    
+
     protected void sendEmail(PrismEmailMessage message) {
-    	mailSender.sendEmail(message);
+        mailSender.sendEmail(message);
     }
-    
+
     protected void sendEmail(PrismEmailMessage... messages) {
-    	mailSender.sendEmail(messages);
+        mailSender.sendEmail(messages);
     }
-    
+
     protected String getHostName() {
-    	return host;
+        return host;
     }
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public MailSender getMailSender() {
+        return mailSender;
+    }
+
 }

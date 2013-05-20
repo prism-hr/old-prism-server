@@ -116,7 +116,7 @@
 					<label for="reg-firstname" class="plain-label">First Name<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.firstName'/>"></span>
 					<div class="field">	
-						<input type="text" class="full" id="reg-firstname" name="regUserFirstname" />
+						<input type="text" class="full" id="reg-firstname" autocomplete="off" name="regUserFirstname" />
 					</div>
 				</div><!-- .row -->
 				
@@ -124,7 +124,7 @@
 					<label for="reg-lastname" class="plain-label">Last Name<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.lastName'/>"></span>
 					<div class="field">	
-						<input type="text" class="full" id="reg-lastname" name="regUserLastname" />
+						<input type="text" class="full" id="reg-lastname" autocomplete="off" name="regUserLastname" />
 					</div>
 				</div><!-- .row -->
 				
@@ -132,7 +132,7 @@
 					<label for="reg-email" class="plain-label">Email Address<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
 					<div class="field">	
-						<input type="email" class="full" id="reg-email" name="regUserEmail" />
+						<input type="email" class="full" id="reg-email" autocomplete="off" name="regUserEmail" />
 					</div>
 				</div><!-- .row -->
 

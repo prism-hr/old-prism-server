@@ -22,7 +22,7 @@ $(document).ready(function()
 	$('a[name="deleteRefereeButton"]').click(function()
 	{	
 		var id = $(this).attr("id").replace("referee_", "");
-		$('#referencesSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -51,9 +51,10 @@ $(document).ready(function()
 			{
 				$('#referencesSection').html(data);
 			},
-			completed: function()
+			complete: function()
 			{
-				$('#referencesSection div.ajax').remove();
+				$('#referee-H2').trigger('click');
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});
@@ -132,7 +133,7 @@ $(document).ready(function()
 
 	$('#refereeClearButton').click(function()
 	{
-		$('#referencesSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		loadReferenceSection(true);
 	});
 	
@@ -141,9 +142,10 @@ $(document).ready(function()
 	// Edit a referee.
 	// -------------------------------------------------------------------------------
 	$('a[name="editRefereeLink"]').click(function(){
+		
 		var id = this.id;
 		id = id.replace('referee_', '');	
-		$('#referencesSection > div').append('<div class="ajax" />');
+		
 		$.ajax({
 		 type: 'GET',
 		 statusCode: {
@@ -173,11 +175,13 @@ $(document).ready(function()
 			},
 			success: function(data)
 			{
+				
 				$('#referencesSection').html(data);
 			},
-			completed: function()
+			complete: function()
 			{
-				$('#referencesSection div.ajax').remove();
+				$('#referee-H2').trigger('click');
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});
@@ -218,7 +222,7 @@ function postRefereeData(message){
 			acceptedTerms: acceptedTheTerms
 	}
 
-	$('#referencesSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 
 	$.ajax({
 		type: 'POST',
@@ -244,21 +248,20 @@ function postRefereeData(message){
 		success:function(data) {
 				$('#referencesSection').html(data);
 				
-				var errorCount = $('#referencesSection .alert-error:visible').length;
+				var errorCount = $('#referencesSection .alert-error').length;
 				var referenceCount = $('#referencesSection table.existing tbody tr').length;				
-					
-				if (message == 'close' && errorCount == 0 && referenceCount >= 3)
-				{
-					$('#referee-H2').trigger('click');
-				}
-				if(errorCount > 0){
+				
+				if(errorCount > 0 || referenceCount < 3){
 					markSectionError('#referencesSection');
+					$('#referee-H2').trigger('click');
+				} else {
+					if (message == 'add') {
+						$('#referee-H2').trigger('click');
+					}
 				}
-		
 			},
-    complete: function()
-    {
-      $('#referencesSection div.ajax').remove();
-    }
+		complete: function(){
+		  $('#ajaxloader').fadeOut('fast');
+		}
 	});
 }

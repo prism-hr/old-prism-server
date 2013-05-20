@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.controllers.referees;
 
-import javax.validation.Valid;
+import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -13,17 +15,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Score;
+import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
+import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
+import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
+import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -34,6 +45,7 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @RequestMapping("/referee")
 public class ReferenceController {
 
+    private static final Logger log = LoggerFactory.getLogger(ReferenceController.class);
     private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
     private final ApplicationsService applicationsService;
     private final DocumentPropertyEditor documentPropertyEditor;
@@ -41,20 +53,27 @@ public class ReferenceController {
     private final RefereeService refereeService;
     private final UserService userService;
     private final CommentService commentService;
+    private final ScoringDefinitionParser scoringDefinitionParser;
+    private final ScoresPropertyEditor scoresPropertyEditor;
+    private final ScoreFactory scoreFactory;
 
     ReferenceController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
-            DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService) {
+            DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
+            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;
         this.documentPropertyEditor = documentPropertyEditor;
         this.referenceValidator = referenceValidator;
         this.commentService = commentService;
+        this.scoringDefinitionParser = scoringDefinitionParser;
+        this.scoresPropertyEditor = scoresPropertyEditor;
+        this.scoreFactory = scoreFactory;
     }
 
     @ModelAttribute("applicationForm")
@@ -73,11 +92,11 @@ public class ReferenceController {
         }
         return applicationForm;
     }
-    
+
     @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.getActionsDefinition(getUser(), application);
+        return applicationsService.calculateActions(getUser(), application);
     }
 
     RegisteredUser getCurrentUser() {
@@ -106,6 +125,19 @@ public class ReferenceController {
         referenceComment.setComment("");
         referenceComment.setType(CommentType.REFERENCE);
         referenceComment.setReferee(refereeForApplicationForm);
+
+        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
+        if (scoringDefinition != null) {
+            try {
+                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
+                referenceComment.getScores().addAll(scores);
+                referenceComment.setAlert(customQuestion.getAlert());
+            } catch (ScoringDefinitionParseException e) {
+                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
+            }
+        }
+
         return referenceComment;
     }
 
@@ -114,14 +146,31 @@ public class ReferenceController {
         binder.setValidator(referenceValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
 
     public StringTrimmerEditor newStringTrimmerEditor() {
         return new StringTrimmerEditor(false);
     }
 
+    @RequestMapping(value = "/submitReference", method = RequestMethod.GET)
+    public void defaultGet() {
+        return;
+    }
+
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
-    public String handleReferenceSubmission(@Valid @ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult) {
+    public String handleReferenceSubmission(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("comment") ReferenceComment comment,
+            BindingResult bindingResult) throws ScoringDefinitionParseException {
+        List<Score> scores = comment.getScores();
+        if (!scores.isEmpty()) {
+            List<Question> questions = getCustomQuestions(applicationForm);
+            for (int i = 0; i < scores.size(); i++) {
+                Score score = scores.get(i);
+                score.setOriginalQuestion(questions.get(i));
+            }
+        }
+
+        referenceValidator.validate(comment, bindingResult);
         if (bindingResult.hasErrors()) {
             return ADD_REFERENCES_VIEW_NAME;
         }
@@ -131,6 +180,15 @@ public class ReferenceController {
             refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
         }
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
+    }
+
+    private List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {
+        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
+        if (scoringDefinition != null) {
+            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+            return customQuestion.getQuestion();
+        }
+        return null;
     }
 
 }

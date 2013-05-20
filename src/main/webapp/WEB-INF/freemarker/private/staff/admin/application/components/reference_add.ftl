@@ -1,3 +1,5 @@
+<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
+
 <div class="row-group">
     <div class="row">
         <label for="refereeComment_${encRefereeId}" class="plain-label">Comment<em>*</em></label>
@@ -27,8 +29,6 @@
                   <input type="hidden" class="file" id="document_COMMENT" value="${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}"/>
                 </span> </div>
               </div>
-        
-        
             
             <ul id="psUploadedDocument" class="uploaded-files">
             	
@@ -85,19 +85,40 @@
             <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
             </#list>
         </div>
+        <#if scores!?size == 0>
+        <!-- Add reference add button -->
+        <div class="row">
+            <div class="field">
+                <button id="addReferenceButton" type="button" class="btn btn-primary">Add Reference</button>
+            </div>
+        </div>
+        </#if>
     </div>
-    
-    <@spring.bind "refereesAdminEditDTO.*" />
+    	<@spring.bind "refereesAdminEditDTO.*" />
      
-    <#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
-    <input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
+    	<#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
+    	<input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
     
+</div>
+
+	
+<#assign scores = refereesAdminEditDTO.scores>
+<#if refereesAdminEditDTO.alert??>
+	<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
+</#if>
+<#if (scores)?has_content>
+<div class="row-group">
+    <div id="scoring-questions_${encRefereeId}">
+      <#assign errorsContainerName = "refereesAdminEditDTO">
+      <h3>Programme Specific Questions</h3>
+      <#include "/private/staff/scores.ftl"/>
+    </div>
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
             <button id="addReferenceButton" type="button" class="btn btn-primary">Add Reference</button>
         </div>
     </div>
-    
 </div>
-
+</#if>
+    

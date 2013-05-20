@@ -1,9 +1,10 @@
 
 var sections = 9;  // as in sections to load.
-
+var firstTimeLoading = true;
 
 $(document).ready(function()
 {	
+	
 	$("#acceptTermsValue").val("NO");
 	
 	// --------------------------------------------------------------------------------
@@ -13,71 +14,56 @@ $(document).ready(function()
 	if ($('#timeline').length > 0)
 	{
 		// Timeline is on the page, so place the loading prompt inside the application tab.
-		$('#applicationTab').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 	}
 	else
 	{
 		// Place the loading prompt in the main section.
-		$('.content-box-inner').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 	}
 	
 	/* Programme Details. */
-	loadProgrammeSection();	
-	
-	/* Personal Details. */
-	 loadPersonalDetails();
-	
-	/* Address. */
-	 loadAddresSection();
-	
-	/* Qualifications. */	
-	 loadQualificationsSection();
-	 
-	/* (Employment) Position. */
-	 loadEmploymentSection();
-	
-	/* Funding. */
-	 loadFundingSection();
-	
-	/* Referees. */
-	 loadReferenceSection();
-	 
-	/* Documents. */
-	 loadDocumentsSection();
-	
-	/* Additional Information. */
-	 loadAdditionalInformationSection();
-	
-	/* Terms and conditions. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
+	loadProgrammeSection(false, function () {
+		
+		$('#ajaxloader').fadeOut('fast');
+		
+		/* Personal Details. */
+		 loadPersonalDetails();
+
+		 
+		/* Terms and conditions. */
+		$.ajax({
+				type: 'GET',
+				statusCode: {
+					401: function() {
+						window.location.reload();
+					},
+					  500: function() {
+						  window.location.href = "/pgadmissions/error";
+					  },
+					  404: function() {
+						  window.location.href = "/pgadmissions/404";
+					  },
+					  400: function() {
+						  window.location.href = "/pgadmissions/400";
+					  },				  
+					  403: function() {
+						  window.location.href = "/pgadmissions/404";
+					  }
 				},
-				  500: function() {
-					  window.location.href = "/pgadmissions/error";
-				  },
-				  404: function() {
-					  window.location.href = "/pgadmissions/404";
-				  },
-				  400: function() {
-					  window.location.href = "/pgadmissions/400";
-				  },				  
-				  403: function() {
-					  window.location.href = "/pgadmissions/404";
-				  }
-			},
-			url:"/pgadmissions/acceptTerms/getTermsAndConditions",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: $('#termsAndConditionsError').val()
-			},
-			success: function(data)
-			{
-				$('#acceptTermsSection').html(data);
-			}
-	});
+				url:"/pgadmissions/acceptTerms/getTermsAndConditions",
+				data:{
+					applicationId:  $('#applicationId').val(),
+					errorCode: $('#termsAndConditionsError').val()
+				},
+				success: function(data)
+				{
+					$('#acceptTermsSection').html(data);
+				}
+		});
+	});	
+	
+	
 	
 	
 	/*
@@ -122,7 +108,7 @@ $(document).ready(function()
 		{*/
 			$("span[name='nonAccepted']").html('');
 			$('#submitApplicationForm').append('<input type="hidden" name="acceptedTermsOnSubmission" value="'+$('#acceptTermsValue').val() +'"/>');
-			$('div.content-box-inner').append('<div class="ajax" />');
+			$('#ajaxloader').show();
 			
 			$('#submitApplicationForm').submit();
 			
@@ -224,18 +210,18 @@ function checkLoadedSections()
 		if ($('#timeline').length > 0)
 		{
 			// Timeline is on the page, so place the loading prompt inside the application tab.
-			$('#applicationTab div.ajax').remove();
+			$('#ajaxloader').fadeOut('fast');
 		}
 		else
 		{
 			// Place the loading prompt in the main section.
-			$('.content-box-inner div.ajax').remove();
+			$('#ajaxloader').fadeOut('fast');
 		}
 	}
 }
 
 
-function loadProgrammeSection(clear){
+function loadProgrammeSection(clear, onComplete){
 	/* Programme Details. */
 	$.ajax({
 		 type: 'GET',
@@ -281,8 +267,12 @@ function loadProgrammeSection(clear){
 					$("#awareYes").prop('checked', false);
 					$("#awareNo").prop('checked', false);
 				}
-		
-			}	
+			},
+		  complete: function() {
+			  if (firstTimeLoading == true) {
+			 	 onComplete();
+			  }
+		  }
 	});
 	
 }
@@ -338,14 +328,24 @@ function loadPersonalDetails(clear){
 			        $("#nameOnPassport").val("");
 			        $("#passportIssueDate").val("");
 			        $("#passportExpiryDate").val("");
+					$("input[name='languageQualificationAvailable']").prop('checked', false);
+					$("input[name='passportAvailable']").prop('checked', false);
 			        disablePassportInformation();
+					disableLanguageQualifications();
+					$('#personalDetails-H2').trigger('click');
 				}else{
-					if ($('#personalDetailsSection.error').length == 0)
+					if ($('#personalDetailsSection.error').length > 0)
 					{
 						$('#personalDetails-H2').trigger('click');
 					}
 				}
 				
+			}, 
+			complete: function() {
+				/* Address. */
+			  if (firstTimeLoading == true) {
+			 	 loadAddresSection();
+			  }
 			}
 	});
 }
@@ -391,11 +391,18 @@ function loadAddresSection(clear){
 					$('#contactAddress1, #contactAddress2, #contactAddress3, #contactAddress4, #contactAddress5').val('');
 					$('#contactAddress1, #contactAddress2, #contactAddress3, #contactAddress4, #contactAddress5').removeAttr('disabled');
 					$('#sameAddressCB').prop('checked', false);
+					$('#address-H2').trigger('click');
 				}else{
-					if ($('#addressSection.error').length == 0)
+					if ($('#addressSection.error').length > 0)
 					{
 						$('#address-H2').trigger('click');
 					}
+				}
+			}, 
+			complete: function() {
+				/* Qualifications. */
+				if (firstTimeLoading == true) {	
+					loadQualificationsSection();
 				}
 			}
 	});
@@ -435,15 +442,22 @@ function loadQualificationsSection(clear){
 			$('#qualificationsSection').html(data);
 			checkLoadedSections();
 			if(clear){
-				
+				$('#qualifications-H2').trigger('click');
 			}else{
 			
-				if ($('#qualificationsSection.error').length == 0)
+				if ($('#qualificationsSection.error').length > 0)
 				{
 					$('#qualifications-H2').trigger('click');
 				}
 			}
-		}
+		}, 
+			complete: function() {
+				/* (Employment) Position. */
+				if (firstTimeLoading == true) {
+					loadEmploymentSection();
+				}
+
+			}
 	});
 }
 
@@ -478,12 +492,20 @@ function loadEmploymentSection(clear){
 			$('#positionSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-				if ($('#positionSection.error').length == 0)		
+				if ($('#positionSection.error').length > 0)		
 				{
 					$('#position-H2').trigger('click');
 				}
+			} else {
+				$('#position-H2').trigger('click');
 			}
-		}
+		}, 
+			complete: function() {
+				/* Funding. */
+				if (firstTimeLoading == true) {
+					loadFundingSection();
+				}
+			}
 	});
 }
 
@@ -518,10 +540,18 @@ function loadFundingSection(clear){
 			$('#fundingSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-				if ($('#fundingSection.error').length == 0)
+				if ($('#fundingSection.error').length > 0)
 				{
 					$('#funding-H2').trigger('click');
 				}
+			} else {
+				$('#funding-H2').trigger('click');
+			}
+		}, 
+		complete: function() {
+			/* Referees. */
+			if (firstTimeLoading == true) {
+				loadReferenceSection();
 			}
 		}
 	});
@@ -559,12 +589,20 @@ function loadReferenceSection(clear){
 			$('#referencesSection').html(data);
 			checkLoadedSections();
 			if(!clear){
-			if ($('#referencesSection.error').length == 0)
+				if ($('#referencesSection.error').length > 0)
 				{
 					$('#referee-H2').trigger('click');
 				}
+			} else {
+				$('#referee-H2').trigger('click');
 			}
-		}
+		}, 
+		complete: function() {
+				/* Documents. */
+				if (firstTimeLoading == true) {
+					loadDocumentsSection();
+				}
+			}
 	});
 
 }
@@ -607,11 +645,18 @@ function loadDocumentsSection(clear){
 				$('#cvUploadFields').removeClass("uploaded");
 				$('#document_CV').val('');
 				$('#cvLink').remove();
+				$('#documents-H2').trigger('click');
 			}else{
-				if ($('#documentSection.error').length == 0)
+				if ($('#documentSection.error').length > 0)
 				{
 					$('#documents-H2').trigger('click');
 				}
+			}
+		},
+		complete: function() {
+			/* Additional Information. */
+			if (firstTimeLoading == true) {
+				loadAdditionalInformationSection();
 			}
 		}
 	});
@@ -653,13 +698,16 @@ function loadAdditionalInformationSection(clear){
 				$('#convictionsText').empty();
 				$('input[name="convictionRadio"]').prop('checked', false);
 				$('#convictionsText').attr("disabled","disabled");
+				$('#additional-H2').trigger('click');
 			}
 			else{
-				if ($('#additionalInformationSection.error').length == 0)
+				if ($('#additionalInformationSection.error').length > 0)
 				{
 					$('#additional-H2').trigger('click');
 				}
 			}
+		}, complete: function() {
+			firstTimeLoading = false;
 		}
 });
 }

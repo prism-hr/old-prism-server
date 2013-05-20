@@ -23,7 +23,7 @@ $(document).ready(function(){
 	
 	$('#informationClearButton').click(function()
 	{
-		$('#additionalInformationSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		loadAdditionalInformationSection(true);
 	});
 	
@@ -101,7 +101,7 @@ $(document).ready(function(){
 		}
 			
 		$("span[name='nonAcceptedAID']").html('');
-		$('#additionalInformationSection > div').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 
 		$.ajax({
 			type: 'POST',
@@ -139,19 +139,16 @@ $(document).ready(function(){
 				$('#additionalInformationSection').html(data);
 			
 				// Close the section only if there are no errors.
-				var errorCount = $('#additionalInformationSection .alert-error:visible').length;
-				if (errorCount == 0)
+				var errorCount = $('#additionalInformationSection .alert-error').length;
+				if (errorCount > 0)
 				{
 					$('#additional-H2').trigger('click');
-				}
-				else
-				{
 					markSectionError('#additionalInformationSection');
 				}
 			},
 			complete: function()
 			{
-				$('#additionalInformationSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,8 +28,9 @@ public class LoginControllerTest {
 
 	@Test
 	public void shouldReturnLoginPageViewNameAndSetNotAuthorizedResponseCode(){
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		assertEquals(LOGIN_PAGE, loginController.getLoginPage(new MockHttpServletRequest(), response));
+	    MockHttpSession session = new MockHttpSession();
+	    MockHttpServletResponse response = new MockHttpServletResponse();
+		assertEquals(LOGIN_PAGE, loginController.getLoginPage(new MockHttpServletRequest(), response, session));
 		assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
 	}
 	
@@ -46,7 +48,7 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null).anyTimes();
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);		
-		assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse()));
+		assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
 		assertEquals("program:code||programhome:programhome||bacthdeadline:programDeadline||projectTitle:projectTitle", session.getAttribute("applyRequest"));
 	}
 	
@@ -65,7 +67,7 @@ public class LoginControllerTest {
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
 		
-		assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse() ));
+		assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
 		assertEquals("", session.getAttribute("applyRequest"));
 	}
 	
@@ -81,7 +83,7 @@ public class LoginControllerTest {
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
 
-		assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse()));
+		assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
 		assertNull(session.getAttribute("applyRequest"));
 	}
 	
@@ -114,7 +116,7 @@ public class LoginControllerTest {
         EasyMock.replay(defaultSavedRequestMock, userServiceMock);
         
         session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock); 
-        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse()));
+        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
 
         EasyMock.verify(defaultSavedRequestMock, userServiceMock);
         
@@ -135,7 +137,7 @@ public class LoginControllerTest {
         session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
         session.putValue("loginUserEmail", "ked@zuhlke.com");
         
-        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse()));
+        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
         assertNull(session.getAttribute("applyRequest"));
         assertNull(session.getAttribute("loginUserEmail"));
     }
@@ -149,9 +151,26 @@ public class LoginControllerTest {
         request.setRequestURI("/login");
         request.addHeader("referer", "/register");
         
-        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse()));
+        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
         assertNull(session.getAttribute("applyRequest"));
         assertNull(session.getAttribute("loginUserEmail"));
+        assertTrue((Boolean) session.getAttribute("CLICKED_ON_ALREADY_REGISTERED"));
+	}
+	
+	@Test
+	public void shouldRedirectToLoginPageFromClickingAlreadyRegisteredAndProvidingWrongCredentials() {
+	    MockHttpSession session = new MockHttpSession();
+	    session.setAttribute("CLICKED_ON_ALREADY_REGISTERED", true);
+	    MockHttpServletRequest request = new MockHttpServletRequest();
+        
+        request.setSession(session);
+        request.setRequestURI("/login");
+        request.addHeader("referer", "/login");
+        
+        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
+        assertNull(session.getAttribute("applyRequest"));
+        assertNull(session.getAttribute("loginUserEmail"));
+        assertTrue((Boolean) session.getAttribute("CLICKED_ON_ALREADY_REGISTERED"));
 	}
 	
 	@Before

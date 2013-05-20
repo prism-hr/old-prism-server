@@ -34,6 +34,8 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -111,17 +113,30 @@ public class ApprovalService {
         SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, form, supervisor);
         commentDAO.save(supervisionConfirmationComment);
     }
+    
+    public void restartApprovalStageAsAdministrator(final ApplicationForm form, final RegisteredUser user) {
+        RequestRestartComment restartComment = createRequestRestartComment(form, user);
+        restartApprovalStage(form, user, restartComment);
+    }
 
     private RequestRestartComment createRequestRestartComment(ApplicationForm form, Supervisor supervisor) {
         RequestRestartComment restartComment = new RequestRestartComment();
         restartComment.setApplication(form);
         restartComment.setDate(new Date());
         restartComment.setUser(supervisor.getUser());
-        restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser()
-                .getFirstName(), supervisor.getUser().getLastName()));
+        restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser().getFirstName(), supervisor.getUser().getLastName()));
         return restartComment;
     }
 
+    private RequestRestartComment createRequestRestartComment(ApplicationForm form, RegisteredUser user) {
+        RequestRestartComment restartComment = new RequestRestartComment();
+        restartComment.setApplication(form);
+        restartComment.setDate(new Date());
+        restartComment.setUser(user);
+        restartComment.setComment(String.format("%s %s requested the restart of the approval stage.", user.getFirstName(), user.getLastName()));
+        return restartComment;
+    }
+    
     private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm application, Supervisor supervisor) {
         SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
         supervisionConfirmationComment.setApplication(application);
@@ -129,7 +144,7 @@ public class ApprovalService {
         supervisionConfirmationComment.setSupervisor(supervisor);
         supervisionConfirmationComment.setType(CommentType.SUPERVISION_CONFIRMATION);
         supervisionConfirmationComment.setUser(userService.getCurrentUser());
-        supervisionConfirmationComment.setComment("");
+        supervisionConfirmationComment.setComment(StringUtils.EMPTY);
 
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             supervisionConfirmationComment.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
@@ -152,6 +167,7 @@ public class ApprovalService {
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
+        form.setPendingApprovalRestart(false);
         form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
         
         approvalRound.setApplication(form);
@@ -173,7 +189,7 @@ public class ApprovalService {
 
         ApprovalComment approvalComment = new ApprovalComment();
         approvalComment.setApplication(form);
-        approvalComment.setComment("");
+        approvalComment.setComment(StringUtils.EMPTY);
         approvalComment.setType(CommentType.APPROVAL);
         approvalComment.setProjectAbstract(approvalRound.getProjectAbstract());
         approvalComment.setProjectDescriptionAvailable(approvalRound.getProjectDescriptionAvailable());
@@ -210,18 +226,21 @@ public class ApprovalService {
                 NotificationType.APPROVAL_NOTIFICATION);
     }
 
-    public void requestApprovalRestart(ApplicationForm application, RegisteredUser approver, Comment comment) {
-        if (!approver.isInRole(Authority.APPROVER)) {
-            throw new IllegalArgumentException(String.format("User %s is not an approver!", approver.getUsername()));
+    public void requestApprovalRestart(ApplicationForm form, RegisteredUser user, Comment comment) {
+        if (user.isNotInRole(Authority.APPROVER) && user.isNotInRole(Authority.ADMINISTRATOR)) {
+            throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
         }
-        if (!approver.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
-            throw new IllegalArgumentException(String.format("User %s is not an approver in program %s!",//
-                    approver.getUsername(), application.getProgram().getTitle()));
+        
+        if (user.isNotInRoleInProgram(Authority.APPROVER, form.getProgram()) && user.isNotInRoleInProgram(Authority.ADMINISTRATOR, form.getProgram())) {
+            throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
         }
-        if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
-            throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
+        
+        if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
+            throw new CannotUpdateApplicationException(form.getApplicationNumber());
         }
-        restartApprovalStage(application, approver, comment);
+        
+        form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
+        restartApprovalStage(form, user, comment);
     }
 
     private void restartApprovalStage(ApplicationForm application, RegisteredUser approver, Comment comment) {

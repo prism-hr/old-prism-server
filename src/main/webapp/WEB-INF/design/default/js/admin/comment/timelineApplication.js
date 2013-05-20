@@ -12,7 +12,10 @@ $(document).ready(function()
 		$(this).parent('li').addClass('current');
 		
 		$('#application').hide();
-		$('#timeline').append('<div class="ajax" />').show();
+		if ( $('#timeline').children().length == 0 ) {
+			$('#ajaxloader').show();
+		}
+		$('#timeline').show();
 		
 		$.ajax({
 			 type: 'GET',
@@ -50,8 +53,12 @@ $(document).ready(function()
 					{
 						jumpToTimeline = true;
 					}
-					addToolTips();	
-				},			
+					addToolTips();
+					toggleScores();
+				},
+				 complete: function() {
+					 $('#ajaxloader').fadeOut('fast');
+				 }				
 		});
 		
 		
@@ -66,7 +73,10 @@ $(document).ready(function()
 			$('#timelineview ul.tabs li').removeClass('current');
 			$(this).parent('li').addClass('current');
 	
-			$('#timeline').html("").hide();
+			$('#timeline').hide();
+			if ( $('#application').children().length == 0 ) {
+				$('#ajaxloader').show();
+			}
 			$('#application').show();
 			
 			// Only fetch the application form if it hasn't been fetched already.
@@ -114,7 +124,10 @@ $(document).ready(function()
 								 }
 							});
 							addToolTips();
-						}		
+						},
+					 complete: function() {
+						 $('#ajaxloader').fadeOut('fast');
+					 }		
 				});
 				
 			

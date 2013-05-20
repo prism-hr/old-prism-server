@@ -40,7 +40,7 @@ public class ApplicationsServiceTest {
 	public void setup() {
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		mailServiceMock = createMock(MailSendingService.class);
-		applicationsService = new ApplicationsService(applicationFormDAOMock, null, mailServiceMock);
+		applicationsService = new ApplicationsService(applicationFormDAOMock, null, mailServiceMock, null);
 	}
 
 	@Test

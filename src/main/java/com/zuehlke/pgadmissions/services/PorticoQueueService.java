@@ -59,7 +59,7 @@ public class PorticoQueueService {
         } 
     }
     
-    @Transactional(readOnly = true)
+    @Transactional
     public void sendQueuedApprovedApplicationsToPortico() {
         List<ApplicationFormTransfer> applications = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirst();
         for (ApplicationFormTransfer transfer : applications) {
@@ -70,12 +70,12 @@ public class PorticoQueueService {
         }       
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void sendQueuedWithdrawnOrRejectedApplicationsToPortico(final int batchSize) {
-        List<ApplicationFormTransfer> applications = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirst();
+        List<Long> transferIds = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds();
         int numberOfApplicationsSent = 1;
-        for (ApplicationFormTransfer transfer : applications) {
-            ApplicationForm form = transfer.getApplicationForm();
+        for (Long transferId : transferIds) {
+            ApplicationForm form = formTransferService.getById(transferId).getApplicationForm();
             if (form.getStatus().equals(ApplicationFormStatus.WITHDRAWN) || form.getStatus().equals(ApplicationFormStatus.REJECTED)) {
                 if ((batchSize == 0) || numberOfApplicationsSent <= batchSize) {
                     numberOfApplicationsSent++;

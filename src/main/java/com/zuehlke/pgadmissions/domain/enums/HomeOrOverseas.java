@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum HomeOrOverseas {
 
-	HOME("Home/EU"), OVERSEAS("Overseas");
+	HOME("Home/EU"), OVERSEAS("Overseas"), UNSURE("Unsure");
 
 	private final String displayValue;
 

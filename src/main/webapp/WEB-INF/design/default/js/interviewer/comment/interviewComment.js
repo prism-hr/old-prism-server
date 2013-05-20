@@ -1,6 +1,5 @@
 $(document).ready(function()
 {
-	
 	$('#cancelInterviewFeedbackBtn').click(function()
 	{
 		window.location.href = "/pgadmissions/interviewFeedback?applicationId=" +  $('#applicationId').val();
@@ -8,20 +7,17 @@ $(document).ready(function()
 	
 	$('#submitInterviewFeedback').click(function()
 	{
-		/*if (!validateFeedback())
-		{
-			return false;
-		}*/
-		
-		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
-		var onOk    = function()
+		var onOk = function()
 		{
 			$('#interviewForm').append("<input type='hidden' name='type' value='INTERVIEW'/>");		
 			if ($('#decline:checked').length > 0)
 			{
 				$('#interviewForm').append("<input type='hidden' name='decline' value='true'/>");			
 			}
+			var scores = getScores($('#scoring-questions'));
+			$('#interviewForm').append("<input type='hidden' name='scores' value=\'" + scores + "\'/>");
 			$('#interviewForm').submit();
+			
 		};
 		
 		var section = $(this).closest('section.form-rows');
@@ -33,7 +29,7 @@ $(document).ready(function()
 			
 			var onCancel = function()
 			{
-				$('div.content-box-inner div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			};
 			
 			modalPrompt(message, onOk, onCancel);

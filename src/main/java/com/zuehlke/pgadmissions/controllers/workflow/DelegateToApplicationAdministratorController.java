@@ -81,9 +81,9 @@ public class DelegateToApplicationAdministratorController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, String> delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
+    public Map<String, Object> delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
             @Valid @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer, BindingResult delegatedInterviewerResult) {
-        Map<String, String> result = Maps.newHashMap();
+        Map<String, Object> result = Maps.newHashMap();
 
         if (delegatedInterviewerResult.hasErrors()) {
             result.put("success", "false");
@@ -94,7 +94,7 @@ public class DelegateToApplicationAdministratorController {
         RegisteredUser applicationAdmin = userService.getUserByEmailIncludingDisabledAccounts(delegatedInterviewer.getEmail());
         if (applicationAdmin == null) {
             applicationAdmin = userService.createNewUserInRole(delegatedInterviewer.getFirstName(), delegatedInterviewer.getLastName(),
-                    delegatedInterviewer.getEmail(), Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm);
+                    delegatedInterviewer.getEmail(), DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm, Authority.INTERVIEWER);
         }
         
         applicationsService.delegateInterviewAdministration(applicationForm, applicationAdmin);

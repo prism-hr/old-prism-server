@@ -45,18 +45,16 @@
 		      <!-- content box -->
 		      <div class="content-box">
 		        <div class="content-box-inner">
-
-							<div id="site-message" class="error">
-								<div class="header">
-									<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_app.png' />" alt="" /></div>
-									<div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
-								</div>
+							
+                            <div id="site-message" class="error" style="height:170px">
 								<div class="content">
 									<h1>Whoops</h1>
 									<p>We are sorry, there has been a problem. Try back later.</p>
-									<input type="hidden" value="500"/>
+                                    <input type="hidden" value="500"/>
 								</div>
 							</div>
+                            
+							
 
 		        </div><!-- .content-box-inner -->
 		      </div><!-- .content-box -->

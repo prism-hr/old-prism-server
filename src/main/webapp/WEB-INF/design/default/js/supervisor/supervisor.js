@@ -42,7 +42,7 @@ $(document).ready(function() {
     // Create a new supervisor
     // -----------------------------------------------------------------------------------------
     $('#createsupervisorsection').on('click', '#createSupervisor', function() {
-        $('#createsupervisorsection').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         
         var postData = {
             applicationId : $('#applicationId').val(),
@@ -84,7 +84,7 @@ $(document).ready(function() {
 				
             },
             complete : function() {
-                $('#createsupervisorsection div.ajax').remove();
+               $('#ajaxloader').fadeOut('fast');
 	
             }
         });
@@ -119,7 +119,7 @@ $(document).ready(function() {
     // Submit selected Supervisors
     // -----------------------------------------------------------------------------------------
     $('#assignSupervisorsBtn').click(function() {
-        $('#approvalsection').append('<div class="ajax" />');
+        $('#ajaxloader').show();
         var url = "/pgadmissions/approval/assignSupervisors";
 
         $('#applicationSupervisorsList li').each(function() {
@@ -178,7 +178,7 @@ $(document).ready(function() {
                 addToolTips();
             },
             complete : function() {
-                $('#approvalsection div.ajax').remove();
+                $('#ajaxloader').fadeOut('fast');
 				addCounter();
 				
             }
@@ -206,7 +206,7 @@ function appendNewSupervisorToList(id, text, category) {
 }
 
 function getSupervisorsSection() {
-    $('#approvalsection').append('<div class="ajax" />');
+    $('#ajaxloader').show();
 
     var url = "/pgadmissions/approval/supervisors_section";
 
@@ -225,13 +225,13 @@ function getSupervisorsSection() {
             addToolTips();
         },
         complete : function() {
-            $('#approvalsection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
         }
     });
 }
 
 function getCreateSupervisorsSection() {
-    $('#createsupervisorsection').append('<div class="ajax" />');
+    $('#ajaxloader').show();
 
     $.ajax({
         type : 'GET',
@@ -244,7 +244,7 @@ function getCreateSupervisorsSection() {
         },
         url : "/pgadmissions/approval/create_supervisor_section?applicationId=" + $('#applicationId').val(),
         success : function(data) {
-            $('#createsupervisorsection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
             $('#createsupervisorsection').html(data);
 			if($('#applicationSupervisorsList li').length >= 2){
 				disableAddingSupervisorsToList();

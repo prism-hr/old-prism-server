@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,6 +102,19 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
                 sessionFactory.getCurrentSession().save(user);
                 sessionFactory.getCurrentSession().save(superUser);
                 sessionFactory.getCurrentSession().save(program);
+            }
+        });
+    }
+    
+    @After
+    public void clean() {
+        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        template.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(final TransactionStatus status) {
+                sessionFactory.getCurrentSession()
+                        .createSQLQuery("DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE")
+                        .executeUpdate();
             }
         });
     }

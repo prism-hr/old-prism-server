@@ -521,6 +521,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return isViewerOfProgramme(form, this);
     }
 
+    public boolean isApplicationAdministrator(final ApplicationForm form) {
+        return isApplicationAdministrator(form, this);
+    }
+    
     public boolean isProgrammeAdministrator(final ApplicationForm form) {
         return isProgrammeAdministrator(form, this);
     }

@@ -65,7 +65,7 @@ public class InterviewConfirmControllerTest {
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
         Interviewer interviewer = new InterviewerBuilder().user(user).build();
         Interview interview = new InterviewBuilder().interviewers(interviewer).stage(InterviewStage.SCHEDULED).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).applicationAdministrator(user).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
 
@@ -80,7 +80,7 @@ public class InterviewConfirmControllerTest {
         Interviewer interviewer = new InterviewerBuilder().user(user).build();
         Interview interview = new InterviewBuilder().interviewers(interviewer).stage(InterviewStage.SCHEDULING).build();
         Program program = new ProgramBuilder().build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).status(ApplicationFormStatus.APPROVAL).program(program).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).status(ApplicationFormStatus.APPROVAL).program(program).applicationAdministrator(user).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
 

@@ -90,10 +90,6 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
             return true;
         }
         
-        if (isApplicationAdministrator(form, user)) {
-            return true;
-        }
-        
         if (isProgrammeAdministrator(form, user)) {
             return true;
         }

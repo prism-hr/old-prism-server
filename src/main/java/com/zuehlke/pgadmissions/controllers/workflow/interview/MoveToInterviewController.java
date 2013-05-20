@@ -86,7 +86,8 @@ public class MoveToInterviewController {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 
         if (application == null//
-                || (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isInterviewerOfApplicationForm(application))) {
+                || (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isApplicationAdministrator(application) && !currentUser
+                        .isInterviewerOfApplicationForm(application))) {
             throw new ResourceNotFoundException();
         }
         return application;
@@ -143,7 +144,7 @@ public class MoveToInterviewController {
             interview.setInterviewers(latestInterview.getInterviewers());
         }
         Set<RegisteredUser> defaultInterviewers = Sets.newLinkedHashSet(applicationForm.getReviewersWillingToInterview());
-        if(applicationForm.getApplicationAdministrator() != null){
+        if (applicationForm.getApplicationAdministrator() != null) {
             defaultInterviewers.add(applicationForm.getApplicationAdministrator());
         }
         for (RegisteredUser registeredUser : defaultInterviewers) {
@@ -176,13 +177,14 @@ public class MoveToInterviewController {
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult, ModelMap model) {
+    public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult,
+            ModelMap model) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         if (bindingResult.hasErrors()) {
             return INTERVIEWERS_SECTION;
         }
         interviewService.moveApplicationToInterview(interview, applicationForm);
-        if(interview.isParticipant(getUser())){
+        if (interview.isParticipant(getUser())) {
             model.addAttribute("message", "redirectToVote");
             return "/private/common/simpleResponse";
         }
@@ -211,8 +213,8 @@ public class MoveToInterviewController {
         String supervisorEmail = suggestedSupervisor.getEmail();
         RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
         if (possibleUser == null) {
-            possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
-                    null, applicationForm, Authority.REVIEWER);
+            possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail, null,
+                    applicationForm, Authority.REVIEWER);
         }
         return possibleUser;
     }

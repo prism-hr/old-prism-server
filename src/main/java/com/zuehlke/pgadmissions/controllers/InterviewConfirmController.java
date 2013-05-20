@@ -50,7 +50,7 @@ public class InterviewConfirmController {
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isInterviewerOfApplicationForm(application)) {
+        if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isApplicationAdministrator(application)) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         Interview interview = application.getLatestInterview();

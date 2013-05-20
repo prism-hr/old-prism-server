@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
@@ -59,20 +62,173 @@ public class ApplicationFormListDAO {
     }
     
     public List<ApplicationForm> getApplicationsWorthConsideringForAttentionFlag(final RegisteredUser user, final ApplicationsFiltering filtering, final ApplicationsService service) {
-        Criteria criteria = buildCriteriaForVisibleApplications(user, filtering);
-
-        if (criteria == null) {
-            return Collections.emptyList();
-        }
+        HashSet<ApplicationForm> applicationsWhichNeedAttention = new LinkedHashSet<ApplicationForm>();
+//        StringBuilder queryBuilder = new StringBuilder(""
+//                + "SELECT apform.id "  
+//                + "FROM application_form apform " 
+//                + "JOIN PROGRAM prog ON apform.program_id = prog.id " 
+//                + "JOIN REGISTERED_USER ru ON apform.applicant_id = ru.id " 
+//                + "WHERE apform.status NOT IN (\"UNSUBMITTED\", \"REJECTED\", \"WITHDRAWN\", \"APPROVED\") " 
+//                + "AND apform.program_id IN " 
+//                + "( "
+//                + "    SELECT program_id "  
+//                + "    FROM REGISTERED_USER ru "  
+//                + "    JOIN PROGRAM_ADMINISTRATOR_LINK pal ON ru.id = pal.administrator_id "  
+//                + "    WHERE ru.id = :user_id "
+//                + "    /* Programme  administrators */ "
+//                + ""                      
+//                + "    UNION "
+//                + ""                
+//                + "    SELECT program_id "  
+//                + "    FROM REGISTERED_USER ru "  
+//                + "    JOIN PROGRAM_APPROVER_LINK papl ON ru.id = papl.registered_user_id "  
+//                + "    WHERE ru.id = :user_id "
+//                + "    /* Programme approvers */ "
+//                + ""
+//                + ") OR apform.id IN ( "
+//                + ""
+//                + "     SELECT appform.id " 
+//                + "     FROM APPLICATION_FORM appform " 
+//                + "     JOIN INTERVIEW iv ON appform.latest_interview_id = iv.id "
+//                + "     JOIN INTERVIEWER ivr ON ivr.interview_id = iv.id "
+//                + "     WHERE ivr.registered_user_id = :user_id "
+//                + "     /* Current interviewers */ "
+//                + ""
+//                + ") OR apform.id IN ( "
+//                + ""
+//                + "     SELECT appform.id "
+//                + "     FROM APPLICATION_FORM appform " 
+//                + "     JOIN REVIEW_ROUND iv ON appform.latest_review_round_id = iv.id "
+//                + "     JOIN REVIEWER ivr ON ivr.review_round_id = iv.id "
+//                + "     WHERE ivr.registered_user_id = :user_id "
+//                + "     /* Current reviewers */ "
+//                + ""
+//                + ") OR apform.id IN ( "
+//                + ""
+//                + "     SELECT appform.id " 
+//                + "     FROM APPLICATION_FORM appform " 
+//                + "     JOIN APPROVAL_ROUND iv ON appform.latest_approval_round_id = iv.id "
+//                + "     JOIN SUPERVISOR ivr ON ivr.approval_round_id = iv.id "
+//                + "     WHERE ivr.registered_user_id = :user_id "
+//                + "     /* Current supervisors */ "
+//                + ""
+//                + ") "
+//                + ""
+//                + "OR apform.app_administrator_id = :user_id "
+//                + "/* Delegated interview administrator */ "
+//                + ""
+//                + "OR apform.applicant_id = :user_id "
+//                + "/* Applicant */ "
+//                + ""
+//                + "OR apform.id IN ( "
+//                + ""
+//                + "     SELECT appform.id "
+//                + "     FROM APPLICATION_FORM appform "     
+//                + "     JOIN APPLICATION_FORM_REFEREE ref ON ref.application_form_id = appform.id "
+//                + "     WHERE ref.registered_user_id = :user_id "
+//                + "     /* Application referees */ "
+//                + ") "
+//                + ""
+//                + "OR apform.id IN ( "
+//                + ""
+//                + "     SELECT appform.id " 
+//                + "     FROM APPLICATION_FORM appform "
+//                + "     WHERE registry_users_notified = true " 
+//                + "     AND 1 = ( "
+//                + "         SELECT DISTINCT 1 " 
+//                + "         FROM REGISTERED_USER user "
+//                + "         JOIN USER_ROLE_LINK urole ON urole.registered_user_id = user.id "
+//                + "         JOIN APPLICATION_ROLE arole ON urole.application_role_id = arole.id "
+//                + "         WHERE arole.authority = \"ADMITTER\" "
+//                + "         AND user.id = :user_id "
+//                + ") "
+//                + "/* Applications which need registry attention if current user is an ADMITTER */ "
+//                + ") ORDER BY ");
         
-        ArrayList<ApplicationForm> results = new ArrayList<ApplicationForm>();
-        for (Object id : criteria.list()) {
+        StringBuilder queryBuilder = new StringBuilder(""
+                + "SELECT apform.id " 
+                + "FROM APPLICATION_FORM apform "
+                + "JOIN PROGRAM prog ON apform.program_id = prog.id "
+                + "JOIN REGISTERED_USER ru ON apform.applicant_id = ru.id "
+                + "WHERE apform.status NOT IN (\"UNSUBMITTED\", \"REJECTED\", \"WITHDRAWN\", \"APPROVED\")" 
+                + "AND apform.program_id IN "
+                + "( "
+                + "     SELECT program_id " 
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN PROGRAM_ADMINISTRATOR_LINK pal ON ru.id = pal.administrator_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + "     UNION "
+                + ""
+                + "     SELECT program_id " 
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN PROGRAM_APPROVER_LINK papl ON ru.id = papl.registered_user_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + "     UNION " 
+                + ""
+                + "     SELECT program_id "
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN PROGRAM_INTERVIEWER_LINK pil ON ru.id = pil.interviewer_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + "     UNION " 
+                + ""
+                + "     SELECT program_id "
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN PROGRAM_REVIEWER_LINK prl ON ru.id = prl.reviewer_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + "     UNION "
+                + ""
+                + "     SELECT program_id " 
+                + "     FROM REGISTERED_USER ru " 
+                + "     JOIN PROGRAM_SUPERVISOR_LINK psl ON ru.id = psl.supervisor_id " 
+                + "     WHERE ru.id = :user_id "
+                + ""
+                + ") ORDER BY ");
+
+        switch (filtering.getSortCategory()) {
+            case APPLICANT_NAME:
+                queryBuilder.append("ru.lastName");
+                getSqlOrder(filtering, queryBuilder);
+                queryBuilder.append(", ru.firstName");
+                getSqlOrder(filtering, queryBuilder);
+                break;
+
+            case PROGRAMME_NAME:
+                queryBuilder.append("prog.title");
+                getSqlOrder(filtering, queryBuilder);
+                break;
+
+            case APPLICATION_STATUS:
+                queryBuilder.append("apform.status");
+                getSqlOrder(filtering, queryBuilder);
+                break;
+
+            default:
+            case APPLICATION_DATE:
+                queryBuilder.append("apform.submitted_on_timestamp");
+                getSqlOrder(filtering, queryBuilder);
+                queryBuilder.append(", apform.app_date_time");
+                break;
+        }
+
+        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(queryBuilder.toString());
+        query.setInteger("user_id", user.getId());
+
+        for (Object id : query.list()) {
             ApplicationForm form = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id);
             if (service.calculateActions(user, form).isRequiresAttention()) {
-                results.add(form);
+                applicationsWhichNeedAttention.add(form);
             }
         }
-        return results;
+        return new ArrayList<ApplicationForm>(applicationsWhichNeedAttention);
+    }
+    
+
+    private StringBuilder getSqlOrder(final ApplicationsFiltering filtering, final StringBuilder builder) {
+        return filtering.getOrder() == SortOrder.DESCENDING ? builder.append(" DESC ") : builder.append(" ASC ");
     }
 
     public List<ApplicationForm> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {

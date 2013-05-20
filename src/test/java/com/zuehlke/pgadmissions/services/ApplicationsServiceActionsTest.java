@@ -251,9 +251,9 @@ public class ApplicationsServiceActionsTest {
     }
 
     private ActionsDefinitions executeGetActionsDefinitions() {
-        EasyMock.replay(userMock, applicationMock);
+        EasyMock.replay(userMock, applicationMock, stateTransitionViewResolverMock);
         ActionsDefinitions actionsDefinition = applicationsService.calculateActions(userMock, applicationMock);
-        EasyMock.verify(userMock, applicationMock);
+        EasyMock.verify(userMock, applicationMock, stateTransitionViewResolverMock);
         return actionsDefinition;
     }
 
@@ -303,6 +303,7 @@ public class ApplicationsServiceActionsTest {
             EasyMock.expect(applicationMock.isInState(status)).andReturn(true).anyTimes();
         }
         EasyMock.expect(applicationMock.isInState(EasyMock.isA(ApplicationFormStatus.class))).andReturn(false).anyTimes();
+        EasyMock.expect(stateTransitionViewResolverMock.getNextStatus(applicationMock)).andReturn(null).anyTimes();
     }
 
     private void assertActionsDefinition(ActionsDefinitions actionsDefinition, boolean requiresAttention, String[] actionsNames, String[] actionDisplayValues) {

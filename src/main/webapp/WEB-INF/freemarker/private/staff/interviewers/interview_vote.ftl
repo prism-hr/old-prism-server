@@ -59,57 +59,24 @@
             	<div>
 		      		<form method="post" action= "<@spring.url '/interviewVote'/>" />
 		      		<input type="hidden" id="applicationId" name ="applicationId" value ="${(applicationForm.applicationNumber)!}"/>
-		              <#assign interview = applicationForm.latestInterview>
-		              	<!--div class="row-group">
-			              	<div class="row" >
-							    <label class="plain-label" for="programInterviewers">Interview Location</label>
-							    <div class="field">
-							    	<#if interview.locationURL?has_content>
-										<a style="text-decoration:none;" href="${interview.locationURL}" title="Get Directions">${interview.locationURL}</a>
-							        <#else>
-							        	<i>Not provided</i>
-							    	</#if>
-							    </div>
-							</div>
-							<#if user == applicationForm.applicant>
-								<div class="row">
-								    <label class="plain-label" for="programInterviewers">Interview Instructions for Candidate</label>
-								    <div class="field">
-								    	<#if interview.furtherDetails?has_content>${interview.furtherDetails!}<#else><i>Not provided</i></#if>
-								    </div>
-								</div>
-							<#else>
-								<div class="row">
-								    <label class="plain-label" for="programInterviewers">Interview Instructions for Interviewer</label>
-								    <div class="field">
-								    	<#if interview.furtherInterviewerDetails?has_content>${interview.furtherInterviewerDetails!}<#else><i>Not provided</i></#if>
-								    </div>
-								</div>
-							</#if>
-		              	</div-->
-                        <@spring.bind "interviewParticipant.canMakeIt" />
+	              <#assign interview = applicationForm.latestInterview>
+                <@spring.bind "interviewParticipant.canMakeIt" />
   							<#if spring.status.errors.hasErrors()>
-		            	  		
 					    		<div class="alert alert-error"> <i class="icon-warning-sign"></i> 
-                            <#else>
-                            	<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i>
+                <#else>
+                	<div id="add-info-bar-div" class="alert alert-info"> <i class="icon-info-sign"></i>
 					    	</#if>
-                            
-                         Please select your interview preferences.</div>
+                  Please select your interview preferences.</div>
                         
-		              	<div class="row-group">
+            	    <div class="row-group">
                         
-                        
-			              	<div class="row">
-			              		<#assign responded = 0>
-			              		<#list interview.participants as participant>
-			              			<#if participant.responded == true>
-			              				<#assign responded = responded + 1>
-			              			</#if>
-			              		</#list>
-			              		
-		            	  			
-		            	  		
+		              	<div class="row">
+		              		<#assign responded = 0>
+		              		<#list interview.participants as participant>
+		              			<#if participant.responded == true>
+		              				<#assign responded = responded + 1>
+		              			</#if>
+		              		</#list>
 		            	  		
 		            	  		<div class="timeslots-wrapper">
 			            	  		<div class="timeslots-scrollable">
@@ -127,19 +94,20 @@
 				        	  							<tr class="info">
 				        	  								<td class="participant">
 				        	  									<div><span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
-				        	  									${participant.user.firstName!} ${participant.user.lastName!} <input type="checkbox" class="check-all sign-tooltip" data-desc="Select/Deselect all">
-                                                                </div>
+  				        	  									${participant.user.firstName!} ${participant.user.lastName!} 
+  				        	  									<#assign allSelected = RequestParameters.selectAll?? && RequestParameters.selectAll == 'true'> 
+  				        	  									<input type="checkbox" <#if allSelected>checked</#if> class="check-all sign-tooltip" data-desc="Select/Deselect all">
+                                      </div>
 			        	  									</td>
-			        	  									
 					        	  							
 					        	  							<#assign acceptedTimeslots = participant.acceptedTimeslots>
 					            	  						<#list interview.timeslots as timeslot>
-					            	  							<td class="timeslot"> <div>
-					            	  								<#if acceptedTimeslots?seq_contains(timeslot)>
-					            	  								<input type="checkbox" name="acceptedTimeslots" class="timeslot-to-accept" value="${timeslot.id}" checked="checked" />
-						            	  							<#else>
-					            	  								<input type="checkbox" name="acceptedTimeslots" class="timeslot-to-accept" value="${timeslot.id}" />
-						            	  							</#if> </div>
+					            	  							<td class="timeslot">
+					            	  							  <div>
+  					            	  								
+  					            	  								<input type="checkbox" name="acceptedTimeslots" class="timeslot-to-accept" value="${timeslot.id}" 
+  					            	  								  <#if allSelected || acceptedTimeslots?seq_contains(timeslot)>checked="checked"</#if> /> 
+						            	  							</div>
 					            	  							</td>
 					            	  						</#list>
 				        	  							</tr>

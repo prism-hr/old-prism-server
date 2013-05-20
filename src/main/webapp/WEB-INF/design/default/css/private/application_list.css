@@ -33,7 +33,7 @@ td.status { text-align: center !important; }
   font-weight: bold;
   padding-right: 6px;
 }
-.applyOptions #preFilter i{
+.applyOptions #preFilter i, #preFilterOptions i{
   color: #F83929;
 }
 .applyOptions #preFilter {

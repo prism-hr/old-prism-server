@@ -24,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -43,14 +44,14 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testFullTextSearchContext.xml")
-public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagTest {
+public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagTest extends AutomaticRollbackTestCase {
 
     @Autowired
     private SessionFactory sessionFactory;
-    
+
     @Autowired
     private PlatformTransactionManager transactionManager;
-    
+
     private RegisteredUser user;
 
     private RegisteredUser superUser;
@@ -71,31 +72,27 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
         template.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                sessionFactory
-                .getCurrentSession()
-                .createSQLQuery(""
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (1,'ADMINISTRATOR');"
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (2,'APPLICANT');"
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (4,'APPROVER');"
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (7,'INTERVIEWER');"
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (6,'REFEREE');"
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (3,'REVIEWER');"
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (5,'SUPERADMINISTRATOR');"
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (8,'SUPERVISOR');"
-                        + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (9,'VIEWER');")
-                 .executeUpdate();
-                
+                sessionFactory.getCurrentSession()
+                                .createSQLQuery("" + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (1,'ADMINISTRATOR');"
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (2,'APPLICANT');"
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (4,'APPROVER');"
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (7,'INTERVIEWER');"
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (6,'REFEREE');"
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (3,'REVIEWER');"
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (5,'SUPERADMINISTRATOR');"
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (8,'SUPERVISOR');"
+                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (9,'VIEWER');").executeUpdate();
+
                 applicationFormListDAO = new ApplicationFormListDAO(sessionFactory);
                 applicationFormDAO = new ApplicationFormDAO(sessionFactory);
                 applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null);
                 roleDAO = new RoleDAO(sessionFactory);
-                user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                        .username("username").password("password").role(roleDAO.getRoleByAuthority(Authority.APPLICANT))
-                        .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-                superUser = new RegisteredUserBuilder().firstName("John").lastName("Doe").email("email@test.com")
-                        .username("superUserUsername").password("password")
-                        .role(roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR)).accountNonExpired(false)
-                        .accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                                .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).accountNonExpired(false).accountNonLocked(false)
+                                .credentialsNonExpired(false).enabled(true).build();
+                superUser = new RegisteredUserBuilder().firstName("John").lastName("Doe").email("email@test.com").username("superUserUsername")
+                                .password("password").role(roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR)).accountNonExpired(false)
+                                .accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
                 program = new ProgramBuilder().code("doesntexist").administrators(superUser).title("another title").build();
                 superUser.getProgramsOfWhichAdministrator().add(program);
                 superUser.getProgramsOfWhichApprover().add(program);
@@ -105,16 +102,14 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
             }
         });
     }
-    
+
     @After
     public void clean() {
         TransactionTemplate template = new TransactionTemplate(transactionManager);
         template.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                sessionFactory.getCurrentSession()
-                        .createSQLQuery("DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE")
-                        .executeUpdate();
+                sessionFactory.getCurrentSession().createSQLQuery("DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE").executeUpdate();
             }
         });
     }
@@ -127,34 +122,29 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
                 try {
                     ApprovalRound approvalRound = new ApprovalRoundBuilder().build();
-                    ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL)
-                            .applicationNumber("ABC").program(program)
-                            .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
-                            .latestApprovalRound(approvalRound).pendingApprovalRestart(true).applicant(user)
-                            .build();
-            
-                    ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology")
-                            .program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user)
-                            .build();
-            
-                    ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL)
-                            .applicationNumber("ABCD").program(program).latestApprovalRound(approvalRound)
-                            .pendingApprovalRestart(true).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
-                            .applicant(user).build();
-            
-                    ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1")
-                            .program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user)
-                            .build();
-            
+                    ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).applicationNumber("ABC")
+                                    .program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).latestApprovalRound(approvalRound)
+                                    .pendingApprovalRestart(true).applicant(user).build();
+
+                    ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
+                                    .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).build();
+
+                    ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).applicationNumber("ABCD")
+                                    .program(program).latestApprovalRound(approvalRound).pendingApprovalRestart(true)
+                                    .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).build();
+
+                    ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
+                                    .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).build();
+
                     sessionFactory.getCurrentSession().save(approvalRound);
                     sessionFactory.getCurrentSession().save(applicationFormOne);
                     sessionFactory.getCurrentSession().save(applicationFormTwo);
                     sessionFactory.getCurrentSession().save(applicationFormThree);
                     sessionFactory.getCurrentSession().save(applicationFormFour);
-                    
-                    List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(
-                            superUser, newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1));
-            
+
+                    List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser,
+                                    newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1));
+
                     assertEquals(2, applications.size());
                     assertTrue(listContainsId(applicationFormOne, applications));
                     assertTrue(listContainsId(applicationFormThree, applications));
@@ -164,12 +154,12 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
             }
         });
     }
-    
+
     private ApplicationsFiltering newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, ApplicationsFilter... filters) {
-        return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount)
-                .filters(filters).preFilter(ApplicationsPreFilter.URGENT).build();
+        return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount).filters(filters)
+                        .preFilter(ApplicationsPreFilter.URGENT).build();
     }
-    
+
     private boolean listContainsId(ApplicationForm form, List<ApplicationForm> aplicationForms) {
         for (ApplicationForm entry : aplicationForms) {
             if (form.getId().equals(entry.getId())) {

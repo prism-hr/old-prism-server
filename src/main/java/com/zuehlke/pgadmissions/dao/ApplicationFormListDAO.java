@@ -150,7 +150,7 @@ public class ApplicationFormListDAO {
                 + "FROM APPLICATION_FORM apform "
                 + "JOIN PROGRAM prog ON apform.program_id = prog.id "
                 + "JOIN REGISTERED_USER ru ON apform.applicant_id = ru.id "
-                + "WHERE apform.status NOT IN (\"UNSUBMITTED\", \"REJECTED\", \"WITHDRAWN\", \"APPROVED\")" 
+                + "WHERE apform.status NOT IN ('UNSUBMITTED', 'REJECTED', 'WITHDRAWN', 'APPROVED')" 
                 + "AND apform.program_id IN "
                 + "( "
                 + "     SELECT program_id " 

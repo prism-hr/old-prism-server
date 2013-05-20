@@ -105,6 +105,15 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 .applicationRow {
 	cursor:pointer;
 }
+.applicationRow .icon-bell-alt{
+  color: #F83929;
+}
+.applicationRow .icon-refresh{
+  color: #FFBF00;
+}
+.applicationRow .icon-circle-blank{
+  color: #51A351);
+}
 #applicationListSection .application-details, #applicationListSection .placeholder {
 	display:none;
 }

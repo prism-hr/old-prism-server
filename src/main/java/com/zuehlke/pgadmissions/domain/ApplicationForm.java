@@ -1097,4 +1097,13 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isNotInState(ApplicationFormStatus status) {
         return !isInState(status);
     }
+
+    public boolean hasConfirmElegibilityComment() {
+        for (Comment comment : applicationComments) {
+            if (comment instanceof ValidationComment && comment.getUser().isInRole(Authority.ADMITTER)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

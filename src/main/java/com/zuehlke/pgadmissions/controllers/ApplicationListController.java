@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
@@ -62,21 +64,24 @@ public class ApplicationListController {
     private final ApplicationSummaryService applicationSummaryService;
 
     private final ApplicationsFilteringService filteringService;
+    
+    private final ApplicationFormAccessService accessService;
 
     public ApplicationListController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
             ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
-            ApplicationsFilteringService filteringService) {
+            ApplicationsFilteringService filteringService, final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
         this.applicationSummaryService = applicationSummaryService;
         this.filteringService = filteringService;
+        this.accessService = accessService;
     }
 
     @InitBinder(value = "filtering")
@@ -118,11 +123,14 @@ public class ApplicationListController {
     public String getApplicationListSection(@ModelAttribute("filtering") ApplicationsFiltering filtering, ModelMap model) {
         RegisteredUser user = getUser();
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
+        Map<String, Boolean> updatedApplications = new HashMap<String, Boolean>();
         Map<String, ActionsDefinitions> actionDefinitions = new LinkedHashMap<String, ActionsDefinitions>();
         for (ApplicationForm applicationForm : applications) {
+            updatedApplications.put(applicationForm.getApplicationNumber(), accessService.userNeedsToSeeApplicationUpdates(applicationForm, getUser()));
             ActionsDefinitions actionsDefinition = applicationsService.calculateActions(user, applicationForm);
             actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
         }
+        model.addAttribute("updateApplications", updatedApplications);
         model.addAttribute("applications", applications);
         model.addAttribute("actionDefinitions", actionDefinitions);
         return APPLICATION_LIST_SECTION_VIEW_NAME;
@@ -190,7 +198,7 @@ public class ApplicationListController {
         }
         return statuses;
     }
-
+    
     @ModelAttribute("applications")
     public List<ApplicationForm> getApplications() {
         return java.util.Collections.emptyList();

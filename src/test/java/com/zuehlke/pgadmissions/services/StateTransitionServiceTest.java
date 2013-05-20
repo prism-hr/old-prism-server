@@ -18,33 +18,33 @@ public class StateTransitionServiceTest {
     
     @Test
     public void shouldReturnRejectedReviewApprovedAndInterviewForValidationState(){
-        ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.VALIDATION);
+        ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.VALIDATION).toArray(new ApplicationFormStatus[]{});
         assertArrayEquals(new ApplicationFormStatus[]{ ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.REJECTED},avaialbleStati);
     }
     
     @Test
     public void shouldReturnRejectedReviewApprovedAndInterviewForReviewState(){
-        ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.REVIEW);
+        ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.REVIEW).toArray(new ApplicationFormStatus[]{});
         assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.REJECTED},avaialbleStati);
     }
     
     @Test
     public void shouldReturnRejectedApprovedAndInterviewForInterviewState(){
-        ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.INTERVIEW);
+        ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.INTERVIEW).toArray(new ApplicationFormStatus[]{});
         assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.REJECTED},avaialbleStati);
     }
     
     @Test
     public void shouldReturnRejectedApprovedForApprovalState(){
-        ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.APPROVAL);
+        ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.APPROVAL).toArray(new ApplicationFormStatus[]{});
         assertArrayEquals(new ApplicationFormStatus[]{ ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.REQUEST_RESTART_APPROVAL},avaialbleStati);
     }
     
     @Test
     public void shouldReturnEmptyArrayForOtherStates(){
-        assertArrayEquals(new ApplicationFormStatus[]{},service.getAvailableNextStati(ApplicationFormStatus.UNSUBMITTED));
-        assertArrayEquals(new ApplicationFormStatus[]{},service.getAvailableNextStati(ApplicationFormStatus.REJECTED));
-        assertArrayEquals(new ApplicationFormStatus[]{},service.getAvailableNextStati(ApplicationFormStatus.APPROVED));
-        assertArrayEquals(new ApplicationFormStatus[]{},service.getAvailableNextStati(ApplicationFormStatus.WITHDRAWN));
+        assertArrayEquals(new ApplicationFormStatus[]{}, service.getAvailableNextStati(ApplicationFormStatus.UNSUBMITTED).toArray(new ApplicationFormStatus[]{}));
+        assertArrayEquals(new ApplicationFormStatus[]{}, service.getAvailableNextStati(ApplicationFormStatus.REJECTED).toArray(new ApplicationFormStatus[]{}));
+        assertArrayEquals(new ApplicationFormStatus[]{}, service.getAvailableNextStati(ApplicationFormStatus.APPROVED).toArray(new ApplicationFormStatus[]{}));
+        assertArrayEquals(new ApplicationFormStatus[]{}, service.getAvailableNextStati(ApplicationFormStatus.WITHDRAWN).toArray(new ApplicationFormStatus[]{}));
     }
 }

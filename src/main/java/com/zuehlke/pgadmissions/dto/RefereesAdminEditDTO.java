@@ -1,9 +1,13 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class RefereesAdminEditDTO {
@@ -46,6 +50,10 @@ public class RefereesAdminEditDTO {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
     private String messenger;
+
+    private List<Score> scores = new ArrayList<Score>();
+    
+    private String alert;
 
     public String getComment() {
         return comment;
@@ -167,15 +175,23 @@ public class RefereesAdminEditDTO {
         this.messenger = messenger;
     }
 
+    public List<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
+    }
+
     public boolean hasUserStartedTyping() {
         boolean startedTypingReference = StringUtils.isNotBlank(comment) || !allNull(referenceDocument, suitableForProgramme, suitableForUCL);
         boolean startedTypingRefereeData = addressLocation != null
-                && (!allBlank(firstname, lastname, addressLocation.getAddress1(), addressLocation.getAddress2(),
-                        addressLocation.getAddress3(), addressLocation.getAddress4(), addressLocation.getAddress5(),
-                        jobEmployer, jobTitle, email, phoneNumber, messenger) || addressLocation.getCountry() != null);
+                && (!allBlank(firstname, lastname, addressLocation.getAddress1(), addressLocation.getAddress2(), addressLocation.getAddress3(),
+                        addressLocation.getAddress4(), addressLocation.getAddress5(), jobEmployer, jobTitle, email, phoneNumber, messenger) || addressLocation
+                        .getCountry() != null);
         return startedTypingReference || startedTypingRefereeData;
     }
-    
+
     private boolean allBlank(String... strings) {
         for (String string : strings) {
             if (StringUtils.isNotBlank(string)) {
@@ -184,7 +200,7 @@ public class RefereesAdminEditDTO {
         }
         return true;
     }
-    
+
     private boolean allNull(Object... objects) {
         for (Object obj : objects) {
             if (obj != null) {
@@ -192,5 +208,13 @@ public class RefereesAdminEditDTO {
             }
         }
         return true;
+    }
+
+	public String getAlert() {
+	    return alert;
+    }
+
+	public void setAlert(String alert) {
+	    this.alert = alert;
     }
 }

@@ -22,9 +22,10 @@
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
   
-  <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/comment/interviewComment.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
@@ -67,16 +68,23 @@
               <h2>Interview Outcome</h2>
               <div>
                 <form id="interviewForm" method="POST" action="<@spring.url '/interviewFeedback'/>"/>
+                <@spring.bind "comment.confirmNextStage" />
+			    <#if spring.status.errorMessages?size &gt; 0>
+		     		<div class="alert alert-error" >
+                    <i class="icon-warning-sign"></i>
+			    <#else>
+		            <div class="alert alert-info">
+          			<i class="icon-info-sign"></i>
+	          	</#if>
                 
-                <div class="alert alert-info"> <i class="icon-info-sign"></i> Following their interview, reassess the applicant's suitability for postgraduate research and their chosen study programme. </div>
+                Following their interview, reassess the applicant's suitability for postgraduate research and their chosen study programme. </div>
                 <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
                 <div class="row-group">
                   <div class="row">
                     <label for="interview-comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
                     <div class="field">
-                      <textarea name="comment" id="interview-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}
-</textarea>
+                      <textarea name="comment" id="interview-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}</textarea>
                       <@spring.bind "comment.comment" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -139,6 +147,19 @@
                       </#list> </div>
                   </div>
                 </div>
+                
+              <#assign scores = comment.scores>
+              <#if (scores)?has_content>
+              <div id="scoring-questions" class="row-group">
+                  <#if comment.alert??>
+                  	<#assign alertForScoringQuestions=comment.alert>
+                  </#if>
+                  <#assign errorsContainerName = "comment">
+                  	<h3>Programme Specific Questions</h3>
+                  	<#include "/private/staff/scores.ftl"/>
+        	  </div>
+              </#if>
+                  
                 <@spring.bind "comment.confirmNextStage" />
 			    <#if spring.status.errorMessages?size &gt; 0>
 		     		<div class="alert alert-error" >
@@ -155,13 +176,14 @@
 						<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
 					</div>
 				</div>
+
+				
                 <div class="buttons">
                   <button class="btn btn-primary" id="submitInterviewFeedback" type="button" value="Submit">Submit</button>
                 </div>
                 </form>
               </div>
             </section>
-            <hr />
             <#include "/private/staff/admin/comment/timeline_application.ftl"/> </div>
           <!-- .content-box-inner --> 
         </div>

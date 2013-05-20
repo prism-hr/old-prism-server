@@ -106,7 +106,7 @@ $(document).ready(function()
 		{
 			field.value = '';
 		}
-		$('#registration-box').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		return true;
 	});
   
@@ -115,7 +115,7 @@ $(document).ready(function()
 	$('#resend').click(function()
 	{
 		var url = $(this).attr('href');
-		$('#site-message').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		window.location.href = url;
 	});
   

@@ -73,9 +73,9 @@ $(document).ready(function() {
 	toggleButtons(true);
     $(document).on('change', 'select.templateType', function() {
             if ($(this).val()!='original template') {
-            	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
+            	$('#ajaxloader').show();
             	var url = "/pgadmissions/configuration/editEmailTemplate/"+$(this).val();
-            	$('.content-box-inner').append('<div class="ajax" />');
+            	$('#ajaxloader').show();
             	$.ajax({
         	        type : 'GET',
         	        statusCode : errorCodes,
@@ -103,7 +103,7 @@ $(document).ready(function() {
         	            	    });
         	               		},
         	        complete : function() {
-        	        				$('div.ajax').remove();
+        	        				$('#ajaxloader').fadeOut('fast');
         	        			}
         	    });
             } else {
@@ -121,9 +121,9 @@ $(document).ready(function() {
     
     $(document).on('change', 'select.templateVersion', function() {
     	if ($(this).val()!=null) {
-    		$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
+    		$('#ajaxloader').show();
     		var url = "/pgadmissions/configuration/editEmailTemplate/"+$(this).val();
-    		$('.content-box-inner').append('<div class="ajax" />');
+    		$('#ajaxloader').show();
     		$.ajax({
     			type : 'GET',
     			statusCode : errorCodes,
@@ -138,7 +138,7 @@ $(document).ready(function() {
     				toggleButtons(false);
     			},
     			complete : function() {
-    				$('div.ajax').remove();
+    				$('#ajaxloader').fadeOut('fast');
     			}
     		});
     	} else {
@@ -156,7 +156,7 @@ $(document).ready(function() {
     $('#save-go').click(function() {
 		$("#templateContentId").parent().find('.alert-info').remove();
     	if ($('#templateContentId').val()!=emailTemplateContent || $('#templateSubjectId').val()!=emailTemplateSubject) {//user has changed template or the subject before re-enabling it
-    		$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
+    		 $('#ajaxloader').show();
 	    	 $.ajax({
 	    	        type : 'POST',
 	    	        statusCode : errorCodes,
@@ -175,7 +175,7 @@ $(document).ready(function() {
 				    	        	}
 	    	               		},
 	    	        complete : function() {
-	    	        				$('div.ajax').remove();
+	    	        				$('#ajaxloader').fadeOut('fast');
 	    	        			}
 	    	    });
     	} else {
@@ -185,7 +185,7 @@ $(document).ready(function() {
     
     
     $('#enable-go').click(function() {
-    	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
+    	$('#ajaxloader').show();
     	if ($('#templateContentId').val()!=emailTemplateContent || $('#templateSubjectId').val()!=emailTemplateSubject) {//user has chnaged template before rnabling it
     		var options = {
     				saveCopy : true,
@@ -219,7 +219,7 @@ $(document).ready(function() {
 				 
 			 },
 			 complete : function() {
-				 			$('div.ajax').remove();
+				 $('#ajaxloader').fadeOut('fast');
 			 }
 		 });
     });
@@ -235,7 +235,7 @@ $(document).ready(function() {
     });
     
     $('#delete-go').click(function() {
-    	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
+    	$('#ajaxloader').show();
     	$.ajax({
     		type : 'POST',
     		statusCode : errorCodes,
@@ -258,7 +258,7 @@ $(document).ready(function() {
     			}
     		},
     		complete : function() {
-    			$('div.ajax').remove();
+    			$('#ajaxloader').fadeOut('fast');
     		}
     	});
     });

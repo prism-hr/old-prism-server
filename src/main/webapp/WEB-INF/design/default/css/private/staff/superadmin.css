@@ -70,7 +70,7 @@ font-family:FontAwesome;font-weight:normal;
 }
 #existingUsers .role-icons .is-interviewer:before {
   cursor: default;
-  content:"\f03d";
+  content:"\f130";
   font-size:17px;
   top: 2px;
 }

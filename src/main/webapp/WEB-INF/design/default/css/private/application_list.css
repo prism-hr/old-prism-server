@@ -27,9 +27,21 @@ td.status { text-align: center !important; }
 /* Table bar, containing download button and search bar. --------------------------------------------- */
 #table-bar { margin-bottom: 10px; margin-top: 10px; position: relative;  }
 
-
+/* Applications display */
+.applyOptions { background: #FFF; position: relative;  border-radius: 4px; margin-bottom: 10px; text-align: right;}
+.applyOptions>span {
+  font-weight: bold;
+  padding-right: 6px;
+}
+.applyOptions #preFilter i{
+  color: #F83929;
+}
+.applyOptions #preFilter {
+  opacity: 1;
+  color: #333;
+}
 /* Search box. */
-#search-box { background: #FFF; border: 1px solid #AAA; position: relative;  border-radius: 4px; padding: 10px; padding-bottom: 0px; position: relative;
+#search-box { background: #FFF; border: 1px solid #AAA; position: relative;  border-radius: 4px; padding: 10px; padding-bottom: 0px; 
  }
 #search-box label { font-weight: bold; }
 #search-box input { padding: 4px; width: 240px; height: 17px; margin-bottom: 0px; margin-right:4px;}

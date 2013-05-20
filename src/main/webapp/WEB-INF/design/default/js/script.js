@@ -241,7 +241,8 @@ function makeFeedbackButton() {
 function bindDatePicker(selector) {
     $(selector).each(function() {
         if (!$(this).hasClass('hasDatepicker')) {
-            $(this).attr("readonly", "readonly");
+    		$(this).attr("readonly", "readonly");
+        	
             $(this).datepicker({
                 dateFormat : 'dd M yy',
                 changeMonth : true,
@@ -291,7 +292,7 @@ function addCounter() {
 			$(this).data("maxlength", 250);
 		} else if  ($(this).attr('id') == 'explanationText') {
 		    $(this).data("maxlength", 500);
-		} else if ($(this).attr('id') == 'templateContentId') {
+		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'scoringConfigurationContent') {
 			return false;
 		} else {
 			$(this).data("maxlength", 2000);
@@ -335,6 +336,24 @@ function addCounter() {
 // ------------------------------------------------------------------------------
 function addToolTips() {
     $('*[data-desc]').qtip(tooltipSettings);
+}
+
+//------------------------------------------------------------------------------
+// Alternates between showing only the first score answers and all.
+//------------------------------------------------------------------------------
+function toggleScores() {
+	$.each($('.hide-score'), function (key, value) {
+		$(this).closest('.score-results').find('.hide-score-group').append($(this));
+		$(this).show();
+	});
+	
+	$('.more-scores').toggle(function () {
+		$(this).closest('.score-results').find('.hide-score-group').slideDown();
+		$(this).text('Show less').addClass('collapsed').removeClass('expand');
+	}, function () {
+		$(this).closest('.score-results').find('.hide-score-group').slideUp();
+		$(this).text('Show more').addClass('expand').removeClass('collapsed');
+	});
 }
 
 // ------------------------------------------------------------------------------
@@ -743,7 +762,7 @@ function modalPosition() {
     }).show();
 }
 
-function modalPrompt(message, okay, cancel) {
+function modalPrompt(message, okay, cancel, hide) {
     if (typeof(okay) == 'undefined') {
         okay = function() {
         };
@@ -769,7 +788,12 @@ function modalPrompt(message, okay, cancel) {
     });
     
     $('#dialog-box').on('hide', function () {
-    	cancel();
+    	if (typeof(hide) != 'undefined') {
+    		hide();
+    	}
+    	else {
+    		cancel();
+    	}
     });
 
     // Show the box.
@@ -810,9 +834,15 @@ function guid() {
 }
 	
 $('button.btn.btn-primary').live('click', function() {
-	var section = $(this).closest('section.form-rows');
+	var section;
 	
-	if (section.length == 1) {
+	if ($(this).hasClass('btn-large')) {
+		section = $('section.form-rows');
+	} else {
+		section = $(this).closest('section.form-rows');
+	}
+	
+	if (section.length >= 1) {
 		
 		if (section[0].id == "") {
 			section[0].id = guid();
@@ -821,3 +851,61 @@ $('button.btn.btn-primary').live('click', function() {
 		$.scrollTo('#' + section[0].id, 500);
 	}
 });
+
+function stringToSlug(str) {
+  str = str.replace(/^\s+|\s+$/g, ''); // trim
+  str = str.toLowerCase();
+  
+  // remove accents, swap ñ for n, etc
+  var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+  var to   = "aaaaeeeeiiiioooouuuunc------";
+  for (var i=0, l=from.length ; i<l ; i++) {
+    str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+  }
+
+  str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-'); // collapse dashes
+
+  return str;
+}
+
+function padLeft(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+function applyTooltip(selector) {
+  $(selector).qtip({
+    content: {
+        text: function(api) {
+          // Retrieve content from custom attribute of the $('.selector') elements.
+          return $(this).attr('data-desc');
+       } 
+     },
+     position: {
+        my: 'bottom right', // where the tooltip's pointer appears
+        at: 'top center',   // where the tooltip is positioned
+        viewport: $(window),
+        adjust: {
+           method: 'flip shift'
+        }
+     },
+     style: 'tooltip-pgr ui-tooltip-shadow'
+   });
+}
+
+function dateToDMY(date) {
+    var d = date.getDate();
+    var m = date.getMonth() + 1;
+    var y = date.getFullYear();
+    return '' + (d <= 9 ? '0' + d : d) + '/' + (m<=9 ? '0' + m : m) + '/' + y;
+}
+// Info bar top to change to error if errors in page
+function checkIfErrors() {
+	errors = $('.alert-error:visible').length;
+	if (errors > 0) {
+		$('#add-info-bar-div').removeClass('alert-info').addClass('alert-error');
+	} 
+}

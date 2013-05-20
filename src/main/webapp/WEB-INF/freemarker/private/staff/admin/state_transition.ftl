@@ -76,32 +76,48 @@
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
 					
+                    
+                    
 					<section id="commentsection" class="form-rows">
 						<h2 class="no-arrow">
-						<#if applicationForm.isInState('VALIDATION')>
-							Validate Application
-						<#elseif applicationForm.isInState('REVIEW')>
-							Evaluate Application Reviews
-						<#elseif applicationForm.isInState('INTERVIEW')>
-							Evaluate Interview Outcomes
-						<#elseif applicationForm.isInState('APPROVAL')>
-							Approve Application
+						<#if user.isInRole('ADMITTER')>
+							Confirm Eligibility
+						<#else>
+							<#if applicationForm.isInState('VALIDATION')>
+								Validate Application
+							<#elseif applicationForm.isInState('REVIEW')>
+								Evaluate Application Reviews
+							<#elseif applicationForm.isInState('INTERVIEW')>
+								Evaluate Interview Outcomes
+							<#elseif applicationForm.isInState('APPROVAL')>
+								Approve Application
+							</#if>
 						</#if>
 						</h2>
 		
 						<div>
 							<form>
-							
-								<div class="alert alert-info"> <i class="icon-info-sign"></i>
-								<#if applicationForm.isInState('VALIDATION')>
-									Validate the application here. You may <a class="proceed-link" href="#" id="notifyRegistryButton">refer the application to admissions</a> if you feel unable to assess the Applicant's eligbility.
-								<#elseif applicationForm.isInState('REVIEW')>
-									Evaluate the reviewers' comments and decide which stage to progress the application to.
-								<#elseif applicationForm.isInState('INTERVIEW')>
-									Evaluate the interviewers' comments and decide which stage to progress the application to.
-								<#elseif applicationForm.isInState('APPROVAL')>
-									Evaluate the application here and decide which stage to progress the application to.
+								<@spring.bind "comment.confirmNextStage" />
+							    <#if spring.status.errorMessages?size &gt; 0>
+						     		<div class="alert alert-error" > <i class="icon-warning-sign"></i>
+							    <#else>
+							        <div class="alert alert-info"> <i class="icon-info-sign"></i>
+							    </#if>
+                                
+								<#if user.isInRole('ADMITTER')>
+									Confirm the applicant eligibility
+								<#else>
+									<#if applicationForm.isInState('VALIDATION')>
+										Validate the application here.
+									<#elseif applicationForm.isInState('REVIEW')>
+										Evaluate the reviewers' comments and decide which stage to progress the application to.
+									<#elseif applicationForm.isInState('INTERVIEW')>
+										Evaluate the interviewers' comments and decide which stage to progress the application to.
+									<#elseif applicationForm.isInState('APPROVAL')>
+										Evaluate the application here and decide which stage to progress the application to.
+									</#if>
 								</#if>
+								
 								</div>
 			
 								<div class="row-group">
@@ -126,7 +142,7 @@
 									<#include "comment/documents_snippet.ftl"/>
 								</div><!-- close .row-group -->
 	
-								<#if applicationForm.isInState('VALIDATION')>
+								<#if applicationForm.isInState('VALIDATION') || user.isInRole('ADMITTER')>
 								<div class="row-group">
 								
 									<div class="row">
@@ -180,45 +196,42 @@
 							
 								</div><!-- close .row-group -->
 								
-								<div class="row-group">
-    								<div class="row">
-                                        <label for="closingDate" class="plain-label">Assign to Closing Date</label>
-    								    <span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
-                                        <div class="field">
-                                            <input type="text" class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>
-                                            <#if closingDate_error??>
-                                                <span class="invalid">${closingDate_error}</span>
-                                            </#if>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <label class="plain-label" for="projectTitle">Assign to Project</label>
-                                        <span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
-                                        <div class="field">
-                                            <input id="projectTitle" name="projectTitle" class="full ui-autocomplete-input" type="text" value="${(projectTitle)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
-                                            <#if projectTitle_error??>
-                                                <span class="invalid">${projectTitle_error}</span>
-                                            </#if>
-                                        </div>
-                                     </div>
-								</div><!-- close .row-group -->
-								
-								
+								<#if user.isNotInRole('ADMITTER')>
+									<div class="row-group">
+	    								<div class="row">
+	                                        <label for="closingDate" class="plain-label">Assign to Closing Date</label>
+	    								    <span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
+	                                        <div class="field">
+	                                            <input type="text" class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>
+	                                            <#if closingDate_error??>
+	                                                <span class="invalid">${closingDate_error}</span>
+	                                            </#if>
+	                                        </div>
+	                                    </div>
+	                                    <div class="row">
+	                                        <label class="plain-label" for="projectTitle">Assign to Project</label>
+	                                        <span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
+	                                        <div class="field">
+	                                            <input id="projectTitle" name="projectTitle" class="full ui-autocomplete-input" type="text" value="${(projectTitle)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+	                                            <#if projectTitle_error??>
+	                                                <span class="invalid">${projectTitle_error}</span>
+	                                            </#if>
+	                                        </div>
+	                                     </div>
+									</div><!-- close .row-group -->
+								  </#if>
 								
 								</#if>
 	
-								<div class="row-group">
+								<div class="row-group" <#if user.isInRole('ADMITTER')>style="display: none;"</#if>>
 									<div class="row">
 										<label class="plain-label" for="status">Next Stage<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
-										<div class="field">		            				
+										<div class="field" >		            				
 											<select class="max" name="status" id="status">
 												<option value="">Select...</option>
 												<#list stati as status>
-												<option value="${status}"
-												<#if  comment.nextStatus?? && comment.nextStatus == status>
-													selected="selected"
-												</#if> >${status.displayValue()}</option>               
+												    <option value="${status}" <#if comment.nextStatus?? && comment.nextStatus == status> selected="selected" </#if> >${status.displayValue()}</option>               
 												</#list>
 											</select>	
 											<@spring.bind "comment.nextStatus" /> 
@@ -227,24 +240,27 @@
                                               </div></#list>
 										</div>
 									</div>
-									
 								</div><!-- close .row-group -->
 								
 								<div class="row-group" id="interviewDelegation" style="display:none">
 								  <#include "/private/staff/admin/interview_delegation.ftl"/>
 								</div>
 								
+								<div id="approvedDetails" style="display:none">
+								    <#include "/private/staff/admin/approved_details.ftl"/>
+								</div>
+								
 							    <@spring.bind "comment.confirmNextStage" />
 							    <#if spring.status.errorMessages?size &gt; 0>
 						     		<div class="alert alert-error" >
 							    <#else>
-							        <div class="alert" >
+							        <div class="alert" <#if user.isInRole('ADMITTER')>style="display: none;"</#if>>
 							    </#if>
 									<div class="row">
 										<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
 											Confirm that you wish to move this application to the next stage.				
 										</label>
-										<div class="terms-field">
+										<div class="terms-field" >
 											<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
 										</div>
 										<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
@@ -257,7 +273,9 @@
 								
 							</form>
 							
-							<#if applicationForm.isInState('VALIDATION')>
+							<#if user.isInRole('ADMITTER') >
+						 		<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitRegistryValidationComment' />">
+							<#elseif applicationForm.isInState('VALIDATION')>
 						 		<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitValidationComment' />">
 						 	<#else>
 						 		<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitEvaluationComment' />">
@@ -265,7 +283,9 @@
 						 		 <input type="hidden" id="applicationId" name ="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 						 		 <input type="hidden" id="commentField" name="comment" value=""/>				
 						 		 <input type="hidden" id="nextStatus" name="nextStatus"  value=""/>
-						 		 <#if applicationForm.isInState('VALIDATION')>
+						 		 <#if user.isInRole('ADMITTER') >
+									<input type="hidden" id="commentType" name="type" value="ADMITTER_COMMENT"/>
+						 		 	<#elseif applicationForm.isInState('VALIDATION')>
 									<input type="hidden" id="commentType" name="type" value="VALIDATION"/>
 									<#elseif applicationForm.isInState('REVIEW')>
 									<input type="hidden" id="commentType" name="type" value="REVIEW_EVALUATION"/>

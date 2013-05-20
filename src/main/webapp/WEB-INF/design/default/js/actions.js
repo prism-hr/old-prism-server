@@ -1,8 +1,27 @@
 $(document).ready(function() {
     $(document).on('change', 'select.actionType', function() {
-        $('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
-            var name = this.name;
-            var id = name.substring(5).replace(']','');
+    	
+        var name = this.name;
+        var id = name.substring(5).replace(']','');
+        
+        var skip = false;
+        
+        switch ($(this).val()) {
+        case 'emailApplicant':
+        	$('#ajaxloader').fadeOut('fast');
+        	$(this).val($("select.actionType option:first").val());
+        	var subject = "Question Regarding UCL Prism Application " + $(this).attr('data-applicationnumber');
+        	var email = $(this).attr('data-email');
+        	window.location.href ="mailto:" + email + "?subject=" + subject;
+        	skip = true;
+        	break;
+        }
+    	
+        if (skip) {
+        	return;
+        }
+        
+		$('#ajaxloader').show();
             switch ($(this).val()) {
             case 'view':
                 window.location.href = "/pgadmissions/application?view=view&applicationId="+ id;
@@ -28,14 +47,26 @@ $(document).ready(function() {
             case 'interviewFeedback':
                 window.location.href = "/pgadmissions/interviewFeedback?applicationId="+ id;
                 break;
+            case 'interviewVote':
+            	window.location.href = "/pgadmissions/interviewVote?applicationId="+ id;
+            	break;
+            case 'interviewConfirm':
+            	window.location.href = "/pgadmissions/interviewConfirm?applicationId="+ id;
+            	break;
             case 'restartApproval':
                 window.location.href = "/pgadmissions/approval/moveToApproval?applicationId="+ id;
+                break;
+            case 'restartApprovalAsAdministrator':
+            	window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id;
                 break;
             case 'progress':
                 window.location.href = "/pgadmissions/viewprogress?applicationId="+ id;
                 break;
             case 'confirmSupervision':
                 window.location.href = "/pgadmissions/confirmSupervision?applicationId="+ id;
+                break;
+            case 'rejectApplication':
+            	window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
                 break;
             case 'withdraw':
                 var message = 'Are you sure you want to withdraw the application? <b>You will not be able to submit a withdrawn application.</b>';
@@ -57,13 +88,13 @@ $(document).ready(function() {
                             window.location.href = "/pgadmissions/applications?messageCode=application.withdrawn&application="+ id;
                         },
                         complete : function() {
-                            $('div.content-box-inner div.ajax').remove();
+                            $('#ajaxloader').fadeOut('fast');
                         }
                     });    
                 };
                 var onCancel = function() {
                 	$('#actionTypeSelect').val('Actions');
-                    $('div.content-box-inner div.ajax').remove();
+					$('#ajaxloader').fadeOut('fast');
                 };
                 modalPrompt(message, onOk, onCancel);
                 break;

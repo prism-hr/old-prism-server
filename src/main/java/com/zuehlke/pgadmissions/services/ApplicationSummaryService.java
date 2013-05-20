@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Service
@@ -47,8 +47,7 @@ public class ApplicationSummaryService {
     }
 
     @Autowired
-    public ApplicationSummaryService(final ApplicationsService applicationsService, final UserService userService,
-            EncryptionHelper encryptionHelper) {
+    public ApplicationSummaryService(final ApplicationsService applicationsService, final UserService userService, EncryptionHelper encryptionHelper) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.encryptionHelper = encryptionHelper;
@@ -58,8 +57,9 @@ public class ApplicationSummaryService {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
         result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
-        ApplicationActionsDefinition actionsDefinition = applicationsService.getActionsDefinition(userService.getCurrentUser(), form);
+        ActionsDefinitions actionsDefinition = applicationsService.calculateActions(userService.getCurrentUser(), form);
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(actionsDefinition.isRequiresAttention()));
+        result.put("applicationNumber", form.getApplicationNumber());
     }
 
     private void addActiveApplications(final RegisteredUser applicant, final Map<String, String> result) {
@@ -139,10 +139,10 @@ public class ApplicationSummaryService {
     }
 
     private void addFundings(final ApplicationForm form, Map<String, String> result, final Gson gson) {
-        Integer fundingSum = 0;
+        Long fundingSum = 0L;
         for (Funding funding : form.getFundings()) {
             if (StringUtils.isNumericSpace(funding.getValue())) {
-                fundingSum = fundingSum + Integer.valueOf(funding.getValue());
+                fundingSum = fundingSum + Long.valueOf(funding.getValue());
             }
         }
         result.put("fundingRequirements", fundingSum.toString());
@@ -168,8 +168,13 @@ public class ApplicationSummaryService {
 
     private void addPersonalStatement(ApplicationForm form, Map<String, String> result) {
         Document personalStatement = form.getPersonalStatement();
-        result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));
-        result.put("personalStatementFilename", personalStatement.getFileName());
+        if (personalStatement != null) {
+            result.put("personalStatementProvided", "true");
+            result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));
+            result.put("personalStatementFilename", personalStatement.getFileName());
+        } else {
+            result.put("personalStatementProvided", "false");
+        }
 
         Document cv = form.getCv();
         if (cv != null) {

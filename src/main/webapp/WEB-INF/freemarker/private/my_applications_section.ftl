@@ -5,8 +5,12 @@
     <#assign actions = actionsDefinition.actions>
     <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow" >
   <td class="centre"><input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" /></td>
-  <td <#if actionsDefinition.requiresAttention>data-desc="This application requires your attention" class="applicant-name flagred" <#else> class="applicant-name flaggreen"</#if>>
-  <#if actionsDefinition.requiresAttention> <i class="icon-circle"></i> <#else> <i class="icon-circle-blank"></i> </#if>
+  <td <#if actionsDefinition.requiresAttention>data-desc="This application requires your attention"
+	  <#elseif updateApplications[application.applicationNumber]> data-desc="This application has been updated"
+	  <#else> class="applicant-name flaggreen"</#if>>
+  <#if actionsDefinition.requiresAttention> <i class="icon-bell-alt"></i> 
+  <#elseif updateApplications[application.applicationNumber]> <i class="icon-refresh"></i>
+  <#else> <i class="icon-circle-blank"></i> </#if>
   
   <#if !user.isInRole('APPLICANT')>
   ${application.applicant.firstName}
@@ -16,16 +20,16 @@
       </span>
   </td>
   <td class="program-title">${application.program.title}</td>
-  <td class="status"><span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">
-    ${application.status.displayValue()}
-    </span></td>
-  <td class="centre"><select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber}]">
-      <option>Actions</option>
-      <#list actions?keys as actionName>
-      <option value="${actionName}">
-      ${actions[actionName]}
-      </option>
-      </#list>
+  <td class="status"><span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span></td>
+  <td class="centre">
+      <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
+          <option>Actions</option>
+          <#list actions?keys as actionName>
+            <#if user.isInRole('APPLICANT') && actionName == "emailApplicant">
+            <#else>
+                <option value="${actionName?html}">${actions[actionName]}</option>
+            </#if>
+          </#list>
     </select></td>
   <td class="centre"><#if application.isWithdrawn() && !application.submittedDate??>
         Aborted
@@ -59,7 +63,9 @@
         <div class="span4">
           <ul class="documents">
             <li><b>Documents:</b></li>
+            <#if application.personalStatement?has_content>
             <li><i class="icon-file-alt"></i> <a data-field="personal-statement-link" target="_blank" href="javascript:void(0);"></a></li>
+            </#if>
             <#if application.cv?has_content>
             <li><i class="icon-file-alt"></i> <a data-field="cv-statement-link" target="_blank" href="javascript:void(0);"></a></li>
             </#if>

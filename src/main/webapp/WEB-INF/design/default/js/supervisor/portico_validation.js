@@ -3,8 +3,7 @@ $(document).ready(function()
 	$('#applyQualificationsAndReferences').click(function()
 	{
 		// TODO show ajax progress
-		$('#qualificationsSection').append('<div class="ajax" />');
-		$('#referencesSection').append('<div class="ajax" />');
+		$('#ajaxloader').show();
 		
 		var qualificationsSendToPortico = collectQualificationsSendToPortico();
 		var refereesSendToPorticoData = collectRefereesSendToPortico();
@@ -54,8 +53,7 @@ $(document).ready(function()
 			},
 			complete: function()
 			{
-				$('#qualificationsSection div.ajax').remove();
-				$('#referencesSection div.ajax').remove();
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});

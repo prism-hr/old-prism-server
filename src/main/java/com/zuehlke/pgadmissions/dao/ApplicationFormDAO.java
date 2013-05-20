@@ -76,7 +76,9 @@ public class ApplicationFormDAO {
 		ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
 				.createCriteria(ReminderInterval.class).uniqueResult();
 		Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-
+		
+		today = DateUtils.truncate(today, Calendar.DAY_OF_MONTH);
+		    
 		DetachedCriteria anyRemindersCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", notificationType))
@@ -178,7 +180,6 @@ public class ApplicationFormDAO {
 	    invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
         invalidStateList.add(ApplicationFormStatus.REJECTED);
         invalidStateList.add(ApplicationFormStatus.APPROVED);
-        invalidStateList.add(ApplicationFormStatus.INTERVIEW);
 	    return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
 	            .add(Restrictions.isNotNull("applicationAdministrator"))
 	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
@@ -218,9 +219,15 @@ public class ApplicationFormDAO {
 	}
 
 	public List<ApplicationForm> getApplicationsDueApprovalReminder() {
+	    Date today = Calendar.getInstance().getTime();
+        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
+                .createCriteria(ReminderInterval.class).uniqueResult();
+        Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+       
 	    DetachedCriteria approvalNotificationCriteria = DetachedCriteria
 				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", NotificationType.APPROVAL_REMINDER))
+				.add(Restrictions.le("notificationRecord.date", subtractInterval))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		return sessionFactory
@@ -246,8 +253,65 @@ public class ApplicationFormDAO {
 				.list();
 	}
 	
+	public List<ApplicationForm> getApplicationsDueRevalidationRequest() {
+	    DetachedCriteria revalidationNotificationCriteria = DetachedCriteria
+	            .forClass(NotificationRecord.class, "notificationRecord")
+	            .add(Restrictions.eq("notificationType", NotificationType.REPEAT_VALIDATION_REQUEST))
+	            .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+	    
+	    List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
+        invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
+        invalidStateList.add(ApplicationFormStatus.REJECTED);
+        invalidStateList.add(ApplicationFormStatus.APPROVED);
+        
+	    return sessionFactory
+	            .getCurrentSession()
+	            .createCriteria(ApplicationForm.class, "applicationForm")
+	            .add(Restrictions.and(Restrictions.isNotNull("registryUsersDueNotification"), Restrictions.eq("registryUsersDueNotification", true)))
+	            .add(Restrictions.isNotNull("adminRequestedRegistry"))
+	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
+	            .add(Subqueries.notExists(revalidationNotificationCriteria.setProjection(Projections
+	                    .property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+	                    .list();
+	}
+	
+	public List<ApplicationForm> getApplicationsDueRevalidationReminder() {
+	    Date today = Calendar.getInstance().getTime();
+        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
+                .createCriteria(ReminderInterval.class).uniqueResult();
+        Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+        
+	    DetachedCriteria revalidationReminderCriteria = DetachedCriteria
+	            .forClass(NotificationRecord.class, "notificationRecord")
+	            .add(Restrictions.eq("notificationType", NotificationType.REPEAT_VALIDATION_REMINDER))
+	            .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+	    
+	    DetachedCriteria overDueRemindersCriteria = DetachedCriteria
+                .forClass(NotificationRecord.class, "notificationRecord")
+                .add(Restrictions.eq("notificationType", NotificationType.REPEAT_VALIDATION_REMINDER))
+                .add(Restrictions.le("notificationRecord.date", subtractInterval))
+                .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+	    
+	    List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
+	    invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
+	    invalidStateList.add(ApplicationFormStatus.REJECTED);
+	    invalidStateList.add(ApplicationFormStatus.APPROVED);
+	    
+	    return sessionFactory
+	            .getCurrentSession()
+	            .createCriteria(ApplicationForm.class, "applicationForm")
+	            .add(Restrictions.and(Restrictions.isNotNull("registryUsersDueNotification"), Restrictions.eq("registryUsersDueNotification", true)))
+	            .add(Restrictions.isNotNull("adminRequestedRegistry"))
+	            .add(Restrictions.not(Restrictions.in("status", invalidStateList)))
+	            .add(Restrictions.or(Subqueries.exists(overDueRemindersCriteria.setProjection(Projections
+                        .property("notificationRecord.id"))), Subqueries.notExists(revalidationReminderCriteria
+                        .setProjection(Projections.property("notificationRecord.id")))))
+	            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+	                    .list();
+	}
+	
     public List<ApplicationForm> getApplicationsDueInterviewFeedbackNotification() {
-        DetachedCriteria appronalNotificationCriteria = DetachedCriteria
+        DetachedCriteria approvalNotificationCriteria = DetachedCriteria
                 .forClass(NotificationRecord.class, "notificationRecord")
                 .add(Restrictions.eq("notificationType", NotificationType.INTERVIEW_FEEDBACK_REQUEST))
                 .add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
@@ -257,7 +321,7 @@ public class ApplicationFormDAO {
                 .createCriteria(ApplicationForm.class, "applicationForm")
                 .add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
                 .add(Restrictions.lt("dueDate", new DateTime().toDate()))
-                .add(Subqueries.notExists(appronalNotificationCriteria.setProjection(Projections.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Subqueries.notExists(approvalNotificationCriteria.setProjection(Projections.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .list();
     }
 
@@ -265,6 +329,13 @@ public class ApplicationFormDAO {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
 				.add(Restrictions.eq("registryUsersDueNotification", true))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	}
+
+	public List<Integer> getApplicationsIdsDueRegistryNotification() {
+	    return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+	            .setProjection(Projections.property("id"))
+	            .add(Restrictions.eq("registryUsersDueNotification", true))
+	            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	public List<ApplicationForm> getApplicationsDueApprovalRequestNotification() {
@@ -330,6 +401,7 @@ public class ApplicationFormDAO {
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.or(Restrictions.isNull("pendingApprovalRestart"), Restrictions.eq("pendingApprovalRestart", false)))
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
 				.add(Subqueries.notExists(mvoedToApprovalNotificationCriteria.setProjection(Projections
 						.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)

@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-	$('.content-box-inner').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 	$.ajax({
 		type: 'GET',
 		statusCode: {
@@ -30,8 +30,10 @@ $(document).ready(function()
 		},
 		complete: function()
 		{
-			$('div.ajax').remove();
-			updateRegistryForm();
+			$('#ajaxloader').fadeOut('fast');
+			if ($('#registryUsers').length > 0) {
+				updateRegistryForm();
+			}
 
 			// -----------------------------------------------------------------------------
 			// Restrict some text fields to numbers only.

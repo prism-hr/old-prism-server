@@ -3,12 +3,12 @@
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
 <a name="additional-info"></a>
-<h2 id="additional-H2" class="empty open">
+<h2 id="additional-H2" class="empty">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
 	Additional Information<em>*</em>
 </h2>
 
-<div>
+<div style="display:none;">
 	<form>
 	    <#if errorCode?? && errorCode=="true">
         <div class="alert alert-error"> 
@@ -27,21 +27,13 @@
 		
 			<!-- Radio buttons for convictions. -->
 			<div class="row">
-				<label class="plain-label">Do you have any unspent Criminial Convictions?<em>*</em></label>
+				<label class="plain-label">Do you have any unspent Criminal Convictions?<em>*</em></label>
 				<span class="hint" data-desc="<@spring.message 'additionalInformation.hasconvictions'/>"></span>
 				<div class="field">
-					<label><input type="radio" name="convictionRadio" value="TRUE" id="convictionRadio_true"
-					<#if additionalInformation.convictions?? && additionalInformation.convictions >
-					checked="checked"
-					</#if> 
-					<#if applicationForm.isDecided()>disabled="disabled"</#if>									   
-					/> Yes</label>   		
-					<label><input type="radio" name="convictionRadio" value="FALSE" id="convictionRadio_false"
-					<#if  additionalInformation.convictions?? && !additionalInformation.convictions >
-					checked="checked"
-					</#if> 
-					<#if applicationForm.isDecided()>disabled="disabled"</#if>									   
-					/> No</label>
+					<label><input type="radio" name="convictionRadio" value="TRUE" id="convictionRadio_true" <#if additionalInformation.convictions?? && additionalInformation.convictions> checked="checked" </#if>  
+					<#if applicationForm.isDecided()>disabled="disabled"</#if> /> Yes</label>
+					<label><input type="radio" name="convictionRadio" value="FALSE" id="convictionRadio_false" <#if  additionalInformation.convictions?? && !additionalInformation.convictions> checked="checked" </#if> 
+					<#if applicationForm.isDecided()>disabled="disabled"</#if> /> No</label>
 				</div>
 			</div>
 			<@spring.bind "additionalInformation.convictions" /> 

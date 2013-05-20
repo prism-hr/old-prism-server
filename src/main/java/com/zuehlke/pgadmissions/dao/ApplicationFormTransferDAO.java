@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -53,6 +54,16 @@ public class ApplicationFormTransferDAO {
                                 Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL)))
                 .addOrder(Order.asc("transferStartTimepoint")).list();
     }
+    
+    public List<Long> getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds() {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(ApplicationFormTransfer.class)
+                .setProjection(Projections.id())
+                .add(Restrictions.or(
+                                Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING), 
+                                Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL)))
+                .addOrder(Order.asc("transferStartTimepoint")).list();
+    }
 
     public List<ApplicationFormTransfer> getAllTransfersWaitingForAttachmentsSending() {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).
@@ -67,4 +78,5 @@ public class ApplicationFormTransferDAO {
     public List<ApplicationFormTransfer> getAllTransfers() {
         return (List<ApplicationFormTransfer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).list();
     }
+
 }

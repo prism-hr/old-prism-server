@@ -24,6 +24,7 @@
   
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/reviewer/comment/reviewComment.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
@@ -48,7 +49,7 @@
     <!-- Middle Starts -->
     <div id="middle"> <#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
       <@header/>
-      <section id="reviewcommentsectopm" >
+      <div id="reviewcommentsectopm" >
       <!-- Main content area. -->
       <article id="content" role="main"> 
         
@@ -61,8 +62,16 @@
                 <form id ="reviewForm" method="POST" action= "<@spring.url '/reviewFeedback'/>"/>
                 
                 <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
-                <div class="alert alert-info">
-          			<i class="icon-info-sign"></i>  Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme. </div>
+                
+                <@spring.bind "comment.confirmNextStage" />
+                <#if spring.status.errorMessages?size &gt; 0>
+		     		<div class="alert alert-error" >
+                    <i class="icon-warning-sign"></i>
+			    <#else>
+		            <div class="alert alert-info">
+          			<i class="icon-info-sign"></i>
+	          	</#if>
+ 				 Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme. </div>
                 <div class="row-group">
                   <div class="row">
                     <label for="review-comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>
@@ -105,7 +114,7 @@
                       </#list> </div>
                   </div>
                   <div class="row multi-line"> 
-                  <label id="supervise-lbl" class="plain-label">Would you like to interview the applicant with a view to working with them?<em>*</em></label> 
+                  <label id="supervise-lbl" class="plain-label">Would you like to interview the applicant?<em>*</em></label> 
                   <span class="hint" data-desc="<@spring.message 'review.interview'/>"></span>
                     <div class="field" id="field-wouldinterview">
                       <label><input type="radio" name="willingToInterview" value="true" id="willingRB_true" <#if comment.willingToInterviewSet && comment.willingToInterview> checked="checked"</#if> /> Yes</label>
@@ -115,24 +124,49 @@
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
                       </#list> </div>
                   </div>
+                  <div class="row multi-line"> 
+                  <label id="supervise-work-lbl" class="plain-label">Would you like to supervise this applicant?<em>*</em></label> 
+                  <span class="hint" data-desc="<@spring.message 'review.willingToWork'/>"></span>
+                    <div class="field" id="field-wouldwork">
+                      <label><input type="radio" name="willingToWorkWithApplicant" value="true" id="willingWorkRB_true" <#if comment.willingToWorkWithApplicantSet && comment.willingToWorkWithApplicant> checked="checked"</#if> /> Yes</label>
+                      <label><input type="radio" name="willingToWorkWithApplicant" value="false" id="willingWorkRB_false" <#if comment.willingToWorkWithApplicantSet && !comment.willingToWorkWithApplicant> checked="checked"</#if> /> No</label>
+                      <@spring.bind "comment.willingToWorkWithApplicant" />
+                      <#list spring.status.errorMessages as error>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+                      </#list> </div>
+                  </div>
                 </div>
-                
-                <@spring.bind "comment.confirmNextStage" />
-                <#if spring.status.errorMessages?size &gt; 0>
-                    <div class="alert alert-error" >
-                <#else>
-                    <div class="alert" >
-                </#if>
-                    <div class="row">
-                        <label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">Please confirm that you are satisfied with your comments.</label>
-                        <div class="terms-field">
-                            <input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
-                        </div>
-                        <input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
-                    </div>
-                </div>
+
+                <#assign scores = comment.scores>
+                <#if (scores)?has_content>
+	                <div id="scoring-questions" class="row-group">
+	                  <#if comment.alert??>
+	                  	<#assign alertForScoringQuestions=comment.alert>
+	                  </#if>
+	                  <#assign errorsContainerName = "comment">
+	                  <h3>Programme Specific Questions</h3>
+	                  <#include "/private/staff/scores.ftl"/>
+	                </div>
+	          	</#if>
+	          	
+           		<@spring.bind "comment.confirmNextStage" />
+			    <#if spring.status.errorMessages?size &gt; 0>
+		     		<div class="alert alert-error" >
+			    <#else>
+		            <div class="alert" >
+	          	</#if>
+						<div class="row">
+							<label id="confirmNextStageLabel" class="terms-label" for="confirmNextStage">
+								Please confirm that you are satisfied with your comments.				
+							</label>
+							<div class="terms-field">
+								<input type="checkbox" name="confirmNextStage" id="confirmNextStage"/>
+							</div>
+							<input type="hidden" name="confirmNextStageValue" id="confirmNextStageValue"/>
+						</div>
+					</div>
                 <div class="buttons">
-                  <button class="btn btn-primary" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>
+              		<button class="btn btn-primary" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>
                 </div>
                 </form>
               </div>
@@ -143,7 +177,7 @@
         <!-- .content-box --> 
         
       </article>
-      </section>
+      </div>
     </div>
     <!-- Middle Ends --> 
     

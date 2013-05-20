@@ -98,26 +98,26 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		save(unsubmittedApplication, approvedApplication, rejectedApplication,withdrawnApplicationForm);
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee refereeOne = new RefereeBuilder().declined(false).application(unsubmittedApplication).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
+		Referee refereeOne = new RefereeBuilder().id(1).declined(false).application(unsubmittedApplication).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).build();
 		
-		Referee refereeTwo = new RefereeBuilder().declined(false).application(rejectedApplication).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
+		Referee refereeTwo = new RefereeBuilder().id(2).declined(false).application(rejectedApplication).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).build();
 		
-		Referee refereeThree = new RefereeBuilder().declined(false).application(approvedApplication).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
+		Referee refereeThree = new RefereeBuilder().id(3).declined(false).application(approvedApplication).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).build();
 		
-		Referee refereeFour = new RefereeBuilder().declined(false).application(withdrawnApplicationForm).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
+		Referee refereeFour = new RefereeBuilder().id(4).declined(false).application(withdrawnApplicationForm).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).build();
 		
 		save(refereeOne, refereeTwo, refereeThree, refereeFour);
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertFalse(referees.contains(refereeOne));
-		assertFalse(referees.contains(refereeTwo));
-		assertFalse(referees.contains(refereeThree));
-		assertFalse(referees.contains(refereeFour));
+		assertFalse(referees.contains(refereeOne.getId()));
+		assertFalse(referees.contains(refereeTwo.getId()));
+		assertFalse(referees.contains(refereeThree.getId()));
+		assertFalse(referees.contains(refereeFour.getId()));
 
 	}
 
@@ -127,13 +127,13 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		save(application);
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().application(application).declined(true).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
+		Referee referee = new RefereeBuilder().id(1).application(application).declined(true).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).build();		
 		save(referee);
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertFalse(referees.contains(referee));
+		assertFalse(referees.contains(referee.getId()));
 	}
 	
 	@Test
@@ -143,15 +143,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").build();
 		ReferenceComment reference = new ReferenceCommentBuilder().user(user).comment("comment").application(application).document(document).build();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
+		Referee referee = new RefereeBuilder().id(1).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).user(user).build();			
 	
 		save(document, reference,referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertFalse(referees.contains(referee));		
+		assertFalse(referees.contains(referee.getId()));		
 	}
 	
 	@Test
@@ -161,15 +161,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();		
 		Date threeDaysAgo = DateUtils.addDays(now,-3);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(threeDaysAgo)
+		Referee referee = new RefereeBuilder().id(1).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(threeDaysAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).build();			
 	
 		save(referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertFalse(referees.contains(referee));		
+		assertFalse(referees.contains(referee.getId()));		
 	}
 	
 	@Test
@@ -179,16 +179,16 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();		
 		Date eightDaysAgo = DateUtils.addDays(now,-8);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(eightDaysAgo)
+		Referee referee = new RefereeBuilder().id(1).user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(eightDaysAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").build();			
 	
 		save(referee);
 		
 		flushAndClearSession();
 		assertEquals(referee.getId(), refereeDAO.getRefereeById(referee.getId()).getId());
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertTrue(listContainsId(referee.getId(), referees));		
+		assertTrue(referees.contains(referee.getId()));		
 	}
 	
 	@Test
@@ -197,15 +197,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		save(application);		
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
+		Referee referee = new RefereeBuilder().id(1).user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").build();			
 	
 		save(referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertFalse(referees.contains(referee));		
+		assertFalse(referees.contains(referee.getId()));		
 	}
 	
 	@Test
@@ -224,15 +224,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date oneWeekAgo = DateUtils.addDays(now,-7);
 		Date oneWeekMinusFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, 5);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekMinusFiveMinAgo)
+		Referee referee = new RefereeBuilder().id(1).user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekMinusFiveMinAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").build();			
 	
 		save(referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertTrue(listContainsId(referee.getId(), referees));			
+		assertTrue(referees.contains(referee.getId()));			
 	}
 	
 	@Test
@@ -250,15 +250,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();		
 		Date oneMinuteAgo = DateUtils.addMinutes(now,-1);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneMinuteAgo)
+		Referee referee = new RefereeBuilder().id(1).user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneMinuteAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").build();			
 		
 		save(referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertFalse(referees.contains(referee));			
+		assertFalse(referees.contains(referee.getId()));			
 	}
 	
 	@Test
@@ -276,15 +276,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();		
 		Date twoMinutesAgo = DateUtils.addMinutes(now,-2);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(twoMinutesAgo)
+		Referee referee = new RefereeBuilder().id(1).user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(twoMinutesAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").build();			
 		
 		save(referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertTrue(listContainsId(referee.getId(), referees));	
+		assertTrue(referees.contains(referee.getId()));	
 	}
 	
 	@Test
@@ -295,15 +295,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date sixDaysAgo = DateUtils.addDays(now,-6);
 		Date oneWeekPlusFiveMinAgo = DateUtils.addMinutes(sixDaysAgo, -5);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)
+		Referee referee = new RefereeBuilder().id(1).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").build();			
 	
 		save(referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertFalse(referees.contains(referee));		
+		assertFalse(referees.contains(referee.getId()));		
 	}
 	
 	@Test
@@ -314,15 +314,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date oneWeekAgo = DateUtils.addMinutes(now, -((int) TimeUnit.MINUTES.convert(7, TimeUnit.DAYS)));
 		Date oneWeekPlusFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, -5);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)
+		Referee referee = new RefereeBuilder().id(1).user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").build();			
 	
 		save(referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
 		assertNotNull(referees);
-		assertTrue(listContainsId(referee.getId(), referees));
+		assertTrue(referees.contains(referee.getId()));
 	}
 	
 	@Test
@@ -333,14 +333,14 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date oneWeekAgo = DateUtils.addDays(now,-7);
 		Date oneWeekPlusFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, -5);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)
+		Referee referee = new RefereeBuilder().id(1).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").build();			
 		
 		save(referee);
 		
 		flushAndClearSession();
-		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
-		assertFalse(referees.contains(referee));		
+		List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+		assertFalse(referees.contains(referee.getId()));		
 	}
 	
 	@Test

@@ -67,9 +67,9 @@ $(document)
 					// -------------------------------------------------------------------------------
 					$('#personalDetailsClearButton').click(
 							function() {
-								$('#personalDetailsSection > div').append(
-										'<div class="ajax" />');
+								$('#ajaxloader').show();
 								loadPersonalDetails(true);
+								
 							});
 
 					// -------------------------------------------------------------------------------
@@ -659,7 +659,7 @@ function postPersonalDetailsData(message) {
 	}
 
 	// do the post!
-	$('#personalDetailsSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 
 	$
 			.ajax({
@@ -689,16 +689,16 @@ function postPersonalDetailsData(message) {
 
 					if (message == 'close') {
 						// Close the section only if there are no errors.
-						var errorCount = $('#personalDetailsSection .alert-error:visible').length;
-						if (errorCount == 0) {
+						var errorCount = $('#personalDetailsSection div.alert-error').length;
+						
+						if (errorCount > 0) {
 							$('#personalDetails-H2').trigger('click');
-						} else {
 							markSectionError('#personalDetailsSection');
-						}
+						} 
 					}
 				},
 				complete : function() {
-					$('#personalDetailsSection div.ajax').remove();
+					$('#ajaxloader').fadeOut('fast');
 				}
 			});
 }

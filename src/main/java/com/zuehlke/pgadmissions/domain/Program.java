@@ -2,8 +2,11 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,9 +15,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+
 @Entity(name = "PROGRAM")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Program extends Authorisable implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;
@@ -56,6 +66,11 @@ public class Program extends Authorisable implements Serializable {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
     private List<Badge> badges = new ArrayList<Badge>();
+    
+    @MapKey(name="stage")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
+    @JoinColumn(name="program_id")
+    private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
 
     public Program() {
     }
@@ -179,4 +194,8 @@ public class Program extends Authorisable implements Serializable {
         this.viewers.clear();
         this.approvers.addAll(viewers);
     }
+    
+    public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {
+		return scoringDefinitions;
+	}
 }

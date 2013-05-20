@@ -135,7 +135,7 @@ public class BadgeController {
         return gson.toJson(convertedDates);
     }
     
-    @RequestMapping(value = "/getProjectTitles", method = RequestMethod.GET)
+    @RequestMapping(value = "/getProjectTitles", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getProjectTitlesJson(@RequestParam String program, @RequestParam String term) {
         if (!(userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR) || userService.getCurrentUser().isInRole(Authority.ADMINISTRATOR))) {

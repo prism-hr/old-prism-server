@@ -7,7 +7,7 @@ $(document).ready(function() {
                 email : $(this).attr("email"),
         };
         
-        $('.content-box-inner').append('<div class="ajax" />');
+        //$('#ajaxloader').show();
         
         $.ajax({
             type: 'POST',
@@ -29,7 +29,7 @@ $(document).ready(function() {
                 }
              },
              complete: function() {
-                 $('.content-box-inner div.ajax').remove();
+                //$('#ajaxloader').fadeOut('fast');
              }
         });
     });
@@ -46,7 +46,7 @@ $(document).ready(function() {
                 confirmPassword : $('#confirmNewPass').val()
         };
         
-        $('.content-box-inner').append('<div class="ajax" />');
+        //$('#ajaxloader').show();
         
         $.ajax({
             type: 'POST',
@@ -68,7 +68,7 @@ $(document).ready(function() {
                 }
              },
              complete: function() {
-                 $('.content-box-inner div.ajax').remove();
+                 //$('#ajaxloader').fadeOut('fast');
              }
         });
     });
@@ -85,7 +85,7 @@ $(document).ready(function() {
                 password : $('#linkPassword').val()
         };
         
-        $('.content-box-inner').append('<div class="ajax" />');
+        //$('#ajaxloader').show();
         
         $.ajax({
             type: 'POST',
@@ -107,14 +107,14 @@ $(document).ready(function() {
                 }
              },
              complete: function() {
-                 $('.content-box-inner div.ajax').remove();
+                 //$('#ajaxloader').fadeOut('fast');
              }
         });
     });
 });
 
 function getAccountDetailsSection() {
-    $('.content-box-inner').append('<div class="ajax" />');
+    $('#ajaxloader').show();
     var url = "/pgadmissions/myAccount/section";    
     if($('#messageCode').val() != ''){
         url = url + "?messageCode=" + $('#messageCode').val();
@@ -122,6 +122,7 @@ function getAccountDetailsSection() {
     if($('#messageCodeLink').val() != ''){
         url = url + "?messageCodeLink=" + $('#messageCodeLink').val();
     }
+	$('#ajaxloader').show();
     $.ajax({
         type: 'GET',
         statusCode: {
@@ -137,7 +138,7 @@ function getAccountDetailsSection() {
             addToolTips();
         },
         complete: function() {
-            $('.content-box-inner div.ajax').remove();
+           $('#ajaxloader').fadeOut('fast');
             var urllocation = location.href;
             if (urllocation.indexOf("#") != -1 && urllocation.indexOf("#linkAcountDetailsSection") > -1) {
                 window.location.hash = "linkAcountDetailsSectionChromeFix";

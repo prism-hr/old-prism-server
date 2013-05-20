@@ -121,7 +121,7 @@ function postAddressData(message)
 	else{
 		acceptedTheTerms = true;
 	}
-	$('#addressSection > div').append('<div class="ajax" />');
+	$('#ajaxloader').show();
 
 	$.ajax({
 		type: 'POST',
@@ -167,19 +167,17 @@ function postAddressData(message)
 			if (message == 'close')
 			{
 				// Close the section only if there are no errors.
-				var errorCount = $('#addressSection .alert-error:visible').length;
-				if (errorCount == 0)
+				var errorCount = $('#addressSection .alert-error').length;
+				if (errorCount > 0)
 				{
 					$('#address-H2').trigger('click');
-				}else{
 					markSectionError('#addressSection');
 				}
 			}
 		},
-    complete: function()
-    {
-			$('#addressSection div.ajax').remove();
-    }
+		complete: function(){
+			$('#ajaxloader').fadeOut('fast');
+		}
 	});
 }
 

@@ -32,70 +32,70 @@ import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 @RequestMapping("/review")
 public class MoveToReviewController extends ReviewController {
 
-    private final ReviewRoundValidator reviewRoundValidator;
-    private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
+	private final ReviewRoundValidator reviewRoundValidator;
+	private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
 
-    MoveToReviewController() {
-        this(null, null, null, null, null);
-    }
+	MoveToReviewController() {
+		this(null, null, null, null, null);
+	}
 
-    @Autowired
-    public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
-            ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor) {
-        super(applicationsService, userService, reviewService);
-        this.reviewRoundValidator = reviewRoundValidator;
-        this.reviewerPropertyEditor = reviewerPropertyEditor;
-    }
+	@Autowired
+	public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
+	                ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor) {
+		super(applicationsService, userService, reviewService);
+		this.reviewRoundValidator = reviewRoundValidator;
+		this.reviewerPropertyEditor = reviewerPropertyEditor;
+	}
 
-    @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
-    public String getReviewRoundDetailsPage(ModelMap modelMap) {
-        modelMap.put("assignOnly", false);
-        return REVIEW_DETAILS_VIEW_NAME;
-    }
+	@RequestMapping(method = RequestMethod.GET, value = "moveToReview")
+	public String getReviewRoundDetailsPage(ModelMap modelMap) {
+		modelMap.put("assignOnly", false);
+		return REVIEW_DETAILS_VIEW_NAME;
+	}
 
-    @RequestMapping(method = RequestMethod.GET, value = "reviewersSection")
-    public String getReviewersSectionView(ModelMap modelMap) {
-        modelMap.put("assignOnly", false);
-        return REVIEWERS_SECTION_NAME;
-    }
+	@RequestMapping(method = RequestMethod.GET, value = "reviewersSection")
+	public String getReviewersSectionView(ModelMap modelMap) {
+		modelMap.put("assignOnly", false);
+		return REVIEWERS_SECTION_NAME;
+	}
 
-    @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
+	@RequestMapping(value = "/move", method = RequestMethod.POST)
+	public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
 
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        if (bindingResult.hasErrors()) {
-            return REVIEWERS_SECTION_NAME;
-        }
-        reviewService.moveApplicationToReview(applicationForm, reviewRound);
-        return "/private/common/ajax_OK";
-    }
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		if (bindingResult.hasErrors()) {
+			return REVIEWERS_SECTION_NAME;
+		}
+		reviewService.moveApplicationToReview(applicationForm, reviewRound);
+		return "/private/common/ajax_OK";
+	}
 
-    @ModelAttribute("reviewRound")
-    public ReviewRound getReviewRound(@RequestParam Object applicationId) {
-        ReviewRound reviewRound = new ReviewRound();
-        ApplicationForm applicationForm = getApplicationForm((String) applicationId);
-        ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-        if (latestReviewRound != null) {
-            List<Reviewer> newReviewers = Lists.newArrayList();
-            for (Reviewer lastReviewer : latestReviewRound.getReviewers()) {
-                ReviewComment lastReview = lastReviewer.getReview();
-                if (lastReview == null || !BooleanUtils.isTrue(lastReview.isDecline())) {
-                    newReviewers.add(lastReviewer);
-                }
-            }
-            reviewRound.setReviewers(newReviewers);
-        }
-        return reviewRound;
-    }
+	@ModelAttribute("reviewRound")
+	public ReviewRound getReviewRound(@RequestParam Object applicationId) {
+		ReviewRound reviewRound = new ReviewRound();
+		ApplicationForm applicationForm = getApplicationForm((String) applicationId);
+		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
+		if (latestReviewRound != null) {
+			List<Reviewer> newReviewers = Lists.newArrayList();
+			for (Reviewer lastReviewer : latestReviewRound.getReviewers()) {
+				ReviewComment lastReview = lastReviewer.getReview();
+				if (lastReview == null || !BooleanUtils.isTrue(lastReview.isDecline())) {
+					newReviewers.add(lastReviewer);
+				}
+			}
+			reviewRound.setReviewers(newReviewers);
+		}
+		return reviewRound;
+	}
 
-    @InitBinder(value = "reviewRound")
-    public void registerReviewRoundValidator(WebDataBinder binder) {
-        binder.setValidator(reviewRoundValidator);
-        binder.registerCustomEditor(Reviewer.class, reviewerPropertyEditor);
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-    }
+	@InitBinder(value = "reviewRound")
+	public void registerReviewRoundValidator(WebDataBinder binder) {
+		binder.setValidator(reviewRoundValidator);
+		binder.registerCustomEditor(Reviewer.class, reviewerPropertyEditor);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+	}
 
-    public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
-    }
+	public StringTrimmerEditor newStringTrimmerEditor() {
+		return new StringTrimmerEditor(false);
+	}
 }

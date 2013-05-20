@@ -963,14 +963,6 @@ public class RegisteredUserTest {
 	}
 
 	@Test
-	public void shouldHaveAdminRightsOnAppIfAdministratorOfApplication() {
-		RegisteredUser user = new RegisteredUserBuilder().id(8).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationAdministrator(user).status(ApplicationFormStatus.VALIDATION)
-				.build();
-		assertTrue(user.hasAdminRightsOnApplication(applicationForm));
-	}
-
-	@Test
 	public void shouldHaveAdminRightsOnAppIfSuperadmin() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build();

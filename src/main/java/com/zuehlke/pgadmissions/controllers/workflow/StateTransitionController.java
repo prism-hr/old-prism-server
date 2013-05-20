@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
@@ -14,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -31,37 +33,35 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class StateTransitionController {
 
     protected static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
-    
+
     protected final ApplicationsService applicationsService;
-    
+
     protected final UserService userService;
-    
+
     protected final CommentService commentService;
-    
+
     protected final CommentFactory commentFactory;
-    
+
     protected final EncryptionHelper encryptionHelper;
-    
+
     protected final DocumentService documentService;
-    
+
     protected final ApprovalService approvalService;
-    
+
     protected final StateChangeValidator stateChangeValidator;
-    
+
     protected final DocumentPropertyEditor documentPropertyEditor;
 
     protected final StateTransitionService stateTransitionService;
-    
+
     public StateTransitionController() {
         this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public StateTransitionController(ApplicationsService applicationsService, UserService userService,
-            CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
-            DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
-            StateTransitionService stateTransitionService) {
+    public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -93,16 +93,17 @@ public class StateTransitionController {
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        if (!currentUser.hasAdminRightsOnApplication(applicationForm) && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
+        if (!currentUser.isInRole(Authority.ADMITTER) && !currentUser.hasAdminRightsOnApplication(applicationForm)
+                && !currentUser.isApplicationAdministrator(applicationForm) && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
     }
 
     @ModelAttribute("actionsDefinition")
-    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId) {
+    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.getActionsDefinition(getUser(), application);
+        return applicationsService.calculateActions(getUser(), application);
     }
 
     RegisteredUser getCurrentUser() {
@@ -110,8 +111,24 @@ public class StateTransitionController {
     }
 
     @ModelAttribute("stati")
-    public ApplicationFormStatus[] getAvailableNextStati(@RequestParam String applicationId) {
-        return stateTransitionService.getAvailableNextStati(getApplicationForm(applicationId).getStatus());
+    public List<ApplicationFormStatus> getAvailableNextStati(@RequestParam String applicationId) {
+        final ApplicationForm form = getApplicationForm(applicationId);
+        final RegisteredUser currentUser = getCurrentUser();
+        List<ApplicationFormStatus> availableNextStatuses = stateTransitionService.getAvailableNextStati(getApplicationForm(applicationId).getStatus());
+        CollectionUtils.filter(availableNextStatuses, new Predicate() {
+            @Override
+            public boolean evaluate(final Object object) {
+                ApplicationFormStatus status = (ApplicationFormStatus) object;
+                if (status.equals(ApplicationFormStatus.APPROVED)) {
+                    if (currentUser.isInRoleInProgram(Authority.ADMINISTRATOR, form.getProgram())
+                            && currentUser.isNotInRoleInProgram(Authority.APPROVER, form.getProgram())) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+        return availableNextStatuses;
     }
 
     @ModelAttribute("user")

@@ -156,7 +156,7 @@ div.button { cursor: pointer; display: inline-block; vertical-align: top; } /* u
 
 span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical-align: middle; }
 
-.button-edit, .button-delete, .button-question, .button-responded, .button-show {
+.button-edit, .remove-date, .button-delete, .button-question, .button-responded, .button-show, .clone-times {
 	background: url(../../images/icon_round.png) no-repeat;
 	border: none;
 	border-radius: 0;
@@ -848,6 +848,7 @@ span.icon-role.approver { background-image: url(../../images/role_approver.png);
 span.icon-role.applicant { background-image: url(../../images/role_applicant.png);  background-position: 0 0; }
 span.icon-role.referee { background-image: url(../../images/role_referee.png);  background-position: 0 0; }
 span.icon-role.supervisor { background-image: url(../../images/role_supervisor.png); background-position: 0 0;  }
+span.icon-role.admitter { background-image: url(../../images/role_admitter.png); background-position: 0 0;  }
 span.icon-role.viewer { background-image: url(../../images/role_viewer.png); background-position: 0 0;  }
 
 
@@ -869,17 +870,37 @@ button span.icon-down { background-image: url(../../images/icon_arrow_down.png) 
 
 
 /* AJAX loading/posting notification */
-div.ajax {
-	background: rgba(128,128,128,.4) url(../../images/ajax-loader.gif) no-repeat center !important;
+div#ajaxloader {
+	display: none;
+	background: rgba(0,0,0,0.4);
 	border: none !important;
 	height: 100%;
 	left: 0;
 	margin: 0 !important;
 	min-height: 80px;
 	padding: 0 !important;
-	position: absolute !important;
+	position: fixed !important;
 	top: 0;
 	width: 100%;
+	z-index: 999;
+}
+.ajaxbox {
+	background-clip: padding-box;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    left: 50%;
+    margin-left: -162px;
+    outline: medium none;
+    position: fixed;
+    top: 30%;
+    width: 300px;
+    padding: 10px;
+    z-index: 1050;
+}
+.ajaxbox .progress {
+	margin-bottom: 0px;
 }
 
 
@@ -981,7 +1002,77 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   border-radius: 4px;
   border-color: #ddd !important;
 }
+
+/* Interview arrangements */
+.datepicker-inline .ui-state-highlight {
+	border-width:0;
+}
+
+.datepicker-inline .ui-state-highlight a {
+	background-color:#27AAE1;
+}
+
+#interviewStatus.row-group .row .field {
+	float:left;
+	margin:0 10px 0 0;
+}
+
+#interviewStatus.row-group .row .field input[type=radio] {
+	margin:0;
+}
+
+#interviewStatus.row-group .row label {
+	line-height:17px;
+	width:auto;
+}
+
+#availableDatesPicker {
+	margin-bottom:20px;
+}
+#interviewPossibleStartTimes {
+	margin-top: -15px;
+	margin-bottom: 20px;
+}
+.field.mpt {
+	margin-top: -10px;
+}
+#interviewPossibleStartTimes table th,
+#interviewPossibleStartTimes table td {
+	padding:4px;
+	width:60px;
+}
+#interviewPossibleStartTimes table input { margin-bottom:0px !important;}
+
+#interviewPossibleStartTimes .suggested-date span { display:block; float:left; }
+
+
+#interviewPossibleStartTimes input[type=text] {
+	width:50px;
+}
+
+#interviewPossibleStartTimes tr .suggested-date {
+	width:222px !important;
+}
+
+#interviewPossibleStartTimes tr th.clone-column,
+#interviewPossibleStartTimes tr td.clone-column,
+#interviewPossibleStartTimes tr th.remove-column,
+#interviewPossibleStartTimes tr td.remove-column  {
+	width:16px !important;
+}
+
+#interviewPossibleStartTimes .time-hidden {
+	display:none;
+}
+
 /* Fixes */
+.no-margin { margin:0 !important; }
+
+.buttons.no-bottom-margin {
+	margin-bottom: 0px !important;
+}
+
+#fake-submit { margin:10px; }
 
 #content {
   padding: 15px !important;
@@ -1006,11 +1097,11 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   font-size: 15px;
   padding: 6px 14px;
 }
-input[readonly]#fundingAwardDate, .filter input[readonly].date  ,input[readonly]#recommendedStartDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate {
+input[readonly].date-input, input[readonly].second-date-input, input[readonly]#fundingAwardDate, .filter input[readonly].date  ,input[readonly]#recommendedStartDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate, input[readonly]#availableDates {
 	background-color: #FFFFFF;
 	cursor:auto;
 }
-input[readonly][disabled]#fundingAwardDate, .filter input[readonly][disabled].date , input[readonly][disabled]#recommendedStartDate, input[readonly][disabled]#offerStartDate, input[readonly][disabled]#interviewDate, input[readonly][disabled]#position_endDate, input[readonly][disabled]#qualificationAwardDate, input[readonly][disabled]#position_startDate, input[readonly][disabled]#qualificationStartDate, input[readonly][disabled]#startDate, input[readonly][disabled]#dateOfBirth, input[readonly][disabled]#dateOfExamination, input[readonly][disabled]#passportIssueDate, input[readonly][disabled]#passportExpiryDate {
+input[readonly][disabled].date-input, input[readonly][disabled].second-date-input, input[readonly][disabled]#fundingAwardDate, .filter input[readonly][disabled].date , input[readonly][disabled]#recommendedStartDate, input[readonly][disabled]#offerStartDate, input[readonly][disabled]#interviewDate, input[readonly][disabled]#position_endDate, input[readonly][disabled]#qualificationAwardDate, input[readonly][disabled]#position_startDate, input[readonly][disabled]#qualificationStartDate, input[readonly][disabled]#startDate, input[readonly][disabled]#dateOfBirth, input[readonly][disabled]#dateOfExamination, input[readonly][disabled]#passportIssueDate, input[readonly][disabled]#passportExpiryDate {
 	background-color: #EEEEEE;
 	cursor: not-allowed;
 }
@@ -1086,24 +1177,25 @@ span.count {
 .content-box-inner>.alert strong{
 	font-size: 13px;
 }
-.field .alert, .alert-info {
+.field .alert, .alert-info, form>.alert-error:first-child {
     line-height: 1.4em;
     padding: 6px;
-    padding-left: 24px !important;
+    padding-left: 26px !important;
 }
-.field .alert i, .alert-info i{
-  margin-left: -14px;
+.field .alert i, .alert-info i, form>.alert-error  i.icon-warning-sign {
+  margin-left: -17px;
   font-size: 14px;
 }
 h3.group-heading-label {
   width: auto;
 }
 /* New Icons */
+.modal .modal-body .hint,
 section.form-rows .hint{
   margin-top: 0px !important;
   background: none !important;
 }
-.hint:before, .arrow:before, .button-delete:before, .button-show:before, .button-edit:before, .button-responded:before, span.icon-status:before {
+.hint:before, .remove-date:before, .clone-times:before, .arrow:before, .button-delete:before, .button-show:before, .button-edit:before, .button-responded:before, span.icon-status:before {
   font-family:FontAwesome;font-weight:normal;
   font-style:normal;
   text-decoration:inherit;-webkit-font-smoothing:antialiased;
@@ -1122,6 +1214,9 @@ section.form-rows .hint{
   -webkit-font-smoothing: antialiased;
   cursor:default;
 }
+.remove-date:before {
+	width: 26px;
+}
 .hint:before{
   cursor: default;
   content:"\f059";
@@ -1131,17 +1226,17 @@ section.form-rows .hint{
 .hint.grey:before{
 	color: #DDE4E2;
 }
-.button-delete.grey {
+.button-delete.grey, .clone-times.grey {
 	background:#DDE4E2;
 	cursor: default !important;
 }
 .button-delete.grey:before {
 	cursor: default !important;
 }
-.button-delete:before, .button-edit:before, .button-show:before, .button-responded:before {
+.button-delete:before, .remove-date:before, .clone-times:before, .button-edit:before, .button-show:before, .button-responded:before {
   cursor: pointer;
 }
-.button-delete, .button-edit, .button-show, .button-responded {
+.button-delete, .button-edit, .button-show, .button-responded, .remove-date, .clone-times {
   overflow: hidden;
   line-height: 25px;
   background: #9B9DA0;
@@ -1158,25 +1253,30 @@ section.form-rows .hint{
   font-size: 17px;
   line-height: 24px;
 }
-.button-delete:hover, .button-edit:hover, .button-show:hover, .button-responded:hover {
+.button-delete:hover, .clone-times:hover, .button-edit:hover, .button-show:hover, .button-responded:hover, .remove-date:hover {
   color: #9B9DA0;
   text-decoration: none;
 }
-.button-delete:before {
-  content:"\f014 ";
+.button-delete:before, .remove-date:before {
+  content:"\f014";
   color: white;
 }
+.clone-times:before {
+  content:"\f0c5";
+  color: white;
+  font-size: 16px;
+}
 .button-edit:before {
-  content:"\f040 ";
+  content:"\f040";
   color: white;
 }
 .button-show:before {
-  content:"\f06e ";
+  content:"\f06e";
   color: white;
   width: 25px;
 }
 .button-responded:before {
-  content:"\f00c ";
+  content:"\f00c";
   color: white;
   width: 25px;
 }
@@ -1295,6 +1395,11 @@ span.icon-status.not-submitted:before {
   width: 650px !important;
   margin-left: -318px !important;
 }
+
+#previewModal.modal.large {
+	width: 800px !important;
+	height:500px;
+}
 #psUploadFields .button-delete, #cvUploadedDocument .button-delete  {
   margin-top: 0px;
   margin-left: 6px;
@@ -1366,7 +1471,7 @@ form#removeForm {
 #supervisor_div .alert-info {
 	margin-bottom: 0px;
 }
-#badgeS {
+#scoringConfiguration {
 	margin-bottom: -10px;
 }
 #search-box .btn.remove, #search-box .btn.add{
@@ -1460,6 +1565,12 @@ form#removeForm {
     top: 6px;
     width: 28px;
 }
+
+.score-results h4 { padding:6px 9px 5px; border-top:6px solid white; margin:10px 0 0; }
+.score-results p { margin-bottom:12px !important; }
+.score-results b { margin-bottom:10px; }
+.score-results ul { margin-top:-24px !important; margin-bottom:-11px !important; }
+
 .ui-tooltip{
     margin-top: 10px;
 }
@@ -1509,4 +1620,172 @@ form#removeForm {
 }
 .fileupload-new, .fileupload-new, .uneditable-input{
 	cursor: pointer !important;
+}
+
+/* Interviews */
+.interview-votes {
+	
+}
+
+.interview-votes .votes-summary {
+	font-weight:bold;
+}
+
+.interview-votes .table.timeslots td {
+	vertical-align:middle;
+}
+
+.interview-votes .timeslots-wrapper {
+	position:relative;
+}
+.interview-votes .timeslots-scrollable {
+	margin-left: 232px;
+    overflow: auto;
+    width: 608px;
+    margin-bottom: 10px;
+}
+
+.interview-votes .timeslots-scrollable::-webkit-scrollbar {
+	width: 15px; // to adjust width
+}
+.interview-votes .timeslots-scrollable::-webkit-scrollbar-track {
+	background: #FFFFFF;
+	-webkit-box-shadow: inset 1px 1px 2px #E0E0E0;   
+	border: 1px solid #D8D8D8;  //color of the track of scroll bar
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+.interview-votes .timeslots-scrollable::-webkit-scrollbar-thumb {
+	background: #6B6B6B;
+	-webkit-box-shadow: inset 1px 1px 2px rgba(155, 155, 155, 0.4);
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+.interview-votes .timeslots-scrollable::-webkit-scrollbar-thumb:hover {
+	background: #aaaaaa;
+}
+.interview-votes .timeslots-scrollable::-webkit-scrollbar-thumb:active {
+	background: #888;
+	-webkit-box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.interview-votes .table {
+	width: auto;
+	margin-bottom: 2px !important;
+}
+.interview-votes .table.timeslots thead th, .interview-votes .table.timeslots thead td{
+	text-align: center;
+	min-width: 60px;
+}
+.interview-votes .table.timeslots th,
+.interview-votes .table.timeslots td {
+	font-weight: normal !important;
+}
+.interview-votes .table tbody tr.info > td {
+	background: white;
+}
+.interview-votes .table.timeslots th.participant,
+.interview-votes .table.timeslots td.participant {
+	width:220px;
+	position:absolute;
+	left:0;
+	background-color:white;
+	border:none;
+	text-align: left;
+	padding: 3px;
+	padding-left: 0px;
+}
+.interview-votes .table.timeslots tr td.participant>div, .interview-votes .table tbody tr.info > td div, .interview-votes .timeslot>div {
+	border: 1px solid #DDDDDD;
+	border-radius: 4px;
+	padding: 4px;
+	line-height:24px;
+	background-color:#F4F4F4;
+}
+.interview-votes .table.timeslots tr.info td.participant>div, .interview-votes .table tbody tr.info > td.timeslot>div {
+	background-color:#d9edf7;
+}
+
+.interview-votes .table.timeslots tfoot td.participant {
+	background:transparent;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions {
+	position:relative;
+}
+.interview-votes .table.timeslots td.participant .traversal-actions a {
+	border:0;
+	background:none;
+	cursor:pointer;
+	position:absolute;
+	right:2px;
+	bottom:-2px;
+	color:black;
+}
+.interview-votes .table.timeslots td.participant .check-all {
+	float: right;
+	margin-right: 4px;
+}
+.interview-votes .table.timeslots td.participant .traversal-actions a.can-make-anytime {
+	right:35px;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a.maybe-can-make-some {
+	display:none;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a:hover i {
+	color:#0066B3;
+	text-decoration:none;
+}
+.interview-votes .table.timeslots td.participant .traversal-actions a.cant-make-it:hover i {
+	color:#C3272F;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a.maybe-can-make-some:hover i {
+	color:#71BF46;
+}
+
+.interview-votes .table.timeslots td.participant .traversal-actions a i {
+	font-size:20px;
+	cursor:pointer;
+}
+.interview-votes .timeslot {
+	text-align: center;
+	border:none;
+	background: white;
+	color: #CCC;
+	padding: 3px;
+}
+.interview-votes .timeslot .numb {
+	font-size: 16px;
+	color: #333333;
+}
+.interview-votes .timeslot .icon-ok-sign,
+.interview-votes .timeslot .icon-circle,
+.interview-votes .timeslot .icon-remove-sign,
+.interview-votes .timeslot .icon-time {
+	font-size:23px;
+	display: block;
+}
+
+.interview-votes .timeslot .icon-remove-sign {
+	color:#C3272F;
+}
+
+.interview-votes .timeslot .icon-ok-sign {
+	color:#71BF46;
+}
+
+.interview-votes .timeslot .icon-circle {
+	color:#ccc;
+}
+.interview-votes .timeslot input{
+	margin-top: -2px;
+}
+.interview-votes .timeslot input[type=checkbox] {
+	margin-left:0px;
+	margin-top: 0px;
 }

@@ -76,7 +76,7 @@ function showFirstQualificationEntryOrExplanationArea() {
 }
 
 function postQualificationsData() {
-    $('#qualificationsSection > div').append('<div class="ajax" />');
+    $('#ajaxloader').show();
     var qualificationsSendToPortico = collectQualificationsSendToPortico();
     data = {
         applicationId : $('#applicationId').val(),
@@ -102,7 +102,7 @@ function postQualificationsData() {
         	$("#qualificationsSection").html(data);
         },
         complete : function() {
-            $('#qualificationsSection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
         }
     });
 }

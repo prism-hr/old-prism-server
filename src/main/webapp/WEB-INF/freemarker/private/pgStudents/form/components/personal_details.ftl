@@ -25,12 +25,11 @@
 
 <!-- Personal details -->
 <a name="Personal-Details"></a>
-<h2 id="personalDetails-H2" class="open">
+<h2 id="personalDetails-H2">
     <span class="left"></span><span class="right"></span><span class="status"></span>
     Personal Details<em>*</em>
 </h2>
-
-<div>    
+<div style="display:none;">    
     <form>              
         <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
         <#if errorCode?? && errorCode=="true">

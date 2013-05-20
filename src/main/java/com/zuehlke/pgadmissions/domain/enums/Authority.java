@@ -5,6 +5,9 @@ public enum Authority {
     /* This is an administrator of a particular programme */
     ADMINISTRATOR,
     
+    /* This is a person belonging to the admissions team of UCL */
+    ADMITTER,
+    
     /* An applicant applying for a programme */
     APPLICANT, 
     

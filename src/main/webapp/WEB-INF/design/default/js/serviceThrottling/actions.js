@@ -15,7 +15,8 @@ $(document).ready(function() {
     				enabled : $('input:radio[name=switch]')[0].checked,
     				batchSize : $('#batchSizeId').val()
     			};
-    	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
+		 $('#ajaxloader').show();
+		 
     	 $.ajax({
     	        type : 'POST',
     	        statusCode : errorCodes,
@@ -30,7 +31,7 @@ $(document).ready(function() {
     	        				}
     	               		},
     	        complete : function() {
-    	        				$('div.ajax').remove();
+    	        				$('#ajaxloader').fadeOut('fast');
 								
     	        			}
     	    });
@@ -44,7 +45,9 @@ $(document).ready(function() {
 		 success : function(data) {
 			 var index = data.enabled == true ? 0 : 1;
 			 if (data.enabled!=null) {
-			 	$('input:radio[name=switch]')[index].checked=true;
+				 if ($('#edit-throttle-section').length > 0) {
+			 		$('input:radio[name=switch]')[index].checked=true;
+				 }
 		 	}
 			 $('#batchSizeId').val(data.batchSize);
 			 $('#throttleId').val(data.throttleId);

@@ -1,7 +1,6 @@
 $(document).ready(function() {
     
     addToolTips();
-    
     showProperRefereeEntry();
     
     // --------------------------------------------------------------------------------
@@ -104,6 +103,8 @@ function clearRefereeForm(form) {
     
     form.find("textarea").each(function() {
         $(this).val("");
+		addCounter();
+		$(this).parent().find('.badge').html('2000 Characters left');
     });
     
     form.find("input:radio").each(function() {
@@ -205,7 +206,10 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
 		postData['editedRefereeId'] = refereeId;
 	}
     
-    $('#referencesSection > div').append('<div class="ajax" />');
+    var scoreData=getScores($("#scoring-questions_"+refereeId));
+    postData['scores']=scoreData;
+    
+    $('#ajaxloader').show();
     $.ajax({
         type : 'POST',
         statusCode : {
@@ -226,7 +230,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
             addCounter();
         },
         complete : function() {
-            $('#referencesSection div.ajax').remove();
+           $('#ajaxloader').fadeOut('fast');
             
         }
     });
@@ -259,7 +263,7 @@ function editReferenceData() {
         suitableForProgramme : suitableForProgramme, 
     };
 
-    $('#referencesSection > div').append('<div class="ajax" />');
+    $('#ajaxloader').show();
     $.ajax({
     	dataType: "json",
         type : 'POST',
@@ -281,7 +285,7 @@ function editReferenceData() {
         	}
         },
         complete : function() {
-            $('#referencesSection div.ajax').remove();
+            $('#ajaxloader').fadeOut('fast');
         },
         
     });

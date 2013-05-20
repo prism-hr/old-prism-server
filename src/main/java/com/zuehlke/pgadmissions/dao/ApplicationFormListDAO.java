@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -25,15 +26,17 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
-import com.zuehlke.pgadmissions.hibernate.ConcatenableIlikeCriterion;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Repository
 public class ApplicationFormListDAO {
@@ -52,28 +55,63 @@ public class ApplicationFormListDAO {
     }
 
     public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
-        return this.getVisibleApplications(user, Collections.<ApplicationsFilter> emptyList(), SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 50);
+        return this.getVisibleApplications(user, new ApplicationsFiltering(), 50);
+    }
+    
+    public List<ApplicationForm> getApplicationsWorthConsideringForAttentionFlag(final RegisteredUser user, final ApplicationsFiltering filtering, final ApplicationsService service) {
+        Criteria criteria = buildCriteriaForVisibleApplications(user, filtering);
+
+        if (criteria == null) {
+            return Collections.emptyList();
+        }
+        
+        ArrayList<ApplicationForm> results = new ArrayList<ApplicationForm>();
+        for (Object id : criteria.list()) {
+            ApplicationForm form = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id);
+            if (service.calculateActions(user, form).isRequiresAttention()) {
+                results.add((ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id));
+            }
+        }
+        return results;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sortCategory, SortOrder sortOrder,
-            Integer pageCount, Integer itemsPerPage) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
-        if (pageCount != null && itemsPerPage != null) {
-            criteria.setFirstResult((pageCount - 1) * itemsPerPage);
-            criteria.setMaxResults(itemsPerPage);
+    public List<ApplicationForm> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {
+        Criteria criteria = buildCriteriaForVisibleApplications(user, filtering);
+
+        if (criteria == null) {
+            return Collections.emptyList();
         }
+
+        criteria.setFirstResult((filtering.getBlockCount() - 1) * itemsPerPage);
+        criteria.setMaxResults(itemsPerPage);
+
+        ArrayList<ApplicationForm> results = new ArrayList<ApplicationForm>();
+        for (Object id : criteria.list()) {
+            results.add((ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id));
+        }
+
+        return results;
+    }
+    
+    private Criteria buildCriteriaForVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
+
         criteria.setReadOnly(true);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+        criteria.setProjection(Projections.id());
+        
+        if (user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMITTER)) {
             criteria.add(getAllApplicationsForSuperAdministrator());
+            criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
         } else {
             Disjunction disjunction = Restrictions.disjunction();
 
             if (user.isInRole(Authority.APPLICANT)) {
                 disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichApplicant(user)));
                 disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichReferee(user)));
+            } else {
+                criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
             }
 
             if (user.isInRole(Authority.REFEREE)) {
@@ -88,8 +126,10 @@ public class ApplicationFormListDAO {
                 disjunction.add(Subqueries.propertyIn("id", getApprovedApplicationsInProgramsOfWhichApprover(user)));
             }
 
-            if (!user.getProgramsOfWhichViewer().isEmpty()) {
-                disjunction.add(Subqueries.propertyIn("id", getApplicationsInProgramsOfWhichViewer(user)));
+            if (filtering.getPreFilter() == ApplicationsPreFilter.ALL) {
+                if (!user.getProgramsOfWhichViewer().isEmpty()) {
+                    disjunction.add(Subqueries.propertyIn("id", getApplicationsInProgramsOfWhichViewer(user)));
+                }
             }
 
             disjunction.add(Subqueries.propertyIn("id", getSubmittedApplicationsOfWhichApplicationAdministrator(user)));
@@ -105,17 +145,13 @@ public class ApplicationFormListDAO {
 
         criteria = setAliases(criteria);
 
-        for (ApplicationsFilter filter : filters) {
+        for (ApplicationsFilter filter : filtering.getFilters()) {
             criteria = setSearchCriteria(filter.getSearchCategory(), filter.getSearchPredicate(), filter.getSearchTerm(), criteria);
         }
 
-        if (criteria == null) {
-            return Collections.emptyList();
-        }
+        criteria = setOrderCriteria(filtering.getSortCategory(), filtering.getOrder(), criteria);
 
-        criteria = setOrderCriteria(sortCategory, sortOrder, criteria);
-
-        return criteria.list();
+        return criteria;
     }
 
     private Criteria setAliases(final Criteria criteria) {
@@ -136,8 +172,7 @@ public class ApplicationFormListDAO {
                     newCriterion = Restrictions.ilike("applicationNumber", term, MatchMode.ANYWHERE);
                     break;
                 case PROGRAMME_NAME:
-                    newCriterion = Restrictions.disjunction()
-                            .add(Restrictions.like("p.title", StringUtils.upperCase(term), MatchMode.ANYWHERE))
+                    newCriterion = Restrictions.disjunction().add(Restrictions.like("p.title", StringUtils.upperCase(term), MatchMode.ANYWHERE))
                             .add(Restrictions.like("p.title", StringUtils.lowerCase(term), MatchMode.ANYWHERE))
                             .add(Restrictions.like("p.code", StringUtils.upperCase(term), MatchMode.ANYWHERE))
                             .add(Restrictions.like("p.code", StringUtils.lowerCase(term), MatchMode.ANYWHERE));
@@ -167,7 +202,7 @@ public class ApplicationFormListDAO {
         return criteria;
     }
 
-    public Criteria setOrderCriteria(SortCategory sortCategory, SortOrder order, Criteria criteria) {
+    public Criteria setOrderCriteria(final SortCategory sortCategory, final SortOrder order, final Criteria criteria) {
         boolean ascending = true;
         if (order == SortOrder.DESCENDING) {
             ascending = false;
@@ -236,6 +271,10 @@ public class ApplicationFormListDAO {
         } else {
             return Order.desc(propertyName);
         }
+    }
+
+    private Criterion getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit() {
+        return Restrictions.eq("withdrawnBeforeSubmit", false);
     }
 
     private Criterion getAllApplicationsForSuperAdministrator() {

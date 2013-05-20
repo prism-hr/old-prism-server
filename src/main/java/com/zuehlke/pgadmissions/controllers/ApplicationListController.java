@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,22 +30,24 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.base.DataSourceException;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
-import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
-import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
+import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping(value = { "", "applications" })
-@SessionAttributes("applicationSearchDTO")
+@SessionAttributes("filtering")
 public class ApplicationListController {
 
     private static final String APPLICATION_LIST_PAGE_VIEW_NAME = "private/my_applications_page";
@@ -57,79 +60,86 @@ public class ApplicationListController {
     private final UserService userService;
 
     private final ApplicationsFiltersPropertyEditor filtersPropertyEditor;
-    
+
     private final ApplicationSummaryService applicationSummaryService;
 
+    private final ApplicationsFilteringService filteringService;
+    
+    private final ApplicationFormAccessService accessService;
+
     public ApplicationListController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public ApplicationListController(ApplicationsService applicationsService,
-            ApplicationsReportService applicationsReportService, UserService userService,
-            ApplicationsFiltersPropertyEditor filtersPropertyEditor,
-            final ApplicationSummaryService applicationSummaryService) {
+    public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
+            ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
+            ApplicationsFilteringService filteringService, final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
         this.applicationSummaryService = applicationSummaryService;
+        this.filteringService = filteringService;
+        this.accessService = accessService;
     }
 
-    @InitBinder(value = "applicationSearchDTO")
+    @InitBinder(value = "filtering")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.registerCustomEditor(List.class, "filters", filtersPropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getApplicationListPage(boolean reloadFilters, Model model, HttpSession session) {
+    public String getApplicationListPage(@RequestParam(required = false) String applyFilters, ModelMap model, HttpSession session) {
         Object alertDefinition = session.getAttribute("alertDefinition");
         if (alertDefinition != null) {
             model.addAttribute("alertDefinition", alertDefinition);
             session.removeAttribute("alertDefinition");
         }
 
-        List<ApplicationsFilter> applicationsFilters;
-        ApplicationSearchDTO applicationSearchDTO = (ApplicationSearchDTO) model.asMap().get("applicationSearchDTO");
-        if (applicationSearchDTO.getFilters() == null || reloadFilters) {
-            // filters not initialized in session or filter reload requested
-            RegisteredUser user = getUser();
-            if (!user.isStoredFilters()) {
-                applicationsFilters = getActiveApplicationFilters();
-            } else {
-                applicationsFilters = user.getApplicationsFilters();
-            }
-        } else {
-            applicationsFilters = applicationSearchDTO.getFilters();
+        ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
+
+        if (applyFilters != null) { // custom apply filters action
+            if ("reload".equals(applyFilters)) {
+                filtering = filteringService.getStoredOrDefaultFiltering(getUser());
+            } else if ("my".equals(applyFilters)) {
+                filtering = new ApplicationsFiltering();
+                filtering.setPreFilter(ApplicationsPreFilter.MY);
+            } else if ("urgent".equals(applyFilters)) {
+                filtering = new ApplicationsFiltering();
+                filtering.setPreFilter(ApplicationsPreFilter.URGENT);
+            } 
         }
-        model.addAttribute("filters", applicationsFilters);
+        
+        if (filtering == null) {
+            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
+        }
+        
+        model.addAttribute("filtering", filtering);
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }
 
-    @ModelAttribute("applicationSearchDTO")
-    public ApplicationSearchDTO getApplicationSearchDTO() {
-        return new ApplicationSearchDTO();
-    }
-
     @RequestMapping(value = "/section", method = RequestMethod.GET)
-    public String getApplicationListSection(@ModelAttribute("applicationSearchDTO") ApplicationSearchDTO dto, Model model) {
+    public String getApplicationListSection(@ModelAttribute("filtering") ApplicationsFiltering filtering, ModelMap model) {
         RegisteredUser user = getUser();
-        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, dto.getFilters(), dto.getSortCategory(),
-                dto.getOrder(), dto.getBlockCount());
-        Map<String, ApplicationActionsDefinition> actionDefinitions = new LinkedHashMap<String, ApplicationActionsDefinition>();
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
+        Map<String, Boolean> updatedApplications = new HashMap<String, Boolean>();
+        Map<String, ActionsDefinitions> actionDefinitions = new LinkedHashMap<String, ActionsDefinitions>();
         for (ApplicationForm applicationForm : applications) {
-            ApplicationActionsDefinition actionsDefinition = applicationsService.getActionsDefinition(user, applicationForm);
+            updatedApplications.put(applicationForm.getApplicationNumber(), accessService.userNeedsToSeeApplicationUpdates(applicationForm, getUser()));
+            ActionsDefinitions actionsDefinition = applicationsService.calculateActions(user, applicationForm);
             actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
         }
+        model.addAttribute("updateApplications", updatedApplications);
         model.addAttribute("applications", applications);
         model.addAttribute("actionDefinitions", actionDefinitions);
         return APPLICATION_LIST_SECTION_VIEW_NAME;
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public void getApplicationsReport(@ModelAttribute("applicationSearchDTO") ApplicationSearchDTO dto, HttpServletRequest req, HttpServletResponse resp)
+    public void getApplicationsReport(@ModelAttribute("filtering") ApplicationsFiltering filtering, HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), dto.getFilters(), dto.getSortCategory(), dto.getOrder());
+        DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), filtering);
         DataSourceRequest dsRequest;
         try {
             dsRequest = new DataSourceRequest(req);
@@ -141,14 +151,14 @@ public class ApplicationListController {
 
     @RequestMapping(value = "/saveFilters", method = RequestMethod.POST)
     @ResponseBody
-    public String saveFiltersAsDefault(@ModelAttribute("applicationSearchDTO") ApplicationSearchDTO dto) {
-        userService.setFilters(getUser(), dto.getFilters());
+    public String saveFiltersAsDefault(@ModelAttribute("filtering") ApplicationsFiltering filtering) {
+        userService.setFiltering(getUser(), filtering);
         return "OK";
     }
 
     @RequestMapping(value = "/getApplicationDetails", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, String> getApplicationDetails(@RequestParam String applicationId){
+    public Map<String, String> getApplicationDetails(@RequestParam String applicationId) {
         return applicationSummaryService.getSummary(applicationId);
     }
 
@@ -188,7 +198,7 @@ public class ApplicationListController {
         }
         return statuses;
     }
-
+    
     @ModelAttribute("applications")
     public List<ApplicationForm> getApplications() {
         return java.util.Collections.emptyList();
@@ -214,19 +224,4 @@ public class ApplicationListController {
         return applicationsService.getApplicationByApplicationNumber(application);
     }
 
-    private List<ApplicationsFilter> getActiveApplicationFilters() {
-        List<ApplicationsFilter> filters = Lists.newArrayListWithExpectedSize(3);
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPROVED));
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.REJECTED));
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.WITHDRAWN));
-        return filters;
-    }
-
-    private ApplicationsFilter getFilterForNonStatus(ApplicationFormStatus status) {
-        ApplicationsFilter filter = new ApplicationsFilter();
-        filter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
-        filter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
-        filter.setSearchTerm(status.displayValue());
-        return filter;
-    }
 }

@@ -28,6 +28,9 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 	@Before
 	public void prepare() {
 		dao = new EmailTemplateDAO(sessionFactory);
+		for (EmailTemplate template : dao.getAll()) {
+		    dao.remove(template);
+		}
 	}
 
 	@Test

@@ -71,8 +71,15 @@
           <div>
             <form id="confirmSupervisionForm" method ="POST" action="<@spring.url '/confirmSupervision/applyConfirmSupervision' />" >
               <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-              <div class="alert alert-info">
-          			<i class="icon-info-sign"></i> Confirm your intention to provide primary supervision.</div>
+              
+              
+             		 <@spring.bind "confirmSupervisionDTO.confirmedSupervision" />
+                      <#if spring.status.errors.hasErrors()>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
+                      <#else>
+               		  <div class="alert alert-info"> <i class="icon-info-sign"></i> 
+                      </#if>
+                       Confirm your intention to provide primary supervision.</div>
               <div class="row-group">
                 <div class="row">
                   <label class="plain-label">Confirm that you are willing to provide primary supervision<em>*</em></label>
@@ -143,8 +150,7 @@
                   <label id="lbl_projectAbstract" class="plain-label" for="projectAbstract">Project Abstract (ATAS)<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
                   <div class="field">
-                    <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6"  >${(confirmSupervisionDTO.projectAbstract?html)!}
-</textarea>
+                    <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6">${(confirmSupervisionDTO.projectAbstract?html)!}</textarea>
                     <@spring.bind "confirmSupervisionDTO.projectAbstract" />
                     <#list spring.status.errorMessages as error >
                     <div class="alert alert-error"> <i class="icon-warning-sign"></i>

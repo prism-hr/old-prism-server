@@ -65,6 +65,8 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 public class ApprovalServiceTest {
@@ -474,10 +476,9 @@ public class ApprovalServiceTest {
         try {
             approvalService.requestApprovalRestart(applicationForm, approver, comment);
             Assert.fail("expected exception not thrown!");
-        } catch (IllegalArgumentException iae) {
-            Assert.assertEquals("Application DUDU is not in state APPROVAL!", iae.getMessage());
+        } catch (CannotUpdateApplicationException iae) {
+            Assert.assertEquals("DUDU", iae.getApplicationNumber());
         }
-
     }
 
     @Test
@@ -493,10 +494,9 @@ public class ApprovalServiceTest {
         try {
             approvalService.requestApprovalRestart(applicationForm, approver, comment);
             Assert.fail("expected exception not thrown!");
-        } catch (IllegalArgumentException iae) {
-            Assert.assertEquals("User dd@test.com is not an approver!", iae.getMessage());
+        } catch (InsufficientApplicationFormPrivilegesException iae) {
+            Assert.assertEquals("DUDU", iae.getApplicationNumber());
         }
-
     }
 
     @Test
@@ -512,10 +512,9 @@ public class ApprovalServiceTest {
         try {
             approvalService.requestApprovalRestart(applicationForm, approver, comment);
             Assert.fail("expected exception not thrown!");
-        } catch (IllegalArgumentException iae) {
-            Assert.assertEquals("User dd@test.com is not an approver in program lala!", iae.getMessage());
+        } catch (InsufficientApplicationFormPrivilegesException iae) {
+            Assert.assertEquals("DUDU", iae.getApplicationNumber());
         }
-
     }
 
     @Test
@@ -546,7 +545,6 @@ public class ApprovalServiceTest {
 
         assertEquals(1, application.getEvents().size());
         assertEquals(event, application.getEvents().get(0));
-
     }
 
     @Test
@@ -581,20 +579,40 @@ public class ApprovalServiceTest {
 
         assertEquals(1, application.getEvents().size());
         assertEquals(event, application.getEvents().get(0));
-
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailOmMoveToApprovedIfApplicationNotInApproval() {
-
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(2).build();
-
         EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock);
-
         approvalService.moveToApproved(application);
-
         EasyMock.verify(applicationFormDAOMock, commentDAOMock);
+    }
+    
+    @Test
+    public void  shouldRestartApprovalStageAsAdministrator() {
+        Program program = new ProgramBuilder().id(321).title("lala").build();
 
+        RegisteredUser administrator = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu")
+                .username("dd@test.com").role(new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).build())
+                .programsOfWhichApprover(program).build();
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program)
+                .status(ApplicationFormStatus.APPROVAL).id(1).build();
+
+        Capture<RequestRestartComment> capture = new Capture<RequestRestartComment>();
+        
+        commentDAOMock.save(EasyMock.and(EasyMock.isA(RequestRestartComment.class), EasyMock.capture(capture)));
+        applicationFormDAOMock.save(applicationForm);
+        
+        EasyMock.replay(commentDAOMock, applicationFormDAOMock);
+        
+        approvalService.restartApprovalStageAsAdministrator(applicationForm, administrator);
+        
+        EasyMock.verify(commentDAOMock, applicationFormDAOMock);
+        assertTrue(applicationForm.isPendingApprovalRestart());
+        assertEquals(administrator, applicationForm.getApproverRequestedRestart());
+        assertEquals("dada dudu requested the restart of the approval stage.", capture.getValue().getComment());
     }
 
     private void applyValidSendToPorticoData(ApplicationForm applicationForm) {

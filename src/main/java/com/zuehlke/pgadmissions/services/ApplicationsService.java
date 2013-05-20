@@ -210,7 +210,7 @@ public class ApplicationsService {
             }
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW)) {
+        if (application.isInState(ApplicationFormStatus.INTERVIEW) && stateTransitionViewResolver.getNextStatus(application) == null) {
             if (user.hasAdminRightsOnApplication(application)) {
                 actions.addAction("validate", "Evaluate interview feedback");
             }

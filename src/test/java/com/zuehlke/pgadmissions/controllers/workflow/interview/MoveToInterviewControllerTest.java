@@ -43,7 +43,8 @@ import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
@@ -310,23 +311,7 @@ public class MoveToInterviewControllerTest {
 
     }
 
-    @Test
-    public void shouldGetApplicationFromIdForInterviewer() {
-        Program program = new ProgramBuilder().id(6).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
-        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-        EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationServiceMock, currentUserMock);
-
-        ApplicationForm returnedForm = controller.getApplicationForm("5");
-        assertEquals(applicationForm, returnedForm);
-
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
         EasyMock.replay(applicationServiceMock);
@@ -334,14 +319,13 @@ public class MoveToInterviewControllerTest {
         controller.getApplicationForm("5");
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrInterviewerOfApplicationProgram() {
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
+    public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrApplicationAdministrator() {
 
         Program program = new ProgramBuilder().id(6).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-        EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
         EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);

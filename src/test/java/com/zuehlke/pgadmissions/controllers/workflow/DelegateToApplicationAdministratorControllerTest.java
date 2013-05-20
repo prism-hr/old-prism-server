@@ -23,7 +23,8 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -62,7 +63,7 @@ public class DelegateToApplicationAdministratorControllerTest {
 
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfApplicatioNDoesNotExist() {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
         EasyMock.replay(applicationServiceMock);
@@ -70,7 +71,7 @@ public class DelegateToApplicationAdministratorControllerTest {
         controller.getApplicationForm("5");
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserDoesNotHaveAdminRights() {
 
         Program program = new ProgramBuilder().id(6).build();

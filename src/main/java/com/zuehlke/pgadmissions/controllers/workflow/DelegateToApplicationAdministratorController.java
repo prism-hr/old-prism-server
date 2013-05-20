@@ -23,7 +23,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -57,8 +58,11 @@ public class DelegateToApplicationAdministratorController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null || !getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
-            throw new ResourceNotFoundException();
+        if (applicationForm == null){
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if(!getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
     }

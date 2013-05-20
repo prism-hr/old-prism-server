@@ -48,8 +48,8 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 #middle > header {
   padding: 20px 30px 0; /*overflow: hidden;*/
 }
-
-#middle > header .logo { float: left; margin-right: 30px; }
+#middle > header .tagline {display: none;}
+#middle > header .logo { float: left; margin-right: 30px; width: 220px; }
 #middle > header .tagline { color: white; float: left; font-size: 18pt; font-weight: bold;  line-height: 26px; margin-top: 5px; width: 350px; }
 
 #middle > header nav { clear: both; height: 36px; line-height: 36px; /*overflow: hidden;*/ padding-top: 15px; }
@@ -1039,7 +1039,7 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 #interviewPossibleStartTimes table th,
 #interviewPossibleStartTimes table td {
 	padding:4px;
-	width:60px;
+	
 }
 #interviewPossibleStartTimes table input { margin-bottom:0px !important;}
 
@@ -1727,6 +1727,13 @@ form#removeForm {
 .interview-votes .table.timeslots td.participant .check-all {
 	float: right;
 	margin-right: 4px;
+
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	.interview-votes .table.timeslots td.participant .check-all {
+		position: relative;
+		top: 2px;
+	}
 }
 .interview-votes .table.timeslots td.participant .traversal-actions a.can-make-anytime {
 	right:35px;
@@ -1787,5 +1794,5 @@ form#removeForm {
 }
 .interview-votes .timeslot input[type=checkbox] {
 	margin-left:0px;
-	margin-top: 0px;
+	margin-top: -1px;
 }

@@ -171,6 +171,7 @@
   				<th class="time-hidden">Time 6</th>
   				<th class="time-hidden">Time 7</th>
   				<th class="time-hidden">Time 8</th>
+  				<th class="clone-column"></th>
   				<th class="remove-column"></th>
   			</tr>
   		</thead>
@@ -186,6 +187,7 @@
   			<td class="time-hidden"></td>
   			<td class="time-hidden"></td>
   			<td class="time-hidden"></td>
+  			<td class="clone-column"></td>
   			<td class="remove-column"></td>
   		</tfoot>
   	</table>

@@ -62,7 +62,7 @@ public class InterviewVoteController {
             throw new MissingApplicationFormException(applicationId);
         }
         Interview interview = applicationForm.getLatestInterview();
-        if (!interview.isParticipant(currentUser) || !currentUser.canSee(applicationForm)) {
+        if (!interview.isParticipant(currentUser)) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         InterviewParticipant participant = interview.getParticipant(currentUser);

@@ -223,7 +223,7 @@ public class ApplicationsService {
             }
         }
 
-        if (user.isInRole(Authority.ADMITTER)) {
+        if (user.isInRole(Authority.ADMITTER) && !application.hasConfirmElegibilityComment()) {
             actions.addAction("validate", "Confirm Eligibility");
             if (application.getAdminRequestedRegistry() != null
                     && (application.isNotInState(ApplicationFormStatus.WITHDRAWN) && application.isNotInState(ApplicationFormStatus.REJECTED))) {

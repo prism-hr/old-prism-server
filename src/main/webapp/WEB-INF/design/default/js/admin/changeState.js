@@ -300,12 +300,14 @@ function validateAndSaveUpdatedProjectDetails() {
             'recommendedConditions' : $('#recommendedConditions').val(),
             'recommendedStartDate' : $('#recommendedStartDate').val(),
             'recommendedConditionsAvailable' : ($('input:radio[name=recommendedConditionsAvailable]:checked').val() === "true" ? true : false),
-            'projectDescriptionAvailable' : true
+            'projectDescriptionAvailable' : true,
+            'comment' : $('#comment').val(),
+            'confirmNextStage' : $('#confirmNextStage').is(':checked')
     };
     
     $('#ajaxloader').show();
     $.ajax({
-        type : 'GET',
+        type : 'POST',
         dataType : "json",
         statusCode : {
             401 : function() { window.location.reload(); },
@@ -318,6 +320,8 @@ function validateAndSaveUpdatedProjectDetails() {
         data : postData,
         success : function(data) {
             $("#approvedDetails").find("div.alert").remove();
+            $("#comment").parent().find("div.alert").remove();
+            $("#confirmNextStageLabel").parent().parent().removeClass("alert-error");
             if (!data.success) {
                 if (data.projectTitle != null) {
                     $('#projectTitle').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.projectTitle + '</div>');
@@ -334,6 +338,15 @@ function validateAndSaveUpdatedProjectDetails() {
                 if (data.recommendedStartDate != null) {
                     $('#recommendedStartDate').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.recommendedStartDate + '</div>');
                 }
+                
+                if (data.comment != null) {
+                    $('#comment').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.comment + '</div>');
+                }
+                
+                if (data.confirmNextStage != null) {
+                    $('#confirmNextStageLabel').parent().parent().addClass("alert-error");
+                }
+                
             } else {
             	saveUpdatedProjectDetails();
             }

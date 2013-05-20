@@ -245,8 +245,8 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduling() && interview.isParticipant(user)
-                && !interview.getParticipant(user).getResponded()) {
+        if (application.isInState(ApplicationFormStatus.INTERVIEW) && stateTransitionViewResolver.getNextStatus(application) == null
+                && interview.isScheduling() && interview.isParticipant(user) && !interview.getParticipant(user).getResponded()) {
             actions.addAction("interviewVote", "Provide Availability For Interview");
             actions.setRequiresAttention(true);
         }

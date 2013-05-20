@@ -10,11 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Entity(name = "APPLICATION_ROLE")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Role implements GrantedAuthority, Serializable {
 
 	private static final long serialVersionUID = 4265990408553249748L;

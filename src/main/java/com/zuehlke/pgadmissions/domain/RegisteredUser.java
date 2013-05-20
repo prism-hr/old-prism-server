@@ -24,6 +24,8 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -38,6 +40,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
 @Indexed
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class RegisteredUser extends Authorisable implements UserDetails, Comparable<RegisteredUser>, Serializable {
 
     private static final long serialVersionUID = 7913035836949510857L;
@@ -134,30 +137,37 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Role> roles = new ArrayList<Role>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "administrator_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "registered_user_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "reviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_INTERVIEWER_LINK", joinColumns = { @JoinColumn(name = "interviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_SUPERVISOR_LINK", joinColumns = { @JoinColumn(name = "supervisor_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_VIEWER_LINK", joinColumns = { @JoinColumn(name = "viewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
 
     @Column(name = "ucl_user_id")

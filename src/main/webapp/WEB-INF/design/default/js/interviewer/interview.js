@@ -206,7 +206,7 @@ $(document).ready(function() {
                 if (data == "OK") {
                     window.location.href = '/pgadmissions/applications?messageCode=move.interview&application=' + $('#applicationId').val();
                 } else if(data == "redirectToVote"){
-                	window.location.href = '/pgadmissions/interviewVote?applicationId=' + $('#applicationId').val();
+                	window.location.href = '/pgadmissions/interviewVote?applicationId=' + $('#applicationId').val() + '&selectAll=true';
                 } else {
                     $('#temp').html(data);
                     $('#assignInterviewersToAppSection').html($('#section_1').html());

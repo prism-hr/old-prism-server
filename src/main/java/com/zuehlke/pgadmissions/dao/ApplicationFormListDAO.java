@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
@@ -61,105 +58,49 @@ public class ApplicationFormListDAO {
         return this.getVisibleApplications(user, new ApplicationsFiltering(), 50);
     }
     
-    public List<ApplicationForm> getApplicationsWorthConsideringForAttentionFlag(final RegisteredUser user,
-            final ApplicationsFiltering filtering, final ApplicationsService service) {
-        HashSet<ApplicationForm> applicationsWhichNeedAttention = new LinkedHashSet<ApplicationForm>();
-        
-        StringBuilder queryBuilder = new StringBuilder(""
-                + "SELECT apform.id " 
-                + "FROM APPLICATION_FORM apform "
-                + "JOIN PROGRAM prog ON apform.program_id = prog.id "
-                + "JOIN REGISTERED_USER ru ON apform.applicant_id = ru.id "
-                + "WHERE apform.status NOT IN (\"UNSUBMITTED\", \"REJECTED\", \"WITHDRAWN\", \"APPROVED\")" 
-                + "AND apform.program_id IN "
-                + "( "
-                + "     SELECT program_id " 
-                + "     FROM REGISTERED_USER ru " 
-                + "     JOIN PROGRAM_ADMINISTRATOR_LINK pal ON ru.id = pal.administrator_id " 
-                + "     WHERE ru.id = :user_id "
-                + ""
-                + "     UNION "
-                + ""
-                + "     SELECT program_id " 
-                + "     FROM REGISTERED_USER ru " 
-                + "     JOIN PROGRAM_APPROVER_LINK papl ON ru.id = papl.registered_user_id " 
-                + "     WHERE ru.id = :user_id "
-                + ""
-                + "     UNION " 
-                + ""
-                + "     SELECT program_id "
-                + "     FROM REGISTERED_USER ru " 
-                + "     JOIN PROGRAM_INTERVIEWER_LINK pil ON ru.id = pil.interviewer_id " 
-                + "     WHERE ru.id = :user_id "
-                + ""
-                + "     UNION " 
-                + ""
-                + "     SELECT program_id "
-                + "     FROM REGISTERED_USER ru " 
-                + "     JOIN PROGRAM_REVIEWER_LINK prl ON ru.id = prl.reviewer_id " 
-                + "     WHERE ru.id = :user_id "
-                + ""
-                + "     UNION "
-                + ""
-                + "     SELECT program_id " 
-                + "     FROM REGISTERED_USER ru " 
-                + "     JOIN PROGRAM_SUPERVISOR_LINK psl ON ru.id = psl.supervisor_id " 
-                + "     WHERE ru.id = :user_id "
-                + ""
-                + ") ORDER BY ");
+    public List<ApplicationForm> getApplicationsWorthConsideringForAttentionFlag(final RegisteredUser user, final ApplicationsFiltering filtering, final ApplicationsService service) {
+        Criteria criteria = buildCriteriaForVisibleApplications(user, filtering);
 
-        switch (filtering.getSortCategory()) {
-            case APPLICANT_NAME:
-                queryBuilder.append("ru.lastName");
-                getSqlOrder(filtering, queryBuilder);
-                queryBuilder.append(", ru.firstName");
-                getSqlOrder(filtering, queryBuilder);
-                break;
-
-            case PROGRAMME_NAME:
-                queryBuilder.append("prog.title");
-                getSqlOrder(filtering, queryBuilder);
-                break;
-
-            case APPLICATION_STATUS:
-                queryBuilder.append("apform.status");
-                getSqlOrder(filtering, queryBuilder);
-                break;
-
-            default:
-            case APPLICATION_DATE:
-                queryBuilder.append("apform.submitted_on_timestamp");
-                getSqlOrder(filtering, queryBuilder);
-                queryBuilder.append(", apform.app_date_time");
-                break;
+        if (criteria == null) {
+            return Collections.emptyList();
         }
-
-        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(queryBuilder.toString());
-        query.setInteger("user_id", user.getId());
-
-        for (Object id : query.list()) {
+        
+        ArrayList<ApplicationForm> results = new ArrayList<ApplicationForm>();
+        for (Object id : criteria.list()) {
             ApplicationForm form = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id);
             if (service.calculateActions(user, form).isRequiresAttention()) {
-                applicationsWhichNeedAttention.add(form);
+                results.add((ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id));
             }
         }
-        return new ArrayList<ApplicationForm>(applicationsWhichNeedAttention);
-    }
-    
-    private StringBuilder getSqlOrder(final ApplicationsFiltering filtering, final StringBuilder builder) {
-        return filtering.getOrder() == SortOrder.DESCENDING ? builder.append(" DESC ") : builder.append(" ASC ");
+        return results;
     }
 
-    @SuppressWarnings("unchecked")
     public List<ApplicationForm> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
+        Criteria criteria = buildCriteriaForVisibleApplications(user, filtering);
+
+        if (criteria == null) {
+            return Collections.emptyList();
+        }
 
         criteria.setFirstResult((filtering.getBlockCount() - 1) * itemsPerPage);
         criteria.setMaxResults(itemsPerPage);
 
+        ArrayList<ApplicationForm> results = new ArrayList<ApplicationForm>();
+        for (Object id : criteria.list()) {
+            results.add((ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id));
+        }
+
+        return results;
+    }
+    
+    private Criteria buildCriteriaForVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
+
         criteria.setReadOnly(true);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
+        criteria.setProjection(Projections.id());
+        
         if (user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMITTER)) {
             criteria.add(getAllApplicationsForSuperAdministrator());
             criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
@@ -208,13 +149,9 @@ public class ApplicationFormListDAO {
             criteria = setSearchCriteria(filter.getSearchCategory(), filter.getSearchPredicate(), filter.getSearchTerm(), criteria);
         }
 
-        if (criteria == null) {
-            return Collections.emptyList();
-        }
-
         criteria = setOrderCriteria(filtering.getSortCategory(), filtering.getOrder(), criteria);
 
-        return criteria.list();
+        return criteria;
     }
 
     private Criteria setAliases(final Criteria criteria) {

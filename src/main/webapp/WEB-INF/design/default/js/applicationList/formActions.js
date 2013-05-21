@@ -267,14 +267,15 @@ $(document).ready(function() {
 		cleanUpFilterIds();
 	});
 	
-	// Remover current filter
+	// Remove current filter
 	$(".remove").live('click', function() {
 		var existingFilter= $(this).parent();
 		if ($("#search-box").find("div.filter").length > 1) {
-			if(existingFilter.find(".filterInput").val()!=""){
+			var filterValue = existingFilter.find(".filterInput").val(); 
+			existingFilter.remove();
+			if (filterValue != "") {
 				$('#search-go').click();
 			}
-			existingFilter.remove();
 		}
 	});
 	

@@ -399,10 +399,9 @@ public class UserService {
         return false;
     }
 
-    public void setFiltering(RegisteredUser user, ApplicationsFiltering filtering) {
-        user.setFiltering(filtering);
-
-        filteringDAO.merge(filtering);
+    public void setFiltering(final RegisteredUser user, final ApplicationsFiltering filtering) {
+        ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
+        user.setFiltering(mergedFilter );
         userDAO.save(user);
     }
 

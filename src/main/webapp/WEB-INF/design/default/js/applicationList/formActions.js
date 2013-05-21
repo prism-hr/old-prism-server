@@ -1,4 +1,5 @@
 var loading = false;
+var latestConsideredFlagIndex = 0;
 
 $(document).ready(function() {
 	var searchPredicatesMap = JSON.parse($("#searchPredicatesMap").val());
@@ -10,8 +11,6 @@ $(document).ready(function() {
 	    bindDatePicker($(this));
     });
 
-	showOrHideTheDisplayNextButton();
-	
 	$.fn.jExpand = function(){
         var element = this;
 
@@ -69,16 +68,12 @@ $(document).ready(function() {
 							applicationDetails.find('[data-field=cv-statement-link]').attr('href', '/pgadmissions/download?documentId=' + data.cvId);
 						}
 						
-						//applicationDetails.find('[data-field=active-applications-link]').text(data.numberOfActiveApplications + ' active applications >>');
-						//applicationDetails.find('[data-field=active-applications-link]').attr('href', '/pgadmissions/download?documentId=' + data.personalStatement);
-						
 						applicationDetails.find('[data-field=email]').text(applicant.email);
 						applicationDetails.find('[data-field=email]').attr('href', 'mailto:' + applicant.email + "?subject=Question Regarding UCL Prism Application " + data.applicationNumber);
 						applicationDetails.find('[data-field=phone-number] span').text(applicant.phoneNumber);
 						applicationDetails.find('[data-field=skype] span').text(applicant.skype);
 						
 						applicationDetails.find('[data-field=application-status]').text(data.applicationStatus);
-						//applicationDetails.find('[data-field=application-status-symbol]').addClass(data.applicationStatus.toLowerCase());
 					},
 					complete : function() {
 						$(element).find('.loading').removeClass('loading');
@@ -118,22 +113,11 @@ $(document).ready(function() {
 		$.ajax({
 			type : 'POST',
 			statusCode : {
-				401 : function() {
-					window.location
-							.reload();
-				},
-				500 : function() {
-					window.location.href = "/pgadmissions/error";
-				},
-				404 : function() {
-					window.location.href = "/pgadmissions/404";
-				},
-				400 : function() {
-					window.location.href = "/pgadmissions/400";
-				},
-				403 : function() {
-					window.location.href = "/pgadmissions/404";
-				}
+				401 : function() { window.location.reload(); },
+				500 : function() { window.location.href = "/pgadmissions/error"; },
+				404 : function() { window.location.href = "/pgadmissions/404"; },
+				400 : function() { window.location.href = "/pgadmissions/400"; },
+				403 : function() { window.location.href = "/pgadmissions/404"; }
 			},
 			url : "/pgadmissions/applications/saveFilters",
 			data : data,
@@ -150,8 +134,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	$('.selectCategory').live("change",	function() {
 		var selected = $(this).val();
-		var predicateSelect = $(this).parent()
-				.find('.selectPredicate');
+		var predicateSelect = $(this).parent().find('.selectPredicate');
 		predicateSelect.empty();
 		
 		if (selected != "") {
@@ -296,6 +279,7 @@ $(document).ready(function() {
 	});
 	
 	$("#preFilterOptions li a").click(function(event) {
+		clearRedFlagIndex();
 		event.preventDefault();
 		filterVal = $(this).attr('href');
 		filterHtml = $(this).html();
@@ -304,6 +288,11 @@ $(document).ready(function() {
 	});
 
 });
+
+function clearRedFlagIndex() {
+	latestConsideredFlagIndex = 0;
+}
+
 // ------------------------------------------------------------------------------
 // APPLY/REMOVE DATAPICKER AND SELECTOR
 // ------------------------------------------------------------------------------
@@ -349,6 +338,7 @@ function fieldChange(selected, id) {
 }
 function resetPageCount() {
 	$('#block-index').val("1");
+	clearRedFlagIndex();
 }
 
 function getPageCount() {
@@ -374,7 +364,8 @@ function populateApplicationList() {
 		preFilter : $("#preFilter").val(),
 		sortCategory : $('#sort-column').val(),
 		order : $('#sort-order').val(),
-		blockCount : $('#block-index').val()
+		blockCount : $('#block-index').val(),
+		latestConsideredFlagIndex : latestConsideredFlagIndex
 	};
 
 	$('#search-box div.alert-error').remove();
@@ -384,21 +375,11 @@ function populateApplicationList() {
 	$.ajax({
 		type : 'GET',
 		statusCode : {
-			401 : function() {
-				window.location.reload();
-			},
-			500 : function() {
-				window.location.href = "/pgadmissions/error";
-			},
-			404 : function() {
-				window.location.href = "/pgadmissions/404";
-			},
-			400 : function() {
-				window.location.href = "/pgadmissions/400";
-			},
-			403 : function() {
-				window.location.href = "/pgadmissions/404";
-			}
+			401 : function() { window.location.reload(); },
+			500 : function() { window.location.href = "/pgadmissions/error"; },
+			404 : function() { window.location.href = "/pgadmissions/404"; },
+			400 : function() { window.location.href = "/pgadmissions/400"; },
+			403 : function() { window.location.href = "/pgadmissions/404"; }
 		},
 		url : "/pgadmissions/applications/section",
 		data : options,
@@ -419,7 +400,6 @@ function populateApplicationList() {
 			 $('#ajaxloader').fadeOut('fast');
 			addToolTips();
 			loading = false;
-			showOrHideTheDisplayNextButton();
 		}
 	});
 }
@@ -431,7 +411,8 @@ function downloadReport(event) {
         filters : JSON.stringify(filters),
         sortCategory : $('#sort-column').val(),
         order : $('#sort-order').val(),
-        blockCount : $('#block-index').val()
+        blockCount : $('#block-index').val(),
+        latestConsideredFlagIndex : latestConsideredFlagIndex
     };
     
     var url = "/pgadmissions/applications/report?";
@@ -527,13 +508,12 @@ function getActiveApplicationFilters() {
 
 function clearCurrentFilters(shouldApplyChanges){
 	var filters = $("#search-box").find("div.filter");
-
 	for ( var i = 1; i < filters.length; i++) {
 		$(filters[i]).remove();
 	}
 
 	clearFilter(filters[0]);
-	if(shouldApplyChanges){
+	if (shouldApplyChanges) {
 		$('#search-go').click();
 	}
 }
@@ -554,13 +534,3 @@ function cleanUpFilterIds(){
 		$(filters[i]).find(".filterInput").attr("id","searchTerm_"+i);
 	}
 }
-
-function showOrHideTheDisplayNextButton() {
-	if ($("#preFilter").val() == "URGENT") {
-		$("#loadMoreApplications").hide();
-	} else {
-		$("#loadMoreApplications").show();
-	}
-
-}
-

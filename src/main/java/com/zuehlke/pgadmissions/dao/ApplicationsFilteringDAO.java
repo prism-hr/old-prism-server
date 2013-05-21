@@ -20,7 +20,7 @@ public class ApplicationsFilteringDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public void merge(ApplicationsFiltering filtering) {
-        sessionFactory.getCurrentSession().merge(filtering);
+    public ApplicationsFiltering merge(ApplicationsFiltering filtering) {
+        return (ApplicationsFiltering) sessionFactory.getCurrentSession().merge(filtering);
     }
 }

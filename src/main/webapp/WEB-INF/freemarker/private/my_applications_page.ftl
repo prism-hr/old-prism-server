@@ -214,6 +214,7 @@
                   <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" />
                   <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" />
                   <input type="hidden" id="block-index" name="block-index" value="1" /></th>
+                  <input type="hidden" id="latest-considered-flag-index" name="latest-considered-flag-index" value="0" /></th>
                 <#if !user.isInRole('APPLICANT')>
                 <th class="sortable" scope="col" id="APPLICANT_NAME" onclick="sortList(this)">Applicant</th>
                 <#else>

@@ -134,7 +134,7 @@ public class ApplicationsService {
 
     public List<ApplicationForm> getAllVisibleAndMatchedApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
         if (filtering.getPreFilter() == ApplicationsPreFilter.URGENT) {
-            return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, this);
+            return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, APPLICATION_BLOCK_SIZE, this);
         } else {
             return applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
         }

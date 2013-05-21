@@ -116,10 +116,10 @@ public class ApplicationFormTest {
     @Test
     public void shouldNotAddDuplicateNotificationTypeButUpdateExistingOne() throws ParseException {
         NotificationRecord updatedNotification = new NotificationRecordBuilder().notificationType(NotificationType.UPDATED_NOTIFICATION)
-                        .notificationDate(DateUtils.parseDate("2012-09-09T00:03:00", new String[] { "yyyy-MM-dd'T'HH:mm:ss" })).build();
+                .notificationDate(DateUtils.parseDate("2012-09-09T00:03:00", new String[] { "yyyy-MM-dd'T'HH:mm:ss" })).build();
 
         NotificationRecord duplicateNpdatedNotification = new NotificationRecordBuilder().notificationType(NotificationType.UPDATED_NOTIFICATION)
-                        .notificationDate(new Date()).build();
+                .notificationDate(new Date()).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().notificationRecords(updatedNotification).build();
 
@@ -140,7 +140,7 @@ public class ApplicationFormTest {
     @Test
     public void shouldSeeNoCommentsApplicant() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).comments(new CommentBuilder().id(4).build())
-                        .build();
+                .build();
         RegisteredUser user = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
         assertTrue(applicationForm.getVisibleComments(user).isEmpty());
     }
@@ -165,15 +165,14 @@ public class ApplicationFormTest {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
         RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().referees()
-                        .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build()).id(7)
-                        .build();
+                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
         Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerUserTwo).build();
 
         ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).build(),
-                        new ReviewerBuilder().user(reviewerUserTwo).build()).build();
+                new ReviewerBuilder().user(reviewerUserTwo).build()).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree).build();
         Referee referee = new RefereeBuilder().application(applicationForm).build();
@@ -187,16 +186,16 @@ public class ApplicationFormTest {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
         RegisteredUser reviewerUserTwo = new RegisteredUserBuilder()
-                        .referees()
-                        .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build(),
-                                        new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
+                .referees()
+                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build(),
+                        new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
         Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerUserTwo).build();
 
         ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).build(),
-                        new ReviewerBuilder().user(reviewerUserTwo).build()).build();
+                new ReviewerBuilder().user(reviewerUserTwo).build()).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree).build();
         Referee referee = new RefereeBuilder().application(applicationForm).build();
@@ -212,12 +211,14 @@ public class ApplicationFormTest {
         RegisteredUser applicant = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
         Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).id(1).build();
         Interview interview = new InterviewBuilder().interviewers(interviewer).id(1).build();
-        
-        InterviewVoteComment interviewVoteCommentByInterviewer = new InterviewVoteCommentBuilder().date(format.parse("01 01 2011")).id(1).user(interviewerUser).build();
+
+        InterviewVoteComment interviewVoteCommentByInterviewer = new InterviewVoteCommentBuilder().date(format.parse("01 01 2011")).id(1).user(interviewerUser)
+                .build();
         InterviewVoteComment interviewVoteCommentByApplicant = new InterviewVoteCommentBuilder().date(format.parse("01 01 2011")).id(2).user(applicant).build();
 
         Program program = new ProgramBuilder().id(1).viewers(interviewerUser).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).interviews(interview).id(5).comments(interviewVoteCommentByInterviewer, interviewVoteCommentByApplicant).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).interviews(interview).id(5)
+                .comments(interviewVoteCommentByInterviewer, interviewVoteCommentByApplicant).build();
         List<Comment> visibleComments = applicationForm.getVisibleComments(applicant);
         assertEquals(1, visibleComments.size());
         List<Comment> visibleCommentsForInterviewer = applicationForm.getVisibleComments(interviewerUser);
@@ -231,12 +232,14 @@ public class ApplicationFormTest {
         RegisteredUser applicant = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
         Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).id(1).build();
         Interview interview = new InterviewBuilder().interviewers(interviewer).id(1).build();
-        
-        InterviewVoteComment interviewVoteCommentByInterviewer = new InterviewVoteCommentBuilder().date(format.parse("01 01 2011")).id(1).user(interviewerUser).build();
+
+        InterviewVoteComment interviewVoteCommentByInterviewer = new InterviewVoteCommentBuilder().date(format.parse("01 01 2011")).id(1).user(interviewerUser)
+                .build();
         InterviewVoteComment interviewVoteCommentByApplicant = new InterviewVoteCommentBuilder().date(format.parse("01 01 2011")).id(2).user(applicant).build();
-        
+
         Program program = new ProgramBuilder().id(1).viewers(interviewerUser).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).interviews(interview).id(5).comments(interviewVoteCommentByInterviewer, interviewVoteCommentByApplicant).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).interviews(interview).id(5)
+                .comments(interviewVoteCommentByInterviewer, interviewVoteCommentByApplicant).build();
         List<Comment> visibleCommentsForInterviewer = applicationForm.getVisibleComments(interviewerUser);
         assertEquals(2, visibleCommentsForInterviewer.size());
     }
@@ -250,19 +253,19 @@ public class ApplicationFormTest {
 
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
         RegisteredUser reviewerUserTwo = new RegisteredUserBuilder()
-                        .referees()
-                        .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build(),
-                                        new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
+                .referees()
+                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build(),
+                        new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
         Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerUserTwo).build();
 
         ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).build(),
-                        new ReviewerBuilder().user(reviewerUserTwo).build()).build();
+                new ReviewerBuilder().user(reviewerUserTwo).build()).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree)
-                        .program(program).build();
+                .program(program).build();
 
         Referee referee = new RefereeBuilder().application(applicationForm).build();
         reviewerUserTwo.getReferees().add(referee);
@@ -274,13 +277,13 @@ public class ApplicationFormTest {
     @Test
     public void shouldReturnStateChangeEventsEventsSortedByDate() throws ParseException {
         Event validationEvent = new StateChangeEventBuilder().id(1).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/01/01"))
-                        .newStatus(ApplicationFormStatus.VALIDATION).build();
+                .newStatus(ApplicationFormStatus.VALIDATION).build();
         Event reviewEvent = new StateChangeEventBuilder().id(2).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/02/02"))
-                        .newStatus(ApplicationFormStatus.REVIEW).build();
+                .newStatus(ApplicationFormStatus.REVIEW).build();
         StateChangeEvent approvalEvent = new StateChangeEventBuilder().id(3).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04"))
-                        .newStatus(ApplicationFormStatus.APPROVAL).build();
+                .newStatus(ApplicationFormStatus.APPROVAL).build();
         Event rejectedEvent = new StateChangeEventBuilder().id(40).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04"))
-                        .newStatus(ApplicationFormStatus.REJECTED).build();
+                .newStatus(ApplicationFormStatus.REJECTED).build();
         ApplicationForm application = new ApplicationFormBuilder().id(1).events(approvalEvent, rejectedEvent, reviewEvent, validationEvent).build();
         List<StateChangeEvent> eventsSortedByDate = application.getStateChangeEventsSortedByDate();
         Assert.assertEquals(validationEvent, eventsSortedByDate.get(0));
@@ -305,7 +308,7 @@ public class ApplicationFormTest {
         InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-                        .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
+                .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
 
         List<RegisteredUser> users = applicationForm.getUsersWillingToSupervise();
         assertEquals(1, users.size());
@@ -325,7 +328,7 @@ public class ApplicationFormTest {
         InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review1, review2, review3, interviewComment1)
-                        .build();
+                .build();
 
         List<RegisteredUser> users = applicationForm.getUsersWillingToSupervise();
         assertEquals(Collections.EMPTY_LIST, users);
@@ -346,7 +349,7 @@ public class ApplicationFormTest {
         InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-                        .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
+                .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
 
         List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
         assertEquals(2, users.size());
@@ -367,7 +370,7 @@ public class ApplicationFormTest {
         InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-                        .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
+                .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
 
         List<RegisteredUser> users = applicationForm.getReviewersWillingToWorkWithApplicant();
         assertEquals(2, users.size());
@@ -417,7 +420,7 @@ public class ApplicationFormTest {
         ReviewRound reviewRoundOne = new ReviewRoundBuilder().id(3).build();
         ReviewRound reviewRoundTwo = new ReviewRoundBuilder().id(4).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).reviewRounds(reviewRoundOne, reviewRoundTwo).status(ApplicationFormStatus.REVIEW)
-                        .build();
+                .build();
         assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
     }
 
@@ -433,7 +436,7 @@ public class ApplicationFormTest {
         Interview interviewOne = new InterviewBuilder().id(3).build();
         ReviewRound reviewRound = new ReviewRoundBuilder().id(3).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne).reviewRounds(reviewRound)
-                        .status(ApplicationFormStatus.INTERVIEW).build();
+                .status(ApplicationFormStatus.INTERVIEW).build();
         assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
     }
 
@@ -442,7 +445,7 @@ public class ApplicationFormTest {
         Interview interviewOne = new InterviewBuilder().id(3).build();
         Interview interviewTwo = new InterviewBuilder().id(5).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne, interviewTwo).status(ApplicationFormStatus.INTERVIEW)
-                        .build();
+                .build();
         assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getOutcomeOfStage());
     }
 
@@ -451,7 +454,7 @@ public class ApplicationFormTest {
         ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).build();
         ApprovalRound approvalRoundTwo = new ApprovalRoundBuilder().id(5).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne, approvalRoundTwo)
-                        .status(ApplicationFormStatus.APPROVAL).build();
+                .status(ApplicationFormStatus.APPROVAL).build();
         assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getOutcomeOfStage());
     }
 
@@ -467,7 +470,7 @@ public class ApplicationFormTest {
         ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).build();
         ReviewRound reviewRound = new ReviewRoundBuilder().id(3).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).reviewRounds(reviewRound)
-                        .status(ApplicationFormStatus.APPROVAL).build();
+                .status(ApplicationFormStatus.APPROVAL).build();
         assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
     }
 
@@ -476,7 +479,7 @@ public class ApplicationFormTest {
         ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).build();
         Interview interviewOne = new InterviewBuilder().id(3).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).interviews(interviewOne)
-                        .status(ApplicationFormStatus.APPROVAL).build();
+                .status(ApplicationFormStatus.APPROVAL).build();
         assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getOutcomeOfStage());
     }
 
@@ -530,7 +533,7 @@ public class ApplicationFormTest {
         referee2.setReference(referenceComment2);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
-                        .qualification(qualification1, qualification2).build();
+                .qualification(qualification1, qualification2).build();
 
         assertTrue(applicationForm.isCompleteForSendingToPortico(false));
     }
@@ -553,10 +556,10 @@ public class ApplicationFormTest {
         referee2.setReference(referenceComment2);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
-                        .build();
+                .build();
 
         assertTrue("Two reference comments have been selected for sending to Portico but function returned false.",
-                        applicationForm.isCompleteForSendingToPortico(true));
+                applicationForm.isCompleteForSendingToPortico(true));
     }
 
     @Test
@@ -580,10 +583,10 @@ public class ApplicationFormTest {
         Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
-                        .qualification(qualification1).build();
+                .qualification(qualification1).build();
 
         assertFalse("Less than two reference comments have been selected for sending to Portico but function returned true.",
-                        applicationForm.isCompleteForSendingToPortico(false));
+                applicationForm.isCompleteForSendingToPortico(false));
     }
 
     @Test
@@ -604,7 +607,7 @@ public class ApplicationFormTest {
         referee2.setReference(referenceComment2);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
-                        .build();
+                .build();
 
         assertFalse(applicationForm.isCompleteForSendingToPortico(false));
     }
@@ -633,7 +636,7 @@ public class ApplicationFormTest {
         referee2.setReference(referenceComment2);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
-                        .qualification(qualification1, qualification2, qualification3).build();
+                .qualification(qualification1, qualification2, qualification3).build();
 
         assertFalse(applicationForm.isCompleteForSendingToPortico(false));
     }
@@ -647,95 +650,22 @@ public class ApplicationFormTest {
         DateTime instance2EndDate = new DateTime(2012, 6, 1, 8, 0);
 
         ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                        .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                        .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(true).instances(instance1, instance2)
-                        .title("MRes Medical and Biomedical Imaging").build();
+                .title("MRes Medical and Biomedical Imaging").build();
 
         ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                        .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
-                        .studyOption("F+++++", "Full-time").build();
+                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
+                .build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
 
         assertFalse("Should have returned false because the largest possible end date is " + instance2EndDate.toString() + " which is before today",
-                        applicationForm.isProgrammeStillAvailable());
-    }
-
-    @Test
-    public void shouldAllowSuperAdministratorToEdit() {
-        RegisteredUser superAdmin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).build();
-        assertTrue(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(superAdmin));
-    }
-
-    @Test
-    public void shouldAllowProgramAdministratorToEdit() {
-        RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();
-        Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).program(program).build();
-        assertTrue(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
-    }
-
-    @Test
-    public void shouldAllowApplicationInterviewerToEdit() {
-        RegisteredUser interviewerUser = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).build()).id(7).build();
-        Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
-        Interview interview = new InterviewBuilder().interviewers(interviewer).build();
-        Program program = new ProgramBuilder().id(1).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).program(program)
-                        .latestInterview(interview).build();
-        assertTrue(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(interviewerUser));
-    }
-
-    @Test
-    public void shouldNotAllowApplicantToEditAsAdministrator() {
-        RegisteredUser applicant = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).applicant(applicant).build();
-        assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(applicant));
-    }
-
-    @Test
-    public void shouldNotAllowAdministratorToEditApplicationInValidationStage() {
-        RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();
-        Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).build();
-        assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
-    }
-
-    @Test
-    public void shouldNotAllowAdministratorToEditUnsubmittedApplication() {
-        RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();
-        Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).program(program).build();
-        assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
-    }
-
-    @Test
-    public void shouldNotAllowAdministratorToEditWithdrawnApplication() {
-        RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();
-        Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.WITHDRAWN).program(program).build();
-        assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
-    }
-
-    @Test
-    public void shouldNotAllowAdministratorToEditRejectedApplication() {
-        RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();
-        Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REJECTED).program(program).build();
-        assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
-    }
-
-    @Test
-    public void shouldNotAllowAdministratorToEditApplicationInApprovalState() {
-        RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();
-        Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVAL).program(program).build();
-        assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
+                applicationForm.isProgrammeStillAvailable());
     }
 
     @Test
@@ -747,22 +677,22 @@ public class ApplicationFormTest {
         DateTime instance2EndDate = new DateTime(2014, 6, 1, 8, 0);
 
         ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                        .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                        .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(true).instances(instance1, instance2)
-                        .title("MRes Medical and Biomedical Imaging").build();
+                .title("MRes Medical and Biomedical Imaging").build();
 
         ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                        .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
-                        .studyOption("F+++++", "Full-time").build();
+                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
+                .build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
 
         assertTrue("Should have returned true because the largest possible end date is " + instance2EndDate.toString() + " which is after today",
-                        applicationForm.isProgrammeStillAvailable());
+                applicationForm.isProgrammeStillAvailable());
     }
 
     @Test
@@ -774,17 +704,17 @@ public class ApplicationFormTest {
         DateTime instance2EndDate = new DateTime(2014, 6, 1, 8, 0);
 
         ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                        .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                        .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(false).instances(instance1, instance2)
-                        .title("MRes Medical and Biomedical Imaging").build();
+                .title("MRes Medical and Biomedical Imaging").build();
 
         ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                        .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
-                        .studyOption("F+++++", "Full-time").build();
+                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
+                .build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
 
@@ -800,17 +730,17 @@ public class ApplicationFormTest {
         DateTime instance2EndDate = new DateTime(2014, 6, 1, 8, 0);
 
         ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                        .enabled(false).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(false).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                        .enabled(false).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(false).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(false).instances(instance1, instance2)
-                        .title("MRes Medical and Biomedical Imaging").build();
+                .title("MRes Medical and Biomedical Imaging").build();
 
         ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                        .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
-                        .studyOption("F+++++", "Full-time").build();
+                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
+                .build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
 
@@ -826,17 +756,17 @@ public class ApplicationFormTest {
         DateTime instance2EndDate = new DateTime(2014, 6, 1, 8, 0);
 
         ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                        .enabled(false).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(false).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                        .enabled(false).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
+                .enabled(false).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
 
         Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(false).instances(instance1, instance2)
-                        .title("MRes Medical and Biomedical Imaging").build();
+                .title("MRes Medical and Biomedical Imaging").build();
 
         ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                        .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
-                        .studyOption("H+++++", "Part-time").build();
+                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("H+++++", "Part-time")
+                .build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
 

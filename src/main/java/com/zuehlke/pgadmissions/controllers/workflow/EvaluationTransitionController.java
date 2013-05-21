@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -39,7 +40,7 @@ public class EvaluationTransitionController extends StateTransitionController {
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
     
     public EvaluationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -47,9 +48,9 @@ public class EvaluationTransitionController extends StateTransitionController {
             CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
             DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
-            StateTransitionService stateTransitionService) {
+            StateTransitionService stateTransitionService, ApplicationFormAccessService accessService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService,
-                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService);
+                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService, accessService);
     }
 
     @ModelAttribute("comment")

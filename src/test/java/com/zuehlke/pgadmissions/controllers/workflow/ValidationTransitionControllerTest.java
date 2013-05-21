@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.BadgeService;
@@ -72,6 +73,7 @@ public class ValidationTransitionControllerTest {
 	private BindingResult bindingResultMock;
 	private BadgeService badgeServiceMock;
 	private MessageSource messageSourceMock;
+	private ApplicationFormAccessService accessServiceMock;
 	
 	@Test
 	public void shouldReturnAllValidationQuestionOptions() {
@@ -125,7 +127,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock,
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm( String applicationId) {
                 return applicationForm;
@@ -162,7 +165,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock, 
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm( String applicationId) {
                 return applicationForm;
@@ -201,7 +205,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock, 
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -250,7 +255,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock, 
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm( String applicationId) {
                 return applicationForm;
@@ -288,7 +294,8 @@ public class ValidationTransitionControllerTest {
 				documentPropertyEditorMock, 
 				badgeServiceMock, 
 				messageSourceMock,
-				stateTransitionServiceMock){
+				stateTransitionServiceMock,
+				accessServiceMock){
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -330,7 +337,8 @@ public class ValidationTransitionControllerTest {
 				documentPropertyEditorMock, 
 				badgeServiceMock, 
 				messageSourceMock,
-				stateTransitionServiceMock) {
+				stateTransitionServiceMock,
+				accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -370,7 +378,8 @@ public class ValidationTransitionControllerTest {
 				documentPropertyEditorMock, 
 				badgeServiceMock, 
 				messageSourceMock,
-				stateTransitionServiceMock){
+				stateTransitionServiceMock,
+				accessServiceMock){
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -401,7 +410,8 @@ public class ValidationTransitionControllerTest {
 				documentPropertyEditorMock, 
 				badgeServiceMock, 
 				messageSourceMock,
-				stateTransitionServiceMock){
+				stateTransitionServiceMock,
+				accessServiceMock){
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -430,7 +440,8 @@ public class ValidationTransitionControllerTest {
 				documentPropertyEditorMock, 
 				badgeServiceMock, 
 				messageSourceMock,
-				stateTransitionServiceMock) {
+				stateTransitionServiceMock,
+				accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -475,7 +486,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock, 
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm( String applicationId) {
                 return applicationForm;
@@ -532,7 +544,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock, 
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm( String applicationId) {
                 return applicationForm;
@@ -589,7 +602,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock, 
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm( String applicationId) {
                 return applicationForm;
@@ -646,7 +660,8 @@ public class ValidationTransitionControllerTest {
 	                documentPropertyEditorMock, 
 	                badgeServiceMock, 
 	                messageSourceMock,
-	                stateTransitionServiceMock){
+	                stateTransitionServiceMock,
+	                accessServiceMock){
 	            @Override
 	            public ApplicationForm getApplicationForm( String applicationId) {
 	                return applicationForm;
@@ -701,7 +716,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock, 
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm( String applicationId) {
                 return applicationForm;
@@ -756,7 +772,8 @@ public class ValidationTransitionControllerTest {
                 documentPropertyEditorMock, 
                 badgeServiceMock, 
                 messageSourceMock,
-                stateTransitionServiceMock){
+                stateTransitionServiceMock,
+                accessServiceMock){
             @Override
             public ApplicationForm getApplicationForm( String applicationId) {
                 return applicationForm;
@@ -796,6 +813,7 @@ public class ValidationTransitionControllerTest {
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		badgeServiceMock = EasyMock.createMock(BadgeService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 		controller = new ValidationTransitionController(
 		        applicationServiceMock, 
 		        userServiceMock, 
@@ -808,7 +826,8 @@ public class ValidationTransitionControllerTest {
 				documentPropertyEditorMock, 
 				badgeServiceMock, 
 				messageSourceMock,
-				stateTransitionServiceMock);
+				stateTransitionServiceMock,
+				accessServiceMock);
 	}
 
 	@After

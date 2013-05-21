@@ -17,6 +17,8 @@
 
   <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichAdministrator" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
 
+  <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichApprover" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
+
   <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichReviewer" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />
 
   <cache name="com.zuehlke.pgadmissions.domain.RegisteredUser.programsOfWhichInterviewer" maxElementsInMemory="100" eternal="false" overflowToDisk="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" />

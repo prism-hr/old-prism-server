@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,13 +11,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -31,16 +36,20 @@ public class InterviewConfirmController {
     private final UserService userService;
 
     private final InterviewService interviewService;
+    
+    private final ApplicationFormAccessService accessService;
 
     public InterviewConfirmController() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public InterviewConfirmController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService) {
+    public InterviewConfirmController(ApplicationsService applicationsService, UserService userService,
+            InterviewService interviewService, final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
+        this.accessService = accessService;
     }
 
     @ModelAttribute("applicationForm")
@@ -85,7 +94,11 @@ public class InterviewConfirmController {
         }
         Interview interview = applicationForm.getLatestInterview();
         interviewService.confirmInterview(interview, timeslotId);
-
+        
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        applicationsService.save(applicationForm);
+        
+        accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }
 

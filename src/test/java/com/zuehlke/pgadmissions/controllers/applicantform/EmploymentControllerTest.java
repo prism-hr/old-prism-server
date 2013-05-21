@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
@@ -62,6 +63,7 @@ public class EmploymentControllerTest {
 	private EmploymentPositionValidator employmentValidatorMock;
 	private UserService userServiceMock;
 	private EncryptionHelper encryptionHelperMock;
+	private ApplicationFormAccessService accessServiceMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -242,8 +244,9 @@ public class EmploymentControllerTest {
 		employmentValidatorMock = EasyMock.createMock(EmploymentPositionValidator.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 		controller = new EmploymentController(employmentServiceMock, languageServiceMock, countriesServiceMock, applicationsServiceMock,
-				languagePropertyEditorMock, datePropertyEditorMock, countryPropertyEditor, applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock);
+				languagePropertyEditorMock, datePropertyEditorMock, countryPropertyEditor, applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock, accessServiceMock);
 
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();

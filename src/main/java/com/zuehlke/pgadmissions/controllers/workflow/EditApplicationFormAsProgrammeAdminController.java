@@ -249,7 +249,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        if (!getCurrentUser().canSee(applicationForm) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+        if (!getCurrentUser().canEditAsAdministrator(applicationForm)) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
 

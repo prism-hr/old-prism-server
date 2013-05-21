@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.review;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -34,17 +36,19 @@ public class MoveToReviewController extends ReviewController {
 
 	private final ReviewRoundValidator reviewRoundValidator;
 	private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
+	private final ApplicationFormAccessService accessService;
 
 	MoveToReviewController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
-	                ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor) {
+	                ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor, final ApplicationFormAccessService accessService) {
 		super(applicationsService, userService, reviewService);
 		this.reviewRoundValidator = reviewRoundValidator;
 		this.reviewerPropertyEditor = reviewerPropertyEditor;
+        this.accessService = accessService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToReview")
@@ -67,6 +71,7 @@ public class MoveToReviewController extends ReviewController {
 			return REVIEWERS_SECTION_NAME;
 		}
 		reviewService.moveApplicationToReview(applicationForm, reviewRound);
+		accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
 		return "/private/common/ajax_OK";
 	}
 

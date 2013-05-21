@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.StageDurationService;
@@ -58,6 +59,8 @@ public class SubmitApplicationFormControllerTest {
     private UserService userServiceMock;
 
     private MockHttpServletRequest httpServletRequestMock;
+    
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test
     public void shouldReturnCurrentUser() {
@@ -302,7 +305,7 @@ public class SubmitApplicationFormControllerTest {
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
         EasyMock.expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);
         EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
-        EasyMock.replay(stageDurationServiceMock, stageDurationMock);
+        EasyMock.replay(stageDurationServiceMock, accessServiceMock, stageDurationMock);
         applicationController.calculateAndSetValidationDueDate(applicationForm);
         Date dayAfterTomorrow = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 1440);
         Assert.assertTrue(String.format("Dates are not on the same day [%s] [%s]", dayAfterTomorrow, applicationForm.getDueDate()),
@@ -317,8 +320,9 @@ public class SubmitApplicationFormControllerTest {
         applicationFormValidatorMock = EasyMock.createMock(ApplicationFormValidator.class);
         stageDurationServiceMock = EasyMock.createMock(StageDurationService.class);
         eventFactoryMock = EasyMock.createMock(EventFactory.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         applicationController = new SubmitApplicationFormController(applicationsServiceMock, userServiceMock, applicationFormValidatorMock,
-                stageDurationServiceMock, eventFactoryMock);
+                stageDurationServiceMock, eventFactoryMock, accessServiceMock);
         httpServletRequestMock = new MockHttpServletRequest();
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

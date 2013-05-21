@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -29,6 +31,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
@@ -52,16 +55,17 @@ public class EmploymentController {
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final UserService userService;
 	private final EncryptionHelper encryptionHelper;
+	private final ApplicationFormAccessService accessService;
 
 	EmploymentController() {
-		this(null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public EmploymentController(EmploymentPositionService employmentPositionService, LanguageService languageService, CountryService countryService,
 			ApplicationsService applicationsService, LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor,
 			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor,
-			EmploymentPositionValidator employmentPositionValidator, UserService userService, EncryptionHelper encryptionHelper) {
+			EmploymentPositionValidator employmentPositionValidator, UserService userService, EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService) {
 		this.employmentPositionService = employmentPositionService;
 		this.languageService = languageService;
 		this.countryService = countryService;
@@ -73,6 +77,7 @@ public class EmploymentController {
 		this.employmentPositionValidator = employmentPositionValidator;
 		this.userService = userService;
 		this.encryptionHelper = encryptionHelper;
+        this.accessService = accessService;
 	}
 
 	@InitBinder("employmentPosition")
@@ -108,8 +113,11 @@ public class EmploymentController {
 		if(result.hasErrors()){
 			return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
 		}
+		ApplicationForm applicationForm = employment.getApplication();
+		applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+		accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
 		employmentPositionService.save(employment);
-		employment.getApplication().setLastUpdated(new Date());
+		applicationForm.setLastUpdated(new Date());
 		applicationService.save(employment.getApplication());
 		return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
 	}

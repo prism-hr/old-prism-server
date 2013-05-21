@@ -14,11 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
@@ -69,6 +71,7 @@ public class RejectService {
 		if (!(form.getProgram().isApprover(approver) || approver.hasAdminRightsOnApplication(form))) {
 			throw new IllegalArgumentException("approver is not an approver or administrator in the program of the application!");
 		}
+        form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.ALL_USERS, new Date()));
 		form.setApprover(approver);
 		form.setStatus(ApplicationFormStatus.REJECTED);		
 		form.setRejection(rejection);

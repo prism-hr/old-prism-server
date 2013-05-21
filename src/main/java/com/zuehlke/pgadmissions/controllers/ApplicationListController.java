@@ -120,7 +120,7 @@ public class ApplicationListController {
     }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
-    public String getApplicationListSection(@ModelAttribute("filtering") ApplicationsFiltering filtering, ModelMap model) {
+    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, final ModelMap model) {
         RegisteredUser user = getUser();
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
         Map<String, Boolean> updatedApplications = new HashMap<String, Boolean>();
@@ -133,6 +133,7 @@ public class ApplicationListController {
         model.addAttribute("updateApplications", updatedApplications);
         model.addAttribute("applications", applications);
         model.addAttribute("actionDefinitions", actionDefinitions);
+        model.addAttribute("latestConsideredFlagIndex", filtering.getLatestConsideredFlagIndex());
         return APPLICATION_LIST_SECTION_VIEW_NAME;
     }
 

@@ -82,4 +82,8 @@
     <tr class="placeholder">
   <td colspan="6">***PLACEHOLDER***</td>
 </tr>
-</#list> 
+</#list>
+
+<script>
+    latestConsideredFlagIndex = ${latestConsideredFlagIndex};
+</script> 

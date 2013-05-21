@@ -47,6 +47,17 @@ public class ApplicationsFiltering implements Serializable {
 
     @Transient
     private Integer blockCount = 1;
+    
+    @Transient
+    private Integer latestConsideredFlagIndex = 0;
+    
+    public Integer getLatestConsideredFlagIndex() {
+        return latestConsideredFlagIndex;
+    }
+    
+    public void setLatestConsideredFlagIndex(final Integer index) {
+        this.latestConsideredFlagIndex = index;
+    }
 
     public Integer getId() {
         return id;

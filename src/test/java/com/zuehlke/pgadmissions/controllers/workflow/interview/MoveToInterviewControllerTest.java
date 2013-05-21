@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -64,6 +65,7 @@ public class MoveToInterviewControllerTest {
     private BindingResult bindingResultMock;
     private DatePropertyEditor datePropertyEditorMock;
     private InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditorMock;
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test
     public void shouldGetInterviewPage() {
@@ -93,7 +95,7 @@ public class MoveToInterviewControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -130,7 +132,7 @@ public class MoveToInterviewControllerTest {
         final Program program = new ProgramBuilder().interviewers(interUser1, interUser2, interUser3).id(6).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -173,7 +175,7 @@ public class MoveToInterviewControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).comments(reviewOne, reviewTwo, reviewThree)
                 .programmeDetails(programmeDetails).build();
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -205,7 +207,7 @@ public class MoveToInterviewControllerTest {
                 .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -227,7 +229,7 @@ public class MoveToInterviewControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").applicationAdministrator(user).build();
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -256,7 +258,7 @@ public class MoveToInterviewControllerTest {
                 .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -280,7 +282,7 @@ public class MoveToInterviewControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -346,7 +348,7 @@ public class MoveToInterviewControllerTest {
         ModelMap model = new ExtendedModelMap(); 
         
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return application;
@@ -370,7 +372,7 @@ public class MoveToInterviewControllerTest {
         ModelMap model = new ExtendedModelMap(); 
         
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return application;
@@ -396,7 +398,7 @@ public class MoveToInterviewControllerTest {
         ModelMap model = new ExtendedModelMap(); 
         
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock) {
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -434,6 +436,7 @@ public class MoveToInterviewControllerTest {
         interviewerPropertyEditorMock = EasyMock.createMock(InterviewerPropertyEditor.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         interviewServiceMock = EasyMock.createMock(InterviewService.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         interviewTimeslotsPropertyEditorMock = EasyMock.createMock(InterviewTimeslotsPropertyEditor.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
@@ -444,7 +447,7 @@ public class MoveToInterviewControllerTest {
         EasyMock.replay(bindingResultMock);
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock);
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock);
 
     }
 }

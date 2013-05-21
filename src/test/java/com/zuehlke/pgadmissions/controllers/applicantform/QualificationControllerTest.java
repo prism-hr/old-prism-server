@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
@@ -70,6 +71,8 @@ public class QualificationControllerTest {
 	private DocumentPropertyEditor documentPropertyEditorMock;
 	private UserService userServiceMock;
 	private EncryptionHelper encryptionHelperMock;
+	
+	private ApplicationFormAccessService accessServiceMock;
 	
 	private Model modelMock;
 	
@@ -247,6 +250,7 @@ public class QualificationControllerTest {
 		languagePropertyEditorMock = EasyMock.createMock(LanguagePropertyEditor.class);
 
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 
 		domicilePropertyEditor = EasyMock.createMock(DomicilePropertyEditor.class);
 		domicileDAOMock = EasyMock.createMock(DomicileDAO.class);
@@ -272,7 +276,7 @@ public class QualificationControllerTest {
 		
 		controller = new QualificationController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, domicileDAOMock,
 				languageServiceMock, languagePropertyEditorMock, domicilePropertyEditor, qualificationValidatorMock, qualificationServiceMock,
-				documentPropertyEditorMock, userServiceMock, encryptionHelperMock, qualificationTypeDAOMock, qualificationTypePropertyEditorMock, institutionDAOMock);
+				documentPropertyEditorMock, userServiceMock, encryptionHelperMock, qualificationTypeDAOMock, qualificationTypePropertyEditorMock, institutionDAOMock, accessServiceMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

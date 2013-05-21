@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
@@ -46,6 +48,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.DisabilityService;
@@ -86,9 +89,10 @@ public class PersonalDetailsController {
     private final DocumentService documentService;
     private final EncryptionHelper encryptionHelper;
     private final PersonalDetailsUserValidator personalDetailsUserValidator;
+    private final ApplicationFormAccessService accessService;
 
     public PersonalDetailsController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -98,7 +102,8 @@ public class PersonalDetailsController {
             LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, DisabilityPropertyEditor disabilityPropertyEditor,
             EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, PersonalDetailsService personalDetailsService,
             DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor,
-            DocumentService documentService, EncryptionHelper encryptionHelper, PersonalDetailsUserValidator personalDetailsUserValidator) {
+            DocumentService documentService, EncryptionHelper encryptionHelper, PersonalDetailsUserValidator personalDetailsUserValidator,
+            final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -119,6 +124,7 @@ public class PersonalDetailsController {
         this.documentService = documentService;
         this.encryptionHelper = encryptionHelper;
         this.personalDetailsUserValidator = personalDetailsUserValidator;
+        this.accessService = accessService;
     }
 
     @InitBinder(value = "personalDetails")
@@ -180,11 +186,14 @@ public class PersonalDetailsController {
         if (BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
             personalDetails.getLanguageQualifications().clear();
         }
-
+        
+        ApplicationForm applicationForm = personalDetails.getApplication();
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+        applicationForm.setLastUpdated(new Date());
         userService.updateCurrentUser(updatedUser);
         personalDetailsService.save(personalDetails);
-        personalDetails.getApplication().setLastUpdated(new Date());
-        applicationsService.save(personalDetails.getApplication());
+        applicationsService.save(applicationForm);
 
         sessionStatus.setComplete();
 

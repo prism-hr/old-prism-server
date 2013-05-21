@@ -94,7 +94,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @JoinColumn(name = "filtering_id")
     @OneToOne(fetch = FetchType.LAZY)
     private ApplicationsFiltering filtering;
-
+    
     private boolean enabled;
 
     private boolean accountNonExpired;
@@ -197,7 +197,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         }
         return firstNameResult;
     }
-
+    
     public String getActivationCode() {
         return activationCode;
     }

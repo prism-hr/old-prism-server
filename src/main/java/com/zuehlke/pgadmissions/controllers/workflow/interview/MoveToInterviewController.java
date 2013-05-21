@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -52,15 +53,16 @@ public class MoveToInterviewController {
     private final InterviewService interviewService;
     private final DatePropertyEditor datePropertyEditor;
     private final InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
+    private final ApplicationFormAccessService accessService;
 
     MoveToInterviewController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
             InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
-            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor) {
+            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -68,6 +70,7 @@ public class MoveToInterviewController {
         this.interviewerPropertyEditor = interviewerPropertyEditor;
         this.datePropertyEditor = datePropertyEditor;
         this.interviewTimeslotsPropertyEditor = interviewTimeslotsPropertyEditor;
+        this.accessService = accessService;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToInterview")
@@ -185,6 +188,7 @@ public class MoveToInterviewController {
             return INTERVIEWERS_SECTION;
         }
         interviewService.moveApplicationToInterview(interview, applicationForm);
+        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
         if (interview.isParticipant(getUser())) {
             model.addAttribute("message", "redirectToVote");
             return "/private/common/simpleResponse";

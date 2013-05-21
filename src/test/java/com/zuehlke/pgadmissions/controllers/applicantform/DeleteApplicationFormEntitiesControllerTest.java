@@ -15,10 +15,13 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class DeleteApplicationFormEntitiesControllerTest {
 
@@ -30,6 +33,9 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	private FundingService fundingServiceMock;
 	private RefereeService refereeServiceMock;
 	private EncryptionHelper encryptionHelperMock;
+	private UserService userServiceMock;
+	private ApplicationFormAccessService accessServiceMock;
+	private ApplicationsService applicationServiceMock;
 
 
 	
@@ -99,6 +105,9 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		fundingServiceMock = EasyMock.createMock(FundingService.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-		controller = new DeleteApplicationFormEntitiesController(qualificationServiceMock, employmentServiceMock, fundingServiceMock, refereeServiceMock, encryptionHelperMock);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+		controller = new DeleteApplicationFormEntitiesController(qualificationServiceMock, employmentServiceMock, fundingServiceMock, refereeServiceMock, encryptionHelperMock, applicationServiceMock, userServiceMock, accessServiceMock);
 	}
 }

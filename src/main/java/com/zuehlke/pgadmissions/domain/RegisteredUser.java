@@ -94,7 +94,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @JoinColumn(name = "filtering_id")
     @OneToOne(fetch = FetchType.LAZY)
     private ApplicationsFiltering filtering;
-
+    
     private boolean enabled;
 
     private boolean accountNonExpired;
@@ -177,6 +177,14 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return canSeeApplication(applicationForm, this);
     }
 
+    public boolean canEditAsApplicant(ApplicationForm applicationForm) {
+        return canEditApplicationAsApplicant(applicationForm, this);
+    }
+
+    public boolean canEditAsAdministrator(ApplicationForm applicationForm) {
+        return canEditApplicationAsAdministrator(applicationForm, this);
+    }
+
     public boolean canSeeReference(final ReferenceComment reference) {
         return canSeeReference(reference, this);
     }
@@ -189,7 +197,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         }
         return firstNameResult;
     }
-
+    
     public String getActivationCode() {
         return activationCode;
     }
@@ -534,7 +542,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isApplicationAdministrator(final ApplicationForm form) {
         return isApplicationAdministrator(form, this);
     }
-    
+
     public boolean isProgrammeAdministrator(final ApplicationForm form) {
         return isProgrammeAdministrator(form, this);
     }

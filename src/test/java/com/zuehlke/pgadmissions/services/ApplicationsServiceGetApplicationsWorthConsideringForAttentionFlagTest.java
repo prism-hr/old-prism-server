@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.easymock.EasyMock;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Assert;
@@ -59,6 +60,8 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
     private ApplicationFormListDAO applicationFormListDAO;
 
     private ApplicationFormDAO applicationFormDAO;
+    
+    private StateTransitionViewResolver stateTransitionViewResolverMock;
 
     private Program program;
 
@@ -86,7 +89,8 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
 
                 applicationFormListDAO = new ApplicationFormListDAO(sessionFactory);
                 applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-                applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null);
+                stateTransitionViewResolverMock = EasyMock.createMock(StateTransitionViewResolver.class);
+                applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, stateTransitionViewResolverMock);
                 roleDAO = new RoleDAO(sessionFactory);
                 user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).accountNonExpired(false).accountNonLocked(false)
@@ -100,6 +104,9 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
                 sessionFactory.getCurrentSession().save(user);
                 sessionFactory.getCurrentSession().save(superUser);
                 sessionFactory.getCurrentSession().save(program);
+                
+                EasyMock.expect(stateTransitionViewResolverMock.getNextStatus(EasyMock.isA(ApplicationForm.class))).andReturn(null).anyTimes();
+                EasyMock.replay(stateTransitionViewResolverMock);
             }
         });
     }

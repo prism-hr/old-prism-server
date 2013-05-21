@@ -59,6 +59,7 @@ public class ApplicationFormBuilder {
 	private Date lastUpdated;
 	private Date rejectNotificationDate;
 	
+	
 	private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
 	private List<Interview> interviews = new ArrayList<Interview>();
 	private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
@@ -75,6 +76,7 @@ public class ApplicationFormBuilder {
     private String ipAddress;
     private Boolean suppressChangeStateNotifications;
     private Boolean withdrawnBeforeSubmit = false;
+    private Boolean isEditableByApplicant = true;
 	
     public ApplicationFormBuilder withdrawnBeforeSubmit(Boolean flag) {
         this.withdrawnBeforeSubmit = flag;
@@ -337,6 +339,11 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
+	public ApplicationFormBuilder isEditableByApplicant(Boolean isEditableByApplicant) {
+	    this.isEditableByApplicant = isEditableByApplicant;
+	    return this;
+	}
+
 	public ApplicationForm build() {
 		ApplicationForm application = new ApplicationForm();
 		application.setId(id);
@@ -392,6 +399,7 @@ public class ApplicationFormBuilder {
 		application.setSuppressStateChangeNotifications(this.suppressChangeStateNotifications);
 		
 		application.setWithdrawnBeforeSubmit(withdrawnBeforeSubmit);
+		application.setIsEditableByApplicant(isEditableByApplicant);
 		
 		try {
 		    application.setIpAddressAsString(ipAddress);

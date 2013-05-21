@@ -19,15 +19,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -47,15 +50,16 @@ public class RefereeController {
 	private final RefereeValidator refereeValidator;
 	private final EncryptionHelper encryptionHelper;
 	private final UserService userService;
+	private final ApplicationFormAccessService accessService;
 
 	public RefereeController() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RefereeController(RefereeService refereeService, UserService userService, CountryService countryService, ApplicationsService applicationsService,
 			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, 
-			RefereeValidator refereeValidator, EncryptionHelper encryptionHelper) {
+			RefereeValidator refereeValidator, EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService) {
 		this.refereeService = refereeService;
 		this.userService = userService;
 		this.countryService = countryService;
@@ -64,6 +68,7 @@ public class RefereeController {
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.refereeValidator = refereeValidator;
 		this.encryptionHelper = encryptionHelper;
+        this.accessService = accessService;
 	}
 
 	@RequestMapping(value = "/editReferee", method = RequestMethod.POST)
@@ -89,7 +94,9 @@ public class RefereeController {
 
         }
 
+        application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
         application.setLastUpdated(new Date());
+        accessService.updateAccessTimestamp(application, userService.getCurrentUser(), new Date());
         applicationsService.save(application);
         return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
 	}

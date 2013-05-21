@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -121,9 +122,10 @@ public class ApprovalController {
 	private final ScoresPropertyEditor scoresPropertyEditor;
 
 	private final ScoreFactory scoreFactory;
+	private final ApplicationFormAccessService accessService;
 
 	public ApprovalController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -134,7 +136,8 @@ public class ApprovalController {
 	                EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
 	                SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
 	                CountryPropertyEditor countryPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
-	                ScoreFactory scoreFactory) {
+	                ScoreFactory scoreFactory,
+	                final ApplicationFormAccessService accessService) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.approvalService = approvalService;
@@ -154,6 +157,7 @@ public class ApprovalController {
 		this.scoringDefinitionParser = scoringDefinitionParser;
 		this.scoresPropertyEditor = scoresPropertyEditor;
 		this.scoreFactory = scoreFactory;
+        this.accessService = accessService;
 	}
 
 	@InitBinder(value = "refereesAdminEditDTO")
@@ -325,8 +329,8 @@ public class ApprovalController {
 		if (bindingResult.hasErrors()) {
 			return SUPERVISORS_SECTION;
 		}
-
 		approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+		accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());                     
 		sessionStatus.setComplete();
 		return "/private/common/ajax_OK";
 	}

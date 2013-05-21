@@ -17,13 +17,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
@@ -39,22 +42,24 @@ public class AdditionalInformationController {
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final BooleanPropertyEditor booleanPropertyEditor;
 	private final UserService userService;
+	private final ApplicationFormAccessService accessService;
 	
 	AdditionalInformationController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public AdditionalInformationController(ApplicationsService applicationService,
 			UserService userService, ApplicationFormPropertyEditor applicationFormPropertyEditor,//
 			BooleanPropertyEditor booleanEditor,//
-			AdditionalInfoService addInfoServiceMock, AdditionalInformationValidator infoValidator) {
+			AdditionalInfoService addInfoServiceMock, AdditionalInformationValidator infoValidator, final ApplicationFormAccessService accessService) {
 		this.applicationService = applicationService;
 		this.userService = userService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.booleanPropertyEditor = booleanEditor;
 		this.additionalService = addInfoServiceMock;
 		this.additionalInformationValidator = infoValidator;
+        this.accessService = accessService;
 	}
 
 	@RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
@@ -69,6 +74,9 @@ public class AdditionalInformationController {
 			return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
 		}
 		additionalService.save(info);
+		ApplicationForm form = info.getApplication();
+		form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.ALL_USERS, new Date()));
+		accessService.updateAccessTimestamp(form, getCurrentUser(), new Date());
 		info.getApplication().setLastUpdated(new Date());
 		applicationService.save(info.getApplication());
 		return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getApplicationNumber();

@@ -109,7 +109,7 @@ public class SubmitApplicationFormController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-        if (applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(getCurrentUser().getId()) && applicationForm.isModifiable()) {
+        if (getCurrentUser().canEditAsApplicant(applicationForm)) {
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
 
@@ -117,7 +117,7 @@ public class SubmitApplicationFormController {
             return VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME;
         }
 
-        if (applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+        if (getCurrentUser().canEditAsAdministrator(applicationForm)) {
             return "redirect:/editApplicationFormAsProgrammeAdmin?applicationId=" + applicationForm.getApplicationNumber();
         }
 

@@ -369,7 +369,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("3")).andReturn(applicationForm);
-        EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
+        EasyMock.expect(userMock.canEditAsAdministrator(applicationForm)).andReturn(false);
         EasyMock.replay(applicationServiceMock, userMock);
 
         controller.getApplicationForm("3");

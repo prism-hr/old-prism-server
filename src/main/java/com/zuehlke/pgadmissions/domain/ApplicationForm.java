@@ -345,16 +345,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isWithdrawn() {
         return status == ApplicationFormStatus.WITHDRAWN;
     }
-
-    public boolean isUserAllowedToSeeAndEditAsAdministrator(final RegisteredUser user) {
-        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
-                        || user.isInterviewerOfApplicationForm(this) || user.isAdminInProgramme(getProgram());
-        return hasPermissionToEdit //
-                        && isSubmitted() //
-                        && !isInValidationStage() //
-                        && !isInApprovalStage() //
-                        && !isDecided() //
-                        && !isWithdrawn();
+    
+    public boolean isTerminated(){
+        return isDecided() || isWithdrawn();
     }
 
     public List<Comment> getApplicationComments() {
@@ -565,6 +558,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isInValidationStage() {
         return status == ApplicationFormStatus.VALIDATION;
+    }
+    
+    public boolean isInReviewStage() {
+        return status == ApplicationFormStatus.REVIEW;
+    }
+    
+    public boolean isInInterviewStage() {
+        return status == ApplicationFormStatus.INTERVIEW;
     }
 
     public boolean isInApprovalStage() {

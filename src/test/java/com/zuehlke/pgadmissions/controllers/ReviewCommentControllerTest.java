@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -58,6 +59,7 @@ public class ReviewCommentControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -190,7 +192,7 @@ public class ReviewCommentControllerTest {
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock) {
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -223,7 +225,7 @@ public class ReviewCommentControllerTest {
         EasyMock.expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock) {
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -264,7 +266,7 @@ public class ReviewCommentControllerTest {
         result.reject("error");
 
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, null) {
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, null, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -284,7 +286,7 @@ public class ReviewCommentControllerTest {
         BindingResult result = new BeanPropertyBindingResult(comment, "comment");
 
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, null) {
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, null, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -311,8 +313,9 @@ public class ReviewCommentControllerTest {
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock);
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock);
 
     }
 }

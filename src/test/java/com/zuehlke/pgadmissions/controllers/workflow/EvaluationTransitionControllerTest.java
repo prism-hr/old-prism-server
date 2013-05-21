@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -54,6 +55,7 @@ public class EvaluationTransitionControllerTest {
     private StateChangeValidator stateChangeValidatorMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
     private BindingResult bindingResultMock;
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test
     public void shouldCreateApprovalEvaluationCommentWithLatestReviewRound() {
@@ -74,7 +76,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock) {
+                stateTransitionViewServiceMock,
+                accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -114,7 +117,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock) {
+                stateTransitionViewServiceMock,
+                accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -159,7 +163,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock) {
+                stateTransitionViewServiceMock,
+                accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -198,7 +203,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock) {
+                stateTransitionViewServiceMock,
+                accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -237,7 +243,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock) {
+                stateTransitionViewServiceMock,
+                accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -278,7 +285,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock) {
+                stateTransitionViewServiceMock,
+                accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -320,7 +328,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock) {
+                stateTransitionViewServiceMock,
+                accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -371,7 +380,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock) {
+                stateTransitionViewServiceMock,
+                accessServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -403,6 +413,7 @@ public class EvaluationTransitionControllerTest {
         stateTransitionViewServiceMock = EasyMock.createMock(StateTransitionService.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
         documentServiceMock = EasyMock.createMock(DocumentService.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controller = new EvaluationTransitionController(
                 applicationServiceMock, 
                 userServiceMock, 
@@ -413,7 +424,8 @@ public class EvaluationTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock,
                 documentPropertyEditorMock,
-                stateTransitionViewServiceMock);
+                stateTransitionViewServiceMock,
+                accessServiceMock);
     }
 
     @After

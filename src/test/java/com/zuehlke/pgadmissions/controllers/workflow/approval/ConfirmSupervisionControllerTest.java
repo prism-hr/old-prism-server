@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -41,6 +42,8 @@ public class ConfirmSupervisionControllerTest {
     private DatePropertyEditor datePropertyEditorMock;
 
     private ConfirmSupervisionDTOValidator confirmSupervisionDTOValidatorMock;
+    
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test
     public void testLoadConfirmSupervisionPage() {
@@ -161,8 +164,9 @@ public class ConfirmSupervisionControllerTest {
         approvalServiceMock = EasyMock.createMock(ApprovalService.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         confirmSupervisionDTOValidatorMock = EasyMock.createMock(ConfirmSupervisionDTOValidator.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock,
-                datePropertyEditorMock, confirmSupervisionDTOValidatorMock);
+                datePropertyEditorMock, confirmSupervisionDTOValidatorMock, accessServiceMock);
 
     }
 

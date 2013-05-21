@@ -135,6 +135,7 @@ public class AdditionalInformationControllerTest {
 		addInfoServiceMock.save(info);
 		applicationServiceMock.save(applicationForm);
 		
+		
 		EasyMock.replay(errors, applicationServiceMock, addInfoServiceMock);
 		String viewID = controller.editAdditionalInformation(info, errors);
 		EasyMock.verify(errors, applicationServiceMock, addInfoServiceMock);

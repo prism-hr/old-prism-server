@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -35,7 +38,7 @@ public class AdmitterCommentController extends StateTransitionController {
     private final MailSendingService mailService;
     
     public AdmitterCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -43,9 +46,9 @@ public class AdmitterCommentController extends StateTransitionController {
             CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
             DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
-            StateTransitionService stateTransitionService, final MailSendingService mailService) {
+            StateTransitionService stateTransitionService, ApplicationFormAccessService accessService, final MailSendingService mailService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService,
-                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService);
+                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService, accessService);
         this.mailService = mailService;
     }
     
@@ -70,6 +73,8 @@ public class AdmitterCommentController extends StateTransitionController {
         form.setAdminRequestedRegistry(null);
         form.setRegistryUsersDueNotification(false);
        
+        form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
+        accessService.updateAccessTimestamp(form, getCurrentUser(), new Date());
         applicationsService.save(form);
         commentService.save(comment);
         

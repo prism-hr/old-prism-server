@@ -23,12 +23,14 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -39,6 +41,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
@@ -64,9 +67,10 @@ public class QualificationController {
     private final QualificationTypeDAO qualificationTypeDAO;
     private final QualificationTypePropertyEditor qualificationTypePropertyEditor;
     private final QualificationInstitutionDAO qualificationInstitutionDAO;
-
+    private final ApplicationFormAccessService accessService;
+    
 	public QualificationController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
     @Autowired
@@ -77,7 +81,8 @@ public class QualificationController {
             QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor,
             UserService userService, EncryptionHelper encryptionHelper, QualificationTypeDAO qualificationTypeDAO,
             QualificationTypePropertyEditor qualificationTypePropertyEditor, 
-            QualificationInstitutionDAO qualificationInstitutionDAO) {
+            QualificationInstitutionDAO qualificationInstitutionDAO,
+            final ApplicationFormAccessService accessService) {
 		this.applicationService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
@@ -93,6 +98,7 @@ public class QualificationController {
         this.qualificationTypeDAO = qualificationTypeDAO;
         this.qualificationTypePropertyEditor = qualificationTypePropertyEditor;
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
+        this.accessService = accessService;
 	}
 	
 	@InitBinder(value="qualification")
@@ -137,9 +143,12 @@ public class QualificationController {
             return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
         }
 
+        ApplicationForm applicationForm = qualification.getApplication();
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        applicationForm.setLastUpdated(new Date());
+        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
         qualificationService.save(qualification);
-        qualification.getApplication().setLastUpdated(new Date());
-        applicationService.save(qualification.getApplication());
+        applicationService.save(applicationForm);
 
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 	}

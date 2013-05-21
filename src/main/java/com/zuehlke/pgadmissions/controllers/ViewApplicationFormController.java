@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -24,17 +27,19 @@ public class ViewApplicationFormController {
     private final ApplicationsService applicationService;
     private final ApplicationPageModelBuilder applicationPageModelBuilder;
     private final UserService userService;
+    private final ApplicationFormAccessService accessService;
 
     ViewApplicationFormController() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
     public ViewApplicationFormController(ApplicationsService applicationService, UserService userService,
-            ApplicationPageModelBuilder applicationPageModelBuilder) {
+            ApplicationPageModelBuilder applicationPageModelBuilder, final ApplicationFormAccessService accessService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationPageModelBuilder = applicationPageModelBuilder;
+        this.accessService = accessService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -43,6 +48,7 @@ public class ViewApplicationFormController {
             @RequestParam(required = false) String fundingErrors) {
         RegisteredUser currentuser = userService.getCurrentUser();
         ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+        accessService.updateAccessTimestamp(applicationForm, currentuser, new Date());
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }

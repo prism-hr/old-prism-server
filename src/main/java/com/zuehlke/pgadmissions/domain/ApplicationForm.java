@@ -86,6 +86,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "application_form_id")
     private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+    
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @JoinColumn(name = "application_form_id")
+    private List<ApplicationFormUpdate> applicationUpdates = new ArrayList<ApplicationFormUpdate>();
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -847,6 +852,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return adminRequestedRegistry;
     }
 
+    public List<ApplicationFormUpdate> getApplicationUpdates() {
+        return applicationUpdates;
+    }
+    
+    public void setApplicationUpdates(List<ApplicationFormUpdate> applicationUpdates) {
+        this.applicationUpdates.clear();
+        this.applicationUpdates.addAll(applicationUpdates);
+    }
+    
+    public void addApplicationUpdate(ApplicationFormUpdate applicationUpdate) {
+        this.applicationUpdates.add(applicationUpdate);
+    }
+    
     public void setAdminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
         this.adminRequestedRegistry = adminRequestedRegistry;
     }

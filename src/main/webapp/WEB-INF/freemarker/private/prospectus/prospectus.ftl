@@ -62,10 +62,10 @@
 						<div class="row-group">
 						<div class="row">
 								<label for="programme" class="plain-label">Programme<em>*</em></label>
-								<span class="hint" data-desc="<@spring.message 'badge.programme'/>"></span>
+								<span class="hint" data-desc="<@spring.message 'prospetus.programme'/>"></span>
 								<div class="field">
 									<select name="programme" id="programme" class="max">
-										<option value="">Please select a program</option>
+										<option value="">Select...</option>
 										<#--
 										<#list programs as program>
 											<option value="${program.code}" <#if badge.program?? && badge.program.id == program.id> selected="selected"</#if>>${program.title?html}</option>
@@ -89,42 +89,84 @@
 						</div>
 
 						<div class="row-group">
-						<h3>Programme Advert</h3>
-		              	<div class="row">
-							<label for="programmeTitle" class="plain-label">Title <em>*</em></label>
-							<span class="hint" data-desc="title here"></span>
-							<div class="field">
-							    <input id="programmeTitle" name="project" class="full" type="text" value="${(badge.projectTitle?html)!}" role="textbox" aria-haspopup="true">
+							<h2>Programme Advert</h2>
+			              	<div class="row">
+								<label for="programmeTitle" class="plain-label">Title <em>*</em></label>
+								<span class="hint" data-desc="<@spring.message 'prospetus.title'/>"></span>
+								<div class="field">
+								    <input id="programmeTitle" name="project" class="input-xlarge" type="text" value="${(badge.projectTitle?html)!}" role="textbox" aria-haspopup="true">
+								</div>
+							</div>
+			              	<div class="row">
+								<label for="programmeDescription" class="plain-label">Description <em>*</em></label>
+								<span class="hint" data-desc="<@spring.message 'prospetus.description'/>"></span>
+								<div class="field">
+				                    <textarea id="programmeDescription" class="input-xlarge" rows="6" cols="150"></textarea>
+				                </div>
+							</div>
+			              	<div class="row">
+								<label for="programmeDurationOfStudy" class="plain-label">Duration of Study <em>*</em></label>
+								<span class="hint" data-desc="<@spring.message 'prospetus.durationOfStudy'/>"></span>
+				                <div class="field">	
+					                <input class="numeric input-small" type="text" size="4" id="programmeDurationOfStudy" />
+				                    <select id="timeUnit" class="input">
+											<option value="">Select...</option>
+											<option>Months</option>
+											<option>Years</option>
+									</select>
+								</div>
+							</div>
+							
+			              	<div class="row">
+								<label for="programmeFundingInformation" class="plain-label">Funding Information</label>
+								<span class="hint" data-desc="<@spring.message 'prospetus.fundingInformation'/>"></span>
+								<div class="field">
+				                    <textarea id="programmeFundingInformation" class="input-xlarge" rows="6" cols="150"></textarea>
+				                </div>
 							</div>
 						</div>
-		              	<div class="row">
-							<label for="programmeDescription" class="plain-label">Description <em>*</em></label>
-							<span class="hint" data-desc="description here"></span>
-							<div class="field">
-			                    <textarea name="programmeDescription" id="programmeDescription" class="input-xlarge" rows="6" cols="100"></textarea>
-			                </div>
+						
+						<div class="row-group">
+							<div class="row">
+		                      <label class="plain-label" for="currentlyAcceptingApplication">Are you currently accepting applications? <em>*</em></label>
+   							  <span class="hint" data-desc="<@spring.message 'prospetus.acceptingApplications'/>"></span>
+		                      <div class="field">
+		                        <input id="currentlyAcceptingApplication" type="radio" name="switch" value="yes">
+		                       	Yes
+		                        </input>
+		                        <input type="radio" name="switch" value="no">
+		                        No
+		                        </input>
+		                      </div>
+		                    </div>
 						</div>
-		              	<div class="row">
-							<label for="programmeDurationOfStudy" class="plain-label">Duration of Study <em>*</em></label>
-							<span class="hint" data-desc="description here"></span>
-							<div class="field">
-								<intput id="programmeDurationOfStudy" class="full" type="text" role="textbox" aria-haspopup="true">
-			                    <select id="timeUnit">
-										<option value="">Select...</option>
-								</select>
-			                </div>
-						</div>
-		              	<div class="row">
-							<label for="fundingInformation" class="plain-label">Funding Information</label>
-							<span class="hint" data-desc="Funding Information here"></span>
-							<div class="field">
-			                    <textarea name="fundingInformation" id="fundingInformation" class="input-xlarge" rows="6" cols="100"></textarea>
-			                </div>
-						</div>
+						
+						<div class="row-group">
+							<h2>Advert</h2>
+							<div class="alert alert-info"> <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here. </div>
+							<div class="row">
+								<label for="linkToApply" class="plain-label">Link to Apply</label>
+								<span class="hint" data-desc="<@spring.message 'prospetus.linkToApply'/>"></span>
+								<div class="field">
+								    <input id="linkToApply" name="project" class="input-xlarge" type="text" value="${(badge.projectTitle?html)!}" role="textbox" aria-haspopup="true">
+								</div>
+							</div>
+							<div class="row">
+								<label for="buttonToApply" class="plain-label">Button to Apply</label>
+								<span class="hint" data-desc="<@spring.message 'prospetus.buttonToApply'/>"></span>
+								<div class="field">
+				                    <textarea id="buttonToApply" class="input-xlarge" rows="6" cols="150"></textarea>
+				                </div>
+							</div>
 						</div>
 						
 		            </section>
 		          </div>
+		          <div class="buttons">
+                  <button class="btn" type="button" id="clear-go">Clear</button>
+                  <button class="btn" type="button" id="close-go">Close</button>
+                  <button class="btn btn-primary" type="button" id="save-go">Save</button>
+                </div>
   
              </div>
           </div>

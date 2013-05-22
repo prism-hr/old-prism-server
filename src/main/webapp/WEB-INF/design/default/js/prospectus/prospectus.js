@@ -1,6 +1,11 @@
 $(document).ready(function(){
 		
 		$("select#programme").bind('change', function() {
+			var programme_code= $("#programme").val();
+			if(programme_code==""){
+				clearAll();
+			}
+			else{
 			$.ajax({
 		        type: 'GET',
 		        statusCode: {
@@ -32,7 +37,7 @@ $(document).ready(function(){
 				},
 				url:"/pgadmissions/prospectus/getButtonToApply",
 				data: {
-					programmeCode: $("#programme").val(),
+					programmeCode: programme_code,
 				}, 
 				success: function(data) {
 					$("#buttonToApply").val(data);
@@ -40,6 +45,12 @@ $(document).ready(function(){
 				complete: function() {
 				}
 			});
+			}
 		});
 });
+
+function clearAll(){
+	$("#linkToApply").val("");
+	$("#buttonToApply").val("");
+}
 

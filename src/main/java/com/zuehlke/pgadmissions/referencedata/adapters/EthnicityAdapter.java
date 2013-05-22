@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.referencedata.adapters;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.CodeObject;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Ethnicities.Ethnicity;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Ethnicities.Ethnicity;
 
 public class EthnicityAdapter implements ImportData {
 

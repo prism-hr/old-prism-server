@@ -24,13 +24,10 @@ public class ProgramDAO {
     @Autowired
     public ProgramDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-
     }
 
-    @SuppressWarnings("unchecked")
     public List<Program> getAllPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .addOrder(Order.asc("title")).list();
+        return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).addOrder(Order.asc("title")).list();
     }
 
     public Program getProgramById(Integer programId) {
@@ -44,5 +41,4 @@ public class ProgramDAO {
     public Program getProgramByCode(String code) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
     }
-
 }

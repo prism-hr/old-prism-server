@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -18,7 +17,8 @@ public class ProgramBuilder {
     private String code;
     private String title;
     private boolean enabled;
-
+    private boolean atasRequired;
+    
     private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
@@ -28,6 +28,11 @@ public class ProgramBuilder {
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
 
+    public ProgramBuilder atasRequired(boolean flag) {
+        atasRequired = flag;
+        return this;
+    }
+    
     public ProgramBuilder viewers(RegisteredUser... users) {
         for (RegisteredUser approver : users) {
             this.viewers.add(approver);
@@ -116,6 +121,7 @@ public class ProgramBuilder {
         program.getInstances().addAll(instances);
         program.getViewers().addAll(viewers);
         program.getScoringDefinitions().putAll(scoringDefinitions);
+        program.setAtasRequired(atasRequired);
         return program;
     }
 }

@@ -15,5 +15,7 @@ public interface ProgramInstanceInterface extends CodeObject {
 	Date getApplicationDeadline();
 
 	String getIdentifier();
+	
+	Boolean isAtasRequired();
 
 }

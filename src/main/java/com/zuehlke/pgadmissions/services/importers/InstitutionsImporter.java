@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionReferenceDAO;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.QualificationInstitutionReferenceAdapter;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Institutions;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Institutions.Institution;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Institutions;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Institutions.Institution;
 
 @Service
 public class InstitutionsImporter implements Importer {

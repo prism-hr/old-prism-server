@@ -73,7 +73,6 @@ public class ImportServiceTest {
 	
 	@Test
 	public void testMergeProgrammeData() {
-		
 		ProgramBuilder pb = new ProgramBuilder();
 		Program p1 = pb.code("A").title("A").id(1).build();
 		Program p2 = pb.code("B").title("B").id(2).build();
@@ -104,7 +103,7 @@ public class ImportServiceTest {
 		Assert.assertSame(((ProgramInstance)changes.get(2)).getProgram(), p2);
 		Assert.assertSame(((ProgramInstance)changes.get(4)).getProgram(),((ProgramInstance)changes.get(5)).getProgram());
 	}
-
+	
 	@Before
 	public void setUp() {
 		importService = new ImportService();

@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.PrismProgrammeAdapter;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 
 @Service
 public class ProgrammesImporter implements Importer {
@@ -65,12 +68,24 @@ public class ProgrammesImporter implements Importer {
 			List<PrismProgrammeAdapter> importData = createAdapter(programmes);
 			List<ProgramInstance> currentData = programInstanceDAO.getAllProgramInstances();
 			List<ProgramInstance> changes = importService.merge(currentData, importData);
+			
 			for (ProgramInstance programInstance : changes) {
 				programInstanceDAO.save(programInstance);
 				if (programInstance.getProgram().getId() == null) {
 					programDao.save(programInstance.getProgram());
 				}
 			}
+
+			// Update the require ATAS flag in our PRISM domain object
+			for (ProgrammeOccurrence programmeOccurence : programmes.getProgrammeOccurrence()) {
+			    Programme programme = programmeOccurence.getProgramme();
+			    Program prismProgram = programDao.getProgramByCode(programme.getCode());
+			    if (prismProgram != null) {
+			        prismProgram.setAtasRequired(BooleanUtils.isTrue(programme.isAtasRegistered()));
+			        programDao.save(prismProgram);
+			    }
+			}
+			
 			log.info("Import done. Wrote " + changes.size() + " change(s) to the database.");
 		} catch (Exception e) {
 			throw new XMLDataImportException("Error during the import of file: " + xmlFileLocation, e);
@@ -97,6 +112,4 @@ public class ProgrammesImporter implements Importer {
 		}
 		return result;
 	}
-
-
 }

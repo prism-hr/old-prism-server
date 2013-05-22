@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Countries;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Countries;
 
 public class CountryOfBirthAdapterTest {
 

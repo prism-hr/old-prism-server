@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.referencedata.adapters;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.CodeObject;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.SourcesOfInterest.SourceOfInterest;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.SourcesOfInterest.SourceOfInterest;
 
 public class SourceOfInterestAdapter implements ImportData {
 

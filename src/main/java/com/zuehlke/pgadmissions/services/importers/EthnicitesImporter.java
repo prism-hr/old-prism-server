@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.dao.EthnicityDAO;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.EthnicityAdapter;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Ethnicities;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Ethnicities;
 
 @Service
 public class EthnicitesImporter implements Importer {
@@ -67,7 +67,7 @@ public class EthnicitesImporter implements Importer {
 
 	private List<EthnicityAdapter> createAdapter(Ethnicities ethnicities) {
 		List<EthnicityAdapter> result = new ArrayList<EthnicityAdapter>(ethnicities.getEthnicity().size());
-		for (com.zuehlke.pgadmissions.referencedata.v1.jaxb.Ethnicities.Ethnicity ethnicity : ethnicities.getEthnicity()) {
+		for (com.zuehlke.pgadmissions.referencedata.v2.jaxb.Ethnicities.Ethnicity ethnicity : ethnicities.getEthnicity()) {
 			result.add(new EthnicityAdapter(ethnicity));
 		}
 		return result;

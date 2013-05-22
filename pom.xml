@@ -457,14 +457,20 @@
                             <staleFile>${project.build.directory}/jaxb2/.schema4XjcStaleFlag</staleFile>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>xjc-5</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>com.zuehlke.pgadmissions.referencedata.v2.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb/import/v2</outputDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/xsd/import.v2</schemaDirectory>
+                            <staleFile>${project.build.directory}/jaxb2/.schema5XjcStaleFlag</staleFile>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
-            <!-- <plugin> <groupId>org.apache.cxf</groupId> <artifactId>cxf-codegen-plugin</artifactId> 
-                <version>2.7.4</version> <executions> <execution> <id>generate-sources</id> 
-                <phase>generate-sources</phase> <configuration> <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot> 
-                <wsdlOptions> <wsdlOption> <wsdl>${basedir}/src/main/xsd/export.v2/admissionsapplicationsservice.wsdl</wsdl> 
-                </wsdlOption> </wsdlOptions> </configuration> <goals> <goal>wsdl2java</goal> 
-                </goals> </execution> </executions> </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

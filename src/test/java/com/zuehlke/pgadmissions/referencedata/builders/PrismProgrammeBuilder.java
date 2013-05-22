@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.referencedata.builders;
 
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 
 public class PrismProgrammeBuilder {
 	private String academicYear;
@@ -13,7 +13,13 @@ public class PrismProgrammeBuilder {
 	private String studyOptionCode;
 	private String studyOption;
 	private String identifier;
+    private boolean atasRequired;
 
+    public PrismProgrammeBuilder atasRequired(boolean atasRequired){
+        this.atasRequired = atasRequired;
+        return this;
+    } 
+    
 	public PrismProgrammeBuilder academicYear(String academicYear){
 	    this.academicYear = academicYear;
 	    return this;
@@ -62,6 +68,7 @@ public class PrismProgrammeBuilder {
 		modeOfAttendance.setName(studyOption);
 		programme.setCode(code);
 		programme.setName(name);
+		programme.setAtasRegistered(atasRequired);
 		programmeOccurrence.setModeOfAttendance(modeOfAttendance);
 		programmeOccurrence.setAcademicYear(academicYear);
 		programmeOccurrence.setProgramme(programme);

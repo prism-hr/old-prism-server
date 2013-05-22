@@ -113,4 +113,5 @@
     <bean id="stateTransitionViewResolver" class="com.zuehlke.pgadmissions.services.StateTransitionViewResolver" />
 
     <context:component-scan base-package="com.zuehlke.pgadmissions.dao" />
+    <context:component-scan base-package="com.zuehlke.pgadmissions.components" />
 </beans>

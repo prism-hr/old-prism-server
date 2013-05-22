@@ -67,6 +67,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class SubmitAdmissionsApplicationRequestBuilder {
 
@@ -212,7 +213,16 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         nameTp.setForename1(applicant.getFirstName());
         nameTp.setForename2(applicant.getFirstName2());
         nameTp.setForename3(applicant.getFirstName3());
-        nameTp.setTitle(personalDetails.getTitle().getDisplayValue());
+        // Workaround until a new web service has been released by UCL.
+        switch (personalDetails.getGender()) {
+        case FEMALE:
+        case INDETERMINATE_GENDER:
+            nameTp.setTitle(Title.MRS.getDisplayValue());
+            break;
+        default:
+            nameTp.setTitle(Title.MR.getDisplayValue());
+            break;
+        }
         return nameTp;
     }
 

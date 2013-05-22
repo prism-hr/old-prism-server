@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicatio
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -62,6 +63,7 @@ public class RejectApplicationControllerTest {
     private RejectionValidator rejectionValidatorMock;
     private BindingResult errorsMock;
     private ActionsProvider actionsProviderMock;
+    private ApplicationFormAccessService accessServiceMock;
 
     @Before
     public void setUp() {
@@ -82,8 +84,9 @@ public class RejectApplicationControllerTest {
         EasyMock.replay(userServiceMock);
         rejectionValidatorMock = EasyMock.createMock(RejectionValidator.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock, rejectReasonPropertyEditorMock,
-                rejectionValidatorMock, actionsProviderMock);
+                rejectionValidatorMock, actionsProviderMock, accessServiceMock);
 
         errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);

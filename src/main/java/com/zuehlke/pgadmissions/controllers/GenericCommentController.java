@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -17,13 +18,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -47,21 +51,26 @@ public class GenericCommentController {
 	
 	private final ActionsProvider actionsProvider;
 
+    private final ApplicationFormAccessService accessService;
+
 	public GenericCommentController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
     @Autowired
     public GenericCommentController(ApplicationsService applicationsService,
             UserService userService, CommentService commentService,
             GenericCommentValidator genericCommentValidator,
-            DocumentPropertyEditor documentPropertyEditor, ActionsProvider actionsProvider) {
+            DocumentPropertyEditor documentPropertyEditor,
+            ActionsProvider actionsProvider,
+            ApplicationFormAccessService accessService) {
 	this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
 		this.genericCommentValidator = genericCommentValidator;
 		this.documentPropertyEditor = documentPropertyEditor;
 		this.actionsProvider = actionsProvider;
+        this.accessService = accessService;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -121,8 +130,12 @@ public class GenericCommentController {
 		if (result.hasErrors()) {
 			return GENERIC_COMMENT_PAGE;
 		}
+		ApplicationForm applicationForm = comment.getApplication();
+		applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
+	    accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
+	    applicationsService.save(applicationForm);
 		commentService.save(comment);
-		return "redirect:/comment?applicationId=" + comment.getApplication().getApplicationNumber();
+		return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
 	}
 	
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgrammeAdminController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -39,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -334,6 +336,13 @@ public class ApprovalController {
 		if (bindingResult.hasErrors()) {
 			return SUPERVISORS_SECTION;
 		}
+		
+		if (applicationForm.isPendingApprovalRestart()) {
+		    applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
+		}
+		else {
+		    applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+		}
 		approvalService.moveApplicationToApproval(applicationForm, approvalRound);
 		accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());                     
 		sessionStatus.setComplete();
@@ -441,7 +450,9 @@ public class ApprovalController {
         }
 
         RegisteredUser currentUser = getUser();
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         approvalService.requestApprovalRestart(applicationForm, currentUser, comment);
+        accessService.updateAccessTimestamp(applicationForm, currentUser, new Date());
 
         if (currentUser.isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram())) {
             return "redirect:/approval/moveToApproval?applicationId=" + applicationForm.getApplicationNumber();

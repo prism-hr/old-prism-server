@@ -28,12 +28,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -56,8 +59,10 @@ public class CreateNewApprovalCommentController {
     
     private final MessageSource messageSource;
     
+    private final ApplicationFormAccessService accessService;
+    
     public CreateNewApprovalCommentController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -67,13 +72,15 @@ public class CreateNewApprovalCommentController {
             final ApprovalService approvalService,
             final CommentService commentService,
             final ApprovalCommentValidator validator,
-            final MessageSource messageSource) {
+            final MessageSource messageSource,
+            final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.validator = validator;
         this.approvalService = approvalService;
         this.commentService = commentService;
         this.messageSource = messageSource;
+        this.accessService = accessService;
     }
     
     @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment", method = RequestMethod.GET, produces = "application/json")
@@ -181,6 +188,10 @@ public class CreateNewApprovalCommentController {
         
         approvalService.save(latestApprovalRound);
         commentService.save(approvalComment);
+        
+        form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
+        accessService.updateAccessTimestamp(form, getCurrentUser(), new Date());
+        applicationsService.save(form);
         
         return gson.toJson(Collections.singletonMap("success", true));
     }

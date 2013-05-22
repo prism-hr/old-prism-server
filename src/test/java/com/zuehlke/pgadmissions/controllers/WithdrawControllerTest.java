@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -33,6 +34,7 @@ public class WithdrawControllerTest {
 
 	private EventFactory eventFactoryMock;
 	private UserService userServiceMock;
+	private ApplicationFormAccessService accessServiceMock;
 
 	@Test(expected = CannotTerminateApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInApprovedStage() {
@@ -161,7 +163,8 @@ public class WithdrawControllerTest {
 		withdrawServiceMock = EasyMock.createMock(WithdrawService.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		withdrawController = new WithdrawController(applicationsServiceMock,userServiceMock,  withdrawServiceMock,eventFactoryMock);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+		withdrawController = new WithdrawController(applicationsServiceMock,userServiceMock,  withdrawServiceMock,eventFactoryMock, accessServiceMock);
 
 		
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

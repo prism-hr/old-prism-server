@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -18,14 +19,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -47,21 +51,25 @@ public class RejectApplicationController {
     private final RejectionValidator rejectionValidator;
 
     private final ApplicationsService applicationsService;
+    
+    private final ApplicationFormAccessService accessService;
 
     private final ActionsProvider actionsProvider;
 
     public RejectApplicationController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ActionsProvider actionsProvider) {
+            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ActionsProvider actionsProvider,
+            ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.rejectService = rejectService;
         this.userService = userService;
         this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
         this.rejectionValidator = rejectionValidator;
+        this.accessService = accessService;
         this.actionsProvider = actionsProvider;
     }
 
@@ -83,6 +91,8 @@ public class RejectApplicationController {
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;
         }
+        application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
+        accessService.updateAccessTimestamp(application, getCurrentUser(), new Date());
         rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
         rejectService.sendToPortico(application);
         return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();

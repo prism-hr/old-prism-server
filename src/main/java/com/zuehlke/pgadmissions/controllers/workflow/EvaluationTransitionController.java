@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
@@ -21,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -97,6 +101,8 @@ public class EvaluationTransitionController extends StateTransitionController {
             ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
 
             if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
+                applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+                accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
                 if (approvalService.moveToApproved(applicationForm)) {
                     approvalService.sendToPortico(applicationForm);
                     modelMap.put("messageCode", "move.approved");
@@ -110,6 +116,9 @@ public class EvaluationTransitionController extends StateTransitionController {
             }
         }
 
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
+        applicationsService.save(applicationForm);
         commentService.save(newComment);
 
         if (stateChangeComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {

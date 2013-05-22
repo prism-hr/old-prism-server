@@ -76,6 +76,7 @@ public class ValidationTransitionControllerTest {
     private MessageSource messageSourceMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
+    private RegisteredUser currentUser;
 
     @Test
     public void shouldReturnAllValidationQuestionOptions() {
@@ -89,10 +90,8 @@ public class ValidationTransitionControllerTest {
 
     @Test
     public void shouldResolveViewForApplicationForm() {
-        RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).build();
         EasyMock.expect(stateTransitionServiceMock.resolveView(applicationForm)).andReturn("view");
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.replay(stateTransitionServiceMock, userServiceMock);
         assertEquals("view", controller.getStateTransitionView(applicationForm));
         EasyMock.verify(stateTransitionServiceMock, userServiceMock);
@@ -100,9 +99,8 @@ public class ValidationTransitionControllerTest {
 
     @Test
     public void shouldResolveViewForApplicationFormAsAdmitter() {
-        RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.ADMITTER).build()).build();
+        currentUser.getRoles().add(new RoleBuilder().authorityEnum(Authority.ADMITTER).build());
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).build();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.replay(userServiceMock);
         assertEquals("private/staff/admin/state_transition", controller.getStateTransitionView(applicationForm));
         EasyMock.verify(userServiceMock);
@@ -195,6 +193,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 
         applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(2);
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
 
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
@@ -235,6 +234,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(2);
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
         controller.addComment(applicationForm.getApplicationNumber(), format.format(twoMontshAgo), "projectTitle", comment, bindingResultMock, new ModelMap(),
@@ -268,6 +268,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(2);
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
         String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock,
@@ -400,10 +401,9 @@ public class ValidationTransitionControllerTest {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
 
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().build());
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
-        applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(3);
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -442,10 +442,9 @@ public class ValidationTransitionControllerTest {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
 
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().build());
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
-        applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(3);
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -484,10 +483,9 @@ public class ValidationTransitionControllerTest {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
 
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().build());
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
-        applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(3);
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -528,6 +526,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(2);
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -568,6 +567,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(2);
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -608,6 +608,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
+        EasyMock.expectLastCall().times(2);
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -642,6 +643,8 @@ public class ValidationTransitionControllerTest {
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock, messageSourceMock,
                 stateTransitionServiceMock, accessServiceMock, actionsProviderMock);
+        currentUser = new RegisteredUser();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }
 
     @After

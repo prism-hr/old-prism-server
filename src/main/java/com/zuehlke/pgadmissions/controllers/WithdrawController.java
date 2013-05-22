@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -34,17 +35,20 @@ public class WithdrawController{
 	
 	private final UserService userService;
 	
+	private final ApplicationFormAccessService accessService;
+	
 	public WithdrawController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
     public WithdrawController(ApplicationsService applicationService, UserService userService,
-            WithdrawService withdrawService, EventFactory eventFactory) {
+            WithdrawService withdrawService, EventFactory eventFactory, ApplicationFormAccessService accessService) {
 		this.applicationService = applicationService;
 		this.userService = userService;
 		this.withdrawService = withdrawService;
 		this.eventFactory = eventFactory;
+        this.accessService = accessService;
 	}
 
     @RequestMapping(method = RequestMethod.POST)
@@ -63,6 +67,7 @@ public class WithdrawController{
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
+        accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
         withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
         withdrawService.sendToPortico(applicationForm);
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();

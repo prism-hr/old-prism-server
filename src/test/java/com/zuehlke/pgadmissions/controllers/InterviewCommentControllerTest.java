@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -61,6 +62,7 @@ public class InterviewCommentControllerTest {
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
     private ActionsProvider actionsProviderMock;
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -200,7 +202,7 @@ public class InterviewCommentControllerTest {
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
         
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock) {
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -236,7 +238,7 @@ public class InterviewCommentControllerTest {
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
         
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock) {
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -278,7 +280,7 @@ public class InterviewCommentControllerTest {
         errorsMock.reject("error");
 
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, null, null, null, actionsProviderMock) {
+                documentPropertyEditorMock, null, null, null, actionsProviderMock, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -304,7 +306,7 @@ public class InterviewCommentControllerTest {
         commentServiceMock.save(comment);
 
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, null, null, null, actionsProviderMock) {
+                documentPropertyEditorMock, null, null, null, actionsProviderMock, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -333,8 +335,9 @@ public class InterviewCommentControllerTest {
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock);
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock, accessServiceMock);
 
     }
 }

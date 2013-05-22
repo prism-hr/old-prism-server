@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -48,6 +49,8 @@ public class CreateNewApprovalCommentControllerTest {
     
     private BindingResult bindingResultMock;
     
+    private ApplicationFormAccessService accessServiceMock;
+    
     private CreateNewApprovalCommentController controller;
     
     @Before
@@ -59,9 +62,10 @@ public class CreateNewApprovalCommentControllerTest {
         validatorMock = EasyMock.createMock(ApprovalCommentValidator.class);
         messageSourceMock = EasyMock.createMock(MessageSource.class);
         bindingResultMock = EasyMock.createMock(BindingResult.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controller = new CreateNewApprovalCommentController(applicationsServiceMock, 
                 userServiceMock, approvalServiceMock,
-                commentServiceMock, validatorMock, messageSourceMock);
+                commentServiceMock, validatorMock, messageSourceMock, accessServiceMock);
     }
     
     @Test
@@ -189,10 +193,11 @@ public class CreateNewApprovalCommentControllerTest {
                 .projectDescriptionAvailable(false).recommendedConditions("1")
                 .recommendedConditionsAvailable(false).recommendedStartDate(now.plusDays(1).toDate()).build();
         
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber(form.getApplicationNumber())).andReturn(form);
         approvalServiceMock.save(EasyMock.capture(approvalRoundCapture));
         commentServiceMock.save(EasyMock.capture(approvalCommentCapture));
+        applicationsServiceMock.save(form);
         EasyMock.replay(userServiceMock, applicationsServiceMock, bindingResultMock, approvalServiceMock, commentServiceMock);
         
         String json = controller.save(form.getApplicationNumber(), newComment, bindingResultMock);

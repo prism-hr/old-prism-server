@@ -4,11 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.services.StateTransitionViewResolver;
 
@@ -17,121 +14,105 @@ public class ActionsProvider {
 
     private StateTransitionViewResolver stateTransitionViewResolver;
 
+    private ActionsAvailabilityProvider availabilityProvider;
+
     public ActionsProvider() {
     }
 
     @Autowired
-    public ActionsProvider(StateTransitionViewResolver stateTransitionViewResolver) {
+    public ActionsProvider(StateTransitionViewResolver stateTransitionViewResolver, ActionsAvailabilityProvider availabilityProvider) {
         this.stateTransitionViewResolver = stateTransitionViewResolver;
+        this.availabilityProvider = availabilityProvider;
     }
 
     public ActionsDefinitions calculateActions(final RegisteredUser user, final ApplicationForm application) {
-        Interview interview = application.getLatestInterview();
         ApplicationFormStatus nextStatus = stateTransitionViewResolver.getNextStatus(application);
 
         ActionsDefinitions actions = new ActionsDefinitions();
 
         if (user.canEditAsAdministrator(application) || user.canEditAsApplicant(application)) {
             actions.addAction("view", "View / Edit");
-        } else if (user.canSee(application)) {
+        } else {
             actions.addAction("view", "View");
         }
 
-        if (application.isInState(ApplicationFormStatus.VALIDATION)) {
-            if (user.hasAdminRightsOnApplication(application)) {
-                actions.addAction("validate", "Validate");
-            }
+        if (availabilityProvider.canValidate(user, application)) {
+            actions.addAction("validate", "Validate");
         }
 
-        if (application.isInState(ApplicationFormStatus.REVIEW)) {
-            if (user.hasAdminRightsOnApplication(application)) {
-                actions.addAction("validate", "Evaluate reviews");
-            }
+        if (availabilityProvider.canEvaluateReviews(user, application)) {
+            actions.addAction("validate", "Evaluate reviews");
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && nextStatus == null) {
-            if (user.hasAdminRightsOnApplication(application)) {
-                actions.addAction("validate", "Evaluate interview feedback");
-            }
-            if (interview.isScheduling() && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application))) {
-                actions.addAction("interviewConfirm", "Confirm interview time");
-                actions.setRequiresAttention(true);
-            }
+        if (availabilityProvider.canEvaluateInterviewFeedback(user, application, nextStatus)) {
+            actions.addAction("validate", "Evaluate interview feedback");
+        }
+        if (availabilityProvider.canConfirmInterviewTime(user, application, nextStatus)) {
+            actions.addAction("interviewConfirm", "Confirm interview time");
+            actions.setRequiresAttention(true);
         }
 
-        if (user.isApplicationAdministrator(application) && nextStatus == ApplicationFormStatus.INTERVIEW) {
-            // application not yet in interview stage, interview is next
+        if (availabilityProvider.canAdministerInterview(user, application, nextStatus)) {
             actions.addAction("validate", "Administer Interview");
         }
 
-        if (user.isInRole(Authority.ADMITTER) && !application.hasConfirmElegibilityComment()) {
+        if (availabilityProvider.canConfirmEligibility(user, application)) {
             actions.addAction("validate", "Confirm Eligibility");
-            if (application.getAdminRequestedRegistry() != null
-                    && (application.isNotInState(ApplicationFormStatus.WITHDRAWN) && application.isNotInState(ApplicationFormStatus.REJECTED))) {
+            if (availabilityProvider.isEligibilityConfirmationAwaiting(application)) {
                 actions.setRequiresAttention(true);
             } else {
                 actions.setRequiresAttention(false);
             }
         }
 
-        if (user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application) || user.isInRole(Authority.ADMITTER)) {
+        if (availabilityProvider.canPostComment(user, application)) {
             actions.addAction("comment", "Comment");
         }
 
-        if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState(ApplicationFormStatus.REVIEW)
-                && !user.hasRespondedToProvideReviewForApplicationLatestRound(application)) {
+        if (availabilityProvider.canAddReview(user, application)) {
             actions.addAction("review", "Add review");
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && nextStatus == null && interview.isScheduling() && interview.isParticipant(user)
-                && !interview.getParticipant(user).getResponded()) {
+        if (availabilityProvider.canProvideInterviewAvailability(user, application, nextStatus)) {
             actions.addAction("interviewVote", "Provide Availability For Interview");
             actions.setRequiresAttention(true);
         }
 
-        if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduled()
-                && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+        if (availabilityProvider.canAddInterviewFeedback(user, application)) {
             actions.addAction("interviewFeedback", "Add interview feedback");
             actions.setRequiresAttention(true);
         }
 
-        if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isTerminated()
-                && !user.getRefereeForApplicationForm(application).hasResponded()) {
+        if (availabilityProvider.canAddReference(user, application)) {
             actions.addAction("reference", "Add reference");
             actions.setRequiresAttention(true);
         }
 
-        if (user == application.getApplicant() && !application.isTerminated()) {
+        if (availabilityProvider.canWithdraw(user, application)) {
             actions.addAction("withdraw", "Withdraw");
         }
 
-        if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart()) {
+        if (availabilityProvider.canReviseApproval(user, application)) {
             actions.addAction("restartApproval", "Revise Approval");
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.APPROVAL)
-                && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
+        if (availabilityProvider.canApproveAsApprover(user, application)) {
             actions.addAction("validate", "Approve");
-            if (user.isNotInRole(Authority.SUPERADMINISTRATOR) && !application.isPendingApprovalRestart()) {
-                actions.setRequiresAttention(true);
-            }
+            actions.setRequiresAttention(true);
+        } else if (availabilityProvider.canApproveAsSuperadministrator(user, application)) {
+            actions.addAction("validate", "Approve");
         }
 
-        if (application.isInState(ApplicationFormStatus.APPROVAL) && !application.isPendingApprovalRestart()
-                && user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
-                && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) && user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
+        if (availabilityProvider.canReviseApprovalAsAdministrator(user, application)) {
             actions.addAction("restartApprovalAsAdministrator", "Revise Approval");
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.APPROVAL)) {
-            Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-            if (primarySupervisor != null && user == primarySupervisor.getUser() && !primarySupervisor.hasResponded()) {
-                actions.addAction("confirmSupervision", "Confirm supervision");
-                actions.setRequiresAttention(true);
-            }
+        if (availabilityProvider.canConfirmSupervision(user, application)) {
+            actions.addAction("confirmSupervision", "Confirm supervision");
+            actions.setRequiresAttention(true);
         }
 
         actions.addAction("emailApplicant", "Email applicant");

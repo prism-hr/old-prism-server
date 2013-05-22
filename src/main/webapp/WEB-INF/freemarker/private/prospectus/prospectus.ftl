@@ -60,41 +60,17 @@
 		                <div class="alert alert-info"> <i class="icon-info-sign"></i>A specific guidance note for the context of use goes here. </div>
 						
 						<div class="row-group">
-						<div class="row">
+							<h3>Programme Advert</h3>
+			              	<div class="row">
 								<label for="programme" class="plain-label">Programme<em>*</em></label>
 								<span class="hint" data-desc="<@spring.message 'prospetus.programme'/>"></span>
 								<div class="field">
-									<select name="programme" id="programme" class="max">
+								<select name="programme" id="programme" class="max">
 										<option value="">Select...</option>
-										<#--
-										<#list programs as program>
-											<option value="${program.code}" <#if badge.program?? && badge.program.id == program.id> selected="selected"</#if>>${program.title?html}</option>
+										<#list programmes as programme>
+											<option value="${programme.code}">${programme.title?html}</option>
 										</#list>
-										-->
-									</select>
-								</div>
-							</div>
-							<#--
-							<@spring.bind "badge.program" /> 
-						        <#list spring.status.errorMessages as error>
-						        <div class="row">
-						            <div class="field">
-						                <div class="alert alert-error">
-						                    <i class="icon-warning-sign"></i> ${error}
-						                </div>
-						            </div>
-						        </div>
-						    </#list>
-						    -->
-						</div>
-
-						<div class="row-group">
-							<h2>Programme Advert</h2>
-			              	<div class="row">
-								<label for="programmeTitle" class="plain-label">Title <em>*</em></label>
-								<span class="hint" data-desc="<@spring.message 'prospetus.title'/>"></span>
-								<div class="field">
-								    <input id="programmeTitle" name="project" class="input-xlarge" type="text" value="${(badge.projectTitle?html)!}" role="textbox" aria-haspopup="true">
+								</select>
 								</div>
 							</div>
 			              	<div class="row">
@@ -109,7 +85,7 @@
 								<span class="hint" data-desc="<@spring.message 'prospetus.durationOfStudy'/>"></span>
 				                <div class="field">	
 					                <input class="numeric input-small" type="text" size="4" id="programmeDurationOfStudy" />
-				                    <select id="timeUnit" class="input">
+				                    <select id="timeUnit" class="input small">
 											<option value="">Select...</option>
 											<option>Months</option>
 											<option>Years</option>
@@ -142,20 +118,20 @@
 						</div>
 						
 						<div class="row-group">
-							<h2>Advert</h2>
+							<h3>Advert</h3>
 							<div class="alert alert-info"> <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here. </div>
 							<div class="row">
 								<label for="linkToApply" class="plain-label">Link to Apply</label>
 								<span class="hint" data-desc="<@spring.message 'prospetus.linkToApply'/>"></span>
 								<div class="field">
-								    <input id="linkToApply" name="project" class="input-xlarge" type="text" value="${(badge.projectTitle?html)!}" role="textbox" aria-haspopup="true">
+								    <input id="linkToApply" name="project" class="input-xxlarge" type="text" role="textbox" aria-haspopup="true">
 								</div>
 							</div>
 							<div class="row">
 								<label for="buttonToApply" class="plain-label">Button to Apply</label>
 								<span class="hint" data-desc="<@spring.message 'prospetus.buttonToApply'/>"></span>
 								<div class="field">
-				                    <textarea id="buttonToApply" class="input-xlarge" rows="6" cols="150"></textarea>
+				                    <textarea id="buttonToApply" class="input-xxlarge" rows="6" cols="150"></textarea>
 				                </div>
 							</div>
 						</div>

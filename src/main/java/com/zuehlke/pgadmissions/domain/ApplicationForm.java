@@ -86,6 +86,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "application_form_id")
     private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+    
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @JoinColumn(name = "application_form_id")
+    private List<ApplicationFormUpdate> applicationUpdates = new ArrayList<ApplicationFormUpdate>();
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -345,16 +350,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isWithdrawn() {
         return status == ApplicationFormStatus.WITHDRAWN;
     }
-
-    public boolean isUserAllowedToSeeAndEditAsAdministrator(final RegisteredUser user) {
-        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
-                        || user.isInterviewerOfApplicationForm(this) || user.isAdminInProgramme(getProgram());
-        return hasPermissionToEdit //
-                        && isSubmitted() //
-                        && !isInValidationStage() //
-                        && !isInApprovalStage() //
-                        && !isDecided() //
-                        && !isWithdrawn();
+    
+    public boolean isTerminated(){
+        return isDecided() || isWithdrawn();
     }
 
     public List<Comment> getApplicationComments() {
@@ -565,6 +563,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isInValidationStage() {
         return status == ApplicationFormStatus.VALIDATION;
+    }
+    
+    public boolean isInReviewStage() {
+        return status == ApplicationFormStatus.REVIEW;
+    }
+    
+    public boolean isInInterviewStage() {
+        return status == ApplicationFormStatus.INTERVIEW;
     }
 
     public boolean isInApprovalStage() {
@@ -846,6 +852,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return adminRequestedRegistry;
     }
 
+    public List<ApplicationFormUpdate> getApplicationUpdates() {
+        return applicationUpdates;
+    }
+    
+    public void setApplicationUpdates(List<ApplicationFormUpdate> applicationUpdates) {
+        this.applicationUpdates.clear();
+        this.applicationUpdates.addAll(applicationUpdates);
+    }
+    
+    public void addApplicationUpdate(ApplicationFormUpdate applicationUpdate) {
+        this.applicationUpdates.add(applicationUpdate);
+    }
+    
     public void setAdminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
         this.adminRequestedRegistry = adminRequestedRegistry;
     }

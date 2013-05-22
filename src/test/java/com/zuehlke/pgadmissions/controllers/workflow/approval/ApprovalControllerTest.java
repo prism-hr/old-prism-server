@@ -80,6 +80,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -115,6 +116,7 @@ public class ApprovalControllerTest {
 	private ScoringDefinitionParser scoringDefinitionParserMock;
 	private ScoresPropertyEditor scoresPropertyEditorMock;
 	private ScoreFactory scoreFactoryMock;
+	private ApplicationFormAccessService accessServiceMock;
 
 	@Test
 	public void shouldGetApprovalPage() {
@@ -134,7 +136,7 @@ public class ApprovalControllerTest {
 		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-		                scoreFactoryMock) {
+		                scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("bob")) {
@@ -169,7 +171,7 @@ public class ApprovalControllerTest {
 		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-		                scoreFactoryMock) {
+		                scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("5")) {
@@ -207,7 +209,7 @@ public class ApprovalControllerTest {
 						supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 						qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 						datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-						scoreFactoryMock) {
+						scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("5")) {
@@ -247,7 +249,7 @@ public class ApprovalControllerTest {
 						supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 						qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 						datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-						scoreFactoryMock) {
+						scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("5")) {
@@ -289,7 +291,7 @@ public class ApprovalControllerTest {
 		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-		                scoreFactoryMock) {
+		                scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("5")) {
@@ -328,7 +330,7 @@ public class ApprovalControllerTest {
 		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-		                scoreFactoryMock) {
+		                scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("bob")) {
@@ -369,7 +371,7 @@ public class ApprovalControllerTest {
 		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-		                scoreFactoryMock) {
+		                scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("bob")) {
@@ -404,7 +406,7 @@ public class ApprovalControllerTest {
 		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-		                scoreFactoryMock) {
+		                scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("bob")) {
@@ -533,7 +535,7 @@ public class ApprovalControllerTest {
 		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-		                scoreFactoryMock) {
+		                scoreFactoryMock, accessServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if ("5".equals(applicationId)) {
@@ -885,6 +887,7 @@ public class ApprovalControllerTest {
 		scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
 		scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
 		scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock);
@@ -897,7 +900,7 @@ public class ApprovalControllerTest {
 		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
 		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
 		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
-		                scoreFactoryMock);
+		                scoreFactoryMock, accessServiceMock);
 
 	}
 }

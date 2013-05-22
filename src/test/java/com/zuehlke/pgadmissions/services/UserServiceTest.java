@@ -188,7 +188,7 @@ public class UserServiceTest {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).filtering(filtering).build();
 
         userDAOMock.save(selectedUser);
-        filteringDAOMock.merge(filtering);
+        EasyMock.expect(filteringDAOMock.merge(filtering)).andReturn(filtering);
 
         replay(userDAOMock, filteringDAOMock);
         userService.setFiltering(selectedUser, filtering);

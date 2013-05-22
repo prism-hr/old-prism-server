@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
@@ -40,6 +41,8 @@ public class DocumentsControllerTest {
 	private DocumentPropertyEditor documentPropertyEditorMock;
 
 	private UserService userServiceMock;
+	
+	private ApplicationFormAccessService accessServiceMock;
 
     @Before
     public void setUp() {
@@ -47,9 +50,10 @@ public class DocumentsControllerTest {
         documentSectionValidatorMock = EasyMock.createMock(DocumentSectionValidator.class);
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        controller = new DocumentsController(applicationsServiceMock, userServiceMock, documentSectionValidatorMock, documentPropertyEditorMock);   
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        controller = new DocumentsController(applicationsServiceMock, userServiceMock, documentSectionValidatorMock, documentPropertyEditorMock, accessServiceMock);   
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
     }
 

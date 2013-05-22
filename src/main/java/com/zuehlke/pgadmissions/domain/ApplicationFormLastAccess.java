@@ -33,7 +33,16 @@ public class ApplicationFormLastAccess implements Serializable {
     @Column(name = "last_access_timestamp")
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date lastAccessTimestamp;
+    
+    public ApplicationFormLastAccess() {
+    }
 
+    public ApplicationFormLastAccess(RegisteredUser user, ApplicationForm applicationForm, Date timestamp) {
+        this.user = user;
+        this.applicationForm = applicationForm;
+        this.lastAccessTimestamp = timestamp;
+    }
+    
     public Integer getId() {
         return id;
     }

@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
@@ -27,6 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFo
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -47,19 +50,22 @@ public class ConfirmSupervisionController {
     private final DatePropertyEditor datePropertyEditor;
 
     private final ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
+    
+    private final ApplicationFormAccessService accessService;
 
     public ConfirmSupervisionController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public ConfirmSupervisionController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-            DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator) {
+            DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator, ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
         this.datePropertyEditor = datePropertyEditor;
         this.confirmSupervisionDTOValidator = confirmSupervisionDTOValidator;
+        this.accessService = accessService;
     }
 
     @ModelAttribute("applicationForm")
@@ -137,6 +143,9 @@ public class ConfirmSupervisionController {
         }
         
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
+        
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
         
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();

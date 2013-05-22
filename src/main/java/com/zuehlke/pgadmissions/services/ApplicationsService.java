@@ -134,7 +134,7 @@ public class ApplicationsService {
 
     public List<ApplicationForm> getAllVisibleAndMatchedApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
         if (filtering.getPreFilter() == ApplicationsPreFilter.URGENT) {
-            return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, this);
+            return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, APPLICATION_BLOCK_SIZE, this);
         } else {
             return applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
         }
@@ -187,15 +187,14 @@ public class ApplicationsService {
 
     public ActionsDefinitions calculateActions(final RegisteredUser user, final ApplicationForm application) {
         Interview interview = application.getLatestInterview();
+        ApplicationFormStatus nextStatus = stateTransitionViewResolver.getNextStatus(application);
 
         ActionsDefinitions actions = new ActionsDefinitions();
 
-        if (user.canSee(application)) {
-            if (application.isUserAllowedToSeeAndEditAsAdministrator(user) || (user == application.getApplicant() && application.isModifiable())) {
-                actions.addAction("view", "View / Edit");
-            } else {
-                actions.addAction("view", "View");
-            }
+        if (user.canEditAsAdministrator(application) || user.canEditAsApplicant(application)) {
+            actions.addAction("view", "View / Edit");
+        } else if (user.canSee(application)) {
+            actions.addAction("view", "View");
         }
 
         if (application.isInState(ApplicationFormStatus.VALIDATION)) {
@@ -210,7 +209,7 @@ public class ApplicationsService {
             }
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && stateTransitionViewResolver.getNextStatus(application) == null) {
+        if (application.isInState(ApplicationFormStatus.INTERVIEW) && nextStatus == null) {
             if (user.hasAdminRightsOnApplication(application)) {
                 actions.addAction("validate", "Evaluate interview feedback");
             }
@@ -220,7 +219,7 @@ public class ApplicationsService {
             }
         }
 
-        if (user.isApplicationAdministrator(application) && stateTransitionViewResolver.getNextStatus(application) == ApplicationFormStatus.INTERVIEW) {
+        if (user.isApplicationAdministrator(application) && nextStatus == ApplicationFormStatus.INTERVIEW) {
             // application not yet in interview stage, interview is next
             actions.addAction("validate", "Administer Interview");
         }
@@ -245,8 +244,8 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && stateTransitionViewResolver.getNextStatus(application) == null
-                && interview.isScheduling() && interview.isParticipant(user) && !interview.getParticipant(user).getResponded()) {
+        if (application.isInState(ApplicationFormStatus.INTERVIEW) && nextStatus == null && interview.isScheduling() && interview.isParticipant(user)
+                && !interview.getParticipant(user).getResponded()) {
             actions.addAction("interviewVote", "Provide Availability For Interview");
             actions.setRequiresAttention(true);
         }
@@ -257,13 +256,13 @@ public class ApplicationsService {
             actions.setRequiresAttention(true);
         }
 
-        if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable()
+        if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isTerminated()
                 && !user.getRefereeForApplicationForm(application).hasResponded()) {
             actions.addAction("reference", "Add reference");
             actions.setRequiresAttention(true);
         }
 
-        if (user == application.getApplicant() && !application.isDecided() && !application.isWithdrawn()) {
+        if (user == application.getApplicant() && !application.isTerminated()) {
             actions.addAction("withdraw", "Withdraw");
         }
 

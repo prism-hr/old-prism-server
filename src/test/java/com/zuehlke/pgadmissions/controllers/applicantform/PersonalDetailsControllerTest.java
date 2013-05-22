@@ -56,6 +56,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.DisabilityService;
@@ -95,6 +96,7 @@ public class PersonalDetailsControllerTest {
 
     private Model modelMock;
 
+    private ApplicationFormAccessService accessServiceMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
 
     private SessionStatus sessionStatusMock;
@@ -406,15 +408,16 @@ public class PersonalDetailsControllerTest {
 
         personalDetailsValidatorMock = EasyMock.createMock(PersonalDetailsValidator.class);
         userServiceMock = EasyMock.createMock(UserService.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 
         sessionStatusMock = EasyMock.createMock(SessionStatus.class);
 
         controller = new PersonalDetailsController(applicationsServiceMock, userServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 countryServiceMock, ethnicityServiceMock, disabilityServiceMock, languageServiceMok, languagePropertyEditorMopck, countryPropertyEditorMock,
                 disabilityPropertyEditorMock, ethnicityPropertyEditorMock, personalDetailsValidatorMock, personalDetailsServiceMock, domicileServiceMock,
-                domicilePropertyEditorMock, documentPropertyEditorMock, documentServiceMock, encryptionHelperMock, personalDetailsUserValidatorMock);
+                domicilePropertyEditorMock, documentPropertyEditorMock, documentServiceMock, encryptionHelperMock, personalDetailsUserValidatorMock, accessServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }
 }

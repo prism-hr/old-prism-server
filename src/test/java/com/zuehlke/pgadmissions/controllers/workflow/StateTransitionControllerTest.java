@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFo
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -53,6 +54,7 @@ public class StateTransitionControllerTest {
 	private ApprovalService approvalServiceMock;
 	private StateChangeValidator stateChangeValidatorMock;
 	private DocumentPropertyEditor documentPropertyEditorMock;
+	private ApplicationFormAccessService accessServiceMock;
 
 	@Test
 	public void shouldRegisterValidator(){
@@ -170,7 +172,8 @@ public class StateTransitionControllerTest {
 				approvalServiceMock, 
 				stateChangeValidatorMock, 
 				documentPropertyEditorMock,
-				stateTransitionServiceMock) {
+				stateTransitionServiceMock,
+				accessServiceMock) {
 
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
@@ -208,7 +211,8 @@ public class StateTransitionControllerTest {
                 approvalServiceMock, 
                 stateChangeValidatorMock, 
                 documentPropertyEditorMock,
-                stateTransitionServiceMock) {
+                stateTransitionServiceMock,
+                accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -239,7 +243,8 @@ public class StateTransitionControllerTest {
 				approvalServiceMock, 
 				stateChangeValidatorMock, 
 				documentPropertyEditorMock,
-				new StateTransitionService()) {
+				new StateTransitionService(),
+				accessServiceMock) {
 
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
@@ -261,6 +266,7 @@ public class StateTransitionControllerTest {
 		stateTransitionServiceMock = EasyMock.createMock(StateTransitionService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 		controller = new StateTransitionController(
 		        applicationServiceMock, 
 		        userServiceMock, 
@@ -271,7 +277,8 @@ public class StateTransitionControllerTest {
 				approvalServiceMock, 
 				stateChangeValidatorMock, 
 				documentPropertyEditorMock,
-				stateTransitionServiceMock);
+				stateTransitionServiceMock,
+				accessServiceMock);
 	}
 
 	@After

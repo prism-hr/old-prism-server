@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
@@ -36,18 +39,21 @@ public class DocumentsController {
     private final DocumentPropertyEditor documentPropertyEditor;
     
     private final UserService userService;
+    
+    private final ApplicationFormAccessService accessService;
 
     public DocumentsController() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
     public DocumentsController(ApplicationsService applicationsService, UserService userService,
-            DocumentSectionValidator documentSectionValidator, DocumentPropertyEditor documentPropertyEditor) {
+            DocumentSectionValidator documentSectionValidator, DocumentPropertyEditor documentPropertyEditor, final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.documentSectionValidator = documentSectionValidator;
         this.documentPropertyEditor = documentPropertyEditor;
+        this.accessService = accessService;
     }
 
     @RequestMapping(value = "/editDocuments", method = RequestMethod.POST)
@@ -68,6 +74,8 @@ public class DocumentsController {
             return STUDENTS_FORM_DOCUMENTS_VIEW;
         }
         
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationForm.setLastUpdated(new Date());
         applicationsService.save(applicationForm);
         return "redirect:/update/getDocuments?applicationId=" + applicationForm.getApplicationNumber();

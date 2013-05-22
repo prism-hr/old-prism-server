@@ -22,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -35,6 +37,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -52,16 +55,17 @@ public class ProgrammeDetailsController {
     private final SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
     private final SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
     private final UserService userService;
+    private final ApplicationFormAccessService accessService;
 
     ProgrammeDetailsController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProgrammeDetailsController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
             DatePropertyEditor datePropertyEditor, SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
             ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService, UserService userService,
-            SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor) {
+            SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor, final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
         this.datePropertyEditor = datePropertyEditor;
@@ -70,6 +74,7 @@ public class ProgrammeDetailsController {
         this.programmeDetailsService = programmeDetailsService;
         this.userService = userService;
         this.sourcesOfInterestPropertyEditor = sourcesOfInterestPropertyEditor;
+        this.accessService = accessService;
     }
 
     @RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
@@ -88,11 +93,13 @@ public class ProgrammeDetailsController {
             return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
         }
 
-        programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(programmeDetails.getApplication().getProgram(),
-                programmeDetails.getStudyOption()));
+        ApplicationForm applicationForm = programmeDetails.getApplication();
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+        applicationForm.setLastUpdated(new Date());
+        programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(applicationForm.getProgram(), programmeDetails.getStudyOption()));
         programmeDetailsService.save(programmeDetails);
-        programmeDetails.getApplication().setLastUpdated(new Date());
-        applicationsService.save(programmeDetails.getApplication());
+        applicationsService.save(applicationForm);
         return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
     }
 

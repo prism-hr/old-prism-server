@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -58,6 +59,7 @@ public class ProgrammeDetailsControllerTest {
 
     private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
     private UserService userServiceMock;
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -102,7 +104,7 @@ public class ProgrammeDetailsControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).build();
         controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
-                sourcesOfInterestPropertyEditorMock) {
+                sourcesOfInterestPropertyEditorMock, accessServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -268,15 +270,16 @@ public class ProgrammeDetailsControllerTest {
         programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
         programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         sourcesOfInterestPropertyEditorMock = EasyMock.createMock(SourcesOfInterestPropertyEditor.class);
 
         controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
-                sourcesOfInterestPropertyEditorMock);
+                sourcesOfInterestPropertyEditorMock, accessServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
     }
 }

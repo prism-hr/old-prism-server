@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.BadgeService;
@@ -59,7 +60,7 @@ public class ValidationTransitionController extends StateTransitionController {
     private final MessageSource messageSource;
 
     public ValidationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -67,9 +68,9 @@ public class ValidationTransitionController extends StateTransitionController {
             CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
             DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
-            BadgeService badgeService, MessageSource messageSource, StateTransitionService stateTransitionService) {
+            BadgeService badgeService, MessageSource messageSource, StateTransitionService stateTransitionService, ApplicationFormAccessService accessService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService,
-                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService);
+                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService, accessService);
         this.messageSource = messageSource;
         this.badgeService = badgeService;
     }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
@@ -38,20 +39,22 @@ public class InterviewVoteController {
     private final InterviewService interviewService;
     private final InterviewParticipantValidator interviewParticipantValidator;
     private final AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor;
+    private final ActionsProvider actionsProvider;
 
     public InterviewVoteController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewVoteController(ApplicationsService applicationsService, UserService userService,
                     InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
-                    AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor) {
+                    AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
         this.interviewParticipantValidator = interviewParticipantValidator;
         this.acceptedTimeslotsPropertyEditor = acceptedTimeslotsPropertyEditor;
+        this.actionsProvider = actionsProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -92,7 +95,7 @@ public class InterviewVoteController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(userService.getCurrentUser(), application);
+        return actionsProvider.calculateActions(userService.getCurrentUser(), application);
     }
 
     @RequestMapping(method = RequestMethod.GET)

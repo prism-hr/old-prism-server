@@ -18,6 +18,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -60,6 +61,7 @@ public class RejectApplicationControllerTest {
     private UserService userServiceMock;
     private RejectionValidator rejectionValidatorMock;
     private BindingResult errorsMock;
+    private ActionsProvider actionsProviderMock;
 
     @Before
     public void setUp() {
@@ -79,8 +81,9 @@ public class RejectApplicationControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
         rejectionValidatorMock = EasyMock.createMock(RejectionValidator.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock, rejectReasonPropertyEditorMock,
-                rejectionValidatorMock);
+                rejectionValidatorMock, actionsProviderMock);
 
         errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);

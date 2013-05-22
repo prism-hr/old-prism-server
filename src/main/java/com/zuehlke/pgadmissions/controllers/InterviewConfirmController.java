@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -38,18 +39,21 @@ public class InterviewConfirmController {
     private final InterviewService interviewService;
     
     private final ApplicationFormAccessService accessService;
+    
+    private final ActionsProvider actionsProvider;
 
     public InterviewConfirmController() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
     public InterviewConfirmController(ApplicationsService applicationsService, UserService userService,
-            InterviewService interviewService, final ApplicationFormAccessService accessService) {
+            InterviewService interviewService, final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -77,7 +81,7 @@ public class InterviewConfirmController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(userService.getCurrentUser(), application);
+        return actionsProvider.calculateActions(userService.getCurrentUser(), application);
     }
 
     @RequestMapping(method = RequestMethod.GET)

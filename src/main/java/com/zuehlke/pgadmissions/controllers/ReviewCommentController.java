@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
@@ -57,15 +58,16 @@ public class ReviewCommentController {
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
     private final ApplicationFormAccessService accessService;
+    private final ActionsProvider actionsProvider;
 
     ReviewCommentController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormAccessService accessService) {
+            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -75,6 +77,7 @@ public class ReviewCommentController {
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -96,7 +99,7 @@ public class ReviewCommentController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(getUser(), application);
+        return actionsProvider.calculateActions(getUser(), application);
     }
 
     @RequestMapping(method = RequestMethod.GET)

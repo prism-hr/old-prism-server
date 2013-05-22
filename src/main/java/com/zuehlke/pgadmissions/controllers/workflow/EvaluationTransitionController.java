@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -38,33 +39,33 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class EvaluationTransitionController extends StateTransitionController {
 
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
-    
+
     public EvaluationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService,
-            CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
-            DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
-            StateTransitionService stateTransitionService, ApplicationFormAccessService accessService) {
-        super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService,
-                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService, accessService);
+    public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+        super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
+                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
     }
 
     @ModelAttribute("comment")
     public StateChangeComment getComment(@RequestParam String applicationId) {
         return new StateChangeComment();
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/submitEvaluationComment")
     public String defaultGet() {
         return MY_APPLICATIONS_VIEW;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
-    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
+            ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
         modelMap.put("delegate", delegate);
 
         if (result.hasErrors()) {
@@ -74,7 +75,8 @@ public class EvaluationTransitionController extends StateTransitionController {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
 
-        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getType(), stateChangeComment.getNextStatus());
+        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getType(),
+                stateChangeComment.getNextStatus());
 
         if (newComment instanceof ReviewEvaluationComment) {
             ((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
@@ -91,9 +93,9 @@ public class EvaluationTransitionController extends StateTransitionController {
         newComment.setDocuments(stateChangeComment.getDocuments());
 
         if (newComment instanceof ApprovalEvaluationComment) {
-            
+
             ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
-            
+
             if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
                 if (approvalService.moveToApproved(applicationForm)) {
                     approvalService.sendToPortico(applicationForm);

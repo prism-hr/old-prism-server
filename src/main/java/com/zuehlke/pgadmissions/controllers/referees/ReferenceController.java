@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
@@ -61,15 +62,16 @@ public class ReferenceController {
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
     private final ApplicationFormAccessService accessService;
+    private final ActionsProvider actionsProvider;
 
     ReferenceController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
             DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
-            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationFormAccessService accessService) {
+            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;
@@ -80,6 +82,7 @@ public class ReferenceController {
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -102,7 +105,7 @@ public class ReferenceController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(getUser(), application);
+        return actionsProvider.calculateActions(getUser(), application);
     }
 
     RegisteredUser getCurrentUser() {

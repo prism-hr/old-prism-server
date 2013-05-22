@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -85,6 +86,8 @@ public class ApplicationSumarryServiceTest {
 
     private ApplicationsService applicationsServiceMock;
 
+    private ActionsProvider actionsProviderMock;
+
     private ApplicationSummaryService service;
 
     @Before
@@ -96,7 +99,8 @@ public class ApplicationSumarryServiceTest {
         userServiceMock = createMock(UserService.class);
         encryptionHelperMock = createMock(EncryptionHelper.class);
         applicationsServiceMock = createMock(ApplicationsService.class);
-        service = new ApplicationSummaryService(applicationsServiceMock, userServiceMock, encryptionHelperMock);
+        actionsProviderMock = createMock(ActionsProvider.class);
+        service = new ApplicationSummaryService(applicationsServiceMock, userServiceMock, encryptionHelperMock, actionsProviderMock);
     }
 
     @Test
@@ -131,7 +135,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -140,9 +144,9 @@ public class ApplicationSumarryServiceTest {
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
+        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
+        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -173,7 +177,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -182,9 +186,9 @@ public class ApplicationSumarryServiceTest {
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
+        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
+        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -215,7 +219,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -225,9 +229,9 @@ public class ApplicationSumarryServiceTest {
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
+        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
+        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -258,7 +262,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -267,9 +271,9 @@ public class ApplicationSumarryServiceTest {
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
+        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
+        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -299,7 +303,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -308,9 +312,9 @@ public class ApplicationSumarryServiceTest {
 
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
+        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
+        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -339,7 +343,7 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(applicationsServiceMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
 
         expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
@@ -348,9 +352,9 @@ public class ApplicationSumarryServiceTest {
 
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock);
+        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock);
+        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");

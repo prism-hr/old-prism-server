@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -56,6 +57,7 @@ public class EvaluationTransitionControllerTest {
     private DocumentPropertyEditor documentPropertyEditorMock;
     private BindingResult bindingResultMock;
     private ApplicationFormAccessService accessServiceMock;
+    private ActionsProvider actionsProviderMock;
 
     @Test
     public void shouldCreateApprovalEvaluationCommentWithLatestReviewRound() {
@@ -66,18 +68,9 @@ public class EvaluationTransitionControllerTest {
         stateComment.setNextStatus(ApplicationFormStatus.REJECTED);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
         ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().id(6).build();
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock, 
-                commentServiceMock, 
-                commentFactoryMock,
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock) {
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -107,18 +100,9 @@ public class EvaluationTransitionControllerTest {
         stateComment.setNextStatus(ApplicationFormStatus.APPROVED);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
         ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVED).id(6).build();
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock, 
-                commentServiceMock, 
-                commentFactoryMock,
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock) {
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -153,18 +137,9 @@ public class EvaluationTransitionControllerTest {
         stateComment.setNextStatus(ApplicationFormStatus.REJECTED);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
         ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).id(6).build();
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock, 
-                commentServiceMock, 
-                commentFactoryMock,
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock) {
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -193,18 +168,9 @@ public class EvaluationTransitionControllerTest {
         stateComment.setComment("comment");
         stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock,
-                commentServiceMock, 
-                commentFactoryMock,
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock) {
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -233,18 +199,9 @@ public class EvaluationTransitionControllerTest {
         stateComment.setComment("comment");
         stateComment.setNextStatus(ApplicationFormStatus.APPROVAL);
         stateComment.setType(CommentType.REVIEW_EVALUATION);
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock, 
-                commentServiceMock, 
-                commentFactoryMock,
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock) {
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -275,18 +232,9 @@ public class EvaluationTransitionControllerTest {
         stateComment.setComment("comment");
         stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock, 
-                commentServiceMock, 
-                commentFactoryMock,
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock) {
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -306,7 +254,7 @@ public class EvaluationTransitionControllerTest {
 
         assertEquals("redirect:/applications?messageCode=delegate.success&application=ABC", view);
         assertEquals(interview, comment.getInterview());
-        assertTrue((Boolean)modelMap.get("delegate"));
+        assertTrue((Boolean) modelMap.get("delegate"));
     }
 
     @Test
@@ -318,18 +266,9 @@ public class EvaluationTransitionControllerTest {
         stateComment.setComment("comment");
         stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
         stateComment.setType(CommentType.REVIEW_EVALUATION);
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock, 
-                commentServiceMock, 
-                commentFactoryMock,
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock) {
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -370,18 +309,9 @@ public class EvaluationTransitionControllerTest {
         stateChangeComment.setType(CommentType.APPROVAL_EVALUATION);
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABCD-EFG").build();
 
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock, 
-                commentServiceMock, 
-                new CommentFactory(),
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock) {
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, new CommentFactory(),
+                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -414,18 +344,10 @@ public class EvaluationTransitionControllerTest {
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
         documentServiceMock = EasyMock.createMock(DocumentService.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
-        controller = new EvaluationTransitionController(
-                applicationServiceMock, 
-                userServiceMock, 
-                commentServiceMock, 
-                commentFactoryMock,
-                encryptionHelperMock, 
-                documentServiceMock, 
-                approvalServiceMock, 
-                stateChangeValidatorMock,
-                documentPropertyEditorMock,
-                stateTransitionViewServiceMock,
-                accessServiceMock);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                accessServiceMock, actionsProviderMock);
     }
 
     @After

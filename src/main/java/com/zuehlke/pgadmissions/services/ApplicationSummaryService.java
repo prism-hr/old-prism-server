@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -42,22 +43,26 @@ public class ApplicationSummaryService {
 
     private final EncryptionHelper encryptionHelper;
 
+    private final ActionsProvider actionsProvider;
+
     public ApplicationSummaryService() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public ApplicationSummaryService(final ApplicationsService applicationsService, final UserService userService, EncryptionHelper encryptionHelper) {
+    public ApplicationSummaryService(final ApplicationsService applicationsService, final UserService userService, EncryptionHelper encryptionHelper,
+            final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.encryptionHelper = encryptionHelper;
+        this.actionsProvider = actionsProvider;
     }
 
     private void addApplicationProperties(final ApplicationForm form, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
         result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
-        ActionsDefinitions actionsDefinition = applicationsService.calculateActions(userService.getCurrentUser(), form);
+        ActionsDefinitions actionsDefinition = actionsProvider.calculateActions(userService.getCurrentUser(), form);
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(actionsDefinition.isRequiresAttention()));
         result.put("applicationNumber", form.getApplicationNumber());
     }

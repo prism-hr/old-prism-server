@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
@@ -40,6 +41,8 @@ public class InterviewVoteControllerTest {
     private InterviewParticipantValidator interviewParticipantValidatorMock;
 
     private AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditorMock;
+    
+    private ActionsProvider actionsProviderMock;
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionWhenApptlicationIsNull() {
@@ -141,9 +144,10 @@ public class InterviewVoteControllerTest {
         interviewServiceMock = EasyMock.createMock(InterviewService.class);
         interviewParticipantValidatorMock = EasyMock.createMock(InterviewParticipantValidator.class);
         acceptedTimeslotsPropertyEditorMock = EasyMock.createMock(AcceptedTimeslotsPropertyEditor.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
         controller = new InterviewVoteController(applicationsServiceMock, userServiceMock, interviewParticipantValidatorMock, interviewServiceMock,
-                acceptedTimeslotsPropertyEditorMock);
+                acceptedTimeslotsPropertyEditorMock, actionsProviderMock);
 
     }
 

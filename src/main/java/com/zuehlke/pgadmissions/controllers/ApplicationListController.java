@@ -29,6 +29,7 @@ import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.base.DataSourceException;
 import com.google.visualization.datasource.datatable.DataTable;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -54,7 +55,7 @@ public class ApplicationListController {
     private static final String APPLICATION_LIST_SECTION_VIEW_NAME = "private/my_applications_section";
 
     private final ApplicationsService applicationsService;
-
+    
     private final ApplicationsReportService applicationsReportService;
 
     private final UserService userService;
@@ -66,15 +67,17 @@ public class ApplicationListController {
     private final ApplicationsFilteringService filteringService;
     
     private final ApplicationFormAccessService accessService;
+    
+    private final ActionsProvider actionsProvider;
 
     public ApplicationListController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
             ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
-            ApplicationsFilteringService filteringService, final ApplicationFormAccessService accessService) {
+            ApplicationsFilteringService filteringService, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
@@ -82,6 +85,7 @@ public class ApplicationListController {
         this.applicationSummaryService = applicationSummaryService;
         this.filteringService = filteringService;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @InitBinder(value = "filtering")
@@ -127,7 +131,7 @@ public class ApplicationListController {
         Map<String, ActionsDefinitions> actionDefinitions = new LinkedHashMap<String, ActionsDefinitions>();
         for (ApplicationForm applicationForm : applications) {
             updatedApplications.put(applicationForm.getApplicationNumber(), accessService.userNeedsToSeeApplicationUpdates(applicationForm, getUser()));
-            ActionsDefinitions actionsDefinition = applicationsService.calculateActions(user, applicationForm);
+            ActionsDefinitions actionsDefinition = actionsProvider.calculateActions(user, applicationForm);
             actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
         }
         model.addAttribute("updateApplications", updatedApplications);

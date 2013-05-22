@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgrammeAdminController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -122,10 +123,13 @@ public class ApprovalController {
 	private final ScoresPropertyEditor scoresPropertyEditor;
 
 	private final ScoreFactory scoreFactory;
+	
 	private final ApplicationFormAccessService accessService;
+	
+	private final ActionsProvider actionsProvider;
 
 	public ApprovalController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -137,7 +141,7 @@ public class ApprovalController {
 	                SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
 	                CountryPropertyEditor countryPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
 	                ScoreFactory scoreFactory,
-	                final ApplicationFormAccessService accessService) {
+	                final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.approvalService = approvalService;
@@ -158,6 +162,7 @@ public class ApprovalController {
 		this.scoresPropertyEditor = scoresPropertyEditor;
 		this.scoreFactory = scoreFactory;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
 	}
 
 	@InitBinder(value = "refereesAdminEditDTO")
@@ -216,7 +221,7 @@ public class ApprovalController {
 	@ModelAttribute("actionsDefinition")
 	public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
 		ApplicationForm application = getApplicationForm(applicationId);
-		return applicationsService.calculateActions(getUser(), application);
+		return actionsProvider.calculateActions(getUser(), application);
 	}
 
 	@ModelAttribute("nominatedSupervisors")

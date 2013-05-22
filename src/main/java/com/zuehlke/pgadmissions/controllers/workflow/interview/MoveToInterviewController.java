@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -54,15 +55,16 @@ public class MoveToInterviewController {
     private final DatePropertyEditor datePropertyEditor;
     private final InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
     private final ApplicationFormAccessService accessService;
+    private final ActionsProvider actionsProvider;
 
     MoveToInterviewController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
             InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
-            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService) {
+            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -71,6 +73,7 @@ public class MoveToInterviewController {
         this.datePropertyEditor = datePropertyEditor;
         this.interviewTimeslotsPropertyEditor = interviewTimeslotsPropertyEditor;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToInterview")
@@ -100,7 +103,7 @@ public class MoveToInterviewController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(getUser(), application);
+        return actionsProvider.calculateActions(getUser(), application);
     }
 
     @ModelAttribute("nominatedSupervisors")

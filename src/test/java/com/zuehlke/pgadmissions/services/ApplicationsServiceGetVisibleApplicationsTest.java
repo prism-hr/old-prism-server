@@ -58,11 +58,11 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Before
     public void prepare() {
-        applicationFormListDAO = new ApplicationFormListDAO(sessionFactory);
+        applicationFormListDAO = new ApplicationFormListDAO(sessionFactory, null);
 
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
 
-        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null);
+        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null);
 
         roleDAO = new RoleDAO(sessionFactory);
 
@@ -85,7 +85,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     public void shouldGetListOfVisibleApplicationsFromDAOAndSetDefaultValues() {
         ApplicationForm form = new ApplicationFormBuilder().id(1).build();
         ApplicationFormListDAO applicationFormDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
-        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null);
+        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null);
         RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
         ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
         EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(Arrays.asList(form));

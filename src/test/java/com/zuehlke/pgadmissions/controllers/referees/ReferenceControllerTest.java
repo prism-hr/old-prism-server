@@ -16,6 +16,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -64,6 +65,7 @@ public class ReferenceControllerTest {
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
     private ApplicationFormAccessService accessServiceMock;
+    private ActionsProvider actionsProviderMock;
 
     @Test
     public void shouldReturnApplicationForm() {
@@ -246,9 +248,10 @@ public class ReferenceControllerTest {
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
         controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator,
-                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock);
+                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock);
 
     }
 

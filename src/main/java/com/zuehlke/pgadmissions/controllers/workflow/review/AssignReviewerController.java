@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -34,13 +35,13 @@ public class AssignReviewerController extends ReviewController {
 
 
 	AssignReviewerController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public AssignReviewerController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService, 
-			ReviewRoundValidator reviewRoundValidator,  AssignReviewersReviewerPropertyEditor reviewerPropertyEditor) {
-		super(applicationsService, userService, reviewService);
+			ReviewRoundValidator reviewRoundValidator,  AssignReviewersReviewerPropertyEditor reviewerPropertyEditor, ActionsProvider actionsProvider) {
+		super(applicationsService, userService, reviewService, actionsProvider);
 		this.reviewRoundValidator = reviewRoundValidator;
 		this.reviewerPropertyEditor = reviewerPropertyEditor;
 	}

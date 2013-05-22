@@ -14,6 +14,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -184,6 +185,9 @@ public class SubmitApplicationFormControllerTest {
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.VALIDATION)).andReturn(event);
         
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
+        
+        Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
+        EasyMock.expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
 
         EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock);
 
@@ -205,6 +209,8 @@ public class SubmitApplicationFormControllerTest {
         StageDuration stageDuration = new StageDuration();
         stageDuration.setDuration(1);
         stageDuration.setUnit(DurationUnitEnum.DAYS);
+        Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
+        EasyMock.expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock);
@@ -220,6 +226,8 @@ public class SubmitApplicationFormControllerTest {
         StageDuration stageDuration = new StageDuration();
         stageDuration.setDuration(1);
         stageDuration.setUnit(DurationUnitEnum.DAYS);
+        Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
+        EasyMock.expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock);

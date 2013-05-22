@@ -19,17 +19,14 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
+import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service("applicationsService")
@@ -45,17 +42,28 @@ public class ApplicationsService {
     private final ApplicationFormListDAO applicationFormListDAO;
 
     private final MailSendingService mailService;
+    
+    private final BadgeDAO badgeDAO;
 
     public ApplicationsService() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
     public ApplicationsService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormListDAO applicationFormListDAO,
-            final MailSendingService mailService) {
+            final MailSendingService mailService, final BadgeDAO badgeDAO) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
+        this.badgeDAO = badgeDAO;
+    }
+    
+    public Date getBatchDeadlineForApplication(ApplicationForm form) {
+        Date closingDate = badgeDAO.getNextClosingDateForProgram(form.getProgram(), new Date());
+        if (closingDate == null) {
+            return new Date();
+        }
+        return closingDate;
     }
 
     public ApplicationForm getApplicationById(Integer id) {

@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -35,12 +36,14 @@ public class ApplicationsServiceTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
 	private MailSendingService mailServiceMock;
+	private BadgeDAO badgeDAOMock;
 
 	@Before
 	public void setup() {
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		mailServiceMock = createMock(MailSendingService.class);
-		applicationsService = new ApplicationsService(applicationFormDAOMock, null, mailServiceMock);
+		badgeDAOMock = createMock(BadgeDAO.class);
+		applicationsService = new ApplicationsService(applicationFormDAOMock, null, mailServiceMock, badgeDAOMock);
 	}
 
 	@Test

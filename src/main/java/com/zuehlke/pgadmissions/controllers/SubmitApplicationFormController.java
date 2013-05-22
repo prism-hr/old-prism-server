@@ -102,6 +102,7 @@ public class SubmitApplicationFormController {
         calculateAndSetValidationDueDate(applicationForm);
         applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
+        applicationForm.setBatchDeadline(applicationService.getBatchDeadlineForApplication(applicationForm));
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();

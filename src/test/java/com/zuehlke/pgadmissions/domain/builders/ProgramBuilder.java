@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -26,6 +27,7 @@ public class ProgramBuilder {
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
+    private List<Badge> badges = new ArrayList<Badge>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
 
     public ProgramBuilder atasRequired(boolean flag) {
@@ -106,6 +108,13 @@ public class ProgramBuilder {
         this.title = title;
         return this;
     }
+    
+    public ProgramBuilder badges(Badge ...badges){
+        for (Badge badge : badges) {
+            this.badges.add(badge);
+        }
+        return this;
+    }
 
     public Program build() {
         Program program = new Program();
@@ -121,6 +130,7 @@ public class ProgramBuilder {
         program.getInstances().addAll(instances);
         program.getViewers().addAll(viewers);
         program.getScoringDefinitions().putAll(scoringDefinitions);
+        program.getBadges().addAll(badges);
         program.setAtasRequired(atasRequired);
         return program;
     }

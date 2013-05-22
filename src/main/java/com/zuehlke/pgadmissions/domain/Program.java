@@ -33,10 +33,13 @@ public class Program extends Authorisable implements Serializable {
     @GeneratedValue
     private Integer id;
 
+    @Column(name = "code")
     private String code;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "enabled")
     private boolean enabled;
 
     @Column(name = "atas_required")

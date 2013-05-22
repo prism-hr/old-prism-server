@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -54,5 +56,18 @@ public class BadgeDAO {
                         Restrictions.eq("closingDate", badge.getClosingDate())))
                 .add(Restrictions.or(Restrictions.isNull("projectTitle"),
                         Restrictions.eq("projectTitle", badge.getProjectTitle()))).list();
+    }
+    
+    public Date getNextClosingDateForProgram(Program program, Date today) {
+        List<Date> result = (List<Date>) sessionFactory.getCurrentSession().createCriteria(Badge.class).setProjection(Projections.property("closingDate"))
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.gt("closingDate", today))
+                .addOrder(Order.asc("closingDate"))
+                .setMaxResults(1)
+                .list();
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
     }
 }

@@ -26,6 +26,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -46,14 +47,17 @@ public class ApplicationFormListDAO {
     public static final DateTimeFormatter USER_DATE_FORMAT = DateTimeFormat.forPattern("dd MMM yyyy");
 
     private final SessionFactory sessionFactory;
+    
+    private final ActionsProvider actionsProvider;
 
     public ApplicationFormListDAO() {
-        this(null);
+        this(null, null);
     }
 
     @Autowired
-    public ApplicationFormListDAO(SessionFactory sessionFactory) {
+    public ApplicationFormListDAO(SessionFactory sessionFactory, ActionsProvider actionsProvider) {
         this.sessionFactory = sessionFactory;
+        this.actionsProvider = actionsProvider;
     }
 
     public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
@@ -62,7 +66,7 @@ public class ApplicationFormListDAO {
     
     @SuppressWarnings("unchecked")
     public List<ApplicationForm> getApplicationsWorthConsideringForAttentionFlag(final RegisteredUser user, 
-            final ApplicationsFiltering filtering, final int itemsPerPge, final ApplicationsService service) {
+            final ApplicationsFiltering filtering, final int itemsPerPge) {
         HashSet<ApplicationForm> applicationsWhichNeedAttention = new LinkedHashSet<ApplicationForm>();
 
         Criteria criteria = buildCriteriaForVisibleApplications(user, filtering);
@@ -76,7 +80,7 @@ public class ApplicationFormListDAO {
         int idx = 0;
         for (idx = filtering.getLatestConsideredFlagIndex(); idx < applicationIds.size(); idx++) {
             ApplicationForm form = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) applicationIds.get(idx));
-            if (service.calculateActions(user, form).isRequiresAttention()) {
+            if (actionsProvider.calculateActions(user, form).isRequiresAttention()) {
                 applicationsWhichNeedAttention.add(form);
             }
             if (applicationsWhichNeedAttention.size() == itemsPerPge) {

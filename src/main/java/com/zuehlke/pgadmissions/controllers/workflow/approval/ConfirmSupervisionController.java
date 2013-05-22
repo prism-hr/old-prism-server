@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -52,20 +53,23 @@ public class ConfirmSupervisionController {
     private final ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
     
     private final ApplicationFormAccessService accessService;
+    
+    private final ActionsProvider actionsProvider;
 
     public ConfirmSupervisionController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ConfirmSupervisionController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-            DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator, ApplicationFormAccessService accessService) {
+            DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator, ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
         this.datePropertyEditor = datePropertyEditor;
         this.confirmSupervisionDTOValidator = confirmSupervisionDTOValidator;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -95,7 +99,7 @@ public class ConfirmSupervisionController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(getUser(), application);
+        return actionsProvider.calculateActions(getUser(), application);
     }
 
     @ModelAttribute("confirmSupervisionDTO")

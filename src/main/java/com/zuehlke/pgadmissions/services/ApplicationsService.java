@@ -46,19 +46,16 @@ public class ApplicationsService {
 
     private final MailSendingService mailService;
 
-    private final StateTransitionViewResolver stateTransitionViewResolver;
-
     public ApplicationsService() {
-        this(null, null, null, null);
+        this(null, null, null);
     }
 
     @Autowired
     public ApplicationsService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormListDAO applicationFormListDAO,
-            final MailSendingService mailService, final StateTransitionViewResolver stateTransitionViewResolver) {
+            final MailSendingService mailService) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
-        this.stateTransitionViewResolver = stateTransitionViewResolver;
     }
 
     public ApplicationForm getApplicationById(Integer id) {
@@ -134,7 +131,7 @@ public class ApplicationsService {
 
     public List<ApplicationForm> getAllVisibleAndMatchedApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
         if (filtering.getPreFilter() == ApplicationsPreFilter.URGENT) {
-            return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, APPLICATION_BLOCK_SIZE, this);
+            return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, APPLICATION_BLOCK_SIZE);
         } else {
             return applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
         }
@@ -184,118 +181,5 @@ public class ApplicationsService {
     public List<ApplicationForm> getAllApplicationsByStatus(final ApplicationFormStatus status) {
         return applicationFormDAO.getAllApplicationsByStatus(status);
     }
-
-    public ActionsDefinitions calculateActions(final RegisteredUser user, final ApplicationForm application) {
-        Interview interview = application.getLatestInterview();
-        ApplicationFormStatus nextStatus = stateTransitionViewResolver.getNextStatus(application);
-
-        ActionsDefinitions actions = new ActionsDefinitions();
-
-        if (user.canEditAsAdministrator(application) || user.canEditAsApplicant(application)) {
-            actions.addAction("view", "View / Edit");
-        } else if (user.canSee(application)) {
-            actions.addAction("view", "View");
-        }
-
-        if (application.isInState(ApplicationFormStatus.VALIDATION)) {
-            if (user.hasAdminRightsOnApplication(application)) {
-                actions.addAction("validate", "Validate");
-            }
-        }
-
-        if (application.isInState(ApplicationFormStatus.REVIEW)) {
-            if (user.hasAdminRightsOnApplication(application)) {
-                actions.addAction("validate", "Evaluate reviews");
-            }
-        }
-
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && nextStatus == null) {
-            if (user.hasAdminRightsOnApplication(application)) {
-                actions.addAction("validate", "Evaluate interview feedback");
-            }
-            if (interview.isScheduling() && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application))) {
-                actions.addAction("interviewConfirm", "Confirm interview time");
-                actions.setRequiresAttention(true);
-            }
-        }
-
-        if (user.isApplicationAdministrator(application) && nextStatus == ApplicationFormStatus.INTERVIEW) {
-            // application not yet in interview stage, interview is next
-            actions.addAction("validate", "Administer Interview");
-        }
-
-        if (user.isInRole(Authority.ADMITTER) && !application.hasConfirmElegibilityComment()) {
-            actions.addAction("validate", "Confirm Eligibility");
-            if (application.getAdminRequestedRegistry() != null
-                    && (application.isNotInState(ApplicationFormStatus.WITHDRAWN) && application.isNotInState(ApplicationFormStatus.REJECTED))) {
-                actions.setRequiresAttention(true);
-            } else {
-                actions.setRequiresAttention(false);
-            }
-        }
-
-        if (user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application) || user.isInRole(Authority.ADMITTER)) {
-            actions.addAction("comment", "Comment");
-        }
-
-        if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState(ApplicationFormStatus.REVIEW)
-                && !user.hasRespondedToProvideReviewForApplicationLatestRound(application)) {
-            actions.addAction("review", "Add review");
-            actions.setRequiresAttention(true);
-        }
-
-        if (application.isInState(ApplicationFormStatus.INTERVIEW) && nextStatus == null && interview.isScheduling() && interview.isParticipant(user)
-                && !interview.getParticipant(user).getResponded()) {
-            actions.addAction("interviewVote", "Provide Availability For Interview");
-            actions.setRequiresAttention(true);
-        }
-
-        if (user.isInterviewerOfApplicationForm(application) && application.isInState(ApplicationFormStatus.INTERVIEW) && interview.isScheduled()
-                && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
-            actions.addAction("interviewFeedback", "Add interview feedback");
-            actions.setRequiresAttention(true);
-        }
-
-        if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isTerminated()
-                && !user.getRefereeForApplicationForm(application).hasResponded()) {
-            actions.addAction("reference", "Add reference");
-            actions.setRequiresAttention(true);
-        }
-
-        if (user == application.getApplicant() && !application.isTerminated()) {
-            actions.addAction("withdraw", "Withdraw");
-        }
-
-        if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart()) {
-            actions.addAction("restartApproval", "Revise Approval");
-            actions.setRequiresAttention(true);
-        }
-
-        if (application.isInState(ApplicationFormStatus.APPROVAL)
-                && (user.isInRoleInProgram(Authority.APPROVER, application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
-            actions.addAction("validate", "Approve");
-            if (user.isNotInRole(Authority.SUPERADMINISTRATOR) && !application.isPendingApprovalRestart()) {
-                actions.setRequiresAttention(true);
-            }
-        }
-
-        if (application.isInState(ApplicationFormStatus.APPROVAL) && !application.isPendingApprovalRestart()
-                && user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
-                && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) && user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
-            actions.addAction("restartApprovalAsAdministrator", "Revise Approval");
-            actions.setRequiresAttention(true);
-        }
-
-        if (application.isInState(ApplicationFormStatus.APPROVAL)) {
-            Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-            if (primarySupervisor != null && user == primarySupervisor.getUser() && !primarySupervisor.hasResponded()) {
-                actions.addAction("confirmSupervision", "Confirm supervision");
-                actions.setRequiresAttention(true);
-            }
-        }
-
-        actions.addAction("emailApplicant", "Email applicant");
-
-        return actions.sort();
-    }
+    
 }

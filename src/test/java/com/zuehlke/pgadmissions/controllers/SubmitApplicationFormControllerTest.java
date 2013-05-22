@@ -20,6 +20,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -61,6 +62,8 @@ public class SubmitApplicationFormControllerTest {
     private MockHttpServletRequest httpServletRequestMock;
     
     private ApplicationFormAccessService accessServiceMock;
+    
+    private ActionsProvider actionsProviderMock;
 
     @Test
     public void shouldReturnCurrentUser() {
@@ -321,8 +324,9 @@ public class SubmitApplicationFormControllerTest {
         stageDurationServiceMock = EasyMock.createMock(StageDurationService.class);
         eventFactoryMock = EasyMock.createMock(EventFactory.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         applicationController = new SubmitApplicationFormController(applicationsServiceMock, userServiceMock, applicationFormValidatorMock,
-                stageDurationServiceMock, eventFactoryMock, accessServiceMock);
+                stageDurationServiceMock, eventFactoryMock, accessServiceMock, actionsProviderMock);
         httpServletRequestMock = new MockHttpServletRequest();
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

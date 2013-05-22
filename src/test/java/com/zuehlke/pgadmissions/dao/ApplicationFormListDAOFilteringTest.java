@@ -60,7 +60,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Before
     public void prepare() {
-        applicationDAO = new ApplicationFormListDAO(sessionFactory);
+        applicationDAO = new ApplicationFormListDAO(sessionFactory, null);
 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
 

@@ -15,6 +15,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -35,170 +36,178 @@ import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 public class MoveToReviewControllerTest {
 
-	private MoveToReviewController controller;
-	private ApplicationsService applicationServiceMock;
-	private UserService userServiceMock;
+    private MoveToReviewController controller;
+    private ApplicationsService applicationServiceMock;
+    private UserService userServiceMock;
 
-	private ReviewService reviewServiceMock;
+    private ReviewService reviewServiceMock;
 
-	private BindingResult bindingResultMock;
+    private BindingResult bindingResultMock;
 
-	private static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
-	private static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
-	private RegisteredUser currentUserMock;	
-	private MoveToReviewReviewerPropertyEditor reviewerPropertyEditorMock;
-	private ReviewRoundValidator reviewRoundValidatorMock;
-	private ApplicationFormAccessService accessServiceMock;
+    private static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
+    private static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
+    private RegisteredUser currentUserMock;
+    private MoveToReviewReviewerPropertyEditor reviewerPropertyEditorMock;
+    private ReviewRoundValidator reviewRoundValidatorMock;
+    private ApplicationFormAccessService accessServiceMock;
+    private ActionsProvider actionsProviderMock;
 
-	@Test
-	public void shouldGetReviewRoundPageWithOnlyAssignFalseNewReviewersFunctionality() {
-		ModelMap modelMap = new ModelMap();
-		String reviewRoundDetailsPage = controller.getReviewRoundDetailsPage(modelMap);
-		Assert.assertEquals(REVIEW_DETAILS_VIEW_NAME, reviewRoundDetailsPage);
-		Assert.assertFalse((Boolean) modelMap.get("assignOnly"));
+    @Test
+    public void shouldGetReviewRoundPageWithOnlyAssignFalseNewReviewersFunctionality() {
+        ModelMap modelMap = new ModelMap();
+        String reviewRoundDetailsPage = controller.getReviewRoundDetailsPage(modelMap);
+        Assert.assertEquals(REVIEW_DETAILS_VIEW_NAME, reviewRoundDetailsPage);
+        Assert.assertFalse((Boolean) modelMap.get("assignOnly"));
 
-	}	
-	
-	@Test
-	public void shouldGetReviewesSectionWithOnlyAssignFalseNewReviewersFunctionality() {
-		ModelMap modelMap = new ModelMap();
-		String reviewersDetailsSection = controller.getReviewersSectionView(modelMap);
-		Assert.assertEquals(REVIEWERS_SECTION_NAME, reviewersDetailsSection);
-		Assert.assertFalse((Boolean) modelMap.get("assignOnly"));
+    }
 
-	}
+    @Test
+    public void shouldGetReviewesSectionWithOnlyAssignFalseNewReviewersFunctionality() {
+        ModelMap modelMap = new ModelMap();
+        String reviewersDetailsSection = controller.getReviewersSectionView(modelMap);
+        Assert.assertEquals(REVIEWERS_SECTION_NAME, reviewersDetailsSection);
+        Assert.assertFalse((Boolean) modelMap.get("assignOnly"));
 
-	@Test
-	public void shouldGetApplicationFromId() {
-		Program program = new ProgramBuilder().id(6).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+    }
 
-		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
-		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationServiceMock, currentUserMock);
+    @Test
+    public void shouldGetApplicationFromId() {
+        Program program = new ProgramBuilder().id(6).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
-		ApplicationForm returnedForm = controller.getApplicationForm("5");
-		assertEquals(applicationForm, returnedForm);
+        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationServiceMock, currentUserMock);
 
-	}
+        ApplicationForm returnedForm = controller.getApplicationForm("5");
+        assertEquals(applicationForm, returnedForm);
 
-	@Test
-	public void shouldReturnNewReviewRoundWithExistingRoundsReviewersWhoHaveNotDeclined() {
-		Reviewer reviewerOne = new ReviewerBuilder().id(1).build();
-		ReviewComment reviewTwoComment = new ReviewCommentBuilder().decline(true).build();
-		Reviewer reviewerTwo = new ReviewerBuilder().id(2).review(reviewTwoComment).build();
-		Reviewer reviewerThree = new ReviewerBuilder().id(2).build();
-		
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo, reviewerThree).build()).build();
-		
-		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock, accessServiceMock){
-			@Override
-			public ApplicationForm getApplicationForm(String applicationId) {
-				if(applicationId.equals("bob")){
-					return application;
-				}
-				return null;
-			}
+    }
 
-		};	
-		ReviewRound returnedReviewRound = controller.getReviewRound("bob");
-		assertNull(returnedReviewRound.getId());
-		assertEquals(2, returnedReviewRound.getReviewers().size());
-		assertTrue(returnedReviewRound.getReviewers().containsAll(Arrays.asList(reviewerOne, reviewerThree)));
-	}
-	
-	@Test
-	public void shouldReturnNewReviewRoundWithEmtpyReviewersIfNoLatestReviewRound() {
-	
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
-		
-		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock, accessServiceMock){
-			@Override
-			public ApplicationForm getApplicationForm(String applicationId) {
-				if(applicationId.equals("bob")){
-					return application;
-				}
-				return null;
-			}
+    @Test
+    public void shouldReturnNewReviewRoundWithExistingRoundsReviewersWhoHaveNotDeclined() {
+        Reviewer reviewerOne = new ReviewerBuilder().id(1).build();
+        ReviewComment reviewTwoComment = new ReviewCommentBuilder().decline(true).build();
+        Reviewer reviewerTwo = new ReviewerBuilder().id(2).review(reviewTwoComment).build();
+        Reviewer reviewerThree = new ReviewerBuilder().id(2).build();
 
-		};	
-		ReviewRound returnedReviewRound = controller.getReviewRound("bob");
-		assertNull(returnedReviewRound.getId());
-		assertTrue(returnedReviewRound.getReviewers().isEmpty());
-	}
-	
-	@Test
-	public void shouldMoveApplicationToReview() {
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).build();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
-		
-		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock, accessServiceMock) {
-			@Override
-			public ApplicationForm getApplicationForm(String applicationId) {
-				return application;
-			}
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
+                .latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo, reviewerThree).build()).build();
 
-		};	
-		
-		reviewServiceMock.moveApplicationToReview(application, reviewRound);
-		EasyMock.replay(reviewServiceMock);
-		
-		String view = controller.moveToReview("abc", reviewRound, bindingResultMock);
-		assertEquals("/private/common/ajax_OK", view);
-		EasyMock.verify(reviewServiceMock);
-		
-	}
+        controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
+                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+            @Override
+            public ApplicationForm getApplicationForm(String applicationId) {
+                if (applicationId.equals("bob")) {
+                    return application;
+                }
+                return null;
+            }
 
-	@Test
-	public void shouldNotSaveReviewRoundAndReturnToReviewRoundPageIfHasErrors() {
-		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock, accessServiceMock){
-			@Override
-			public ApplicationForm getApplicationForm(String applicationId) {
-				return applicationForm;
-			}
+        };
+        ReviewRound returnedReviewRound = controller.getReviewRound("bob");
+        assertNull(returnedReviewRound.getId());
+        assertEquals(2, returnedReviewRound.getReviewers().size());
+        assertTrue(returnedReviewRound.getReviewers().containsAll(Arrays.asList(reviewerOne, reviewerThree)));
+    }
 
-		};
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).build();
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-		EasyMock.replay(errorsMock, applicationServiceMock);
-		assertEquals(REVIEWERS_SECTION_NAME, controller.moveToReview("1", reviewRound, errorsMock));
+    @Test
+    public void shouldReturnNewReviewRoundWithEmtpyReviewersIfNoLatestReviewRound() {
 
-	}
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
-	@Test
-	public void shouldAddReviewRoundValidator() {
-		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.setValidator(reviewRoundValidatorMock);		
-		binderMock.registerCustomEditor(Reviewer.class, reviewerPropertyEditorMock);
-		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
-		
-		EasyMock.replay(binderMock);
-		controller.registerReviewRoundValidator(binderMock);
-		EasyMock.verify(binderMock);
-	}
-	
-	@Before
-	public void setUp() {
-		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		currentUserMock = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-		EasyMock.replay(userServiceMock);
-		reviewServiceMock = EasyMock.createMock(ReviewService.class);
-		
-		reviewerPropertyEditorMock = EasyMock.createMock(MoveToReviewReviewerPropertyEditor.class);
-		bindingResultMock = EasyMock.createMock(BindingResult.class);
-		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
-		
-		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-		EasyMock.replay(bindingResultMock);
-		reviewRoundValidatorMock = EasyMock.createMock(ReviewRoundValidator.class);
-		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock, accessServiceMock);
+        controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
+                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+            @Override
+            public ApplicationForm getApplicationForm(String applicationId) {
+                if (applicationId.equals("bob")) {
+                    return application;
+                }
+                return null;
+            }
 
-	}
+        };
+        ReviewRound returnedReviewRound = controller.getReviewRound("bob");
+        assertNull(returnedReviewRound.getId());
+        assertTrue(returnedReviewRound.getReviewers().isEmpty());
+    }
+
+    @Test
+    public void shouldMoveApplicationToReview() {
+        ReviewRound reviewRound = new ReviewRoundBuilder().id(4).build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
+
+        controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
+                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+            @Override
+            public ApplicationForm getApplicationForm(String applicationId) {
+                return application;
+            }
+
+        };
+
+        reviewServiceMock.moveApplicationToReview(application, reviewRound);
+        EasyMock.replay(reviewServiceMock);
+
+        String view = controller.moveToReview("abc", reviewRound, bindingResultMock);
+        assertEquals("/private/common/ajax_OK", view);
+        EasyMock.verify(reviewServiceMock);
+
+    }
+
+    @Test
+    public void shouldNotSaveReviewRoundAndReturnToReviewRoundPageIfHasErrors() {
+        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
+                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+            @Override
+            public ApplicationForm getApplicationForm(String applicationId) {
+                return applicationForm;
+            }
+
+        };
+        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).build();
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+        EasyMock.replay(errorsMock, applicationServiceMock);
+        assertEquals(REVIEWERS_SECTION_NAME, controller.moveToReview("1", reviewRound, errorsMock));
+
+    }
+
+    @Test
+    public void shouldAddReviewRoundValidator() {
+        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        binderMock.setValidator(reviewRoundValidatorMock);
+        binderMock.registerCustomEditor(Reviewer.class, reviewerPropertyEditorMock);
+        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+
+        EasyMock.replay(binderMock);
+        controller.registerReviewRoundValidator(binderMock);
+        EasyMock.verify(binderMock);
+    }
+
+    @Before
+    public void setUp() {
+        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        currentUserMock = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        EasyMock.replay(userServiceMock);
+        reviewServiceMock = EasyMock.createMock(ReviewService.class);
+
+        reviewerPropertyEditorMock = EasyMock.createMock(MoveToReviewReviewerPropertyEditor.class);
+        bindingResultMock = EasyMock.createMock(BindingResult.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        EasyMock.replay(bindingResultMock);
+        reviewRoundValidatorMock = EasyMock.createMock(ReviewRoundValidator.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
+                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock);
+
+    }
 
 }

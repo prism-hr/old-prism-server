@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -59,6 +60,7 @@ public class InterviewCommentControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
+    private ActionsProvider actionsProviderMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -198,7 +200,7 @@ public class InterviewCommentControllerTest {
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
         
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock) {
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -234,7 +236,7 @@ public class InterviewCommentControllerTest {
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
         
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock) {
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -276,7 +278,7 @@ public class InterviewCommentControllerTest {
         errorsMock.reject("error");
 
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, null, null, null) {
+                documentPropertyEditorMock, null, null, null, actionsProviderMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -302,7 +304,7 @@ public class InterviewCommentControllerTest {
         commentServiceMock.save(comment);
 
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, null, null, null) {
+                documentPropertyEditorMock, null, null, null, actionsProviderMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -330,8 +332,9 @@ public class InterviewCommentControllerTest {
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock);
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock);
 
     }
 }

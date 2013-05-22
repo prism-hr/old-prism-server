@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services;
+package com.zuehlke.pgadmissions.components;
 
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -28,12 +27,12 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.services.StateTransitionViewResolver;
 
-public class ApplicationsServiceActionsTest {
+public class ActionsProviderTest {
 
-    private ApplicationsService applicationsService;
+    private ActionsProvider actionsProvider;
 
-    private ApplicationFormDAO applicationFormDAOMock;
     private StateTransitionViewResolver stateTransitionViewResolverMock;
 
     private RegisteredUser userMock;
@@ -42,9 +41,8 @@ public class ApplicationsServiceActionsTest {
 
     @Before
     public void setup() {
-        applicationFormDAOMock = createMock(ApplicationFormDAO.class);
         stateTransitionViewResolverMock = createMock(StateTransitionViewResolver.class);
-        applicationsService = new ApplicationsService(applicationFormDAOMock, null, null, stateTransitionViewResolverMock);
+        actionsProvider = new ActionsProvider(stateTransitionViewResolverMock);
 
         userMock = EasyMock.createMock(RegisteredUser.class);
         applicationMock = EasyMock.createMock(ApplicationForm.class);
@@ -253,7 +251,7 @@ public class ApplicationsServiceActionsTest {
 
     private ActionsDefinitions executeGetActionsDefinitions() {
         EasyMock.replay(userMock, applicationMock, stateTransitionViewResolverMock);
-        ActionsDefinitions actionsDefinition = applicationsService.calculateActions(userMock, applicationMock);
+        ActionsDefinitions actionsDefinition = actionsProvider.calculateActions(userMock, applicationMock);
         EasyMock.verify(userMock, applicationMock, stateTransitionViewResolverMock);
         return actionsDefinition;
     }

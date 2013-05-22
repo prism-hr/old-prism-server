@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -54,18 +55,20 @@ public class StateTransitionController {
     protected final DocumentPropertyEditor documentPropertyEditor;
 
     protected final StateTransitionService stateTransitionService;
-    
+
     protected final ApplicationFormAccessService accessService;
 
+    protected final ActionsProvider actionsProvider;
+
     public StateTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService) {
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -77,6 +80,7 @@ public class StateTransitionController {
         this.documentPropertyEditor = documentPropertyEditor;
         this.stateTransitionService = stateTransitionService;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @InitBinder(value = "comment")
@@ -108,7 +112,7 @@ public class StateTransitionController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(getUser(), application);
+        return actionsProvider.calculateActions(getUser(), application);
     }
 
     RegisteredUser getCurrentUser() {

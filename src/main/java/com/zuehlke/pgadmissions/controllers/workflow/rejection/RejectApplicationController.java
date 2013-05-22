@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
@@ -47,25 +48,28 @@ public class RejectApplicationController {
 
     private final ApplicationsService applicationsService;
 
+    private final ActionsProvider actionsProvider;
+
     public RejectApplicationController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator) {
+            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.rejectService = rejectService;
         this.userService = userService;
         this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
         this.rejectionValidator = rejectionValidator;
+        this.actionsProvider = actionsProvider;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String getRejectPage() {
         return REJECT_VIEW_NAME;
     }
-    
+
     @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.GET)
     public void defaultGet() {
         return;
@@ -99,11 +103,11 @@ public class RejectApplicationController {
         checkApplicationStatus(application);
         return application;
     }
-    
+
     @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
+    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(getUser(), application);
+        return actionsProvider.calculateActions(getUser(), application);
     }
 
     private void checkApplicationStatus(ApplicationForm application) {

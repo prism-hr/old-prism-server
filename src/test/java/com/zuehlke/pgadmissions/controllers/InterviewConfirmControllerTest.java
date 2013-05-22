@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -43,6 +44,8 @@ public class InterviewConfirmControllerTest {
     private InterviewConfirmController controller;
     
     private ApplicationFormAccessService accessServiceMock;
+    
+    private ActionsProvider actionsProviderMock;
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionWhenApptlicationIsNull() {
@@ -131,8 +134,9 @@ public class InterviewConfirmControllerTest {
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
-        controller = new InterviewConfirmController(applicationsServiceMock, userServiceMock, interviewServiceMock, accessServiceMock);
+        controller = new InterviewConfirmController(applicationsServiceMock, userServiceMock, interviewServiceMock, accessServiceMock, actionsProviderMock);
     }
 
 }

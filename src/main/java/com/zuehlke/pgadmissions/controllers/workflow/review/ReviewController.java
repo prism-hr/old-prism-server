@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -25,16 +26,18 @@ public abstract class ReviewController {
 	protected final ApplicationsService applicationsService;
 	protected final UserService userService;
 	protected final ReviewService reviewService;
+	protected final ActionsProvider actionsProvider;
 
 	ReviewController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public ReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService) {
+	public ReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService, ActionsProvider actionsProvider) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.reviewService = reviewService;
+		this.actionsProvider = actionsProvider;
 	}
 
 	@ModelAttribute("user")
@@ -58,7 +61,7 @@ public abstract class ReviewController {
 	@ModelAttribute("actionsDefinition")
 	public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
 		ApplicationForm application = getApplicationForm(applicationId);
-		return applicationsService.calculateActions(getUser(), application);
+		return actionsProvider.calculateActions(getUser(), application);
 	}
 
 	public abstract ReviewRound getReviewRound(@RequestParam Object id);

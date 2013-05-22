@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -43,21 +44,24 @@ public class GenericCommentController {
 	private final CommentService commentService;
 	
 	private final DocumentPropertyEditor documentPropertyEditor;
+	
+	private final ActionsProvider actionsProvider;
 
 	public GenericCommentController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
     @Autowired
     public GenericCommentController(ApplicationsService applicationsService,
             UserService userService, CommentService commentService,
             GenericCommentValidator genericCommentValidator,
-            DocumentPropertyEditor documentPropertyEditor) {
+            DocumentPropertyEditor documentPropertyEditor, ActionsProvider actionsProvider) {
 	this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
 		this.genericCommentValidator = genericCommentValidator;
 		this.documentPropertyEditor = documentPropertyEditor;
+		this.actionsProvider = actionsProvider;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -82,7 +86,7 @@ public class GenericCommentController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationsService.calculateActions(getUser(), application);
+        return actionsProvider.calculateActions(getUser(), application);
     }
 	
 	@RequestMapping(method = RequestMethod.GET)

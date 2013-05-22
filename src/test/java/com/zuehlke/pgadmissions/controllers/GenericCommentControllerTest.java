@@ -10,6 +10,7 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -34,6 +35,7 @@ public class GenericCommentControllerTest {
     private GenericCommentValidator genericCommentValidatorMock;
     private CommentService commentServiceMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
+    private ActionsProvider actionsProviderMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -176,7 +178,7 @@ public class GenericCommentControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
-                documentPropertyEditorMock) {
+                documentPropertyEditorMock, actionsProviderMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -230,8 +232,9 @@ public class GenericCommentControllerTest {
         genericCommentValidatorMock = EasyMock.createMock(GenericCommentValidator.class);
         commentServiceMock = EasyMock.createMock(CommentService.class);
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
-                documentPropertyEditorMock);
+                documentPropertyEditorMock, actionsProviderMock);
 
     }
 }

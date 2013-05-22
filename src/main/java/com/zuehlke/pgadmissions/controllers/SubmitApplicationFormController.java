@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -59,20 +60,23 @@ public class SubmitApplicationFormController {
     private final UserService userService;
     
     private final ApplicationFormAccessService accessService;
+    
+    private final ActionsProvider actionsProvider;
 
     public SubmitApplicationFormController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService) {
+            StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
         this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -152,7 +156,7 @@ public class SubmitApplicationFormController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
         ApplicationForm application = getApplicationForm(applicationId);
-        return applicationService.calculateActions(getUser(), application);
+        return actionsProvider.calculateActions(getUser(), application);
     }
 
     @ModelAttribute("user")

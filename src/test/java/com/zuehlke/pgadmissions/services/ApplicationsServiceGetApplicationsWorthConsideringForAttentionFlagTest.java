@@ -22,6 +22,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -66,7 +67,7 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
     private Program program;
 
     private ApplicationsService applicationsService;
-
+    
     private RoleDAO roleDAO;
 
     @Before
@@ -87,10 +88,12 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
                                                 + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (8,'SUPERVISOR');"
                                                 + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (9,'VIEWER');").executeUpdate();
 
-                applicationFormListDAO = new ApplicationFormListDAO(sessionFactory);
+                StateTransitionViewResolver stateTransitionViewResolver = new StateTransitionViewResolver();
+                ActionsProvider actionsProvider = new ActionsProvider(stateTransitionViewResolver);
+                applicationFormListDAO = new ApplicationFormListDAO(sessionFactory, actionsProvider);
                 applicationFormDAO = new ApplicationFormDAO(sessionFactory);
                 stateTransitionViewResolverMock = EasyMock.createMock(StateTransitionViewResolver.class);
-                applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, stateTransitionViewResolverMock);
+                applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null);
                 roleDAO = new RoleDAO(sessionFactory);
                 user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).accountNonExpired(false).accountNonLocked(false)

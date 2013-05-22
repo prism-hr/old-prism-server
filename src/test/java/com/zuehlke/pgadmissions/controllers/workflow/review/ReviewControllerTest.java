@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.BindingResult;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -38,6 +39,7 @@ public class ReviewControllerTest {
 	private ReviewService reviewServiceMock;
 	private BindingResult bindingResultMock;
 	private RegisteredUser currentUserMock;
+	private ActionsProvider actionsProviderMock;
 
 	@Test
 	public void shouldGetNominatedReviewers() {
@@ -56,7 +58,7 @@ public class ReviewControllerTest {
 		final Program program = new ProgramBuilder().reviewers(interUser1, interUser2).id(6).build();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
 
-		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock) {
+		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, actionsProviderMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("5")) {
@@ -97,7 +99,7 @@ public class ReviewControllerTest {
 
 		final Program program = new ProgramBuilder().reviewers(interUser1, interUser2,interUser3).id(6).build();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
-		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock) {
+		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, actionsProviderMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("5")) {
@@ -178,7 +180,7 @@ public class ReviewControllerTest {
 		final Program program = new ProgramBuilder().reviewers(defaultReviewer).id(6).build();
 
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
-		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock) {
+		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, actionsProviderMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId.equals("5")) {
@@ -216,16 +218,16 @@ public class ReviewControllerTest {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-		EasyMock.replay(userServiceMock);
-
 		reviewServiceMock = EasyMock.createMock(ReviewService.class);
-
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-		EasyMock.replay(bindingResultMock);
+		actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
-		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock) {
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+
+		EasyMock.replay(userServiceMock, bindingResultMock);
+
+		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, actionsProviderMock) {
 
 			@Override
 			public ReviewRound getReviewRound(Object applicationId) {

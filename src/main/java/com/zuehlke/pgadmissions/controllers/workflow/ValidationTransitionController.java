@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -54,23 +55,22 @@ public class ValidationTransitionController extends StateTransitionController {
     private static final String ERROR_CLOSING_DATE_FORMAT = "dd-MMM-yyyy";
 
     private static final String PROVIDED_CLOSING_DATE_FORMAT = "dd MMM yyyy";
-    
+
     private final BadgeService badgeService;
 
     private final MessageSource messageSource;
 
     public ValidationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public ValidationTransitionController(ApplicationsService applicationsService, UserService userService,
-            CommentService commentService, CommentFactory commentFactory, EncryptionHelper encryptionHelper,
-            DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor,
-            BadgeService badgeService, MessageSource messageSource, StateTransitionService stateTransitionService, ApplicationFormAccessService accessService) {
-        super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService,
-                approvalService, stateChangeValidator, documentPropertyEditor, stateTransitionService, accessService);
+    public ValidationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, BadgeService badgeService, MessageSource messageSource,
+            StateTransitionService stateTransitionService, ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+        super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
+                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
         this.messageSource = messageSource;
         this.badgeService = badgeService;
     }
@@ -82,12 +82,12 @@ public class ValidationTransitionController extends StateTransitionController {
         }
         return stateTransitionService.resolveView(applicationForm);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/submitValidationComment")
     public String defaultGet() {
         return "redirect:/applications";
     }
-    
+
     @ModelAttribute("comment")
     public ValidationComment getComment(@RequestParam String applicationId) {
         ValidationComment validationComment = new ValidationComment();
@@ -97,10 +97,9 @@ public class ValidationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
-    public String addComment(@RequestParam String applicationId, @RequestParam String closingDate,
-            @RequestParam String projectTitle, @Valid @ModelAttribute("comment") ValidationComment comment,
-            BindingResult result, ModelMap model, @RequestParam(required = false) Boolean delegate,
-            @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+    public String addComment(@RequestParam String applicationId, @RequestParam String closingDate, @RequestParam String projectTitle,
+            @Valid @ModelAttribute("comment") ValidationComment comment, BindingResult result, ModelMap model,
+            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
 
         model.put("delegate", delegate);
         ApplicationForm form = getApplicationForm(applicationId);
@@ -108,7 +107,7 @@ public class ValidationTransitionController extends StateTransitionController {
             Program programme = form.getProgram();
             Date newClosingDate = null;
             Date today = new Date();
-            
+
             if (StringUtils.isNotBlank(closingDate)) {
                 newClosingDate = new SimpleDateFormat(PROVIDED_CLOSING_DATE_FORMAT).parse(closingDate);
                 model.put("closingDate", newClosingDate);
@@ -162,14 +161,14 @@ public class ValidationTransitionController extends StateTransitionController {
 
             if (comment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
                 applicationsService.makeApplicationNotEditable(form);
-            } 
-            
+            }
+
             if (answeredOneOfTheQuestionsUnsure(comment) && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
                 form.setAdminRequestedRegistry(getCurrentUser());
                 form.setRegistryUsersDueNotification(true);
                 applicationsService.save(form);
             }
-            
+
         } catch (Exception e) {
             return STATE_TRANSITION_VIEW;
         }
@@ -184,17 +183,17 @@ public class ValidationTransitionController extends StateTransitionController {
     private boolean isNotSameDay(final Date date1, final Date date2) {
         return !DateUtils.isSameDay(date1, date2);
     }
-    
+
     private boolean answeredOneOfTheQuestionsUnsure(final ValidationComment comment) {
-        return comment.getHomeOrOverseas() == HomeOrOverseas.UNSURE
-                || comment.getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
+        return comment.getHomeOrOverseas() == HomeOrOverseas.UNSURE || comment.getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
                 || comment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
     }
 
     @RequestMapping(value = "/getProjectTitles", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getProjectTitlesJson(@RequestParam String applicationId, @RequestParam String term) {
-        List<String> projectTitles = badgeService.getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(getApplicationForm(applicationId).getProgram(), term);
+        List<String> projectTitles = badgeService.getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(getApplicationForm(applicationId).getProgram(),
+                term);
         ApplicationForm form = getApplicationForm(applicationId);
         if (!StringUtils.isBlank(form.getProjectTitle()) && form.getBatchDeadline() != null && form.getBatchDeadline().before(new Date())) {
             projectTitles.add(form.getProjectTitle());

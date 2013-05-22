@@ -37,6 +37,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.DataTable;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -67,6 +68,7 @@ public class ApplicationListControllerTest {
     private ApplicationSummaryService applicationSummaryServiceMock;
     private ApplicationsFilteringService filteringServiceMock;
     private ApplicationFormAccessService accessServiceMock;
+    private ActionsProvider actionsProviderMock;
 
     @Test
     public void shouldReturnViewForApplicationListPageWithStoredFiltersWhenSessionFiltersNotInitialized() {
@@ -350,8 +352,9 @@ public class ApplicationListControllerTest {
         applicationSummaryServiceMock = createMock(ApplicationSummaryService.class);
         filteringServiceMock = EasyMock.createMock(ApplicationsFilteringService.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new ApplicationListController(applicationsServiceMock, applicationsReportServiceMock, userServiceMock, filtersPropertyEditorMock,
-                applicationSummaryServiceMock, filteringServiceMock, accessServiceMock);
+                applicationSummaryServiceMock, filteringServiceMock, accessServiceMock, actionsProviderMock);
     }
 
     @SuppressWarnings("unchecked")

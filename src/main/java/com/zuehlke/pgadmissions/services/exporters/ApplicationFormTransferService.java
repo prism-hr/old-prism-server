@@ -89,4 +89,9 @@ public class ApplicationFormTransferService {
     public ApplicationFormTransfer getById(final Long id) {
         return applicationFormTransferDAO.getById(id);
     }
+    
+    @Transactional(readOnly = true)
+    public ApplicationFormTransfer getByApplicationForm(final ApplicationForm form) {
+        return applicationFormTransferDAO.getByApplicationForm(form);
+    }
 }

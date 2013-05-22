@@ -7,13 +7,14 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.zuehlke.pgadmissions.domain.CodeObject;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramInstanceInterface;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.services.importers.ImportService;
 
 public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportData {
@@ -52,6 +53,11 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
     public String getIdentifier() {
         return programme.getIdentifier();
     }
+    
+    @Override
+    public Boolean isAtasRequired() {
+        return BooleanUtils.isTrue(programme.getProgramme().isAtasRegistered());
+    }
 
     @Override
     public Date getApplicationStartDate() {
@@ -82,6 +88,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
         result.setIdentifier(getIdentifier());
         result.setEnabled(true);
         Program program = getProgramme(currentData, changes);
+        program.setAtasRequired(isAtasRequired());
         result.setProgram(program);
         return result;
     }

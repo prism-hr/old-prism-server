@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.referencedata.builders;
 
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Countries;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Countries;
 
 public class CountryOfBirthBuilder {
     

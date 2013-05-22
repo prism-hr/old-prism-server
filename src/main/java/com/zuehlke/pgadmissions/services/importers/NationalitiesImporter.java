@@ -19,8 +19,8 @@ import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.NationalityAdapter;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Nationalities;
-import com.zuehlke.pgadmissions.referencedata.v1.jaxb.Nationalities.Nationality;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Nationalities;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Nationalities.Nationality;
 
 @Service
 public class NationalitiesImporter implements Importer {

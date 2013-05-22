@@ -151,4 +151,9 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         boolean beforeEndDate = date.before(getApplicationDeadline());
         return afterStartDate && beforeEndDate;
     }
+    
+    @Override
+    public Boolean isAtasRequired() {
+        return program.getAtasRequired();
+    }
 }

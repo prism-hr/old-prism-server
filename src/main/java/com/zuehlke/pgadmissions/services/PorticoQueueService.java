@@ -16,9 +16,11 @@ import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
@@ -26,6 +28,9 @@ import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 public class PorticoQueueService {
 
     private final Logger log = LoggerFactory.getLogger(PorticoQueueService.class);
+    
+    @Resource
+    private ApplicationFormDAO formDAO;
     
     @Resource(name = "porticoQueue")
     private Queue queue;
@@ -88,6 +93,13 @@ public class PorticoQueueService {
     @Transactional
     public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
         return formTransferService.createOrReturnExistingApplicationFormTransfer(form);
+    }
+    
+    @Transactional
+    public void handleNonDeliverableApplication(final String applicationNumber) {
+        ApplicationForm form = formDAO.getApplicationByApplicationNumber(applicationNumber);
+        ApplicationFormTransfer transfer = formTransferService.getByApplicationForm(form);
+        transfer.setStatus(ApplicationTransferStatus.CANCELLED);
     }
     
     public void setThrottleService(ThrottleService throttleService) {

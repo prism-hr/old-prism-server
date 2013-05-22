@@ -10,7 +10,6 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -22,7 +21,6 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
-@Service
 public class PorticoQueueListener implements MessageListener {
 
     public static class TriggerJmsRetryException extends RuntimeException {

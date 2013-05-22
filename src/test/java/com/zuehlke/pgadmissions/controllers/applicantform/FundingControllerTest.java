@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -54,6 +55,8 @@ public class FundingControllerTest {
 	private UserService userServiceMock;
 
 	private EncryptionHelper encryptionHelperMock;
+	
+	private ApplicationFormAccessService accessServiceMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -219,9 +222,10 @@ public class FundingControllerTest {
 		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 
 		controller = new FundingController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, fundingValidatorMock,
-				fundingServiceMock, documentPropertyEditorMock, userServiceMock, encryptionHelperMock);
+				fundingServiceMock, documentPropertyEditorMock, userServiceMock, encryptionHelperMock, accessServiceMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

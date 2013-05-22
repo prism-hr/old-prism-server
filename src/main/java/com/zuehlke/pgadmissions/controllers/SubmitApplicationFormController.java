@@ -20,12 +20,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.StageDurationService;
@@ -54,19 +57,22 @@ public class SubmitApplicationFormController {
     private final EventFactory eventFactory;
 
     private final UserService userService;
+    
+    private final ApplicationFormAccessService accessService;
 
     public SubmitApplicationFormController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory) {
+            StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
         this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
+        this.accessService = accessService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -87,11 +93,13 @@ public class SubmitApplicationFormController {
 
         //also batchDeadline needs to be set here once we got it working
         applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         applicationForm.setSubmittedDate(new Date());
         calculateAndSetValidationDueDate(applicationForm);
         applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
+        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 
@@ -109,7 +117,8 @@ public class SubmitApplicationFormController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-        if (applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(getCurrentUser().getId()) && applicationForm.isModifiable()) {
+        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
+        if (getCurrentUser().canEditAsApplicant(applicationForm)) {
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
 
@@ -117,7 +126,7 @@ public class SubmitApplicationFormController {
             return VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME;
         }
 
-        if (applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+        if (getCurrentUser().canEditAsAdministrator(applicationForm)) {
             return "redirect:/editApplicationFormAsProgrammeAdmin?applicationId=" + applicationForm.getApplicationNumber();
         }
 

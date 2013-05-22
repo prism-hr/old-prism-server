@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -62,6 +63,7 @@ public class ReferenceControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test
     public void shouldReturnApplicationForm() {
@@ -242,10 +244,11 @@ public class ReferenceControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
 
         controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator,
-                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock);
+                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock);
 
     }
 

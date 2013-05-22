@@ -31,7 +31,7 @@
         <intercept-url pattern="/assignReviewers/**" access="hasAnyRole('ADMINISTRATOR','SUPERADMINISTRATOR','REVIEWER')" />
         <intercept-url pattern="/rejectApplication/**" access="hasAnyRole('ADMINISTRATOR','SUPERADMINISTRATOR','APPROVER')" />
         <intercept-url pattern="/reviewer/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER','APPROVER', 'SUPERADMINISTRATOR')" />
-        <intercept-url pattern="/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER')" />
+        <intercept-url pattern="/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER')" />
         <intercept-url pattern="/dwr/**" access="permitAll" />
         
         <session-management session-fixation-protection="migrateSession" />

@@ -18,13 +18,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -41,20 +44,22 @@ public class AddressController {
     private final CountryService countryService;
     private final CountryPropertyEditor countryPropertyEditor;
     private final UserService userService;
+    private final ApplicationFormAccessService accessService;
 
     public AddressController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public AddressController(ApplicationsService applicationService, UserService userService,
             CountryService countryService, CountryPropertyEditor countryPropertyEditor,
-            AddressSectionDTOValidator addressSectionDTOValidator) {
+            AddressSectionDTOValidator addressSectionDTOValidator, final ApplicationFormAccessService accessService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.countryService = countryService;
         this.countryPropertyEditor = countryPropertyEditor;
         this.addressSectionDTOValidator = addressSectionDTOValidator;
+        this.accessService = accessService;
     }
 
     @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
@@ -92,7 +97,9 @@ public class AddressController {
         currentAddress.setAddress3(addressSectionDTO.getCurrentAddress3());
         currentAddress.setAddress4(addressSectionDTO.getCurrentAddress4());
         currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
-
+        
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationForm.setLastUpdated(new Date());
         applicationService.save(applicationForm);
 

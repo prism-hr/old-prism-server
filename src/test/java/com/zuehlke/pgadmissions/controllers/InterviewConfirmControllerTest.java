@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
+
+import java.util.Date;
+
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -35,6 +41,8 @@ public class InterviewConfirmControllerTest {
     private UserService userServiceMock;
 
     private InterviewConfirmController controller;
+    
+    private ApplicationFormAccessService accessServiceMock;
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionWhenApptlicationIsNull() {
@@ -94,12 +102,15 @@ public class InterviewConfirmControllerTest {
         Interview interview = new Interview();
         ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).build();
         Model model = new ExtendedModelMap();
+        RegisteredUser currentUser = new RegisteredUser();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         
         interviewServiceMock.confirmInterview(interview, 2);
+        accessServiceMock.updateAccessTimestamp(eq(applicationForm), eq(currentUser), isA(Date.class));
         
-        EasyMock.replay(interviewServiceMock);
+        EasyMock.replay(interviewServiceMock, userServiceMock, accessServiceMock);
         controller.submitInterviewConfirmation(applicationForm, 2, model);
-        EasyMock.verify(interviewServiceMock);
+        EasyMock.verify(interviewServiceMock, accessServiceMock, userServiceMock);
         
         Assert.assertFalse(model.containsAttribute("timeslotIdError"));
     }
@@ -119,8 +130,9 @@ public class InterviewConfirmControllerTest {
         interviewServiceMock = EasyMock.createMock(InterviewService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 
-        controller = new InterviewConfirmController(applicationsServiceMock, userServiceMock, interviewServiceMock);
+        controller = new InterviewConfirmController(applicationsServiceMock, userServiceMock, interviewServiceMock, accessServiceMock);
     }
 
 }

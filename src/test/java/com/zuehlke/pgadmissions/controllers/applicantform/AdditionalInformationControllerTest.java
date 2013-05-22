@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationEx
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
@@ -46,6 +47,8 @@ public class AdditionalInformationControllerTest {
 	private AdditionalInformationController controller;
 
 	private UserService userServiceMock;
+	
+	private ApplicationFormAccessService accessService;
 
 
 	@Before
@@ -56,8 +59,9 @@ public class AdditionalInformationControllerTest {
 		booleanPropertyEditorMock = EasyMock.createMock(BooleanPropertyEditor.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		validatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
+		accessService = EasyMock.createMock(ApplicationFormAccessService.class);
 		controller = new AdditionalInformationController(applicationServiceMock, userServiceMock, applFormPropertyEditorMock,// 
-				booleanPropertyEditorMock, addInfoServiceMock, validatorMock);		
+				booleanPropertyEditorMock, addInfoServiceMock, validatorMock, accessService);		
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
@@ -130,6 +134,7 @@ public class AdditionalInformationControllerTest {
 
 		addInfoServiceMock.save(info);
 		applicationServiceMock.save(applicationForm);
+		
 		
 		EasyMock.replay(errors, applicationServiceMock, addInfoServiceMock);
 		String viewID = controller.editAdditionalInformation(info, errors);

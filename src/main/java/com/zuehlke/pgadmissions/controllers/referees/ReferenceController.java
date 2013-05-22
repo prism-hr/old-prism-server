@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.referees;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
@@ -35,6 +38,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -56,15 +60,16 @@ public class ReferenceController {
     private final ScoringDefinitionParser scoringDefinitionParser;
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
+    private final ApplicationFormAccessService accessService;
 
     ReferenceController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
             DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
-            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory) {
+            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationFormAccessService accessService) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;
@@ -74,6 +79,7 @@ public class ReferenceController {
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
+        this.accessService = accessService;
     }
 
     @ModelAttribute("applicationForm")
@@ -171,6 +177,7 @@ public class ReferenceController {
         }
 
         referenceValidator.validate(comment, bindingResult);
+        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         if (bindingResult.hasErrors()) {
             return ADD_REFERENCES_VIEW_NAME;
         }
@@ -179,6 +186,9 @@ public class ReferenceController {
             commentService.save(comment);
             refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
         }
+        
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        applicationsService.save(applicationForm);
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
 

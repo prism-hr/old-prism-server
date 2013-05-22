@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -49,6 +50,7 @@ public class AddressControllerTest {
 	private CountryService countriesServiceMock;
 	private CountryPropertyEditor countryPropertyEditor;
 	private UserService userServiceMock;
+	private ApplicationFormAccessService accessServiceMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -316,7 +318,9 @@ public class AddressControllerTest {
 
 		addressSectionValidatorMock = EasyMock.createMock(AddressSectionDTOValidator.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new AddressController(applicationsServiceMock, userServiceMock, countriesServiceMock, countryPropertyEditor, addressSectionValidatorMock);
+		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+		controller = new AddressController(applicationsServiceMock, userServiceMock, countriesServiceMock,
+		        countryPropertyEditor, addressSectionValidatorMock, accessServiceMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

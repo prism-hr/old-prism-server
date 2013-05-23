@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.components;
 
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPROVAL;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REJECTED;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REVIEW;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.WITHDRAWN;
 
 import org.springframework.stereotype.Component;
 
@@ -18,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 public class ActionsAvailabilityProvider {
 
     public boolean canPostComment(final RegisteredUser user, final ApplicationForm application) {
-        return user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application) || user.isInRole(Authority.ADMITTER);
+        return application.getStatus() != ApplicationFormStatus.UNSUBMITTED && user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application) || user.isInRole(Authority.ADMITTER);
     }
 
     public boolean canAddReview(final RegisteredUser user, final ApplicationForm application) {
@@ -27,17 +29,17 @@ public class ActionsAvailabilityProvider {
     }
 
     public boolean canReviseApprovalAsAdministrator(final RegisteredUser user, final ApplicationForm application) {
-        return application.isInState(ApplicationFormStatus.APPROVAL) && !application.isPendingApprovalRestart()
+        return application.getStatus() == APPROVAL && !application.isPendingApprovalRestart()
                 && user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
                 && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) && user.isNotInRole(Authority.SUPERADMINISTRATOR);
     }
 
     public boolean canApproveAsApprover(final RegisteredUser user, final ApplicationForm application) {
-        return application.isInState(ApplicationFormStatus.APPROVAL) && user.isInRoleInProgram(Authority.APPROVER, application.getProgram());
+        return application.getStatus() == APPROVAL && user.isInRoleInProgram(Authority.APPROVER, application.getProgram());
     }
 
     public boolean canApproveAsSuperadministrator(final RegisteredUser user, final ApplicationForm application) {
-        return application.isInState(ApplicationFormStatus.APPROVAL) && user.isInRole(Authority.SUPERADMINISTRATOR);
+        return application.getStatus() == APPROVAL && user.isInRole(Authority.SUPERADMINISTRATOR);
     }
 
     public boolean canAddReference(final RegisteredUser user, final ApplicationForm application) {
@@ -45,9 +47,9 @@ public class ActionsAvailabilityProvider {
                 && !user.getRefereeForApplicationForm(application).hasResponded();
     }
 
-    public boolean canAddInterviewFeedback(final RegisteredUser user, final ApplicationForm application) {
+    public boolean canAddInterviewFeedback(final RegisteredUser user, final ApplicationForm application, ApplicationFormStatus nextStatus) {
         Interview interview = application.getLatestInterview();
-        return application.getStatus() == INTERVIEW && user.isInterviewerOfApplicationForm(application) && interview.isScheduled()
+        return application.getStatus() == INTERVIEW && nextStatus == null && user.isInterviewerOfApplicationForm(application) && interview.isScheduled()
                 && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application);
     }
 
@@ -67,9 +69,9 @@ public class ActionsAvailabilityProvider {
         return false;
     }
 
-    public boolean canAdministerInterview(final RegisteredUser user, final ApplicationForm application, ApplicationFormStatus nextStatus) {
+    public boolean canAssignInterviewersAsDelegate(final RegisteredUser user, final ApplicationForm application, ApplicationFormStatus nextStatus) {
         // application not yet in interview stage, interview is next
-        return nextStatus == ApplicationFormStatus.INTERVIEW && user.isApplicationAdministrator(application);
+        return nextStatus == INTERVIEW && user.isApplicationAdministrator(application);
     }
 
     public boolean canReviseApproval(final RegisteredUser user, final ApplicationForm application) {
@@ -82,7 +84,7 @@ public class ActionsAvailabilityProvider {
 
     public boolean isEligibilityConfirmationAwaiting(final ApplicationForm application) {
         return application.getAdminRequestedRegistry() != null
-                && (application.isNotInState(ApplicationFormStatus.WITHDRAWN) && application.isNotInState(ApplicationFormStatus.REJECTED));
+                && (application.getStatus() != WITHDRAWN && application.getStatus() != REJECTED);
     }
 
     public boolean canConfirmEligibility(final RegisteredUser user, final ApplicationForm application) {
@@ -91,20 +93,24 @@ public class ActionsAvailabilityProvider {
 
     public boolean canConfirmInterviewTime(final RegisteredUser user, final ApplicationForm application, ApplicationFormStatus nextStatus) {
         Interview interview = application.getLatestInterview();
-        return application.isInState(ApplicationFormStatus.INTERVIEW) && nextStatus == null && user.hasAdminRightsOnApplication(application)
+        return application.getStatus() == INTERVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application)
                 && interview.isScheduling() && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application));
     }
 
-    public boolean canEvaluateInterviewFeedback(final RegisteredUser user, final ApplicationForm application, ApplicationFormStatus nextStatus) {
-        return application.isInState(ApplicationFormStatus.INTERVIEW) && nextStatus == null && user.hasAdminRightsOnApplication(application);
+    public boolean canCompleteInterviewStage(final RegisteredUser user, final ApplicationForm application, ApplicationFormStatus nextStatus) {
+        return application.getStatus() == INTERVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application);
     }
 
-    public boolean canEvaluateReviews(final RegisteredUser user, final ApplicationForm application) {
-        return application.isInState(ApplicationFormStatus.REVIEW) && user.hasAdminRightsOnApplication(application);
+    public boolean canCompleteReviewStage(final RegisteredUser user, final ApplicationForm application) {
+        return application.getStatus() == REVIEW && user.hasAdminRightsOnApplication(application);
     }
 
-    public boolean canValidate(final RegisteredUser user, final ApplicationForm application) {
+    public boolean canCompleteValidationStage(final RegisteredUser user, final ApplicationForm application) {
         return application.getStatus() == VALIDATION && user.hasAdminRightsOnApplication(application);
     }
 
+    public boolean canEdit(final RegisteredUser user, final ApplicationForm application) {
+        return user.canEditAsAdministrator(application) || user.canEditAsApplicant(application);
+    }
+    
 }

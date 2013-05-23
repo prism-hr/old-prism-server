@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.components;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -7,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.services.StateTransitionViewResolver;
 
 @Component
@@ -30,34 +33,25 @@ public class ActionsProvider {
 
         ActionsDefinitions actions = new ActionsDefinitions();
 
-        if (user.canEditAsAdministrator(application) || user.canEditAsApplicant(application)) {
-            actions.addAction("view", "View / Edit");
+        // GENERAL ACTIONS
+        if (availabilityProvider.canEdit(user, application)) {
+            actions.addAction(VIEW_EDIT);
         } else {
-            actions.addAction("view", "View");
+            actions.addAction(VIEW);
         }
 
-        if (availabilityProvider.canValidate(user, application)) {
-            actions.addAction("validate", "Validate");
+        actions.addAction(EMAIL_APPLICANT);
+
+        if (availabilityProvider.canPostComment(user, application)) {
+            actions.addAction(COMMENT);
         }
 
-        if (availabilityProvider.canEvaluateReviews(user, application)) {
-            actions.addAction("validate", "Evaluate reviews");
-        }
-
-        if (availabilityProvider.canEvaluateInterviewFeedback(user, application, nextStatus)) {
-            actions.addAction("validate", "Evaluate interview feedback");
-        }
-        if (availabilityProvider.canConfirmInterviewTime(user, application, nextStatus)) {
-            actions.addAction("interviewConfirm", "Confirm interview time");
-            actions.setRequiresAttention(true);
-        }
-
-        if (availabilityProvider.canAdministerInterview(user, application, nextStatus)) {
-            actions.addAction("validate", "Administer Interview");
+        if (availabilityProvider.canWithdraw(user, application)) {
+            actions.addAction(WITHDRAW);
         }
 
         if (availabilityProvider.canConfirmEligibility(user, application)) {
-            actions.addAction("validate", "Confirm Eligibility");
+            actions.addAction(CONFIRM_ELIGIBILITY);
             if (availabilityProvider.isEligibilityConfirmationAwaiting(application)) {
                 actions.setRequiresAttention(true);
             } else {
@@ -65,59 +59,78 @@ public class ActionsProvider {
             }
         }
 
-        if (availabilityProvider.canPostComment(user, application)) {
-            actions.addAction("comment", "Comment");
+        if (availabilityProvider.canAddReference(user, application)) {
+            actions.addAction(ADD_REFERENCE);
+            actions.setRequiresAttention(true);
+        }
+
+        // VALIDATION STAGE ACTIONS
+
+        if (availabilityProvider.canCompleteValidationStage(user, application)) {
+            actions.addAction(COMPLETE_VALIDATION_STAGE);
+        }
+
+        // REVIEW STAGE ACTIONS
+
+        if (availabilityProvider.canCompleteReviewStage(user, application)) {
+            actions.addAction(COMPLETE_REVIEW_STAGE);
         }
 
         if (availabilityProvider.canAddReview(user, application)) {
-            actions.addAction("review", "Add review");
+            actions.addAction(ADD_REVIEW);
+            actions.setRequiresAttention(true);
+        }
+
+        // INTERVIEW STAGE ACTIONS
+
+        if (availabilityProvider.canCompleteInterviewStage(user, application, nextStatus)) {
+            actions.addAction(COMPLETE_INTERVIEW_STAGE);
+        }
+
+        if (availabilityProvider.canAssignInterviewersAsDelegate(user, application, nextStatus)) {
+            actions.addAction(ASSIGN_INTERVIEWERS);
+        }
+
+        if (availabilityProvider.canConfirmInterviewTime(user, application, nextStatus)) {
+            actions.addAction(CONFIRM_INTERVIEW_TIME);
             actions.setRequiresAttention(true);
         }
 
         if (availabilityProvider.canProvideInterviewAvailability(user, application, nextStatus)) {
-            actions.addAction("interviewVote", "Provide Availability For Interview");
+            actions.addAction(PROVIDE_INTERVIEW_AVAILABILITY);
             actions.setRequiresAttention(true);
         }
 
-        if (availabilityProvider.canAddInterviewFeedback(user, application)) {
-            actions.addAction("interviewFeedback", "Add interview feedback");
+        if (availabilityProvider.canAddInterviewFeedback(user, application, nextStatus)) {
+            actions.addAction(ApplicationFormAction.ADD_INTERVIEW_FEEDBACK);
             actions.setRequiresAttention(true);
         }
 
-        if (availabilityProvider.canAddReference(user, application)) {
-            actions.addAction("reference", "Add reference");
-            actions.setRequiresAttention(true);
-        }
-
-        if (availabilityProvider.canWithdraw(user, application)) {
-            actions.addAction("withdraw", "Withdraw");
-        }
+        // APPROVAL STAGE ACTIONS
 
         if (availabilityProvider.canReviseApproval(user, application)) {
-            actions.addAction("restartApproval", "Revise Approval");
+            actions.addAction(REVISE_APPROVAL);
             actions.setRequiresAttention(true);
         }
 
         if (availabilityProvider.canApproveAsApprover(user, application)) {
-            actions.addAction("validate", "Approve");
+            actions.addAction(APPROVE);
             actions.setRequiresAttention(true);
         } else if (availabilityProvider.canApproveAsSuperadministrator(user, application)) {
-            actions.addAction("validate", "Approve");
+            actions.addAction(APPROVE);
         }
 
         if (availabilityProvider.canReviseApprovalAsAdministrator(user, application)) {
-            actions.addAction("restartApprovalAsAdministrator", "Revise Approval");
+            actions.addAction(REVISE_APPROVAL_AS_ADMINISTRATOR);
             actions.setRequiresAttention(true);
         }
 
         if (availabilityProvider.canConfirmSupervision(user, application)) {
-            actions.addAction("confirmSupervision", "Confirm supervision");
+            actions.addAction(ApplicationFormAction.CONFIRM_SUPERVISION);
             actions.setRequiresAttention(true);
         }
 
-        actions.addAction("emailApplicant", "Email applicant");
-
-        return actions.sort();
+        return actions;
     }
 
 }

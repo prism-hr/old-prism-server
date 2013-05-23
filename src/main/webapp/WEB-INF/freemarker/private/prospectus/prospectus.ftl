@@ -60,6 +60,7 @@
               <div class="alert alert-info"> <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here. </div>
               <div class="row-group">
                 <h3>Programme Advert</h3>
+                
                 <div class="row">
                   <label for="programme" class="plain-label">Programme<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'prospetus.programme'/>"></span>
@@ -67,20 +68,42 @@
                     <select name="programme" id="programme" class="max">
                       <option value="">Select...</option>
                       <#list programmes as programme>
-                      <option value="${programme.code}">
+                      <option value="${programme.id}">
                       ${programme.title?html}
                       </option>
                       </#list>
                     </select>
                   </div>
+                  <@spring.bind "programAdvert.program" /> 
+				    <#list spring.status.errorMessages as error>
+					    <div class="row">
+					        <div class="field">
+					            <div class="alert alert-error">
+					                <i class="icon-warning-sign"></i> ${error}
+					            </div>
+					        </div>
+					    </div>
+					</#list>	
                 </div>
+                
                 <div class="row">
                   <label for="programmeDescription" class="plain-label">Description <em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'prospetus.description'/>"></span>
                   <div class="field">
                     <textarea id="programmeDescription" class="input-xlarge" rows="6" cols="150"></textarea>
                   </div>
+                  <@spring.bind "programAdvert.description" /> 
+				    <#list spring.status.errorMessages as error>
+					    <div class="row">
+					        <div class="field">
+					            <div class="alert alert-error">
+					                <i class="icon-warning-sign"></i> ${error}
+					            </div>
+					        </div>
+					    </div>
+					</#list>
                 </div>
+                
                 <div class="row">
                   <label for="programmeDurationOfStudy" class="plain-label">Duration of Study <em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'prospetus.durationOfStudy'/>"></span>
@@ -88,11 +111,22 @@
                     <input class="numeric input-small" type="text" size="4" id="programmeDurationOfStudy" />
                     <select id="timeUnit" class="input small">
                       <option value="">Select...</option>
-                      <option>Months</option>
-                      <option>Years</option>
+                      <option value="Months">Months</option>
+                      <option value="Years">Years</option>
                     </select>
                   </div>
+                  <@spring.bind "programAdvert.durationOfStudyInMonth" /> 
+				    <#list spring.status.errorMessages as error>
+					    <div class="row">
+					        <div class="field">
+					            <div class="alert alert-error">
+					                <i class="icon-warning-sign"></i> ${error}
+					            </div>
+					        </div>
+					    </div>
+					</#list>
                 </div>
+                
                 <div class="row">
                   <label for="programmeFundingInformation" class="plain-label">Funding Information</label>
                   <span class="hint" data-desc="<@spring.message 'prospetus.fundingInformation'/>"></span>
@@ -100,7 +134,9 @@
                     <textarea id="programmeFundingInformation" class="input-xlarge" rows="6" cols="150"></textarea>
                   </div>
                 </div>
+                
               </div>
+              
               <div class="row-group">
                 <div class="row">
                   <label class="plain-label" for="currentlyAcceptingApplication">Are you currently accepting applications? <em>*</em></label>

@@ -1,8 +1,8 @@
 $(document).ready(function(){
 		
 		$("select#programme").bind('change', function() {
-			var programme_code= $("#programme").val();
-			if(programme_code==""){
+			var programme_id= $("#programme").val();
+			if(programme_id==""){
 				clearAll();
 			}
 			else{
@@ -17,7 +17,7 @@ $(document).ready(function(){
 		        },
 		        url:"/pgadmissions/prospectus/getLinkToApply",
 		        data: {
-		        	programmeCode: $("#programme").val(),
+		        	programmeId: programme_id,
 		        }, 
 		        success: function(data) {
 		        	$("#linkToApply").val(data);
@@ -37,7 +37,7 @@ $(document).ready(function(){
 				},
 				url:"/pgadmissions/prospectus/getButtonToApply",
 				data: {
-					programmeCode: programme_code,
+					programmeId: programme_id,
 				}, 
 				success: function(data) {
 					$("#buttonToApply").val(data);
@@ -46,6 +46,37 @@ $(document).ready(function(){
 				}
 			});
 			}
+		});
+		
+		$("#save-go").bind('click', function(){
+			$.ajax({
+				type: 'POST',
+				statusCode: {
+					401: function() { window.location.reload(); },
+					500: function() { window.location.href = "/pgadmissions/error"; },
+					404: function() { window.location.href = "/pgadmissions/404"; },
+					400: function() { window.location.href = "/pgadmissions/400"; },                  
+					403: function() { window.location.href = "/pgadmissions/404"; }
+				},
+				url:"/pgadmissions/prospectus/saveProgramAdvert",
+				data: {
+					programId: $("#programme").val(),
+					description:$("#programmeDescription").val(),
+					durationOfStudy:$("#programmeDurationOfStudy").val(),
+					durationOfStudyUnit:$("#timeUnit").val(),
+					fundingInformation:$("#programmeFundingInformation").val(),
+					isCurrentlyAcceptingApplications:$("#currentlyAcceptingApplication").val()
+				}, 
+				success: function(data) {
+				},
+				complete: function() {
+				}
+			});
+
+		});
+		
+		$("clear-go").bind('click', function(){
+			clearAll();
 		});
 });
 

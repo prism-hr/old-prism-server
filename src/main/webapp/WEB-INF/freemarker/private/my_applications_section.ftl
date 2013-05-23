@@ -23,13 +23,14 @@
   <td class="status"><span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span></td>
   <td class="centre">
       <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
-          <option>Actions</option>
-          <#list actions?keys as actionName>
-            <#if user.isInRole('APPLICANT') && actionName == "emailApplicant">
-            <#else>
-                <option value="${actionName?html}">${actions[actionName]}</option>
-            </#if>
-          </#list>
+        <option>Actions</option>
+        <#list actions as action>
+          <#if action.id == "emailApplicant">
+            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">${action.displayName}</option>
+          <#else>
+            <option value="${action.id}">${action.displayName}</option>
+          </#if>
+        </#list>
     </select></td>
   <td class="centre"><#if application.isWithdrawn() && !application.submittedDate??>
         Aborted

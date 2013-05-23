@@ -1,7 +1,7 @@
 /* CSS Document */
 
 /* Timeline tab ------------------------------------------------------------------------------------------- */
-#prospectus { clear: both; margin-top: 20px; }
+#prospectus { clear: both; margin-top: 10px; }
 #prospectus ul.tabs { background: url(../../../images/tab_line.gif) repeat-x 0 100%; list-style: none; margin: 0; height: 33px; overflow: hidden; }
 #prospectus ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; float: left; margin: 5px 5px 0 3px; padding: 0; }
 #prospectus ul.tabs li.current { background-position: 0 -31px; }
@@ -12,13 +12,13 @@
 
 /* Tabs tineline view */
 #prospectus {
-  border: 1px solid #ddd;
+ /* border: 1px solid #ddd;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
   padding: 10px;
   position: relative;
-  margin-top: 40px;
+  margin-top: 40px;*/
 }
 #prospectus section:last-child {
 	margin-bottom:0px;

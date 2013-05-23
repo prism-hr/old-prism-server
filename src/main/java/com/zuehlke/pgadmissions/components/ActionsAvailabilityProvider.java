@@ -36,13 +36,7 @@ public class ActionsAvailabilityProvider {
                 && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) && user.isNotInRole(Authority.SUPERADMINISTRATOR);
     }
 
-    public boolean canApproveAsApprover(final RegisteredUser user, final ApplicationForm application) {
-        return application.getStatus() == APPROVAL && user.isInRoleInProgram(Authority.APPROVER, application.getProgram());
-    }
 
-    public boolean canApproveAsSuperadministrator(final RegisteredUser user, final ApplicationForm application) {
-        return application.getStatus() == APPROVAL && user.isInRole(Authority.SUPERADMINISTRATOR);
-    }
 
     public boolean canAddReference(final RegisteredUser user, final ApplicationForm application) {
         return application.isSubmitted() && !application.isTerminated() && user.isRefereeOfApplicationForm(application)
@@ -94,17 +88,7 @@ public class ActionsAvailabilityProvider {
                 && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application));
     }
     
-    public boolean canCompleteReviewStage(final RegisteredUser user, final ApplicationForm application, final ApplicationFormStatus nextStatus) {
-        return application.getStatus() == REVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application);
-    }
-
-    public boolean canCompleteInterviewStage(final RegisteredUser user, final ApplicationForm application, final ApplicationFormStatus nextStatus) {
-        return application.getStatus() == INTERVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application);
-    }
-
-    public boolean canCompleteValidationStage(final RegisteredUser user, final ApplicationForm application, final ApplicationFormStatus nextStatus) {
-        return application.getStatus() == VALIDATION && nextStatus == null && user.hasAdminRightsOnApplication(application);
-    }
+ 
 
     public boolean canEdit(final RegisteredUser user, final ApplicationForm application) {
         return user.canEditAsAdministrator(application) || user.canEditAsApplicant(application);
@@ -125,6 +109,28 @@ public class ActionsAvailabilityProvider {
 
     public boolean canAssignSupervisors(RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
         return nextStatus == APPROVAL && user.hasAdminRightsOnApplication(application);
+    }
+    
+    
+    public boolean canCompleteValidationStage(final RegisteredUser user, final ApplicationForm application, final ApplicationFormStatus nextStatus) {
+        return application.getStatus() == VALIDATION && nextStatus == null && user.hasAdminRightsOnApplication(application);
+    }
+
+    public boolean canCompleteReviewStage(final RegisteredUser user, final ApplicationForm application, final ApplicationFormStatus nextStatus) {
+        return application.getStatus() == REVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application);
+    }
+
+    public boolean canCompleteInterviewStage(final RegisteredUser user, final ApplicationForm application, final ApplicationFormStatus nextStatus) {
+        return application.getStatus() == INTERVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application);
+    }
+
+    
+    public boolean canApproveAsApprover(final RegisteredUser user, final ApplicationForm application) {
+        return application.getStatus() == APPROVAL && user.isInRoleInProgram(Authority.APPROVER, application.getProgram());
+    }
+
+    public boolean canApproveAsSuperadministrator(final RegisteredUser user, final ApplicationForm application) {
+        return application.getStatus() == APPROVAL && user.isInRole(Authority.SUPERADMINISTRATOR);
     }
 
 }

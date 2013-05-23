@@ -64,9 +64,9 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (user.isInRole(Authority.ADMITTER) && !application.hasConfirmElegibilityComment()) {
                 actions.addAction(CONFIRM_ELIGIBILITY);
-            }
-            if (application.getAdminRequestedRegistry() != null && (application.getStatus() != WITHDRAWN && application.getStatus() != REJECTED)) {
-                actions.setRequiresAttention(true);
+                if (application.getAdminRequestedRegistry() != null && (application.getStatus() != WITHDRAWN && application.getStatus() != REJECTED)) {
+                    actions.setRequiresAttention(true);
+                }
             }
         }
     }), //
@@ -143,7 +143,7 @@ public enum ApplicationFormAction {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
-            if (application.getStatus() == INTERVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application) && interview.isScheduling()
+            if (application.getStatus() == INTERVIEW && nextStatus == null && interview.isScheduling()
                     && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application))) {
                 actions.addAction(CONFIRM_INTERVIEW_TIME);
                 actions.setRequiresAttention(true);
@@ -202,6 +202,7 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (nextStatus == APPROVAL && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(ASSIGN_SUPERVISORS);
+                actions.setRequiresAttention(true);
             }
         }
     }), //

@@ -67,7 +67,7 @@
     <div class="content-box-inner"> <#include "/private/common/parts/application_info.ftl"/>
       <div id="approve-content">
         <section class="form-rows" id="approvalsection">
-          <h2 class="no-arrow">Intention to Provide Primary Supervision</h2>
+          <h2 class="no-arrow">Confirm Primary Supervision</h2>
           <div>
             <form id="confirmSupervisionForm" method ="POST" action="<@spring.url '/confirmSupervision/applyConfirmSupervision' />" >
               <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>

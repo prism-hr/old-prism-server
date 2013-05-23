@@ -57,7 +57,7 @@
         <div class="content-box">
           <div class="content-box-inner"> <#include "/private/common/parts/application_info.ftl"/>
             <section class="form-rows">
-              <h2 class="no-arrow"> Review Application </h2>
+              <h2 class="no-arrow"> Provide Review </h2>
               <div>
                 <form id ="reviewForm" method="POST" action= "<@spring.url '/reviewFeedback'/>"/>
                 

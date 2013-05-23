@@ -90,7 +90,7 @@
 							<#elseif applicationForm.isInState('INTERVIEW')>
 								Complete Interview Stage
 							<#elseif applicationForm.isInState('APPROVAL')>
-								Compete Approval Stage
+								Complete Approval Stage
 							</#if>
 						</#if>
 						</h2>

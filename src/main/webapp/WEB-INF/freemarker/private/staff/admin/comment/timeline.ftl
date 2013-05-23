@@ -140,6 +140,7 @@
                   <li class="${timelineObject.type}">
                     <div class="box">
                       <p class="target">
+                      	<span data-desc="Target"></span>
                         Our target for completing the stage: ${applicationForm.dueDate?string('dd MMM yy')}.
                       </p>
                     </div>
@@ -187,16 +188,16 @@
     			              <div class="box">
     			                <div class="title">
     			                  <span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
-    			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
-    			                  <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
+    			                  <span class="name" >${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+    			                  <span class="datetime" data-desc="Date">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
     			                </div>
     			                <#if comment.type == 'REQUEST_RESTART'>
     												<div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
-    												<p class="restart"><span></span>Restart of approval stage requested.</p>
+    												<p class="restart"><span data-desc="Restart"></span>Restart of approval stage requested.</p>
     			                <#elseif comment.comment?starts_with("Referred to")>
-    												<p class="referral"><span></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
+    												<p class="referral"><span data-desc="Referral"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
     			                <#elseif comment.comment?starts_with("Delegated Application")>
-    												<p class="delegate"><span></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
+    												<p class="delegate"><span data-desc="Delegate"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
     											<#elseif comment.comment?length &gt; 0>
     												<div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
     											</#if>

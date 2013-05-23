@@ -55,7 +55,7 @@
         <div class="content-box">
           <div class="content-box-inner"> <#include "/private/common/parts/application_info.ftl"/>
             <section class="interview-votes form-rows">
-            	<h2 class="no-arrow">Interview Confirmation</h2>
+            	<h2 class="no-arrow">Confirm Interview Arrangements</h2>
             	<div>
             		<form method="post" action= "<@spring.url '/interviewConfirm'/>" />
             		  <input type="hidden" id="applicationId" name ="applicationId" value ="${(applicationForm.applicationNumber)!}"/>

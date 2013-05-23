@@ -1,6 +1,26 @@
 package com.zuehlke.pgadmissions.components;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.*;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_INTERVIEW_FEEDBACK;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REFERENCE;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REVIEW;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.APPROVE;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_INTERVIEWERS;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_REVIEWERS;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_SUPERVISORS;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMMENT;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_REVIEW_STAGE;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_ELIGIBILITY;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_INTERVIEW_TIME;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_SUPERVISION;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.EMAIL_APPLICANT;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.REVISE_APPROVAL;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.REVISE_APPROVAL_AS_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.VIEW;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.VIEW_EDIT;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.WITHDRAW;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
-import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.services.StateTransitionViewResolver;
 
 @Component
@@ -40,7 +59,9 @@ public class ActionsProvider {
             actions.addAction(VIEW);
         }
 
-        actions.addAction(EMAIL_APPLICANT);
+        if (availabilityProvider.canEmailApplicant(user, application)) {
+            actions.addAction(EMAIL_APPLICANT);
+        }
 
         if (availabilityProvider.canPostComment(user, application)) {
             actions.addAction(COMMENT);
@@ -66,13 +87,18 @@ public class ActionsProvider {
 
         // VALIDATION STAGE ACTIONS
 
-        if (availabilityProvider.canCompleteValidationStage(user, application)) {
+        if (availabilityProvider.canCompleteValidationStage(user, application, nextStatus)) {
             actions.addAction(COMPLETE_VALIDATION_STAGE);
         }
+        
 
         // REVIEW STAGE ACTIONS
 
-        if (availabilityProvider.canCompleteReviewStage(user, application)) {
+        if (availabilityProvider.canAssignReviewers(user, application, nextStatus)) {
+            actions.addAction(ASSIGN_REVIEWERS);
+        }
+
+        if (availabilityProvider.canCompleteReviewStage(user, application, nextStatus)) {
             actions.addAction(COMPLETE_REVIEW_STAGE);
         }
 
@@ -83,13 +109,14 @@ public class ActionsProvider {
 
         // INTERVIEW STAGE ACTIONS
 
+        if (availabilityProvider.canAssignInterviewers(user, application, nextStatus)) {
+            actions.addAction(ASSIGN_INTERVIEWERS);
+        }
+
         if (availabilityProvider.canCompleteInterviewStage(user, application, nextStatus)) {
             actions.addAction(COMPLETE_INTERVIEW_STAGE);
         }
 
-        if (availabilityProvider.canAssignInterviewersAsDelegate(user, application, nextStatus)) {
-            actions.addAction(ASSIGN_INTERVIEWERS);
-        }
 
         if (availabilityProvider.canConfirmInterviewTime(user, application, nextStatus)) {
             actions.addAction(CONFIRM_INTERVIEW_TIME);
@@ -102,15 +129,14 @@ public class ActionsProvider {
         }
 
         if (availabilityProvider.canAddInterviewFeedback(user, application, nextStatus)) {
-            actions.addAction(ApplicationFormAction.ADD_INTERVIEW_FEEDBACK);
+            actions.addAction(ADD_INTERVIEW_FEEDBACK);
             actions.setRequiresAttention(true);
         }
 
         // APPROVAL STAGE ACTIONS
 
-        if (availabilityProvider.canReviseApproval(user, application)) {
-            actions.addAction(REVISE_APPROVAL);
-            actions.setRequiresAttention(true);
+        if(availabilityProvider.canAssignSupervisors(user, application, nextStatus)){
+            actions.addAction(ASSIGN_SUPERVISORS);
         }
 
         if (availabilityProvider.canApproveAsApprover(user, application)) {
@@ -120,13 +146,20 @@ public class ActionsProvider {
             actions.addAction(APPROVE);
         }
 
+        
+        if (availabilityProvider.canReviseApproval(user, application)) {
+            actions.addAction(REVISE_APPROVAL);
+            actions.setRequiresAttention(true);
+        }
+
+
         if (availabilityProvider.canReviseApprovalAsAdministrator(user, application)) {
             actions.addAction(REVISE_APPROVAL_AS_ADMINISTRATOR);
             actions.setRequiresAttention(true);
         }
 
         if (availabilityProvider.canConfirmSupervision(user, application)) {
-            actions.addAction(ApplicationFormAction.CONFIRM_SUPERVISION);
+            actions.addAction(CONFIRM_SUPERVISION);
             actions.setRequiresAttention(true);
         }
 

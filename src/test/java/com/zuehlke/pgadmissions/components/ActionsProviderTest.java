@@ -45,7 +45,7 @@ public class ActionsProviderTest {
         ActionsDefinitions actions = actionsProvider.calculateActions(user, application);
         EasyMock.verify(stateTransitionViewResolverMock, availabilityProviderMock);
 
-        assertActionsDefinition(actions, false, VIEW, EMAIL_APPLICANT);
+        assertActionsDefinition(actions, false, VIEW);
     }
 
     @Test
@@ -57,31 +57,31 @@ public class ActionsProviderTest {
         ActionsDefinitions actions = actionsProvider.calculateActions(user, application);
         EasyMock.verify(stateTransitionViewResolverMock, availabilityProviderMock);
 
-        assertActionsDefinition(actions, false, VIEW_EDIT, EMAIL_APPLICANT);
+        assertActionsDefinition(actions, false, VIEW_EDIT);
     }
 
     @Test
     public void shouldReturnValidateAction() {
         EasyMock.expect(stateTransitionViewResolverMock.getNextStatus(application)).andReturn(null);
-        EasyMock.expect(availabilityProviderMock.canCompleteValidationStage(user, application)).andReturn(true);
+        EasyMock.expect(availabilityProviderMock.canCompleteValidationStage(user, application, null)).andReturn(true);
 
         EasyMock.replay(stateTransitionViewResolverMock, availabilityProviderMock);
         ActionsDefinitions actions = actionsProvider.calculateActions(user, application);
         EasyMock.verify(stateTransitionViewResolverMock, availabilityProviderMock);
 
-        assertActionsDefinition(actions, false, VIEW, COMPLETE_VALIDATION_STAGE, EMAIL_APPLICANT);
+        assertActionsDefinition(actions, false, VIEW, COMPLETE_VALIDATION_STAGE);
     }
 
     @Test
     public void shouldReturnEvaluateReviewsAction() {
         EasyMock.expect(stateTransitionViewResolverMock.getNextStatus(application)).andReturn(null);
-        EasyMock.expect(availabilityProviderMock.canCompleteReviewStage(user, application)).andReturn(true);
+        EasyMock.expect(availabilityProviderMock.canCompleteReviewStage(user, application, null)).andReturn(true);
 
         EasyMock.replay(stateTransitionViewResolverMock, availabilityProviderMock);
         ActionsDefinitions actions = actionsProvider.calculateActions(user, application);
         EasyMock.verify(stateTransitionViewResolverMock, availabilityProviderMock);
 
-        assertActionsDefinition(actions, false, VIEW, COMPLETE_REVIEW_STAGE, EMAIL_APPLICANT);
+        assertActionsDefinition(actions, false, VIEW, COMPLETE_REVIEW_STAGE);
     }
     
     @Test
@@ -94,7 +94,7 @@ public class ActionsProviderTest {
         ActionsDefinitions actions = actionsProvider.calculateActions(user, application);
         EasyMock.verify(stateTransitionViewResolverMock, availabilityProviderMock);
 
-        assertActionsDefinition(actions, true, VIEW, CONFIRM_ELIGIBILITY, EMAIL_APPLICANT);
+        assertActionsDefinition(actions, true, VIEW, CONFIRM_ELIGIBILITY);
     }
     
     private void assertActionsDefinition(ActionsDefinitions actionsDefinition, boolean requiresAttention, ApplicationFormAction... actions) {

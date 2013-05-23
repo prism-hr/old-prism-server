@@ -6,7 +6,6 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,10 +94,9 @@ public class SubmitApplicationFormController {
             log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
         }
 
-        //also batchDeadline needs to be set here once we got it working
         applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        applicationForm.setSubmittedDate(new Date());
+        applicationForm.setSubmittedDate(DateUtils.truncateToDay(new Date()));
         calculateAndSetValidationDueDate(applicationForm);
         applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
@@ -109,10 +107,9 @@ public class SubmitApplicationFormController {
     }
 
     public void calculateAndSetValidationDueDate(ApplicationForm applicationForm) {
-        DateTime dueDate = new DateTime(applicationForm.getSubmittedDate());
         StageDuration validationDuration = stageDurationService.getByStatus(ApplicationFormStatus.VALIDATION);
-        dueDate = DateUtils.addWorkingDaysInMinutes(dueDate, validationDuration.getDurationInMinutes());
-        applicationForm.setDueDate(dueDate.toDate());
+        Date dueDate = DateUtils.addWorkingDaysInMinutes(applicationForm.getSubmittedDate(), validationDuration.getDurationInMinutes());
+        applicationForm.setDueDate(dueDate);
     }
 
     @InitBinder("applicationForm")

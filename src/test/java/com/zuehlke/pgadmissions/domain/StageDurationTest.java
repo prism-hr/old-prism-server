@@ -26,7 +26,7 @@ public class StageDurationTest {
 	@Test
 	public void shouldGet1WeekInMinutes() {
 		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).duration(1).build();
-		Assert.assertEquals(10080, stageDuration.getDurationInMinutes());
+		Assert.assertEquals(7200, stageDuration.getDurationInMinutes());
 	}
 
 	

@@ -254,14 +254,21 @@ public class InterviewServiceTest {
         InterviewTimeslot timeslot2 = new InterviewTimeslotBuilder().id(2).dueDate(date).startTime("11:11").build();
 
         Interview interview = new InterviewBuilder().timeslots(timeslot1, timeslot2).interviewers(interviewer).application(applicationForm).build();
+        
+        StageDuration interviewStageDuration = new StageDurationBuilder()
+            .duration(1)
+            .unit(DurationUnitEnum.WEEKS)
+            .stage(ApplicationFormStatus.INTERVIEW)
+            .build();
+        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(interviewStageDuration);
 
         interviewDAOMock.save(interview);
         mailServiceMock.sendInterviewConfirmationToApplicant(applicationForm);
         mailServiceMock.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
 
-        EasyMock.replay(interviewDAOMock, mailServiceMock);
+        EasyMock.replay(interviewDAOMock, mailServiceMock, stageDurationServiceMock);
         interviewService.confirmInterview(interview, 2);
-        EasyMock.verify(interviewDAOMock, mailServiceMock);
+        EasyMock.verify(interviewDAOMock, mailServiceMock, stageDurationServiceMock);
 
         assertEquals(date, interview.getInterviewDueDate());
         assertEquals("11:11", interview.getInterviewTime());

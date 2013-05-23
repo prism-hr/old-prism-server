@@ -16,7 +16,7 @@ public class ESAPIRegularExpressionTest {
     
     private String[] invalidEmailAddresses = new String[] { "mkyong", "mkyong@.com.my",
             "mkyong123@.com", "mkyong123@.com.com", ".mkyong@mkyong.com", "mkyong()*@gmail.com",
-            "mkyong..2002@gmail.com", "mkyong.@gmail.com", "mkyong@mkyong@gmail.com"};
+            "mkyong..2002@gmail.com", "mkyong.@gmail.com", "mkyong@mkyong@gmail.com", "richard. taylor@ucl.ac.uk"};
 
     @Before
     public void setUp() {

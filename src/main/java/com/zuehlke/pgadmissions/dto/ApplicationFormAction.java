@@ -10,15 +10,17 @@ public enum ApplicationFormAction {
     CONFIRM_ELIGIBILITY("validate", "Confirm Eligibility"), //
     ADD_REFERENCE("reference", "Add reference"), //
     COMPLETE_VALIDATION_STAGE("validate", "Complete Validation Stage"), //
+    ASSIGN_REVIEWERS("validate", "Assign Reviewers"), //
     COMPLETE_REVIEW_STAGE("validate", "Complete Review Stage"), //
     ADD_REVIEW("review", "Add review"), //
     COMPLETE_INTERVIEW_STAGE("validate", "Complete Interview Stage"), //
     ASSIGN_INTERVIEWERS("validate", "Assign Interviewers"), //
-    CONFIRM_INTERVIEW_TIME("interviewConfirm", "Confirm Interview Time"), //
+    CONFIRM_INTERVIEW_TIME("interviewConfirm", "Confirm Interview Arrangements"), //
     PROVIDE_INTERVIEW_AVAILABILITY("interviewVote", "Provide Interview Availability"), //
     ADD_INTERVIEW_FEEDBACK("interviewFeedback", "Add interview feedback"), //
     REVISE_APPROVAL("restartApproval", "Revise Approval"), //
     APPROVE("validate", "Approve"), //
+    ASSIGN_SUPERVISORS("validate", "Assign Supervisors"), //
     REVISE_APPROVAL_AS_ADMINISTRATOR("restartApprovalAsAdministrator", "Revise Approval"), //
     CONFIRM_SUPERVISION("confirmSupervision", "Confirm supervision"), //
     ;

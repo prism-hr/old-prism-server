@@ -33,7 +33,6 @@ public class ActionsProvider {
             action.applyAction(actions, user, application, nextStatus);
         }
 
-
         return actions;
     }
 }

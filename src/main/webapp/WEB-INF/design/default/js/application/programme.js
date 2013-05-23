@@ -311,9 +311,9 @@ $(document).ready(function()
 		}
 		
 		if (!validateEmail($('#supervisorEmail').val()))
-		{
-			$('#supervisorEmail').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must enter a valid email address.</div>').show();
-			errors++;
+        {
+            $('#supervisorEmail').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must enter a valid email address.</div>').show();
+            errors++;
 		} else if (!validateStringLength($('#supervisorEmail').val(), 255)) 
 		{
 			$('#supervisorEmail').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> A maximum of 255 characters are allowed.</div>').show();
@@ -396,8 +396,8 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	function validateEmail(email)
 	{ 
-		//var pattern = new RegExp(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/);
-	    var pattern = new RegExp("[A-Za-z0-9!#-'\\*\\+\\-/=\\?\\^_`\\{-~]+(\\.[A-Za-z0-9!#-'\\*\\+\\-/=\\?\\^_`\\{-~]+)*@[A-Za-z0-9!#-'\\*\\+\\-/=\\?\\^_`\\{-~]+(\\.[A-Za-z0-9!#-'\\*\\+\\-/=\\?\\^_`\\{-~]+)*");
+	    var re = /^[A-Za-z0-9\!\#-'\*\+\-\=\?\^_`\{-~]+(\.[A-Za-z0-9\!\#-'\*\+\-\=\?\^_`\{-~]+)*@[A-Za-z0-9\!\#-'\*\+\-\=\?\^_`\{-~]+(\.[A-Za-z0-9\!\#-'\*\+\-\=\?\^_`\{-~]+)*$/;
+	    var pattern = new RegExp(re);
 		var result = pattern.test(email);
 		return result;
 	} 

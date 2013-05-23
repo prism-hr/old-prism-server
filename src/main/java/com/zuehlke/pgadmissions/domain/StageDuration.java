@@ -53,7 +53,7 @@ public class StageDuration {
         case HOURS:
             return (int) TimeUnit.MINUTES.convert(this.duration, TimeUnit.HOURS);
         case WEEKS:
-            int weekInDays = this.duration * 7;
+            int weekInDays = this.duration * 5;
             return (int) TimeUnit.MINUTES.convert(weekInDays, TimeUnit.DAYS);
         case MINUTES:
             return this.duration;

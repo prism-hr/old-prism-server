@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
-<html>
-<head>
+<html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="prism.version" content="<@spring.message 'prism.version'/>" >
 <title>UCL Postgraduate Admissions</title>
@@ -136,8 +135,6 @@
                 </div>
               </div>
               <div class="buttons">
-                <button class="btn" type="button" id="clear-go">Clear</button>
-                <button class="btn" type="button" id="close-go">Close</button>
                 <button class="btn btn-primary" type="button" id="save-go">Save</button>
               </div>
             </form>

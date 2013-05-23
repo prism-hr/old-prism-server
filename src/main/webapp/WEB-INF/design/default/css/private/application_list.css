@@ -7,7 +7,7 @@ table#appliList thead th {
 	padding:12px 2px;
 }
 table#appliList thead th:nth-child(5) {
-	cursor: auto;
+	/*cursor: auto;*/
 }
 
 /* Sorting functionality. */

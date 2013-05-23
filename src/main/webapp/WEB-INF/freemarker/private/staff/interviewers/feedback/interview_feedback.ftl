@@ -65,7 +65,7 @@
         <div class="content-box">
           <div class="content-box-inner"> <#include "/private/common/parts/application_info.ftl"/>
             <section class="form-rows">
-              <h2>Interview Outcome</h2>
+              <h2>Provide Interview Feedback</h2>
               <div>
                 <form id="interviewForm" method="POST" action="<@spring.url '/interviewFeedback'/>"/>
                 <@spring.bind "comment.confirmNextStage" />

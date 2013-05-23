@@ -5,7 +5,7 @@ import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.INTERV
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REVIEW;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_INTERVIEW_FEEDBACK;
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REFERENCE;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.*;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REVIEW;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_REVIEWERS;
@@ -29,14 +29,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
@@ -845,7 +850,6 @@ public class ApplicationFormActionTest {
 
     @Test
     public void shouldNotAddAddInterviewFeedbackActionIfStatusNotInterview() {
-
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).build();
 
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
@@ -853,6 +857,278 @@ public class ApplicationFormActionTest {
 
         EasyMock.replay(userMock, applicationMock);
         ADD_INTERVIEW_FEEDBACK.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldAddReviseApprovalAction() {
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, true, REVISE_APPROVAL);
+    }
+
+    @Test
+    public void shouldNotAddReviseApprovalActionIfNoAdminRights() {
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddReviseApprovalActionIfNoApprovalRestartNoPending() {
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldAddApproveActionIfApprover() {
+        Program program = new Program();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.getProgram()).andReturn(program);
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        APPROVE.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, true, APPROVE);
+    }
+
+    @Test
+    public void shouldAddApproveActionIfSuperadministrator() {
+        Program program = new Program();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.getProgram()).andReturn(program);
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        APPROVE.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false, APPROVE);
+    }
+
+    @Test
+    public void shouldNotAddApproveActionIfNoRights() {
+        Program program = new Program();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.getProgram()).andReturn(program);
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+
+        EasyMock.replay(userMock, applicationMock);
+        APPROVE.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddApproveActionIfStatusNotApproval() {
+        EasyMock.expect(applicationMock.getStatus()).andReturn(VALIDATION);
+
+        EasyMock.replay(userMock, applicationMock);
+        APPROVE.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldAddAssignSupervisorsAction() {
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        ASSIGN_SUPERVISORS.applyAction(actionsDefinitions, userMock, applicationMock, APPROVAL);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, true, ASSIGN_SUPERVISORS);
+    }
+
+    @Test
+    public void shouldNotAddAssignSupervisorsActionIfNoRights() {
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
+
+        EasyMock.replay(userMock, applicationMock);
+        ASSIGN_SUPERVISORS.applyAction(actionsDefinitions, userMock, applicationMock, APPROVAL);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddAssignSupervisorsActionIfNextStatusNotApproval() {
+        EasyMock.replay(userMock, applicationMock);
+        ASSIGN_SUPERVISORS.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldAddReviseApprovalAsAdministratorAction() {
+        Program program = new Program();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
+        EasyMock.expect(applicationMock.getProgram()).andReturn(program).anyTimes();
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
+        EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+        EasyMock.expect(userMock.isNotInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, true, REVISE_APPROVAL_AS_ADMINISTRATOR);
+    }
+
+    @Test
+    public void shouldNotAddReviseApprovalAsAdministratorActionIfSuperadministrator() {
+        Program program = new Program();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
+        EasyMock.expect(applicationMock.getProgram()).andReturn(program).anyTimes();
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
+        EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+        EasyMock.expect(userMock.isNotInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddReviseApprovalAsAdministratorActionIfNotProgramAdministrator() {
+        Program program = new Program();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
+        EasyMock.expect(applicationMock.getProgram()).andReturn(program).anyTimes();
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddReviseApprovalAsAdministratorActionIfPendingApprovalRestart() {
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddReviseApprovalAsAdministratorActionIfStatusNotApproval() {
+        EasyMock.expect(applicationMock.getStatus()).andReturn(VALIDATION);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldAddConfirmSupervisionAction() {
+        Supervisor supervisor = new SupervisorBuilder().user(userMock).isPrimary(true).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
+
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_SUPERVISION.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, true, CONFIRM_SUPERVISION);
+    }
+
+    @Test
+    public void shouldNotAddConfirmSupervisionActionIfAlreadyResponded() {
+        Supervisor supervisor = new SupervisorBuilder().user(userMock).isPrimary(true).confirmedSupervision(true).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
+
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_SUPERVISION.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddConfirmSupervisionActionIfNotSupervisor() {
+        RegisteredUser anyUser = new RegisteredUser();
+
+        Supervisor supervisor = new SupervisorBuilder().user(anyUser).isPrimary(true).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
+
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_SUPERVISION.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddConfirmSupervisionActionIfNoPrimarySupervisor() {
+        Supervisor supervisor = new SupervisorBuilder().build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
+
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+        EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
+
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_SUPERVISION.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddConfirmSupervisionActionIfStatusNotApproval() {
+        EasyMock.expect(applicationMock.getStatus()).andReturn(VALIDATION);
+
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_SUPERVISION.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, false);

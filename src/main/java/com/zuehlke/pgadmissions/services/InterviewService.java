@@ -73,12 +73,7 @@ public class InterviewService {
 
     public void moveApplicationToInterview(final Interview interview, ApplicationForm applicationForm) {
         interview.setApplication(applicationForm);
-        if (interview.isScheduled()) {
-            DateTime baseDate = interview.getTakenPlace() ? new DateTime() : new DateTime(interview.getInterviewDueDate());
-            StageDuration duration = stageDurationService.getByStatus(ApplicationFormStatus.INTERVIEW);
-            Date dueDate = DateUtils.addWorkingDaysInMinutes(baseDate.toDate(), duration.getDurationInMinutes());
-            applicationForm.setDueDate(dueDate);
-        }
+        assignInterviewDueDate(interview, applicationForm);
         interviewDAO.save(interview);
 
         for (Interviewer interviewer : interview.getInterviewers()) {
@@ -112,6 +107,15 @@ public class InterviewService {
 
     }
 
+    private void assignInterviewDueDate(final Interview interview, ApplicationForm applicationForm) {
+        if (interview.isScheduled()) {
+            DateTime baseDate = interview.getTakenPlace() ? new DateTime() : new DateTime(interview.getInterviewDueDate());
+            StageDuration duration = stageDurationService.getByStatus(ApplicationFormStatus.INTERVIEW);
+            Date dueDate = DateUtils.addWorkingDaysInMinutes(DateUtils.truncateToDay(baseDate.toDate()), duration.getDurationInMinutes());
+            applicationForm.setDueDate(dueDate);
+        }
+    }
+
 
     public void postVote(InterviewParticipant interviewParticipant, InterviewVoteComment interviewVoteComment) {
         interviewParticipant.setResponded(true);
@@ -137,6 +141,7 @@ public class InterviewService {
         interview.setStage(InterviewStage.SCHEDULED);
         interviewDAO.save(interview);
         
+        assignInterviewDueDate(interview, interview.getApplication());
         removeApplicationAdministratorIfExists(interview);
 
         sendConfirmationEmails(interview);

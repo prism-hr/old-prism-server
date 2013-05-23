@@ -44,7 +44,7 @@ public class ApplicationsService {
     private final MailSendingService mailService;
     
     private final BadgeDAO badgeDAO;
-
+    
     public ApplicationsService() {
         this(null, null, null, null);
     }

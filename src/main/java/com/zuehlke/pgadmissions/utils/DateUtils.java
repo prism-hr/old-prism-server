@@ -66,6 +66,10 @@ public final class DateUtils {
         return endDate;
     }
     
+    public static Date truncateToDay(Date date) {
+        return org.apache.commons.lang.time.DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
+    }
+    
     public static int workingDaysBetween(final DateTime startDate, final DateTime endDate) {
         Days days = Days.daysBetween(startDate, endDate);
         int businessDays  = days.getDays() + 1;

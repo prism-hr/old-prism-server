@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -65,7 +67,7 @@ public class SubmitApplicationFormControllerTest {
     private ApplicationFormAccessService accessServiceMock;
     
     private ActionsProvider actionsProviderMock;
-
+    
     @Test
     public void shouldReturnCurrentUser() {
         assertEquals(student, applicationController.getUser());
@@ -176,10 +178,6 @@ public class SubmitApplicationFormControllerTest {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).build();
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-        StageDuration stageDuration = new StageDuration();
-        stageDuration.setDuration(8);
-        stageDuration.setUnit(DurationUnitEnum.DAYS);
-        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.VALIDATION)).andReturn(event);
@@ -189,13 +187,25 @@ public class SubmitApplicationFormControllerTest {
         Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
         EasyMock.expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
 
+        StageDuration validationDuration = new StageDurationBuilder()
+                .duration(1)
+                .stage(ApplicationFormStatus.VALIDATION)
+                .unit(DurationUnitEnum.WEEKS)
+                .build();
+        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(validationDuration);
+        
         EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock);
 
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 
-        EasyMock.verify(applicationsServiceMock);
+        EasyMock.verify(applicationsServiceMock, stageDurationServiceMock);
         assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
 
+        assertEquals(batchDeadline, applicationForm.getBatchDeadline());
+        Date submittedDate = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        Date dueDate = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(submittedDate, validationDuration.getDurationInMinutes());
+        assertEquals(0, dueDate.compareTo(applicationForm.getDueDate()));
+        
         assertEquals(1, applicationForm.getEvents().size());
         assertNotNull(applicationForm.getDueDate());
         assertEquals(event, applicationForm.getEvents().get(0));

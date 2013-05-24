@@ -20,7 +20,15 @@ $(document).ready(function(){
 			        	programCode: programme_code,
 			        }, 
 			        success: function(data) {
-			        	alert(data);
+			        	var map = JSON.parse(data);
+			        	$("#buttonToApply").val(map['buttonToApply']);
+			        	$("#linkToApply").val(map['linkToApply']);
+			        	var advert = map['advert'];
+			        	if(advert){
+			        		$("#programmeDescription").val(advert['description']);
+			        		$("#programmeDurationOfStudy").val(advert['durationOfStudyInMonth'].toString());
+			        		$("#timeUnit").val('Months');
+			        	}
 			        },
 			        complete: function() {
 			        }

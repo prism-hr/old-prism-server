@@ -105,5 +105,5 @@ public class Reviewer implements Serializable {
 	public void setRequiresAdminNotification(CheckedStatus requiresAdminNotification) {
 		this.requiresAdminNotification = requiresAdminNotification;
 	}
-
+	
 }

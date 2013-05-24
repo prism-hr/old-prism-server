@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -21,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
@@ -98,7 +100,7 @@ public class Interview implements Serializable {
 
     @Transient
     private Boolean takenPlace = false;
-    
+
     public Date getLastNotified() {
         return lastNotified;
     }
@@ -248,22 +250,39 @@ public class Interview implements Serializable {
     public boolean isScheduled() {
         return getStage() == InterviewStage.SCHEDULED;
     }
-    
+
     public boolean isScheduling() {
         return getStage() == InterviewStage.SCHEDULING;
     }
-    
-    public boolean isParticipant(RegisteredUser user){
+
+    public boolean isParticipant(RegisteredUser user) {
         return getParticipant(user) != null;
     }
-    
-    public InterviewParticipant getParticipant(RegisteredUser user){
-        for(InterviewParticipant participant : getParticipants()){
-            if(participant.getUser().getId().equals(user.getId())){
+
+    public InterviewParticipant getParticipant(RegisteredUser user) {
+        for (InterviewParticipant participant : getParticipants()) {
+            if (participant.getUser().getId().equals(user.getId())) {
                 return participant;
             }
         }
         return null;
+    }
+
+    public boolean hasAllInterviewersProvidedFeedback() {
+        for (Interviewer interviewer : getInterviewers()) {
+            if (interviewer.getInterviewComment() == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isDateExpired() {
+        if (interviewDueDate == null) {
+            return false;
+        }
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        return !getInterviewDueDate().after(today);
     }
 
 }

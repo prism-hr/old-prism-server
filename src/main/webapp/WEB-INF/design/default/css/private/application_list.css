@@ -28,15 +28,35 @@ td.status { text-align: center !important; }
 #table-bar { margin-bottom: 10px; margin-top: 10px; position: relative;  }
 
 /* Applications display */
-.applyOptions { background: #FFF; position: relative;  border-radius: 4px; margin-bottom: 10px; text-align: right;}
-.applyOptions>span {
+#prefilterBox {
+  display: block;
+  height: 36px;
+  position: relative;
+  
+}
+.applyOptions {
+  right: 0px;
+}
+.filterOperators {
+  left: 135px;
+  padding-top: 2px;
+}
+.filterOperators .switch {
+  margin-right: 5px;
+}
+.applyOptions, .filterOperators { background: #FFF; position: absolute;  border-radius: 4px; margin-bottom: 10px; display: inline-block; }
+.applyOptions>span, .filterOperators>span {
   font-weight: bold;
   padding-right: 6px;
+}
+.filterOperators > span {
+  position: relative;
+  top: -5px;
 }
 .applyOptions #preFilter i, #preFilterOptions i{
   color: #F83929;
 }
-.applyOptions #preFilter {
+.applyOptions #preFilter, .filterOperators #useDisjunctionId {
   opacity: 1;
   color: #333;
 }

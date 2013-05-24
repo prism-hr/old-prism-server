@@ -9,7 +9,7 @@
 <body>
     <table width="600" border="0" cellspacing="0" cellpadding="0">
         <tr>
-            <td colspan="3"><img src="${host}/pgadmissions/design/default/images/email/header.jpg" width="600" height="160" alt="Prism: A Spectrum of Postgraduate Research Opportunities" /></td>
+            <td colspan="3"><img src="${host}/pgadmissions/design/default/images/email/header.jpg" width="600" height="100" alt="Prism: A Spectrum of Postgraduate Research Opportunities" /></td>
         </tr>
         <tr>
             <td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

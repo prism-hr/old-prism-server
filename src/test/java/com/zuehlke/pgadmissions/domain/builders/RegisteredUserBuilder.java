@@ -31,6 +31,7 @@ public class RegisteredUserBuilder {
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
     private String activationCode;
+    private String upi;
     private DigestNotificationType digestNotificationType = DigestNotificationType.NONE;
 
     private List<Referee> referees = new ArrayList<Referee>();
@@ -50,6 +51,11 @@ public class RegisteredUserBuilder {
 
     private String originalApplicationQueryString;
 
+    public RegisteredUserBuilder upi(final String upi) {
+        this.upi = upi;
+        return this;
+    }
+    
     public RegisteredUserBuilder digestNotificationType(final DigestNotificationType flag) {
         this.digestNotificationType = flag;
         return this;
@@ -240,6 +246,7 @@ public class RegisteredUserBuilder {
         user.setDirectToUrl(directURL);
         user.setOriginalApplicationQueryString(originalApplicationQueryString);
         user.setFiltering(filtering);
+        user.setUpi(upi);
         return user;
     }
 }

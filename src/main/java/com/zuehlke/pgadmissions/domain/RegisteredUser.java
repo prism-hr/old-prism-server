@@ -94,6 +94,9 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @JoinColumn(name = "filtering_id")
     @OneToOne(fetch = FetchType.LAZY)
     private ApplicationsFiltering filtering;
+
+    @Column(name = "upi")
+    private String upi;
     
     private boolean enabled;
 
@@ -723,6 +726,14 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public void setFiltering(ApplicationsFiltering filtering) {
         this.filtering = filtering;
+    }
+
+    public String getUpi() {
+        return upi;
+    }
+    
+    public void setUpi(final String upi) {
+        this.upi = upi;
     }
 
     @Override

@@ -68,31 +68,14 @@
                     <select name="programme" id="programme" class="max">
                       <option value="">Select...</option>
                       <#list programmes as programme>
-                      <option value="${programme.id}">
+                      <option value="${programme.code}" <#if program?? && programme.code == program.code>selected</#if> >
                       ${programme.title?html}
                       </option>
                       </#list>
                     </select>
                   </div>
-                  <@spring.bind "programAdvert.program" /> 
-				    <#list spring.status.errorMessages as error>
-					    <div class="row">
-					        <div class="field">
-					            <div class="alert alert-error">
-					                <i class="icon-warning-sign"></i> ${error}
-					            </div>
-					        </div>
-					    </div>
-					</#list>	
-                </div>
-                
-                <div class="row">
-                  <label for="programmeDescription" class="plain-label">Description <em>*</em></label>
-                  <span class="hint" data-desc="<@spring.message 'prospetus.description'/>"></span>
-                  <div class="field">
-                    <textarea id="programmeDescription" class="input-xlarge" rows="6" cols="150"></textarea>
-                  </div>
-                  <@spring.bind "programAdvert.description" /> 
+                  <#if program??>
+                  <@spring.bind "program" />
 				    <#list spring.status.errorMessages as error>
 					    <div class="row">
 					        <div class="field">
@@ -102,6 +85,30 @@
 					        </div>
 					    </div>
 					</#list>
+					</#if>	
+                </div>
+                
+                <div class="row">
+                  <label for="programmeDescription" class="plain-label">Description <em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'prospetus.description'/>"></span>
+                  <div class="field">
+                    <textarea id="programmeDescription" class="input-xlarge" rows="6" cols="150"></textarea>
+                  </div>
+                  outside description error
+                  <#if programAdvert??>
+                  <@spring.bind "programAdvert.description" /> 
+                  	inside description error
+				    <#list spring.status.errorMessages as error>
+				    inside the loop
+					    <div class="row">
+					        <div class="field">
+					            <div class="alert alert-error">
+					                <i class="icon-warning-sign"></i> ${error}
+					            </div>
+					        </div>
+					    </div>
+					</#list>
+				</#if>
                 </div>
                 
                 <div class="row">
@@ -115,6 +122,7 @@
                       <option value="Years">Years</option>
                     </select>
                   </div>
+                  <#if programAdvert??>
                   <@spring.bind "programAdvert.durationOfStudyInMonth" /> 
 				    <#list spring.status.errorMessages as error>
 					    <div class="row">
@@ -125,6 +133,7 @@
 					        </div>
 					    </div>
 					</#list>
+				</#if>
                 </div>
                 
                 <div class="row">
@@ -142,18 +151,32 @@
                   <label class="plain-label" for="currentlyAcceptingApplication">Are you currently accepting applications? <em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'prospetus.acceptingApplications'/>"></span>
                   <div class="field">
-                    <input id="currentlyAcceptingApplication" type="radio" name="switch" value="yes">
+                    <input id="currentlyAcceptingApplication" type="radio" name="switch" value="true">
                     Yes
                     </input>
-                    <input type="radio" name="switch" value="no">
+                    <input type="radio" name="switch" value="false">
                     No
                     </input>
                   </div>
                 </div>
+                <#if programAdvert??>
+                <@spring.bind "programAdvert.isCurrentlyAcceptingApplications" /> 
+				    <#list spring.status.errorMessages as error>
+					    <div class="row">
+					        <div class="field">
+					            <div class="alert alert-error">
+					                <i class="icon-warning-sign"></i> ${error}
+					            </div>
+					        </div>
+					    </div>
+					</#list>
+				</#if>
+                </div>
               </div>
-              <div class="alert alert-info"> <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here. </div>
+              
               <div class="row-group">
                 <h3>Advert</h3>
+	              <div class="alert alert-info"> <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here. </div>
                 
                 <div class="row">
                   <label for="linkToApply" class="plain-label">Link to Apply</label>

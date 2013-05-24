@@ -20,10 +20,6 @@ public class ProgramAdvertValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         ProgramAdvert programAdvert = (ProgramAdvert) target;
 
-        if (programAdvert.getProgram() == null) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "program", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        }
-
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", EMPTY_FIELD_ERROR_MESSAGE);
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "durationOfStudyInMonth", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);

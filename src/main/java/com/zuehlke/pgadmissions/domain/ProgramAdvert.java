@@ -18,10 +18,6 @@ public class ProgramAdvert implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @OneToOne
-    @JoinColumn(name = "program_id")
-    private Program program;
-
     @Column(name = "description")
     private String description;
 
@@ -41,15 +37,7 @@ public class ProgramAdvert implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
+    
     public String getDescription() {
         return description;
     }

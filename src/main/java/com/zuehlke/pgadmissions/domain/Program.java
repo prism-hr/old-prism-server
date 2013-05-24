@@ -17,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -64,7 +65,7 @@ public class Program extends Authorisable implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichSupervisor")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichViewer")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
@@ -75,15 +76,19 @@ public class Program extends Authorisable implements Serializable {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
     private List<Badge> badges = new ArrayList<Badge>();
-    
-    @MapKey(name="stage")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name="program_id")
+
+    @MapKey(name = "stage")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id")
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_advert_id")
+    private ProgramAdvert advert;
 
     public Program() {
     }
-    
+
     public Integer getId() {
         return id;
     }
@@ -203,8 +208,16 @@ public class Program extends Authorisable implements Serializable {
         this.viewers.clear();
         this.approvers.addAll(viewers);
     }
-    
+
     public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {
-		return scoringDefinitions;
-	}
+        return scoringDefinitions;
+    }
+
+    public ProgramAdvert getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(ProgramAdvert advert) {
+        this.advert = advert;
+    }
 }

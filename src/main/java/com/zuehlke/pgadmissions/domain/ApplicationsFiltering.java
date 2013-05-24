@@ -39,6 +39,9 @@ public class ApplicationsFiltering implements Serializable {
     @Enumerated(EnumType.STRING)
     private ApplicationsPreFilter preFilter = ApplicationsPreFilter.MY;
     
+    @Column(name = "use_disjunction")
+    private Boolean useDisjunction = false;
+    
     @Transient
     private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
 
@@ -61,6 +64,14 @@ public class ApplicationsFiltering implements Serializable {
 
     public Integer getId() {
         return id;
+    }
+    
+    public Boolean getUseDisjunction() {
+        return useDisjunction;
+    }
+    
+    public void setUseDisjunction(Boolean useDisjunction) {
+        this.useDisjunction = useDisjunction;
     }
 
     public void setId(Integer id) {

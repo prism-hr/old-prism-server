@@ -108,6 +108,7 @@ $(document).ready(function() {
 
 		data = {
 			filters : JSON.stringify(filters),
+			useDisjunction : $('input:radio[name=disjunctionSwitch]')[1].checked
 		};
 
 		$.ajax({
@@ -361,6 +362,7 @@ function populateApplicationList() {
 	filters = getFilters();
 
 	options = {
+		useDisjunction :  $('input:radio[name=disjunctionSwitch]')[1].checked,
 		filters : JSON.stringify(filters),
 		preFilter : $("#preFilter").val(),
 		sortCategory : $('#sort-column').val(),
@@ -471,12 +473,12 @@ function getFilters() {
 		var search_category = $(this).find('.selectCategory').val();
 		var search_predicate = $(this).find('.selectPredicate').val();
 		var search_term = $(this).find('.filterInput').val();
-
+		
 		if (search_category && search_term.length > 0) {
 			filters.push({
 				searchCategory : search_category,
 				searchPredicate : search_predicate,
-				searchTerm : search_term
+				searchTerm : search_term,
 			});
 		}
 	});
@@ -512,6 +514,9 @@ function clearCurrentFilters(shouldApplyChanges){
 	for ( var i = 1; i < filters.length; i++) {
 		$(filters[i]).remove();
 	}
+	
+	$('input:radio[name=disjunctionSwitch]')[0].checked=true;
+	$('input:radio[name=disjunctionSwitch]')[1].checked=false;
 
 	clearFilter(filters[0]);
 	if (shouldApplyChanges) {

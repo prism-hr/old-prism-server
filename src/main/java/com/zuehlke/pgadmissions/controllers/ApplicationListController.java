@@ -124,8 +124,9 @@ public class ApplicationListController {
     }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
-    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, final ModelMap model) {
+    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam Boolean useDisjunction, final ModelMap model) {
         RegisteredUser user = getUser();
+        filtering.setUseDisjunction(useDisjunction);
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
         Map<String, Boolean> updatedApplications = new HashMap<String, Boolean>();
         Map<String, ActionsDefinitions> actionDefinitions = new LinkedHashMap<String, ActionsDefinitions>();
@@ -156,7 +157,8 @@ public class ApplicationListController {
 
     @RequestMapping(value = "/saveFilters", method = RequestMethod.POST)
     @ResponseBody
-    public String saveFiltersAsDefault(@ModelAttribute("filtering") ApplicationsFiltering filtering) {
+    public String saveFiltersAsDefault(@ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam Boolean useDisjunction) {
+        filtering.setUseDisjunction(useDisjunction);
         userService.setFiltering(getUser(), filtering);
         return "OK";
     }

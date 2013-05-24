@@ -24,6 +24,8 @@ public class ApplicationsFilteringBuilder {
 
     private Integer blockCount;
 
+    private Boolean useDisjunction;
+
     public ApplicationsFilteringBuilder id(Integer id) {
         this.id = id;
         return this;
@@ -51,6 +53,10 @@ public class ApplicationsFilteringBuilder {
         this.blockCount = blockCount;
         return this;
     }
+    public ApplicationsFilteringBuilder useDisjunction(Boolean useDisjunction) {
+        this.useDisjunction = useDisjunction;
+        return this;
+    }
 
     public ApplicationsFiltering build() {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
@@ -60,6 +66,7 @@ public class ApplicationsFilteringBuilder {
         filtering.setSortCategory(sortCategory);
         filtering.setOrder(order);
         filtering.setBlockCount(blockCount);
+        filtering.setUseDisjunction(useDisjunction);
         return filtering;
     }
 

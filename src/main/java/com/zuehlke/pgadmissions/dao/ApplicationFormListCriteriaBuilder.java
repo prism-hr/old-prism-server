@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -50,6 +52,8 @@ public class ApplicationFormListCriteriaBuilder {
     private int maxResults = -1;
     
     private ApplicationsFiltering applicationsFilter = null;
+
+    private Boolean useDisjunction;
     
     public ApplicationFormListCriteriaBuilder(final SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -73,6 +77,11 @@ public class ApplicationFormListCriteriaBuilder {
 
     public ApplicationFormListCriteriaBuilder forUser(final RegisteredUser user) {
         this.user = user;
+        return this;
+    }
+    
+    public ApplicationFormListCriteriaBuilder useDisjunction(final Boolean useDisjunction) {
+        this.useDisjunction = useDisjunction;
         return this;
     }
 
@@ -109,11 +118,28 @@ public class ApplicationFormListCriteriaBuilder {
             }
         }
         
+        
         criteria = setAliases(criteria);
 
         if (applicationsFilter != null) {
+            List<Criterion> criterions = new ArrayList<Criterion>();
             for (ApplicationsFilter filter : applicationsFilter.getFilters()) {
-                criteria = setSearchCriteria(filter.getSearchCategory(), filter.getSearchPredicate(), filter.getSearchTerm(), criteria);
+                Criterion criterion = getSearchCriterion(filter.getSearchCategory(), filter.getSearchPredicate(), filter.getSearchTerm());
+                if (criterion!=null) {
+                    criterions.add(criterion);
+                }
+            }
+            if (BooleanUtils.isTrue(useDisjunction)) {
+                Disjunction disjunction = Restrictions.disjunction();
+                for (Criterion criterion : criterions) {
+                    disjunction.add(criterion);
+                }
+                criteria.add(disjunction);
+            }
+            else {
+                for (Criterion criterion : criterions) {
+                    criteria.add(criterion);
+                }
             }
             criteria = setOrderCriteria(applicationsFilter.getSortCategory(), applicationsFilter.getOrder());
         }
@@ -171,7 +197,7 @@ public class ApplicationFormListCriteriaBuilder {
         return criteria;
     }
 
-    private Criteria setSearchCriteria(final SearchCategory searchCategory, final SearchPredicate searchPredicate, final String term, final Criteria criteria) {
+    private Criterion getSearchCriterion(final SearchCategory searchCategory, final SearchPredicate searchPredicate, final String term) {
         if (searchCategory != null && StringUtils.isNotBlank(term)) {
             Criterion newCriterion = null;
             if (searchCategory.getType() == CategoryType.TEXT) {
@@ -206,11 +232,9 @@ public class ApplicationFormListCriteriaBuilder {
                     newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "lastUpdated");
                 }
             }
-            if (newCriterion != null) {
-                criteria.add(newCriterion);
-            }
+            return newCriterion;
         }
-        return criteria;
+        return null;
     }
 
     private Criteria setOrderCriteria(final SortCategory sortCategory, final SortOrder order) {

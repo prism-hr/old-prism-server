@@ -81,5 +81,14 @@ public class ReviewRound implements Serializable {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
+	
+	public boolean hasAllReviewersResponded(){
+	    for(Reviewer reviewer : getReviewers()){
+	        if(reviewer.getReview() == null){
+	            return false;
+	        }
+	    }
+	    return true;
+	}
 
 }

@@ -2,10 +2,15 @@ package com.zuehlke.pgadmissions.domain;
 
 import static org.junit.Assert.*;
 
+import java.util.Calendar;
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class InterviewTest {
@@ -54,5 +59,48 @@ public class InterviewTest {
         assertNull(interview.getParticipant(user3));
     }
 
+    @Test
+    public void shouldReturnTrueIfAllInterviewerHasProvidedFeedback() {
+        Interviewer interviewer1 = new InterviewerBuilder().interviewComment(new InterviewComment()).build();
+        Interviewer interviewer2 = new InterviewerBuilder().interviewComment(new InterviewComment()).build();
+
+        Interview interview = new InterviewBuilder().interviewers(interviewer1, interviewer2).build();
+        assertTrue(interview.hasAllInterviewersProvidedFeedback());
+    }
+    
+    @Test
+    public void shouldReturnFalseIfOneInterviewerHasNotProvidedFeedback() {
+        Interviewer interviewer1 = new InterviewerBuilder().interviewComment(new InterviewComment()).build();
+        Interviewer interviewer2 = new InterviewerBuilder().interviewComment(null).build();
+
+        Interview interview = new InterviewBuilder().interviewers(interviewer1, interviewer2).build();
+        assertFalse(interview.hasAllInterviewersProvidedFeedback());
+    }
+    
+    @Test
+    public void shouldExpiredReturnTrueIfDueDateWasYesterday() {
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        Date yesterday = DateUtils.addDays(today, -1);
+        
+        Interview interview = new InterviewBuilder().dueDate(yesterday).build();
+        assertTrue(interview.isDateExpired());
+    }
+    
+    @Test
+    public void shouldExpiredReturnTrueIfDueDateIsToday() {
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        
+        Interview interview = new InterviewBuilder().dueDate(today).build();
+        assertTrue(interview.isDateExpired());
+    }
+    @Test
+    public void shouldExpiredReturnFalseIfDueDateIsTomorrow() {
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        Date tomorrow = DateUtils.addDays(today, 1);
+        
+        Interview interview = new InterviewBuilder().dueDate(tomorrow).build();
+        assertFalse(interview.isDateExpired());
+    }
+    
     
 }

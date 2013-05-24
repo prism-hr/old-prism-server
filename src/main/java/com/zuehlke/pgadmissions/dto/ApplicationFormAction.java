@@ -8,9 +8,15 @@ import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.UNSUBM
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.WITHDRAWN;
 
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
+
+import com.ibm.icu.util.Calendar;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -88,6 +94,7 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == VALIDATION && nextStatus == null && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(COMPLETE_VALIDATION_STAGE);
+                actions.setRequiresAttention(true);
             }
         }
     }), //
@@ -99,6 +106,7 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (nextStatus == REVIEW && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(ASSIGN_REVIEWERS);
+                actions.setRequiresAttention(true);
             }
         }
     }), //
@@ -107,6 +115,11 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == REVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(COMPLETE_REVIEW_STAGE);
+                ReviewRound reviewRound = application.getLatestReviewRound();
+                Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+                if(reviewRound.hasAllReviewersResponded() || today.after(application.getDueDate())){
+                    actions.setRequiresAttention(true);
+                }
             }
         }
     }), //
@@ -166,7 +179,7 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
             if (application.getStatus() == INTERVIEW && nextStatus == null && user.isInterviewerOfApplicationForm(application) && interview.isScheduled()
-                    && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+                    && interview.isDateExpired() && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
                 actions.addAction(ADD_INTERVIEW_FEEDBACK);
                 actions.setRequiresAttention(true);
             }

@@ -1,0 +1,247 @@
+
+/* Application list ---------------------------------------------------------------------------------- */
+
+table#appliList thead th {
+	background: rgb(188,188,188);
+	cursor: pointer; 
+	padding:12px 2px;
+}
+table#appliList thead th:nth-child(5) {
+	/*cursor: auto;*/
+}
+
+/* Sorting functionality. */
+table#appliList th.sorting {
+	background: #59DAFF; /* Old browsers */ 
+}
+table#appliList th.sortable span { float: right; width: 10px; height: 16px; background:  url(../../images/icon_arrow_sort.png) no-repeat center; margin: 0px 2px 0 3px; }
+table#appliList th.sortable.asc span { background-image: url(../../images/icon_arrow_up.png); }
+table#appliList th.sortable.desc span { background-image: url(../../images/icon_arrow_down.png); }
+
+/* Form fields inside the table. */
+td.applicant-name { white-space: nowrap; } /* name on one line. */
+td.applicant-name .applicant-id { display: block; font-size: 10px; }
+td.status { text-align: center !important; }
+
+
+/* Table bar, containing download button and search bar. --------------------------------------------- */
+#table-bar { margin-bottom: 10px; margin-top: 10px; position: relative;  }
+
+/* Applications display */
+.applyOptions { background: #FFF; position: relative;  border-radius: 4px; margin-bottom: 10px; text-align: right;}
+.applyOptions>span {
+  font-weight: bold;
+  padding-right: 6px;
+}
+.applyOptions #preFilter i, #preFilterOptions i{
+  color: #F83929;
+}
+.applyOptions #preFilter {
+  opacity: 1;
+  color: #333;
+}
+/* Search box. */
+#search-box { background: #FFF; border: 1px solid #AAA; position: relative;  border-radius: 4px; padding: 10px; padding-bottom: 0px; 
+ }
+#search-box label { font-weight: bold; }
+#search-box input { padding: 4px; width: 240px; height: 17px; margin-bottom: 0px; margin-right:4px;}
+#search-box select { padding: 4px; width: 150px; height: auto; margin-bottom: 0px;  margin-right: 6px; }
+#search-box select.selectPredicate { width: 120px; }
+
+#search-box button { margin-top: -2px; }
+#search-box .invalid  { display: block; margin-left: 147px; margin-top: 5px; padding: 3px; text-align: left; }
+#search-box .filter {
+  padding-left: 123px;
+  float: left;
+  padding-bottom: 10px;
+}
+#search-box .filter input.hasDatepicker {
+  margin-right: 148px;
+}
+#search-box .filter select.selector {
+  margin-right: 104px;
+}
+#search-box #searchTerm {margin-bottom: 5px; margin-top: 5px;}
+#search-box #searchCategory {padding: 4px; height: 28px;}
+#search-box .dropdown-toggle {margin-right: 8px;}
+div.fetching { text-align: center; font-weight: bold; padding: 5px; }
+
+
+/* With bootstrap*/
+
+table#appliList th, table#appliList td { padding: 8px 3px; vertical-align: middle; line-height: 15px; }
+table#appliList select {width: 113px; margin-bottom: 0;}
+table#appliList input[type="checkbox"] { margin-top: 0px;}
+
+/* new actions line/*/
+.actions {
+  position: absolute;
+  left: 10px;
+  bottom: 11px;
+  float: left;
+  padding-right: 10px;
+}
+.btn-actions {
+  margin-top: 2px;
+  float: right;
+}
+.applicant-name {
+  padding-left: 23px !important;
+}
+.applicant-name i{
+  margin-left: -18px;
+  float: left;
+  font-size: 14px;
+  margin-top: 1px;
+}
+.applicant-name.flagred i{
+  color: #F83929;
+}
+.applicant-name.flaggreen i{
+  color: #5BB75B;
+}
+
+
+.applicationRow {
+	cursor:pointer;
+}
+.applicationRow .icon-bell-alt{
+  color: #F83929;
+}
+.applicationRow .icon-refresh{
+  color: #FFBF00;
+}
+.applicationRow .icon-circle-blank{
+  color: #51A351);
+}
+#applicationListSection .application-details, #applicationListSection .placeholder {
+	display:none;
+}
+.application-lhs.loading {
+  background: #FFFFFF url(../../images/ajax-loader-file.gif) 854px 4px no-repeat;
+}
+.application-lhs {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #DDDDDD !important;
+    border-radius: 4px 4px 4px 4px;
+    margin-bottom: 0px;
+    overflow: hidden;
+    margin-left: 4px;
+    margin-right: 4px;
+    padding: 10px;
+    position: relative;
+}
+.application-lhs .details  {
+  margin-top: 6px;
+}
+.details .thumbnail {
+  margin-left: 0px;
+  margin-top: -6px;
+}
+.application-details .applicant-name {
+	font-weight:bold;
+	padding:0 !important;
+}
+.application-details .detail-status {
+	position:relative;
+	padding-right:20px;
+}
+.submitted-date, .last-edited-date {
+  font-weight: bold;
+}
+.application-details td {
+  background: #F9F9F9;
+}
+.documents {
+  list-style: none;
+  padding-left: 0px;
+  margin-left: 0px;
+}
+.tlf i, .documents i{
+  font-size: 14px;
+}
+.skype, .tlf, .documents li  {
+  vertical-align: center;
+}
+.skype i {
+  font-size: 15px;
+}
+.mdetails {
+  margin-top: 10px;
+  margin-left: 4px;
+}
+.application-details .detail-status i {
+	display:block;
+	position:absolute;
+	right:0;
+	top:0;
+}
+
+.application-details .detail-status .green {
+	color:#007F0E;
+}
+
+.application-details .detail-status .yellow {
+	color:#FFD800;
+}
+
+.application-details .detail-status .red {
+	color:#C3272F;
+}
+
+.application-details .application-rhs {
+	float:left;
+	width:25%;
+	padding:33px 0 0 8%;
+}
+
+.application-details .application-rhs a,
+.application-details .application-rhs span {
+	display:block;
+	margin-bottom:.2em;
+}
+
+.application-details .application-rhs img {
+	display:block;
+	margin:.8em 0 .3em;
+}
+
+.application-actions:before {
+	clear:both;
+}
+
+.application-actions {
+	clear:both;
+	margin-top:1em;
+	padding:1em 1% 0.7em;
+	background-color:#BCBCBC;
+	border:1px solid gray;
+	display:table;
+	width:96%;
+	margin:0 auto;
+}
+
+.application-actions .status-wrapper {
+	display:table-cell;
+}
+
+.application-actions .review-buttons {
+	display:table-cell;
+	text-align:right;
+}
+
+.application-actions .review-buttons button {
+	margin-left:4px;
+}
+
+.application-actions .bs-status {
+	margin:0;
+	padding:8px 9px;
+}
+
+.application-actions .bs-status .icon {
+	float:right;
+}
+.applist .alert {
+  margin-bottom: 0px;
+}

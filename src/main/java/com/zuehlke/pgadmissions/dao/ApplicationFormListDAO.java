@@ -73,6 +73,7 @@ public class ApplicationFormListDAO {
             .forUser(user)
             .filter(filtering)
             .maxResults(itemsPerPage)
+            .useDisjunction(filtering.getUseDisjunction())
             .firstResult((filtering.getBlockCount() - 1) * itemsPerPage)
             .build();
 

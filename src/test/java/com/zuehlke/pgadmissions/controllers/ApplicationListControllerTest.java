@@ -219,7 +219,7 @@ public class ApplicationListControllerTest {
 
         // WHEN
         EasyMock.replay(userServiceMock, applicationsServiceMock);
-        assertEquals("private/my_applications_section", controller.getApplicationListSection(filtering, model));
+        assertEquals("private/my_applications_section", controller.getApplicationListSection(filtering, true, model));
         EasyMock.verify(userServiceMock, applicationsServiceMock);
 
         // THEN
@@ -307,7 +307,7 @@ public class ApplicationListControllerTest {
         userServiceMock.setFiltering(user, filtering);
 
         replay(userServiceMock);
-        controller.saveFiltersAsDefault(filtering);
+        controller.saveFiltersAsDefault(filtering, false);
         verify(userServiceMock);
     }
 
@@ -324,7 +324,7 @@ public class ApplicationListControllerTest {
         userServiceMock.setFiltering(user, filtering);
 
         replay(userServiceMock);
-        controller.saveFiltersAsDefault(filtering);
+        controller.saveFiltersAsDefault(filtering, true);
         verify(userServiceMock);
     }
 

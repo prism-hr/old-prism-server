@@ -112,7 +112,15 @@
              
             </div>
             <div id="search-box" class="clearfix"> 
+            <!-- Radio button to chose whether filters should per applied in AND/OR -->
+                <input id="useDisjunctionId" type="radio" name="disjunctionSwitch" <#if !filtering.useDisjunction>checked</#if> >
+                	And
+                </input>
+                <input type="radio" name="disjunctionSwitch" <#if filtering.useDisjunction>checked</#if> >
+                	Or
+             	</input>
             <div class="actions">
+            
           	<!-- Download button. --> 
     		<div class="btn-group">
                 <button class="btn dropdown-toggle" data-toggle="dropdown"> Downloads <span class="caret"></span></button>
@@ -124,7 +132,7 @@
                     <li><a href="#" name="downloadAll" id="downloadAll"><i class="icon-download-alt"></i> Download  PDF</a></li>
                 </ul>
               </div>
-            
+             
             <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value='${searchPredicatesMap}' />
             <input type="hidden" id="applicationStatusValues" name="applicationStatusValues" 
               value='<#list applicationStatusValues as value>${value.displayValue()}<#if value_has_next>,</#if></#list>'

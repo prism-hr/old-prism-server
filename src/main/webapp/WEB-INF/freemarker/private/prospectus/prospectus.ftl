@@ -94,21 +94,6 @@
                   <div class="field">
                     <textarea id="programmeDescription" class="input-xlarge" rows="6" cols="150"></textarea>
                   </div>
-                  outside description error
-                  <#if programAdvert??>
-                  <@spring.bind "programAdvert.description" /> 
-                  	inside description error
-				    <#list spring.status.errorMessages as error>
-				    inside the loop
-					    <div class="row">
-					        <div class="field">
-					            <div class="alert alert-error">
-					                <i class="icon-warning-sign"></i> ${error}
-					            </div>
-					        </div>
-					    </div>
-					</#list>
-				</#if>
                 </div>
                 
                 <div class="row">
@@ -122,18 +107,6 @@
                       <option value="Years">Years</option>
                     </select>
                   </div>
-                  <#if programAdvert??>
-                  <@spring.bind "programAdvert.durationOfStudyInMonth" /> 
-				    <#list spring.status.errorMessages as error>
-					    <div class="row">
-					        <div class="field">
-					            <div class="alert alert-error">
-					                <i class="icon-warning-sign"></i> ${error}
-					            </div>
-					        </div>
-					    </div>
-					</#list>
-				</#if>
                 </div>
                 
                 <div class="row">

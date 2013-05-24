@@ -108,7 +108,7 @@ $(document).ready(function() {
 
 		data = {
 			filters : JSON.stringify(filters),
-			useDisjunction : $('input:radio[name=disjunctionSwitch]')[1].checked
+			useDisjunction : $('#useDisjunctionId').is(':checked')
 		};
 
 		$.ajax({
@@ -266,6 +266,7 @@ $(document).ready(function() {
 			$('#search-go').click();
 		}
 		cleanUpFilterIds();
+		checkSwich();
 	});
 	
 	// Remove current filter
@@ -278,6 +279,7 @@ $(document).ready(function() {
 				$('#search-go').click();
 			}
 		}
+		checkSwich();
 	});
 	
 	$("#preFilterOptions li a").click(function(event) {
@@ -288,8 +290,19 @@ $(document).ready(function() {
 		$('#preFilter').val(filterVal).html(filterHtml);
 		$('#search-go').click();
 	});
-
+	$('#operatorSwitch').on('switch-change', function () {
+		setTimeout(function() {
+			$('#search-go').click();
+		},800)
+	});
 });
+function checkSwich() {
+	if ($('.filter').length > 1) {
+		$('.filterOperators').show();
+	} else  {
+		$('.filterOperators').hide();
+	}
+}
 
 function clearRedFlagIndex() {
 	latestConsideredFlagIndex = 0;
@@ -362,7 +375,7 @@ function populateApplicationList() {
 	filters = getFilters();
 
 	options = {
-		useDisjunction :  $('input:radio[name=disjunctionSwitch]')[1].checked,
+		useDisjunction :  $('#useDisjunctionId').is(':checked'),
 		filters : JSON.stringify(filters),
 		preFilter : $("#preFilter").val(),
 		sortCategory : $('#sort-column').val(),
@@ -482,7 +495,7 @@ function getFilters() {
 			});
 		}
 	});
-
+	checkSwich();
 	return filters;
 }
 

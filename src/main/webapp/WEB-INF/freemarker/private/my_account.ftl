@@ -54,7 +54,7 @@
 						<div class="content-box">
 							<div class="content-box-inner">
 							
-                                <div id="accountdetails"></div>
+                                <div id="accountdetails" class="tabbox"></div>
                                 
 							</div><!-- .content-box-inner -->
 						</div><!-- .content-box -->

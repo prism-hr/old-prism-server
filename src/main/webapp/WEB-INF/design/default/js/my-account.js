@@ -69,6 +69,8 @@ $(document).ready(function() {
              },
              complete: function() {
                  //$('#ajaxloader').fadeOut('fast');
+				 /* Tabs */
+				 generalTabing('#accountdetails');
              }
         });
     });
@@ -108,6 +110,8 @@ $(document).ready(function() {
              },
              complete: function() {
                  //$('#ajaxloader').fadeOut('fast');
+				 /* Tabs */
+			    generalTabing('#accountdetails');
              }
         });
     });
@@ -136,6 +140,8 @@ function getAccountDetailsSection() {
         success: function(data) {
             $('#accountdetails').html(data);
             addToolTips();
+			/* Tabs */
+			generalTabing('#accountdetails');
         },
         complete: function() {
            $('#ajaxloader').fadeOut('fast');

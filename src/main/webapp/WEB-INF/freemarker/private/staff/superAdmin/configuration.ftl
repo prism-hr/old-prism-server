@@ -61,9 +61,17 @@
       <!-- content box -->
       <div class="content-box">
         <div class="content-box-inner">
-          <div id="configsection"></div>
+          <div id="configBox" class="tabbox">
+          <ul class="tabs">
+              <li><a href="#configsection">Service Levels</a></li>
+              <li><a href="#edit-template-section">Email Templates</a></li>
+              <li><a href="#edit-throttle-section">Portico Interface</a></li>
+              <li><a href="#badgeS">Badge</a></li>
+              <li><a href="#scoringConfiguration">Custom Forms</a></li>
+          </ul>
+          <div id="configsection" class="tab-page"></div>
           <#if user.isInRole('SUPERADMINISTRATOR') >
-          <div id="edit-template-section"> 
+          <div id="edit-template-section" class="tab-page"> 
             
             <!-- Modal -->
             <div id="previewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -138,7 +146,7 @@
               </div>
             </section>
           </div>
-          <div id="edit-throttle-section">
+          <div id="edit-throttle-section" class="tab-page">
             <section class="form-rows">
               <h2>Manage Portico Interface</h2>
               <div>
@@ -174,7 +182,7 @@
             </section>
           </div>
           </#if>
-          <div id="badgeS">
+          <div id="badgeS" class="tab-page">
             <section class="form-rows">
               <h2>Badge</h2>
               <div>
@@ -184,7 +192,7 @@
               </div>
             </section>
           </div>
-          <div id="scoringConfiguration">
+          <div id="scoringConfiguration" class="tab-page">
             
               <section class="form-rows">
               <h2>Manage Custom Forms</h2>
@@ -235,6 +243,7 @@
             
           </div>
         </div>
+          </div>
         <!-- .content-box-inner --> 
       </div>
       <!-- .content-box --> 

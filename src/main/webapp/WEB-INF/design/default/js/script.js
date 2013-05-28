@@ -909,3 +909,35 @@ function checkIfErrors() {
 		$('#add-info-bar-div').removeClass('alert-info').addClass('alert-error');
 	} 
 }
+/* general Tabs funcionality */
+function generalTabing(id) {
+	// generalTabing('#id');
+	// #id = id of the div tabs holder
+
+	$.each($('.tab-page'), function() {
+		$('.tabs li').removeClass('current');
+		if ( $(this).find('.alert-error').length > 0) {
+			$(id).children('div').hide();
+			$(this).show();
+			$('.tabs li:nth-child('+$(this).index()+')').addClass('current');
+		} else {
+			// Hide tabs
+			$('.tabs li:first').addClass('current')
+			$(id).children('div').not(':eq(0)').hide();
+		}
+	});
+	// Set buttons
+	$('.tabs li a').click(function(event){
+		event.preventDefault();
+		setTab($(this), id);
+	});
+}
+function setTab(tab, id) {
+	// button function 
+	// Tabs higliting
+	$('.tabs li').removeClass('current');
+	tab.parent().addClass('current');
+	// div hide/show
+	$(id).children('div').hide();
+	$(tab.attr('href')).show();
+}

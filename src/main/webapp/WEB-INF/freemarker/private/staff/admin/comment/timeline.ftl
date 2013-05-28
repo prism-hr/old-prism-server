@@ -199,6 +199,7 @@
     			                <#elseif comment.comment?starts_with("Delegated Application")>
     												<p class="delegate"><span data-desc="Delegate"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
     											<#elseif comment.comment?length &gt; 0>
+                                                	<div class="actionUser"><strong>Had comented:</strong></div>
     												<div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
     											</#if>
     											
@@ -210,7 +211,7 @@
             				                </ul>
             							</#if>
             							
-    			                <#if comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT'>                                                    
+    			                <#if comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT'>
     			                	<#include "timeline_snippets/validation_comment.ftl"/>
     			                <#elseif comment.type == 'REVIEW'>
     			                	<#include "timeline_snippets/review_comment.ftl"/>

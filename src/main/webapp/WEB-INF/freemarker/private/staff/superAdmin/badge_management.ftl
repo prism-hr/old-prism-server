@@ -1,5 +1,3 @@
-<section id="badgeSection" >
-
 <#import "/spring.ftl" as spring />
 
 <div class="row-group">
@@ -95,7 +93,5 @@
 <div class="buttons">
     <button class="btn btn-primary" id="badgeSaveButton" type="button">Create</button>
 </div>
-			
-</section>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge_management.js'/>"></script>

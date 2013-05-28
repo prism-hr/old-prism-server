@@ -25,18 +25,9 @@ import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 @Transactional
 public class EmailTemplateService {
 	
-	private final EmailTemplateDAO emailTemplateDAO;
+    @Autowired
+	private EmailTemplateDAO emailTemplateDAO;
 
-	
-	public EmailTemplateService() {
-		this(null);
-	}
-	
-	@Autowired
-	public EmailTemplateService(EmailTemplateDAO emailTemplateDAO) {
-		this.emailTemplateDAO = emailTemplateDAO;
-	}
-	
 	public EmailTemplate getDefaultEmailTemplate(EmailTemplateName name) {
 		return emailTemplateDAO.getDefaultByName(name);
 	}

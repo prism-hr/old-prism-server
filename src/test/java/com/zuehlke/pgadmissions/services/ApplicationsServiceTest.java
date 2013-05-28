@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.unitils.easymock.EasyMockUnitils.replay;
+import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,8 +17,12 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -31,29 +36,34 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ApplicationsServiceTest {
 
-	private ApplicationFormDAO applicationFormDAOMock;
-	private ApplicationsService applicationsService;
-	private MailSendingService mailServiceMock;
-	private BadgeDAO badgeDAOMock;
+    @TestedObject
+    private ApplicationsService applicationsService;
 
-	@Before
-	public void setup() {
-		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		mailServiceMock = createMock(MailSendingService.class);
-		badgeDAOMock = createMock(BadgeDAO.class);
-		applicationsService = new ApplicationsService(applicationFormDAOMock, null, mailServiceMock, badgeDAOMock);
-	}
+    @Mock
+    @InjectIntoByType
+	private ApplicationFormDAO applicationFormDAOMock;
+	
+    @Mock
+	@InjectIntoByType
+	private MailSendingService mailServiceMock;
+	
+    @Mock
+	@InjectIntoByType
+	private BadgeDAO badgeDAOMock;
 
 	@Test
 	public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {
 		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(),
 				new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(applicationsList);
-		EasyMock.replay(applicationFormDAOMock);
+
+		replay();
 		List<ApplicationForm> appsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+		
 		assertSame(applicationsList, appsDueUpdateNotification);
 	}
 
@@ -62,10 +72,12 @@ public class ApplicationsServiceTest {
 		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(),
 				new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueRegistryNotification()).andReturn(applicationsList);
-		EasyMock.replay(applicationFormDAOMock);
+
+		replay();
 		List<ApplicationForm> appsDueRegistryNotification = applicationsService
 				.getApplicationsDueRegistryNotification();
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+
 		assertSame(applicationsList, appsDueRegistryNotification);
 	}
 
@@ -75,10 +87,12 @@ public class ApplicationsServiceTest {
 				new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueApprovalRequestNotification()).andReturn(
 				applicationsList);
-		EasyMock.replay(applicationFormDAOMock);
+		
+		replay();
 		List<ApplicationForm> appsDueNotification = applicationsService
 				.getApplicationsDueApprovalRestartRequestNotification();
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+
 		assertSame(applicationsList, appsDueNotification);
 	}
 
@@ -88,10 +102,12 @@ public class ApplicationsServiceTest {
 				new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationDueApprovalRestartRequestReminder()).andReturn(
 				applicationsList);
-		EasyMock.replay(applicationFormDAOMock);
+
+		replay();
 		List<ApplicationForm> appsDueNotification = applicationsService
 				.getApplicationsDueApprovalRestartRequestReminder();
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+
 		assertSame(applicationsList, appsDueNotification);
 	}
 	
@@ -103,9 +119,9 @@ public class ApplicationsServiceTest {
 		
 		applicationFormDAOMock.save(application);
 		
-		EasyMock.replay(applicationFormDAOMock, mailServiceMock);
+		replay();
 		applicationsService.sendSubmissionConfirmationToApplicant(application);
-		EasyMock.verify(applicationFormDAOMock, mailServiceMock);
+		verify();
 	}
 
 	@Test
@@ -113,9 +129,9 @@ public class ApplicationsServiceTest {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationFormDAOMock.get(234)).andReturn(application);
 
-		EasyMock.replay(application, applicationFormDAOMock);
+		replay();
 		Assert.assertEquals(application, applicationsService.getApplicationById(234));
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
 	}
 
 	@Test
@@ -123,9 +139,9 @@ public class ApplicationsServiceTest {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("ABC")).andReturn(application);
 
-		EasyMock.replay(application, applicationFormDAOMock);
+		replay();
 		Assert.assertEquals(application, applicationsService.getApplicationByApplicationNumber("ABC"));
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
 	}
 
 	@Test
@@ -143,10 +159,12 @@ public class ApplicationsServiceTest {
 
 		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
 		applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
-		EasyMock.replay(applicationFormDAOMock);
+
+		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
 				program, null, null, null);
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+
 		assertNotNull(returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
@@ -169,13 +187,15 @@ public class ApplicationsServiceTest {
 
 		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
 		applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
-		EasyMock.replay(applicationFormDAOMock);
 		Date batchDeadline = new SimpleDateFormat("dd/MM/yyyy").parse("12/12/2012");
 		String projectTitle = "This is the project title";
 		String researchHomePage = "researchHomePage";
+
+		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
 				program, batchDeadline, projectTitle, researchHomePage);
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+
 		assertNotNull(returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
@@ -204,12 +224,12 @@ public class ApplicationsServiceTest {
 				.andReturn(Lists.newArrayList(oldApplicationForm, newApplicationForm, oldApplicationForm2));
 
 		// WHEN
-		EasyMock.replay(applicationFormDAOMock);
+		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
 				program, null, null, null);
-
 		// THEN
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+
 		assertSame(newApplicationForm, returnedForm);
 	}
 
@@ -234,12 +254,13 @@ public class ApplicationsServiceTest {
 								interviewApplicationForm));
 
 		// WHEN
-		EasyMock.replay(applicationFormDAOMock);
+		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
 				program, null, null, null);
 
 		// THEN
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+
 		assertSame(interviewApplicationForm, returnedForm);
 	}
 
@@ -262,12 +283,12 @@ public class ApplicationsServiceTest {
 				.andReturn(Lists.newArrayList(oldApplicationForm, newApplicationForm, oldApplicationForm2));
 
 		// WHEN
-		EasyMock.replay(applicationFormDAOMock);
+		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
 				program, null, null, null);
-
 		// THEN
-		EasyMock.verify(applicationFormDAOMock);
+		verify();
+
 		assertSame(newApplicationForm, returnedForm);
 	}
 

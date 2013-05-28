@@ -49,7 +49,6 @@ public class ProgramAdvertEditor extends PropertyEditorSupport {
                 Integer programId = Integer.valueOf(programIdAsString);
                 Program program = programsService.getProgramById(programId);
                 programAdvert = programAdvertDAO.getProgramAdvertByProgramId(programId);
-                programAdvert.setProgram(program);
             } else {
                 programAdvert = new ProgramAdvert();
             }

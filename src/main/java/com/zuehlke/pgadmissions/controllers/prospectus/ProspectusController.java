@@ -1,15 +1,19 @@
 package com.zuehlke.pgadmissions.controllers.prospectus;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,7 +32,10 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.validators.ProgramAdvertValidator;
+
+import freemarker.template.Template;
 
 @Controller
 @RequestMapping("/prospectus")
@@ -42,7 +49,7 @@ public class ProspectusController {
 
     private final ProgramsService programsService;
     private final String host;
-    private final ProgramAdvertDAO programAdvertDAO;
+    private final MessageSource messageSource;
     private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
     private final ProgramAdvertValidator programAdvertValidator;
@@ -53,12 +60,11 @@ public class ProspectusController {
 
     @Autowired
     public ProspectusController(UserService userService, ProgramsService programsService, @Value("${application.host}") final String host,
-                    ProgramAdvertDAO programAdvertDAO, ProgramAdvertValidator programAdvertValidator,
-                    DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
+            MessageSource messageSource, ProgramAdvertValidator programAdvertValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
         this.host = host;
-        this.programAdvertDAO = programAdvertDAO;
+        this.messageSource = messageSource;
         this.programAdvertValidator = programAdvertValidator;
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
     }
@@ -82,8 +88,7 @@ public class ProspectusController {
         return programsService.getProgramByCode(programCode);
     }
 
-    @ModelAttribute("programAdvert")
-    public ProgramAdvert getOrCreateProgrameAdvert(@RequestParam(required = false) String programCode) {
+    private ProgramAdvert getOrCreateProgrameAdvert(String programCode) {
         Program program = getProgram(programCode);
         if (program == null) {
             return null;
@@ -107,37 +112,42 @@ public class ProspectusController {
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
     public String getLinkToApply(@RequestParam String programCode, Model model) {
-        // model.addAttribute("programmeCode", programCode);
-        // model.addAttribute("host", host);
-
-        ProgramAdvert advert = new ProgramAdvert();
-        advert.setDescription("aaa");
-        advert.setDurationOfStudyInMonth(4);
-        
-                        //programsService.getProgramByCode(programCode).getAdvert();
+        ProgramAdvert advert = getOrCreateProgrameAdvert(programCode);
 
         Map<String, Object> result = Maps.newHashMap();
-        String templateString = "dummy template";
+        String buttonString = "<button>dummy button</button>";
         result.put("linkToApply", host + "/apply/new?program=" + programCode);
-        result.put("buttonToApply", templateString);
-        result.put("advert", advert);
+        result.put("buttonToApply", buttonString);
+        result.put("advert", HibernateUtils.unproxy(advert));
 
         return new Gson().toJson(result);
     }
 
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
-    public String saveProgramAdvert(@ModelAttribute Program program, BindingResult programResult,
-                    @ModelAttribute(value = "programAdvert") @Valid ProgramAdvert programAdvert, BindingResult result) {
-        if (program == null) {
-            programResult.reject("dropdown.radio.select.none");
-        }
+    @ResponseBody
+    public String saveProgramAdvert(String programCode, @Valid ProgramAdvert programAdvert, BindingResult result, HttpServletRequest request) {
+        Map<String, Object> map = Maps.newHashMap();
 
-        if (!programResult.hasErrors() && !result.hasErrors()) {
+        Program program = programsService.getProgramByCode(programCode);
+
+        if (programCode == null) {
+            map.put("program", "Invalid program selected.");
+        }
+        
+        if(result.hasErrors()){
+            for (FieldError error : result.getFieldErrors()) {
+                map.put(error.getField(), messageSource.getMessage(error, request.getLocale()));
+            }
+        }
+        
+        if(map.isEmpty()){
             program.setAdvert(programAdvert);
             programsService.save(program);
+            map.put("success", "true");
         }
 
-        return PROSPECTUS_PAGE;
+        Gson gson = new Gson();
+        return gson.toJson(map);
     }
 
 }

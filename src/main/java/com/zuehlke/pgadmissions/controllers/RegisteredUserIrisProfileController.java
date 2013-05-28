@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -20,7 +22,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/users")
-public class RegisteredUserUpiController {
+public class RegisteredUserIrisProfileController {
 
     private final UclIrisProfileService irisService;
 
@@ -29,20 +31,19 @@ public class RegisteredUserUpiController {
     private final MessageSource messageSource;
     
     @Autowired
-    public RegisteredUserUpiController(final UclIrisProfileService irisService, final UserService userService,
-            final MessageSource messageSource) {
+    public RegisteredUserIrisProfileController(final UclIrisProfileService irisService, final UserService userService, final MessageSource messageSource) {
         this.irisService = irisService;
         this.userService = userService;
         this.messageSource = messageSource;
     }
     
-    public RegisteredUserUpiController() {
+    public RegisteredUserIrisProfileController() {
         this(null, null, null);
     }
     
     @RequestMapping(value = "/IRIS/{upi}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> upiExists(final @PathVariable String upi) {
+    public Map<String, Object> irisProfileExists(final @PathVariable String upi) {
         Map<String, Object> result = new HashMap<String, Object>();
         
         if (!StringUtils.isAlphanumeric(upi)) {
@@ -60,9 +61,10 @@ public class RegisteredUserUpiController {
         return Collections.<String, Object>singletonMap("success", true);
     }
     
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{userid}/IRIS/{upi}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> getUpi(final @PathVariable String userid, final @PathVariable String upi) {
+    public Map<String, Object> setIrisProfile(final @PathVariable String userid, final @PathVariable String upi) {
         Map<String, Object> result = new HashMap<String, Object>();
         RegisteredUser currentUser = userService.getCurrentUser();
         RegisteredUser userToUpdate = userService.getUser(Integer.valueOf(userid));
@@ -83,8 +85,22 @@ public class RegisteredUserUpiController {
             return result;
         }
         
-        userToUpdate.setUpi(upi);
-        userService.save(userToUpdate);
-        return Collections.<String, Object>singletonMap("success", true);
+        List<RegisteredUser> usersWithUpi = userService.getUsersWithUpi(upi);
+        List<RegisteredUser> linkedAccounts = currentUser.getAllLinkedAccounts();
+        List<RegisteredUser> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
+        
+        if (intersection.isEmpty()) {
+            userToUpdate.setUpi(upi);
+            userService.save(userToUpdate);
+            for (RegisteredUser linkedAccount : linkedAccounts) {
+                linkedAccount.setUpi(upi);
+                userService.save(linkedAccount);
+            }
+            return Collections.<String, Object>singletonMap("success", true);            
+        } else {
+            result.put("success", false);
+            result.put("irisProfile", messageSource.getMessage("account.iris.upi.registered", null, null));
+            return result;
+        }
     }
 }

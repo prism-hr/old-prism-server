@@ -51,6 +51,13 @@ public class RegisteredUserBuilder {
 
     private String originalApplicationQueryString;
 
+    private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
+    
+    public RegisteredUserBuilder linkedAccounts(final RegisteredUser... user) {
+        linkedAccounts.addAll(Arrays.asList(user));
+        return this;
+    }
+    
     public RegisteredUserBuilder upi(final String upi) {
         this.upi = upi;
         return this;
@@ -246,7 +253,10 @@ public class RegisteredUserBuilder {
         user.setDirectToUrl(directURL);
         user.setOriginalApplicationQueryString(originalApplicationQueryString);
         user.setFiltering(filtering);
+        
         user.setUpi(upi);
+        user.setLinkedAccounts(linkedAccounts);
+        
         return user;
     }
 }

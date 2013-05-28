@@ -37,13 +37,13 @@ public class ApplicationsService {
 
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
-    private final ApplicationFormDAO applicationFormDAO;
+    private ApplicationFormDAO applicationFormDAO;
 
-    private final ApplicationFormListDAO applicationFormListDAO;
+    private ApplicationFormListDAO applicationFormListDAO;
 
-    private final MailSendingService mailService;
+    private MailSendingService mailService;
     
-    private final BadgeDAO badgeDAO;
+    private BadgeDAO badgeDAO;
     
     public ApplicationsService() {
         this(null, null, null, null);

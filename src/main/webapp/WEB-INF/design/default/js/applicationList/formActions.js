@@ -528,9 +528,6 @@ function clearCurrentFilters(shouldApplyChanges){
 	for ( var i = 1; i < filters.length; i++) {
 		$(filters[i]).remove();
 	}
-	
-	$('input:radio[name=disjunctionSwitch]')[0].checked=true;
-	$('input:radio[name=disjunctionSwitch]')[1].checked=false;
 
 	clearFilter(filters[0]);
 	if (shouldApplyChanges) {
@@ -543,6 +540,7 @@ function clearFilter(filter){
 	$(filter).find(".selectPredicate").empty();
 	$(filter).find(".filterInput").val('');
 	inputBackNormal($(filter));
+	checkSwich();
 }
 
 function cleanUpFilterIds(){

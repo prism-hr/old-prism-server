@@ -78,6 +78,7 @@ public class ConfigurationService {
         for (Person person : getAllRegistryUsers()) {
             if (!containsRegistryUser(person, registryContacts)) {
                 personDAO.delete(person);
+                removeAdmitterRoleToUser(person.getEmail());
             }
         }
         
@@ -103,6 +104,14 @@ public class ConfigurationService {
         reminderIntervalDAO.save(reminderInterval);
     }
     
+    private void removeAdmitterRoleToUser(String email) {
+        RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(email);
+        if (user!=null) {
+            user.removeRole(Authority.ADMITTER);
+            userDAO.save(user);
+        }
+    }
+
     private void saveRegistryContactsAsUsers(final Person registryContact, RegisteredUser requestedBy) {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(registryContact.getEmail());
         PendingRoleNotification admitterNotification = new PendingRoleNotification();

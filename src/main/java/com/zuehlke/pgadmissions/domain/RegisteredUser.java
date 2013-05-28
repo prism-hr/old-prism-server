@@ -23,6 +23,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -739,5 +741,14 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Override
     public String toString() {
         return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName, lastName, email, enabled);
+    }
+
+    public void removeRole(final Authority authority) {
+        CollectionUtils.filter(roles, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                return ((Role)object).getAuthorityEnum() != authority;
+            }
+        });
     }
 }

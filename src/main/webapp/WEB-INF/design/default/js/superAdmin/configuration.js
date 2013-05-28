@@ -45,6 +45,7 @@ $(document).ready(function()
 
 		}
 	});
-	
+	/* Tabs */
+	generalTabing('#configBox');
 });
-	
+

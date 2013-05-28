@@ -44,7 +44,8 @@ public class UserService {
     }
 
     @Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, UserFactory userFactory, EncryptionUtils encryptionUtils, MailSendingService mailService) {
+    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO,
+            UserFactory userFactory, EncryptionUtils encryptionUtils, MailSendingService mailService) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.filteringDAO = filteringDAO;
@@ -415,5 +416,9 @@ public class UserService {
 
     public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
+    }
+    
+    public List<RegisteredUser> getUsersWithUpi(final String upi) {
+        return userDAO.getUsersWithUpi(upi);
     }
 }

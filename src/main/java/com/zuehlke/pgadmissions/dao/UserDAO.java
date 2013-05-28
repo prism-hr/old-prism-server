@@ -78,6 +78,11 @@ public class UserDAO {
                 .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.WITHDRAWN)))
                 .setProjection(Projections.rowCount()).uniqueResult();
     }
+    
+    public List<RegisteredUser> getUsersWithUpi(final String upi) {
+        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .add(Restrictions.eq("upi", upi)).list();
+    }
 
     public List<RegisteredUser> getUsersForProgram(Program program) {
         final Map<Integer, RegisteredUser> users = new HashMap<Integer, RegisteredUser>();

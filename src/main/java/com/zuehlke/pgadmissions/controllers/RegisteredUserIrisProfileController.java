@@ -13,10 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientPrivilegesException;
 import com.zuehlke.pgadmissions.services.UclIrisProfileService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -41,12 +41,16 @@ public class RegisteredUserIrisProfileController {
         this(null, null, null);
     }
     
+    private boolean isNotValidUpi(final String upi) {
+        return !StringUtils.isAlphanumeric(upi) || StringUtils.length(upi) != 7;
+    }
+    
     @RequestMapping(value = "/IRIS/{upi}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Map<String, Object> irisProfileExists(final @PathVariable String upi) {
         Map<String, Object> result = new HashMap<String, Object>();
         
-        if (!StringUtils.isAlphanumeric(upi)) {
+        if (isNotValidUpi(upi)) {
             result.put("success", false);
             result.put("irisProfile", messageSource.getMessage("account.iris.upi.invalid", null, null));
             return result;
@@ -62,18 +66,13 @@ public class RegisteredUserIrisProfileController {
     }
     
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/{userid}/IRIS/{upi}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/IRIS/", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> setIrisProfile(final @PathVariable String userid, final @PathVariable String upi) {
+    public Map<String, Object> setIrisProfileForCurrentUser(final @RequestParam String upi) {
         Map<String, Object> result = new HashMap<String, Object>();
         RegisteredUser currentUser = userService.getCurrentUser();
-        RegisteredUser userToUpdate = userService.getUser(Integer.valueOf(userid));
         
-        if (!currentUser.getId().equals(userToUpdate.getId())) {
-            throw new InsufficientPrivilegesException();
-        }
-        
-        if (!StringUtils.isAlphanumeric(upi)) {
+        if (isNotValidUpi(upi)) {
             result.put("success", false);
             result.put("irisProfile", messageSource.getMessage("account.iris.upi.invalid", null, null));
             return result;
@@ -90,8 +89,8 @@ public class RegisteredUserIrisProfileController {
         List<RegisteredUser> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
         
         if (intersection.isEmpty()) {
-            userToUpdate.setUpi(upi);
-            userService.save(userToUpdate);
+            currentUser.setUpi(upi);
+            userService.save(currentUser);
             for (RegisteredUser linkedAccount : linkedAccounts) {
                 linkedAccount.setUpi(upi);
                 userService.save(linkedAccount);

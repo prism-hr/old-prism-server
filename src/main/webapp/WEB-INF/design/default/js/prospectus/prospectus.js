@@ -69,6 +69,43 @@ $(document).ready(function(){
 		$("clear-go").bind('click', function(){
 			clearAll();
 		});
+		
+		$("#save-upi-go").bind('click', function() {
+			$("#irisSection").find("div.alert").remove();
+			$('#iris-profile-modal').modal();
+			$("#iris-profile-modal-iframe").attr("src", "http://iris.ucl.ac.uk/iris/browse/profile?upi=" + $('#upi').val());
+		});
+		
+		$("#iris-profile-modal-confirm-btn").bind('click', function() {
+			$('#iris-profile-modal').modal('hide');
+			$("#irisSection").find("div.alert").remove();
+			$.ajax({
+				type: 'POST',
+				dataType: "json",
+				statusCode: {
+					401: function() { window.location.reload(); },
+					500: function() { window.location.href = "/pgadmissions/error"; },
+					404: function() { window.location.href = "/pgadmissions/404"; },
+					400: function() { window.location.href = "/pgadmissions/400"; },                  
+					403: function() { window.location.href = "/pgadmissions/404"; }
+				},
+				url: "/pgadmissions/users/IRIS/",
+				data: {
+					upi : $('#upi').val()
+				}, 
+				success: function(data) {
+					if (data.success) {
+						alert("success");
+					} else {
+						if (data.irisProfile != null) {
+		                    $('#upi').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.irisProfile  + '</div>');
+		                }
+					}
+				},
+				complete: function() {
+				}
+			});
+		});
 });
 
 function clearAll(){

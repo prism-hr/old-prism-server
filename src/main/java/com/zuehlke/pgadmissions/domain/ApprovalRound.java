@@ -185,4 +185,9 @@ public class ApprovalRound implements Serializable {
         this.recommendedConditions = recommendedConditions;
     }
 
+    public boolean hasPrimarySupervisorResponded(){
+        Supervisor primarySupervisor = getPrimarySupervisor();
+        return primarySupervisor != null && primarySupervisor.hasResponded();
+    }
+    
 }

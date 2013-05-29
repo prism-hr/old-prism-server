@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring />
 <ul class="tabs">
   <li><a href="#accountDetails">Account Details</a></li>
-  <li><a href="#linkAccounts">Link Accounts</a></li>
+  <li><a href="#linkAccountstab">Link Accounts</a></li>
 </ul>
 <div id="accountDetails" class="tab-page">
 	<section id="accountDetailsSection" class="form-rows">
@@ -128,7 +128,7 @@
     </section>
     </div>
 
-	<div id="linkAccounts" class="tab-page">
+	<div id="linkAccountstab" class="tab-page">
     <section id="linkAcountDetailsSection" class="form-rows">
         <h2 class="no-arrow">Linked Accounts</h2>
         <div id="linkAccountsSection">   

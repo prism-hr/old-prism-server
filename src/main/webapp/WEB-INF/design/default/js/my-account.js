@@ -70,7 +70,7 @@ $(document).ready(function() {
              complete: function() {
                  //$('#ajaxloader').fadeOut('fast');
 				 /* Tabs */
-				 generalTabing('#accountdetails');
+				 generalTabing();
              }
         });
     });
@@ -111,7 +111,7 @@ $(document).ready(function() {
              complete: function() {
                  //$('#ajaxloader').fadeOut('fast');
 				 /* Tabs */
-			    generalTabing('#accountdetails');
+			    generalTabing();
              }
         });
     });
@@ -141,7 +141,7 @@ function getAccountDetailsSection() {
             $('#accountdetails').html(data);
             addToolTips();
 			/* Tabs */
-			generalTabing('#accountdetails');
+			generalTabing();
         },
         complete: function() {
            $('#ajaxloader').fadeOut('fast');

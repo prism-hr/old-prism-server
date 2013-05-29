@@ -34,7 +34,8 @@ $(document).ready(function()
 			if ($('#registryUsers').length > 0) {
 				updateRegistryForm();
 			}
-
+			/* Tabs */
+			generalTabing();
 			// -----------------------------------------------------------------------------
 			// Restrict some text fields to numbers only.
 			// -----------------------------------------------------------------------------
@@ -45,7 +46,6 @@ $(document).ready(function()
 
 		}
 	});
-	/* Tabs */
-	generalTabing('#configBox');
+	
 });
 

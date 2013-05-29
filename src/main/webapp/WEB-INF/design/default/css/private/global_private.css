@@ -369,7 +369,8 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 #programme-details .row label.checkbox { margin-left: 1em; min-width: 0; }
 #programme-details .half { width: 50%; float: left; }
 #programme-details .icon, #programme-details .actions { float: right; }
-
+#programme-details .cdate {display: inline-block; font-weight: bold; position: relative; left: 155px;}
+#programme-details .cdate span{display: inline-block; font-weight: normal; margin-left: 40px;}
 
 
 .ui-datepicker { box-shadow: 0px 3px 6px #999; font-size: 9pt !important; }

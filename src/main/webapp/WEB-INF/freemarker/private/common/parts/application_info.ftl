@@ -35,16 +35,20 @@
   <div class="row">
     <label>Submitted</label> 
     ${(applicationForm.submittedDate?string("dd MMM yyyy"))!"In Progress"}
+    <#if (applicationForm.batchDeadline)?has_content>
+        <div class="cdate">Closing date<span>${applicationForm.batchDeadline?string("dd MMM yyyy")}</span></div>
+    </#if>   
   </div>
   <div class="row">
     <label>Programme</label>
-    <#if applicationForm.researchHomePage??>
-      <a href="${applicationForm.researchHomePage}">${applicationForm.program.code} - ${applicationForm.program.title}</a>
-    <#else>
       ${applicationForm.program.code} - ${applicationForm.program.title}
-    </#if>
-    
-  </div>    
+  </div> 
+  <#if (applicationForm.projectTitle)?has_content>
+  <div class="row">
+    <label>Project</label>
+     ${(applicationForm.projectTitle?html)}
+  </div>
+  </#if>
 
 </div>
 

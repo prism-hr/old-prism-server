@@ -21,6 +21,7 @@ table#appliList th.sortable.desc span { background-image: url(../../images/icon_
 /* Form fields inside the table. */
 td.applicant-name { white-space: nowrap; } /* name on one line. */
 td.applicant-name .applicant-id { display: block; font-size: 10px; }
+td.program-title .project { display: block; font-size: 10px; }
 td.status { text-align: center !important; }
 
 

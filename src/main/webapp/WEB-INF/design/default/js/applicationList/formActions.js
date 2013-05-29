@@ -74,6 +74,7 @@ $(document).ready(function() {
 						applicationDetails.find('[data-field=skype] span').text(applicant.skype);
 						
 						applicationDetails.find('[data-field=application-status]').text(data.applicationStatus);
+						
 					},
 					complete : function() {
 						$(element).find('.loading').removeClass('loading');

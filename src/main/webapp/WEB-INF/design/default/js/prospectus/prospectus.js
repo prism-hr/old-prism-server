@@ -71,14 +71,14 @@ $(document).ready(function(){
 		});
 		
 		$("#save-upi-go").bind('click', function() {
-			$("#irisSection").find("div.alert").remove();
+			$("#irisSection").find("div.alert-error").remove();
 			$('#iris-profile-modal').modal();
 			$("#iris-profile-modal-iframe").attr("src", "http://iris.ucl.ac.uk/iris/browse/profile?upi=" + $('#upi').val());
 		});
 		
 		$("#iris-profile-modal-confirm-btn").bind('click', function() {
 			$('#iris-profile-modal').modal('hide');
-			$("#irisSection").find("div.alert").remove();
+			$("#irisSection").find("div.alert-error").remove();
 			$.ajax({
 				type: 'POST',
 				dataType: "json",
@@ -95,7 +95,7 @@ $(document).ready(function(){
 				}, 
 				success: function(data) {
 					if (data.success) {
-						alert("success");
+						$('#upi').val("");
 					} else {
 						if (data.irisProfile != null) {
 		                    $('#upi').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.irisProfile  + '</div>');

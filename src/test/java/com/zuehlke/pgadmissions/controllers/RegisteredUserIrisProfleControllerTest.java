@@ -85,6 +85,7 @@ public class RegisteredUserIrisProfleControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(userServiceMock.getUsersWithUpi(upi)).andReturn(new ArrayList<RegisteredUser>());
         userServiceMock.save(user);
+        userServiceMock.save(user);
         userServiceMock.save(linkedUser);
         EasyMock.replay(irisServiceMock, userServiceMock);
         Map<String, Object> resultMap = controller.setIrisProfileForCurrentUser(upi);

@@ -48,7 +48,20 @@
 <!--[if (gte IE 9)|!(IE)]><!-->
 <body>
 <!--<![endif]--> 
-
+<!-- Modal -->
+<div id="previewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3 id="previewModalLabel"></h3>
+  </div>
+  <div id="previewModalContent" class="modal-body"> 
+    <!-- Modal content --> 
+    
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
 <!-- Wrapper Starts -->
 <div id="wrapper"> <#include "/private/common/global_header.ftl"/> 
   
@@ -72,21 +85,6 @@
           <div id="configsection" class="tab-page"></div>
           <#if user.isInRole('SUPERADMINISTRATOR') >
           <div id="edit-template-section" class="tab-page"> 
-            
-            <!-- Modal -->
-            <div id="previewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="previewModalLabel"></h3>
-              </div>
-              <div id="previewModalContent" class="modal-body"> 
-                <!-- Modal content --> 
-                
-              </div>
-              <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-              </div>
-            </div>
             <section class="form-rows">
               <h2>Manage Email Templates</h2>
               <div>

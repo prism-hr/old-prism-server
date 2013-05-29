@@ -910,13 +910,13 @@ function checkIfErrors() {
 	} 
 }
 /* general Tabs funcionality */
-function generalTabing(id) {
+function generalTabing() {
 	// generalTabing('#id');
 	// #id = id of the div tabs holder
-
+	id = $.find('.tabbox');
 	$.each($('.tab-page'), function() {
 		$('.tabs li').removeClass('current');
-		if ( $(this).find('.alert-error').length > 0) {
+		if ( $(this).find('.alert-error').length > 0 ) {
 			$(id).children('div').hide();
 			$(this).show();
 			$('.tabs li:nth-child('+$(this).index()+')').addClass('current');

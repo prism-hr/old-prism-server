@@ -67,11 +67,10 @@ public class RegisteredUserIrisProfleControllerTest {
     @Test
     public void shouldNotSetIrisProfileIfUpiIsNotAlphanumeric() {
         RegisteredUser user = new RegisteredUserBuilder().id(10).build();
-        EasyMock.expect(userServiceMock.getUser(user.getId())).andReturn(user);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(messageSourceMock.getMessage("account.iris.upi.invalid", null, null)).andReturn("account.iris.upi.invalid");
         EasyMock.replay(messageSourceMock, userServiceMock);
-        Map<String, Object> resultMap = controller.setIrisProfile(String.valueOf(user.getId()), "http://www.evil.org");
+        Map<String, Object> resultMap = controller.setIrisProfileForCurrentUser("http://www.evil.org");
         EasyMock.verify(messageSourceMock, userServiceMock);
         Assert.assertFalse((Boolean) resultMap.get("success")); 
         Assert.assertEquals("account.iris.upi.invalid", resultMap.get("irisProfile"));
@@ -83,13 +82,12 @@ public class RegisteredUserIrisProfleControllerTest {
         RegisteredUser linkedUser = new RegisteredUserBuilder().id(11).build();
         RegisteredUser user = new RegisteredUserBuilder().id(10).linkedAccounts(linkedUser).build();
         EasyMock.expect(irisServiceMock.profileExists(upi)).andReturn(true);
-        EasyMock.expect(userServiceMock.getUser(user.getId())).andReturn(user);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(userServiceMock.getUsersWithUpi(upi)).andReturn(new ArrayList<RegisteredUser>());
         userServiceMock.save(user);
         userServiceMock.save(linkedUser);
         EasyMock.replay(irisServiceMock, userServiceMock);
-        Map<String, Object> resultMap = controller.setIrisProfile(String.valueOf(user.getId()), upi);
+        Map<String, Object> resultMap = controller.setIrisProfileForCurrentUser(upi);
         EasyMock.verify(irisServiceMock, userServiceMock);
         Assert.assertTrue((Boolean) resultMap.get("success")); 
         Assert.assertEquals(upi, user.getUpi());
@@ -102,12 +100,11 @@ public class RegisteredUserIrisProfleControllerTest {
         RegisteredUser impersonator = new RegisteredUserBuilder().id(10).build();
         RegisteredUser existingIrisProfile = new RegisteredUserBuilder().id(11).upi(upi).build();
         EasyMock.expect(irisServiceMock.profileExists(upi)).andReturn(true);
-        EasyMock.expect(userServiceMock.getUser(impersonator.getId())).andReturn(impersonator);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(impersonator);
         EasyMock.expect(userServiceMock.getUsersWithUpi(upi)).andReturn(Arrays.asList(existingIrisProfile));
         EasyMock.expect(messageSourceMock.getMessage("account.iris.upi.registered", null, null)).andReturn("account.iris.upi.registered");
         EasyMock.replay(irisServiceMock, userServiceMock, messageSourceMock);
-        Map<String, Object> resultMap = controller.setIrisProfile(String.valueOf(impersonator.getId()), upi);
+        Map<String, Object> resultMap = controller.setIrisProfileForCurrentUser(upi);
         EasyMock.verify(irisServiceMock, userServiceMock, messageSourceMock);
         Assert.assertFalse((Boolean) resultMap.get("success")); 
         Assert.assertEquals("account.iris.upi.registered", resultMap.get("irisProfile"));

@@ -79,3 +79,11 @@
 #prospectus .field>label {
   margin-top: 4px;
 }
+#iris-profile-modal {
+  left:43%;
+  width: 820px; 
+}
+#iris-profile-modal-iframe {
+    width:785px;
+    height: 390px;
+}

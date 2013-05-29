@@ -540,6 +540,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return isInterviewerOfProgram(programme, this);
     }
 
+    public boolean isApproverInProgram(final Program programme) {
+        return isApproverInProgramme(programme, this);
+    }
+
     public boolean isViewerOfProgramme(final ApplicationForm form) {
         return isViewerOfProgramme(form, this);
     }

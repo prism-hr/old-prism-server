@@ -8,12 +8,8 @@ import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.UNSUBM
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.WITHDRAWN;
 
-import java.util.Date;
-
-import org.apache.commons.lang.time.DateUtils;
-
-import com.ibm.icu.util.Calendar;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -116,8 +112,7 @@ public enum ApplicationFormAction {
             if (application.getStatus() == REVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(COMPLETE_REVIEW_STAGE);
                 ReviewRound reviewRound = application.getLatestReviewRound();
-                Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-                if(reviewRound.hasAllReviewersResponded() || today.after(application.getDueDate())){
+                if (reviewRound.hasAllReviewersResponded() || application.isDueDateExpired()) {
                     actions.setRequiresAttention(true);
                 }
             }
@@ -147,8 +142,12 @@ public enum ApplicationFormAction {
     COMPLETE_INTERVIEW_STAGE("validate", "Complete Interview Stage", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
+            Interview interview = application.getLatestInterview();
             if (application.getStatus() == INTERVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(COMPLETE_INTERVIEW_STAGE);
+                if (interview.hasAllInterviewersProvidedFeedback() || application.isDueDateExpired()) {
+                    actions.setRequiresAttention(true);
+                }
             }
         }
     }), //
@@ -197,15 +196,17 @@ public enum ApplicationFormAction {
             }
         }
     }), //
-    APPROVE("validate", "Approve", new ActionPredicate() {
+    COMPLETE_APPROVAL_STAGE("validate", "Complete Approval Stage", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == APPROVAL) {
-                if (user.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
-                    actions.addAction(APPROVE);
-                    actions.setRequiresAttention(true);
-                } else if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-                    actions.addAction(APPROVE);
+                if (user.isApproverInProgram(application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR)) {
+                    actions.addAction(COMPLETE_APPROVAL_STAGE);
+                   
+                    ApprovalRound approvalRound = application.getLatestApprovalRound();
+                    if (approvalRound.hasPrimarySupervisorResponded() || application.isDueDateExpired()) {
+                        actions.setRequiresAttention(true);
+                    }
                 }
             }
         }

@@ -49,6 +49,7 @@ public class ApplicationFormListDAO {
             .attentionFlag()
             .forUser(user)
             .filter(filtering)
+            .useDisjunction(filtering.getUseDisjunction())
             .build();
 
         List<Integer> applicationIds = (List<Integer>) criteria.list();

@@ -234,7 +234,8 @@ public class ApplicationFormActionTest {
         EasyMock.expect(applicationMock.hasConfirmElegibilityComment()).andReturn(false);
 
         EasyMock.expect(applicationMock.getAdminRequestedRegistry()).andReturn(anyRequester);
-        EasyMock.expect(applicationMock.getStatus()).andReturn(ApplicationFormStatus.APPROVAL).anyTimes();
+        EasyMock.expect(applicationMock.isSubmitted()).andReturn(true);
+        EasyMock.expect(applicationMock.isTerminated()).andReturn(false);
 
         EasyMock.replay(userMock, applicationMock);
         CONFIRM_ELIGIBILITY.applyAction(actionsDefinitions, userMock, applicationMock, null);
@@ -427,24 +428,24 @@ public class ApplicationFormActionTest {
     public void shouldAddCompleteReviewStageAction() {
         Reviewer reviewer = new ReviewerBuilder().review(null).build();
         ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
-        
+
         EasyMock.expect(applicationMock.getStatus()).andReturn(REVIEW);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
         EasyMock.expect(applicationMock.getLatestReviewRound()).andReturn(reviewRound);
         EasyMock.expect(applicationMock.isDueDateExpired()).andReturn(false);
-        
+
         EasyMock.replay(userMock, applicationMock);
         COMPLETE_REVIEW_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, false, COMPLETE_REVIEW_STAGE);
     }
-    
+
     @Test
     public void shouldAddCompleteReviewStageActionAndSetAttentionFlagIfAllReviewersResponded() {
         Reviewer reviewer = new ReviewerBuilder().review(new ReviewComment()).build();
         ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
-        
+
         EasyMock.expect(applicationMock.getStatus()).andReturn(REVIEW);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
         EasyMock.expect(applicationMock.getLatestReviewRound()).andReturn(reviewRound);
@@ -460,7 +461,7 @@ public class ApplicationFormActionTest {
     public void shouldAddCompleteReviewStageActionAndSetAttentionFlagIfDueDateHasExpired() {
         Reviewer reviewer = new ReviewerBuilder().review(null).build();
         ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
-        
+
         EasyMock.expect(applicationMock.getStatus()).andReturn(REVIEW);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
         EasyMock.expect(applicationMock.getLatestReviewRound()).andReturn(reviewRound);
@@ -473,7 +474,6 @@ public class ApplicationFormActionTest {
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_REVIEW_STAGE);
     }
 
-    
     @Test
     public void shouldNotAddCompleteReviewStageActionIfHasNotAdminRights() {
         EasyMock.expect(applicationMock.getStatus()).andReturn(REVIEW);
@@ -617,7 +617,25 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false, COMPLETE_INTERVIEW_STAGE);
     }
-    
+
+    @Test
+    public void shouldAddCompleteInterviewStageActionIfIsApplicationAdministrator() {
+        Interviewer interviewer = new InterviewerBuilder().build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).interviewers(interviewer).build();
+
+        EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
+        EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
+        EasyMock.expect(applicationMock.isDueDateExpired()).andReturn(false);
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
+        EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        COMPLETE_INTERVIEW_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false, COMPLETE_INTERVIEW_STAGE);
+    }
+
     @Test
     public void shouldAddCompleteInterviewStageActionAndSetAttentionFlagIfAllInterviewersResponded() {
         InterviewComment comment = new InterviewComment();
@@ -651,7 +669,7 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_INTERVIEW_STAGE);
     }
-    
+
     @Test
     public void shouldNotAddCompleteInterviewStageActionIfNoAdminRights() {
         Interviewer interviewer = new InterviewerBuilder().build();
@@ -660,6 +678,7 @@ public class ApplicationFormActionTest {
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
         EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
+        EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(false);
 
         EasyMock.replay(userMock, applicationMock);
         COMPLETE_INTERVIEW_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);
@@ -700,10 +719,45 @@ public class ApplicationFormActionTest {
 
     @Test
     public void shouldAddConfirmInterviewTimeAction() {
-        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).build();
+        InterviewParticipant participant = new InterviewParticipantBuilder().responded(false).build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).participants(participant).build();
 
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
         EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
+        EasyMock.expect(applicationMock.isDueDateExpired()).andReturn(false);
+        EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_INTERVIEW_TIME.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false, CONFIRM_INTERVIEW_TIME);
+    }
+
+    @Test
+    public void shouldAddConfirmInterviewTimeActionAndSetAttentionFlagIfAllParticipantsHaveResponded() {
+        InterviewParticipant participant = new InterviewParticipantBuilder().responded(true).build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).participants(participant).build();
+
+        EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
+        EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
+        EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_INTERVIEW_TIME.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, true, CONFIRM_INTERVIEW_TIME);
+    }
+
+    @Test
+    public void shouldAddConfirmInterviewTimeActionAndSetAttentionFlagIfApplicationDueDateHasExpired() {
+        InterviewParticipant participant = new InterviewParticipantBuilder().responded(false).build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).participants(participant).build();
+
+        EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
+        EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
+        EasyMock.expect(applicationMock.isDueDateExpired()).andReturn(true);
         EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(true);
 
         EasyMock.replay(userMock, applicationMock);
@@ -872,7 +926,7 @@ public class ApplicationFormActionTest {
     @Test
     public void shouldAddAddInterviewFeedbackAction() {
         Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-        
+
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).dueDate(today).build();
 
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
@@ -891,7 +945,7 @@ public class ApplicationFormActionTest {
     public void shouldNotAddAddInterviewFeedbackActionIfHasAlreadyResponded() {
         Date today = DateUtils.truncate(new Date(), Calendar.DATE);
         Date yesterday = DateUtils.addDays(today, -1);
-        
+
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).dueDate(yesterday).build();
 
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
@@ -963,21 +1017,22 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false);
     }
+
     @Test
     public void shouldNotAddAddInterviewFeedbackActionIfInterviewHasNotTakenPlaceYet() {
         Date today = DateUtils.truncate(new Date(), Calendar.DATE);
         Date tomorrow = DateUtils.addDays(today, 1);
-        
+
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).dueDate(tomorrow).build();
-        
+
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
         EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
         EasyMock.expect(userMock.isInterviewerOfApplicationForm(applicationMock)).andReturn(true);
-        
+
         EasyMock.replay(userMock, applicationMock);
         ADD_INTERVIEW_FEEDBACK.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
-        
+
         assertActionsDefinitions(actionsDefinitions, false);
     }
 
@@ -1052,7 +1107,7 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false, COMPLETE_APPROVAL_STAGE);
     }
-    
+
     @Test
     public void shouldAddApproveActionIfApproverAndSetAttentionFlagIfPrimarySupervisorResponded() {
         Program program = new Program();
@@ -1070,7 +1125,7 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_APPROVAL_STAGE);
     }
-    
+
     @Test
     public void shouldAddApproveActionIfApproverAndSetAttentionFlagIfDueDateHasExpired() {
         Program program = new Program();

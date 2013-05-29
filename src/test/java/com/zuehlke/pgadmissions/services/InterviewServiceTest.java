@@ -155,11 +155,15 @@ public class InterviewServiceTest {
     public void shouldMoveToInterviewIfInReview() throws ParseException {
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
+        StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
+        
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock);
+        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
         interviewService.moveApplicationToInterview(interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
 
     }
 
@@ -167,11 +171,15 @@ public class InterviewServiceTest {
     public void shouldMoveToInterviewIfInInterview() throws ParseException {
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
+        StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
+        
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock);
+        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
         interviewService.moveApplicationToInterview(interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
 
     }
 

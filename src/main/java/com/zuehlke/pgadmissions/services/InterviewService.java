@@ -52,7 +52,8 @@ public class InterviewService {
 
     @Autowired
     public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
-            InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO, final StageDurationService stageDurationService) {
+            InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO,
+            final StageDurationService stageDurationService) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;
@@ -94,8 +95,8 @@ public class InterviewService {
 
         if (interview.isScheduled() && !interview.getTakenPlace()) {
             sendConfirmationEmails(interview);
-        } 
-        
+        }
+
         if (interview.isScheduling()) {
             createParticipants(interview);
             mailService.sendInterviewVoteNotificationToInterviewerParticipants(interview);
@@ -108,20 +109,17 @@ public class InterviewService {
     }
 
     private void assignInterviewDueDate(final Interview interview, ApplicationForm applicationForm) {
-        if (interview.isScheduled()) {
-            DateTime baseDate = interview.getTakenPlace() ? new DateTime() : new DateTime(interview.getInterviewDueDate());
-            StageDuration duration = stageDurationService.getByStatus(ApplicationFormStatus.INTERVIEW);
-            Date dueDate = DateUtils.addWorkingDaysInMinutes(DateUtils.truncateToDay(baseDate.toDate()), duration.getDurationInMinutes());
-            applicationForm.setDueDate(dueDate);
-        }
+        DateTime baseDate = interview.getTakenPlace() || !interview.isScheduled() ? new DateTime() : new DateTime(interview.getInterviewDueDate());
+        StageDuration duration = stageDurationService.getByStatus(ApplicationFormStatus.INTERVIEW);
+        Date dueDate = DateUtils.addWorkingDaysInMinutes(DateUtils.truncateToDay(baseDate.toDate()), duration.getDurationInMinutes());
+        applicationForm.setDueDate(dueDate);
     }
-
 
     public void postVote(InterviewParticipant interviewParticipant, InterviewVoteComment interviewVoteComment) {
         interviewParticipant.setResponded(true);
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
-        
+
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 
@@ -140,7 +138,7 @@ public class InterviewService {
         interview.setInterviewTime(timeslot.getStartTime());
         interview.setStage(InterviewStage.SCHEDULED);
         interviewDAO.save(interview);
-        
+
         assignInterviewDueDate(interview, interview.getApplication());
         removeApplicationAdministratorIfExists(interview);
 
@@ -170,7 +168,6 @@ public class InterviewService {
             log.warn("{}", e);
         }
     }
-    
 
     private void removeApplicationAdministratorIfExists(final Interview interview) {
         ApplicationForm application = interview.getApplication();

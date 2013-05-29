@@ -28,9 +28,8 @@ public class UclIrisProfileService {
                 return displayNameDiv.text();                
             }
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug(e.getMessage(), e);
-            }
+            log.warn(IRIS_PROFILE_URL + StringUtils.upperCase(upi));
+            log.warn(e.getMessage(), e);
         }
         return StringUtils.EMPTY;
     }

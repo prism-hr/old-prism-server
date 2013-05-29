@@ -76,6 +76,24 @@ public class InterviewTest {
         Interview interview = new InterviewBuilder().interviewers(interviewer1, interviewer2).build();
         assertFalse(interview.hasAllInterviewersProvidedFeedback());
     }
+
+    @Test
+    public void shouldReturnTrueIfAllParticipantsHasResponded() {
+        InterviewParticipant participant1 = new InterviewParticipantBuilder().responded(true).build();
+        InterviewParticipant participant2 = new InterviewParticipantBuilder().responded(true).build();
+
+        Interview interview = new InterviewBuilder().participants(participant1, participant2).build();
+        assertTrue(interview.hasAllParticipantsProvidedAvailability());
+    }
+    
+    @Test
+    public void shouldReturnFalseIfAtLeastOneParticipantHasNotResponded() {
+        InterviewParticipant participant1 = new InterviewParticipantBuilder().responded(true).build();
+        InterviewParticipant participant2 = new InterviewParticipantBuilder().responded(false).build();
+
+        Interview interview = new InterviewBuilder().participants(participant1, participant2).build();
+        assertFalse(interview.hasAllParticipantsProvidedAvailability());
+    }
     
     @Test
     public void shouldExpiredReturnTrueIfDueDateWasYesterday() {

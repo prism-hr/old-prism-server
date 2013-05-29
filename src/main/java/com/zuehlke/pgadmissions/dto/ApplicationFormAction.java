@@ -2,11 +2,9 @@ package com.zuehlke.pgadmissions.dto;
 
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPROVAL;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REJECTED;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REVIEW;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.WITHDRAWN;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -66,13 +64,13 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (user.isInRole(Authority.ADMITTER) && !application.hasConfirmElegibilityComment()) {
                 actions.addAction(CONFIRM_ELIGIBILITY);
-                if (application.getAdminRequestedRegistry() != null && (application.getStatus() != WITHDRAWN && application.getStatus() != REJECTED)) {
+                if (application.getAdminRequestedRegistry() != null && (application.isSubmitted() && !application.isTerminated())) {
                     actions.setRequiresAttention(true);
                 }
             }
         }
     }), //
-    ADD_REFERENCE("reference", "Add reference", new ActionPredicate() {
+    ADD_REFERENCE("reference", "Provide Reference", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.isSubmitted() && !application.isTerminated() && user.isRefereeOfApplicationForm(application)
@@ -118,7 +116,7 @@ public enum ApplicationFormAction {
             }
         }
     }), //
-    ADD_REVIEW("review", "Add review", new ActionPredicate() {
+    ADD_REVIEW("review", "Provide Review", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == REVIEW && user.isReviewerInLatestReviewRoundOfApplicationForm(application)
@@ -143,7 +141,8 @@ public enum ApplicationFormAction {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
-            if (application.getStatus() == INTERVIEW && nextStatus == null && user.hasAdminRightsOnApplication(application)) {
+            if (application.getStatus() == INTERVIEW && nextStatus == null
+                    && (user.hasAdminRightsOnApplication(application) || user.isApplicationAdministrator(application))) {
                 actions.addAction(COMPLETE_INTERVIEW_STAGE);
                 if (interview.hasAllInterviewersProvidedFeedback() || application.isDueDateExpired()) {
                     actions.setRequiresAttention(true);
@@ -158,7 +157,9 @@ public enum ApplicationFormAction {
             if (application.getStatus() == INTERVIEW && nextStatus == null && interview.isScheduling()
                     && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application))) {
                 actions.addAction(CONFIRM_INTERVIEW_TIME);
-                actions.setRequiresAttention(true);
+                if (interview.hasAllParticipantsProvidedAvailability() || application.isDueDateExpired()) {
+                    actions.setRequiresAttention(true);
+                }
             }
         }
     }), //
@@ -173,7 +174,7 @@ public enum ApplicationFormAction {
             }
         }
     }), //
-    ADD_INTERVIEW_FEEDBACK("interviewFeedback", "Add interview feedback", new ActionPredicate() {
+    ADD_INTERVIEW_FEEDBACK("interviewFeedback", "Provide interview feedback", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
@@ -202,7 +203,7 @@ public enum ApplicationFormAction {
             if (application.getStatus() == APPROVAL) {
                 if (user.isApproverInProgram(application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR)) {
                     actions.addAction(COMPLETE_APPROVAL_STAGE);
-                   
+
                     ApprovalRound approvalRound = application.getLatestApprovalRound();
                     if (approvalRound.hasPrimarySupervisorResponded() || application.isDueDateExpired()) {
                         actions.setRequiresAttention(true);

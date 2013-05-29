@@ -276,6 +276,15 @@ public class Interview implements Serializable {
         }
         return true;
     }
+    
+    public boolean hasAllParticipantsProvidedAvailability(){
+        for(InterviewParticipant participant : getParticipants()){
+            if(!participant.getResponded()){
+                return false;
+            }
+        }
+        return true;
+    }
 
     public boolean isDateExpired() {
         if (interviewDueDate == null) {

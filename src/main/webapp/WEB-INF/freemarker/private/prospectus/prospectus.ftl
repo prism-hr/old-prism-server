@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="row-group">
                                             <h3>Programme Advert</h3>
-                                            <div class="row">
+                <div class="row" id="program">
                                                 <label for="programme" class="plain-label">Programme<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospetus.programme'/>"></span>
                                                 <div class="field">
                                                     <select name="programme" id="programme" class="max">
@@ -63,23 +63,14 @@
                                                         <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option> </#list>
                                                     </select>
                                                 </div>
-                                                <#if program??> <@spring.bind "program" /> <#list spring.status.errorMessages as error>
-                                                <div class="row">
-                                                    <div class="field">
-                                                        <div class="alert alert-error">
-                                                            <i class="icon-warning-sign"></i> ${error}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                </#list> </#if>
                                             </div>
-                                            <div class="row">
+                <div class="row" id="description">
                                                 <label for="programmeDescription" class="plain-label">Description <em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospetus.description'/>"></span>
                                                 <div class="field">
                                                     <textarea id="programmeDescription" class="input-xlarge" rows="6" cols="150"></textarea>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                <div class="row" id="durationOfStudyInMonth">
                                                 <label for="programmeDurationOfStudy" class="plain-label">Duration of Study <em>*</em>
                                                 </label> <span class="hint" data-desc="<@spring.message 'prospetus.durationOfStudy'/>"></span>
                                                 <div class="field">
@@ -98,22 +89,18 @@
                                             </div>
                                         </div>
                                         <div class="row-group">
-                                            <div class="row">
+                <div class="row" id="isCurrentlyAcceptingApplications">
                                                 <label class="plain-label" for="currentlyAcceptingApplication">Are you currently accepting applications? <em>*</em>
                                                 </label> <span class="hint" data-desc="<@spring.message 'prospetus.acceptingApplications'/>"></span>
                                                 <div class="field">
-                                                    <input id="currentlyAcceptingApplication" type="radio" name="switch" value="true"> Yes </input> <input type="radio" name="switch" value="false"> No </input>
-                                                </div>
-                                            </div>
-                                            <#if programAdvert??> <@spring.bind "programAdvert.isCurrentlyAcceptingApplications" /> <#list spring.status.errorMessages as error>
-                                            <div class="row">
-                                                <div class="field">
-                                                    <div class="alert alert-error">
-                                                        <i class="icon-warning-sign"></i> ${error}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </#list> </#if>
+                    <input id="currentlyAcceptingApplicationYes" type="radio" name="switch" value="true">
+                    Yes
+                    </input>
+                    <input id="currentlyAcceptingApplicationNo" type="radio" name="switch" value="false">
+                    No
+                    </input>
+                  </div>
+                </div>
                                         </div>
                                         <div class="row-group">
                                             <h3>Advert</h3>

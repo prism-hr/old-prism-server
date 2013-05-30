@@ -59,7 +59,21 @@
 	<!-- freemarker config -->
 	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
 		<property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
+		 <property name="freemarkerVariables">
+            <map>
+                <entry key="encrypter" value-ref="encryptionHelper" />
+            </map>
+        </property>
 	</bean>
+	
+	 <bean id="freemarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="cache" value="true" />
+        <property name="prefix" value="" />
+        <property name="suffix" value=".ftl" />
+        <property name="contentType" value="text/html;charset=UTF-8" />
+        <property name="exposeSessionAttributes" value="true" />
+        <property name="allowSessionOverride" value="true" />
+    </bean>
 
 	<bean id="mailSender" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
         <constructor-arg value="com.zuehlke.pgadmissions.mail.MailSender" />

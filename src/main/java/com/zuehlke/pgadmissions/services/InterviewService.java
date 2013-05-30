@@ -119,10 +119,13 @@ public class InterviewService {
         interviewParticipant.setResponded(true);
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
-
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 
+    public void saveComment(InterviewParticipant interviewParticipant, InterviewVoteComment interviewVoteComment) {
+        interviewVoteCommentDAO.save(interviewVoteComment);
+    }
+    
     public void confirmInterview(Interview interview, Integer timeslotId) {
         InterviewTimeslot timeslot = null;
         for (InterviewTimeslot t : interview.getTimeslots()) {

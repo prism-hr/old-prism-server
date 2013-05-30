@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,8 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
+import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -90,19 +94,49 @@ public class InterviewConfirmController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer timeslotId,
-            Model model) {
+    public String submitInterviewConfirmation(
+            @ModelAttribute ApplicationForm applicationForm, 
+            @RequestParam(required = false) Integer timeslotId, 
+            @RequestParam(required = false) String comments, Model model) {
+        
+        boolean hasErrors = false;
+        
         if (timeslotId == null) {
             model.addAttribute("timeslotIdError", "dropdown.radio.select.none");
+            model.addAttribute("comments", comments);
+            hasErrors = true;
+        }
+        
+        if (StringUtils.isNotBlank(comments) && !ESAPI.validator().isValidInput("comment", comments, "ExtendedAscii", 2000, true)) {
+            model.addAttribute("commentsError", "text.field.nonextendedascii");
+            model.addAttribute("comments", comments);
+            hasErrors = true;
+        }
+        
+        if (hasErrors) {
             return INTERVIEW_CONFIRM_PAGE;
         }
+        
         Interview interview = applicationForm.getLatestInterview();
         interviewService.confirmInterview(interview, timeslotId);
         
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         applicationsService.save(applicationForm);
         
-        accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
+        RegisteredUser user = getUser();
+        accessService.updateAccessTimestamp(applicationForm, user, new Date());
+        
+        if (StringUtils.isNotBlank(comments)) {
+            InterviewParticipant interviewParticipant = interview.getParticipant(user);
+            InterviewVoteComment comment = new InterviewVoteComment();
+            comment.setApplication(applicationForm);
+            comment.setComment(comments);
+            comment.setDate(new Date());
+            comment.setInterviewParticipant(interview.getParticipant(user));
+            comment.setUser(user);
+            interviewService.saveComment(interviewParticipant, comment);
+        }
+        
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }
 

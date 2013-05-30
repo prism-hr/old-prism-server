@@ -149,9 +149,16 @@
 							  	<label class="plain-label normal" for="comments">Comments</label>
 							    <span class="hint" data-desc="<@spring.message 'interviewConfirm.comments'/>"></span>
 							    <div class="field">
-								  	<textarea id="comments" name="comments" class="max" rows="6" cols="80" maxlength="2000"></textarea>			
+								  	<textarea id="comments" name="comments" class="max" rows="6" cols="80" maxlength="2000">${(comments?html)!}</textarea>			
 							  	</div>	
 						  	</div>
+						  	
+						  	<#if commentsError??>
+                                <div class="field">
+                                  <div class="alert alert-error" id="commentsErrorSpan"> <i class="icon-warning-sign"></i> <@spring.message commentsError /> </div>
+                                </div>
+                            </#if>
+						  	
 		            	</div>
 		              	<div class="buttons">
 		              		<button type="button" class="btn btn-danger" id="restart-interview">Start Again</button>

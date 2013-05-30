@@ -45,6 +45,12 @@ public class RegisteredUserIrisProfileController {
         return !StringUtils.isAlphanumeric(upi) || StringUtils.length(upi) != 7;
     }
     
+    @RequestMapping(value = "/IRIS/", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> getUpiForCurrentUser() {
+        return Collections.<String, Object>singletonMap("upi", StringUtils.trimToEmpty(userService.getCurrentUser().getUpi()));
+    }
+    
     @RequestMapping(value = "/IRIS/{upi}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Map<String, Object> irisProfileExists(final @PathVariable String upi) {

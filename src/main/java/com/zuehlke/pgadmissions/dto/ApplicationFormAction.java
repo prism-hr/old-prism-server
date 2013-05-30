@@ -141,8 +141,7 @@ public enum ApplicationFormAction {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
-            if (application.getStatus() == INTERVIEW && nextStatus == null
-                    && (user.hasAdminRightsOnApplication(application) || user.isApplicationAdministrator(application))) {
+            if (application.getStatus() == INTERVIEW && nextStatus == null && (user.hasAdminRightsOnApplication(application))) {
                 actions.addAction(COMPLETE_INTERVIEW_STAGE);
                 if (interview.hasAllInterviewersProvidedFeedback() || application.isDueDateExpired()) {
                     actions.setRequiresAttention(true);

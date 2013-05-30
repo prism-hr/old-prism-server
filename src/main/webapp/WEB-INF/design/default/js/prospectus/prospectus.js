@@ -129,6 +129,8 @@ $(document).ready(function(){
 						if (data.irisProfile != null) {
 		                    $('#upi').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.irisProfile  + '</div>');
 		                }
+					} else {
+						$("#iris-account-linked-message").show().find("span").html($('#upi').val());
 					}
 				},
 				complete: function() {
@@ -166,6 +168,11 @@ function getUpiForCurrentUser() {
 		success: function(data) {
 			if (data.upi) {
 				$('#upi').val(data.upi);
+				$("#iris-account-linked-message").show().find("span").html($('#upi').val());
+				$("#iris-account-not-linked-message").hide();
+			} else {
+				$("#iris-account-linked-message").hide();
+				$("#iris-account-not-linked-message").show();
 			}
 		},
 		complete: function() {

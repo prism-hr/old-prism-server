@@ -128,16 +128,18 @@
                             </section>
 
                             <section id="irisSection" class="form-rows">
-                                <h2>Link to UCL IRIS (Institutional Research Information System)</h2>
+                                <h2>Link to UCL IRIS</h2>
                                 <div>
                                     <form>
                                         <div class="alert alert-info">
                                             <i class="icon-info-sign"></i> Link your UCL Prism profile to UCL IRIS. This will display your Research Opportunities Feed on your UCL IRIS profile.
                                         </div>
-
+										<div class="alert alert-success">
+                                            <i class="icon-ok-sign"></i> Your account is linked to UCL UPI: AJKEN86
+                                        </div>
                                         <div class="row-group">
                                             <div class="row">
-                                                <label for="upi" class="plain-label">UCL Unique Person Indentifier (UPI)</label> 
+                                                <label for="upi" class="plain-label">UCL Staff Indentifier (UPI)</label> 
                                                 <span class="hint" data-desc="<@spring.message 'prospectus.iris.upi'/>"></span>
                                                 <div class="field">
                                                     <input id="upi" name="upi" class="input-small" type="text" />

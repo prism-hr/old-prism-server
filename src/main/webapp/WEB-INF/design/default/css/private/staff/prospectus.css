@@ -87,3 +87,7 @@
     width:785px;
     height: 390px;
 }
+#irisSection .icon-ok-sign {
+  margin-left: -5px;
+  font-size: 14px;
+}

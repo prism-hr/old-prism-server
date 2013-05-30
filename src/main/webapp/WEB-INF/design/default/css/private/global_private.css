@@ -1456,6 +1456,9 @@ form#removeForm {
 #previewModalContent h1 {
 	float: none !important;
 }
+#previewModalContent .row{
+	margin-left: 0px;
+}
 #edit-throttle-section input[type="radio"], #timelineview input[type="checkbox"] {
     margin-top: -3px;
 }

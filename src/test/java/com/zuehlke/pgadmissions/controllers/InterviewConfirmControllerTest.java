@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.isA;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -112,7 +113,7 @@ public class InterviewConfirmControllerTest {
         accessServiceMock.updateAccessTimestamp(eq(applicationForm), eq(currentUser), isA(Date.class));
         
         EasyMock.replay(interviewServiceMock, userServiceMock, accessServiceMock);
-        controller.submitInterviewConfirmation(applicationForm, 2, model);
+        controller.submitInterviewConfirmation(applicationForm, 2, StringUtils.EMPTY, model);
         EasyMock.verify(interviewServiceMock, accessServiceMock, userServiceMock);
         
         Assert.assertFalse(model.containsAttribute("timeslotIdError"));
@@ -123,7 +124,7 @@ public class InterviewConfirmControllerTest {
         ApplicationForm applicationForm = new ApplicationForm();
         Model model = new ExtendedModelMap();
         
-        controller.submitInterviewConfirmation(applicationForm, null, model);
+        controller.submitInterviewConfirmation(applicationForm, null, StringUtils.EMPTY, model);
         
         Assert.assertEquals("dropdown.radio.select.none", model.asMap().get("timeslotIdError"));
     }

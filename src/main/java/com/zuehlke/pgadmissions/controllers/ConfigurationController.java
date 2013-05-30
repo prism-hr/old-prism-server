@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
-import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
@@ -42,11 +41,9 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.dto.RegistryUserDTO;
 import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -70,8 +67,6 @@ public class ConfigurationController {
 
 	private final StageDurationPropertyEditor stageDurationPropertyEditor;
 
-	private final PersonPropertyEditor registryPropertyEditor;
-
 	private final UserService userService;
 
 	private final ConfigurationService configurationService;
@@ -93,16 +88,15 @@ public class ConfigurationController {
 	private final FeedbackCommentValidator dummyCommentValidator;
 
 	public ConfigurationController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor, PersonPropertyEditor registryPropertyEditor,
+	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor,
 	                UserService userService, ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService,
 	                PorticoQueueService queueService, ProgramsService programsService, ScoringDefinitionParser scoringDefinitionParser,
 	                ScoreFactory scoreFactory, ScoresPropertyEditor scoresPropertyEditor, FeedbackCommentValidator dummyCommentValidator) {
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
-		this.registryPropertyEditor = registryPropertyEditor;
 		this.userService = userService;
 		this.configurationService = configurationService;
 		this.templateService = templateService;
@@ -118,11 +112,6 @@ public class ConfigurationController {
 	@InitBinder(value = "stageDurationDTO")
 	public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(StageDuration.class, stageDurationPropertyEditor);
-	}
-
-	@InitBinder(value = "registryUserDTO")
-	public void registerValidatorsAndPropertyEditorsForRegistryUsers(WebDataBinder binder) {
-		binder.registerCustomEditor(Person.class, registryPropertyEditor);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -142,12 +131,12 @@ public class ConfigurationController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@ModelAttribute StageDurationDTO stageDurationDto, @ModelAttribute RegistryUserDTO registryUserDTO,
+	public String submit(@ModelAttribute StageDurationDTO stageDurationDto,
 	                @ModelAttribute ReminderInterval reminderInterval) {
 		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
-		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval, getUser());
+		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), reminderInterval);
 		return "redirect:/configuration/config_section";
 	}
 
@@ -332,11 +321,6 @@ public class ConfigurationController {
 	@ModelAttribute("reminderInterval")
 	public ReminderInterval getReminderInterval() {
 		return configurationService.getReminderInterval();
-	}
-
-	@ModelAttribute("allRegistryUsers")
-	public List<Person> getAllRegistryContacts() {
-		return configurationService.getAllRegistryUsers();
 	}
 
 	@ModelAttribute("units")

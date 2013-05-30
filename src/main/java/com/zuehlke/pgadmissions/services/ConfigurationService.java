@@ -74,7 +74,24 @@ public class ConfigurationService {
     }
 
     @Transactional
-    public void saveConfigurations(List<StageDuration> stageDurations, List<Person> registryContacts, ReminderInterval reminderInterval, RegisteredUser requestedBy) {
+    public void saveConfigurations(List<StageDuration> stageDurations, ReminderInterval reminderInterval) {
+        
+        for (StageDuration stageDuration : stageDurations) {
+            StageDuration oldDuration = stageDurationDAO.getByStatus(stageDuration.getStage());
+            if (oldDuration != null) {
+                oldDuration.setUnit(stageDuration.getUnit());
+                oldDuration.setDuration(stageDuration.getDuration());
+                stageDurationDAO.save(oldDuration);
+            } else {
+                stageDurationDAO.save(stageDuration);
+            }
+        }
+        
+        reminderIntervalDAO.save(reminderInterval);
+    }
+    
+    @Transactional
+    public void saveRegistryUsers(List<Person> registryContacts, RegisteredUser requestedBy) {
         for (Person person : getAllRegistryUsers()) {
             if (!containsRegistryUser(person, registryContacts)) {
                 personDAO.delete(person);
@@ -89,19 +106,6 @@ public class ConfigurationService {
         for (Person person : registryContacts) {
             saveRegistryContactsAsUsers(person, requestedBy);
         }
-        
-        for (StageDuration stageDuration : stageDurations) {
-            StageDuration oldDuration = stageDurationDAO.getByStatus(stageDuration.getStage());
-            if (oldDuration != null) {
-                oldDuration.setUnit(stageDuration.getUnit());
-                oldDuration.setDuration(stageDuration.getDuration());
-                stageDurationDAO.save(oldDuration);
-            } else {
-                stageDurationDAO.save(stageDuration);
-            }
-        }
-        
-        reminderIntervalDAO.save(reminderInterval);
     }
     
     private void removeAdmitterRoleToUser(String email) {

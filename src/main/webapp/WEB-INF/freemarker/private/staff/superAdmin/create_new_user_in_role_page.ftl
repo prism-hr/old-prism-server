@@ -40,121 +40,284 @@
 			<div class="content-box">
 				<div class="content-box-inner">
 					
-					<!-- Remove form. -->
-					<form id="removeForm" action="/pgadmissions/manageUsers/remove" method="POST">
-						<input type="hidden" id="deleteFromUser" name="user" value=""/>						
-						<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
-					</form>
+					<div id="configManageUsersBox" class="tabbox">
+				        <ul class="tabs">
+				            <li> <a href="#manageUsers">Manage Users</a></li>
+				            <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#manageSuperadmins">Manage Superadmins</a></li></#if>
+				            <li><a href="#manageRegistryContacts">Manage Registry Contacts</a></li>
+				        </ul>
+				        
+				        <div id="manageUsers"  class="tab-page">
 					
-					<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
-					
-						<section class="form-rows">
-							<h2 class="no-arrow">Manage Users</h2>
-	
-							<div>
-								<!-- Table of users. -->
-								<div id="existingUsers" class="tableContainer"></div>
-								
-								<div class="alert alert-info">
-									<i class="icon-info-sign"></i> 
-									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>"><strong>manage superadministrators.</strong></a></#if>
-								</div>
-	
-								<div class="row-group">
-								
-									<div class="row">
-										<label for="programs" class="plain-label">Programme<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'manageUsers.programme'/>"></span>
-										<div class="field">
-											<select class="max" name="selectedProgram" id="programs">
-												<option value="">Please select a program</option>
-												<#list programs as program>"
-												<option value='${program.code}' 
-												<#if userDTO.selectedProgram?? && userDTO.selectedProgram.id == program.id >selected="selected"</#if>
-												>${program.title?html}</option>               
-												</#list>
-											</select>
-		
-											<@spring.bind "userDTO.selectedProgram" /> 
-											<#list spring.status.errorMessages as error>
-											 <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
-											</#list>
-										</div>
-									</div>
-									
-								</div>
+							<!-- Remove form. -->
+							<form id="removeForm" action="/pgadmissions/manageUsers/remove" method="POST">
+								<input type="hidden" id="deleteFromUser" name="user" value=""/>						
+								<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
+							</form>
+							
+							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit/saveUser" method="POST">
+							
+								<section class="form-rows">
+									<h2 class="no-arrow">Manage Users</h2>
 			
-								<div class="row-group" id="editUser">
-								
-									<h3><#if userDTO.newUser>Add New User<#else>Edit User Roles</#if></h3>
-									
-									<div class="row">
-										<label for="firstName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">First Name<em>*</em></label>
-										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
-										<div class="field">
-											<input class="max" type="text" value="${(userDTO.firstName?html)!}" autocomplete="off" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			    
-											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.firstName?html)!}" name="firstName" /></#if>                              
-											<@spring.bind "userDTO.firstName" /> 
-											<#list spring.status.errorMessages as error>
-												<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
-											</#list>			                             
-										</div>
-									</div>
+									<div>
+										<!-- Table of users. -->
+										<div class="tableContainer existingUsers"></div>
 			
-									<div class="row">
-										<label for="lastName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Last Name<em>*</em></label>
-										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
-										<div class="field">
-											<input class="max" type="text" value="${(userDTO.lastName?html)!}" autocomplete="off" name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>
-											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.lastName?html)!}" name="lastName" /></#if>    
-											<@spring.bind "userDTO.lastName" /> 
-											<#list spring.status.errorMessages as error>
-												<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
-											</#list>
-										</div>
-									</div>
+										<div class="row-group">
+										
+											<div class="row">
+												<label for="programs" class="plain-label">Programme<em>*</em></label>
+												<span class="hint" data-desc="<@spring.message 'manageUsers.programme'/>"></span>
+												<div class="field">
+													<select class="max" name="selectedProgram" id="programs">
+														<option value="">Please select a program</option>
+														<#list programs as program>"
+														<option value='${program.code}' 
+														<#if userDTO.selectedProgram?? && userDTO.selectedProgram.id == program.id >selected="selected"</#if>
+														>${program.title?html}</option>               
+														</#list>
+													</select>
 				
-									<div class="row">
-										<label for="email" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Email<em>*</em></label>
-										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.email'/>"></span>
-										<div class="field">
-											<input class="max" type="email" value="${(userDTO.email?html)!}" autocomplete="off" name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
-											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.email?html)!}" name="email" /></#if>    
-											<@spring.bind "userDTO.email" /> 
-											<#list spring.status.errorMessages as error>
-												<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
-											</#list>
+													<@spring.bind "userDTO.selectedProgram" /> 
+													<#list spring.status.errorMessages as error>
+													 <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
+													</#list>
+												</div>
+											</div>
+											
 										</div>
-									</div>
-		
-									<div class="row">
-										<label for="roles" class="plain-label">Roles<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'manageUsers.roles'/>"></span>
-										<div class="field">
-											<select multiple size="5" id="roles" name="selectedAuthorities" class="max">
-												<#list authorities as authority>
-													<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority?capitalize}</option>
-												</#list>
-											</select>
-											<@spring.bind "userDTO.selectedAuthorities" /> 
-											<#list spring.status.errorMessages as error>
-												<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
-											</#list>
-										</div>
-									</div>
-																			
-									<div class="row">
-										<div class="field">
-											<button class="btn btn-primary" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
-										</div>
-									</div>
-									
-								</div><!-- .row-group -->
-									
-							</div>
-						</section>
+					
+										<div class="row-group" id="editUser">
+										
+											<h3><#if userDTO.newUser>Add New User<#else>Edit User Roles</#if></h3>
+											
+											<div class="row">
+												<label for="firstName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">First Name<em>*</em></label>
+												<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
+												<div class="field">
+													<input class="max" type="text" value="${(userDTO.firstName?html)!}" autocomplete="off" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			    
+													<#if !userDTO.newUser><input type="hidden" value="${(userDTO.firstName?html)!}" name="firstName" /></#if>                              
+													<@spring.bind "userDTO.firstName" /> 
+													<#list spring.status.errorMessages as error>
+														<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
+													</#list>			                             
+												</div>
+											</div>
+					
+											<div class="row">
+												<label for="lastName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Last Name<em>*</em></label>
+												<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
+												<div class="field">
+													<input class="max" type="text" value="${(userDTO.lastName?html)!}" autocomplete="off" name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>
+													<#if !userDTO.newUser><input type="hidden" value="${(userDTO.lastName?html)!}" name="lastName" /></#if>    
+													<@spring.bind "userDTO.lastName" /> 
+													<#list spring.status.errorMessages as error>
+														<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
+													</#list>
+												</div>
+											</div>
 						
-					</form>
+											<div class="row">
+												<label for="email" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Email<em>*</em></label>
+												<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.email'/>"></span>
+												<div class="field">
+													<input class="max" type="email" value="${(userDTO.email?html)!}" autocomplete="off" name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
+													<#if !userDTO.newUser><input type="hidden" value="${(userDTO.email?html)!}" name="email" /></#if>    
+													<@spring.bind "userDTO.email" /> 
+													<#list spring.status.errorMessages as error>
+														<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
+													</#list>
+												</div>
+											</div>
+				
+											<div class="row">
+												<label for="roles" class="plain-label">Roles<em>*</em></label>
+												<span class="hint" data-desc="<@spring.message 'manageUsers.roles'/>"></span>
+												<div class="field">
+													<select multiple size="5" id="roles" name="selectedAuthorities" class="max">
+														<#list authorities as authority>
+															<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority?capitalize}</option>
+														</#list>
+													</select>
+													<@spring.bind "userDTO.selectedAuthorities" /> 
+													<#list spring.status.errorMessages as error>
+														<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
+													</#list>
+												</div>
+											</div>
+																					
+											<div class="row">
+												<div class="field">
+													<button class="btn btn-primary" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
+												</div>
+											</div>
+											
+										</div><!-- .row-group -->
+											
+									</div>
+								</section>
+								
+							</form>
+						<!-- close manage users tab page -->
+						</div>
+						<#if user.isInRole('SUPERADMINISTRATOR')>
+							<div id="manageSuperadmins" class="tab-page">
+								<form id="editSuperadmins" name="editSuperadmins" action="/pgadmissions/manageUsers/edit/saveSuperadmin" method="POST">
+					
+									<section id="superadmins" class="form-rows">
+										<h2>Manage Superadministrators</h2>
+
+										<div>
+										
+											<div class="tableContainer table table-condensed existingUsers">
+												<table class="data" border="0">
+													<colgroup>
+														<col style="width: 30px;" />
+														<col/>
+													</colgroup>
+													<tbody>
+														<tr>
+															<td colspan="4" class="scrollparent">
+																<div class="scroll">
+																	<table class="table-hover table-hover table-striped">
+																		<colgroup>
+																			<col style="width:30px;" />
+																			<col  />
+																		</colgroup>
+																		<tbody>
+																			<#list superadmins as superadmin>
+																			<tr>
+																				<td><span class="arrow">&nbsp;</span></td>
+																				<td scope="col">${(superadmin.firstName?html)!} ${(superadmin.lastName?html)!} (${(superadmin.email?html)!})</td>
+																			</tr>
+																			</#list>
+																		</tbody>
+																	</table>
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											</div><!-- #existingUsers -->
+	
+											<div class="row-group">
+											
+												<div class="row">
+													<label class="plain-label" for="firstName">First Name<em>*</em></label>
+													<span class="hint" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
+													<div class="field">
+														<input class="full" type="text"  value="${(adminDTO.firstName?html)!}" name="firstName" id="firstName" <#if !adminDTO.newUser>disabled="disabled"</#if>/>			                                  
+														<@spring.bind "adminDTO.firstName" /> 
+														<#list spring.status.errorMessages as error>
+														<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+														</#list>			                             
+													</div>
+												</div>
+						
+												<div class="row">
+													<label class="plain-label" for="lastName">Last Name<em>*</em></label>
+													<span class="hint" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
+													<div class="field">
+														<input class="full" type="text" value="${(adminDTO.lastName?html)!}" name="lastName" id="lastName"  <#if !adminDTO.newUser>disabled="disabled"</#if>/>
+														<@spring.bind "adminDTO.lastName" /> 
+														<#list spring.status.errorMessages as error>
+														<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+														</#list>
+													</div>
+												</div>
+						
+												<div class="row">
+													<label class="plain-label" for="email">Email<em>*</em></label>
+													<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
+													<div class="field">
+														<input class="full" type="email" value="${(adminDTO.email?html)!}" name="email" id="email" <#if !adminDTO.newUser>disabled="disabled"</#if>/>
+														<@spring.bind "adminDTO.email" /> 
+														<#list spring.status.errorMessages as error>
+														<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+														</#list>
+													</div>
+												</div>
+					
+												<div class="row">
+													<div class="field">
+														<button class="btn btn-primary" type="submit"><#if adminDTO.newUser>Add<#else>Update</#if></button>
+													</div>
+												</div>
+						
+											</div><!-- .row-group -->
+										</div>
+									</section>
+								</form>						
+							<!-- close manage superadmins tab page -->
+							</div>
+						</#if>
+						
+						<div id="manageRegistryContacts" class="tab-page">
+							<form id="addRemoveRegistryUsers">
+								<div class="row-group" id="section-registryusers">
+
+									<div class="row">
+										<h3 >Admissions Contacts</h3>
+										<table id="registryUsers" class="table table-striped table-condensed table-bordered table-hover ">
+											<colgroup>
+												<col />
+												<col style="width: 30px;" />
+											</colgroup>
+											<tbody>
+												<#list allRegistryUsers! as regUser>
+												<tr>
+													<td>
+														${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
+													</td>
+													<td>
+														<button class="button-delete" type="button" data-desc="Remove">Remove</button>
+														<input type="hidden" name="firstname" value="${regUser.firstname!}" />
+														<input type="hidden" name="lastname" value="${regUser.lastname!}" />
+														<input type="hidden" name="email" value="${regUser.email!}" />
+														<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
+													</td>
+												</tr>
+												</#list>
+											</tbody>
+										</table>
+									</div>
+									<!-- Entry form. -->
+									<div class="row">
+										<label for="reg-firstname" class="plain-label">First Name<em>*</em></label>
+										<span class="hint" data-desc="<@spring.message 'configuration.firstName'/>"></span>
+										<div class="field">	
+											<input type="text" class="full" id="reg-firstname" autocomplete="off" name="regUserFirstname" />
+										</div>
+									</div><!-- .row -->
+									
+									<div class="row">
+										<label for="reg-lastname" class="plain-label">Last Name<em>*</em></label>
+										<span class="hint" data-desc="<@spring.message 'configuration.lastName'/>"></span>
+										<div class="field">	
+											<input type="text" class="full" id="reg-lastname" autocomplete="off" name="regUserLastname" />
+										</div>
+									</div><!-- .row -->
+									
+									<div class="row">
+										<label for="reg-email" class="plain-label">Email Address<em>*</em></label>
+										<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
+										<div class="field">	
+											<input type="email" class="full" id="reg-email" autocomplete="off" name="regUserEmail" />
+										</div>
+									</div><!-- .row -->
+					
+									<div class="row">
+										<div class="field">	
+											<button class="btn btn-primary" type="button" id="registryUserAdd">Add</button>
+										</div>
+									</div><!-- .row -->
+									<div id = "regContactData"></div>
+								</div>			
+							</form>
+						<!-- close manage registry contacts tab page -->
+						</div>
+					<!-- close tab box -->
+					</div>
 			
 				</div><!-- .content-box-inner -->
 			</div><!-- .content-box -->

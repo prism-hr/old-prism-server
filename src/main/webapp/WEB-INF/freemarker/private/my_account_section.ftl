@@ -128,7 +128,7 @@
     </section>
     </div>
 
-	<div id="linkAccountstab" class="tab-page">
+	<div id="linkAccountstab" class="tab-page <#if RequestParameters.messageCodeLink??>preselected</#if>">
     <section id="linkAcountDetailsSection" class="form-rows">
         <h2 class="no-arrow">Linked Accounts</h2>
         <div id="linkAccountsSection">   

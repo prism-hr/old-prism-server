@@ -173,7 +173,7 @@
                     </div>
                   </div>
                   <div class="buttons">
-                    <button class="btn btn-primary" type="button" id="apply-throttle-go">Apply changes</button>
+                    <button class="btn btn-primary" type="button" id="apply-throttle-go">Apply Changes</button>
                   </div>
                 </form>
               </div>

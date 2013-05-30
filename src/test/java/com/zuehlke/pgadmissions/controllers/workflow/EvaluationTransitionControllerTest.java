@@ -220,11 +220,13 @@ public class EvaluationTransitionControllerTest {
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
         EasyMock.expectLastCall();
         applicationServiceMock.save(applicationForm);
-        EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, applicationServiceMock, userServiceMock);
+        applicationServiceMock.refresh(applicationForm);
 
+        EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, applicationServiceMock, userServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, new ModelMap(), null, null);
-        assertEquals("bob", view);
         EasyMock.verify(commentServiceMock, commentServiceMock, stateTransitionViewServiceMock, applicationServiceMock, userServiceMock);
+
+        assertEquals("bob", view);
     }
 
     @Test

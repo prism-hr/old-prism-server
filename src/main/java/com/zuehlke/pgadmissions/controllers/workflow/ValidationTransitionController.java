@@ -182,7 +182,8 @@ public class ValidationTransitionController extends StateTransitionController {
             return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();
         }
 
-        return stateTransitionService.resolveView(getApplicationForm(applicationId));
+        applicationsService.refresh(form);
+        return stateTransitionService.resolveView(form);
     }
 
     private boolean isNotSameDay(final Date date1, final Date date2) {

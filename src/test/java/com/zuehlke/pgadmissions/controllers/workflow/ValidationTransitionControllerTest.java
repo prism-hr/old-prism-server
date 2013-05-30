@@ -195,6 +195,7 @@ public class ValidationTransitionControllerTest {
         applicationServiceMock.save(applicationForm);
         EasyMock.expectLastCall().times(2);
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
+        applicationServiceMock.refresh(applicationForm);
 
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
 
@@ -236,6 +237,8 @@ public class ValidationTransitionControllerTest {
         applicationServiceMock.save(applicationForm);
         EasyMock.expectLastCall().times(2);
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
+        applicationServiceMock.refresh(applicationForm);
+
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
         controller.addComment(applicationForm.getApplicationNumber(), format.format(twoMontshAgo), "projectTitle", comment, bindingResultMock, new ModelMap(),
                 false, delegatedInterviewer);

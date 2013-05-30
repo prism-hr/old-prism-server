@@ -193,7 +193,7 @@
   width:auto;
   height:auto;
   line-height:normal;
-  vertical-align:baseline;
+  vertical-align:middle;
   background-image:none;
   background-position:0 0;
   background-repeat:repeat;
@@ -203,7 +203,7 @@
   width: 25px;
   -webkit-font-smoothing: antialiased;
   cursor:default;
-  font-size: 17px;
+  font-size: 20px;
 }
 /*.expander.expand {
 	background: url('../../../images/icon_expand.png') center right no-repeat;
@@ -218,13 +218,14 @@
   width: 22px;
   display: inline-block;
   height: 17px;
+  font-size: 17px;
 }
 .expander.expand:after, .more-scores.expand:after {
-content:"\f0ab";
+content:"\f055";
 color:grey;
 }
 .expander.collapsed:after, .more-scores.collapsed:after {
-  content:"\f0aa";
+  content:"\f056";
 color:grey;
 }
 /* Tabs tineline view */
@@ -302,4 +303,13 @@ color:grey;
   display: block;
   line-height: 24px;
   padding: 4px;
+}
+
+/* Extra buttons */
+#timeline-statuses i.icon-plus-sign , #timeline-statuses i.icon-minus-sign  {
+  position: absolute;
+  right: 6px;
+  top: 38px;
+  font-size: 30px;
+  cursor: pointer;
 }

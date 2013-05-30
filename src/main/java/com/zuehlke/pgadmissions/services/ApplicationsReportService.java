@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -70,10 +71,16 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
         cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
         cd.add(new ColumnDescription("email", ValueType.TEXT, "E-mail"));
+        cd.add(new ColumnDescription("nationality1", ValueType.TEXT, "Nationality 1"));
+        cd.add(new ColumnDescription("nationality2", ValueType.TEXT, "Nationality 2"));
+        cd.add(new ColumnDescription("dateOfBirth", ValueType.DATE, "Date Of Birth"));
+        cd.add(new ColumnDescription("gender", ValueType.TEXT, "Gender"));
         cd.add(new ColumnDescription("programmeId", ValueType.TEXT, "Programme ID"));
         cd.add(new ColumnDescription("programmeName", ValueType.TEXT, "Programme Name"));
         cd.add(new ColumnDescription("projectTitle", ValueType.TEXT, "Project Title"));
         cd.add(new ColumnDescription("studyOption", ValueType.TEXT, "Study Option"));
+        cd.add(new ColumnDescription("sourcesOfInterest", ValueType.TEXT, "How did you find us"));
+        cd.add(new ColumnDescription("sourcesOfInterestText", ValueType.TEXT, "Additional Information"));
         cd.add(new ColumnDescription("provisionalSupervisors", ValueType.TEXT, "Provisional Supervisors"));
         cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
         cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
@@ -108,7 +115,13 @@ public class ApplicationsReportService {
 
             // Fill the data table.
             for (ApplicationForm app : applications) {
+                
+                if (app.getStatus() == ApplicationFormStatus.UNSUBMITTED) {
+                    continue;
+                }
+                
                 RegisteredUser applicant = app.getApplicant();
+                PersonalDetails personalDetails = app.getPersonalDetails();
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();
                 ProgrammeDetails programmeDetails = app.getProgrammeDetails();
@@ -125,19 +138,25 @@ public class ApplicationsReportService {
                 row.addCell(firstNames);
                 row.addCell(applicant.getLastName());
                 row.addCell(applicant.getEmail());
+                row.addCell(personalDetails.getFirstNationality().getName());
+                row.addCell(personalDetails.getSecondNationality() != null ? app.getPersonalDetails().getSecondNationality().getName() : StringUtils.EMPTY);
+                row.addCell(getDateValue(personalDetails.getDateOfBirth()));
+                row.addCell(personalDetails.getGender().getDisplayValue());
                 row.addCell(program.getCode());
                 row.addCell(program.getTitle());
                 row.addCell(getProjectTitle(app));
-                row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : "");
+                row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : StringUtils.EMPTY);
+                row.addCell(programmeDetails.getSourcesOfInterest().getName());
+                row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterestText()));
                 row.addCell(getSuggestedSupervisors(programmeDetails));
                 row.addCell(getAcademicYear(app));
                 row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
                 row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
                 row.addCell(app.getStatus().displayValue());
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
-                row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : "");
-                row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : "");
-                row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : "");
+                row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
+                row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
+                row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : StringUtils.EMPTY);
                 row.addCell(new NumberValue(receivedAndDeclinedReferences[0]));
                 row.addCell(new NumberValue(reviewEndorsements[0]));
                 row.addCell(new NumberValue(reviewEndorsements[1]));
@@ -152,8 +171,8 @@ public class ApplicationsReportService {
                 row.addCell(getPrintableSecondarySupervisor(app));
                 row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
                 row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
-                row.addCell(approveDate != null ? getConditionalType(app) : "");
-                row.addCell(approveDate != null ? getOfferConditions(app) : "");
+                row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
+                row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);
 
                 try {
                     data.addRow(row);

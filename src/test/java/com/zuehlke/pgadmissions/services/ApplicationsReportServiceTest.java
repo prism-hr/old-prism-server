@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -39,17 +41,21 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
@@ -83,9 +89,9 @@ public class ApplicationsReportServiceTest {
         // GIVEN
         RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
         Program program1 = new ProgramBuilder().code("ABC").title("BBC").build();
-        ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().build();
-        ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1)
-                .build();
+        PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
+        ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).build();
+        ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1).build();
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
@@ -107,17 +113,17 @@ public class ApplicationsReportServiceTest {
         assertEquals("gienia@pigwa.pl", getTextValue(table, row, "email"));
         assertEquals("ABC", getTextValue(table, row, "programmeId"));
         assertEquals("BBC", getTextValue(table, row, "programmeName"));
-        assertEquals("", getTextValue(table, row, "projectTitle"));
-        assertEquals("", getTextValue(table, row, "studyOption"));
-        assertEquals("", getTextValue(table, row, "provisionalSupervisors"));
-        assertEquals("", getTextValue(table, row, "academicYear"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "projectTitle"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "studyOption"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "provisionalSupervisors"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "academicYear"));
         assertEquals("null", getDateValue(table, row, "submittedDate"));
         assertEquals("null", getDateValue(table, row, "lastEditedDate"));
-        assertEquals("Not Submitted", getTextValue(table, row, "status"));
+        assertEquals("Validation", getTextValue(table, row, "status"));
         assertEquals(0, getNumberValue(table, row, "validationTime"), 0);
-        assertEquals("", getTextValue(table, row, "feeStatus"));
-        assertEquals("", getTextValue(table, row, "academicallyQualified"));
-        assertEquals("", getTextValue(table, row, "adequateEnglish"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "feeStatus"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "academicallyQualified"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "adequateEnglish"));
         assertEquals(0, getNumberValue(table, row, "receivedReferences"), 0);
         assertEquals(0, getNumberValue(table, row, "positiveReviewEndorsements"), 0);
         assertEquals(0, getNumberValue(table, row, "negativeReviewEndorsements"),0);
@@ -128,12 +134,12 @@ public class ApplicationsReportServiceTest {
         assertEquals(0, getNumberValue(table, row, "negativeInterviewEndorsements"),0);
         assertEquals(0, getNumberValue(table, row, "approvalTime"),0);
         assertEquals(0, getNumberValue(table, row, "approvalStages"),0);
-        assertEquals("", getTextValue(table, row, "primarySupervisor"));
-        assertEquals("", getTextValue(table, row, "secondarySupervisor"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "primarySupervisor"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "secondarySupervisor"));
         assertEquals("Not approved", getTextValue(table, row, "outcome"));
         assertEquals("null", getDateValue(table, row, "outcomedate"));
-        assertEquals("", getTextValue(table, row, "outcomeType"));
-        assertEquals("", getTextValue(table, row, "outcomeNote"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "outcomeType"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "outcomeNote"));
     }
     
     @Test
@@ -149,10 +155,11 @@ public class ApplicationsReportServiceTest {
         RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
         ProgramInstance programInstance = new ProgramInstanceBuilder().applicationStartDate(tomorrow).applicationDeadline(dayAfterTomorrow).academicYear("1939").build();
         Program program1 = new ProgramBuilder().code("ABC").title("BBC").instances(programInstance).build();
+        PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
         
         SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisorBuilder().firstname("suggested").lastname("supervisor1").build();
         SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisorBuilder().firstname("suggested").lastname("supervisor2").build();
-        ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().studyOption("Part-time").suggestedSupervisors(suggestedSupervisor1, suggestedSupervisor2).startDate(tomorrow).build();
+        ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).studyOption("Part-time").suggestedSupervisors(suggestedSupervisor1, suggestedSupervisor2).startDate(tomorrow).build();
 
         StateChangeEvent validationEvent = new StateChangeEventBuilder().date(DateUtils.addDays(today, -10)).newStatus(ApplicationFormStatus.VALIDATION).build();
         StateChangeEvent reviewEvent = new StateChangeEventBuilder().date(DateUtils.addDays(today, -9)).newStatus(ApplicationFormStatus.REVIEW).build();
@@ -174,7 +181,7 @@ public class ApplicationsReportServiceTest {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().projectTitle("title").supervisors(primarySupervisor, secondarySupervisor).recommendedConditionsAvailable(true).recommendedConditions("Conditions").build();
         
         ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1)
-                .approvalRounds(approvalRound).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).build();
+                .approvalRounds(approvalRound).personalDetails(personalDetails).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).build();
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();

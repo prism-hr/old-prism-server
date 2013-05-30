@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Service
 public class StateTransitionViewResolver {
@@ -37,10 +38,10 @@ public class StateTransitionViewResolver {
         }
 
         ApplicationFormStatus nextStatus = getNextStatus(applicationForm);
-        if(nextStatus == null){
+        if (nextStatus == null) {
             return STATE_TRANSITION_VIEW;
         }
-        
+
         switch (nextStatus) {
         case REVIEW:
             return REVIEW_VIEW + applicationForm.getApplicationNumber();
@@ -133,7 +134,7 @@ public class StateTransitionViewResolver {
     private ValidationComment getValidationComment(final ApplicationForm applicationForm) {
         List<Comment> applicationComments = applicationForm.getApplicationComments();
         for (Comment comment : applicationComments) {
-            if (comment instanceof ValidationComment) {
+            if (comment instanceof ValidationComment && comment.getType() != CommentType.ADMITTER_COMMENT) {
                 return (ValidationComment) comment;
             }
         }

@@ -129,6 +129,7 @@ public class EvaluationTransitionController extends StateTransitionController {
             return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
         }
 
+        applicationsService.refresh(applicationForm);
         return stateTransitionService.resolveView(applicationForm);
     }
 }

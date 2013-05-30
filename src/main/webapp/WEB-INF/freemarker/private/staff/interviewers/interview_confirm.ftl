@@ -24,7 +24,7 @@
   
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
-  <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/comment/voting.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/voting.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/jquery.mousewheel.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>

@@ -9,7 +9,8 @@
     <div class="row-group">
     
       <ul id="timeline-statuses">
-      
+        
+        <#assign shownTargetForCompletingStage = false>
         <#list timelineObjects as timelineObject>  
 	        <#if timelineObject.type != 'reference' || user.isInRole('ADMITTER') || user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
 		        <li class="${timelineObject.type}">
@@ -135,17 +136,20 @@
 		        
 							</#if> 
 							
-		          <#if timelineObject_index == 0 && (applicationForm.status == 'VALIDATION' || applicationForm.status == 'REVIEW' || applicationForm.status == 'APPROVAL')> 
-                <ul class="status-info">
-                  <li class="${timelineObject.type}">
-                    <div class="box">
-                      <p class="target">
-                      	<span data-desc="Target"></span>
-                        Our target for completing the stage: ${applicationForm.dueDate?string('dd MMM yy')}.
-                      </p>
-                    </div>
-                  </li>
-                </ul>
+		          <#if !shownTargetForCompletingStage && (timelineObject.type != 'reference')>
+		            <#if timelineObject.type == 'validation' || timelineObject.type == 'review' || timelineObject.type == 'approval'> 
+                  <ul class="status-info">
+                    <li class="${timelineObject.type}">
+                      <div class="box">
+                        <p class="target">
+                        	<span data-desc="Target"></span>
+                          Our target for completing the stage: ${applicationForm.dueDate?string('dd MMM yy')}.
+                        </p>
+                      </div>
+                    </li>
+                  </ul>
+                </#if>
+                <#assign shownTargetForCompletingStage = true>
               </#if>							          
 							                      
 		          

@@ -941,3 +941,33 @@ function setTab(tab, id) {
 	$(id).children('div').hide();
 	$(tab.attr('href')).show();
 }
+
+/**
+ * Adds duration (in minutes) to given start time.
+ * 
+ * @param startTime
+ *            start time string in hh:mm format
+ * @param duration
+ *            duration in minutes
+ * @returns computed end time
+ */
+function computeEndTime(startTime, duration) {
+	var timeSplit = startTime.split(":");
+	var hours = parseInt(timeSplit[0]);
+	var minutes = parseInt(timeSplit[1]);
+	
+	var date = new Date(1970, 1, 1, hours, minutes, 0, 0);
+	date = new Date(date.getTime() + duration*60000);
+	
+	var endHours = '' + date.getHours();
+	var endMinutes = '' + date.getMinutes();
+	
+	if(endHours.length == 1){
+		endHours = '0' + endHours;
+	}
+	if(endMinutes.length == 1){
+		endMinutes = '0' + endMinutes;
+	}
+	var endTime = endHours + ':' + endMinutes;
+	return endTime;
+}

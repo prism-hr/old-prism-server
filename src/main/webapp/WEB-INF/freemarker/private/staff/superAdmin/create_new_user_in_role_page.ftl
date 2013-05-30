@@ -254,65 +254,72 @@
 						
 						<div id="manageRegistryContacts" class="tab-page">
 							<form id="addRemoveRegistryUsers">
-								<div class="row-group" id="section-registryusers">
 
-									<div class="row">
-										<h3 >Admissions Contacts</h3>
-										<table id="registryUsers" class="table table-striped table-condensed table-bordered table-hover ">
-											<colgroup>
-												<col />
-												<col style="width: 30px;" />
-											</colgroup>
-											<tbody>
-												<#list allRegistryUsers! as regUser>
-												<tr>
-													<td>
-														${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
-													</td>
-													<td>
-														<button class="button-delete" type="button" data-desc="Remove">Remove</button>
-														<input type="hidden" name="firstname" value="${regUser.firstname!}" />
-														<input type="hidden" name="lastname" value="${regUser.lastname!}" />
-														<input type="hidden" name="email" value="${regUser.email!}" />
-														<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
-													</td>
-												</tr>
-												</#list>
-											</tbody>
-										</table>
+
+								<section id="registryUsers" class="form-rows">
+										<h2>Manage Admissions Contacts</h2>
+									<div>
+										
+										<div class="tableContainer table table-condensed ">
+											<table id="registryUsers" class="table table-striped table-condensed table-bordered table-hover " border="0">
+												<colgroup>
+													<col />
+													<col style="width: 30px;" />
+												</colgroup>
+												<tbody>
+													<#list allRegistryUsers! as regUser>
+													<tr>
+														<td>
+															${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
+														</td>
+														<td>
+															<button class="button-delete" type="button" data-desc="Remove">Remove</button>
+															<input type="hidden" name="firstname" value="${regUser.firstname!}" />
+															<input type="hidden" name="lastname" value="${regUser.lastname!}" />
+															<input type="hidden" name="email" value="${regUser.email!}" />
+															<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
+														</td>
+													</tr>
+													</#list>
+												</tbody>
+											</table>
+										</div>
+									
+										<div class="row-group">
+											<!-- Entry form. -->
+											<div class="row">
+												<label for="reg-firstname" class="plain-label">First Name<em>*</em></label>
+												<span class="hint" data-desc="<@spring.message 'configuration.firstName'/>"></span>
+												<div class="field">	
+													<input type="text" class="full" id="reg-firstname" autocomplete="off" name="regUserFirstname" />
+												</div>
+											</div><!-- .row -->
+											
+											<div class="row">
+												<label for="reg-lastname" class="plain-label">Last Name<em>*</em></label>
+												<span class="hint" data-desc="<@spring.message 'configuration.lastName'/>"></span>
+												<div class="field">	
+													<input type="text" class="full" id="reg-lastname" autocomplete="off" name="regUserLastname" />
+												</div>
+											</div><!-- .row -->
+											
+											<div class="row">
+												<label for="reg-email" class="plain-label">Email Address<em>*</em></label>
+												<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
+												<div class="field">	
+													<input type="email" class="full" id="reg-email" autocomplete="off" name="regUserEmail" />
+												</div>
+											</div><!-- .row -->
+							
+											<div class="row">
+												<div class="field">	
+													<button class="btn btn-primary" type="button" id="registryUserAdd">Add</button>
+												</div>
+											</div><!-- .row -->
+										</div>
 									</div>
-									<!-- Entry form. -->
-									<div class="row">
-										<label for="reg-firstname" class="plain-label">First Name<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'configuration.firstName'/>"></span>
-										<div class="field">	
-											<input type="text" class="full" id="reg-firstname" autocomplete="off" name="regUserFirstname" />
-										</div>
-									</div><!-- .row -->
-									
-									<div class="row">
-										<label for="reg-lastname" class="plain-label">Last Name<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'configuration.lastName'/>"></span>
-										<div class="field">	
-											<input type="text" class="full" id="reg-lastname" autocomplete="off" name="regUserLastname" />
-										</div>
-									</div><!-- .row -->
-									
-									<div class="row">
-										<label for="reg-email" class="plain-label">Email Address<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
-										<div class="field">	
-											<input type="email" class="full" id="reg-email" autocomplete="off" name="regUserEmail" />
-										</div>
-									</div><!-- .row -->
-					
-									<div class="row">
-										<div class="field">	
-											<button class="btn btn-primary" type="button" id="registryUserAdd">Add</button>
-										</div>
-									</div><!-- .row -->
 									<div id = "regContactData"></div>
-								</div>			
+								</section>			
 							</form>
 						<!-- close manage registry contacts tab page -->
 						</div>

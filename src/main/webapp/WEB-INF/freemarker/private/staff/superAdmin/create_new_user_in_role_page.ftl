@@ -54,13 +54,10 @@
 								<input type="hidden" id="deleteFromUser" name="user" value=""/>						
 								<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
 							</form>
-							
-							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit/saveUser" method="POST">
-							
 								<section class="form-rows">
 									<h2 class="no-arrow">Manage Users</h2>
-			
 									<div>
+									<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit/saveUser" method="POST">
 										<!-- Table of users. -->
 										<div class="tableContainer existingUsers"></div>
 			
@@ -154,22 +151,19 @@
 											</div>
 											
 										</div><!-- .row-group -->
-											
+											</form>
 									</div>
 								</section>
 								
-							</form>
+							
 						<!-- close manage users tab page -->
 						</div>
 						<#if user.isInRole('SUPERADMINISTRATOR')>
 							<div id="manageSuperadmins" class="tab-page">
-								<form id="editSuperadmins" name="editSuperadmins" action="/pgadmissions/manageUsers/edit/saveSuperadmin" method="POST">
-					
 									<section id="superadmins" class="form-rows">
 										<h2>Manage Superadministrators</h2>
-
 										<div>
-										
+										<form id="editSuperadmins" name="editSuperadmins" action="/pgadmissions/manageUsers/edit/saveSuperadmin" method="POST">
 											<div class="tableContainer table table-condensed existingUsers">
 												<table class="data" border="0">
 													<colgroup>
@@ -245,21 +239,19 @@
 												</div>
 						
 											</div><!-- .row-group -->
+											</form>  
 										</div>
 									</section>
-								</form>						
+													
 							<!-- close manage superadmins tab page -->
 							</div>
 						</#if>
 						
 						<div id="manageRegistryContacts" class="tab-page">
-							<form id="addRemoveRegistryUsers">
-
-
-								<section id="registryUsers" class="form-rows">
+								<section class="form-rows">
 										<h2>Manage Admissions Contacts</h2>
 									<div>
-										
+										<form id="addRemoveRegistryUsers">
 										<div class="tableContainer table table-condensed ">
 											<table id="registryUsers" class="table table-striped table-condensed table-bordered table-hover " border="0">
 												<colgroup>
@@ -317,10 +309,11 @@
 												</div>
 											</div><!-- .row -->
 										</div>
+										</form>
 									</div>
-									<div id = "regContactData"></div>
+									<div id = "regContactData" style="display:none;"></div>
 								</section>			
-							</form>
+							
 						<!-- close manage registry contacts tab page -->
 						</div>
 					<!-- close tab box -->

@@ -5,6 +5,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.ProgramAdvert;
+import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 
 @Component
 public class ProgramAdvertValidator extends AbstractValidator {
@@ -24,7 +25,7 @@ public class ProgramAdvertValidator extends AbstractValidator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "durationOfStudyInMonth", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
         Integer durationOfStudyInMonth = programAdvert.getDurationOfStudyInMonth();
-        if (durationOfStudyInMonth != null && durationOfStudyInMonth.equals(-1)) {
+        if (durationOfStudyInMonth != null && durationOfStudyInMonth.equals(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY)) {
             errors.rejectValue("durationOfStudyInMonth", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
         }
 

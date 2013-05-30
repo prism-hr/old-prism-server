@@ -13,7 +13,7 @@ public class DurationOfStudyPropertyEditor extends PropertyEditorSupport {
     public static final Integer ERROR_VALUE_FOR_DURATION_OF_STUDY = -1;
 
     @Override
-    public void setAsText(String jsonString) throws IllegalArgumentException {
+    public void setAsText(String jsonString) {
 
         if (jsonString == null || StringUtils.isBlank(jsonString)) {
             setValue(null);
@@ -26,11 +26,12 @@ public class DurationOfStudyPropertyEditor extends PropertyEditorSupport {
         String durationOfStudyAsString = (String) durationOfStudyMap.get("value");
         String durationOfStudyUnitAsString = (String) durationOfStudyMap.get("unit");
 
-        if (StringUtils.isNotBlank(durationOfStudyAsString) && StringUtils.isNotBlank(durationOfStudyUnitAsString)) {
-            Double durationOfStudyAsDouble = Double.valueOf(durationOfStudyAsString);
+        if (StringUtils.isNotBlank(durationOfStudyAsString) && StringUtils.isNotBlank(durationOfStudyUnitAsString)
+                        && StringUtils.isNumeric(durationOfStudyAsString.trim())) {
+            Double durationOfStudyAsDouble = Double.valueOf(durationOfStudyAsString.trim());
             if (!durationOfStudyAsDouble.isNaN() && (Math.floor(durationOfStudyAsDouble) == durationOfStudyAsDouble)) {
-                Integer durationOfStudyInMonths = Integer.valueOf(durationOfStudyAsString);
-                if (durationOfStudyUnitAsString.equals("Years")) {
+                Integer durationOfStudyInMonths = durationOfStudyAsDouble.intValue();
+                if (durationOfStudyUnitAsString.trim().equals("Years")) {
                     durationOfStudyInMonths = durationOfStudyInMonths * 12;
                 }
                 result = durationOfStudyInMonths;

@@ -28,8 +28,20 @@ $(document).ready(function(){
 			        	var advert = map['advert'];
 			        	if(advert){
 			        		$("#programmeDescription").val(advert['description']);
-			        		$("#programmeDurationOfStudy").val(advert['durationOfStudyInMonth'].toString());
-			        		$("#timeUnit").val('Months');
+			        		
+			        		var durationOfStudyInMonths=advert['durationOfStudyInMonth'];
+			        		if(durationOfStudyInMonths%12==0){
+			        			$("#programmeDurationOfStudy").val((durationOfStudyInMonths/12).toString());
+			        			$("#timeUnit").val('Years');
+			        		}else{
+			        			$("#programmeDurationOfStudy").val(durationOfStudyInMonths.toString());
+			        			$("#timeUnit").val('Months');
+			        		}
+			        		
+			        		if(advert['isCurrentlyAcceptingApplications']){$("#currentlyAcceptingApplicationYes").prop("checked", true);}
+			        		else{$("#currentlyAcceptingApplicationNo").prop("checked", true);}
+			        	}else{
+			        		clearAdvert();
 			        	}
 			        },
 			        complete: function() {
@@ -39,10 +51,15 @@ $(document).ready(function(){
 		});
 		
 		$("#save-go").bind('click', function(){
-			duration = {
+			clearPreviousErrors();
+			var duration = {
 				value : $("#programmeDurationOfStudy").val(),
 				unit : $("#timeUnit").val()
 			};
+			var acceptApplications;
+			if($("#currentlyAcceptingApplicationYes").prop("checked")){acceptApplications="true";}
+			else if($("#currentlyAcceptingApplicationNo").prop("checked")){acceptApplications="false";}
+			else {acceptApplications="";}
 			$.ajax({
 				type: 'POST',
 				statusCode: {
@@ -58,9 +75,24 @@ $(document).ready(function(){
 					description:$("#programmeDescription").val(),
 					durationOfStudyInMonth:JSON.stringify(duration),
 					fundingInformation:$("#programmeFundingInformation").val(),
-					isCurrentlyAcceptingApplications:$('input["#currentlyAcceptingApplication"]:checked').val()
+					isCurrentlyAcceptingApplications:acceptApplications
 				}, 
 				success: function(data) {
+					var map = JSON.parse(data);
+					if(!map['success']){
+						if(map['program']){
+							$("#program").append(getErrorMessageHTML(map['program']));
+						}
+						if(map['description']){
+							$("#description").append(getErrorMessageHTML(map['description']));
+						}
+						if(map['durationOfStudyInMonth']){
+							$("#durationOfStudyInMonth").append(getErrorMessageHTML(map['durationOfStudyInMonth']));
+						}
+						if(map['isCurrentlyAcceptingApplications']){
+							$("#isCurrentlyAcceptingApplications").append(getErrorMessageHTML(map['isCurrentlyAcceptingApplications']));
+						}
+					}
 				},
 				complete: function() {
 				}
@@ -68,9 +100,6 @@ $(document).ready(function(){
 
 		});
 		
-		$("clear-go").bind('click', function(){
-			clearAll();
-		});
 		
 		$("#save-upi-go").bind('click', function() {
 			$("#irisSection").find("div.alert-error").remove();
@@ -108,9 +137,19 @@ $(document).ready(function(){
 		});
 });
 
+function clearAdvert(){
+	$("#programmeDescription").val("");
+	$("#programmeDurationOfStudy").val("");
+	$("#timeUnit").val("");
+	$("#programmeFundingInformation").val("");
+	$("#currentlyAcceptingApplicationYes").prop("checked", false);
+	$("#currentlyAcceptingApplicationNo").prop("checked", false);
+}
+
 function clearAll(){
-	$("#linkToApply").val("");
+	clearAdvert();
 	$("#buttonToApply").val("");
+	$("#linkToApply").val("");
 }
 
 function getUpiForCurrentUser() {
@@ -134,3 +173,10 @@ function getUpiForCurrentUser() {
 	});
 }
 
+function getErrorMessageHTML(message){
+	return "<div class=\"row error\"><div class=\"field\"><div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i> "+message+"</div></div></div>";
+}
+
+function clearPreviousErrors(){
+	$(".error").remove();
+}

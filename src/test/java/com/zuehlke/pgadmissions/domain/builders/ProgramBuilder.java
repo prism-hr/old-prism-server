@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramAdvert;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -19,7 +20,7 @@ public class ProgramBuilder {
     private String title;
     private boolean enabled;
     private boolean atasRequired;
-    
+
     private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
@@ -29,12 +30,13 @@ public class ProgramBuilder {
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
     private List<Badge> badges = new ArrayList<Badge>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
+    private ProgramAdvert advert;
 
     public ProgramBuilder atasRequired(boolean flag) {
         atasRequired = flag;
         return this;
     }
-    
+
     public ProgramBuilder viewers(RegisteredUser... users) {
         for (RegisteredUser approver : users) {
             this.viewers.add(approver);
@@ -108,11 +110,16 @@ public class ProgramBuilder {
         this.title = title;
         return this;
     }
-    
-    public ProgramBuilder badges(Badge ...badges){
+
+    public ProgramBuilder badges(Badge... badges) {
         for (Badge badge : badges) {
             this.badges.add(badge);
         }
+        return this;
+    }
+
+    public ProgramBuilder advert(ProgramAdvert advert) {
+        this.advert = advert;
         return this;
     }
 
@@ -132,6 +139,7 @@ public class ProgramBuilder {
         program.getScoringDefinitions().putAll(scoringDefinitions);
         program.getBadges().addAll(badges);
         program.setAtasRequired(atasRequired);
+        program.setAdvert(advert);
         return program;
     }
 }

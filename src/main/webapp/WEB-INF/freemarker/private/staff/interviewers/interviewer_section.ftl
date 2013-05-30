@@ -259,7 +259,7 @@
   </div>
   
   <div class="row interview-scheduled interview-to-schedule">
-    <label class="plain-label normal" for="interviewLocation">Interview Location</label>
+    <label class="plain-label normal" for="interviewLocation">Interview Location (URL)</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
     <div class="field"> 
     <#if assignOnly?? && assignOnly>

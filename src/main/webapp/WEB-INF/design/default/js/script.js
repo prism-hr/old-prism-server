@@ -906,7 +906,7 @@ function dateToDMY(date) {
 function checkIfErrors() {
 	errors = $('.alert-error:visible').length;
 	if (errors > 0) {
-		$('#add-info-bar-div').removeClass('alert-info').addClass('alert-error');
+		$('#add-info-bar-div').removeClass('alert-info').addClass('alert-error').find('i').removeClass('icon-info-sign').addClass('icon-warning-sign');
 	} 
 }
 /*!
@@ -1012,22 +1012,34 @@ function generalTabing() {
 	id = $.find('.tabbox');
 	$.each($('.tab-page'), function() {
 		$('.tabs li').removeClass('current');
-		if ( $(this).find('.alert-error:visible').length > 0 ) {
-			$(id).children('div').hide();
-			$(this).show();
-			$('.tabs li:nth-child('+$(this).index()+')').addClass('current');
-			return false;
-		} else if (tabslected == ('#'+$(this).attr('id'))){
-			$(id).children('div').hide();
-			$(this).show();
-			$('.tabs li:nth-child('+$(this).index()+')').addClass('current');
-			return false;
+		
+		if (window.location.hash) {
+			if (window.location.hash == $(this).attr('id')) {
+				showTab($(this));
+			} else { 
+				parent = $(window.location.hash).closest('.tab-page');
+				showTab(parent);
+			}
 		} else {
-			// Hide tabs
-			$('.tabs li:first').addClass('current')
-			$(id).children('div').not(':eq(0)').hide();
+			if ( $(this).find('.alert-error:visible').length > 0 ) {
+				showTab($(this));
+				return false;
+			} else if (tabslected == ('#'+$(this).attr('id'))){
+				showTab($(this));
+				return false;
+			} else {
+				// Hide tabs
+				$('.tabs li:first').addClass('current')
+				$(id).children('div').not(':eq(0)').hide();
+			}
 		}
 	});
+	// Show current
+	function showTab(tab) {
+		$(id).children('div').hide();
+		tab.show();
+		$('.tabs li:nth-child('+tab.index()+')').addClass('current');
+	}
 	// Set buttons
 	$('.tabs li a').click(function(event){
 		event.preventDefault();

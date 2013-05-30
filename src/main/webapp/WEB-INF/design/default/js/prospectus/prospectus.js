@@ -103,6 +103,10 @@ $(document).ready(function(){
 		
 		$("#save-upi-go").bind('click', function() {
 			$("#irisSection").find("div.alert-error").remove();
+			if ($("#upi").val() == "") {
+				$('#upi').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make an entry.</div>');
+				return;
+			}
 			$('#iris-profile-modal').modal();
 			$("#iris-profile-modal-iframe").attr("src", "http://iris.ucl.ac.uk/iris/browse/profile?upi=" + $('#upi').val());
 		});
@@ -131,6 +135,7 @@ $(document).ready(function(){
 		                }
 					} else {
 						$("#iris-account-linked-message").show().find("span").html($('#upi').val());
+						$("#iris-account-not-linked-message").hide();
 					}
 				},
 				complete: function() {

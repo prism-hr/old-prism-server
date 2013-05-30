@@ -26,14 +26,12 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
-import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -44,11 +42,9 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.dto.RegistryUserDTO;
 import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
@@ -67,7 +63,6 @@ public class ConfigurationControllerTest {
 	private ConfigurationController controller;
 	private RegisteredUser superAdmin;
 	private StageDurationPropertyEditor stageDurationPropertyEditorMock;
-	private PersonPropertyEditor registryPropertyEditorMock;
 	private UserService userServiceMock;
 	private EmailTemplateService emailTemplateServiceMock;
 	private ThrottleService throttleserviceMock;
@@ -128,14 +123,6 @@ public class ConfigurationControllerTest {
 		EasyMock.verify(dataBinderMock);
 	}
 
-	@Test
-	public void shouldRegistorPropertyEditorForRegistryUsers() {
-		WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
-		dataBinderMock.registerCustomEditor(Person.class, registryPropertyEditorMock);
-		EasyMock.replay(dataBinderMock);
-		controller.registerValidatorsAndPropertyEditorsForRegistryUsers(dataBinderMock);
-		EasyMock.verify(dataBinderMock);
-	}
 
 	@Test
 	public void shouldGetStageDurationsConvertedToStringKeys() {
@@ -163,18 +150,6 @@ public class ConfigurationControllerTest {
 	}
 
 	@Test
-	public void shouldGetAllRegistryUsers() {
-		Person personOne = new PersonBuilder().id(1).build();
-		Person personTwo = new PersonBuilder().id(4).build();
-
-		EasyMock.expect(configurationServiceMock.getAllRegistryUsers()).andReturn(Arrays.asList(personOne, personTwo));
-		EasyMock.replay(configurationServiceMock);
-		List<Person> allRegistryUsers = controller.getAllRegistryContacts();
-		assertEquals(2, allRegistryUsers.size());
-		assertTrue(allRegistryUsers.containsAll(Arrays.asList(personOne, personTwo)));
-	}
-
-	@Test
 	public void shouldGetPossibleDurationUnits() {
 		org.junit.Assert.assertArrayEquals(DurationUnitEnum.values(), controller.getUnits());
 	}
@@ -190,23 +165,15 @@ public class ConfigurationControllerTest {
 		List<StageDuration> stageDurationList = Arrays.asList(validationDuration, interviewDuration);
 		stageDurationDto.setStagesDuration(stageDurationList);
 
-		Person registryUserOne = new PersonBuilder().id(1).build();
-		Person registryUserTwo = new PersonBuilder().id(2).build();
-
-		
-		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
-		List<Person> registryContactList = Arrays.asList(registryUserOne, registryUserTwo);
-		registryUserDTO.setRegistryUsers(registryContactList);
-
 		ReminderInterval reminderInterval = new ReminderInterval();
 		reminderInterval.setId(1);
 
 		
-		configurationServiceMock.saveConfigurations(stageDurationList, registryContactList, reminderInterval, superAdmin);
+		configurationServiceMock.saveConfigurations(stageDurationList, reminderInterval);
 
 		replay(configurationServiceMock);
 
-		String view = controller.submit(stageDurationDto, registryUserDTO, reminderInterval);
+		String view = controller.submit(stageDurationDto, reminderInterval);
 
 		verify(configurationServiceMock);
 		assertEquals("redirect:/configuration/config_section", view);
@@ -364,22 +331,14 @@ public class ConfigurationControllerTest {
 		List<StageDuration> stageDurationList = Arrays.asList(validationDuration, interviewDuration);
 		stageDurationDto.setStagesDuration(stageDurationList);
 
-		Person registryUserOne = new PersonBuilder().id(1).build();
-		Person registryUserTwo = new PersonBuilder().id(2).build();
-
-		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
-		List<Person> registryContactList = Arrays.asList(registryUserOne, registryUserTwo);
-		registryUserDTO.setRegistryUsers(registryContactList);
-
 		ReminderInterval reminderInterval = new ReminderInterval();
 		reminderInterval.setId(1);
 
 		EasyMock.replay(configurationServiceMock);
 
-		controller.submit(stageDurationDto, registryUserDTO, reminderInterval);
+		controller.submit(stageDurationDto, reminderInterval);
 
 		EasyMock.verify(configurationServiceMock);
-
 	}
 
 	@Test
@@ -538,8 +497,6 @@ public class ConfigurationControllerTest {
 	public void setUp() {
 		stageDurationPropertyEditorMock = EasyMock.createMock(StageDurationPropertyEditor.class);
 
-		registryPropertyEditorMock = EasyMock.createMock(PersonPropertyEditor.class);
-
 		userServiceMock = EasyMock.createMock(UserService.class);
 
 		emailTemplateServiceMock = EasyMock.createMock(EmailTemplateService.class);
@@ -554,7 +511,7 @@ public class ConfigurationControllerTest {
 
 		scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
 
-		controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock,
+		controller = new ConfigurationController(stageDurationPropertyEditorMock, userServiceMock, configurationServiceMock,
 		                emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock, scoringDefinitionParserMock, null, null, null);
 
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

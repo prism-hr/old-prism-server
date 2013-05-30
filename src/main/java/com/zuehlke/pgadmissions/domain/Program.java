@@ -73,6 +73,9 @@ public class Program extends Authorisable implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "program")
+    private List<ProgramClosingDate> closingDates = new ArrayList<ProgramClosingDate>();
+
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
     private List<Badge> badges = new ArrayList<Badge>();
@@ -219,5 +222,13 @@ public class Program extends Authorisable implements Serializable {
 
     public void setAdvert(ProgramAdvert advert) {
         this.advert = advert;
+    }
+    
+    public List<ProgramClosingDate> getClosingDates() {
+        return closingDates;
+    }
+
+    public void setClosingDates(List<ProgramClosingDate> closingDates) {
+        this.closingDates = closingDates;
     }
 }

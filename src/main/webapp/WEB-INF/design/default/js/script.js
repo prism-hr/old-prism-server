@@ -238,10 +238,12 @@ function makeFeedbackButton() {
 // ------------------------------------------------------------------------------
 // Initialise jQuery's date picker on specified fields.
 // ------------------------------------------------------------------------------
-function bindDatePicker(selector) {
+function bindDatePicker(selector, enabled) {
     $(selector).each(function() {
         if (!$(this).hasClass('hasDatepicker')) {
-    		$(this).attr("readonly", "readonly");
+        	if(!enabled){
+        		$(this).attr("readonly", "readonly");
+        	}
         	
             $(this).datepicker({
                 dateFormat : 'dd M yy',
@@ -251,6 +253,10 @@ function bindDatePicker(selector) {
             });
         }
     });
+}
+
+function bindDatePickerEnabled(selector){
+	bindDatePicker(selector,true);
 }
 
 // ------------------------------------------------------------------------------
@@ -281,7 +287,6 @@ function bindDatePicker(selector) {
 }*/
 // Textarea Counter
 function addCounter() {
-    var i = 1
 	var $textArea = $("textarea");
     $.each($textArea, function() {
         if ($(this).attr('id') == 'convictionsText') {
@@ -414,7 +419,7 @@ function watchUpload($field, $deleteFunction) {
             $deleteFunction();
         }
 
-        $uploadedDocuments.find('li:last-child').remove()
+        $uploadedDocuments.find('li:last-child').remove();
 		$uploadedDocuments.hide();
 
         $hidden.val(''); // clear field value.
@@ -1029,7 +1034,7 @@ function generalTabing() {
 				return false;
 			} else {
 				// Hide tabs
-				$('.tabs li:first').addClass('current')
+			$('.tabs li:first').addClass('current');
 				$(id).children('div').not(':eq(0)').hide();
 			}
 		}

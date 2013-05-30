@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers.prospectus;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +169,20 @@ public class ProspectusController {
             map.put("success", "true");
         }
 
+        Gson gson = new Gson();
+        return gson.toJson(map);
+    }
+    
+    @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
+    @ResponseBody
+    public String addClosingDate(@RequestParam String programCode, @RequestParam Date closingDate, @RequestParam Integer studyPlaces, HttpServletRequest request){
+        Map<String, Object> map = Maps.newHashMap();
+        
+        Program program = programsService.getProgramByCode(programCode);
+        if (program == null) {
+            map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE,null,request.getLocale()));
+        }
+        
         Gson gson = new Gson();
         return gson.toJson(map);
     }

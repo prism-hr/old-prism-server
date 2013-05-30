@@ -131,11 +131,11 @@
                                 <h2>Link to UCL IRIS</h2>
                                 <div>
                                     <form>
-                                        <div class="alert alert-info">
+                                        <div class="alert alert-info" id="iris-account-not-linked-message" style="display:none">
                                             <i class="icon-info-sign"></i> Link your UCL Prism profile to UCL IRIS. This will display your Research Opportunities Feed on your UCL IRIS profile.
                                         </div>
-										<div class="alert alert-success">
-                                            <i class="icon-ok-sign"></i> Your account is linked to UCL UPI: AJKEN86
+										<div class="alert alert-success" id="iris-account-linked-message" style="display:none">
+                                            <i class="icon-ok-sign"></i> Your account is linked to UCL UPI: <span></span>
                                         </div>
                                         <div class="row-group">
                                             <div class="row">

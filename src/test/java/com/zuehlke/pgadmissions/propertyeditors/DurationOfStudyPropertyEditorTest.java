@@ -23,7 +23,7 @@ public class DurationOfStudyPropertyEditorTest {
     @Test
     public void shouldSetErrorValueForEmptyDurationUnit() {
         editor.setAsText("{\"value\":\"2\",\"unit\":\"\"}");
-        assertEquals(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY, editor.getValue());
+        assertEquals(DurationOfStudyPropertyEditor.ERROR_UNIT_FOR_DURATION_OF_STUDY, editor.getValue());
     }
 
     @Test

@@ -619,24 +619,6 @@ public class ApplicationFormActionTest {
     }
 
     @Test
-    public void shouldAddCompleteInterviewStageActionIfIsApplicationAdministrator() {
-        Interviewer interviewer = new InterviewerBuilder().build();
-        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).interviewers(interviewer).build();
-
-        EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
-        EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
-        EasyMock.expect(applicationMock.isDueDateExpired()).andReturn(false);
-        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
-        EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(true);
-
-        EasyMock.replay(userMock, applicationMock);
-        COMPLETE_INTERVIEW_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false, COMPLETE_INTERVIEW_STAGE);
-    }
-
-    @Test
     public void shouldAddCompleteInterviewStageActionAndSetAttentionFlagIfAllInterviewersResponded() {
         InterviewComment comment = new InterviewComment();
         Interviewer interviewer = new InterviewerBuilder().interviewComment(comment).build();
@@ -678,7 +660,6 @@ public class ApplicationFormActionTest {
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
         EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
-        EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(false);
 
         EasyMock.replay(userMock, applicationMock);
         COMPLETE_INTERVIEW_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);

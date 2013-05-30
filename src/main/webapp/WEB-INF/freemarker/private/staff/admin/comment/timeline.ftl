@@ -76,7 +76,7 @@
 											<#elseif user.isInterviewerOfApplicationForm(applicationForm.application)>                
 												${(timelineObject.interview.furtherInterviewerDetails?html)!}
 											<#elseif user.isInRole('SUPERADMINISTRATOR')>
-												<#if timelineObject.interview.furtherInterviewerDetails!= ""><p><strong>Instructions for interviewers:</strong> <em>${(timelineObject.interview.furtherInterviewerDetails?html)!}</em></p></#if>
+												<#if timelineObject.interview.furtherInterviewerDetails?? && timelineObject.interview.furtherInterviewerDetails != ""><p><strong>Instructions for interviewers:</strong> <em>${(timelineObject.interview.furtherInterviewerDetails?html)!}</em></p></#if>
 												<#if timelineObject.interview.furtherDetails!= "">
                                                 <p><strong>Instructions for applicant:</strong> <em> ${(timelineObject.interview.furtherDetails?html)!}</em></p></#if>
 											</#if>            

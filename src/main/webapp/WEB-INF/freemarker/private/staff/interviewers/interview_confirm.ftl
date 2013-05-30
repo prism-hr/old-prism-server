@@ -24,7 +24,7 @@
   
   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
-  <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/voting.js' />"></script>
+  <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/comment/voting.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/jquery.mousewheel.js' />"></script>
   <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
   <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
@@ -74,10 +74,8 @@
 			              				<#assign responded = responded + 1>
 			              			</#if>
 			              		</#list>
-			              		
-		            	  	
 		            	  		
-		            	  		
+		            	  		<input id="interview-duration" hidden="true" value="${interview.duration?html}" />
 		            	  		<div class="timeslots-wrapper">
 			            	  		<div class="timeslots-scrollable">
 				            	  		<table class="table timeslots">
@@ -85,7 +83,7 @@
 				            	  				<th class="participant">&nbsp;</th>
 				            	  				
 				            	  				<#list interview.timeslots as timeslot>
-				            	  					<th><strong>${timeslot.dueDate?string("dd MMM yy")}</strong> <br />${timeslot.startTime}</th>
+				            	  					<th class="timeslot-header"><strong>${timeslot.dueDate?string("dd MMM yy")}</strong> <br /><span class="start-time">${timeslot.startTime}</span> - <span class="end-time"></span></th>
 				            	  				</#list>
 				            	  			</thead>
 				            	  			<tbody>

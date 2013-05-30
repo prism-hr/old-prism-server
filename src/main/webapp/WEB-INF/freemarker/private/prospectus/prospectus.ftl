@@ -110,13 +110,13 @@
                                             <div class="row">
                                                 <label for="linkToApply" class="plain-label">Link to Apply</label> <span class="hint" data-desc="<@spring.message 'prospetus.linkToApply'/>"></span>
                                                 <div class="field">
-                                                    <input id="linkToApply" name="project" class="input-xxlarge" type="text" role="textbox" aria-haspopup="true">
+                                                    <input id="linkToApply" name="project" class="input-xxlarge" type="text" role="textbox" aria-haspopup="true" readonly>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <label for="buttonToApply" class="plain-label">Button to Apply</label> <span class="hint" data-desc="<@spring.message 'prospetus.buttonToApply'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="buttonToApply" class="input-xxlarge" rows="6" cols="150"></textarea>
+                                                    <textarea id="buttonToApply" class="input-xxlarge" rows="6" cols="150" readonly></textarea>
                                                 </div>
                                             </div>
                                         </div>

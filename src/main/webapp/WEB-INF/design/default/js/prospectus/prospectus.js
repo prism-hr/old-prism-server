@@ -1,5 +1,7 @@
 $(document).ready(function(){
-		
+	
+		getUpiForCurrentUser();
+	
 		$("select#programme").bind('change', function() {
 			var programme_code= $("#programme").val();
 			if(programme_code==""){
@@ -94,9 +96,7 @@ $(document).ready(function(){
 					upi : $('#upi').val()
 				}, 
 				success: function(data) {
-					if (data.success) {
-						$('#upi').val("");
-					} else {
+					if (!data.success) {
 						if (data.irisProfile != null) {
 		                    $('#upi').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.irisProfile  + '</div>');
 		                }
@@ -111,5 +111,26 @@ $(document).ready(function(){
 function clearAll(){
 	$("#linkToApply").val("");
 	$("#buttonToApply").val("");
+}
+
+function getUpiForCurrentUser() {
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() { window.location.reload(); },
+			500: function() { window.location.href = "/pgadmissions/error"; },
+			404: function() { window.location.href = "/pgadmissions/404"; },
+			400: function() { window.location.href = "/pgadmissions/400"; },                  
+			403: function() { window.location.href = "/pgadmissions/404"; }
+		},
+		url: "/pgadmissions/users/IRIS/",
+		success: function(data) {
+			if (data.upi) {
+				$('#upi').val(data.upi);
+			}
+		},
+		complete: function() {
+		}
+	});
 }
 

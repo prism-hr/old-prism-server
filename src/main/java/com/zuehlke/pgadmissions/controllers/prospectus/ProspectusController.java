@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
+import com.zuehlke.pgadmissions.validators.AbstractValidator;
 import com.zuehlke.pgadmissions.validators.ProgramAdvertValidator;
 
 import freemarker.template.Template;
@@ -152,7 +153,7 @@ public class ProspectusController {
         Program program = programsService.getProgramByCode(programCode);
 
         if (program == null) {
-            map.put("program", "Invalid program selected.");
+            map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE,null,request.getLocale()));
         }
 
         if (result.hasErrors()) {

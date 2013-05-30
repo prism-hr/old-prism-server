@@ -28,6 +28,9 @@ public class ProgramAdvertValidator extends AbstractValidator {
         if (durationOfStudyInMonth != null && durationOfStudyInMonth.equals(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY)) {
             errors.rejectValue("durationOfStudyInMonth", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
         }
+        if (durationOfStudyInMonth != null && durationOfStudyInMonth.equals(DurationOfStudyPropertyEditor.ERROR_UNIT_FOR_DURATION_OF_STUDY)) {
+        	errors.rejectValue("durationOfStudyInMonth", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "isCurrentlyAcceptingApplications", EMPTY_DROPDOWN_ERROR_MESSAGE);
 

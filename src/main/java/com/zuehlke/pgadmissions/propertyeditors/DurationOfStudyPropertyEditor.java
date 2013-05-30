@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 public class DurationOfStudyPropertyEditor extends PropertyEditorSupport {
 
     public static final Integer ERROR_VALUE_FOR_DURATION_OF_STUDY = -1;
+    public static final Integer ERROR_UNIT_FOR_DURATION_OF_STUDY = -2;
 
     @Override
     public void setAsText(String jsonString) {
@@ -20,25 +21,35 @@ public class DurationOfStudyPropertyEditor extends PropertyEditorSupport {
             return;
         }
 
-        Integer result = ERROR_VALUE_FOR_DURATION_OF_STUDY;
-
         java.util.Map durationOfStudyMap = new Gson().fromJson(jsonString, java.util.Map.class);
         String durationOfStudyAsString = (String) durationOfStudyMap.get("value");
         String durationOfStudyUnitAsString = (String) durationOfStudyMap.get("unit");
 
-        if (StringUtils.isNotBlank(durationOfStudyAsString) && StringUtils.isNotBlank(durationOfStudyUnitAsString)
-                        && StringUtils.isNumeric(durationOfStudyAsString.trim())) {
-            Double durationOfStudyAsDouble = Double.valueOf(durationOfStudyAsString.trim());
-            if (!durationOfStudyAsDouble.isNaN() && (Math.floor(durationOfStudyAsDouble) == durationOfStudyAsDouble)) {
-                Integer durationOfStudyInMonths = durationOfStudyAsDouble.intValue();
-                if (durationOfStudyUnitAsString.trim().equals("Years")) {
-                    durationOfStudyInMonths = durationOfStudyInMonths * 12;
-                }
-                result = durationOfStudyInMonths;
-            }
+        
+        Integer result = getDurationOfStudyAsIntOrError(durationOfStudyAsString);
+        if(!result.equals(ERROR_VALUE_FOR_DURATION_OF_STUDY)){
+        	result = getDurationOfStudyInMonthsOrError(result, durationOfStudyUnitAsString);
         }
 
         setValue(result);
     }
+
+	private Integer getDurationOfStudyInMonthsOrError(Integer duration, String durationOfStudyUnitAsString) {
+		if( StringUtils.isNotBlank(durationOfStudyUnitAsString))
+		{
+			return durationOfStudyUnitAsString.trim().equals("Years") ? duration * 12 : duration; 
+		}
+		return ERROR_UNIT_FOR_DURATION_OF_STUDY;
+	}
+
+	private Integer getDurationOfStudyAsIntOrError(String durationOfStudyAsString) {
+		if (StringUtils.isNotBlank(durationOfStudyAsString)  && StringUtils.isNumeric(durationOfStudyAsString.trim())) {
+            Double durationOfStudyAsDouble = Double.valueOf(durationOfStudyAsString.trim());
+            if (!durationOfStudyAsDouble.isNaN() && (Math.floor(durationOfStudyAsDouble) == durationOfStudyAsDouble)) {
+                return durationOfStudyAsDouble.intValue();
+            }
+        }
+		return ERROR_VALUE_FOR_DURATION_OF_STUDY;
+	}
 
 }

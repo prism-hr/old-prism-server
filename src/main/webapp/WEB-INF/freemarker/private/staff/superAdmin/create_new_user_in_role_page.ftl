@@ -253,14 +253,18 @@
 									<div>
 										<form id="addRemoveRegistryUsers">
 										<div class="tableContainer table table-condensed ">
-											<table id="registryUsers" class="table table-striped table-condensed table-bordered table-hover " border="0">
+											<table id="registryUsers" class="table table-striped table-condensed table-hover " border="0">
 												<colgroup>
+												    <col style="width: 30px;" />
 													<col />
 													<col style="width: 30px;" />
 												</colgroup>
 												<tbody>
 													<#list allRegistryUsers! as regUser>
 													<tr>
+													   <td>
+													       <span class="arrow"></span>
+													   </td>
 														<td>
 															${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
 														</td>

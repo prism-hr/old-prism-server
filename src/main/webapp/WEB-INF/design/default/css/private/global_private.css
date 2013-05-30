@@ -371,7 +371,9 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 #programme-details .icon, #programme-details .actions { float: right; }
 #programme-details .cdate {display: inline-block; font-weight: bold; position: relative; left: 155px;}
 #programme-details .cdate span{display: inline-block; font-weight: normal; margin-left: 40px;}
-
+#qualificationsSection .alert.alert-error i {
+	margin-left: 0px;
+}
 
 .ui-datepicker { box-shadow: 0px 3px 6px #999; font-size: 9pt !important; }
 
@@ -1361,6 +1363,14 @@ span.icon-status.not-submitted:before {
 #registryUsers table {
   /*min-width:416px; */
 }
+.registryUsers td{
+	vertical-align: middle !important;
+	padding: 3px 5px;
+}
+#registryUsers td {
+	vertical-align: middle !important;
+	padding: 3px 5px;
+}
 #linkAccountsSection table{
   margin-bottom: 0px;
 }
@@ -1444,9 +1454,10 @@ i {
   margin-bottom: 10px !important;
 }
 #appliList.table-bordered th, #appliList.table-bordered td { border-color: #B5B1B3 !important; border-left-color: #B5B1B3 !important; border-top-color: #B5B1B3 !important;}
-#createinterviewersection, #supervisor_div .row-group, #editUser, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
+#createinterviewersection, #supervisor_div .row-group, #editUser, #editSuperadmins .row-group, #addRemoveRegistryUsers .row-group, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
 	overflow: visible !important;
 }
+
 #section-registryusers .table-bordered th, #section-registryusers .table-bordered td{
   vertical-align: middle !important;
 }
@@ -1474,9 +1485,6 @@ form#removeForm {
 }
 #supervisor_div .alert-info {
 	margin-bottom: 0px;
-}
-#scoringConfiguration {
-	margin-bottom: -10px;
 }
 #search-box .btn.remove, #search-box .btn.add{
 	border-radius: 15px;

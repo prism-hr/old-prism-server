@@ -76,13 +76,13 @@
         <div class="content-box-inner">
           <div id="configBox" class="tabbox">
           <ul class="tabs">
-              <li><a href="#configsection">Service Levels</a></li>
-              <li><a href="#edit-template-section">Email Templates</a></li>
-              <li><a href="#edit-throttle-section">Portico Interface</a></li>
+              <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#configsection">Service Levels</a></li></#if>
+              <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#edit-template-section">Email Templates</a></li></#if>
+              <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#edit-throttle-section">Portico Interface</a></li></#if>
               <li><a href="#badgeS">Badge</a></li>
               <li><a href="#scoringConfiguration">Custom Forms</a></li>
           </ul>
-          <div id="configsection" class="tab-page"></div>
+          <#if user.isInRole('SUPERADMINISTRATOR') ><div id="configsection" class="tab-page"></div></#if>
           <#if user.isInRole('SUPERADMINISTRATOR') >
           <div id="edit-template-section" class="tab-page"> 
             <section class="form-rows">
@@ -191,7 +191,6 @@
             </section>
           </div>
           <div id="scoringConfiguration" class="tab-page">
-            
               <section class="form-rows">
               <h2>Manage Custom Forms</h2>
               <div>
@@ -237,9 +236,9 @@
                 <button class="btn btn-primary" type="button" id="save-scoring">Save</button>
               </div>
               </form>
+              </div>
               </section>
-            
-          </div>
+         
         </div>
           </div>
         <!-- .content-box-inner --> 

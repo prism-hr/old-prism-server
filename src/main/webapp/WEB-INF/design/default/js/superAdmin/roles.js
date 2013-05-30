@@ -1,7 +1,9 @@
 $(document).ready(function()
 {
 	
-	autosuggest($("#firstName"), $("#lastName"), $("#email"));
+	autosuggest($("#editUser #firstName"), $("#editUser #lastName"), $("#editUser #email"));
+	autosuggest($("#editSuperadmins #firstName"), $("#editSuperadmins #lastName"), $("#editSuperadmins #email"));
+	autosuggest($("#reg-firstname"), $("#reg-lastname"), $("#reg-email"));
 	
 	// ------------------------------------------------------------------------------
 	// Load a list of assigned users for a specific programme.

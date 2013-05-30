@@ -67,7 +67,7 @@
                 							<div class="row" id="description">
                                                 <label for="programmeDescription" class="plain-label">Description <em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.description'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="programmeDescription" class="input-xlarge" rows="6" cols="150"></textarea>
+                                                    <textarea id="programmeDescription" class="max" rows="6" cols="150"></textarea>
                                                 </div>
                                             </div>
                 							<div class="row" id="durationOfStudyInMonth">
@@ -84,7 +84,7 @@
                                             <div class="row">
                                                 <label for="programmeFundingInformation" class="plain-label">Funding Information</label> <span class="hint" data-desc="<@spring.message 'prospectus.fundingInformation'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="programmeFundingInformation" class="input-xlarge" rows="6" cols="150"></textarea>
+                                                    <textarea id="programmeFundingInformation" class="max" rows="6" cols="150"></textarea>
                                                 </div>
                                             </div>
                                         </div>

@@ -34,7 +34,7 @@ public enum ApplicationFormAction {
             }
         }
     }), //
-    EMAIL_APPLICANT("emailApplicant", "Email applicant", new ActionPredicate() {
+    EMAIL_APPLICANT("emailApplicant", "Email Applicant", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() != UNSUBMITTED && user != application.getApplicant()) {
@@ -45,8 +45,7 @@ public enum ApplicationFormAction {
     COMMENT("comment", "Comment", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if (application.getStatus() != ApplicationFormStatus.UNSUBMITTED
-                    && (user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application) || user.isInRole(Authority.ADMITTER))) {
+            if (application.getStatus() != UNSUBMITTED && user != application.getApplicant()) {
                 actions.addAction(COMMENT);
             }
         }
@@ -134,6 +133,7 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (nextStatus == INTERVIEW && (user.hasAdminRightsOnApplication(application) || user.isApplicationAdministrator(application))) {
                 actions.addAction(ASSIGN_INTERVIEWERS);
+                actions.setRequiresAttention(true);
             }
         }
     }), //
@@ -173,14 +173,16 @@ public enum ApplicationFormAction {
             }
         }
     }), //
-    ADD_INTERVIEW_FEEDBACK("interviewFeedback", "Provide interview feedback", new ActionPredicate() {
+    ADD_INTERVIEW_FEEDBACK("interviewFeedback", "Provide Interview Feedback", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
             if (application.getStatus() == INTERVIEW && nextStatus == null && user.isInterviewerOfApplicationForm(application) && interview.isScheduled()
-                    && interview.isDateExpired() && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+                    && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
                 actions.addAction(ADD_INTERVIEW_FEEDBACK);
-                actions.setRequiresAttention(true);
+                if (interview.isDateExpired()) {
+                    actions.setRequiresAttention(true);
+                }
             }
         }
     }), //
@@ -227,16 +229,16 @@ public enum ApplicationFormAction {
                     && user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
                     && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) && user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
                 actions.addAction(REVISE_APPROVAL_AS_ADMINISTRATOR);
-                actions.setRequiresAttention(true);
             }
         }
     }), //
-    CONFIRM_SUPERVISION("confirmSupervision", "Confirm supervision", new ActionPredicate() {
+    CONFIRM_SUPERVISION("confirmSupervision", "Confirm Supervision", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == APPROVAL) {
                 Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-                if (primarySupervisor != null && user == primarySupervisor.getUser() && !primarySupervisor.hasResponded()) {
+                if (!application.isPendingApprovalRestart() && primarySupervisor != null && user == primarySupervisor.getUser()
+                        && !primarySupervisor.hasResponded()) {
                     actions.addAction(CONFIRM_SUPERVISION);
                     actions.setRequiresAttention(true);
                 }

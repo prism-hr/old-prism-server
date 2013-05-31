@@ -126,7 +126,7 @@
 							</#if> 
 							
 		          <#if !shownTargetForCompletingStage && (timelineObject.type != 'reference')>
-		            <#if timelineObject.type == 'validation' || timelineObject.type == 'review' || timelineObject.type == 'approval'> 
+		            <#if timelineObject.type == 'validation' || timelineObject.type == 'review'  || timelineObject.type == 'interview' || timelineObject.type == 'approval'> 
                   <ul class="status-info">
                     <li class="${timelineObject.type}">
                       <div class="box">

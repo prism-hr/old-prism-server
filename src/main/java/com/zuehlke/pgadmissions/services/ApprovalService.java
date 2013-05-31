@@ -114,10 +114,6 @@ public class ApprovalService {
         commentDAO.save(supervisionConfirmationComment);
     }
     
-    public void restartApprovalStageAsAdministrator(final ApplicationForm form, final RegisteredUser user) {
-        RequestRestartComment restartComment = createRequestRestartComment(form, user);
-        restartApprovalStage(form, user, restartComment);
-    }
 
     private RequestRestartComment createRequestRestartComment(ApplicationForm form, Supervisor supervisor) {
         RequestRestartComment restartComment = new RequestRestartComment();
@@ -231,7 +227,7 @@ public class ApprovalService {
             throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
         }
         
-        if (user.isNotInRoleInProgram(Authority.APPROVER, form.getProgram()) && user.isNotInRoleInProgram(Authority.ADMINISTRATOR, form.getProgram())) {
+        if (!user.isApproverInProgram(form.getProgram()) && !user.hasAdminRightsOnApplication(form)) {
             throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
         }
         

@@ -105,11 +105,11 @@ public class InterviewTest {
     }
     
     @Test
-    public void shouldExpiredReturnTrueIfDueDateIsToday() {
+    public void shouldExpiredReturnFalseIfDueDateIsToday() {
         Date today = DateUtils.truncate(new Date(), Calendar.DATE);
         
         Interview interview = new InterviewBuilder().dueDate(today).build();
-        assertTrue(interview.isDateExpired());
+        assertFalse(interview.isDateExpired());
     }
     @Test
     public void shouldExpiredReturnFalseIfDueDateIsTomorrow() {

@@ -53,6 +53,7 @@ function bindSaveUpiAction(){
 		$("#iris-profile-modal-iframe").attr("src", "http://iris.ucl.ac.uk/iris/browse/profile?upi=" + $('#upi').val());
 	});
 }
+
 function bindAddClosingDateButtonAction(){
 	$("#addClosingDate").bind('click', function(){
 		$.ajax({
@@ -140,6 +141,7 @@ function bindSaveButtonAction(){
 		if($("#currentlyAcceptingApplicationYes").prop("checked")){acceptApplications="true";}
 		else if($("#currentlyAcceptingApplicationNo").prop("checked")){acceptApplications="false";}
 		else {acceptApplications="";}
+		$('#ajaxloader').show();
 		$.ajax({
 			type: 'POST',
 			statusCode: {
@@ -175,6 +177,7 @@ function bindSaveButtonAction(){
 				}
 			},
 			complete: function() {
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 

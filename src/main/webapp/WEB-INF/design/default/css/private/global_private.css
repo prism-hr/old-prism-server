@@ -302,6 +302,7 @@ span.icon-status.interview { background-position: 0 0; }
 span.icon-status.withdrawn { background-position: 0 -25px; }
 span.icon-status.review { background-position: 0 -50px; }
 span.icon-status.approved { background-position: 0 -75px; }
+span.icon-status.offer-recommended { background-position: 0 -75px; }
 span.icon-status.rejected { background-position: 0 -100px; }
 span.icon-status.validation { background-position: 0 -150px; }
 span.icon-status.not-submitted { background-position: 0 -175px; }

@@ -209,7 +209,7 @@ public class ApplicationsReportServiceTest {
         assertEquals("1939", getTextValue(table, row, "academicYear"));
         assertEquals("1939-08-31", getDateValue(table, row, "submittedDate"));
         assertEquals("1939-09-01", getDateValue(table, row, "lastEditedDate"));
-        assertEquals("Approved", getTextValue(table, row, "status"));
+        assertEquals("Offer Recommended", getTextValue(table, row, "status"));
         assertEquals(24, getNumberValue(table, row, "validationTime"), 0);
         assertEquals("Overseas", getTextValue(table, row, "feeStatus"));
         assertEquals("Unsure", getTextValue(table, row, "academicallyQualified"));

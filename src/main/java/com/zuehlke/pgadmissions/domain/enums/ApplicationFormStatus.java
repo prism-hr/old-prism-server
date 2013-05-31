@@ -14,7 +14,7 @@ public enum ApplicationFormStatus {
 	
 	APPROVAL("Approval"),
 	
-	APPROVED("Offer Recomended"),
+	APPROVED("Offer Recommended"),
 	
 	WITHDRAWN("Withdrawn"),
 	

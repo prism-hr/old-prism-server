@@ -189,7 +189,7 @@ public enum ApplicationFormAction {
 
     // APPROVAL STAGE ACTIONS
 
-    REVISE_APPROVAL("restartApproval", "Revise Approval", new ActionPredicate() {
+    REVISE_APPROVAL("restartApproval", "Assign Supervisors", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.isPendingApprovalRestart() && user.hasAdminRightsOnApplication(application)) {
@@ -222,7 +222,7 @@ public enum ApplicationFormAction {
             }
         }
     }), //
-    REVISE_APPROVAL_AS_ADMINISTRATOR("restartApprovalAsAdministrator", "Revise Approval", new ActionPredicate() {
+    REVISE_APPROVAL_AS_ADMINISTRATOR("restartApprovalAsAdministrator", "Complete Approval Stage", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == APPROVAL && !application.isPendingApprovalRestart()

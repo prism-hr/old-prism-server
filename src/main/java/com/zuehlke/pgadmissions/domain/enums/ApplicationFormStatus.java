@@ -14,13 +14,13 @@ public enum ApplicationFormStatus {
 	
 	APPROVAL("Approval"),
 	
-	APPROVED("Approved"),
+	APPROVED("Offer Recomended"),
 	
 	WITHDRAWN("Withdrawn"),
 	
 	REJECTED("Rejected"),
 	
-	REQUEST_RESTART_APPROVAL("Approval Revision");
+	REQUEST_RESTART_APPROVAL("Approval");
 
 	private final String displayValue;
 

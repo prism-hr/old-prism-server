@@ -79,9 +79,6 @@ public class ValidationTransitionController extends StateTransitionController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
     public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm) {
-        if (getCurrentUser().isInRole(Authority.ADMITTER)) {
-            return STATE_TRANSITION_VIEW;
-        }
         return stateTransitionService.resolveView(applicationForm);
     }
 

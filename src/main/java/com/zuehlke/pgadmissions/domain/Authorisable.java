@@ -87,7 +87,7 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
 
     public boolean canEditApplicationAsAdministrator(final ApplicationForm form, final RegisteredUser user) {
         boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
-                || user.isInterviewerOfApplicationForm(form) || user.isAdminInProgramme(form.getProgram());
+                || user.isApplicationAdministrator(form) || user.isAdminInProgramme(form.getProgram());
         boolean reviewOrInterview = form.isInReviewStage() || form.isInInterviewStage();
 
         return hasPermissionToEdit && reviewOrInterview;

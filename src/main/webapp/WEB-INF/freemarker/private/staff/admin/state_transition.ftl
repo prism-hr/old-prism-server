@@ -63,20 +63,10 @@
 		<!-- Main content area. -->
 		<article id="content" role="main">		    
 		
-		  <!-- "Tools" 
-		  <div id="tools">
-			<ul class="left">
-			  <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
-			  <li class="icon-feedback"><a title="Send Feedback" href="mailto:prism@ucl.ac.uk?subject=Feedback" target="_blank">Send Feedback</a></li>
-			</ul>
-		  </div>-->
-      
 			<!-- content box -->				      
 			<div class="content-box">
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
-					
-                    
                     
 					<section id="commentsection" class="form-rows">
 						<h2 class="no-arrow">
@@ -93,13 +83,12 @@
 		
 						<div>
 							<form>
-								<@spring.bind "comment.confirmNextStage" />
-							    <#if spring.status.errorMessages?size &gt; 0>
-						     		<div class="alert alert-error" > <i class="icon-warning-sign"></i>
-							    <#else>
-							        <div class="alert alert-info"> <i class="icon-info-sign"></i>
-							    </#if>
-                                
+                <@spring.bind "comment.confirmNextStage" />
+                <#if spring.status.errorMessages?size &gt; 0>
+                	<div class="alert alert-error" > <i class="icon-warning-sign"></i>
+                <#else>
+                  <div class="alert alert-info"> <i class="icon-info-sign"></i>
+                </#if>
 								
 								<#if applicationForm.isInState('VALIDATION')>
 									Validate the application here.
@@ -122,10 +111,8 @@
 											<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='2000'>${(comment.comment?html)!}</textarea>
 											<@spring.bind "comment.comment" /> 
 											<#list spring.status.errorMessages as error> 
-                                              <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-                                                ${error}
-                                              </div>
-                                            </#list>
+                        <div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
+                      </#list>
 										</div>
 									</div>
 	
@@ -190,48 +177,48 @@
 								</div><!-- close .row-group -->
 								
 								<div class="row-group">
-    								<div class="row">
-                                        <label for="closingDate" class="plain-label">Assign to Closing Date</label>
-    								    <span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
-                                        <div class="field">
-                                            <input type="text" class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>
-                                            <#if closingDate_error??>
-                                                <span class="invalid">${closingDate_error}</span>
-                                            </#if>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <label class="plain-label" for="projectTitle">Assign to Project</label>
-                                        <span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
-                                        <div class="field">
-                                            <input id="projectTitle" name="projectTitle" class="full ui-autocomplete-input" type="text" value="${(projectTitle)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
-                                            <#if projectTitle_error??>
-                                                <span class="invalid">${projectTitle_error}</span>
-                                            </#if>
-                                        </div>
-                                     </div>
+  								<div class="row">
+                    <label for="closingDate" class="plain-label">Assign to Closing Date</label>
+                    <span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
+                    <div class="field">
+                        <input type="text" class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>
+                        <#if closingDate_error??>
+                            <span class="invalid">${closingDate_error}</span>
+                        </#if>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <label class="plain-label" for="projectTitle">Assign to Project</label>
+                    <span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
+                    <div class="field">
+                      <input id="projectTitle" name="projectTitle" class="full ui-autocomplete-input" type="text" value="${(projectTitle)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+                      <#if projectTitle_error??>
+                        <span class="invalid">${projectTitle_error}</span>
+                      </#if>
+                    </div>
+                  </div>
 								</div><!-- close .row-group -->
 								
 								</#if>
 	
-								<div class="row-group">
-									<div class="row">
-										<label class="plain-label" for="status">Next Stage<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
-										<div class="field" >		            				
-											<select class="max" name="status" id="status">
-												<option value="">Select...</option>
-												<#list stati as status>
-												    <option value="${status}" <#if comment.nextStatus?? && comment.nextStatus == status> selected="selected" </#if> >${status.displayValue()}</option>               
-												</#list>
-											</select>	
-											<@spring.bind "comment.nextStatus" /> 
-											<#list spring.status.errorMessages as error>  <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-                                                ${error}
-                                              </div></#list>
-										</div>
-									</div>
-								</div><!-- close .row-group -->
+                <div class="row-group">
+                  <div class="row">
+                  	<label class="plain-label" for="status">Next Stage<em>*</em></label>
+                  	<span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
+                  	<div class="field" >		            				
+                      <select class="max" name="status" id="status">
+                        <option value="">Select...</option>
+                        <#list stati as status>
+                          <option value="${status}" <#if comment.nextStatus?? && comment.nextStatus == status> selected="selected" </#if> >${status.displayValue()}</option>               
+                        </#list>
+                      </select>	
+                      <@spring.bind "comment.nextStatus" /> 
+                      <#list spring.status.errorMessages as error>  
+                        <div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
+                      </#list>
+                      </div>
+                  </div>
+                </div><!-- close .row-group -->
 								
 								<div class="row-group" id="interviewDelegation" style="display:none">
 								  <#include "/private/staff/admin/interview_delegation.ftl"/>
@@ -259,7 +246,7 @@
 								</div>
                               		
 								<div class="buttons">
-								    <button class="btn btn-primary" type="button" id="changeStateButton" value="save">Submit</button>
+							    <button class="btn btn-primary" type="button" id="changeStateButton" value="save">Submit</button>
 								</div>
 								
 							</form>

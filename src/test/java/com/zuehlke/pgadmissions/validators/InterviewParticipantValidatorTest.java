@@ -37,7 +37,7 @@ public class InterviewParticipantValidatorTest {
         interviewParticipant.setCanMakeIt(true);
         interviewParticipant.getAcceptedTimeslots().clear();
 
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "interviewParticipant");
         interviewParticipantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("interviewVote.nooptionselected", mappingResult.getFieldError("canMakeIt").getCode());
@@ -47,7 +47,7 @@ public class InterviewParticipantValidatorTest {
     public void shouldAcceptIfCantMakeIt() {
         interviewParticipant.setCanMakeIt(false);
 
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "interviewParticipant");
         interviewParticipantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
@@ -56,7 +56,7 @@ public class InterviewParticipantValidatorTest {
     public void shouldAcceptIfCanMakeItAndTimeSlotsSelected() {
         interviewParticipant.setCanMakeIt(true);
 
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "canMakeIt");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewParticipant, "interviewParticipant");
         interviewParticipantValidator.validate(interviewParticipant, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
@@ -64,8 +64,7 @@ public class InterviewParticipantValidatorTest {
     @Before
     public void setup() {
 
-        interviewParticipant = new InterviewParticipantBuilder().acceptedTimeslots(new InterviewTimeslot(), new InterviewTimeslot()).build();
-        interviewParticipant.setResponded(true);
+        interviewParticipant = new InterviewParticipantBuilder().acceptedTimeslots(new InterviewTimeslot(), new InterviewTimeslot()).responded(true).build();
         interviewParticipantValidator = new InterviewParticipantValidator();
         interviewParticipantValidator.setValidator((javax.validation.Validator) validator);
     }

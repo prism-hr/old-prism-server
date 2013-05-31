@@ -88,11 +88,7 @@ public class StateTransitionController {
         binder.setValidator(stateChangeValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
         binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-    }
-
-    public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
     }
 
     @ModelAttribute("applicationForm")

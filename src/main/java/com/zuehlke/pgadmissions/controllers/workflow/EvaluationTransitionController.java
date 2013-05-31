@@ -19,9 +19,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -79,22 +77,8 @@ public class EvaluationTransitionController extends StateTransitionController {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
 
-        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getType(),
+        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(), stateChangeComment.getType(),
                 stateChangeComment.getNextStatus());
-
-        if (newComment instanceof ReviewEvaluationComment) {
-            ((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
-        }
-
-        if (newComment instanceof InterviewEvaluationComment) {
-            ((InterviewEvaluationComment) newComment).setInterview(applicationForm.getLatestInterview());
-        }
-
-        if (newComment instanceof ApprovalEvaluationComment) {
-            ((ApprovalEvaluationComment) newComment).setApprovalRound(applicationForm.getLatestApprovalRound());
-        }
-
-        newComment.setDocuments(stateChangeComment.getDocuments());
 
         if (newComment instanceof ApprovalEvaluationComment) {
 
@@ -108,8 +92,7 @@ public class EvaluationTransitionController extends StateTransitionController {
                     modelMap.put("messageCode", "move.approved");
                     modelMap.put("application", applicationForm.getApplicationNumber());
                 } else {
-                    Comment genericComment = commentFactory.createComment(applicationForm, user, newComment.getComment(), CommentType.GENERIC, null);
-                    genericComment.setDocuments(newComment.getDocuments());
+                    Comment genericComment = commentFactory.createComment(applicationForm, user, newComment.getComment(), newComment.getDocuments(), CommentType.GENERIC, null);
                     commentService.save(genericComment);
                     return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7";
                 }

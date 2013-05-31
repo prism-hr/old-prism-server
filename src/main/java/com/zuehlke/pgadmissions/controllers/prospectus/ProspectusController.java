@@ -30,14 +30,18 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramAdvert;
+import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.validators.AbstractValidator;
 import com.zuehlke.pgadmissions.validators.ProgramAdvertValidator;
+import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -61,18 +65,23 @@ public class ProspectusController {
 
     private final ProgramAdvertValidator programAdvertValidator;
 
+    private final ProgramClosingDateValidator closingDateValidator;
+    private final DatePropertyEditor datePropertyEditor;
+    private final ProgramPropertyEditor programPropertyEditor;
+
     private final FreeMarkerConfigurer freeMarkerConfigurer;
     private Template buttonToApplyTemplate;
     private Template linkToApplyTemplate;
 
     public ProspectusController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProspectusController(UserService userService, ProgramsService programsService, @Value("${application.host}") final String host,
                     ApplicationContext applicationContext, ProgramAdvertValidator programAdvertValidator,
-                    DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, FreeMarkerConfigurer freeMarkerConfigurer) {
+                    DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, FreeMarkerConfigurer freeMarkerConfigurer,
+                    ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
         this.host = host;
@@ -80,6 +89,9 @@ public class ProspectusController {
         this.programAdvertValidator = programAdvertValidator;
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
         this.freeMarkerConfigurer = freeMarkerConfigurer;
+        this.closingDateValidator = closingDateValidator;
+        this.datePropertyEditor = datePropertyEditor;
+        this.programPropertyEditor = programPropertyEditor;
     }
 
     @PostConstruct
@@ -97,6 +109,13 @@ public class ProspectusController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(programAdvertValidator);
         binder.registerCustomEditor(Integer.class, "durationOfStudyInMonth", durationOfStudyPropertyEditor);
+    }
+
+    @InitBinder("programClosingDate")
+    public void registerEditorsAndValidatorsForClosingDate(WebDataBinder binder) {
+        binder.setValidator(closingDateValidator);
+        binder.registerCustomEditor(Program.class, "program", programPropertyEditor);
+        binder.registerCustomEditor(Date.class, "closingDate", datePropertyEditor);
     }
 
     @ModelAttribute("program")
@@ -154,7 +173,7 @@ public class ProspectusController {
         Program program = programsService.getProgramByCode(programCode);
 
         if (program == null) {
-            map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE,null,request.getLocale()));
+            map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
         }
 
         if (result.hasErrors()) {
@@ -172,17 +191,23 @@ public class ProspectusController {
         Gson gson = new Gson();
         return gson.toJson(map);
     }
-    
+
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String addClosingDate(@RequestParam String programCode, @RequestParam Date closingDate, @RequestParam Integer studyPlaces, HttpServletRequest request){
+    public String addClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMap();
-        
-        Program program = programsService.getProgramByCode(programCode);
-        if (program == null) {
-            map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE,null,request.getLocale()));
+
+        for (FieldError error : result.getFieldErrors()) {
+            map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
         }
-        
+
+        if (map.isEmpty()) {
+            Program program = programClosingDate.getProgram();
+            program.getClosingDates().add(programClosingDate);
+            programsService.save(program);
+            map.put("success", "true");
+        }
+
         Gson gson = new Gson();
         return gson.toJson(map);
     }

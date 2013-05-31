@@ -38,22 +38,21 @@ public class StateTransitionViewResolver {
         }
 
         ApplicationFormStatus nextStatus = getNextStatus(applicationForm);
-        if (nextStatus == null) {
-            return STATE_TRANSITION_VIEW;
+        if (nextStatus != null) {
+            switch (nextStatus) {
+            case REVIEW:
+                return REVIEW_VIEW + applicationForm.getApplicationNumber();
+            case INTERVIEW:
+                return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
+            case APPROVAL:
+                return APPROVAL_VIEW + applicationForm.getApplicationNumber();
+            case REJECTED:
+                return REJECTION_VIEW + applicationForm.getApplicationNumber();
+            default:
+            }
         }
 
-        switch (nextStatus) {
-        case REVIEW:
-            return REVIEW_VIEW + applicationForm.getApplicationNumber();
-        case INTERVIEW:
-            return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
-        case APPROVAL:
-            return APPROVAL_VIEW + applicationForm.getApplicationNumber();
-        case REJECTED:
-            return REJECTION_VIEW + applicationForm.getApplicationNumber();
-        default:
-            return STATE_TRANSITION_VIEW;
-        }
+        return STATE_TRANSITION_VIEW;
 
     }
 

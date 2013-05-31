@@ -291,7 +291,7 @@ public class Interview implements Serializable {
             return false;
         }
         Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-        return !getInterviewDueDate().after(today);
+        return today.after(getInterviewDueDate());
     }
 
 }

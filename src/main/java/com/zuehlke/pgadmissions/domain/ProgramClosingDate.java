@@ -32,6 +32,14 @@ public class ProgramClosingDate implements Serializable {
     @Column(name = "study_places")
     private Integer studyPlaces;
 
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+    
     public Date getClosingDate() {
         return closingDate;
     }

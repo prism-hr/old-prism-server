@@ -56,6 +56,8 @@ function bindSaveUpiAction(){
 
 function bindAddClosingDateButtonAction(){
 	$("#addClosingDate").bind('click', function(){
+		$('#ajaxloader').show();
+		clearPreviousErrors();
 		$.ajax({
 			type: 'POST',
 			statusCode: {
@@ -67,13 +69,26 @@ function bindAddClosingDateButtonAction(){
 			},
 			url: "/pgadmissions/prospectus/addClosingDate",
 			data: {
+				program: $("#programme").val(),
 				closingDate : $('#closingDate').val(),
-				studyPlaces : $('#studyPlaces').val(),
-				programmeCode : $("#programme").val()
+				studyPlaces : $('#studyPlaces').val()
 			}, 
 			success: function(data) {
+				var map = JSON.parse(data);
+				if(!map['success']){
+					if(map['program']){
+						$("#program").append(getErrorMessageHTML(map['program']));
+					}
+					if(map['closingDate']){
+						$("#closingDateRow").append(getErrorMessageHTML(map['closingDate']));
+					}
+					if(map['studyPlaces']){
+						$("#studyPlacesRow").append(getErrorMessageHTML(map['studyPlaces']));
+					}
+				}
 			},
 			complete: function() {
+				$('#ajaxloader').fadeOut('fast');
 			}
 		});
 	});

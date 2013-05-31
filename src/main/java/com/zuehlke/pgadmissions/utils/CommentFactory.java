@@ -1,10 +1,13 @@
 package com.zuehlke.pgadmissions.utils;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -18,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 @Component
 public class CommentFactory {
 
-    public Comment createComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType,
+    public Comment createComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, List<Document> documents, CommentType commentType,
             ApplicationFormStatus nextStatus) {
         Comment comment;
         if (commentType == CommentType.INTERVIEW_EVALUATION) {
@@ -37,6 +40,7 @@ public class CommentFactory {
             comment = new Comment();
         }
         comment.setComment(strComment);
+        comment.setDocuments(documents);
         comment.setUser(user);
         comment.setApplication(applicationForm);
         return comment;
@@ -80,6 +84,7 @@ public class CommentFactory {
         ReviewEvaluationComment comment = new ReviewEvaluationComment();
         comment.setType(commentType);
         comment.setNextStatus(nextStatus);
+        comment.setReviewRound(applicationForm.getLatestReviewRound());
         return comment;
     }
 
@@ -88,6 +93,7 @@ public class CommentFactory {
         InterviewEvaluationComment comment = new InterviewEvaluationComment();
         comment.setType(commentType);
         comment.setNextStatus(nextStatus);
+        comment.setInterview(applicationForm.getLatestInterview());
         return comment;
     }
 
@@ -96,6 +102,7 @@ public class CommentFactory {
         ApprovalEvaluationComment comment = new ApprovalEvaluationComment();
         comment.setType(commentType);
         comment.setNextStatus(nextStatus);
+        comment.setApprovalRound(applicationForm.getLatestApprovalRound());
         return comment;
     }
 }

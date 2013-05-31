@@ -37,10 +37,8 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -95,15 +93,6 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(stateTransitionServiceMock, userServiceMock);
         assertEquals("view", controller.getStateTransitionView(applicationForm));
         EasyMock.verify(stateTransitionServiceMock, userServiceMock);
-    }
-
-    @Test
-    public void shouldResolveViewForApplicationFormAsAdmitter() {
-        currentUser.getRoles().add(new RoleBuilder().authorityEnum(Authority.ADMITTER).build());
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).build();
-        EasyMock.replay(userServiceMock);
-        assertEquals("private/staff/admin/state_transition", controller.getStateTransitionView(applicationForm));
-        EasyMock.verify(userServiceMock);
     }
 
     @Test

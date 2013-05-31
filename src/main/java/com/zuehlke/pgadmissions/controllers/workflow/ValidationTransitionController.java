@@ -80,7 +80,7 @@ public class ValidationTransitionController extends StateTransitionController {
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
     public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm) {
         if (getCurrentUser().isInRole(Authority.ADMITTER)) {
-            return "private/staff/admin/state_transition";
+            return STATE_TRANSITION_VIEW;
         }
         return stateTransitionService.resolveView(applicationForm);
     }

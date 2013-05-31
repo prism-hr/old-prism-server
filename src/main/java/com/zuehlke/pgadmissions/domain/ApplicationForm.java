@@ -475,6 +475,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             for (Comment comment : applicationComments) {
                 if (comment instanceof InterviewVoteComment && comment.getUser().getId().equals(user.getId())) {
                     returnList.add(comment);
+                } else if(comment instanceof InterviewScheduleComment){
+                    returnList.add(comment);
                 }
             }
         }

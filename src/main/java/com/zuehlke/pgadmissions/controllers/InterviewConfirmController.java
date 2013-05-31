@@ -2,11 +2,14 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
-import org.owasp.esapi.ESAPI;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,12 +19,11 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewParticipant;
-import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -29,6 +31,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.InterviewConfirmDTOValidator;
 
 @Controller
 @RequestMapping(value = { "/interviewConfirm" })
@@ -41,23 +44,26 @@ public class InterviewConfirmController {
     private final UserService userService;
 
     private final InterviewService interviewService;
-    
+
     private final ApplicationFormAccessService accessService;
-    
+
     private final ActionsProvider actionsProvider;
+    
+    private final InterviewConfirmDTOValidator interviewConfirmDTOValidator;
 
     public InterviewConfirmController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public InterviewConfirmController(ApplicationsService applicationsService, UserService userService,
-            InterviewService interviewService, final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+    public InterviewConfirmController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
+            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider, InterviewConfirmDTOValidator interviewConfirmDTOValidator) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
+        this.interviewConfirmDTOValidator = interviewConfirmDTOValidator;
     }
 
     @ModelAttribute("applicationForm")
@@ -93,50 +99,31 @@ public class InterviewConfirmController {
         return INTERVIEW_CONFIRM_PAGE;
     }
 
+    @ModelAttribute(value = "interviewConfirmDTO")
+    public InterviewConfirmDTO getInterviewConfirmDTO() {
+        return new InterviewConfirmDTO();
+    }
+
+    @InitBinder(value = "interviewConfirmDTO")
+    public void registerInterviewConfirmDTOEditors(WebDataBinder binder) {
+        binder.setValidator(interviewConfirmDTOValidator);
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+
     @RequestMapping(method = RequestMethod.POST)
-    public String submitInterviewConfirmation(
-            @ModelAttribute ApplicationForm applicationForm, 
-            @RequestParam(required = false) Integer timeslotId, 
-            @RequestParam(required = false) String comments, Model model) {
-        
-        boolean hasErrors = false;
-        
-        if (timeslotId == null) {
-            model.addAttribute("timeslotIdError", "dropdown.radio.select.none");
-            model.addAttribute("comments", comments);
-            hasErrors = true;
-        }
-        
-        if (StringUtils.isNotBlank(comments) && !ESAPI.validator().isValidInput("comment", comments, "ExtendedAscii", 2000, true)) {
-            model.addAttribute("commentsError", "text.field.nonextendedascii");
-            model.addAttribute("comments", comments);
-            hasErrors = true;
-        }
-        
-        if (hasErrors) {
+    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm,
+            @ModelAttribute(value = "interviewConfirmDTO") @Valid InterviewConfirmDTO interviewConfirmDTO, BindingResult result) {
+        if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;
         }
-        
+        RegisteredUser user = getUser();
         Interview interview = applicationForm.getLatestInterview();
-        interviewService.confirmInterview(interview, timeslotId);
-        
+        interviewService.confirmInterview(user, interview, interviewConfirmDTO);
+
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         applicationsService.save(applicationForm);
-        
-        RegisteredUser user = getUser();
+
         accessService.updateAccessTimestamp(applicationForm, user, new Date());
-        
-        if (StringUtils.isNotBlank(comments)) {
-            InterviewParticipant interviewParticipant = interview.getParticipant(user);
-            InterviewVoteComment comment = new InterviewVoteComment();
-            comment.setApplication(applicationForm);
-            comment.setComment(comments);
-            comment.setDate(new Date());
-            comment.setInterviewParticipant(interview.getParticipant(user));
-            comment.setUser(user);
-            interviewService.saveComment(interviewParticipant, comment);
-        }
-        
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }
 

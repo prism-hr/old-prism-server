@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
+import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -29,7 +30,9 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
@@ -45,15 +48,17 @@ public class InterviewService {
     private final InterviewVoteCommentDAO interviewVoteCommentDAO;
     private final MailSendingService mailService;
     private final StageDurationService stageDurationService;
+    private final CommentService commentService;
+    private final CommentFactory commentFactory;
 
     public InterviewService() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
             InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO,
-            final StageDurationService stageDurationService) {
+            final StageDurationService stageDurationService, CommentService commentService, CommentFactory commentFactory) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;
@@ -62,6 +67,8 @@ public class InterviewService {
         this.mailService = mailService;
         this.interviewVoteCommentDAO = interviewVoteCommentDAO;
         this.stageDurationService = stageDurationService;
+        this.commentService = commentService;
+        this.commentFactory = commentFactory;
     }
 
     public Interview getInterviewById(Integer id) {
@@ -72,7 +79,7 @@ public class InterviewService {
         interviewDAO.save(interview);
     }
 
-    public void moveApplicationToInterview(final Interview interview, ApplicationForm applicationForm) {
+    public void moveApplicationToInterview(RegisteredUser user, final Interview interview, ApplicationForm applicationForm) {
         interview.setApplication(applicationForm);
         assignInterviewDueDate(interview, applicationForm);
         interviewDAO.save(interview);
@@ -92,6 +99,12 @@ public class InterviewService {
         applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
 
         applicationFormDAO.save(applicationForm);
+
+        if (!interview.getTakenPlace()) {
+            InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, applicationForm, interview.getFurtherDetails(),
+                    interview.getFurtherInterviewerDetails());
+            commentService.save(scheduleComment);
+        }
 
         if (interview.isScheduled() && !interview.getTakenPlace()) {
             sendConfirmationEmails(interview);
@@ -119,14 +132,12 @@ public class InterviewService {
         interviewParticipant.setResponded(true);
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
+
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 
-    public void saveComment(InterviewParticipant interviewParticipant, InterviewVoteComment interviewVoteComment) {
-        interviewVoteCommentDAO.save(interviewVoteComment);
-    }
-    
-    public void confirmInterview(Interview interview, Integer timeslotId) {
+    public void confirmInterview(RegisteredUser user, Interview interview, InterviewConfirmDTO interviewConfirmDTO) {
+        Integer timeslotId = interviewConfirmDTO.getTimeslotId();
         InterviewTimeslot timeslot = null;
         for (InterviewTimeslot t : interview.getTimeslots()) {
             if (t.getId().equals(timeslotId)) {
@@ -139,8 +150,14 @@ public class InterviewService {
 
         interview.setInterviewDueDate(timeslot.getDueDate());
         interview.setInterviewTime(timeslot.getStartTime());
+        interview.setFurtherDetails(interviewConfirmDTO.getFurtherDetails());
+        interview.setFurtherInterviewerDetails(interviewConfirmDTO.getFurtherInterviewerDetails());
         interview.setStage(InterviewStage.SCHEDULED);
         interviewDAO.save(interview);
+
+        InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, interview.getApplication(),
+                interview.getFurtherDetails(), interview.getFurtherInterviewerDetails());
+        commentService.save(scheduleComment);
 
         assignInterviewDueDate(interview, interview.getApplication());
         removeApplicationAdministratorIfExists(interview);

@@ -174,13 +174,9 @@ public class MoveToInterviewController {
         binder.setValidator(interviewValidator);
         binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(null, "timeslots", interviewTimeslotsPropertyEditor);
         binder.registerCustomEditor(null, "duration", new CustomNumberEditor(Integer.class, true));
-    }
-
-    public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
@@ -190,7 +186,7 @@ public class MoveToInterviewController {
         if (bindingResult.hasErrors()) {
             return INTERVIEWERS_SECTION;
         }
-        interviewService.moveApplicationToInterview(interview, applicationForm);
+        interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
         if (interview.isParticipant(getUser())) {
             model.addAttribute("message", "redirectToVote");

@@ -99,7 +99,8 @@ function bindProgramSelectChangeAction(){
 		        	$("#linkToApply").val(map['linkToApply']);
 		        	var advert = map['advert'];
 		        	if(advert){
-		        		$("#programmeDescription").val(advert['description']);
+		        		setTextAreaValue($("#programmeDescription"),advert['description']);
+			        	setTextAreaValue($("#programmeFundingInformation"),advert['fundingInformation']);
 		        		
 		        		var durationOfStudyInMonths=advert['durationOfStudyInMonth'];
 		        		if(durationOfStudyInMonths%12==0){
@@ -183,12 +184,23 @@ function bindSaveButtonAction(){
 
 
 function clearAdvert(){
-	$("#programmeDescription").val("");
+	setTextAreaValue($("#programmeDescription"),"");
+	setTextAreaValue($("#programmeFundingInformation"),"");
 	$("#programmeDurationOfStudy").val("");
 	$("#timeUnit").val("");
 	$("#programmeFundingInformation").val("");
 	$("#currentlyAcceptingApplicationYes").prop("checked", false);
 	$("#currentlyAcceptingApplicationNo").prop("checked", false);
+}
+
+function setTextAreaValue(textArea, value){
+	textArea.val(value);
+	triggerKeyUp(textArea);
+}
+
+function triggerKeyUp(element) {
+	var keyup = jQuery.Event("keyup");
+	element.trigger(keyup);
 }
 
 function clearAll(){

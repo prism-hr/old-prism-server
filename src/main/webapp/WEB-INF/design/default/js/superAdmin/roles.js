@@ -61,14 +61,6 @@ $(document).ready(function()
 		var errors = false;
 		$('#section-registryusers div.alert-error').remove();
 		
-		// Allow a maximum of three users.
-		var user_count = $('#registryUsers tr').length;
-		if (user_count >= 3)
-		{
-			$('#reg-email').after('<div class="alert alert-error"> <i class="icon-warning-sign"> Only three registry users can be specified.</div>');
-			return;
-		}
-		
 		// Validation on any entered details.
 		if (!validateEmail($('#reg-email').val()))
 		{
@@ -89,6 +81,7 @@ $(document).ready(function()
 		if (!errors)
 		{
 			$('#registryUsers tbody').append('<tr>'
+				+ '	<td> <span class="arrow"></span> </td>'
 				+ '<td>'
 				+ $('#reg-firstname').val() + ' ' + $('#reg-lastname').val() + ' (' + $('#reg-email').val() + ')'
 				+ '</td>'
@@ -101,7 +94,6 @@ $(document).ready(function()
 				+ '</td>'
 				+ '</tr>');
 			$('#reg-firstname, #reg-lastname, #reg-email').val('');
-			updateRegistryForm();
 			submitRegistryUsers();
 		}
 	});
@@ -116,32 +108,6 @@ function checkTableForm() {
 	} else {
 		$('#registryUsers').css('display', 'table');
 	}
-}
-function updateRegistryForm()
-{
-var user_count = $('#registryUsers tr').length;
-if (user_count >= 3)
-{
-	$('#reg-firstname').attr('disabled', 'disabled');
-	$('#reg-lastname').attr('disabled', 'disabled');
-	$('#reg-email').attr('disabled', 'disabled');
-	
-	$('#reg-firstname').parent().parent().children('.plain-label').addClass('grey-label');
-	$('#reg-lastname').parent().parent().children('.plain-label').addClass('grey-label');
-	$('#reg-email').parent().parent().children('.plain-label').addClass('grey-label');
-	$('#registryUserAdd').attr('disabled', 'disabled');
-}
-else
-{
-	$('#reg-firstname').removeAttr('disabled');
-	$('#reg-lastname').removeAttr('disabled');
-	$('#reg-email').removeAttr('disabled');
-	$('#registryUserAdd').removeAttr('disabled');
-	$('#reg-firstname').parent().parent().children('.plain-label').removeClass('grey-label');
-	$('#reg-lastname').parent().parent().children('.plain-label').removeClass('grey-label');
-	$('#reg-email').parent().parent().children('.plain-label').removeClass('grey-label');
-}
-checkTableForm();
 }
 
 
@@ -256,7 +222,6 @@ function submitRegistryUsers()
 			complete: function()
 			{
 				$('#ajaxloader').fadeOut('fast');
-				updateRegistryForm();
 			}
 		});
 	}

@@ -12,7 +12,7 @@
         
         <#assign shownTargetForCompletingStage = false>
         <#list timelineObjects as timelineObject>  
-	        <#if timelineObject.type != 'reference' || user.isInRole('ADMITTER') || user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
+	        <#if (timelineObject.type != 'reference' && timelineObject.type != 'confirmEligibility') || user.isInRole('ADMITTER') || user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
 		        <li class="${timelineObject.type}">
 		          <div class="box">
 		            <div class="title">
@@ -145,13 +145,11 @@
 		          <#if timelineObject.comments??>
 		          <ul>
 		            <#list timelineObject.comments as comment>
-			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE' || comment.type == 'INTERVIEW_SCHEDULE'>                                                    
+			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'VALIDATION' || comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE' || comment.type == 'INTERVIEW_SCHEDULE'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
 			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>
 			           		    <#assign role = "administrator"/> 
-			           		<#elseif comment.user.isInRole('ADMITTER')>
-			           		    <#assign role = "admitter"/> 
 			           		<#elseif comment.user.isInterviewerOfApplicationForm(comment.application)>
 			           		    <#assign role = "interviewer"/> 
 			           		<#elseif comment.user.id == applicationForm.applicant.id>
@@ -231,6 +229,8 @@
 		          </ul>
 		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)> 
 		            	<#include "timeline_snippets/reference_comment.ftl"/>
+		          <#elseif timelineObject.type == 'confirmEligibility'>
+		            	<#include "timeline_snippets/eligibility_comment.ftl"/>
 		          </#if> 
 		        </li>
 	        </#if>

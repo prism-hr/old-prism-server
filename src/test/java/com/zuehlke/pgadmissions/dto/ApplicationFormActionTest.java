@@ -5,18 +5,23 @@ import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.INTERV
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REVIEW;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_INTERVIEW_FEEDBACK;
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.*;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REFERENCE;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REVIEW;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_REVIEWERS;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_SUPERVISORS;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMMENT;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_REVIEW_STAGE;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_ELIGIBILITY;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_INTERVIEW_TIME;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_SUPERVISION;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.EMAIL_APPLICANT;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.REVISE_APPROVAL;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.REVISE_APPROVAL_AS_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.VIEW;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.VIEW_EDIT;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.WITHDRAW;
@@ -221,6 +226,8 @@ public class ApplicationFormActionTest {
     public void shouldAddConfirmEligibilityActionIfAdmitterAndDontSetRequiresAttentionIfNotRequested() {
         EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(true);
         EasyMock.expect(applicationMock.hasConfirmElegibilityComment()).andReturn(false);
+        EasyMock.expect(applicationMock.isSubmitted()).andReturn(true);
+        EasyMock.expect(applicationMock.isTerminated()).andReturn(false);
 
         EasyMock.expect(applicationMock.getAdminRequestedRegistry()).andReturn(null);
 
@@ -244,14 +251,58 @@ public class ApplicationFormActionTest {
     }
 
     @Test
-    public void shouldNotAddConfirmEligibilityActionIfNotAdmitter() {
+    public void shouldNotAddConfirmEligibilityActionIfNotAdmitterOrAdministrator() {
         EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(false);
+        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
 
         EasyMock.replay(userMock, applicationMock);
         CONFIRM_ELIGIBILITY.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, false);
+    }
+    
+    @Test
+    public void shouldNotAddConfirmEligibilityActionIfApplicationIsNotActive() {
+        EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(false);
+        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+        EasyMock.expect(applicationMock.hasConfirmElegibilityComment()).andReturn(false);
+        EasyMock.expect(applicationMock.isSubmitted()).andReturn(true);
+        EasyMock.expect(applicationMock.isTerminated()).andReturn(true);
+        
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_ELIGIBILITY.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+    
+    @Test
+    public void shouldNotAddConfirmEligibilityActionIfApplicationIsNotSubmitted() {
+        EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(false);
+        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+        EasyMock.expect(applicationMock.hasConfirmElegibilityComment()).andReturn(false);
+        EasyMock.expect(applicationMock.isSubmitted()).andReturn(false);
+        
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_ELIGIBILITY.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+    
+    @Test
+    public void shouldAddConfirmEligibilityActionIfuserIsSuperadmin() {
+        EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(false);
+        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+        EasyMock.expect(applicationMock.hasConfirmElegibilityComment()).andReturn(false);
+        EasyMock.expect(applicationMock.isTerminated()).andReturn(false);
+        EasyMock.expect(applicationMock.isSubmitted()).andReturn(true);
+        EasyMock.expect(applicationMock.getAdminRequestedRegistry()).andReturn(new RegisteredUser());
+        
+        EasyMock.replay(userMock, applicationMock);
+        CONFIRM_ELIGIBILITY.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+        
+        assertActionsDefinitions(actionsDefinitions, true);
     }
 
     @Test

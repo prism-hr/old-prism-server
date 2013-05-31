@@ -5,8 +5,10 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.ConfirmEligibilityEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
@@ -60,6 +62,15 @@ public class EventFactory {
 		event.setDate(new Date());
 		event.setApprovalRound(approvalRound);
 		return event;
+	}
+	
+	public Event createEvent(AdmitterComment comment) {
+	    ConfirmEligibilityEvent event = new ConfirmEligibilityEvent();
+	    event.setUser(comment.getUser());
+	    event.setComment(comment);
+	    event.setDate(new Date());
+	    event.setApplication(comment.getApplication());
+	    return event;
 	}
 
 	public Event createEvent(Referee referee) {

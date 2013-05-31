@@ -111,8 +111,8 @@ public class ApplicationFormListCriteriaBuilder {
         if (BooleanUtils.isTrue(attentionFlagsOnly)) {
             buildCriteriaForNormalUser();
         } else {
-            if (user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMITTER)) {
-                buildCriteriaForSuperAdministratorOrAdmitter();
+            if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+                buildCriteriaForSuperAdministrator();
             } else {
                 buildCriteriaForNormalUser();    
             }
@@ -147,7 +147,7 @@ public class ApplicationFormListCriteriaBuilder {
         return criteria;
     }
         
-    private void buildCriteriaForSuperAdministratorOrAdmitter() {
+    private void buildCriteriaForSuperAdministrator() {
         criteria.add(getAllApplicationsForSuperAdministrator());
         criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
     }

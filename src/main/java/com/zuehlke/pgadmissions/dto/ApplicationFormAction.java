@@ -58,12 +58,12 @@ public enum ApplicationFormAction {
             }
         }
     }), //
-    CONFIRM_ELIGIBILITY("validate", "Confirm Eligibility", new ActionPredicate() {
+    CONFIRM_ELIGIBILITY("confirmEligibility", "Confirm Eligibility", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if (user.isInRole(Authority.ADMITTER) && !application.hasConfirmElegibilityComment()) {
+            if ((user.isInRole(Authority.ADMITTER) || user.isInRole(Authority.SUPERADMINISTRATOR)) && !application.hasConfirmElegibilityComment() && application.isSubmitted() && !application.isTerminated()) {
                 actions.addAction(CONFIRM_ELIGIBILITY);
-                if (application.getAdminRequestedRegistry() != null && (application.isSubmitted() && !application.isTerminated())) {
+                if (application.getAdminRequestedRegistry() != null) {
                     actions.setRequiresAttention(true);
                 }
             }

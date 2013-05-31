@@ -68,6 +68,9 @@ $(document).ready(function() {
             case 'rejectApplication':
             	window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
                 break;
+            case 'confirmEligibility':
+            	window.location.href = "/pgadmissions/admitter/confirmEligibility?applicationId=" + id;
+            	break;
             case 'withdraw':
                 var message = 'Are you sure you want to withdraw the application? <b>You will not be able to submit a withdrawn application.</b>';
                 var onOk = function() {

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.ConfirmEligibilityEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.ReferenceEvent;
@@ -19,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.dto.TimelineConfirmEligibility;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.dto.TimelineReference;
@@ -109,7 +111,9 @@ public class TimelineService {
 		for (Event event : events) {
 			if (event instanceof StateChangeEvent) {
 				phases.add(createTimelinePhaseForEvent(event, applicationForm));
-			} else if (event instanceof ReferenceEvent) {
+			} else if (event instanceof ConfirmEligibilityEvent) {
+			    timelineObjects.add(createTimelineConfirmEligibilityEvent(event));
+			}else if (event instanceof ReferenceEvent) {
 				timelineObjects.add(createTimelineReferenceFromEvent(event));
 			}
 		}
@@ -135,5 +139,13 @@ public class TimelineService {
 		timelineReference.setAuthor(event.getUser());
 		timelineReference.setReferee(((ReferenceEvent) event).getReferee());
 		return timelineReference;
+	}
+	
+	private TimelineConfirmEligibility createTimelineConfirmEligibilityEvent(Event event) {
+	    TimelineConfirmEligibility timelineConfirmEligibility = new TimelineConfirmEligibility();
+	    timelineConfirmEligibility.setEventDate(event.getDate());
+	    timelineConfirmEligibility.setAuthor(event.getUser());
+	    timelineConfirmEligibility.setComment(((ConfirmEligibilityEvent)event).getComment());
+	    return timelineConfirmEligibility;
 	}
 }

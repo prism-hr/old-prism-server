@@ -1125,7 +1125,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean hasConfirmElegibilityComment() {
         for (Comment comment : applicationComments) {
-            if (comment instanceof ValidationComment && comment.getUser().isInRole(Authority.ADMITTER)){
+            if (comment instanceof AdmitterComment){
                 return true;
             }
         }

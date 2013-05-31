@@ -67,9 +67,13 @@
 				        
 				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) || user.isViewerOfProgramme(applicationForm) || user.isInRole('ADMITTER')>
 									<section class="form-rows">
-										<h2 class="no-arrow">Comment</h2>
+										<#if isConfirmEligibilityComment??>
+											<h2 class="no-arrow">Confirm the applicant eligibility</h2>
+										<#else>
+											<h2 class="no-arrow">Comment</h2>
+										</#if>
 										<div>
-											<form method="POST" action= "<@spring.url '/comment'/>">
+											<form method="POST" <#if isConfirmEligibilityComment??>action= "<@spring.url '/admitter/submitAdmitterComment'/> <#else>action= "<@spring.url '/comment'/> </#if>">
 												<div class="row-group">
 													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 													<div class="row">
@@ -88,6 +92,58 @@
 												<div class="row-group">													
 													<#include "documents_snippet.ftl"/>
 												</div>
+												
+												<div class="row-group">
+												
+												<#if isConfirmEligibilityComment??>
+													<div class="row">
+														<label class="plain-label">Is the applicant qualified for postgraduate study at UCL?<em>*</em></label>
+														<span class="hint" data-desc="<@spring.message 'validateApp.qualified'/>"></span>
+														<div class="field">		            				
+															<#list validationQuestionOptions as option>
+															<label><input type="radio" name="qualifiedForPhd" value="${option}"
+															<#if comment.qualifiedForPhd?? && comment.qualifiedForPhd == option> checked="checked"</#if>
+															/> ${option.displayValue}</label>
+															</#list>
+															<@spring.bind "comment.qualifiedForPhd" /> 
+															<#list spring.status.errorMessages as error> 
+				                                             <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+				                                                ${error}
+				                                              </div>
+				                                             </#list>
+														</div>
+													</div>
+					
+													<div class="row">
+														<label class="plain-label">Does the applicant meet the required level of English language competence?<em>*</em></label>
+														<span class="hint" data-desc="<@spring.message 'validateApp.english'/>"></span>
+														<div class="field">		            				
+															<#list validationQuestionOptions as option>
+															<label><input type="radio" name="englishCompentencyOk" value="${option}"
+															<#if comment.englishCompentencyOk?? && comment.englishCompentencyOk == option> checked="checked"</#if>/> ${option.displayValue}</label>
+															</#list>
+															<@spring.bind "comment.englishCompentencyOk" /> 
+															<#list spring.status.errorMessages as error>  <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+				                                                ${error}
+				                                              </div></#list>
+														</div>
+													</div>
+					
+													<div class="row">
+														<label class="plain-label">What is the applicant's fee status?<em>*</em></label>
+														<span class="hint" data-desc="<@spring.message 'validateApp.feeStatus'/>"></span>
+														<div class="field">		            				
+															<#list homeOrOverseasOptions as option>
+															<label><input type="radio" name="homeOrOverseas" value="${option}"
+															<#if comment.homeOrOverseas?? && comment.homeOrOverseas == option> checked="checked"</#if>/> ${option.displayValue}</label>
+															</#list>
+															<@spring.bind "comment.homeOrOverseas" /> 
+															<#list spring.status.errorMessages as error>  <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+				                                                ${error}
+				                                              </div></#list>
+														</div>
+													</div>
+												</#if>
 											         
 												<div class="buttons">						        		
 													<button class="btn btn-primary" type="submit" value="Submit">Submit</button>						        

@@ -2,12 +2,14 @@ package com.zuehlke.pgadmissions.utils;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
+import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
@@ -20,12 +22,20 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class CommentFactoryTest {
 
-	@Test
+	private CommentFactory commentFactory;
+    private ApplicationForm applicationForm;
+    private RegisteredUser user;
+
+	@Before
+	public void prepare(){
+	    commentFactory = new CommentFactory();
+	    applicationForm = new ApplicationFormBuilder().id(1).build();
+	    user = new RegisteredUserBuilder().id(8).build();	
+	}
+	
+    @Test
 	public void shouldReturnCorrectCommentType(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		RegisteredUser user = new RegisteredUserBuilder().id(8).build();	
 		String strComment ="bob";
-		CommentFactory commentFactory = new CommentFactory();
 		
 		Comment comment = commentFactory.createComment(applicationForm, user, strComment, CommentType.GENERIC, null);
 		assertEquals(Comment.class, comment.getClass());
@@ -87,6 +97,18 @@ public class CommentFactoryTest {
 		assertEquals(ApplicationFormStatus.REJECTED, ((StateChangeComment)comment).getNextStatus());
 		assertEquals(user,comment.getUser());
 		
+	}
+	
+	@Test
+	public void shouldCreateInterviewScheduleComment(){
+	    InterviewScheduleComment comment = commentFactory.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!");
+	    assertSame(applicationForm, comment.getApplication());
+	    assertEquals("", comment.getComment());
+	    assertEquals("applicant!", comment.getFurtherDetails());
+	    assertEquals("interviewer!", comment.getFurtherInterviewerDetails());
+	    assertEquals(CommentType.INTERVIEW_SCHEDULE, comment.getType());
+	    assertSame(user, comment.getUser());
+	    
 	}
 	
 	

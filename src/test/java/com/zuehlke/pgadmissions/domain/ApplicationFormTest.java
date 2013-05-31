@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -11,11 +12,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.time.DateUtils;
+import org.hamcrest.CoreMatchers;
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -138,11 +139,25 @@ public class ApplicationFormTest {
     }
 
     @Test
-    public void shouldSeeNoCommentsApplicant() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).comments(new CommentBuilder().id(4).build())
-                .build();
+    public void shouldSeeOnlyOwnInterviewVoteCommentsAndInterviewScheduleCommentsIfApplicant() {
         RegisteredUser user = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-        assertTrue(applicationForm.getVisibleComments(user).isEmpty());
+        RegisteredUser interviewer = new RegisteredUserBuilder().id(8).build();
+
+        Comment genericComment = new CommentBuilder().id(4).build();
+        InterviewComment interviewComment = new InterviewCommentBuilder().id(1).build();
+        InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
+
+        InterviewVoteComment applicantVoteComment = new InterviewVoteComment();
+        applicantVoteComment.setUser(user);
+
+        InterviewVoteComment interviewerVoteComment = new InterviewVoteComment();
+        interviewerVoteComment.setUser(interviewer);
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build())
+                .comments(genericComment, interviewComment, scheduleComment, applicantVoteComment, interviewerVoteComment).build();
+        
+        List<Comment> visibleComments = applicationForm.getVisibleComments(user);
+        assertThat(visibleComments, CoreMatchers.hasItems(scheduleComment, applicantVoteComment));
     }
 
     @Test

@@ -358,7 +358,7 @@ public class MoveToInterviewControllerTest {
 
         };
 
-        interviewServiceMock.moveApplicationToInterview(interview, application);
+        interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
         EasyMock.replay(interviewServiceMock);
 
         String view = controller.moveToInterview("abc", interview, bindingResultMock, model);
@@ -383,7 +383,7 @@ public class MoveToInterviewControllerTest {
         };
         EasyMock.expect(currentUserMock.getId()).andReturn(3).anyTimes();
 
-        interviewServiceMock.moveApplicationToInterview(interview, application);
+        interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
 
         EasyMock.replay(interviewServiceMock, currentUserMock);
         String view = controller.moveToInterview("abc", interview, bindingResultMock, model);

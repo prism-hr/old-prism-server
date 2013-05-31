@@ -204,11 +204,7 @@
     <label class="plain-label normal" for="interviewDate">Interview Date<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
     <div class="field">
-      <#if assignOnly?? && assignOnly>
-        <input class="half date" disabled="disabled" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd MMM yyyy'))!}" />
-      <#else>
-        <input class="half date" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd MMM yyyy'))!}" />
-      </#if>
+      <input class="half date" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd MMM yyyy'))!}" />
       <@spring.bind "interview.interviewDueDate" />
       <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -227,11 +223,7 @@
     <label class="plain-label normal" for="instructionsForInterviewer">Interview Instructions (Interviewer)</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewerInstructions'/>"></span>
     <div class="field">
-    	<#if assignOnly?? && assignOnly>
-	      <textarea id="furtherInterviewerDetails" readonly disabled="disabled" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherInterviewerDetails!}</textarea>
-	    <#else>
-	      <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherInterviewerDetails!}</textarea>
-	    </#if>
+      <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherInterviewerDetails!}</textarea>
       <@spring.bind "interview.furtherInterviewerDetails" />
       <#list spring.status.errorMessages as error>
         <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -242,13 +234,10 @@
   </div>
 
   <div class="row interview-scheduled interview-to-schedule">
-    <label class="plain-label normal" for="furtherDetails">Interview Instructions  (Applicant)</label>
+    <label class="plain-label normal" for="furtherDetails">Interview Instructions (Applicant)</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.candidateInstructions'/>"></span>
-    <div class="field"> <#if assignOnly?? && assignOnly>
-      <textarea id="furtherDetails" readonly disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherDetails!}</textarea>
-      <#else>
+    <div class="field"> 
       <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherDetails!}</textarea>
-      </#if>
       <@spring.bind "interview.furtherDetails" />
       <#list spring.status.errorMessages as error>
         <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -262,12 +251,7 @@
     <label class="plain-label normal" for="interviewLocation">Interview Location (URL)</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
     <div class="field"> 
-    <#if assignOnly?? && assignOnly>
       <input type="text" id="interviewLocation" name="interviewLocation" class="input-xxlarge" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/" value="${(interview.locationURL?html)!}">
-      <#else>
-      <input type="text" id="interviewLocation" name="interviewLocation" class="input-xxlarge" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/" value="${(interview.locationURL?html)!}">
-      </#if>
-      
       <@spring.bind "interview.locationURL" />
       <#list spring.status.errorMessages as error>
         <div class="alert alert-error"> <i class="icon-warning-sign"></i>

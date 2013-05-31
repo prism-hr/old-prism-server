@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
+import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
@@ -39,6 +40,16 @@ public class CommentFactory {
         comment.setUser(user);
         comment.setApplication(applicationForm);
         return comment;
+    }
+    
+    public InterviewScheduleComment createInterviewScheduleComment(RegisteredUser user, ApplicationForm application, String furtherDetails, String furtherInterviewerDetails){
+        InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
+        scheduleComment.setFurtherDetails(furtherDetails);
+        scheduleComment.setFurtherInterviewerDetails(furtherInterviewerDetails);
+        scheduleComment.setUser(user);
+        scheduleComment.setApplication(application);
+        scheduleComment.setComment("");
+        return scheduleComment;
     }
 
     private Comment creatStateChangeComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType,

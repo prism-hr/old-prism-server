@@ -45,7 +45,13 @@
                 <!-- content box -->
                 <div class="content-box">
                     <div class="content-box-inner">
-                        <div id="prospectus">
+                      <div id="configBox" class="tabbox">
+                        <ul class="tabs">
+                          <li><a href="#programmeConfiguration">Programme</a></li>
+                          <li><a href="#irisSection">IRIS</a></li>
+                        </ul>
+                    
+                        <div id="programmeConfiguration" class="tab-page">
                             <section class="form-rows">
                                 <h2>Manage Research Programmes</h2>
                                 <div>
@@ -144,15 +150,16 @@
                                     </form>
                                 </div>
                             </section>
-
-                            <section id="irisSection" class="form-rows">
+                        </div>
+                        <div id="irisSection" class="tab-page">
+                            <section class="form-rows">
                                 <h2>Link to UCL IRIS</h2>
                                 <div>
                                     <form>
                                         <div class="alert alert-info" id="iris-account-not-linked-message" style="display:none">
                                             <i class="icon-info-sign"></i> Link your UCL Prism profile to UCL IRIS. This will display your Research Opportunities Feed on your UCL IRIS profile.
                                         </div>
-										<div class="alert alert-success" id="iris-account-linked-message" style="display:none">
+    									<div class="alert alert-success" id="iris-account-linked-message" style="display:none">
                                             <i class="icon-ok-sign"></i> Your account is linked to UCL UPI: <span></span>
                                         </div>
                                         <div class="row-group">
@@ -183,6 +190,7 @@
                             </section>
 
                         </div>
+                      </div>
                         <!-- .content-box-inner -->
                     </div>
                     <!-- .content-box -->

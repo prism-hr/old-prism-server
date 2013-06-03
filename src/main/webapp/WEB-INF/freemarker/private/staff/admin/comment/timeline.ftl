@@ -27,7 +27,7 @@
 	                  </#if>
 		              <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 		            </div>
-		      
+                    
 		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p>  
 							</div>
 		        
@@ -192,7 +192,6 @@
   			                <#elseif comment.comment?starts_with("Delegated Application")>
   												<p class="delegate"><span data-desc="Delegate"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
   											<#elseif comment.comment?length &gt; 0>
-                                              	<div class="actionUser"><strong>Had comented:</strong></div>
   												<div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
   											</#if>
   											

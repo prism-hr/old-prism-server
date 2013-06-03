@@ -192,12 +192,10 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         assertModelEquals(model3, messages.get(2).getModel());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void shouldScheduleApprovalRequestAndNoReminder() {
+    public void shouldScheduleApprovalRequest() {
 
         DateTime date = new DateTime(2100, 1, 2, 3, 4);
-        StageDuration stageDuration = new StageDurationBuilder().unit(DurationUnitEnum.HOURS).duration(1000).build();
         RegisteredUser approver1 = new RegisteredUserBuilder().build();
         RegisteredUser approver2 = new RegisteredUserBuilder().build();
         ApplicationForm form = getSampleApplicationForm();
@@ -206,16 +204,13 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         form.getProgram().setApprovers(asList(approver1, approver2));
         form.setLatestApprovalRound(round1);
 
-        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(stageDuration);
-
         expect(applicationFormDAOMock.getApplicationsDueMovedToApprovalNotifications()).andReturn(asList(form));
-        expect(applicationFormDAOMock.getApplicationsDueApprovalReminder()).andReturn(Collections.EMPTY_LIST);
-
+        
         applicationFormDAOMock.save(form);
         userDAOMock.save(approver1);
         userDAOMock.save(approver2);
         replay(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
-        service.scheduleApprovalReminder();
+        service.scheduleApprovalRequest();
         verify(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, approver1.getDigestNotificationType());

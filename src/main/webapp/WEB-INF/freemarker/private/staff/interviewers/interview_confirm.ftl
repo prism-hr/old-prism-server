@@ -142,21 +142,29 @@
                     </#list>
 		            	</div>
 		            	<div class="row-group">
-                    <div class="row interview-scheduled interview-to-schedule">
+                    <div class="row>
                       <label class="plain-label normal" for="instructionsForInterviewer">Interview Instructions (Interviewer)</label>
                       <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewerInstructions'/>"></span>
                       <div class="field">
-                        <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherInterviewerDetails!}</textarea>
+                        <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interviewConfirmDTO.furtherInterviewerDetails!}</textarea>
                       </div>
                     </div>
                   
-                    <div class="row interview-scheduled interview-to-schedule">
+                    <div class="row>
                       <label class="plain-label normal" for="furtherDetails">Interview Instructions (Applicant)</label>
                       <span class="hint" data-desc="<@spring.message 'assignInterviewer.candidateInstructions'/>"></span>
                       <div class="field"> 
-                        <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherDetails!}</textarea>
+                        <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interviewConfirmDTO.furtherDetails!}</textarea>
                       </div>
-                    </div>		        			  
+                    </div>	
+                    
+                    <div class="row>
+                      <label class="plain-label normal" for="locationUrl">Interview Location (URL)</label>
+                      <span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
+                      <div class="field"> 
+                        <input type="text" id="locationUrl" name="locationUrl" class="input-xxlarge" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/" value="${(interviewConfirmDTO.locationUrl?html)!}">
+                      </div>
+                    </div>
 
 		            	</div>
 	              	<div class="buttons">

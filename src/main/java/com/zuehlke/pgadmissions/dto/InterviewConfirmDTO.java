@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Score;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class InterviewConfirmDTO {
 
@@ -18,6 +8,8 @@ public class InterviewConfirmDTO {
     private String furtherDetails;
 
     private String furtherInterviewerDetails;
+
+    private String locationUrl;
 
     public Integer getTimeslotId() {
         return timeslotId;
@@ -41,6 +33,14 @@ public class InterviewConfirmDTO {
 
     public void setFurtherInterviewerDetails(String furtherInterviewerDetails) {
         this.furtherInterviewerDetails = furtherInterviewerDetails;
+    }
+
+    public String getLocationUrl() {
+        return locationUrl;
+    }
+
+    public void setLocationUrl(String locationUrl) {
+        this.locationUrl = locationUrl;
     }
 
 }

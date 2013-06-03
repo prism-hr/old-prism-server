@@ -16,6 +16,10 @@
       <#if user.isApplicant(applicationForm) || user.isInRole('SUPERADMINISTRATOR')>
         <p><strong>Instructions for applicant:</strong> <em> ${(comment.furtherDetails?html)!"Not Provided"}</em></p>
       </#if>
+      
+      <#if comment.locationUrl?? && comment.locationUrl?length &gt; 0>
+        <p class="location"><span data-desc="Location"></span><a href="${comment.locationUrl}" target="_blank">Directions to interview</a></p>
+      </#if>
     
     </div>
   </li>             

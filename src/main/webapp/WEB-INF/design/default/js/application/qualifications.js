@@ -79,10 +79,9 @@ $(document).ready(function() {
                 cacheBreaker : new Date().getTime()
             },
             success : function(data) {
-                institutions = [];
+                institutions = data;
                 var options = $("#qualificationInstitution");
                 $("#qualificationInstitution").empty();
-                institutions = jQuery.parseJSON(data);
 
                 options.append($("<option />").val("").text("Select..."));
                 for ( var i = 0; i < institutions.length; i++) {

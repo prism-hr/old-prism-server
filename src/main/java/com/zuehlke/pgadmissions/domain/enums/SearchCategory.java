@@ -6,8 +6,15 @@ import com.google.common.collect.Lists;
 
 public enum SearchCategory {
 
-    APPLICATION_NUMBER("Application number", CategoryType.TEXT), APPLICANT_NAME("Applicant", CategoryType.TEXT), PROGRAMME_NAME("Programme", CategoryType.TEXT), APPLICATION_STATUS(
-            "Status", CategoryType.TEXT), SUBMISSION_DATE("Submission date", CategoryType.DATE), LAST_EDITED_DATE("Last edited date", CategoryType.DATE);
+    APPLICATION_NUMBER("Application number", CategoryType.TEXT), 
+    APPLICANT_NAME("Applicant", CategoryType.TEXT), 
+    PROGRAMME_NAME("Programme", CategoryType.TEXT), 
+    PROJECT_TITLE("Project title", CategoryType.TEXT), 
+    APPLICATION_STATUS("Status", CategoryType.TEXT), 
+    SUBMISSION_DATE("Submission date", CategoryType.DATE), 
+    SUPERVISOR("Supervisor", CategoryType.TEXT), 
+    LAST_EDITED_DATE("Last edited date", CategoryType.DATE),
+    CLOSING_DATE("Closing date", CategoryType.DATE);
 
     private final String displayValue;
 

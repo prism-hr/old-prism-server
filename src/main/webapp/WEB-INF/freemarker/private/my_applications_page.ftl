@@ -179,7 +179,7 @@
                       >${value.displayValue()}</option>
                     </#list>
                   </select>
-                <#elseif filter.searchCategory == "LAST_EDITED_DATE" || filter.searchCategory == "SUBMISSION_DATE">
+                <#elseif filter.searchCategory == "LAST_EDITED_DATE" || filter.searchCategory == "SUBMISSION_DATE" || filter.searchCategory == "CLOSING_DATE">
                   <input id="searchTerm_${filter_index}" class="filterInput half date" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />
                 <#else>
                   <input id="searchTerm_${filter_index}" class="filterInput" type="text" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." />

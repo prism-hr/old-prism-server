@@ -297,7 +297,7 @@ public class RegisteredUserTest {
         Interview interview = new InterviewBuilder().interviewers(interviewer).build();
         Program program = new ProgramBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).program(program)
-                .latestInterview(interview).build();
+                .latestInterview(interview).applicationAdministrator(interviewerUser).build();
         assertTrue(interviewerUser.canEditAsAdministrator(applicationForm));
     }
 

@@ -2,12 +2,15 @@
 	<label id="delegateLabel" class="plain-label normal">Delegate interview administration<em>*</em></label> 
 	<span class="hint" data-desc="<@spring.message 'validateApp.delegate'/>"> </span>
     <div class="field">
+      <#assign isDelegate = user.isApplicationAdministrator(applicationForm)>
     	<input id="delegateProcessing" type="radio" name="switch" value="no"
+    	    <#if isDelegate>disabled</#if>
         	<#if delegate?? && !delegate>checked="checked"</#if> />
-               No
-        <input type="radio" name="switch" value="yes" 
-            <#if delegate?? && delegate>checked="checked"</#if> />
-               Yes 
+             No
+      <input type="radio" name="switch" value="yes" 
+          <#if isDelegate>disabled</#if>
+          <#if delegate?? && delegate>checked="checked"</#if> />
+             Yes 
 	</div>
 </div>
 

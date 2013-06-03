@@ -41,7 +41,7 @@ public class MailSendingTimer {
         log.info("Finished scheduleTaskReminders Task");
     }
     
-    //@Scheduled(cron = "${email.notification.digest.cron}")
+    @Scheduled(cron = "${email.notification.digest.cron}")
     public void scheduleTaskNotifications() {
         log.info("Running scheduleTaskNotifications Task");
         mailService.scheduleApprovalRequest();
@@ -56,7 +56,7 @@ public class MailSendingTimer {
         log.info("Finished scheduleTaskNotifications Task");
     }
     
-    //@Scheduled(cron = "${email.update.digest.cron}")
+    @Scheduled(cron = "${email.update.digest.cron}")
     public void scheduleUpdateNotifications() {
         log.info("Running scheduleUpdateNotifications Task");
         mailService.scheduleUpdateConfirmation();

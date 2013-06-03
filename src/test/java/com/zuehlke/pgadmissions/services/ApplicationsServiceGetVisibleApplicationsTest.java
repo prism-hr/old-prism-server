@@ -24,17 +24,28 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
+import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
@@ -581,6 +592,111 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
 
         Assert.assertEquals(APPLICATION_BLOCK_SIZE, applications.size());
+    }
+    
+    @Test
+    public void shouldReturnApplicationWithSupervisorInProgrammeDetails() {
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        SuggestedSupervisor supervisor = new SuggestedSupervisorBuilder().aware(true).email("threepwood@monkeyisland.com").firstname("Guybrush").lastname("Threepwood").build();
+        SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().name("foo").code("foo").build();
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("Test").studyOption("Half").startDate(new Date()).projectName("Test").sourcesOfInterest(sourcesOfInterest).suggestedSupervisors(supervisor).build();
+        ApplicationForm formWithSupervisor = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(applicant).programmeDetails(programmeDetails).program(program).build();
+        save(applicant, supervisor, sourcesOfInterest, programmeDetails, formWithSupervisor);
+        programmeDetails.setApplication(formWithSupervisor);
+        save(programmeDetails);
+        
+        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUPERVISOR).searchTerm("Threepwood").build();
+        
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
+        assertEquals(1, applications.size());
+        assertEquals(supervisor.getLastname(), applications.get(0).getProgrammeDetails().getSuggestedSupervisors().get(0).getLastname());
+    }
+    
+    @Test
+    public void shouldReturnApplicationWithSupervisorInOneOfTheApprovalRounds() {
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("AASW").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser supervisorUser1 = new RegisteredUserBuilder().firstName("Guybrush").lastName("Threepwood").username("AASWW").role(roleDAO.getRoleByAuthority(Authority.SUPERVISOR)).build();
+        Supervisor supervisor1 = new SupervisorBuilder().isPrimary(true).user(supervisorUser1).build();
+        RegisteredUser supervisorUser2 = new RegisteredUserBuilder().firstName("Herman").lastName("Toothrot").username("AASSSCXXSW").role(roleDAO.getRoleByAuthority(Authority.SUPERVISOR)).build();
+        Supervisor supervisor2 = new SupervisorBuilder().isPrimary(false).user(supervisorUser1).build();
+        ApprovalRound approvalRound1 = new ApprovalRoundBuilder().createdDate(new Date()).supervisors(supervisor1).build();
+        ApprovalRound approvalRound2 = new ApprovalRoundBuilder().createdDate(new Date()).supervisors(supervisor2).build();
+        ApplicationForm formWithSupervisor = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(applicant).program(program).approvalRounds(approvalRound1, approvalRound2).build();
+        save(applicant, supervisorUser1, supervisor1, supervisorUser2, supervisor2, approvalRound1, approvalRound2, formWithSupervisor);
+        
+        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUPERVISOR).searchTerm("Threepwood").build();
+        
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
+        assertEquals(1, applications.size());
+        assertEquals(supervisor1.getUser().getLastName(), applications.get(0).getApprovalRounds().get(0).getSupervisors().get(0).getUser().getLastName());
+    }
+    
+    @Test
+    public void shouldReturnApplicationWithSupervisorInProgram() {
+        Program program = new ProgramBuilder().code("232323").title("232323 title").build();
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("AASW").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser supervisorUser1 = new RegisteredUserBuilder().firstName("Guybrush").lastName("Threepwood").username("AASWW").role(roleDAO.getRoleByAuthority(Authority.SUPERVISOR)).build();
+        Supervisor supervisor1 = new SupervisorBuilder().isPrimary(true).user(supervisorUser1).build();
+        program.setSupervisors(Arrays.asList(supervisorUser1));
+        supervisorUser1.setProgramsOfWhichSupervisor(Arrays.asList(program));
+        ApplicationForm formWithSupervisor = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(applicant).program(program).build();
+        save(applicant, supervisorUser1, supervisor1, program, formWithSupervisor);
+        
+        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUPERVISOR).searchTerm("Threepwood").build();
+        
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
+        assertEquals(1, applications.size());
+        assertEquals(supervisor1.getUser().getLastName(), applications.get(0).getProgram().getSupervisors().get(0).getLastName());
+    }
+    
+    @Test
+    public void shouldReturnApplicationsBasedOnTheirClosingDate() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user)
+                .status(ApplicationFormStatus.VALIDATION).submittedDate(new Date()).appDate(format.parse("01 01 2012"))
+                .dueDate(format.parse("01 01 2050")).build();
+        
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
+                .status(ApplicationFormStatus.UNSUBMITTED).appDate(format.parse("01 01 2012"))
+                .dueDate(format.parse("01 01 2050")).submittedDate(format.parse("01 04 2012")).build();
+        
+        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(user)
+                .dueDate(format.parse("01 01 2050")).status(ApplicationFormStatus.UNSUBMITTED).appDate(format.parse("01 02 2012")).build();
+        
+        ApplicationForm applicationFormFour = new ApplicationFormBuilder().program(program).applicant(user)
+                .status(ApplicationFormStatus.UNSUBMITTED).appDate(format.parse("01 02 2012"))
+                .dueDate(format.parse("01 01 2050")).submittedDate(format.parse("01 03 2012")).build();
+        
+        save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
+
+        flushAndClearSession();
+
+        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.CLOSING_DATE).searchPredicate(SearchPredicate.ON_DATE).searchTerm("01 Jan 2050").build();
+        
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user,
+                newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, filter));
+
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
+        assertEquals(applicationFormTwo.getId(), applications.get(1).getId());
+        assertEquals(applicationFormFour.getId(), applications.get(2).getId());
+        assertEquals(applicationFormThree.getId(), applications.get(3).getId());
+    }
+    
+    @Test
+    public void shouldReturnApplicationWithProjectTitle() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder()
+                .status(ApplicationFormStatus.REVIEW)
+                .program(program)
+                .projectTitle("another title")
+                .applicant(user)
+                .submittedDate(new Date()).appDate(format.parse("01 01 2012"))
+                .dueDate(format.parse("01 01 2050")).build();
+        save(applicationFormOne);
+        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROJECT_TITLE).searchTerm("another title").build();
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, filter));
+        assertEquals(1, applications.size());
+        
     }
 
     private ApplicationsFiltering newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, ApplicationsFilter... filters) {

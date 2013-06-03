@@ -52,7 +52,7 @@ public class ApplicationFormListDAO {
             .useDisjunction(filtering.getUseDisjunction())
             .build();
 
-        List<Integer> applicationIds = (List<Integer>) criteria.list();
+        ArrayList<Object> applicationIds = new ArrayList<Object>(new LinkedHashSet<Object>(criteria.list()));
         int idx = 0;
         for (idx = filtering.getLatestConsideredFlagIndex(); idx < applicationIds.size(); idx++) {
             ApplicationForm form = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) applicationIds.get(idx));
@@ -67,8 +67,8 @@ public class ApplicationFormListDAO {
         return new ArrayList<ApplicationForm>(applicationsWhichNeedAttention);
     }
 
+    @SuppressWarnings("unchecked")
     public List<ApplicationForm> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {
-        
         Criteria criteria = new ApplicationFormListCriteriaBuilder(sessionFactory)
             .allVisibleApplications()
             .forUser(user)
@@ -79,7 +79,8 @@ public class ApplicationFormListDAO {
             .build();
 
         ArrayList<ApplicationForm> results = new ArrayList<ApplicationForm>();
-        for (Object id : criteria.list()) {
+        LinkedHashSet<Object> applicationIds = new LinkedHashSet<Object>(criteria.list());
+        for (Object id : applicationIds) {
             results.add((ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id));
         }
         return results;

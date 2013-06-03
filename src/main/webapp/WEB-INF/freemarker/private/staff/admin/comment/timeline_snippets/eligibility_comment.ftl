@@ -13,7 +13,7 @@
 		   <div class="box">
 		     <div class="title">
 		       <span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
-		       <span class="name" >${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+		       <span class="name" data-desc="${(comment.user.email?html)!}">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
 		       <span class="datetime" data-desc="Date">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
 		     </div>
 		     

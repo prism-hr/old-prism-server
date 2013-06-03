@@ -50,7 +50,6 @@ $(document).ready(function()
 		var $row = $(this).closest('tr');
 		$row.remove();
 		checkTableForm();
-		updateRegistryForm();
 		submitRegistryUsers();
 	});
 	
@@ -61,6 +60,11 @@ $(document).ready(function()
 		var errors = false;
 		$('#section-registryusers div.alert-error').remove();
 		
+		// no duplicate users.
+		if ($('#registryUsers:contains('+$('#reg-email').val()+')').length > 0) {
+			$('#reg-email').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> This user already exist.</div>');
+			errors = true;
+		}
 		// Validation on any entered details.
 		if (!validateEmail($('#reg-email').val()))
 		{

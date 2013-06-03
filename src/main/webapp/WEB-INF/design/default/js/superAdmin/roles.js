@@ -58,11 +58,11 @@ $(document).ready(function()
 	{
 		displaytableForm();
 		var errors = false;
-		$('#section-registryusers div.alert-error').remove();
+		$('#addRemoveRegistryUsers div.alert-error').remove();
 		
 		// no duplicate users.
 		if ($('#registryUsers:contains('+$('#reg-email').val()+')').length > 0) {
-			$('#reg-email').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> This user already exist.</div>');
+			$('#reg-email').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> This user already exists.</div>');
 			errors = true;
 		}
 		// Validation on any entered details.

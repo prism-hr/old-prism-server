@@ -414,6 +414,10 @@ public class ApprovalController {
 			Referee referee = newComment.getReferee();
 			applicationsService.refresh(applicationForm);
 			refereeService.refresh(referee);
+			
+			applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+            accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+            applicationsService.save(applicationForm);
 
 			String newRefereeId = encryptionHelper.encrypt(referee.getId());
 			model.addAttribute("editedRefereeId", newRefereeId);

@@ -6,6 +6,7 @@ $(document).ready(function(){
 		bindProgramSelectChangeAction();
 		bindSaveUpiAction();
 		bindIrisProfileModalConfirmAction();
+		generalTabing();
 });
 
 function bindIrisProfileModalConfirmAction(){

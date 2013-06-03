@@ -28,10 +28,10 @@
 								</ul>
 						</#if>
 						<h3 class="answer <#if comment.suitableForUCL?? && comment.suitableForUCL>yes<#else>no</#if>">
-							<span data-desc="<#if comment.suitableForUCL?? && comment.suitableForUCL>Yes<#else>No</#if>"></span> Is the applicant suitable for postgraduate study at UCL?
+							<span data-desc="<#if comment.suitableForUCL?? && comment.suitableForUCL>Yes<#else>No</#if>"></span>Is the applicant suitable for postgraduate study at UCL?
 						</h3>
 						<h3 class="answer <#if comment.suitableForProgramme?? && comment.suitableForProgramme>yes<#else>no</#if>">
-							<span data-desc="<#if comment.suitableForProgramme?? && comment.suitableForProgramme>Yes<#else>No</#if>"></span> Is the applicant suitable for their chosen postgraduate study programme?
+							<span data-desc="<#if comment.suitableForProgramme?? && comment.suitableForProgramme>Yes<#else>No</#if>"></span>Is the applicant suitable for their chosen postgraduate study programme?
 						</h3>
 				</#if>  
 				        

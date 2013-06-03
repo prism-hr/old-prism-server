@@ -89,12 +89,31 @@
                                             </div>
                                         </div>
                                         <div class="row-group">
+                                            <h3>Closing Dates</h3>
+                                            <div class="alert alert-info">
+                                                <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here.
+                                            </div>
+                                            <div class="tableContainer table table-condensed ">
+											<table id="closingDates" class="table table-striped table-condensed table-hover " border="0">
+												<colgroup>
+													<col />
+												    <col style="width: 30px;" />
+													<col style="width: 30px;" />
+												</colgroup>
+												<tbody>
+													
+												</tbody>
+											</table>
+										</div>
+                                        </div>
+                                        <div class="row-group">
 											<h3>Add Closing Date</h3>
+											<input type="hidden" id="closingDateId"/>
 											<div class="row" id="closingDateRow">
 												<label for="closingDate" class="plain-label">Closing Date <em>*</em></label>
 												<span class="hint" data-desc="<@spring.message 'prospectus.closingDate'/>"></span>
 												<div class="field">
-													<input type="text" id="closingDate" class="half date" />
+													<input type="text" id="closingDate" class="full date"/>
 												</div>
 											</div>
 											<div class="row" id="studyPlacesRow">

@@ -8,6 +8,7 @@ import java.util.Map;
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramAdvert;
+import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -29,6 +30,7 @@ public class ProgramBuilder {
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
     private List<Badge> badges = new ArrayList<Badge>();
+    private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private ProgramAdvert advert;
 
@@ -118,6 +120,13 @@ public class ProgramBuilder {
         return this;
     }
 
+    public ProgramBuilder closingDates(ProgramClosingDate... programClosingDates) {
+    	for (ProgramClosingDate programClosingDate : programClosingDates) {
+    		this.programClosingDates.add(programClosingDate);
+    	}
+    	return this;
+    }
+
     public ProgramBuilder advert(ProgramAdvert advert) {
         this.advert = advert;
         return this;
@@ -140,6 +149,7 @@ public class ProgramBuilder {
         program.getBadges().addAll(badges);
         program.setAtasRequired(atasRequired);
         program.setAdvert(advert);
+        program.getClosingDates().addAll(programClosingDates);
         return program;
     }
 }

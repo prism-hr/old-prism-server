@@ -80,4 +80,5 @@ public class ProgramTest {
 		Program program = new ProgramBuilder().id(1).build();
 		assertFalse(program.isInterviewerOfProgram(interviewer));
 	}
+	
 }

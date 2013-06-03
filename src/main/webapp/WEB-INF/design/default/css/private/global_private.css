@@ -1101,7 +1101,7 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   font-size: 15px;
   padding: 6px 14px;
 }
-input[readonly].date-input, input[readonly].second-date-input, input[readonly]#fundingAwardDate, .filter input[readonly].date  ,input[readonly]#recommendedStartDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate, input[readonly]#availableDates {
+input[readonly].date-input, input[readonly].second-date-input, input[readonly]#fundingAwardDate, .filter input[readonly].date  ,input[readonly]#recommendedStartDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate, input[readonly]#availableDates, input[readonly]#closingDate {
 	background-color: #FFFFFF;
 	cursor:auto;
 }

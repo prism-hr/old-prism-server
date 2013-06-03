@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -231,4 +235,76 @@ public class Program extends Authorisable implements Serializable {
     public void setClosingDates(List<ProgramClosingDate> closingDates) {
         this.closingDates = closingDates;
     }
+
+	public void addClosingDate(ProgramClosingDate closingDate) {
+		checkNotNull(closingDate);
+		if(containsClosingDate(closingDate.getClosingDate())){
+			throw new IllegalArgumentException("Already Exists"); 
+		}
+		closingDates.add(closingDate);
+		closingDate.setProgram(this);
+	}
+
+	public void removeClosingDate(ProgramClosingDate closingDate) {
+		if(closingDate == null){
+			return;
+		}
+		removeClosingDate(closingDate.getId());
+	}
+	
+	public void removeClosingDate(Integer closingDateId) {
+		if(closingDateId == null){
+			return;
+		}
+		int closingDateIndex = getClosingDateIndexById(closingDateId);
+		if(closingDateIndex>=0){
+			closingDates.remove(closingDateIndex);
+		}
+	}
+	
+	public ProgramClosingDate getClosingDate(Date date){
+		checkNotNull(date);
+		int closingDateIndex = getClosingDateIndexByDate(date);
+		return (closingDateIndex>=0)? closingDates.get(closingDateIndex):null;
+	}
+	
+	public boolean containsClosingDate(Date date){
+		return getClosingDateIndexByDate(date) >= 0 ;
+	}
+	
+	private int getClosingDateIndexByDate(Date date){
+		Date day = DateUtils.truncateToDay(date);
+		for(int i=0;i<closingDates.size();i++){
+			ProgramClosingDate closingDate = closingDates.get(i);
+			if(day.equals(closingDate.getClosingDate())){
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private int getClosingDateIndexById(Integer id){
+		checkNotNull(id);
+		for(int i=0;i<closingDates.size();i++){
+			ProgramClosingDate closingDate = closingDates.get(i);
+			if(id.equals(closingDate.getId())){
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public void updateClosingDate(ProgramClosingDate closingDate) {
+		checkNotNull(closingDate);
+		int closingDateIndex = getClosingDateIndexById(closingDate.getId());
+		if(closingDateIndex>=0){
+			ProgramClosingDate storeDate = closingDates.get(closingDateIndex);
+			storeDate.setClosingDate(closingDate.getClosingDate());
+			storeDate.setStudyPlaces(closingDate.getStudyPlaces());
+		}
+		
+	}
+
+	
+	
 }

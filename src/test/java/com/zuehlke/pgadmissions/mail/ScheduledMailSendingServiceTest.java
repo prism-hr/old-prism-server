@@ -215,7 +215,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(approver1);
         userDAOMock.save(approver2);
         replay(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
-        service.scheduleApprovalRequestAndReminder();
+        service.scheduleApprovalReminder();
         verify(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, approver1.getDigestNotificationType());
@@ -245,7 +245,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(approver1);
         userDAOMock.save(approver2);
         replay(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
-        service.scheduleApprovalRequestAndReminder();
+        service.scheduleApprovalReminder();
         verify(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, approver1.getDigestNotificationType());
@@ -284,7 +284,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(approver2);
         userDAOMock.save(approver3);
         replay(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
-        service.scheduleApprovalRequestAndReminder();
+        service.scheduleApprovalReminder();
         verify(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, approver1.getDigestNotificationType());
@@ -326,7 +326,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(approver2);
         userDAOMock.save(approver3);
         replay(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
-        service.scheduleApprovalRequestAndReminder();
+        service.scheduleApprovalReminder();
         verify(stageDurationDAOMock, applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, approver1.getDigestNotificationType());
@@ -357,7 +357,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(registryContactUser2);
         
         replay(configurationServiceMock, applicationFormDAOMock, userDAOMock);
-        service.scheduleRegistryRevalidationRequestAndReminder();
+        service.scheduleRegistryRevalidationReminder();
         verify(applicationFormDAOMock, configurationServiceMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, registryContactUser1.getDigestNotificationType());
@@ -387,7 +387,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(registryContactUser2);
         
         replay(configurationServiceMock, applicationFormDAOMock, userDAOMock);
-        service.scheduleRegistryRevalidationRequestAndReminder();
+        service.scheduleRegistryRevalidationReminder();
         verify(applicationFormDAOMock, configurationServiceMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, registryContactUser1.getDigestNotificationType());
@@ -420,7 +420,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         expectLastCall().times(2);
         
         replay(configurationServiceMock, applicationFormDAOMock, userDAOMock);
-        service.scheduleRegistryRevalidationRequestAndReminder();
+        service.scheduleRegistryRevalidationReminder();
         verify(applicationFormDAOMock, configurationServiceMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, registryContactUser1.getDigestNotificationType());
@@ -449,7 +449,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(interviewerUser2);
 
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewFeedbackRequestAndReminder();
+        service.scheduleInterviewFeedbackReminder();
         verify(applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, interviewerUser1.getDigestNotificationType());
@@ -483,7 +483,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(interviewerUser2);
 
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewFeedbackRequestAndReminder();
+        service.scheduleInterviewFeedbackReminder();
         verify(applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, interviewerUser1.getDigestNotificationType());
@@ -518,7 +518,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(interviewerUser1);
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewFeedbackRequestAndReminder();
+        service.scheduleInterviewFeedbackReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, interviewerUser1.getDigestNotificationType());
@@ -631,7 +631,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(reviewerUser2);
 
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleReviewRequestAndReminder();
+        service.scheduleReviewReminder();
         verify(applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, reviewerUser1.getDigestNotificationType());
@@ -669,7 +669,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(reviewerUser3);
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleReviewRequestAndReminder();
+        service.scheduleReviewReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, reviewerUser1.getDigestNotificationType());
@@ -710,7 +710,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(reviewerUser3);
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleReviewRequestAndReminder();
+        service.scheduleReviewReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, reviewerUser1.getDigestNotificationType());
@@ -757,7 +757,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(admins.get(1));
 
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleValidationRequestAndReminder();
+        service.scheduleValidationReminder();
         verify(applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, admins.get(0).getDigestNotificationType());
@@ -783,7 +783,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(admins.get(1));
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleValidationRequestAndReminder();
+        service.scheduleValidationReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, admins.get(0).getDigestNotificationType());
@@ -818,7 +818,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(admins2.get(1));
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleValidationRequestAndReminder();
+        service.scheduleValidationReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, admins1.get(0).getDigestNotificationType());
@@ -846,7 +846,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(admins.get(1));
 
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleRestartApprovalRequestAndReminder();
+        service.scheduleRestartApprovalReminder();
         verify(applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, admins.get(0).getDigestNotificationType());
@@ -872,7 +872,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(admins.get(1));
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleRestartApprovalRequestAndReminder();
+        service.scheduleRestartApprovalReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, admins.get(0).getDigestNotificationType());
@@ -907,7 +907,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(admins2.get(1));
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleRestartApprovalRequestAndReminder();
+        service.scheduleRestartApprovalReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, admins1.get(0).getDigestNotificationType());
@@ -962,7 +962,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(delegate);
 
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewAdministrationRequestAndReminder();
+        service.scheduleInterviewAdministrationReminder();
         verify(applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, delegate.getDigestNotificationType());
@@ -989,7 +989,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(delegate);
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewAdministrationRequestAndReminder();
+        service.scheduleInterviewAdministrationReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals( DigestNotificationType.TASK_NOTIFICATION, delegate.getDigestNotificationType());
@@ -1014,7 +1014,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         
        
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewAdministrationRequestAndReminder();
+        service.scheduleInterviewAdministrationReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.NONE, delegate.getDigestNotificationType());
@@ -1044,7 +1044,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(delegate2);
 
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewAdministrationRequestAndReminder();
+        service.scheduleInterviewAdministrationReminder();
         verify(applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_NOTIFICATION, delegate1.getDigestNotificationType());
@@ -1077,7 +1077,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(delegate2);
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewAdministrationRequestAndReminder();
+        service.scheduleInterviewAdministrationReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, delegate1.getDigestNotificationType());
@@ -1107,7 +1107,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(delegate);
         
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewAdministrationRequestAndReminder();
+        service.scheduleInterviewAdministrationReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.TASK_REMINDER, delegate.getDigestNotificationType());
@@ -1133,7 +1133,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         
        
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewAdministrationRequestAndReminder();
+        service.scheduleInterviewAdministrationReminder();
         verify(applicationFormDAOMock, userDAOMock);
         
         assertEquals(DigestNotificationType.NONE, delegate.getDigestNotificationType());
@@ -1181,7 +1181,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(interviewerUser2);
 
         replay(applicationFormDAOMock, userDAOMock);
-        service.scheduleInterviewFeedbackRequestAndReminder();
+        service.scheduleInterviewFeedbackReminder();
         verify(applicationFormDAOMock, userDAOMock);
 
         assertEquals(DigestNotificationType.TASK_REMINDER, interviewerUser1.getDigestNotificationType());
@@ -1558,7 +1558,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(supervisorUser2);
 
         replay(supervisorDAOMock, userDAOMock);
-        service.scheduleConfirmSupervisionRequestAndReminder();
+        service.scheduleConfirmSupervisionReminder();
         verify(supervisorDAOMock, userDAOMock);
 
         assertNotNull(supervisor1.getLastNotified());
@@ -1584,7 +1584,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(supervisorUser2);
         
         replay(supervisorDAOMock, userDAOMock);
-        service.scheduleConfirmSupervisionRequestAndReminder();
+        service.scheduleConfirmSupervisionReminder();
         verify(supervisorDAOMock, userDAOMock);
         
         assertNotNull(supervisor1.getLastNotified());
@@ -1611,7 +1611,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         userDAOMock.save(supervisorUser2);
         
         replay(supervisorDAOMock, userDAOMock);
-        service.scheduleConfirmSupervisionRequestAndReminder();
+        service.scheduleConfirmSupervisionReminder();
         verify(supervisorDAOMock, userDAOMock);
         
         assertNotNull(supervisor1.getLastNotified());

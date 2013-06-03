@@ -24,28 +24,51 @@ public class MailSendingTimer {
         this.mailService = mailService;
     }
     
-    @Scheduled(cron = "${email.digest.cron}")
-    public void run() {
-        log.info("Running ScheduledMailSendingService Task");
-        mailService.scheduleApprovalRequestAndReminder();
+    @Scheduled(cron = "${email.reminder.digest.cron}")
+    public void scheduleTaskReminders() {
+        log.info("Running scheduleTaskReminders Task");
+        mailService.scheduleApprovalReminder();
         mailService.scheduleInterviewFeedbackEvaluationReminder();
-        mailService.scheduleReviewRequestAndReminder();
+        mailService.scheduleReviewReminder();
+        mailService.scheduleValidationReminder();
+        mailService.scheduleRestartApprovalReminder();
+        mailService.scheduleInterviewAdministrationReminder();
+        mailService.scheduleRegistryRevalidationReminder();
+        mailService.scheduleInterviewFeedbackReminder();
+        mailService.scheduleReviewEvaluationReminder();
+        mailService.scheduleConfirmSupervisionReminder();
+        mailService.sendDigestsToUsers();
+        log.info("Finished scheduleTaskReminders Task");
+    }
+    
+    //@Scheduled(cron = "${email.notification.digest.cron}")
+    public void scheduleTaskNotifications() {
+        log.info("Running scheduleTaskNotifications Task");
+        mailService.scheduleApprovalRequest();
+        mailService.scheduleReviewRequest();
+        mailService.scheduleValidationRequest();
+        mailService.scheduleRestartApprovalRequest();
+        mailService.scheduleInterviewAdministrationRequest();
+        mailService.scheduleRegistryRevalidationRequest();
+        mailService.scheduleInterviewFeedbackRequest();
+        mailService.scheduleConfirmSupervisionRequest();
+        mailService.sendDigestsToUsers();
+        log.info("Finished scheduleTaskNotifications Task");
+    }
+    
+    //@Scheduled(cron = "${email.update.digest.cron}")
+    public void scheduleUpdateNotifications() {
+        log.info("Running scheduleUpdateNotifications Task");
         mailService.scheduleUpdateConfirmation();
-        mailService.scheduleValidationRequestAndReminder();
-        mailService.scheduleRestartApprovalRequestAndReminder();
         mailService.scheduleApprovedConfirmation();
-        mailService.scheduleInterviewAdministrationRequestAndReminder();
-        mailService.scheduleRegistryRevalidationRequestAndReminder();
         mailService.scheduleInterviewFeedbackConfirmation();
-        mailService.scheduleInterviewFeedbackRequestAndReminder();
         mailService.scheduleApplicationUnderApprovalNotification();
         mailService.scheduleRejectionConfirmationToAdministratorsAndSupervisor();
         mailService.scheduleReviewSubmittedConfirmation();
-        mailService.scheduleReviewEvaluationReminder();
-        mailService.scheduleConfirmSupervisionRequestAndReminder();
         mailService.scheduleApplicationUnderReviewNotification();
+        mailService.scheduleApplicationUnderInterviewNotification();
         mailService.sendDigestsToUsers();
-        log.info("Finished ScheduledMailSendingService Task");
+        log.info("Finished scheduleUpdateNotifications Task");
     }
     
     @Scheduled(cron = "${email.schedule.period.chron}")

@@ -166,7 +166,9 @@
 			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
 			            	<#assign role = "approver"/>
 		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
-                            <#assign role = "supervisor"/>                                
+                    <#assign role = "supervisor"/>                                
+                  <#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
+                    <#assign role = "interviewer"/> 
 			            </#if>
 			            
 			            <#if comment.type == 'SUPERVISION_CONFIRMATION'>
@@ -219,6 +221,10 @@
 			                				<h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
 			                			</#if>
 		                		  </#if>
+	                		  <#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
+	                		    <h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>
+	                		      Has suggested to move application to ${comment.nextStatus.displayValue()} stage.
+                		      </h3>
   			                </#if>
   			              </div>
   			            </li>

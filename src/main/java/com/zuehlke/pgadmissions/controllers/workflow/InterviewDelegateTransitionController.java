@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,13 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
-import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -38,16 +38,16 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 
 @Controller
 @RequestMapping("/progress")
-public class EvaluationTransitionController extends StateTransitionController {
+public class InterviewDelegateTransitionController extends StateTransitionController {
 
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
-    public EvaluationTransitionController() {
+    public InterviewDelegateTransitionController() {
         this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+    public InterviewDelegateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
             ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
@@ -56,67 +56,60 @@ public class EvaluationTransitionController extends StateTransitionController {
     }
 
     @ModelAttribute("comment")
-    public StateChangeComment getComment(@RequestParam String applicationId) {
-        return new StateChangeComment();
+    public InterviewEvaluationComment getComment(@RequestParam String applicationId) {
+        return new InterviewEvaluationComment();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/submitEvaluationComment")
+    @ModelAttribute("applicationForm")
+    @Override
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        RegisteredUser currentUser = getCurrentUser();
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!currentUser.isApplicationAdministrator(applicationForm)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
+        return applicationForm;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/submitInterviewEvaluationComment")
     public String defaultGet() {
         return MY_APPLICATIONS_VIEW;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
+    @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
     public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
-            ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
-        modelMap.put("delegate", delegate);
-
+            ModelMap modelMap) {
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
 
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        
-        if(BooleanUtils.isNotTrue(delegate)){
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+
+        Comment comment;
+        if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
+            // delegate should be able to restart interview 
+            comment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
+                    stateChangeComment.getType(), stateChangeComment.getNextStatus());
+        } else {
+            // moving to other state than interview, simply make suggestion
+            comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
+                    stateChangeComment.getNextStatus());
             applicationForm.setApplicationAdministrator(null);
-        }
-
-        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(), stateChangeComment.getType(),
-                stateChangeComment.getNextStatus());
-
-        if (newComment instanceof ApprovalEvaluationComment) {
-
-            ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
-
-            if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
-                applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-                accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
-                if (approvalService.moveToApproved(applicationForm)) {
-                    approvalService.sendToPortico(applicationForm);
-                    modelMap.put("messageCode", "move.approved");
-                    modelMap.put("application", applicationForm.getApplicationNumber());
-                } else {
-                    Comment genericComment = commentFactory.createComment(applicationForm, user, newComment.getComment(), newComment.getDocuments(), CommentType.GENERIC, null);
-                    commentService.save(genericComment);
-                    return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7";
-                }
-            }
         }
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationsService.save(applicationForm);
-        commentService.save(newComment);
-
-        if (stateChangeComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
-            applicationsService.makeApplicationNotEditable(applicationForm);
-        }
-
-        if (BooleanUtils.isTrue(delegate)) {
-            return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
-        }
+        commentService.save(comment);
 
         applicationsService.refresh(applicationForm);
-        return stateTransitionService.resolveView(applicationForm);
+        if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
+            return stateTransitionService.resolveView(applicationForm);
+        }
+        return "redirect:/applications?messageCode=state.change.suggestion&application=" + applicationForm.getApplicationNumber();
     }
 }

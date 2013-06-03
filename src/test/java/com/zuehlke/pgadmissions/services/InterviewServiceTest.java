@@ -219,7 +219,6 @@ public class InterviewServiceTest {
         interviewService.moveApplicationToInterview(currentUser, interview, applicationForm);
         EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
 
-        assertNull(applicationForm.getApplicationAdministrator());
         assertNull(applicationForm.getNotificationForType(INTERVIEW_ADMINISTRATION_REMINDER));
     }
 
@@ -306,7 +305,6 @@ public class InterviewServiceTest {
         assertEquals(date, interview.getInterviewDueDate());
         assertEquals("11:11", interview.getInterviewTime());
         assertEquals(InterviewStage.SCHEDULED, interview.getStage());
-        assertNull(applicationForm.getApplicationAdministrator());
     }
 
     @Before

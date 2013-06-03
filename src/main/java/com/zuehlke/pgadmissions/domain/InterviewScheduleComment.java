@@ -22,6 +22,9 @@ public class InterviewScheduleComment extends Comment {
     @Column(name = "further_interviewer_details")
     private String furtherInterviewerDetails;
 
+    @Column(name = "location_url")
+    private String locationUrl;
+
     public CommentType getType() {
         return type;
     }
@@ -43,6 +46,14 @@ public class InterviewScheduleComment extends Comment {
 
     public void setFurtherInterviewerDetails(String furtherInterviewerDetails) {
         this.furtherInterviewerDetails = furtherInterviewerDetails;
+    }
+
+    public String getLocationUrl() {
+        return locationUrl;
+    }
+
+    public void setLocationUrl(String locationUrl) {
+        this.locationUrl = locationUrl;
     }
 
 }

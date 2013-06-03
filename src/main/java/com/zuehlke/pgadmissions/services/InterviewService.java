@@ -102,7 +102,7 @@ public class InterviewService {
 
         if (!interview.getTakenPlace()) {
             InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, applicationForm, interview.getFurtherDetails(),
-                    interview.getFurtherInterviewerDetails());
+                    interview.getFurtherInterviewerDetails(), interview.getLocationURL());
             commentService.save(scheduleComment);
         }
 
@@ -152,11 +152,12 @@ public class InterviewService {
         interview.setInterviewTime(timeslot.getStartTime());
         interview.setFurtherDetails(interviewConfirmDTO.getFurtherDetails());
         interview.setFurtherInterviewerDetails(interviewConfirmDTO.getFurtherInterviewerDetails());
+        interview.setLocationURL(interviewConfirmDTO.getLocationUrl());
         interview.setStage(InterviewStage.SCHEDULED);
         interviewDAO.save(interview);
 
         InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, interview.getApplication(),
-                interview.getFurtherDetails(), interview.getFurtherInterviewerDetails());
+                interview.getFurtherDetails(), interview.getFurtherInterviewerDetails(), interview.getLocationURL());
         commentService.save(scheduleComment);
 
         assignInterviewDueDate(interview, interview.getApplication());

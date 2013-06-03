@@ -253,6 +253,8 @@
 							
 							<#if applicationForm.isInState('VALIDATION')>
 						 		<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitValidationComment' />">
+						 	<#elseif applicationForm.isInState('INTERVIEW') && user.isApplicationAdministrator(applicationForm)>
+						 		<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitInterviewEvaluationComment' />">
 						 	<#else>
 						 		<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitEvaluationComment' />">
 						 	</#if>

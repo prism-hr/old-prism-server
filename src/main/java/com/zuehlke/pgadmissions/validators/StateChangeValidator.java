@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
+import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 
@@ -13,7 +15,8 @@ public class StateChangeValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(ValidationComment.class) || clazz.isAssignableFrom(StateChangeComment.class);
+        return clazz.isAssignableFrom(ValidationComment.class) || clazz.isAssignableFrom(InterviewEvaluationComment.class)
+                || clazz.isAssignableFrom(StateChangeComment.class);
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.StateChangeSuggestionComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -45,8 +46,9 @@ public class CommentFactory {
         comment.setApplication(applicationForm);
         return comment;
     }
-    
-    public InterviewScheduleComment createInterviewScheduleComment(RegisteredUser user, ApplicationForm application, String furtherDetails, String furtherInterviewerDetails){
+
+    public InterviewScheduleComment createInterviewScheduleComment(RegisteredUser user, ApplicationForm application, String furtherDetails,
+            String furtherInterviewerDetails) {
         InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
         scheduleComment.setFurtherDetails(furtherDetails);
         scheduleComment.setFurtherInterviewerDetails(furtherInterviewerDetails);
@@ -54,6 +56,17 @@ public class CommentFactory {
         scheduleComment.setApplication(application);
         scheduleComment.setComment("");
         return scheduleComment;
+    }
+
+    public StateChangeSuggestionComment createStateChangeSuggestionComment(RegisteredUser user, ApplicationForm application, String comment,
+            ApplicationFormStatus nextStatus) {
+        StateChangeSuggestionComment suggestionComment = new StateChangeSuggestionComment();
+        suggestionComment.setUser(user);
+        suggestionComment.setApplication(application);
+        suggestionComment.setComment(comment);
+        suggestionComment.setNextStatus(nextStatus);
+        return suggestionComment;
+
     }
 
     private Comment creatStateChangeComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType,

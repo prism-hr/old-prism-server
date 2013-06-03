@@ -90,7 +90,7 @@ public class InterviewCommentController {
         if (!currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
-        if (applicationForm.isDecided() || applicationForm.isWithdrawn() || applicationForm.getApplicationAdministrator() != null
+        if (applicationForm.isDecided() || applicationForm.isWithdrawn()
                 || currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
@@ -169,7 +169,6 @@ public class InterviewCommentController {
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
-        applicationForm.setApplicationAdministrator(null);
         applicationsService.save(applicationForm);
 
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();

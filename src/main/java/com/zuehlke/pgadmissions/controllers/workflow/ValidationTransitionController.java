@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -144,6 +143,10 @@ public class ValidationTransitionController extends StateTransitionController {
 
             if (model.containsKey("closingDate_error") || model.containsKey("projectTitle_error") || result.hasErrors()) {
                 return STATE_TRANSITION_VIEW;
+            }
+            
+            if(BooleanUtils.isNotTrue(delegate)){
+                form.setApplicationAdministrator(null);
             }
 
             if (StringUtils.isNotBlank(closingDate) || StringUtils.isNotBlank(projectTitle)) {

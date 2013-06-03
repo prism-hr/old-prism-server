@@ -95,7 +95,7 @@ public class ApplicationFormDAO {
 				.createCriteria(ApplicationForm.class, "applicationForm")
 				.add(Restrictions.or(Restrictions.isNull("suppressStateChangeNotifications"), Restrictions.eq("suppressStateChangeNotifications", false)))
 				.add(Restrictions.eq("status", status))
-				.add(Restrictions.lt("dueDate", today))
+				.add(Restrictions.le("dueDate", today))//TMP change: le was lt
 				.add(Restrictions.or(Subqueries.exists(overDueRemindersCriteria.setProjection(Projections
 						.property("notificationRecord.id"))), Subqueries.notExists(anyRemindersCriteria
 						.setProjection(Projections.property("notificationRecord.id")))))

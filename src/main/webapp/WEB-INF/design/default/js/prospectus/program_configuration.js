@@ -187,7 +187,7 @@ function editDate(row){
 	if(placesValue!="undefined"){
 		$('#studyPlaces').val(placesValue);
 	}
-	$('#addClosingDate').text("Update Closing Date");
+	$('#addClosingDate').text("Update");
 }
 
 function removeClosingDate(row, id){
@@ -352,7 +352,7 @@ function clearClosingDate(){
 	$("#closingDateId").val("");
 	$("#closingDate").val("");
 	$("#studyPlaces").val("");
-	$('#addClosingDate').text("Add Closing Date");
+	$('#addClosingDate').text("Add");
 	checkDates();
 }
 

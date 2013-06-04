@@ -1196,6 +1196,17 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false);
     }
+    
+    @Test
+    public void shouldNotAddApproveActionIfNextStatusSpecified() {
+        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
+
+        EasyMock.replay(userMock, applicationMock);
+        COMPLETE_APPROVAL_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, VALIDATION);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
 
     @Test
     public void shouldAddAssignSupervisorsAction() {

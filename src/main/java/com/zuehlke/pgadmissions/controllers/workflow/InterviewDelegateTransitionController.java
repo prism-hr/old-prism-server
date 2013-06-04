@@ -18,11 +18,13 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
+import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -32,6 +34,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
@@ -42,18 +45,21 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class InterviewDelegateTransitionController extends StateTransitionController {
 
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
+    
+    private InterviewService interviewService;
 
     public InterviewDelegateTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewDelegateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, InterviewService interviewService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
                 documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
+        this.interviewService = interviewService;
     }
 
     @ModelAttribute("comment")
@@ -93,6 +99,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
         }
 
         RegisteredUser user = getCurrentUser();
+        Interview interview = applicationForm.getLatestInterview();
 
         Comment comment;
         if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
@@ -101,9 +108,13 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
                     stateChangeComment.getType(), stateChangeComment.getNextStatus());
         } else {
             // moving to other state than interview, simply make suggestion
+            interview.setStage(InterviewStage.INACTIVE);
+            interviewService.save(interview);
+            
             comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
                     stateChangeComment.getNextStatus());
             applicationForm.setApplicationAdministrator(null);
+            applicationForm.setDueDate(new Date());
         }
         
         if (BooleanUtils.isTrue(fastTrackApplication)) {

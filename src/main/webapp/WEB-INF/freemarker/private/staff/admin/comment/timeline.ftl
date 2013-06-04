@@ -224,7 +224,8 @@
 		                		  </#if>
 	                		  <#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
 	                		    <h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>
-	                		      Has suggested to move application to ${comment.nextStatus.displayValue()} stage.
+	                		    <i class="icon-hand-right"></i>
+	                		      Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
                 		      </h3>
   			                </#if>
   			              </div>

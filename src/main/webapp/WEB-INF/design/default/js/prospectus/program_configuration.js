@@ -248,9 +248,9 @@ function updateAdvertSection(map){
 function updateProgramSection(advert){
 	if(advert){
 		setTextAreaValue($("#programmeDescription"),advert['description']);
-    	setTextAreaValue($("#programmeFundingInformation"),advert['fundingInformation']);
+    	setTextAreaValue($("#programmeFundingInformation"),advert['funding']);
 		
-		var durationOfStudyInMonths=advert['durationOfStudyInMonth'];
+		var durationOfStudyInMonths=advert['studyDuration'];
 		if(durationOfStudyInMonths%12==0){
 			$("#programmeDurationOfStudy").val((durationOfStudyInMonths/12).toString());
 			$("#timeUnit").val('Years');
@@ -259,7 +259,7 @@ function updateProgramSection(advert){
 			$("#timeUnit").val('Months');
 		}
 		
-		if(advert['isCurrentlyAcceptingApplications']){$("#currentlyAcceptingApplicationYes").prop("checked", true);}
+		if(advert['active']){$("#currentlyAcceptingApplicationYes").prop("checked", true);}
 		else{$("#currentlyAcceptingApplicationNo").prop("checked", true);}
 	}else{
 		clearAdvert();
@@ -291,9 +291,9 @@ function bindSaveButtonAction(){
 			data: {
 				programCode: $("#programme").val(),
 				description:$("#programmeDescription").val(),
-				durationOfStudyInMonth:JSON.stringify(duration),
-				fundingInformation:$("#programmeFundingInformation").val(),
-				isCurrentlyAcceptingApplications:acceptApplications
+				studyDuration:JSON.stringify(duration),
+				funding:$("#programmeFundingInformation").val(),
+				active:acceptApplications
 			}, 
 			success: function(data) {
 				var map = JSON.parse(data);
@@ -304,11 +304,11 @@ function bindSaveButtonAction(){
 					if(map['description']){
 						$("#description").append(getErrorMessageHTML(map['description']));
 					}
-					if(map['durationOfStudyInMonth']){
-						$("#durationOfStudyInMonth").append(getErrorMessageHTML(map['durationOfStudyInMonth']));
+					if(map['studyDuration']){
+						$("#durationOfStudyInMonth").append(getErrorMessageHTML(map['studyDuration']));
 					}
-					if(map['isCurrentlyAcceptingApplications']){
-						$("#isCurrentlyAcceptingApplications").append(getErrorMessageHTML(map['isCurrentlyAcceptingApplications']));
+					if(map['active']){
+						$("#isCurrentlyAcceptingApplications").append(getErrorMessageHTML(map['active']));
 					}
 				}
 			},

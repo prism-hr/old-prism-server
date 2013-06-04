@@ -654,18 +654,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user)
                 .status(ApplicationFormStatus.VALIDATION).submittedDate(new Date()).appDate(format.parse("01 01 2012"))
-                .dueDate(format.parse("01 01 2050")).build();
+                .batchDeadline(format.parse("01 01 2050")).build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
                 .status(ApplicationFormStatus.UNSUBMITTED).appDate(format.parse("01 01 2012"))
-                .dueDate(format.parse("01 01 2050")).submittedDate(format.parse("01 04 2012")).build();
+                .batchDeadline(format.parse("01 01 2050")).submittedDate(format.parse("01 04 2012")).build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(user)
-                .dueDate(format.parse("01 01 2050")).status(ApplicationFormStatus.UNSUBMITTED).appDate(format.parse("01 02 2012")).build();
+                .batchDeadline(format.parse("01 01 2050")).status(ApplicationFormStatus.UNSUBMITTED).appDate(format.parse("01 02 2012")).build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().program(program).applicant(user)
                 .status(ApplicationFormStatus.UNSUBMITTED).appDate(format.parse("01 02 2012"))
-                .dueDate(format.parse("01 01 2050")).submittedDate(format.parse("01 03 2012")).build();
+                .batchDeadline(format.parse("01 01 2050")).submittedDate(format.parse("01 03 2012")).build();
         
         save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
 

@@ -1,9 +1,9 @@
 <section class="form-rows">
-    <h2>Manage Research Projects</h2>
+    <h2>Manage Projects</h2>
     <div>
         <form>
             <div class="alert alert-info">
-                <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here.
+                <i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
             </div>
             <div class="row-group">
                 <h3>Project Advert</h3>
@@ -68,7 +68,7 @@
             <div class="row-group">
                 <h3>Advert</h3>
                 <div class="alert alert-info">
-                    <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here.
+                    <i class="icon-info-sign"></i> Embed these resources in emails and on webpages to provide applicants with links to apply for your project.
                 </div>
                 <div class="row">
                     <label for="linkToApply" class="plain-label">Link to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.linkToApply'/>"></span>

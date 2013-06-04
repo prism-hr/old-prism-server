@@ -256,7 +256,7 @@ public class ApplicationFormListCriteriaBuilder {
                 } else if (searchCategory == SearchCategory.LAST_EDITED_DATE) {
                     newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "lastUpdated");
                 } else if (searchCategory == SearchCategory.CLOSING_DATE) {
-                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "dueDate");
+                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "batchDeadline");
                 }
             }
             return newCriterion;

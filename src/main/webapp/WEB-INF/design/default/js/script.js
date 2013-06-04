@@ -1091,3 +1091,27 @@ function computeEndTime(startTime, duration) {
 	var endTime = endHours + ':' + endMinutes;
 	return endTime;
 }
+/* Timeline expandable history*/
+function exStatus() {
+	var $expander = $(".excontainer");
+	$.each($expander, function() {
+		if ($(this).children().length == 0) {
+			$(this).parent().find('>.box i').remove();
+		} else if ($(this).children().children().length == 0) {
+			$(this).parent().find('>.box i').remove();
+		} else {
+			if ($(this).parent().index() > 0) {
+				$(this).hide();
+				$(this).parent().find('>.box i').removeClass('icon-minus-sign').addClass('icon-plus-sign');
+			}
+			$(this).parent().find('>.box i').click(function() {
+				$(this).parent().parent().find(".excontainer").slideToggle(300);
+				if ($(this).attr('class') == 'icon-plus-sign') {
+					$(this).removeClass('icon-plus-sign').addClass('icon-minus-sign');
+				} else {
+					$(this).removeClass('icon-minus-sign').addClass('icon-plus-sign');
+				}
+			})
+		}
+	});
+}

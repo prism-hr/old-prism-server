@@ -18,10 +18,11 @@
 #timeline-statuses>li:last-child {  margin-bottom: -10px;}
 #timeline-statuses .box .title { border-radius: 4px 4px 0 0; background: #999; font-weight: bold; line-height: 24px; overflow: hidden; padding: 5px; }
 #timeline-statuses .box .title .name { margin-left: 4px; }
+#timeline-statuses .box .title .commented { font-weight: normal;}
 #timeline-statuses .box .title .datetime { float: right; margin-right: 5px; }
 #timeline-statuses .box .title em { color: black; font-weight: normal; font-size: 12px; }
 #timeline-statuses .box p { line-height: 1.2; margin: 0; padding: 5px 10px 0 30px; }
-#timeline-statuses .box p.highlight {  border-radius: 0 0 4px 4px; background-image: url(../../../images/bg_status_default.gif); font-size: 16px; font-weight: bold; margin: 0; padding: 10px 25px 10px 10px; }
+#timeline-statuses .box p.highlight {  border-radius: 0 0 4px 4px; background: #C8C8C8; font-size: 16px; font-weight: bold; margin: 0; padding: 10px 25px 10px 10px; }
 #timeline-statuses .box h3 {font-size:13px; line-height: 1.2; margin-bottom: 0; margin-top: .5em; padding: 0 10px; }
 #timeline-statuses .box label { display: inline-block; margin-right: 1em; }
 #timeline-statuses .box label input { vertical-align: middle; }
@@ -55,41 +56,54 @@
 }
 
 
-#timeline-statuses .validation .box { background: #FDDB91; }
-#timeline-statuses .validation .box .title { background: #FBBE1E; }
-#timeline-statuses .validation .box p.highlight { background-image: url(../../../images/bg_status_validation.gif); }
-#timeline-statuses .validation ul .box { background-color: #FFECBF; }
-#timeline-statuses .validation ul .box .title { background: #FECB61; }
+#timeline-statuses .withdrawn .box { background: #FDDB91; }
+#timeline-statuses .withdrawn .box .title { background: #FBBE1E; }
+#timeline-statuses .withdrawn .box p.highlight { background: #FDDB91; }
+#timeline-statuses .withdrawn ul .box { background-color: #FFECBF; }
+#timeline-statuses .withdrawn ul .box .title { background: #FECB61; }
 
 #timeline-statuses .review .box { background: #C2DCEB; }
 #timeline-statuses .review .box .title { background: #A8CBDE; }
-#timeline-statuses .review .box p.highlight { background-image: url(../../../images/bg_status_review.gif); }
+#timeline-statuses .review .box p.highlight { background: #C2DCEB; }
 #timeline-statuses .review ul .box { background-color: #E6F2F8; }
 #timeline-statuses .review ul .box .title { background: #AED5E7; }
 
-#timeline-statuses .interview .box { background: #D6DFAE; }
-#timeline-statuses .interview .box .title { background: #C5CE88; }
-#timeline-statuses .interview .box p.highlight { background-image: url(../../../images/bg_status_interview.gif); }
-#timeline-statuses .interview ul .box { background-color: #E8EDD1; padding-bottom: 10px; }
-#timeline-statuses .interview ul .box .title { background: #CCD495; }
+#timeline-statuses .interview .box { background: #F4B99F; }
+#timeline-statuses .interview .box .title { background: #E96C37; }
+#timeline-statuses .interview .box p.highlight { background: #F4B99F; }
+#timeline-statuses .interview ul .box { background-color: #FBDDD2; padding-bottom: 10px; }
+#timeline-statuses .interview ul .box .title { background: #EE8E66; }
+
+#timeline-statuses .rejected .box { background: #F7AEB1; }
+#timeline-statuses .rejected .box .title { background: #E94E55; }
+#timeline-statuses .rejected .box p.highlight { background: #F7AEB1;  }
+#timeline-statuses .rejected ul .box { background-color: #FBD5D7; padding-bottom: 10px; }
+#timeline-statuses .rejected ul .box .title { background: #ED7076; }
 
 #timeline-statuses .approval .box, #timeline-statuses .approval .actionUser { background: #EAEB93; }
 #timeline-statuses .approval .box .title { background: #DCDD28; }
-#timeline-statuses .approval .box p.highlight { background-image: url(../../../images/bg_status_approval.gif); }
+#timeline-statuses .approval .box p.highlight { background: #EAEB93; }
 #timeline-statuses .approval ul .box { background-color: #F5F7CF; }
 #timeline-statuses .approval ul .box .title { background: #E4E466; }
 
-#timeline-statuses .rejected .box { background: #E0CED7; }
-#timeline-statuses .rejected .box .title { background: #C3ABBB; }
-#timeline-statuses .rejected .box p.highlight { background-image: url(../../../images/bg_status_rejected.gif); }
-#timeline-statuses .rejected ul .box { background-color: #EEE3E8; }
-#timeline-statuses .rejected ul .box .title { background: #D6BFCA; }
+#timeline-statuses .validation .box { background: #E0CED7; }
+#timeline-statuses .validation .box .title { background: #C3ABBB; }
+#timeline-statuses .validation .box p.highlight { background: #E0CED7; }
+#timeline-statuses .validation ul .box { background-color: #EEE3E8; }
+#timeline-statuses .validation ul .box .title { background: #D6BFCA; }
 
-#timeline-statuses .offer_recommended .box { background: #B6DDE9; }
-#timeline-statuses .offer_recommended .box .title { background: #74C0D2; }
-#timeline-statuses .offer_recommended .box p.highlight { background-image: url(../../../images/bg_status_approved.gif); }
-#timeline-statuses .offer_recommended ul .box { background-color: #DBEEF5; }
-#timeline-statuses .offer_recommended ul .box .title { background: #B6DDE9; }
+#timeline-statuses .offer_recommended .box { background: #BADAA5; }
+#timeline-statuses .offer_recommended .box .title { background: #74B64A; }
+#timeline-statuses .offer_recommended .box p.highlight { background: #BADAA5; }
+#timeline-statuses .offer_recommended ul .box { background-color: #E1EFD8; }
+#timeline-statuses .offer_recommended ul .box .title { background: #9CCA7D; }
+
+#timeline-statuses .not_submitted .box { background: #B6DDE9; }
+#timeline-statuses .not_submitted .box .title { background: #74C0D2; }
+#timeline-statuses .not_submitted .box p.highlight { background: #B6DDE9; }
+#timeline-statuses .not_submitted ul .box { background-color: #DBEEF5; }
+#timeline-statuses .not_submitted ul .box .title { background: #B6DDE9; }
+
 
 
 #timeline-statuses ul .box p.datetime,

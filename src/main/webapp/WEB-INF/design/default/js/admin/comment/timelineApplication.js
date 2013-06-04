@@ -55,6 +55,8 @@ $(document).ready(function()
 					}
 					addToolTips();
 					toggleScores();
+					/* Timeline expandable history*/
+				 	exStatus();
 				},
 				 complete: function() {
 					 $('#ajaxloader').fadeOut('fast');

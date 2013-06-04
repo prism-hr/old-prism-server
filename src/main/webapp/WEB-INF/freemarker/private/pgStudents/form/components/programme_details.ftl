@@ -140,8 +140,6 @@
   
     </div><!-- .row-group -->
     
-    <#if !applicationForm.program.hasSupervisors()>
-    
     
   <div id="supervisor_div">
     <div class="row-group">
@@ -240,8 +238,6 @@
     </div><!-- .row-group -->
     </div>
     
-    </#if>
-  
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
     	<@spring.bind "programmeDetails.acceptedTerms" />
        	<#if spring.status.errorMessages?size &gt; 0>        

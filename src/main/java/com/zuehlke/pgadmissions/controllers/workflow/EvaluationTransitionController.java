@@ -71,7 +71,7 @@ public class EvaluationTransitionController extends StateTransitionController {
             @RequestParam(required = false) Boolean fastTrackApplication) {
         modelMap.put("delegate", delegate);
 
-        if (result.hasErrors()) {
+        if (result.hasErrors() || fastTrackApplication == null) {
             return STATE_TRANSITION_VIEW;
         }
 

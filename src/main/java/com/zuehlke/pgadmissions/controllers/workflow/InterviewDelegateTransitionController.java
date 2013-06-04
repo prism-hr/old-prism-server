@@ -83,7 +83,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
     @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
     public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
             @RequestParam(required = false) Boolean fastTrackApplication, ModelMap modelMap) {
-        if (result.hasErrors()) {
+        if (result.hasErrors() || fastTrackApplication == null) {
             return STATE_TRANSITION_VIEW;
         }
 

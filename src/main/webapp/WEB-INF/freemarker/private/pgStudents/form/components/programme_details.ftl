@@ -139,6 +139,10 @@
       </div>
   
     </div><!-- .row-group -->
+    
+    <#if !applicationForm.program.hasSupervisors()>
+    
+    
   <div id="supervisor_div">
     <div class="row-group">
       <h3>Supervisors</h3>
@@ -235,6 +239,8 @@
       
     </div><!-- .row-group -->
     </div>
+    
+    </#if>
   
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
     	<@spring.bind "programmeDetails.acceptedTerms" />

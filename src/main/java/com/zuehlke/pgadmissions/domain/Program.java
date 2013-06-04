@@ -52,27 +52,21 @@ public class Program extends Authorisable implements Serializable {
     private Boolean atasRequired;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichApprover")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichAdministrator")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichReviewer")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<RegisteredUser> programReviewers = new ArrayList<RegisteredUser>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichInterviewer")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichSupervisor")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichViewer")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
@@ -189,6 +183,10 @@ public class Program extends Authorisable implements Serializable {
 
     public void setSupervisors(final List<RegisteredUser> supervisors) {
         this.supervisors = supervisors;
+    }
+    
+    public boolean hasSupervisors() {
+        return !supervisors.isEmpty();
     }
 
     public boolean isEnabled() {

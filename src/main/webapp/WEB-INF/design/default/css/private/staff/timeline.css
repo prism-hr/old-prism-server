@@ -85,11 +85,11 @@
 #timeline-statuses .rejected ul .box { background-color: #EEE3E8; }
 #timeline-statuses .rejected ul .box .title { background: #D6BFCA; }
 
-#timeline-statuses .approved .box { background: #B6DDE9; }
-#timeline-statuses .approved .box .title { background: #74C0D2; }
-#timeline-statuses .approved .box p.highlight { background-image: url(../../../images/bg_status_approved.gif); }
-#timeline-statuses .approved ul .box { background-color: #DBEEF5; }
-#timeline-statuses .approved ul .box .title { background: #B6DDE9; }
+#timeline-statuses .offer_recommended .box { background: #B6DDE9; }
+#timeline-statuses .offer_recommended .box .title { background: #74C0D2; }
+#timeline-statuses .offer_recommended .box p.highlight { background-image: url(../../../images/bg_status_approved.gif); }
+#timeline-statuses .offer_recommended ul .box { background-color: #DBEEF5; }
+#timeline-statuses .offer_recommended ul .box .title { background: #B6DDE9; }
 
 
 #timeline-statuses ul .box p.datetime,

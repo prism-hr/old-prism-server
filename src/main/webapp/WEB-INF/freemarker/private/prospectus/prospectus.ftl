@@ -47,9 +47,9 @@
                     <div class="content-box-inner">
                       <div id="configBox" class="tabbox">
                         <ul class="tabs">
-                          <li><a href="#programmeConfiguration">Programme</a></li>
-                          <li><a href="#projectConfiguration">Project</a></li>
-                          <li><a href="#irisSection">IRIS</a></li>
+                          <li><a href="#programmeConfiguration">Manage Programmes</a></li>
+                          <li><a href="#projectConfiguration">Manage Projects</a></li>
+                          <li><a href="#irisSection">Link to UCL IRIS</a></li>
                         </ul>
                     
                         <div id="programmeConfiguration" class="tab-page">

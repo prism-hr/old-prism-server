@@ -43,7 +43,7 @@
 					<div id="configManageUsersBox" class="tabbox">
 				        <ul class="tabs">
 				            <li> <a href="#manageUsers">Manage Users</a></li>
-				            <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#manageSuperadmins">Manage Superadmins</a></li></#if>
+				            <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#manageSuperadmins">Manage Super Administrators</a></li></#if>
 				            <li><a href="#manageRegistryContacts">Manage Registry Contacts</a></li>
 				        </ul>
 				        
@@ -57,7 +57,7 @@
 								<section class="form-rows">
 									<h2 class="no-arrow">Manage Users</h2>
 									<div>
-									<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit/saveUser" method="POST">
+									<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit/saveUser" method="POST"  autocomplete="off">
 										<!-- Table of users. -->
 										<div class="tableContainer existingUsers"></div>
 			
@@ -163,7 +163,7 @@
 									<section id="superadmins" class="form-rows">
 										<h2>Manage Superadministrators</h2>
 										<div>
-										<form id="editSuperadmins" name="editSuperadmins" action="/pgadmissions/manageUsers/edit/saveSuperadmin" method="POST">
+										<form id="editSuperadmins" name="editSuperadmins" action="/pgadmissions/manageUsers/edit/saveSuperadmin" method="POST"  autocomplete="off">
 											<div class="tableContainer table table-condensed existingUsers">
 												<table class="data" border="0">
 													<colgroup>
@@ -188,6 +188,7 @@
 																			</#list>
 																		</tbody>
 																	</table>
+                                                                    </div>
 																</td>
 															</tr>
 													</tbody>
@@ -251,34 +252,45 @@
 								<section class="form-rows">
 										<h2>Manage Admissions Contacts</h2>
 									<div>
-										<form id="addRemoveRegistryUsers">
+										<form id="addRemoveRegistryUsers"  autocomplete="off">
 										<div class="tableContainer table table-condensed ">
-											<table id="registryUsers" class="table table-striped table-condensed table-hover " border="0">
-												<colgroup>
-												    <col style="width: 30px;" />
-													<col />
-													<col style="width: 30px;" />
-												</colgroup>
-												<tbody>
-													<#list allRegistryUsers! as regUser>
-													<tr>
-													   <td>
-													       <span class="arrow"></span>
-													   </td>
-														<td>
-															${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
-														</td>
-														<td>
-															<button class="button-delete" type="button" data-desc="Remove">Remove</button>
-															<input type="hidden" name="firstname" value="${regUser.firstname!}" />
-															<input type="hidden" name="lastname" value="${regUser.lastname!}" />
-															<input type="hidden" name="email" value="${regUser.email!}" />
-															<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
-														</td>
-													</tr>
-													</#list>
-												</tbody>
-											</table>
+                                        <div class="tableContainer table table-condensed existingUsers">
+												<table class="data" border="0">
+													<tbody>
+														<tr>
+															<td colspan="4" class="scrollparent">
+																<div class="scroll">
+																	<table id="registryUsers" class="table-hover table-hover table-striped">
+                                                                        <colgroup>
+                                                                            <col style="width: 30px;" />
+                                                                            <col />
+                                                                            <col style="width: 30px;" />
+                                                                        </colgroup>
+                                                                        <tbody>
+                                                                            <#list allRegistryUsers! as regUser>
+                                                                            <tr>
+                                                                               <td>
+                                                                                   <span class="arrow"></span>
+                                                                               </td>
+                                                                                <td>
+                                                                                    ${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button class="button-delete" type="button" data-desc="Remove">Remove</button>
+                                                                                    <input type="hidden" name="firstname" value="${regUser.firstname!}" />
+                                                                                    <input type="hidden" name="lastname" value="${regUser.lastname!}" />
+                                                                                    <input type="hidden" name="email" value="${regUser.email!}" />
+                                                                                    <input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            </#list>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    </div>
+																</td>
+															</tr>
+													</tbody>
+												</table>
 										</div>
 									
 										<div class="row-group">

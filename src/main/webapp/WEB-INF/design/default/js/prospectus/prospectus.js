@@ -3,6 +3,7 @@ $(document).ready(function(){
 		bindSaveUpiAction();
 		bindIrisProfileModalConfirmAction();
 		generalTabing();
+		$('#closingDates').hide();
 });
 
 function bindIrisProfileModalConfirmAction(){
@@ -51,6 +52,13 @@ function bindSaveUpiAction(){
 	});
 }
 
+			
+	
+	if (closingDates.length == 0) {
+		$('#closingDates').hide();
+	} else {
+		$('#closingDates').show();
+	}
 function getUpiForCurrentUser() {
 	$.ajax({
 		type: 'GET',

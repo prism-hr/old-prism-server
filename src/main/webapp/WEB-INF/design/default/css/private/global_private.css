@@ -1877,3 +1877,6 @@ form#removeForm {
 .tabbox section {
 	margin-top: 43px;
 }
+#closingDates td{
+	vertical-align: middle;
+}

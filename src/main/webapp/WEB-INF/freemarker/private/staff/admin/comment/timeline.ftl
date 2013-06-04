@@ -70,7 +70,7 @@
 									<div class="box">
 										<div class="title">
 											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
-											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">Comented:</span>
 											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 										</div>
 										<p class="datetime" style="margin-top:6px;">
@@ -132,8 +132,7 @@
                     <li class="${timelineObject.type}">
                       <div class="box">
                         <p class="target">
-                        	<span data-desc="Target"></span>
-                          Our target for completing the stage: ${applicationForm.dueDate?string('dd MMM yy')}.
+                        	<span></span>Our target date for completing this stage: ${applicationForm.dueDate?string('dd MMM yy')}.
                         </p>
                       </div>
                     </li>

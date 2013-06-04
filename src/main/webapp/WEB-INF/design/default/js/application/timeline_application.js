@@ -65,6 +65,7 @@ $(document).ready(function()
 					toggleScores();	
 				}, complete: function() {
                  $('#ajaxloader').fadeOut('fast');
+				 /* Timeline expandable history*/
 				 exStatus();
              }	
 		});
@@ -73,20 +74,3 @@ $(document).ready(function()
 	});
 	
 });
-function exStatus() {
-	var $expander = $(".excontainer");
-	$.each($expander, function() {
-		if ($(this).parent().index() > 0) {
-			$(this).hide();
-			$(this).parent().find('>.box i').removeClass('icon-minus-sign').addClass('icon-plus-sign');
-		}
-		$(this).parent().find('>.box i').click(function() {
-			$(this).parent().parent().find(".excontainer").slideToggle(300);
-			if ($(this).attr('class') == 'icon-plus-sign') {
-				$(this).removeClass('icon-plus-sign').addClass('icon-minus-sign');
-			} else {
-				$(this).removeClass('icon-minus-sign').addClass('icon-plus-sign');
-			}
-		})
-	});
-}

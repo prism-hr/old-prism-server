@@ -101,17 +101,17 @@
                                                 <i class="icon-info-sign"></i> A specific guidance note for the context of use goes here.
                                             </div>
                                             <div class="tableContainer table table-condensed ">
-											<table id="closingDates" class="table table-striped table-condensed table-hover " border="0">
-												<colgroup>
-													<col />
-												    <col style="width: 30px;" />
-													<col style="width: 30px;" />
-												</colgroup>
-												<tbody>
-													
-												</tbody>
-											</table>
-										</div>
+												<table id="closingDates" class="table table-striped table-condensed table-bordered table-hover ">
+													<colgroup>
+														<col />
+													    <col style="width: 30px;" />
+														<col style="width: 30px;" />
+													</colgroup>
+													<tbody>
+														
+													</tbody>
+												</table>
+											</div>
                                         </div>
                                         <div class="row-group">
 											<h3>Add Closing Date</h3>

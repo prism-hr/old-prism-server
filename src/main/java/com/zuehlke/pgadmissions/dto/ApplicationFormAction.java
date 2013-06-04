@@ -201,7 +201,7 @@ public enum ApplicationFormAction {
     COMPLETE_APPROVAL_STAGE("validate", "Complete Approval Stage", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if (application.getStatus() == APPROVAL) {
+            if (application.getStatus() == APPROVAL && nextStatus == null) {
                 if (user.isApproverInProgram(application.getProgram()) || user.isInRole(Authority.SUPERADMINISTRATOR)) {
                     actions.addAction(COMPLETE_APPROVAL_STAGE);
 

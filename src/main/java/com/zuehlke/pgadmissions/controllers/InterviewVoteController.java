@@ -47,8 +47,8 @@ public class InterviewVoteController {
 
     @Autowired
     public InterviewVoteController(ApplicationsService applicationsService, UserService userService,
-                    InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
-                    AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider) {
+            InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
+            AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -69,7 +69,7 @@ public class InterviewVoteController {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         InterviewParticipant participant = interview.getParticipant(currentUser);
-        if (!applicationForm.isInState(ApplicationFormStatus.INTERVIEW) || participant.getResponded() ) {
+        if (!applicationForm.isInState(ApplicationFormStatus.INTERVIEW) || participant.getResponded()) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
         return applicationForm;
@@ -84,7 +84,11 @@ public class InterviewVoteController {
     @ModelAttribute("interviewParticipant")
     public InterviewParticipant getInterviewParticipant(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        return applicationForm.getLatestInterview().getParticipant(getUser());
+        InterviewParticipant participant = applicationForm.getLatestInterview().getParticipant(getUser());
+        if (participant == null) {
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        }
+        return participant;
     }
 
     @ModelAttribute("user")
@@ -105,7 +109,7 @@ public class InterviewVoteController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitInterviewVotes(@Valid @ModelAttribute InterviewParticipant currentParticipant, BindingResult bindingResult,
-                    @ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String comment) {
+            @ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String comment) {
         if (bindingResult.hasErrors()) {
             return INTERVIEW_VOTE_PAGE;
         }

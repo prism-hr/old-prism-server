@@ -260,7 +260,12 @@ function refreshControls() {
         getProjectDetailsFromLatestApprovalRound();
     } else if ($('#status').val() == 'REVIEW') {
         $("#fastTrackApplicationSection").show();
+        $("#interviewDelegation").hide();
     } else if ($('#status').val() == 'REQUEST_RESTART_APPROVAL') {
+    	$("#interviewDelegation").hide();
+    	$("#fastTrackApplicationSection").show();
+    } else if ($('#status').val() == 'APPROVAL') {
+    	$("#interviewDelegation").hide();
     	$("#fastTrackApplicationSection").show();
     } else {
         $("#fastTrackApplicationSection").hide();

@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -128,14 +129,14 @@ public class ApplicationFormListCriteriaBuilder {
                     criterions.add(criterion);
                 }
             }
+            
             if (BooleanUtils.isTrue(useDisjunction)) {
                 Disjunction disjunction = Restrictions.disjunction();
                 for (Criterion criterion : criterions) {
                     disjunction.add(criterion);
                 }
                 criteria.add(disjunction);
-            }
-            else {
+            } else {
                 for (Criterion criterion : criterions) {
                     criteria.add(criterion);
                 }
@@ -163,6 +164,10 @@ public class ApplicationFormListCriteriaBuilder {
 
         if (user.isInRole(Authority.REFEREE)) {
             disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichReferee(user)));
+        }
+        
+        if (user.isInRole(Authority.ADMITTER)) {
+            disjunction.add(Subqueries.propertyIn("id", getAllApplicationsWhichNeedConfirmingTheirEligibility()));
         }
 
         if (!user.getProgramsOfWhichAdministrator().isEmpty()) {
@@ -328,6 +333,13 @@ public class ApplicationFormListCriteriaBuilder {
         } else {
             return Order.desc(propertyName);
         }
+    }
+    
+    private DetachedCriteria getAllApplicationsWhichNeedConfirmingTheirEligibility() {
+        return DetachedCriteria.forClass(ApplicationForm.class)
+                .setProjection(Projections.property("id"))
+                .add(Restrictions.isNotNull("adminRequestedRegistry"))
+                .add(Restrictions.eq("registryUsersDueNotification", true));
     }
 
     private Criterion getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit() {

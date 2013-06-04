@@ -5,6 +5,7 @@ $(document).ready(function(){
 		bindProgramSelectChangeAction();
 		bindClosingDatesActions();
 		generalTabing();
+		$('#closingDates').hide();
 });
 
 function bindProgramSelectChangeAction(){
@@ -45,6 +46,11 @@ function getClosingDatesData(program_code){
 }
 
 function refreshClosingDates(closingDates){
+	if (closingDates.length == 0) {
+		$('#closingDates').hide();
+	} else {
+		$('#closingDates').show();
+	}
 	$('#closingDates tr').remove();
 	jQuery.each(closingDates, function(index, closingDate) {
 		appendClosingDateRow(closingDate);

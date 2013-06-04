@@ -42,7 +42,7 @@
 #timeline-statuses ul .box p:last-child { padding-bottom: 0 !important; }
 
 #timeline-statuses .box ul.uploads { padding: 5px 0 5px 10px; }
-#timeline-statuses .box ul.uploads li { background: url(../../../images/icon_downloads.png) no-repeat 1px 0; display: block; line-height: 15px; margin-bottom: 10px; padding-left: 32px; }
+#timeline-statuses .box ul.uploads li { background: url(../../../images/icon_downloads.png) no-repeat -1px 0; display: block; line-height: 15px; margin-bottom: 10px; padding-left: 32px; }
 #timeline-statuses .box ul.uploads li:last-child { margin-bottom: 0; }
 
 #timeline-statuses ul.status-info .box h3 { margin: 0; padding: 10px; }
@@ -219,7 +219,7 @@
   width: 22px;
   display: inline-block;
   height: 17px;
-  margin-left: -2px;
+  margin-left: -3px;
   font-size: 17px;
 }
 .expander.expand:after, .more-scores.expand:after {

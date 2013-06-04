@@ -28,7 +28,7 @@
 		              <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 		            </div>
                     
-		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p>  
+		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p> <i class="icon-plus-sign "></i> 
 							</div>
 		        
 							<#if timelineObject.reviewRound?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isInRole('ADMITTER'))>

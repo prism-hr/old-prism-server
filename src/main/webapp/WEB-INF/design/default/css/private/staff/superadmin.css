@@ -121,16 +121,10 @@ font-family:FontAwesome;font-weight:normal;
 .existingUsers table { margin-bottom: 0; width: 100% }
 .existingUsers td.scrollparent { padding: 0; }
 .existingUsers .scroll { max-height: 148px; overflow: auto; } /* roughly five rows high. */
-#superadmins .existingUsers .scroll { max-height: 135px; } /* adjustment for missing edit/delete buttons. */
 .existingUsers .scroll table { border-collapse: collapse; width: 100%; }
-#editSuperadmins table td {
+#editSuperadmins table td, #registryUsers td {
   height: 34px;
   vertical-align: middle !important;
-}
-#registryUsers .arrow {
-  margin-top: 4px;
-  display: block;
-  margin-left: 0px;
 }
 .arrow {
   margin-top: 3px;

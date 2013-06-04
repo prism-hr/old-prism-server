@@ -261,7 +261,7 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false);
     }
-    
+
     @Test
     public void shouldNotAddConfirmEligibilityActionIfApplicationIsNotActive() {
         EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(false);
@@ -269,26 +269,26 @@ public class ApplicationFormActionTest {
         EasyMock.expect(applicationMock.hasConfirmElegibilityComment()).andReturn(false);
         EasyMock.expect(applicationMock.isSubmitted()).andReturn(true);
         EasyMock.expect(applicationMock.isTerminated()).andReturn(true);
-        
+
         EasyMock.replay(userMock, applicationMock);
         CONFIRM_ELIGIBILITY.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
         assertActionsDefinitions(actionsDefinitions, false);
     }
-    
+
     @Test
     public void shouldNotAddConfirmEligibilityActionIfApplicationIsNotSubmitted() {
         EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(false);
         EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
         EasyMock.expect(applicationMock.hasConfirmElegibilityComment()).andReturn(false);
         EasyMock.expect(applicationMock.isSubmitted()).andReturn(false);
-        
+
         EasyMock.replay(userMock, applicationMock);
         CONFIRM_ELIGIBILITY.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
         assertActionsDefinitions(actionsDefinitions, false);
     }
-    
+
     @Test
     public void shouldAddConfirmEligibilityActionIfuserIsSuperadmin() {
         EasyMock.expect(userMock.isInRole(Authority.ADMITTER)).andReturn(false);
@@ -297,11 +297,11 @@ public class ApplicationFormActionTest {
         EasyMock.expect(applicationMock.isTerminated()).andReturn(false);
         EasyMock.expect(applicationMock.isSubmitted()).andReturn(true);
         EasyMock.expect(applicationMock.getAdminRequestedRegistry()).andReturn(new RegisteredUser());
-        
+
         EasyMock.replay(userMock, applicationMock);
         CONFIRM_ELIGIBILITY.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
-        
+
         assertActionsDefinitions(actionsDefinitions, true);
     }
 
@@ -643,6 +643,24 @@ public class ApplicationFormActionTest {
     }
 
     @Test
+    public void shouldAddCompleteInterviewStageActionIfApplicationAdministrator() {
+        Interviewer interviewer = new InterviewerBuilder().build();
+        Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).interviewers(interviewer).build();
+
+        EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
+        EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
+        EasyMock.expect(applicationMock.isDueDateExpired()).andReturn(false);
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
+        EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        COMPLETE_INTERVIEW_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false, COMPLETE_INTERVIEW_STAGE);
+    }
+
+    @Test
     public void shouldAddCompleteInterviewStageActionAndSetAttentionFlagIfAllInterviewersResponded() {
         InterviewComment comment = new InterviewComment();
         Interviewer interviewer = new InterviewerBuilder().interviewComment(comment).build();
@@ -684,6 +702,7 @@ public class ApplicationFormActionTest {
         EasyMock.expect(applicationMock.getLatestInterview()).andReturn(interview);
         EasyMock.expect(applicationMock.getStatus()).andReturn(INTERVIEW);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
+        EasyMock.expect(userMock.isApplicationAdministrator(applicationMock)).andReturn(false);
 
         EasyMock.replay(userMock, applicationMock);
         COMPLETE_INTERVIEW_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);
@@ -1304,18 +1323,18 @@ public class ApplicationFormActionTest {
     public void shouldNotAddConfirmSupervisionActionIfPendingApprovalRestart() {
         Supervisor supervisor = new SupervisorBuilder().user(userMock).isPrimary(true).confirmedSupervision(true).build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
-        
+
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
         EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
         EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
-        
+
         EasyMock.replay(userMock, applicationMock);
         CONFIRM_SUPERVISION.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
-        
+
         assertActionsDefinitions(actionsDefinitions, false);
     }
-    
+
     @Test
     public void shouldNotAddConfirmSupervisionActionIfAlreadyResponded() {
         Supervisor supervisor = new SupervisorBuilder().user(userMock).isPrimary(true).confirmedSupervision(true).build();

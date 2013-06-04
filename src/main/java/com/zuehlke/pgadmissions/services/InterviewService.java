@@ -95,14 +95,14 @@ public class InterviewService {
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
 
-        removeApplicationAdministratorIfExists(interview);
+        removeApplicationAdministratorReminders(interview);
         applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
 
         applicationFormDAO.save(applicationForm);
 
         if (!interview.getTakenPlace()) {
             InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, applicationForm, interview.getFurtherDetails(),
-                    interview.getFurtherInterviewerDetails());
+                    interview.getFurtherInterviewerDetails(), interview.getLocationURL());
             commentService.save(scheduleComment);
         }
 
@@ -152,15 +152,16 @@ public class InterviewService {
         interview.setInterviewTime(timeslot.getStartTime());
         interview.setFurtherDetails(interviewConfirmDTO.getFurtherDetails());
         interview.setFurtherInterviewerDetails(interviewConfirmDTO.getFurtherInterviewerDetails());
+        interview.setLocationURL(interviewConfirmDTO.getLocationUrl());
         interview.setStage(InterviewStage.SCHEDULED);
         interviewDAO.save(interview);
 
         InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, interview.getApplication(),
-                interview.getFurtherDetails(), interview.getFurtherInterviewerDetails());
+                interview.getFurtherDetails(), interview.getFurtherInterviewerDetails(), interview.getLocationURL());
         commentService.save(scheduleComment);
 
         assignInterviewDueDate(interview, interview.getApplication());
-        removeApplicationAdministratorIfExists(interview);
+        removeApplicationAdministratorReminders(interview);
 
         sendConfirmationEmails(interview);
     }
@@ -189,13 +190,12 @@ public class InterviewService {
         }
     }
 
-    private void removeApplicationAdministratorIfExists(final Interview interview) {
+    private void removeApplicationAdministratorReminders(final Interview interview) {
         ApplicationForm application = interview.getApplication();
         // Check if the interview administration was delegated
         if (application.getApplicationAdministrator() != null && interview.isScheduled()) {
             // We remove the notification record so that the delegate does not receive reminders any longer
             application.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
-            application.setApplicationAdministrator(null);
             application.setSuppressStateChangeNotifications(false);
         }
     }

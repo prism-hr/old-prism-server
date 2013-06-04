@@ -9,9 +9,9 @@
 			<div class="title">
 				<span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
 				<#if comment?? && comment.providedBy??>
-				    <span class="name">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
+				    <span class="name" data-desc="${(comment.providedBy.email?html)!} on behalf of ${(timelineObject.referee.user.email?html)!}">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
 				<#else>
-				    <span class="name">${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
+				    <span class="name" data-desc="${(timelineObject.referee.user.email?html)!}">${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
 				</#if>
 				<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 			</div>	     
@@ -28,10 +28,10 @@
 								</ul>
 						</#if>
 						<h3 class="answer <#if comment.suitableForUCL?? && comment.suitableForUCL>yes<#else>no</#if>">
-							<span data-desc="<#if comment.suitableForUCL?? && comment.suitableForUCL>Yes<#else>No</#if>"></span> Is the applicant suitable for postgraduate study at UCL?
+							<span data-desc="<#if comment.suitableForUCL?? && comment.suitableForUCL>Yes<#else>No</#if>"></span>Is the applicant suitable for postgraduate study at UCL?
 						</h3>
 						<h3 class="answer <#if comment.suitableForProgramme?? && comment.suitableForProgramme>yes<#else>no</#if>">
-							<span data-desc="<#if comment.suitableForProgramme?? && comment.suitableForProgramme>Yes<#else>No</#if>"></span> Is the applicant suitable for their chosen postgraduate study programme?
+							<span data-desc="<#if comment.suitableForProgramme?? && comment.suitableForProgramme>Yes<#else>No</#if>"></span>Is the applicant suitable for their chosen postgraduate study programme?
 						</h3>
 				</#if>  
 				        

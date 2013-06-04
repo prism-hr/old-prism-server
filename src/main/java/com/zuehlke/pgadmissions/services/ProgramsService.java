@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -16,14 +18,16 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 public class ProgramsService {
 
 	private final ProgramDAO programDAO;
+	private final AdvertDAO advertDAO;
 
 	ProgramsService() {
-		this(null);
+		this(null, null);
 	}
 
 	@Autowired
-	public ProgramsService(ProgramDAO programDAO) {
+	public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO) {
 		this.programDAO = programDAO;
+		this.advertDAO = advertDAO;
 	}
 
 	public List<Program> getAllPrograms() {
@@ -54,5 +58,13 @@ public class ProgramsService {
 		Program program = programDAO.getProgramByCode(programCode);
 		program.getScoringDefinitions().put(scoringStage, null);
 	}
+
+    public Advert getProgramAdvert(Program program) {
+        return advertDAO.getProgramAdvert(program);
+    }
+
+    public void merge(Advert programAdvert) {
+        advertDAO.merge(programAdvert);
+    }
 
 }

@@ -29,7 +29,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramAdvert;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -120,14 +120,6 @@ public class ProjectConfigurationController {
         return programsService.getProgramByCode(programCode);
     }
 
-    private ProgramAdvert getProgrameAdvert(String programCode) {
-        Program program = getProgram(programCode);
-        if (program == null) {
-            return null;
-        }
-        return program.getAdvert();
-    }
-
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -144,46 +136,48 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
     public String getAdvertData(@RequestParam String programCode) throws TemplateException, IOException {
-        ProgramAdvert advert = getProgrameAdvert(programCode);
-
-        Map<String, Object> result = Maps.newHashMap();
-        result.put("advert", HibernateUtils.unproxy(advert));
-
-        HashMap<String, String> dataMap = new HashMap<String, String>();
-        dataMap.put("programCode", programCode);
-        dataMap.put("host", host);
-
-        result.put("buttonToApply", processTemplate(buttonToApplyTemplate, dataMap));
-        result.put("linkToApply", processTemplate(linkToApplyTemplate, dataMap));
-
-        return new Gson().toJson(result);
+//        Advert advert = getProgrameAdvert(programCode);
+//
+//        Map<String, Object> result = Maps.newHashMap();
+//        result.put("advert", HibernateUtils.unproxy(advert));
+//
+//        HashMap<String, String> dataMap = new HashMap<String, String>();
+//        dataMap.put("programCode", programCode);
+//        dataMap.put("host", host);
+//
+//        result.put("buttonToApply", processTemplate(buttonToApplyTemplate, dataMap));
+//        result.put("linkToApply", processTemplate(linkToApplyTemplate, dataMap));
+//
+//        return new Gson().toJson(result);
+        return null;
     }
 
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
-    public String saveProgramAdvert(@RequestParam String programCode, @Valid ProgramAdvert programAdvert, BindingResult result, HttpServletRequest request) {
-        Map<String, Object> map = Maps.newHashMap();
-
-        Program program = programsService.getProgramByCode(programCode);
-
-        if (program == null) {
-            map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
-        }
-
-        if (result.hasErrors()) {
-            for (FieldError error : result.getFieldErrors()) {
-                map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
-            }
-        }
-
-        if (map.isEmpty()) {
-            program.setAdvert(programAdvert);
-            programsService.save(program);
-            map.put("success", "true");
-        }
-
-        Gson gson = new Gson();
-        return gson.toJson(map);
+    public String saveProgramAdvert(@RequestParam String programCode, @Valid Advert programAdvert, BindingResult result, HttpServletRequest request) {
+//        Map<String, Object> map = Maps.newHashMap();
+//
+//        Program program = programsService.getProgramByCode(programCode);
+//
+//        if (program == null) {
+//            map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
+//        }
+//
+//        if (result.hasErrors()) {
+//            for (FieldError error : result.getFieldErrors()) {
+//                map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
+//            }
+//        }
+//
+//        if (map.isEmpty()) {
+//            program.setAdvert(programAdvert);
+//            programsService.save(program);
+//            map.put("success", "true");
+//        }
+//
+//        Gson gson = new Gson();
+//        return gson.toJson(map);
+        return null;
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)

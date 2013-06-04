@@ -6,8 +6,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,7 +22,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -89,9 +90,8 @@ public class Program extends Authorisable implements Serializable {
     @JoinColumn(name = "program_id")
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_advert_id")
-    private ProgramAdvert advert;
+    @OneToMany(mappedBy = "program")
+    private Set<Advert> adverts = new HashSet<Advert>();
 
     public Program() {
     }
@@ -219,15 +219,11 @@ public class Program extends Authorisable implements Serializable {
     public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {
         return scoringDefinitions;
     }
-
-    public ProgramAdvert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(ProgramAdvert advert) {
-        this.advert = advert;
-    }
     
+    public Set<Advert> getAdverts() {
+        return adverts;
+    }
+
     public List<ProgramClosingDate> getClosingDates() {
         return closingDates;
     }

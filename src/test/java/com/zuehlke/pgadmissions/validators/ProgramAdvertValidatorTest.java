@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
-import com.zuehlke.pgadmissions.domain.ProgramAdvert;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,28 +25,28 @@ public class ProgramAdvertValidatorTest {
     private Validator validator;
 
     private ProgramAdvertValidator programAdvertValidator;
-    private ProgramAdvert programAdvert;
+    private Advert programAdvert;
 
     @Before
     public void setUp() {
-        programAdvert = new ProgramAdvert();
+        programAdvert = new Advert();
         programAdvert.setDescription("abc");
-        programAdvert.setDurationOfStudyInMonth(11);
-        programAdvert.setFundingInformation("");
-        programAdvert.setIsCurrentlyAcceptingApplications(true);
+        programAdvert.setStudyDuration(11);
+        programAdvert.setFunding(null);
+        programAdvert.setActive(true);
         programAdvertValidator = new ProgramAdvertValidator();
         programAdvertValidator.setValidator(validator);
     }
 
     @Test
     public void shouldSupportProgramAdvertClass() {
-        assertTrue(programAdvertValidator.supports(ProgramAdvert.class));
+        assertTrue(programAdvertValidator.supports(Advert.class));
     }
 
     @Test
     public void shouldRejectIfDescriptionIsNull() {
         programAdvert.setDescription(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "description");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "advert");
         programAdvertValidator.validate(programAdvert, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("description").getCode());
@@ -55,7 +55,7 @@ public class ProgramAdvertValidatorTest {
     @Test
     public void shouldRejectIfDescriptionIsEmptyString() {
         programAdvert.setDescription("");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "description");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "advert");
         programAdvertValidator.validate(programAdvert, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("description").getCode());
@@ -63,29 +63,29 @@ public class ProgramAdvertValidatorTest {
 
     @Test
     public void shouldRejectIfDurationOfStudyHasErrorValue() {
-        programAdvert.setDurationOfStudyInMonth(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "durationOfStudyInMonth");
+        programAdvert.setStudyDuration(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "advert");
         programAdvertValidator.validate(programAdvert, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("prospectus.durationOfStudy.emptyOrNotInteger", mappingResult.getFieldError("durationOfStudyInMonth").getCode());
+        Assert.assertEquals("prospectus.durationOfStudy.emptyOrNotInteger", mappingResult.getFieldError("studyDuration").getCode());
     }
 
     @Test
     public void shouldRejectIfDurationOfStudyIsNull() {
-        programAdvert.setDurationOfStudyInMonth(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "durationOfStudyInMonth");
+        programAdvert.setStudyDuration(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "advert");
         programAdvertValidator.validate(programAdvert, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("prospectus.durationOfStudy.emptyOrNotInteger", mappingResult.getFieldError("durationOfStudyInMonth").getCode());
+        Assert.assertEquals("prospectus.durationOfStudy.emptyOrNotInteger", mappingResult.getFieldError("studyDuration").getCode());
     }
 
     @Test
     public void shouldRejectIfIsCurrentlyAcceptingApplicationsIsNull() {
-        programAdvert.setIsCurrentlyAcceptingApplications(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "isCurrentlyAcceptingApplications");
+        programAdvert.setActive(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programAdvert, "advert");
         programAdvertValidator.validate(programAdvert, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("isCurrentlyAcceptingApplications").getCode());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("active").getCode());
     }
 
 }

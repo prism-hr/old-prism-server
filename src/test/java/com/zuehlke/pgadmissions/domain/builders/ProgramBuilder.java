@@ -1,13 +1,16 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramAdvert;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -32,7 +35,7 @@ public class ProgramBuilder {
     private List<Badge> badges = new ArrayList<Badge>();
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
-    private ProgramAdvert advert;
+    private Set<Advert> adverts = new HashSet<Advert>();
 
     public ProgramBuilder atasRequired(boolean flag) {
         atasRequired = flag;
@@ -127,8 +130,8 @@ public class ProgramBuilder {
     	return this;
     }
 
-    public ProgramBuilder advert(ProgramAdvert advert) {
-        this.advert = advert;
+    public ProgramBuilder adverts(Advert... adverts) {
+        this.adverts.addAll(Arrays.asList(adverts));
         return this;
     }
 
@@ -148,7 +151,7 @@ public class ProgramBuilder {
         program.getScoringDefinitions().putAll(scoringDefinitions);
         program.getBadges().addAll(badges);
         program.setAtasRequired(atasRequired);
-        program.setAdvert(advert);
+        program.getAdverts().addAll(adverts);
         program.getClosingDates().addAll(programClosingDates);
         return program;
     }

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.ProgramAdvert;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 
 @Component
@@ -14,25 +14,25 @@ public class ProgramAdvertValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return ProgramAdvert.class.equals(clazz);
+        return Advert.class.equals(clazz);
     }
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        ProgramAdvert programAdvert = (ProgramAdvert) target;
+        Advert programAdvert = (Advert) target;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", EMPTY_FIELD_ERROR_MESSAGE);
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "durationOfStudyInMonth", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
-        Integer durationOfStudyInMonth = programAdvert.getDurationOfStudyInMonth();
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
+        Integer durationOfStudyInMonth = programAdvert.getStudyDuration();
         if (durationOfStudyInMonth != null && durationOfStudyInMonth.equals(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY)) {
-            errors.rejectValue("durationOfStudyInMonth", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
+            errors.rejectValue("studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
         }
         if (durationOfStudyInMonth != null && durationOfStudyInMonth.equals(DurationOfStudyPropertyEditor.ERROR_UNIT_FOR_DURATION_OF_STUDY)) {
-        	errors.rejectValue("durationOfStudyInMonth", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        	errors.rejectValue("studyDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "isCurrentlyAcceptingApplications", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "active", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
     }
 }

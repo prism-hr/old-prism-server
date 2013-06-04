@@ -11,6 +11,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -20,6 +21,9 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 public class ProgramsServiceTest {
 
     private ProgramDAO programDAOMock;
+    
+    private AdvertDAO advertDAOMock;
+    
     private ProgramsService programsService;
 
     @Test
@@ -79,6 +83,7 @@ public class ProgramsServiceTest {
     @Before
     public void setUp() {
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
-        programsService = new ProgramsService(programDAOMock);
+        advertDAOMock = EasyMock.createMock(AdvertDAO.class);
+        programsService = new ProgramsService(programDAOMock, advertDAOMock);
     }
 }

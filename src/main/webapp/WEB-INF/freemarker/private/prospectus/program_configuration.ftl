@@ -78,7 +78,7 @@
                   </div>
                 </div>
                 <div class="field">
-                  <a id="addClosingDate" role="button" class="btn">Add Closing Date</a>
+                  <a id="addClosingDate" role="button" class="btn btn-primary">Add</a>
                 </div>
               </div>                                        
               <div class="row-group">

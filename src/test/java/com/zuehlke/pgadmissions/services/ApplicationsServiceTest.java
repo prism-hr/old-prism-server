@@ -291,5 +291,15 @@ public class ApplicationsServiceTest {
 
 		assertSame(newApplicationForm, returnedForm);
 	}
+	
+	@Test
+	public void shouldFastTrackApplicationByClearingTheBatchDeadline() {
+	    ApplicationForm form = new ApplicationFormBuilder().applicationNumber("XXXXX").batchDeadline(new Date()).build();
+	    EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber(form.getApplicationNumber())).andReturn(form);
+	    replay();
+	    applicationsService.fastTrackApplication(form.getApplicationNumber());
+	    verify();
+	    Assert.assertNull(form.getBatchDeadline());
+	}
 
 }

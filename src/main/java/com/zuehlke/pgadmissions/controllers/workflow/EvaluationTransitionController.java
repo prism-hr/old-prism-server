@@ -67,7 +67,8 @@ public class EvaluationTransitionController extends StateTransitionController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
     public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
-            ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+            ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer,
+            @RequestParam(required = false) Boolean fastTrackApplication) {
         modelMap.put("delegate", delegate);
 
         if (result.hasErrors()) {
@@ -77,10 +78,14 @@ public class EvaluationTransitionController extends StateTransitionController {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
         
-        if(BooleanUtils.isNotTrue(delegate)){
+        if (BooleanUtils.isNotTrue(delegate)) {
             applicationForm.setApplicationAdministrator(null);
         }
-
+        
+        if (BooleanUtils.isTrue(fastTrackApplication)) {
+            applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
+        }
+        
         Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(), stateChangeComment.getType(),
                 stateChangeComment.getNextStatus());
 

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -81,7 +82,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
     public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
-            ModelMap modelMap) {
+            @RequestParam(required = false) Boolean fastTrackApplication, ModelMap modelMap) {
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
@@ -99,6 +100,10 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
             comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
                     stateChangeComment.getNextStatus());
             applicationForm.setApplicationAdministrator(null);
+        }
+        
+        if (BooleanUtils.isTrue(fastTrackApplication)) {
+            applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));

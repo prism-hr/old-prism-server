@@ -219,6 +219,10 @@
                     </div>
                   </div>
                 </div><!-- close .row-group -->
+
+                                <div class="row-group" id="fastTrackApplicationSection" style="display:none">
+								  <#include "/private/staff/admin/fast_track.ftl"/>
+                                </div>
 								
 								<div class="row-group" id="interviewDelegation" style="display:none">
 								  <#include "/private/staff/admin/interview_delegation.ftl"/>

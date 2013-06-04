@@ -153,6 +153,10 @@ function saveComment() {
 
     $('#commentField').val($('#comment').val());
 
+    if ($('input:radio[name=fastTrackProcessing]:checked').length > 0) {
+    	$('#stateChangeForm').append('<input type="hidden" name="fastTrackApplication" value="true"/>');
+    }
+    
     if ($('input:radio[name=qualifiedForPhd]:checked').length > 0) {
         $('#stateChangeForm').append('<input type="hidden" name="qualifiedForPhd" value="' + $('input:radio[name=qualifiedForPhd]:checked').val() + '"/>');
     }
@@ -228,11 +232,10 @@ function changeState() {
 
 function refreshControls() {
     if ($('#status').val() == 'INTERVIEW') {
-
         $("#approvedDetails").hide();
         $("#interviewDelegation").show();
         $("#interviewDelegation").find("div.alert").remove();
-
+        $("#fastTrackApplicationSection").show();
         if ($('input:radio[name=switch]:checked').val() == 'yes') {
             $('#delegateFirstName').removeAttr('disabled');
             $('#delegateLastName').removeAttr('disabled');
@@ -252,9 +255,15 @@ function refreshControls() {
     } else if ($('#status').val() == 'APPROVED') {
         $("#approvedDetails").show();
         $("#interviewDelegation").hide();
+        $("#fastTrackApplicationSection").hide();
         $("#approvedDetails").find("div.alert").remove();
         getProjectDetailsFromLatestApprovalRound();
+    } else if ($('#status').val() == 'REVIEW') {
+        $("#fastTrackApplicationSection").show();
+    } else if ($('#status').val() == 'REQUEST_RESTART_APPROVAL') {
+    	$("#fastTrackApplicationSection").show();
     } else {
+        $("#fastTrackApplicationSection").hide();
         $("#interviewDelegation").hide();
         $("#approvedDetails").hide();
         $('input:radio[name=switch]')[0].checked = true;

@@ -18,12 +18,12 @@
 		            <div class="title">
 		              <span class="icon-role 
 		              <#if timelineObject.userCapacity == 'admin'>administrator
-		              <#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
+		              <#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
 		              <#if timelineObject.type == 'reference' && timelineObject.referee?? && timelineObject.referee.reference?? && timelineObject.referee.reference.providedBy??>
 		                  <#assign comment = timelineObject.referee.reference/>
-                          <span class="name" data-desc="${(comment.providedBy.email?html)!} on behalf of ${(timelineObject.referee.user.email?html)!}">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
+                          <span class="name">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
 	                  <#else>
-		                  <span class="name" data-desc="${(timelineObject.author.email?html)!}">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+		                  <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 	                  </#if>
 		              <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 		            </div>
@@ -67,8 +67,8 @@
 								<li class="${timelineObject.type}">
 									<div class="box">
 										<div class="title">
-											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
-											<span class="name" data-desc="${(timelineObject.author.email?html)!}">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
+											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 										</div>
 										<p class="datetime" style="margin-top:6px;">
@@ -111,8 +111,8 @@
 								<li class="${timelineObject.type}">
 									<div class="box">
 										<div class="title">
-											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
-											<span class="name" data-desc="${(timelineObject.author.email?html)!}">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
+											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 										</div>
 										<p class="rejection">
 											<span></span>
@@ -181,8 +181,8 @@
   			            <li>                          
   			              <div class="box">
   			                <div class="title">
-  			                  <span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
-  			                  <span class="name" data-desc="${(comment.user.email?html)!}">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+  			                  <span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
+  			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
   			                  <span class="datetime" data-desc="Date">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
   			                </div>
   			                <#if comment.type == 'REQUEST_RESTART'>

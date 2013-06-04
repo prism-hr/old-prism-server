@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
@@ -140,5 +141,9 @@ public class Comment implements Comparable<Comment>, Serializable {
 
     public void setConfirmNextStage(Boolean confirmNextStage) {
         this.confirmNextStage = confirmNextStage;
+    }
+    
+    public String getTooltipMessage(final String role) {
+        return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role)); 
     }
 }

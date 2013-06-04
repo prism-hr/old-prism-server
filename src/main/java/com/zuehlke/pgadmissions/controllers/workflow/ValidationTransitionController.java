@@ -142,7 +142,10 @@ public class ValidationTransitionController extends StateTransitionController {
                 }
             }
 
-            if (fastTrackApplication == null || model.containsKey("closingDate_error") || model.containsKey("projectTitle_error") || result.hasErrors()) {
+            if ((fastTrackApplication == null && form.getBatchDeadline() != null) || model.containsKey("closingDate_error") || model.containsKey("projectTitle_error") || result.hasErrors()) {
+                if (fastTrackApplication == null) {
+                    model.addAttribute("fastTrackMissing", true);
+                }
                 return STATE_TRANSITION_VIEW;
             }
             

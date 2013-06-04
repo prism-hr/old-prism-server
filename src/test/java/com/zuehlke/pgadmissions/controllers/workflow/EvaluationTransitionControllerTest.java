@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -309,11 +311,19 @@ public class EvaluationTransitionControllerTest {
     @Test
     public void shouldReturnViewIfErrors() {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
-        EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock);
+        EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock);
+        
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock) {
+            @Override
+            @ModelAttribute("applicationForm")
+            public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+                return new ApplicationForm();
+            }
+        };
 
         String view = controller.addComment(null, null, bindingResultMock, new ModelMap(), null, null, false);
 
-        EasyMock.verify(commentServiceMock);
+        EasyMock.verify(commentServiceMock, applicationServiceMock);
         assertEquals("private/staff/admin/state_transition", view);
     }
 

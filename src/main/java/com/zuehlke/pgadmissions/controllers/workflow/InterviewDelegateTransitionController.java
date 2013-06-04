@@ -83,12 +83,16 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
     @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
     public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
             @RequestParam(required = false) Boolean fastTrackApplication, ModelMap modelMap) {
-        if (result.hasErrors() || fastTrackApplication == null) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        
+        if (result.hasErrors() || (fastTrackApplication == null && applicationForm.getBatchDeadline() != null)) {
+            if (fastTrackApplication == null) {
+                modelMap.addAttribute("fastTrackMissing", true);
+            }
             return STATE_TRANSITION_VIEW;
         }
 
         RegisteredUser user = getCurrentUser();
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
 
         Comment comment;
         if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {

@@ -161,7 +161,7 @@
 						<#if user.isInRole('SUPERADMINISTRATOR')>
 							<div id="manageSuperadmins" class="tab-page">
 									<section id="superadmins" class="form-rows">
-										<h2>Manage Superadministrators</h2>
+										<h2>Manage Super Administrators</h2>
 										<div>
 										<form id="editSuperadmins" name="editSuperadmins" action="/pgadmissions/manageUsers/edit/saveSuperadmin" method="POST"  autocomplete="off">
 											<div class="tableContainer table table-condensed existingUsers">
@@ -250,7 +250,7 @@
 						
 						<div id="manageRegistryContacts" class="tab-page">
 								<section class="form-rows">
-										<h2>Manage Admissions Contacts</h2>
+										<h2>Manage Registry Contacts</h2>
 									<div>
 										<form id="addRemoveRegistryUsers"  autocomplete="off">
 										<div class="tableContainer table table-condensed ">

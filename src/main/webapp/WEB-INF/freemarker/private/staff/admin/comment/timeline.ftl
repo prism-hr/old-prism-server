@@ -14,6 +14,7 @@
         <#list timelineObjects as timelineObject>  
 	        <#if (timelineObject.type != 'reference' && timelineObject.type != 'confirmEligibility') || user.isInRole('ADMITTER') || user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
 		        <li class="${timelineObject.type}">
+                <!-- Box start -->
 		          <div class="box">
 		            <div class="title">
 		              <span class="icon-role 
@@ -28,9 +29,10 @@
 		              <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 		            </div>
                     
-		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p> <i class="icon-plus-sign "></i> 
-							</div>
-		        
+		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p> <i class="icon-minus-sign"></i> 
+				   </div>
+		         <!-- Box end -->
+                 <div class="excontainer">
 							<#if timelineObject.reviewRound?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isInRole('ADMITTER'))>
 							<#if timelineObject.reviewRound.reviewers?? && timelineObject.reviewRound.reviewers?size &gt; 0>
 							<ul class="status-info">
@@ -236,6 +238,7 @@
 		          <#elseif timelineObject.type == 'confirmEligibility'>
 		            	<#include "timeline_snippets/eligibility_comment.ftl"/>
 		          </#if> 
+                  </div>
 		        </li>
 	        </#if>
         </#list>

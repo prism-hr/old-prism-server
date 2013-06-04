@@ -7,6 +7,7 @@ $(document).ready(function(){
 		bindSaveUpiAction();
 		bindIrisProfileModalConfirmAction();
 		bindClosingDatesActions();
+		generalTabing();
 });
 
 function bindIrisProfileModalConfirmAction(){

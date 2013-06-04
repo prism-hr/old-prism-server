@@ -1298,7 +1298,7 @@ span.icon-status {
   border-radius: 12px;
 }
 
-span.icon-status.approval, span.icon-status.validation, span.icon-status.review, span.icon-status.rejected, span.icon-status.withdrawn, span.icon-status.interview, span.icon-status.approved, span.icon-status.not-submitted{
+span.icon-status.approval, span.icon-status.validation, span.icon-status.review, span.icon-status.rejected, span.icon-status.withdrawn, span.icon-status.interview, span.icon-status.offer-recommended, span.icon-status.not-submitted{
   background: #DFE758;
   font-size: 18px;
   color: white;
@@ -1344,11 +1344,11 @@ span.icon-status.interview {
 span.icon-status.interview:before {
   content:"\f0c0";
 }
-span.icon-status.approved {
+span.icon-status.offer-recommended {
   background: #74B64A;
   font-size: 18px;
 }
-span.icon-status.approved:before {
+span.icon-status.offer-recommended:before {
   content:"\f00c";
 }
 span.icon-status.not-submitted {

@@ -162,7 +162,7 @@ public class InterviewServiceTest {
     public void shouldMoveToInterviewIfInReview() throws ParseException {
         RegisteredUser user = new RegisteredUser();
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).furtherDetails("applicant!")
-                .furtherInterviewerDetails("interviewer!").build();
+                .furtherInterviewerDetails("interviewer!").locationURL("loc").build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
         StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
         InterviewScheduleComment interviewScheduleComment = new InterviewScheduleComment();
@@ -170,7 +170,8 @@ public class InterviewServiceTest {
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
-        EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!")).andReturn(interviewScheduleComment);
+        EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc")).andReturn(
+                interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
 
         EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock);
@@ -183,7 +184,7 @@ public class InterviewServiceTest {
     public void shouldMoveToInterviewIfInInterview() throws ParseException {
         RegisteredUser user = new RegisteredUser();
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).furtherDetails("applicant!")
-                .furtherInterviewerDetails("interviewer!").build();
+                .furtherInterviewerDetails("interviewer!").locationURL("loc").build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
         StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
         InterviewScheduleComment interviewScheduleComment = new InterviewScheduleComment();
@@ -191,7 +192,8 @@ public class InterviewServiceTest {
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
-        EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!")).andReturn(interviewScheduleComment);
+        EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc")).andReturn(
+                interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
 
         EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock);
@@ -219,7 +221,6 @@ public class InterviewServiceTest {
         interviewService.moveApplicationToInterview(currentUser, interview, applicationForm);
         EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
 
-        assertNull(applicationForm.getApplicationAdministrator());
         assertNull(applicationForm.getNotificationForType(INTERVIEW_ADMINISTRATION_REMINDER));
     }
 
@@ -288,10 +289,11 @@ public class InterviewServiceTest {
         interviewConfirmDTO.setTimeslotId(2);
         interviewConfirmDTO.setFurtherDetails("applicant!");
         interviewConfirmDTO.setFurtherInterviewerDetails("interviewer!");
+        interviewConfirmDTO.setLocationUrl("loc");
         InterviewScheduleComment interviewScheduleComment = new InterviewScheduleComment();
 
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(interviewStageDuration);
-        EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!")).andReturn(
+        EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc")).andReturn(
                 interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
 
@@ -306,7 +308,6 @@ public class InterviewServiceTest {
         assertEquals(date, interview.getInterviewDueDate());
         assertEquals("11:11", interview.getInterviewTime());
         assertEquals(InterviewStage.SCHEDULED, interview.getStage());
-        assertNull(applicationForm.getApplicationAdministrator());
     }
 
     @Before

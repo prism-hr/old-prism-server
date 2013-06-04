@@ -154,7 +154,7 @@
                     <input type="text" id="username_or_email" name="username_or_email" value="${Session.loginUserEmail}" disabled="disabled" />
                     <input type="hidden" id="j_username" name="j_username" value="${Session.loginUserEmail}" />
                   <#else>
-                    <input type="email" id="username_or_email" name="j_username" placeholder="Email address" />
+                    <input type="email" id="username_or_email" name="j_username" placeholder="Email address" autofocus="autofocus" />
                   </#if>
                 </div>
               </div>

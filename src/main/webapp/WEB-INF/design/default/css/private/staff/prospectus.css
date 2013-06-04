@@ -91,3 +91,6 @@
   margin-left: -5px;
   font-size: 14px;
 }
+#linkToApply, #buttonToApply {
+  cursor: text !important;
+}

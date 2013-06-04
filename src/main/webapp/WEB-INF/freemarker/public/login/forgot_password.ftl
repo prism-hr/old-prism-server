@@ -67,7 +67,7 @@
 		           		<label class="control-label" for="email">Email <em>*</em></label>
 		           		<span class="hint" data-desc="Please enter your e-mail address"></span>
 						<div class="controls">
-		           			<input id="email" type="email" name="email" placeholder="Email Address"/>
+		           			<input id="email" type="email" name="email" placeholder="Email Address" autofocus="autofocus"/>
 		           			<#if errorMessageCode??>                    		
                     	<div class="alert alert-error">
 			               <i class="icon-warning-sign"></i> <@spring.message errorMessageCode />

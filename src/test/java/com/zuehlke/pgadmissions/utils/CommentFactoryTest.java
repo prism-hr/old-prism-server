@@ -113,11 +113,12 @@ public class CommentFactoryTest {
 
     @Test
     public void shouldCreateInterviewScheduleComment() {
-        InterviewScheduleComment comment = commentFactory.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!");
+        InterviewScheduleComment comment = commentFactory.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc");
         assertSame(applicationForm, comment.getApplication());
         assertEquals("", comment.getComment());
         assertEquals("applicant!", comment.getFurtherDetails());
         assertEquals("interviewer!", comment.getFurtherInterviewerDetails());
+        assertEquals("loc", comment.getLocationUrl());
         assertEquals(CommentType.INTERVIEW_SCHEDULE, comment.getType());
         assertSame(user, comment.getUser());
 

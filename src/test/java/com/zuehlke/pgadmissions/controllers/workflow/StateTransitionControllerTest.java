@@ -107,14 +107,13 @@ public class StateTransitionControllerTest {
     }
 
     @Test
-    public void shouldGetApplicationFromIdForAdmitter() {
+    public void shouldGetApplicationFromIdForApplicationAdministrator() {
         Program program = new ProgramBuilder().id(6).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
         RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-        EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMITTER)).andReturn(true);
+        EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(true);
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 

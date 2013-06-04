@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +18,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinType;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -97,7 +98,6 @@ public class ApplicationFormListCriteriaBuilder {
 
     public Criteria build() {
         criteria.setReadOnly(true);
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.setProjection(Projections.id());
         
         if (firstResult > -1) {
@@ -123,7 +123,7 @@ public class ApplicationFormListCriteriaBuilder {
         if (applicationsFilter != null) {
             List<Criterion> criterions = new ArrayList<Criterion>();
             for (ApplicationsFilter filter : applicationsFilter.getFilters()) {
-                Criterion criterion = getSearchCriterion(filter.getSearchCategory(), filter.getSearchPredicate(), filter.getSearchTerm());
+                Criterion criterion = getSearchCriterion(filter.getSearchCategory(), filter.getSearchPredicate(), filter.getSearchTerm(), criteria);
                 if (criterion!=null) {
                     criterions.add(criterion);
                 }
@@ -196,7 +196,7 @@ public class ApplicationFormListCriteriaBuilder {
         return criteria;
     }
 
-    private Criterion getSearchCriterion(final SearchCategory searchCategory, final SearchPredicate searchPredicate, final String term) {
+    private Criterion getSearchCriterion(final SearchCategory searchCategory, final SearchPredicate searchPredicate, final String term, final Criteria criteria) {
         if (searchCategory != null && StringUtils.isNotBlank(term)) {
             Criterion newCriterion = null;
             if (searchCategory.getType() == CategoryType.TEXT) {
@@ -216,9 +216,30 @@ public class ApplicationFormListCriteriaBuilder {
                 case APPLICATION_STATUS:
                     ApplicationFormStatus status = ApplicationFormStatus.convert(term);
                     if (status != null) {
-                        newCriterion = Restrictions.eq("status", status);
+                        if (status == ApplicationFormStatus.APPROVAL || status == ApplicationFormStatus.REQUEST_RESTART_APPROVAL) {
+                            newCriterion = Restrictions.disjunction()
+                                    .add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
+                                    .add(Restrictions.eq("status", ApplicationFormStatus.REQUEST_RESTART_APPROVAL));
+                        } else {
+                            newCriterion = Restrictions.eq("status", status);
+                        }
                     }
                     break;
+                case PROJECT_TITLE:
+                    newCriterion = Restrictions.ilike("projectTitle", term, MatchMode.ANYWHERE);
+                    break;
+                case SUPERVISOR:
+                    criteria.createAlias("programmeDetails", "pddetails", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("approvalRounds", "approvRounds", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("p.supervisors", "programme_supervisor", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("pddetails.suggestedSupervisors", "programme_details_supervisor", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("approvRounds.supervisors", "approvrounds_supervisor", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("approvrounds_supervisor.user", "approvrounds_supervisor_user", JoinType.LEFT_OUTER_JOIN);
+                    
+                    newCriterion = Restrictions.disjunction()
+                        .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "programme_supervisor.firstName", "programme_supervisor.lastName"))
+                        .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "approvrounds_supervisor_user.firstName", "approvrounds_supervisor_user.lastName"))
+                        .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "programme_details_supervisor.firstname", "programme_details_supervisor.lastname"));
                 default:
                 }
                 if (searchPredicate == SearchPredicate.NOT_CONTAINING) {
@@ -229,6 +250,8 @@ public class ApplicationFormListCriteriaBuilder {
                     newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "submittedDate");
                 } else if (searchCategory == SearchCategory.LAST_EDITED_DATE) {
                     newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "lastUpdated");
+                } else if (searchCategory == SearchCategory.CLOSING_DATE) {
+                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "dueDate");
                 }
             }
             return newCriterion;
@@ -279,11 +302,11 @@ public class ApplicationFormListCriteriaBuilder {
         case ON_DATE:
             Conjunction conjunction = Restrictions.conjunction();
             conjunction.add(Restrictions.ge(field, submissionDate));
-            conjunction.add(Restrictions.lt(field, new Date(submissionDate.getTime() + TimeUnit.DAYS.toMillis(1))));
+            conjunction.add(Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate()));
             newCriterion = conjunction;
             break;
         case TO_DATE:
-            newCriterion = Restrictions.lt(field, new Date(submissionDate.getTime() + TimeUnit.DAYS.toMillis(1)));
+            newCriterion = Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate());
             break;
         default:
             return null;

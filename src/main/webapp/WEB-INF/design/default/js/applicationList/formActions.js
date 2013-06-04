@@ -346,7 +346,7 @@ function fieldChange(selected, id) {
 		$(selector).insertAfter(id.parent().find('.selectPredicate')).attr('id',idswich);
 
 		
-	} else if (selected == "LAST_EDITED_DATE" || selected == "SUBMISSION_DATE") {
+	} else if (selected == "LAST_EDITED_DATE" || selected == "SUBMISSION_DATE" || selected == "CLOSING_DATE") {
 		// Find input and add classes
 		id.parent().find('.filterInput').addClass('half date').val('');
 		//bind datapicker

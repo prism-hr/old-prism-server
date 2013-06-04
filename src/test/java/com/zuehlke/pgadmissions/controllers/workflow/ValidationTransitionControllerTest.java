@@ -120,7 +120,7 @@ public class ValidationTransitionControllerTest {
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), format.format(twoMonthsAgo), "projectTitle", comment, bindingResultMock,
-                new ModelMap(), false, delegatedInterviewer);
+                new ModelMap(), false, delegatedInterviewer, false);
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         assertEquals("private/staff/admin/state_transition", view);
     }
@@ -151,7 +151,7 @@ public class ValidationTransitionControllerTest {
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), projectTitle.toString(), comment,
-                bindingResultMock, new ModelMap(), true, delegatedInterviewer);
+                bindingResultMock, new ModelMap(), true, delegatedInterviewer, false);
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         assertEquals("private/staff/admin/state_transition", view);
     }
@@ -193,7 +193,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
         controller.addComment(applicationForm.getApplicationNumber(), format.format(oneMonthAgo), "projectTitle", comment, bindingResultMock, new ModelMap(),
-                false, delegatedInterviewer);
+                false, delegatedInterviewer, false);
 
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
     }
@@ -230,7 +230,7 @@ public class ValidationTransitionControllerTest {
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
         controller.addComment(applicationForm.getApplicationNumber(), format.format(twoMontshAgo), "projectTitle", comment, bindingResultMock, new ModelMap(),
-                false, delegatedInterviewer);
+                false, delegatedInterviewer, false);
         EasyMock.verify(commentServiceMock);
     }
 
@@ -264,7 +264,7 @@ public class ValidationTransitionControllerTest {
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
         String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock,
-                new ModelMap(), true, delegatedInterviewer);
+                new ModelMap(), true, delegatedInterviewer, false);
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
@@ -300,7 +300,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock, badgeServiceMock);
 
         assertEquals("view", controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment,
-                bindingResultMock, new ModelMap(), false, delegatedInterviewer));
+                bindingResultMock, new ModelMap(), false, delegatedInterviewer, false));
 
         EasyMock.verify(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock, badgeServiceMock);
         assertEquals(2, comment.getDocuments().size());
@@ -400,7 +400,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
         String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock,
-                new ModelMap(), true, delegatedInterviewer);
+                new ModelMap(), true, delegatedInterviewer, false);
 
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -441,7 +441,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
         String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock,
-                new ModelMap(), true, delegatedInterviewer);
+                new ModelMap(), true, delegatedInterviewer, false);
 
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -482,7 +482,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
         String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock,
-                new ModelMap(), true, delegatedInterviewer);
+                new ModelMap(), true, delegatedInterviewer, false);
 
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -523,7 +523,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
         String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock,
-                new ModelMap(), true, delegatedInterviewer);
+                new ModelMap(), true, delegatedInterviewer, false);
 
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -564,7 +564,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
         String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock,
-                new ModelMap(), true, delegatedInterviewer);
+                new ModelMap(), true, delegatedInterviewer, false);
 
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
@@ -605,7 +605,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 
         String result = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock,
-                new ModelMap(), true, delegatedInterviewer);
+                new ModelMap(), true, delegatedInterviewer, false);
 
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 

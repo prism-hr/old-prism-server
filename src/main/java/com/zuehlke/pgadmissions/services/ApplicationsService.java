@@ -165,6 +165,11 @@ public class ApplicationsService {
             log.warn("{}", e);
         }
     }
+    
+    public void fastTrackApplication(final String applicationNumber) {
+        ApplicationForm form = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
+        form.setBatchDeadline(null);
+    }
 
     public List<Integer> getApplicationsIdsDueRegistryNotification() {
         return applicationFormDAO.getApplicationsIdsDueRegistryNotification();

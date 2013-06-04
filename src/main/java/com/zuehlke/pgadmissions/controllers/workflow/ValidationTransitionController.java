@@ -97,7 +97,8 @@ public class ValidationTransitionController extends StateTransitionController {
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
     public String addComment(@RequestParam String applicationId, @RequestParam String closingDate, @RequestParam String projectTitle,
             @Valid @ModelAttribute("comment") ValidationComment comment, BindingResult result, ModelMap model,
-            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer,
+            @RequestParam(required = false) Boolean fastTrackApplication) {
 
         model.put("delegate", delegate);
         ApplicationForm form = getApplicationForm(applicationId);
@@ -145,8 +146,12 @@ public class ValidationTransitionController extends StateTransitionController {
                 return STATE_TRANSITION_VIEW;
             }
             
-            if(BooleanUtils.isNotTrue(delegate)){
+            if (BooleanUtils.isNotTrue(delegate)) {
                 form.setApplicationAdministrator(null);
+            }
+
+            if (BooleanUtils.isTrue(fastTrackApplication)) {
+                applicationsService.fastTrackApplication(form.getApplicationNumber());
             }
 
             if (StringUtils.isNotBlank(closingDate) || StringUtils.isNotBlank(projectTitle)) {

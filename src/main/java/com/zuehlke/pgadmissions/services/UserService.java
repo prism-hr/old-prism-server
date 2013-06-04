@@ -392,6 +392,9 @@ public class UserService {
     }
 
     private boolean listContainsId(Program program, List<Program> programs) {
+        if (program==null) {
+            return false;
+        }
         for (Program entry : programs) {
             if (entry.getId().equals(program.getId())) {
                 return true;

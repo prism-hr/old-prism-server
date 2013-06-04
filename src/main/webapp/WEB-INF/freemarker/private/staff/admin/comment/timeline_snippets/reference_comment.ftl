@@ -7,11 +7,12 @@
 	<li>                          
 		<div class="box">
 			<div class="title">
-				<span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
 				<#if comment?? && comment.providedBy??>
-				    <span class="name" data-desc="${(comment.providedBy.email?html)!} on behalf of ${(timelineObject.referee.user.email?html)!}">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
+    				<span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
+				    <span class="name">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
 				<#else>
-				    <span class="name" data-desc="${(timelineObject.referee.user.email?html)!}">${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
+    				<span class="icon-role ${role}" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
+				    <span class="name">${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
 				</#if>
 				<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 			</div>	     

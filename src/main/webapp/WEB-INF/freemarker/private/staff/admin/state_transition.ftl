@@ -217,14 +217,14 @@
                         <div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
                       </#list>
                     </div>
-                  </div>
-                </div><!-- close .row-group -->
-
 								<#if applicationForm.batchDeadline??>
-	                                <div class="row-group" id="fastTrackApplicationSection" style="display:none">
+	                                <div id="fastTrackApplicationSection" style="display:none">
 									  <#include "/private/staff/admin/fast_track.ftl"/>
 	                                </div>
                                 </#if>
+                  </div>
+                </div><!-- close .row-group -->
+
 								
 								<div class="row-group" id="interviewDelegation" style="display:none">
 								  <#include "/private/staff/admin/interview_delegation.ftl"/>

@@ -109,6 +109,7 @@ function bindAddClosingDateButtonAction(){
 					}
 					clearClosingDate();
 					sortClosingDates();
+					checkDates();
 				}
 			},
 			complete: function() {
@@ -208,6 +209,7 @@ function removeClosingDate(row, id){
         	var map = JSON.parse(data);
         	if(map['removedDate']){
         		row.remove();
+				checkDates();
         	}
         },
         complete: function() {
@@ -351,7 +353,6 @@ function clearClosingDate(){
 	$("#closingDate").val("");
 	$("#studyPlaces").val("");
 	$('#addClosingDate').text("Add Closing Date");
-	$('#closingDates tr').remove();
 	checkDates();
 }
 

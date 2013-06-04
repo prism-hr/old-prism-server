@@ -71,11 +71,14 @@ public class EvaluationTransitionController extends StateTransitionController {
             @RequestParam(required = false) Boolean fastTrackApplication) {
         modelMap.put("delegate", delegate);
 
-        if (result.hasErrors() || fastTrackApplication == null) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        if (result.hasErrors() || (fastTrackApplication == null && applicationForm.getBatchDeadline() != null)) {
+            if (fastTrackApplication == null) {
+                modelMap.addAttribute("fastTrackMissing", true);
+            }
             return STATE_TRANSITION_VIEW;
         }
 
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
         
         if (BooleanUtils.isNotTrue(delegate)) {

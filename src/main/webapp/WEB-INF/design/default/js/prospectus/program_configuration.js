@@ -5,7 +5,7 @@ $(document).ready(function(){
 		bindProgramSelectChangeAction();
 		bindClosingDatesActions();
 		generalTabing();
-		$('#closingDates').hide();
+		checkDates();
 });
 
 function bindProgramSelectChangeAction(){
@@ -46,18 +46,20 @@ function getClosingDatesData(program_code){
 }
 
 function refreshClosingDates(closingDates){
-	if (closingDates.length == 0) {
-		$('#closingDates').hide();
-	} else {
-		$('#closingDates').show();
-	}
 	$('#closingDates tr').remove();
 	jQuery.each(closingDates, function(index, closingDate) {
 		appendClosingDateRow(closingDate);
 	});
 	sortClosingDates();
+	checkDates();
 }
-
+function checkDates() {
+	if ($('#closingDates td').length == 0) {
+		$('#closingDates').hide();
+	} else {
+		$('#closingDates').show();
+	}
+}
 function bindAddClosingDateButtonAction(){
 	$("#addClosingDate").bind('click', function(){
 		clearPreviousErrors();
@@ -349,6 +351,8 @@ function clearClosingDate(){
 	$("#closingDate").val("");
 	$("#studyPlaces").val("");
 	$('#addClosingDate').text("Add Closing Date");
+	$('#closingDates tr').remove();
+	checkDates();
 }
 
 function getErrorMessageHTML(message){

@@ -73,7 +73,7 @@ public class CommentService {
         Comment comment = getNewGenericComment();
         comment.setApplication(application);
         comment.setUser(user);
-        comment.setComment("Delegated Application for processing to "
+        comment.setComment("Delegating interview administration to: "
                 + application.getApplicationAdministrator().getFirstName() + " "
                 + application.getApplicationAdministrator().getLastName());
         save(comment);

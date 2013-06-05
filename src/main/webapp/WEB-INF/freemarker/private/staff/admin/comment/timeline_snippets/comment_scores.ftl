@@ -1,8 +1,8 @@
 <#assign notProvided = "Not provided">
-    <div class="score-results">
-        <#if comment.scores?size &gt; 0>
-        	<h4></h4>
-        	
+     <#if comment.scores?size &gt; 0>
+     </div>
+     <div class="box scores">
+        <div class="score-results">
         	<#list comment.scores as score>
 	            <div <#if score_index + 1 &gt; 3> class="hide-score" style="display:none;"</#if>>
 	                <#if score.questionType == "TEXT" || score.questionType == "TEXTAREA">
@@ -78,5 +78,6 @@
 	                <a class="expand more-scores" href="javascript:void(0);">Show more</a>
 	            </p>
 	        </#if>
-        </#if>
-    </div>
+         </div>
+     </#if>
+    

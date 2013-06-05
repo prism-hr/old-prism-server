@@ -4,7 +4,7 @@
   <div class="box">
     <div class="title">
       <span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
-      <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!} <#if supervisor.isPrimary> (Primary)</#if></span>
+      <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!} <#if supervisor.isPrimary> (Primary)</#if></span> <span class="commented">commented:</span>
       <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
     </div>
     
@@ -26,17 +26,13 @@
       <div class="box">
         <div class="title">
           <span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
-          <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!} <#if supervisor.isPrimary> (Primary)</#if></span>
+          <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!} <#if supervisor.isPrimary> (Primary)</#if></span> <span class="commented">commented:</span>
           <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
         </div>
-            
-            <p class="project_title"><span/>
-                <b>Project Title:</b> ${(comment.projectTitle?html)!}
-            </p>
-            <p><span/>
+            <p class="project_title"><span data-desc="Project title and description"/>
+                <b>${(comment.projectTitle?html)!}</b><br/>
                 <i>${(comment.projectAbstract?html)!}</i>
             </p>
-        
       </div>
     </li>
 </#if>
@@ -46,17 +42,17 @@
       <div class="box">
         <div class="title">
           <span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
-          <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!} <#if supervisor.isPrimary> (Primary)</#if></span>
+          <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!} <#if supervisor.isPrimary> (Primary)</#if></span> <span class="commented">commented:</span>
           <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
         </div>
             
             <p class="start_date"><span/>
-                <b>${comment.recommendedStartDate?string('dd MMM yy')}</b> 
+                <b>Provisional start date: </b>${comment.recommendedStartDate?string('dd MMM yy')}. 
             </p>
             
             <#if comment.recommendedConditionsAvailable>
                 <p class="conditional_offer"><span/>
-                    <b>Recommended conditions: </b> ${(comment.recommendedConditions?html)!}
+                    <b>Conditional offer recommended: </b> ${(comment.recommendedConditions?html)!}
                 </p>
             <#else>
                 <p class="unconditional_offer"><span/>

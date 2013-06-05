@@ -296,9 +296,6 @@ public class Program extends Authorisable implements Serializable {
 			storeDate.setClosingDate(closingDate.getClosingDate());
 			storeDate.setStudyPlaces(closingDate.getStudyPlaces());
 		}
-		
 	}
-
-	
 	
 }

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -36,5 +38,12 @@ public class AdvertDAO {
     public void merge(Advert programAdvert) {
         sessionFactory.getCurrentSession().merge(programAdvert);
     }
+
+	@SuppressWarnings("unchecked")
+	public List<Advert> getActiveProgramAdverts() {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("active", true))
+				 .add(Restrictions.eq("isProgramAdvert", true));
+		return criteria.list();
+	}
 
 }

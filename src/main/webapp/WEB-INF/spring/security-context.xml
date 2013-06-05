@@ -19,6 +19,7 @@
         <intercept-url pattern="/design/**" access="permitAll" />
         <intercept-url pattern="/programs" access="permitAll" />
         <intercept-url pattern="/register/**" access="permitAll" />
+        <intercept-url pattern="/adverts/**" access="permitAll" />
         <intercept-url pattern="/addReferences/**" access="permitAll" />
         <intercept-url pattern="/referee/register/**" access="permitAll" />
         <intercept-url pattern="/refereeRegistration/**" access="permitAll" />

@@ -71,9 +71,16 @@ public class RegisterControllerTest {
 	}
 
 	@Test
-	public void shouldReturnRegisterPage() {
-		assertEquals("public/register/register_applicant", registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).build(), new MockHttpServletRequest()));
+	public void shouldReturnRegisterPageIfRedirectedFromPrismInternally() {
+	    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+	    mockHttpServletRequest.addHeader("referer", "http://localhost:8080/pgadmissions/programs");
+		assertEquals("public/register/register_applicant", registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).build(), mockHttpServletRequest));
 	}
+	
+	@Test
+    public void shouldReturnLoginPageIfRedirectedFromOutsidePrism() {
+        assertEquals("redirect:/login", registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).build(), new MockHttpServletRequest()));
+    }
 
 	@Test
 	public void shouldRedirectToDirectURLIfUserExistsIsEnabledAndHasADirectURL() {

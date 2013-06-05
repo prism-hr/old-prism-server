@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.utils.ApplicationQueryStringParser;
 import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
 @Controller
-@RequestMapping(value = { "/register" })
+@RequestMapping(value = "/register")
 public class RegisterController {
     
     private final Logger log = LoggerFactory.getLogger(RegisterController.class);
@@ -75,8 +75,6 @@ public class RegisterController {
 		this.programService = programService;
 		this.applicationQueryStringParser = applicationQueryStringParser;
 	}
-
-
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public String submitRegistration( @Valid @ModelAttribute("pendingUser") RegisteredUser pendingUser,	BindingResult result, HttpServletRequest request) {
@@ -167,33 +165,37 @@ public class RegisterController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getRegisterPage(@ModelAttribute("pendingUser") RegisteredUser pendingUser, HttpServletRequest request) {
-		if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
-			return "redirect:" +  pendingUser.getDirectToUrl();
-		} else if (pendingUser!= null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
-		    request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
-		}
-		return REGISTER_USERS_VIEW_NAME;
+        if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
+            return "redirect:" + pendingUser.getDirectToUrl();
+        } else if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
+            request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
+        } else if (!StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions")) {
+            return "redirect:/login";
+        }
+        return REGISTER_USERS_VIEW_NAME;
 	}
 
 	@ModelAttribute("pendingUser")
 	public RegisteredUser getPendingUser(@RequestParam(required=false) String activationCode, @RequestParam(required=false) String directToUrl) {
-		if(StringUtils.isBlank(activationCode)){
-			return new RegisteredUser();
-		}
-		RegisteredUser pendingUser = userService.getUserByActivationCode(activationCode);
-		if(pendingUser == null){
-			throw new ResourceNotFoundException();
-		}
-		if(directToUrl != null){
-			pendingUser.setDirectToUrl(directToUrl);
-		}
-		return pendingUser;
+        if (StringUtils.isBlank(activationCode)) {
+            return new RegisteredUser();
+        }
+        RegisteredUser pendingUser = userService.getUserByActivationCode(activationCode);
+        if (pendingUser == null) {
+            throw new ResourceNotFoundException();
+        }
+        if (directToUrl != null) {
+            pendingUser.setDirectToUrl(directToUrl);
+        }
+        return pendingUser;
 	}
+	
+	private String getReferrerFromHeader(final HttpServletRequest request) {
+        return StringUtils.trimToEmpty(request.getHeader("referer"));
+    }
 	
 	@InitBinder(value = "pendingUser")
 	public void registerValidator(WebDataBinder binder) {
 		binder.setValidator(registerFormValidator);
-		
 	}
-
 }

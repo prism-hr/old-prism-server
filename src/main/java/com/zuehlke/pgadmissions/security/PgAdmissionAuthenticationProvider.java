@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.security;
 
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AccountExpiredException;
@@ -61,7 +62,7 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 		if (!userDetails.isAccountNonExpired()) {
 			throw new AccountExpiredException("account \"" + username + "\" expired");
 		}
-		if (!userDetails.getPassword().equals(encryptionUtils.getMD5Hash((String) preProcessToken.getCredentials()))) {
+		if (!StringUtils.equals(userDetails.getPassword(), encryptionUtils.getMD5Hash((String) preProcessToken.getCredentials()))) {
 			throw new BadCredentialsException("invalid username/password combination");
 		}
 		if (!userDetails.isAccountNonLocked()) {

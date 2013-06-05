@@ -12,6 +12,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -169,7 +170,7 @@ public class RegisterController {
             return "redirect:" + pendingUser.getDirectToUrl();
         } else if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
             request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
-        } else if (!StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions")) {
+        } else if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
             return "redirect:/login";
         }
         return REGISTER_USERS_VIEW_NAME;
@@ -192,6 +193,15 @@ public class RegisterController {
 	
 	private String getReferrerFromHeader(final HttpServletRequest request) {
         return StringUtils.trimToEmpty(request.getHeader("referer"));
+    }
+	
+	private DefaultSavedRequest getDefaultSavedRequest(final HttpServletRequest request) {
+        return (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+    }
+    
+	private boolean isAnApplyNewRequest(final HttpServletRequest request) {
+        DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
+        return defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new");
     }
 	
 	@InitBinder(value = "pendingUser")

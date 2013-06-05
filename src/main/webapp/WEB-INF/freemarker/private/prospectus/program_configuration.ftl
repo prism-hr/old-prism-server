@@ -61,8 +61,8 @@
                     </table>
                   </div>
               </div>
-              <div class="row-group">
-                <h3 id="closingDateHeading">Add Closing Date</h3>
+              <div class="row-group" id="programAdvertClosingDateGroup">
+                <h3 id="programAdvertClosingDateHeading">Add Closing Date</h3>
                 <input type="hidden" id="programAdvertClosingDateId"/>
                 <div class="row" id="programAdvertClosingDateDiv">
                   <label for="closingDate" class="plain-label">Closing Date <em>*</em></label>

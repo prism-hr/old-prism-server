@@ -27,6 +27,7 @@ function getProgramData(){
 }
 
 function getClosingDatesData(program_code){
+	clearClosingDate();
 	$.ajax({
         type: 'GET',
         statusCode: {
@@ -68,7 +69,7 @@ function checkDates() {
 
 function bindAddClosingDateButtonAction(){
 	$("#addProgramAdvertClosingDate").bind('click', function(){
-		clearProgramAdvertErrors();
+		clearProgramAdvertClosingDateErrors();
 		$('#ajaxloader').show();
 		var btnAction = $("#addProgramAdvertClosingDate").text();
 		var update = btnAction.indexOf("Edit") !== -1; 
@@ -194,7 +195,7 @@ function editDate(row){
 		$('#programAdvertStudyPlacesInput').val(placesValue);
 	}
 	$('#addProgramAdvertClosingDate').text("Edit");
-	$('#closingDateHeading').text("Edit Closing Date");
+	$('#programAdvertClosingDateHeading').text("Edit Closing Date");
 	
 }
 
@@ -354,7 +355,7 @@ function clearAll(){
 	$("#programAdvertButtonToApply").val("");
 	$("#programAdvertLinkToApply").val("");
 	clearClosingDate();
-	$('#closingDates tr').remove();
+	$('#programAdvertClosingDates tr').remove();
 	checkDates();
 }
 
@@ -363,7 +364,12 @@ function clearClosingDate(){
 	$("#programAdvertClosingDateInput").val("");
 	$("#programAdvertStudyPlacesInput").val("");
 	$('#addProgramAdvertClosingDate').text("Add");
-	$('#closingDateHeading').text("Add Closing Date");
+	$('#programAdvertClosingDateHeading').text("Add Closing Date");
+	clearProgramAdvertClosingDateErrors();
+}
+
+function clearProgramAdvertClosingDateErrors(){
+	$('#programAdvertClosingDateGroup .error').remove();
 }
 
 function clearProgramAdvertErrors(){

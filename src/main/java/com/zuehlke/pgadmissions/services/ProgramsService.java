@@ -18,47 +18,47 @@ import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
 @Transactional
 public class ProgramsService {
 
-	private final ProgramDAO programDAO;
-	private final AdvertDAO advertDAO;
+    private final ProgramDAO programDAO;
+    private final AdvertDAO advertDAO;
 
-	ProgramsService() {
-		this(null, null);
-	}
+    ProgramsService() {
+        this(null, null);
+    }
 
-	@Autowired
-	public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO) {
-		this.programDAO = programDAO;
-		this.advertDAO = advertDAO;
-	}
+    @Autowired
+    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO) {
+        this.programDAO = programDAO;
+        this.advertDAO = advertDAO;
+    }
 
-	public List<Program> getAllPrograms() {
-		return programDAO.getAllPrograms();
-	}
+    public List<Program> getAllPrograms() {
+        return programDAO.getAllPrograms();
+    }
 
-	public Program getProgramById(Integer programId) {
-		return programDAO.getProgramById(programId);
-	}
+    public Program getProgramById(Integer programId) {
+        return programDAO.getProgramById(programId);
+    }
 
-	public void save(Program program) {
-		programDAO.save(program);
-	}
+    public void save(Program program) {
+        programDAO.save(program);
+    }
 
-	public Program getProgramByCode(String code) {
-		return programDAO.getProgramByCode(code);
-	}
+    public Program getProgramByCode(String code) {
+        return programDAO.getProgramByCode(code);
+    }
 
-	public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent) {
-		Program program = programDAO.getProgramByCode(programCode);
-		ScoringDefinition scoringDefinition = new ScoringDefinition();
-		scoringDefinition.setContent(scoringContent);
-		scoringDefinition.setStage(scoringStage);
-		program.getScoringDefinitions().put(scoringStage, scoringDefinition);
-	}
+    public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent) {
+        Program program = programDAO.getProgramByCode(programCode);
+        ScoringDefinition scoringDefinition = new ScoringDefinition();
+        scoringDefinition.setContent(scoringContent);
+        scoringDefinition.setStage(scoringStage);
+        program.getScoringDefinitions().put(scoringStage, scoringDefinition);
+    }
 
-	public void removeScoringDefinition(String programCode, ScoringStage scoringStage) {
-		Program program = programDAO.getProgramByCode(programCode);
-		program.getScoringDefinitions().put(scoringStage, null);
-	}
+    public void removeScoringDefinition(String programCode, ScoringStage scoringStage) {
+        Program program = programDAO.getProgramByCode(programCode);
+        program.getScoringDefinitions().put(scoringStage, null);
+    }
 
     public Advert getProgramAdvert(Program program) {
         return advertDAO.getProgramAdvert(program);
@@ -77,8 +77,17 @@ public class ProgramsService {
         advert.setFunding(projectAdvertDTO.getFunding());
         advert.setActive(projectAdvertDTO.getActive());
         advert.setIsProgramAdvert(false);
-        
+
         advertDAO.save(advert);
     }
-    
+
+    public List<Advert> listProjectAdverts() {
+        return advertDAO.listProjectAdverts();
+    }
+
+    public void removeAdvert(int advertId) {
+        Advert advert = advertDAO.getAdvertById(advertId);
+        advertDAO.delete(advert);
+    }
+
 }

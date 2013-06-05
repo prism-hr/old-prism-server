@@ -19,6 +19,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +27,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -43,7 +48,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 @Controller
-@RequestMapping("/prospectus/project")
+@RequestMapping("/prospectus/projectAdverts")
 public class ProjectConfigurationController {
 
     public static final String LINK_TO_APPLY = "/private/prospectus/link_to_apply.ftl";
@@ -67,6 +72,7 @@ public class ProjectConfigurationController {
     private final FreeMarkerConfigurer freeMarkerConfigurer;
     private Template buttonToApplyTemplate;
     private Template linkToApplyTemplate;
+    private Gson gson;
 
     public ProjectConfigurationController() {
         this(null, null, null, null, null, null, null, null, null, null);
@@ -93,6 +99,17 @@ public class ProjectConfigurationController {
     public void loadFreeMarkerTemplates() throws IOException {
         linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(LINK_TO_APPLY);
         buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(BUTTON_TO_APPLY);
+        gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes f) {
+                return false;
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return Program.class == clazz;
+            }
+        }).create();
     }
 
     @InitBinder("projectAdvertDTO")
@@ -143,7 +160,7 @@ public class ProjectConfigurationController {
         return null;
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String addProjectAdvert(@ModelAttribute("projectAdvertDTO") @Valid ProjectAdvertDTO projectAdvertDTO, BindingResult result,
             HttpServletRequest request) {
@@ -161,6 +178,20 @@ public class ProjectConfigurationController {
         map.put("success", "true");
 
         return gson.toJson(map);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public String listProjectAdverts(){
+        List<Advert> adverts = programsService.listProjectAdverts();
+        return gson.toJson(adverts);
+    }
+    
+    @RequestMapping(value = "/{advertId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public String removeProjectAdvert(@PathVariable("advertId") int advertId){
+        programsService.removeAdvert(advertId);
+        return "ok";
     }
 
     protected String processTemplate(Template template, Map<String, String> dataMap) throws TemplateException, IOException {

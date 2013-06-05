@@ -8,7 +8,7 @@
                 <i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
             </div>
             
-            <div class="row-group" style="display:none">
+            <div id="projectAdvertsDiv" class="row-group" style="display:none">
               <div class="tableContainer table table-condensed ">
                 <table id="projectAdvertsTable" class="table table-striped table-condensed table-hover table-bordered">
                   <colgroup>

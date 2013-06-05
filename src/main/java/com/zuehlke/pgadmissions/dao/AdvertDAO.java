@@ -46,4 +46,5 @@ public class AdvertDAO {
 		return criteria.list();
 	}
 
+
 }

@@ -42,14 +42,14 @@ public class LoginController {
         this(null);
     }
     
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public String getLoginPage(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session) {
 		
 	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
 		if (hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(request)) {
 		    clearUserEmailInSession(request);
-            clearApplyRequestInSession(request);
+            //clearApplyRequestInSession(request);
             session.setAttribute(CLICKED_ON_ALREADY_REGISTERED, true);
             return LOGIN_PAGE;
 		} 
@@ -62,7 +62,7 @@ public class LoginController {
 		
 		if (isAnApplyNewRequestAndLoginFailed(request, session)) {
 		    clearUserEmailInSession(request);
-            clearApplyRequestInSession(request);
+            //clearApplyRequestInSession(request);
 		    return LOGIN_PAGE;
 		}
 		

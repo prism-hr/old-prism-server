@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
 
 @Service
 @Transactional
@@ -67,4 +68,17 @@ public class ProgramsService {
         advertDAO.merge(programAdvert);
     }
 
+    public void addProjectAdvert(ProjectAdvertDTO projectAdvertDTO) {
+        Advert advert = new Advert();
+        advert.setProgram(projectAdvertDTO.getProgram());
+        advert.setTitle(projectAdvertDTO.getTitle());
+        advert.setDescription(projectAdvertDTO.getDescription());
+        advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
+        advert.setFunding(projectAdvertDTO.getFunding());
+        advert.setActive(projectAdvertDTO.getActive());
+        advert.setIsProgramAdvert(false);
+        
+        advertDAO.save(advert);
+    }
+    
 }

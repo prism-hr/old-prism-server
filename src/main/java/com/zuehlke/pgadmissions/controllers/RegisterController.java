@@ -12,7 +12,9 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -34,7 +36,7 @@ import com.zuehlke.pgadmissions.utils.ApplicationQueryStringParser;
 import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
 @Controller
-@RequestMapping(value = { "/register" })
+@RequestMapping(value = "/register")
 public class RegisterController {
     
     private final Logger log = LoggerFactory.getLogger(RegisterController.class);
@@ -75,8 +77,6 @@ public class RegisterController {
 		this.programService = programService;
 		this.applicationQueryStringParser = applicationQueryStringParser;
 	}
-
-
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public String submitRegistration( @Valid @ModelAttribute("pendingUser") RegisteredUser pendingUser,	BindingResult result, HttpServletRequest request) {
@@ -166,34 +166,62 @@ public class RegisterController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String getRegisterPage(@ModelAttribute("pendingUser") RegisteredUser pendingUser, HttpServletRequest request) {
-		if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
-			return "redirect:" +  pendingUser.getDirectToUrl();
-		} else if (pendingUser!= null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
-		    request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
-		}
-		return REGISTER_USERS_VIEW_NAME;
+	public String getRegisterPage(@RequestParam(required=false) String activationCode, @RequestParam(required=false) String directToUrl, Model modelMap, HttpServletRequest request) {
+        RegisteredUser pendingUser = getPendingUser(activationCode, directToUrl);
+        if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
+            return "redirect:/login";
+        }
+	    
+	    if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
+            return "redirect:" + pendingUser.getDirectToUrl();
+        } 
+	    
+	    if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
+            request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
+        } 
+	    
+	    if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
+            return "redirect:/login";
+        } 
+        
+	    pendingUser = new RegisteredUser();
+	    pendingUser.setDirectToUrl(directToUrl);
+	    modelMap.addAttribute("pendingUser", pendingUser);
+	    return REGISTER_USERS_VIEW_NAME;
 	}
 
-	@ModelAttribute("pendingUser")
-	public RegisteredUser getPendingUser(@RequestParam(required=false) String activationCode, @RequestParam(required=false) String directToUrl) {
-		if(StringUtils.isBlank(activationCode)){
-			return new RegisteredUser();
-		}
-		RegisteredUser pendingUser = userService.getUserByActivationCode(activationCode);
-		if(pendingUser == null){
-			throw new ResourceNotFoundException();
-		}
-		if(directToUrl != null){
-			pendingUser.setDirectToUrl(directToUrl);
-		}
-		return pendingUser;
+	public RegisteredUser getPendingUser(final String activationCode, final String directToUrl) {
+        if (StringUtils.isBlank(activationCode)) {
+            return null;
+        }
+        
+        RegisteredUser pendingUser = userService.getUserByActivationCode(activationCode);
+        if (pendingUser == null) {
+            throw new ResourceNotFoundException();
+        }
+        
+        if (directToUrl != null) {
+            pendingUser.setDirectToUrl(directToUrl);
+        }
+        
+        return pendingUser;
 	}
+	
+	private String getReferrerFromHeader(final HttpServletRequest request) {
+        return StringUtils.trimToEmpty(request.getHeader("referer"));
+    }
+	
+	private DefaultSavedRequest getDefaultSavedRequest(final HttpServletRequest request) {
+        return (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+    }
+    
+	private boolean isAnApplyNewRequest(final HttpServletRequest request) {
+        DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
+        return defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new");
+    }
 	
 	@InitBinder(value = "pendingUser")
 	public void registerValidator(WebDataBinder binder) {
 		binder.setValidator(registerFormValidator);
-		
 	}
-
 }

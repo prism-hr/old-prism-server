@@ -140,20 +140,12 @@
 		        	<div class="control-group">
                			<div class="controls">  
                				<#if Session.applyRequest?has_content>
-                        		<a href="/pgadmissions/login">&gt; Already Registered?</a>
-		                    <#else>
-		                  
+                        		<a href="/pgadmissions/login">Already Registered?</a>
 		                    </#if>
                			 </div>
 		            </div>	
                     </fieldset>
 		      	</form>
-		      	
-		      	<#if RequestParameters.activationCode?has_content>
-		      	   
-                <#else>
-                    
-                </#if>
 		    
 		    </section>
 		

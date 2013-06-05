@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.springframework.util.StringUtils;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -111,4 +112,9 @@ public class ReferenceComment extends Comment {
         this.alert = alert;
     }
     
+    @Override
+    public String getTooltipMessage(final String role) {
+        RegisteredUser providedBy = referee.getReference().getProvidedBy();
+        return String.format("%s %s (%s) as: %s", providedBy.getFirstName(), providedBy.getLastName(), providedBy.getEmail(), StringUtils.capitalize(role)); 
+    }
 }

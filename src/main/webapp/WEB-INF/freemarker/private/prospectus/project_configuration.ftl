@@ -1,10 +1,28 @@
+<script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/project_configuration.js' />"></script>
+
 <section class="form-rows">
     <h2>Manage Projects</h2>
-    <div>
+    <div id="projectAdvertDiv">
         <form>
             <div class="alert alert-info">
                 <i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
             </div>
+            
+            <div class="row-group" style="display:none">
+              <div class="tableContainer table table-condensed ">
+                <table id="projectAdvertsTable" class="table table-striped table-condensed table-hover table-bordered">
+                  <colgroup>
+                    <col />
+                    <col style="width: 30px;" />
+                    <col style="width: 30px;" />
+                  </colgroup>
+                  <tbody>
+                  
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
             <div class="row-group">
                 <h3>Project Advert</h3>
                 <div class="row" id="projectAdvertProgramDiv">
@@ -63,6 +81,14 @@
                   </input>
                 </div>
               </div>
+              
+              <div class="row" id="projectAdvertClosingDateDiv">
+                <label for="closingDate" class="plain-label">Closing Date <em>*</em></label>
+                <span class="hint" data-desc="<@spring.message 'prospectus.closingDate'/>"></span>
+                <div class="field">
+                  <input type="text" id="projectAdvertClosingDateInput" class="full date"/>
+                </div>
+              </div>
             </div>     
                                                
             <div class="row-group">
@@ -70,13 +96,17 @@
                 <label class="plain-label">Are you currently accepting applications? <em>*</em>
                 </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
                 <div class="field">
-                  <input id="projectAdvertIsActiveRadioYes" type="radio" name="switch" value="true">
+                  <input id="projectAdvertIsActiveRadioYes" type="radio" name="projectAdvertIsActiveRadio" value="true">
                   Yes
                   </input>
-                  <input id="projectAdvertIsActiveRadioNo" type="radio" name="switch" value="false">
+                  <input id="projectAdvertIsActiveRadioNo" type="radio" name="projectAdvertIsActiveRadio" value="false">
                   No
                   </input>
                 </div>
+              </div>
+              
+              <div class="field">
+                <a id="addProjectAdvert" role="button" class="btn btn-primary">Add</a>
               </div>
             </div>
             
@@ -86,15 +116,15 @@
                     <i class="icon-info-sign"></i> Embed these resources in emails and on webpages to provide applicants with links to apply for your project.
                 </div>
                 <div class="row">
-                    <label for="linkToApply" class="plain-label">Link to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.linkToApply'/>"></span>
+                    <label for="projectAdvertLinkToApply" class="plain-label">Link to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.linkToApply'/>"></span>
                     <div class="field">
-                        <input id="linkToApply" name="project" class="input-xxlarge" type="text" role="textbox" aria-haspopup="true" readonly>
+                        <input id="projectAdvertLinkToApply" name="project" class="input-xxlarge" type="text" role="textbox" aria-haspopup="true" readonly>
                     </div>
                 </div>
                 <div class="row">
-                    <label for="buttonToApply" class="plain-label">Button to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.buttonToApply'/>"></span>
+                    <label for="projectAdvertButtonToApply" class="plain-label">Button to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.buttonToApply'/>"></span>
                     <div class="field">
-                        <textarea id="buttonToApply" class="input-xxlarge" rows="6" cols="150" readonly></textarea>
+                        <textarea id="projectAdvertButtonToApply" class="input-xxlarge" rows="6" cols="150" readonly></textarea>
                     </div>
                 </div>
             </div>

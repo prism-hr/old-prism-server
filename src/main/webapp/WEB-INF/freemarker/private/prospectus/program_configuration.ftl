@@ -2,7 +2,7 @@
 
 <section class="form-rows">
       <h2>Manage Programmes</h2>
-      <div>
+      <div id="programAdvertDiv">
           <form>
               <div class="alert alert-info">
                   <i class="icon-info-sign"></i> Manage the adverts and closing dates for your programmes here.

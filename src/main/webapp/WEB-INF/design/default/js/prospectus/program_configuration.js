@@ -4,7 +4,6 @@ $(document).ready(function(){
 		bindSaveButtonAction();
 		bindProgramSelectChangeAction();
 		bindClosingDatesActions();
-		generalTabing();
 		getProgramData();
 		checkDates();
 });
@@ -16,7 +15,7 @@ function bindProgramSelectChangeAction(){
 }
 
 function getProgramData(){
-	clearPreviousErrors();
+	clearProgramAdvertErrors();
 	var programme_code= $("#programAdvertProgramSelect").val();
 	if(programme_code==""){
 		clearAll();
@@ -69,7 +68,7 @@ function checkDates() {
 
 function bindAddClosingDateButtonAction(){
 	$("#addProgramAdvertClosingDate").bind('click', function(){
-		clearPreviousErrors();
+		clearProgramAdvertErrors();
 		$('#ajaxloader').show();
 		var btnAction = $("#addProgramAdvertClosingDate").text();
 		var update = btnAction.indexOf("Edit") !== -1; 
@@ -277,7 +276,7 @@ function updateProgramSection(advert){
 
 function bindSaveButtonAction(){
 	$("#programAdvertSave").bind('click', function(){
-		clearPreviousErrors();
+		clearProgramAdvertErrors();
 		var duration = {
 			value : $("#programAdvertStudyDurationInput").val(),
 			unit : $("#programAdvertStudyDurationUnitSelect").val()
@@ -350,7 +349,7 @@ function triggerKeyUp(element) {
 }
 
 function clearAll(){
-	clearPreviousErrors();
+	clearProgramAdvertErrors();
 	clearAdvert();
 	$("#programAdvertButtonToApply").val("");
 	$("#programAdvertLinkToApply").val("");
@@ -367,10 +366,6 @@ function clearClosingDate(){
 	$('#closingDateHeading').text("Add Closing Date");
 }
 
-function getErrorMessageHTML(message){
-	return "<div class=\"row error\"><div class=\"field\"><div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i> "+message+"</div></div></div>";
-}
-
-function clearPreviousErrors(){
-	$(".error").remove();
+function clearProgramAdvertErrors(){
+	$("#programAdvertDiv .error").remove();
 }

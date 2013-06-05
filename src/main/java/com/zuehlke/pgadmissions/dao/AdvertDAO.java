@@ -37,4 +37,5 @@ public class AdvertDAO {
         sessionFactory.getCurrentSession().merge(programAdvert);
     }
 
+
 }

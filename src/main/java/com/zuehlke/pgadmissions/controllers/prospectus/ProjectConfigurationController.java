@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.controllers.prospectus;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +11,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -29,19 +28,16 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
-import com.zuehlke.pgadmissions.validators.AbstractValidator;
-import com.zuehlke.pgadmissions.validators.ProgramAdvertValidator;
 import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
+import com.zuehlke.pgadmissions.validators.ProjectAdvertDTOValidator;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -62,7 +58,7 @@ public class ProjectConfigurationController {
 
     private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
-    private final ProgramAdvertValidator programAdvertValidator;
+    private final ProjectAdvertDTOValidator projectAdvertDTOValidator;
 
     private final ProgramClosingDateValidator closingDateValidator;
     private final DatePropertyEditor datePropertyEditor;
@@ -78,14 +74,14 @@ public class ProjectConfigurationController {
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, @Value("${application.host}") final String host,
-                    ApplicationContext applicationContext, ProgramAdvertValidator programAdvertValidator,
-                    DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, FreeMarkerConfigurer freeMarkerConfigurer,
-                    ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor) {
+            ApplicationContext applicationContext, ProjectAdvertDTOValidator projectAdvertDTOValidator,
+            DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, FreeMarkerConfigurer freeMarkerConfigurer,
+            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
         this.host = host;
         this.applicationContext = applicationContext;
-        this.programAdvertValidator = programAdvertValidator;
+        this.projectAdvertDTOValidator = projectAdvertDTOValidator;
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
         this.freeMarkerConfigurer = freeMarkerConfigurer;
         this.closingDateValidator = closingDateValidator;
@@ -99,17 +95,12 @@ public class ProjectConfigurationController {
         buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(BUTTON_TO_APPLY);
     }
 
-    @InitBinder("programAdvert")
+    @InitBinder("projectAdvertDTO")
     public void registerPropertyEditors(WebDataBinder binder) {
-        binder.setValidator(programAdvertValidator);
-        binder.registerCustomEditor(Integer.class, "durationOfStudyInMonth", durationOfStudyPropertyEditor);
-    }
-
-    @InitBinder("programClosingDate")
-    public void registerEditorsAndValidatorsForClosingDate(WebDataBinder binder) {
-        binder.setValidator(closingDateValidator);
+        binder.setValidator(projectAdvertDTOValidator);
         binder.registerCustomEditor(Program.class, "program", programPropertyEditor);
-        binder.registerCustomEditor(Date.class, "closingDate", datePropertyEditor);
+        binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
     @ModelAttribute("program")
@@ -136,67 +127,39 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
     public String getAdvertData(@RequestParam String programCode) throws TemplateException, IOException {
-//        Advert advert = getProgrameAdvert(programCode);
-//
-//        Map<String, Object> result = Maps.newHashMap();
-//        result.put("advert", HibernateUtils.unproxy(advert));
-//
-//        HashMap<String, String> dataMap = new HashMap<String, String>();
-//        dataMap.put("programCode", programCode);
-//        dataMap.put("host", host);
-//
-//        result.put("buttonToApply", processTemplate(buttonToApplyTemplate, dataMap));
-//        result.put("linkToApply", processTemplate(linkToApplyTemplate, dataMap));
-//
-//        return new Gson().toJson(result);
+        // Advert advert = getProgrameAdvert(programCode);
+        //
+        // Map<String, Object> result = Maps.newHashMap();
+        // result.put("advert", HibernateUtils.unproxy(advert));
+        //
+        // HashMap<String, String> dataMap = new HashMap<String, String>();
+        // dataMap.put("programCode", programCode);
+        // dataMap.put("host", host);
+        //
+        // result.put("buttonToApply", processTemplate(buttonToApplyTemplate, dataMap));
+        // result.put("linkToApply", processTemplate(linkToApplyTemplate, dataMap));
+        //
+        // return new Gson().toJson(result);
         return null;
     }
 
-    @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String saveProgramAdvert(@RequestParam String programCode, @Valid Advert programAdvert, BindingResult result, HttpServletRequest request) {
-//        Map<String, Object> map = Maps.newHashMap();
-//
-//        Program program = programsService.getProgramByCode(programCode);
-//
-//        if (program == null) {
-//            map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
-//        }
-//
-//        if (result.hasErrors()) {
-//            for (FieldError error : result.getFieldErrors()) {
-//                map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
-//            }
-//        }
-//
-//        if (map.isEmpty()) {
-//            program.setAdvert(programAdvert);
-//            programsService.save(program);
-//            map.put("success", "true");
-//        }
-//
-//        Gson gson = new Gson();
-//        return gson.toJson(map);
-        return null;
-    }
-
-    @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
-    @ResponseBody
-    public String addClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
+    public String addProjectAdvert(@ModelAttribute("projectAdvertDTO") @Valid ProjectAdvertDTO projectAdvertDTO, BindingResult result,
+            HttpServletRequest request) {
+        Gson gson = new Gson();
         Map<String, Object> map = Maps.newHashMap();
 
-        for (FieldError error : result.getFieldErrors()) {
-            map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
+        if (result.hasErrors()) {
+            for (FieldError error : result.getFieldErrors()) {
+                map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
+                return gson.toJson(map);
+            }
         }
 
-        if (map.isEmpty()) {
-            Program program = programClosingDate.getProgram();
-            program.getClosingDates().add(programClosingDate);
-            programsService.save(program);
-            map.put("success", "true");
-        }
+        programsService.addProjectAdvert(projectAdvertDTO);
+        map.put("success", "true");
 
-        Gson gson = new Gson();
         return gson.toJson(map);
     }
 

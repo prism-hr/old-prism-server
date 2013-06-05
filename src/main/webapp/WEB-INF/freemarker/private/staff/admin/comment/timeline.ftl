@@ -70,15 +70,16 @@
 									<div class="box">
 										<div class="title">
 											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
-											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">Comented:</span>
+											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
 											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 										</div>
-										<p class="datetime" style="margin-top:6px;">
-										  <span data-desc="Date and Time"></span>
+										<p class="datetime">
+										  <span></span>
 										  <#if timelineObject.interview.stage == 'SCHEDULED'>
-  										  ${timelineObject.interview.interviewDueDate?string('dd MMM yy')}
-  										  at ${timelineObject.interview.interviewTime}
-  										  (${timelineObject.interview.timeZone.getDisplayName(false, 1)})
+                                          	<b>Date and time of interview: </b>
+  										  	${timelineObject.interview.interviewDueDate?string('dd MMM yy')}
+  										  	at ${timelineObject.interview.interviewTime}
+  										  	(${timelineObject.interview.timeZone.getDisplayName(false, 1)}).
 										  <#else>
 										    Scheduling in progress.
 										  </#if>
@@ -114,10 +115,10 @@
 									<div class="box">
 										<div class="title">
 											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
-											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
 										</div>
 										<p class="rejection">
-											<span></span>
+											<i class="icon-puzzle-piece"></i>
 											<em>${applicationForm.rejection.rejectionReason.text?html}</em>
 										</p>
 									</div>
@@ -126,13 +127,14 @@
 		        
 							</#if> 
 							
-		          <#if !shownTargetForCompletingStage && (timelineObject.type != 'reference')>
+		          <#if !shownTargetForCompletingStage && 
+                  		(timelineObject.type != 'reference' && timelineObject.type != 'confirmEligibility')>
 		            <#if timelineObject.type == 'validation' || timelineObject.type == 'review'  || timelineObject.type == 'interview' || timelineObject.type == 'approval'> 
                   <ul class="status-info">
                     <li class="${timelineObject.type}">
                       <div class="box">
                         <p class="target">
-                        	<span></span>Our target date for completing this stage: ${applicationForm.dueDate?string('dd MMM yy')}.
+                        	<span></span><b>Our target date for completing this stage:</b> ${applicationForm.dueDate?string('dd MMM yy')}.
                         </p>
                       </div>
                     </li>
@@ -149,7 +151,7 @@
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
 			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>
-			           		    <#assign role = "administrator"/> 
+                                <#assign role = "administrator"/>
 			           		<#elseif comment.user.isInterviewerOfApplicationForm(comment.application)>
 			           		    <#assign role = "interviewer"/> 
 			           		<#elseif comment.user.id == applicationForm.applicant.id>
@@ -178,33 +180,38 @@
                   <#elseif comment.type == 'INTERVIEW_SCHEDULE'>
                     <#include "timeline_snippets/interview_schedule_comment.ftl"/>
 	                <#else>
-			                
-  			            <li>                          
+                    
+			         <li>                          
   			              <div class="box">
   			                <div class="title">
   			                  <span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
-  			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+  			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span> <span class="commented">commented:</span>
   			                  <span class="datetime" data-desc="Date">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
   			                </div>
+                            <!-- Request restart -->
   			                <#if comment.type == 'REQUEST_RESTART'>
-  												<div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
-  												<p class="restart"><span data-desc="Restart"></span>Restart of approval stage requested.</p>
-  			                <#elseif comment.comment?starts_with("Referred to")>
-  												<p class="referral"><span data-desc="Referral"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
-  			                <#elseif comment.comment?starts_with("Delegated Application")>
-  												<p class="delegate"><span data-desc="Delegate"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
-  											<#elseif comment.comment?length &gt; 0>
-  												<div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
-  											</#if>
-  											
-          							<#if comment.documents?? && comment.documents?size &gt; 0>
-          				                <ul class="uploads">                
-          				                <#list comment.documents as document>
-          				                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
-          				                </#list>
-          				                </ul>
-          							</#if>
-          							
+                                <div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
+                                <p class="restart"><span/><b>Restart of approval stage requested.</b></p>
+            <#elseif comment.comment?starts_with("Referred to")>
+                                <p class="referral"><span data-desc="Referral"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
+            <#elseif comment.comment?starts_with("Delegated Application")>
+                                <p class="delegate"><span></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em>.</p>
+                            <!-- General comment box-->	
+          				    <#elseif comment.comment?trim?length &gt; 0>
+                                <div class="textContainer">
+                                	<p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
+                                </div>
+                            </#if>
+  							<!-- General comment box file-->			
+                            <#if comment.documents?? && comment.documents?size &gt; 0>
+                                <ul class="uploads">                
+                                <#list comment.documents as document>
+                                    <li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
+                                </#list>
+                                </ul>
+                            </#if> 
+                            
+                            <!-- To move to validation questions-->	
   			                <#if comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT'>
   			                	<#include "timeline_snippets/validation_comment.ftl"/>
   			                <#elseif comment.type == 'REVIEW'>
@@ -215,27 +222,26 @@
 			                		<#assign interviewVoteParticipant=comment.interviewParticipant>
 			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
 			                		<#if interviewVoteParticipant.responded>
-			                		 	<#if interviewVoteParticipant.acceptedTimeslots?has_content>
-			                				<h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
-			                			<#else>
-			                				<h3 class="answer no"><span data-desc="No" aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
-			                			</#if>
-		                		  </#if>
+                                        <#if interviewVoteParticipant.acceptedTimeslots?has_content>
+                                            <h3 class="answer yes"><span aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
+                                        <#else>
+                                            <h3 class="answer no"><span aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
+                                        </#if>
+		                		   </#if>
 	                		  <#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
-	                		    <h3 class="answer yes"><span data-desc="Yes" aria-describedby="ui-tooltip-150"></span>
-	                		    <i class="icon-hand-right"></i>
-	                		      Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
+	                		    <h3><span class="icon-hand-right"></span>Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
                 		      </h3>
   			                </#if>
   			              </div>
   			            </li>
+  			           
     			            
 			            </#if>
 		            </#list>                       
 		          </ul>
 		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)> 
 		            	<#include "timeline_snippets/reference_comment.ftl"/>
-		          <#elseif timelineObject.type == 'confirmEligibility'>
+		          <#elseif timelineObject.type == 'confirmEligibility' && user.hasStaffRightsOnApplicationForm(applicationForm)>
 		            	<#include "timeline_snippets/eligibility_comment.ftl"/>
 		          </#if> 
                   </div>

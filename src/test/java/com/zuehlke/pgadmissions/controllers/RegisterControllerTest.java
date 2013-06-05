@@ -79,7 +79,7 @@ public class RegisterControllerTest {
 	
 	@Test
     public void shouldReturnLoginPageIfRedirectedFromOutsidePrism() {
-        assertEquals("redirect:/login", registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).build(), new MockHttpServletRequest()));
+        assertEquals("redirect:/login", registerController.getRegisterPage(null, new MockHttpServletRequest()));
     }
 
 	@Test

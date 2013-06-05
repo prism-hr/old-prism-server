@@ -98,7 +98,7 @@ function bindAddClosingDateButtonAction(){
 				var map = JSON.parse(data);
 				if(!map['programClosingDate']){
 					if(map['program']){
-						$("#programProgramDiv").append(getErrorMessageHTML(map['program']));
+						$("#programAdvertProgramDiv").append(getErrorMessageHTML(map['program']));
 					}
 					if(map['closingDate']){
 						$("#programAdvertClosingDateDiv").append(getErrorMessageHTML(map['closingDate']));
@@ -308,7 +308,7 @@ function bindSaveButtonAction(){
 				var map = JSON.parse(data);
 				if(!map['success']){
 					if(map['program']){
-						$("#programProgramDiv").append(getErrorMessageHTML(map['program']));
+						$("#programAdvertProgramDiv").append(getErrorMessageHTML(map['program']));
 					}
 					if(map['description']){
 						$("#programAdvertDescriptionDiv").append(getErrorMessageHTML(map['description']));

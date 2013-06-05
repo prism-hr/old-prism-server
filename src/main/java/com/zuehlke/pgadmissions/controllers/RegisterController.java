@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -165,29 +166,44 @@ public class RegisterController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String getRegisterPage(@ModelAttribute("pendingUser") RegisteredUser pendingUser, HttpServletRequest request) {
-        if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
-            return "redirect:" + pendingUser.getDirectToUrl();
-        } else if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
-            request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
-        } else if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
+	public String getRegisterPage(@RequestParam(required=false) String activationCode, @RequestParam(required=false) String directToUrl, Model modelMap, HttpServletRequest request) {
+        RegisteredUser pendingUser = getPendingUser(activationCode, directToUrl);
+        if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
             return "redirect:/login";
         }
-        return REGISTER_USERS_VIEW_NAME;
+	    
+	    if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
+            return "redirect:" + pendingUser.getDirectToUrl();
+        } 
+	    
+	    if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
+            request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
+        } 
+	    
+	    if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
+            return "redirect:/login";
+        } 
+        
+	    pendingUser = new RegisteredUser();
+	    pendingUser.setDirectToUrl(directToUrl);
+	    modelMap.addAttribute("pendingUser", pendingUser);
+	    return REGISTER_USERS_VIEW_NAME;
 	}
 
-	@ModelAttribute("pendingUser")
-	public RegisteredUser getPendingUser(@RequestParam(required=false) String activationCode, @RequestParam(required=false) String directToUrl) {
+	public RegisteredUser getPendingUser(final String activationCode, final String directToUrl) {
         if (StringUtils.isBlank(activationCode)) {
-            return new RegisteredUser();
+            return null;
         }
+        
         RegisteredUser pendingUser = userService.getUserByActivationCode(activationCode);
         if (pendingUser == null) {
             throw new ResourceNotFoundException();
         }
+        
         if (directToUrl != null) {
             pendingUser.setDirectToUrl(directToUrl);
         }
+        
         return pendingUser;
 	}
 	

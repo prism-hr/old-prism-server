@@ -115,6 +115,10 @@ public class ReferenceComment extends Comment {
     @Override
     public String getTooltipMessage(final String role) {
         RegisteredUser providedBy = referee.getReference().getProvidedBy();
-        return String.format("%s %s (%s) as: %s", providedBy.getFirstName(), providedBy.getLastName(), providedBy.getEmail(), StringUtils.capitalize(role)); 
+        if (providedBy != null) {
+            return String.format("%s %s (%s) as: %s", providedBy.getFirstName(), providedBy.getLastName(), providedBy.getEmail(), StringUtils.capitalize(role));
+        } else {
+            return super.getTooltipMessage(role);
+        }
     }
 }

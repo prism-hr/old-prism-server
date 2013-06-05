@@ -9,7 +9,7 @@
               </div>
               <div class="row-group">
                   <h3>Programme Advert</h3>
-                    <div class="row" id="programProgramDiv">
+                    <div class="row" id="programAdvertProgramDiv">
                       <label for="programAdvertProgramSelect" class="plain-label">Programme<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
                       <div class="field">
                           <select id="programAdvertProgramSelect" class="max">
@@ -84,7 +84,7 @@
               </div>                                        
               <div class="row-group">
                 <div class="row" id="programAdvertIsActiveDiv">
-                  <label class="plain-label" for="currentlyAcceptingApplication">Are you currently accepting applications? <em>*</em>
+                  <label class="plain-label">Are you currently accepting applications? <em>*</em>
                   </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
                   <div class="field">
                     <input id="programAdvertIsActiveRadioYes" type="radio" name="switch" value="true">

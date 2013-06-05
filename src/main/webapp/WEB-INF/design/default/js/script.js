@@ -297,7 +297,7 @@ function addCounter() {
 			$(this).data("maxlength", 250);
 		} else if  ($(this).attr('id') == 'explanationText'||$(this).attr('id') == 'programmeFundingInformation') {
 		    $(this).data("maxlength", 500);
-		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'buttonToApply') {
+		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply') {
 			return false;
 		} else {
 			$(this).data("maxlength", 2000);

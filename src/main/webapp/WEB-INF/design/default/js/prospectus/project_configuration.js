@@ -31,7 +31,6 @@ function registerAddProjectAdvertButton(){
 			url: url,
 			data: {
 				program: $("#projectAdvertProgramSelect").val(),
-				id: $('#projectAdvertClosingDateId').val(),
 				title:$("#projectAdvertTitleInput").val(),
 				description:$("#projectAdvertDescriptionText").val(),
 				studyDuration:JSON.stringify(duration),
@@ -77,8 +76,10 @@ function registerAddProjectAdvertButton(){
 }
 
 function registerEditProjectAdvertButton(){
-	
-	
+	$('#projectAdvertsTable').on('click', '.button-edit', function(){
+		var $row = $(this).closest('tr');
+		loadProjectAdvert($row);
+	});	
 }
 
 function registerRemoveProjectAdvertButton(){
@@ -104,6 +105,50 @@ function removeProjectAdvert(advertRow) {
         }, 
         success: function(data) {
         	advertRow.remove();
+        },
+        complete: function() {
+        }
+    });
+}
+
+function loadProjectAdvert(advertRow) {
+	program = advertRow.attr("advert-id");
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+	        401: function() { window.location.reload(); },
+	        500: function() { window.location.href = "/pgadmissions/error"; },
+	        404: function() { window.location.href = "/pgadmissions/404"; },
+	        400: function() { window.location.href = "/pgadmissions/400"; },                  
+	        403: function() { window.location.href = "/pgadmissions/404"; }
+		},
+		url:"/pgadmissions/prospectus/projectAdverts/" + program,
+		data: {
+		}, 
+		success: function(data) {
+			clearProjectAdvertErrors();
+			var advert = JSON.parse(data);
+			$("#projectAdvertTitleInput").val(advert.title);
+			$("#projectAdvertDescriptionText").val(advert.description);
+			
+			var durationOfStudyInMonths=advert.studyDuration;
+			if(durationOfStudyInMonths%12==0){
+				$("#projectAdvertStudyDurationInput").val((durationOfStudyInMonths/12).toString());
+				$("#projectAdvertStudyDurationUnitSelect").val('Years');
+			}else{
+				$("#projectAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
+				$("#projectAdvertStudyDurationUnitSelect").val('Months');
+			}
+			
+			$("#projectAdvertFundingText").val(advert.funding);
+			
+			if(advert.active){
+				$("#projectAdvertIsActiveRadioYes").prop("checked", true);
+			} else {
+				$("#projectAdvertIsActiveRadioNo").prop("checked", true);
+			}
+			
+			$('#addProjectAdvert').text("Edit");
         },
         complete: function() {
         }

@@ -187,6 +187,13 @@ public class ProjectConfigurationController {
         return gson.toJson(adverts);
     }
     
+    @RequestMapping(value = "/{advertId}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getProjectAdvert(@PathVariable("advertId") int advertId){
+        Advert advert = programsService.getAdvert(advertId);
+        return gson.toJson(advert);
+    }
+    
     @RequestMapping(value = "/{advertId}", method = RequestMethod.DELETE)
     @ResponseBody
     public String removeProjectAdvert(@PathVariable("advertId") int advertId){

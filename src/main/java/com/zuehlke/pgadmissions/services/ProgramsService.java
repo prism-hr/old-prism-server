@@ -68,6 +68,15 @@ public class ProgramsService {
         advertDAO.merge(programAdvert);
     }
 
+    public void removeAdvert(int advertId) {
+        Advert advert = advertDAO.getAdvertById(advertId);
+        advertDAO.delete(advert);
+    }
+
+    public Advert getAdvert(int advertId) {
+        return advertDAO.getAdvertById(advertId);
+    }
+
     public void addProjectAdvert(ProjectAdvertDTO projectAdvertDTO) {
         Advert advert = new Advert();
         advert.setProgram(projectAdvertDTO.getProgram());
@@ -83,11 +92,6 @@ public class ProgramsService {
 
     public List<Advert> listProjectAdverts() {
         return advertDAO.listProjectAdverts();
-    }
-
-    public void removeAdvert(int advertId) {
-        Advert advert = advertDAO.getAdvertById(advertId);
-        advertDAO.delete(advert);
     }
 
 }

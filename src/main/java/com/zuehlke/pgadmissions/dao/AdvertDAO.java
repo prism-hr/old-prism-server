@@ -25,8 +25,8 @@ public class AdvertDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public void save(Advert programAdvert) {
-        sessionFactory.getCurrentSession().saveOrUpdate(programAdvert);
+    public void save(Advert advert) {
+        sessionFactory.getCurrentSession().saveOrUpdate(advert);
     }
 
     public Advert getProgramAdvert(Program program) {
@@ -35,8 +35,12 @@ public class AdvertDAO {
         return (Advert) criteria.uniqueResult();
     }
 
-    public void merge(Advert programAdvert) {
-        sessionFactory.getCurrentSession().merge(programAdvert);
+    public Advert getAdvertById(int advertId) {
+        return (Advert) sessionFactory.getCurrentSession().get(Advert.class, advertId);
+    }
+
+    public void merge(Advert advert) {
+        sessionFactory.getCurrentSession().merge(advert);
     }
 
     @SuppressWarnings("unchecked")
@@ -49,10 +53,6 @@ public class AdvertDAO {
     @SuppressWarnings("unchecked")
     public List<Advert> listProjectAdverts() {
         return sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("isProgramAdvert", false)).list();
-    }
-
-    public Advert getAdvertById(int advertId) {
-        return (Advert) sessionFactory.getCurrentSession().get(Advert.class, advertId);
     }
 
     public void delete(Advert advert) {

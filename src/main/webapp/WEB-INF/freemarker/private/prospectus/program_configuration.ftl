@@ -61,7 +61,7 @@
                   </div>
               </div>
               <div class="row-group">
-                <h3>Add Closing Date</h3>
+                <h3 id="closingDateHeading">Add Closing Date</h3>
                 <input type="hidden" id="closingDateId"/>
                 <div class="row" id="closingDateRow">
                   <label for="closingDate" class="plain-label">Closing Date <em>*</em></label>

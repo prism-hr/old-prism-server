@@ -5,21 +5,26 @@ $(document).ready(function(){
 		bindProgramSelectChangeAction();
 		bindClosingDatesActions();
 		generalTabing();
+		getProgramData();
 		checkDates();
 });
 
 function bindProgramSelectChangeAction(){
 	$("select#programme").bind('change', function() {
-		clearPreviousErrors();
-		var programme_code= $("#programme").val();
-		if(programme_code==""){
-			clearAll();
-		}
-		else{
-			getAdvertData(programme_code);
-			getClosingDatesData(programme_code);
-		}
+		getProgramData();
 	});
+}
+
+function getProgramData(){
+	clearPreviousErrors();
+	var programme_code= $("#programme").val();
+	if(programme_code==""){
+		clearAll();
+	}
+	else{
+		getAdvertData(programme_code);
+		getClosingDatesData(programme_code);
+	}
 }
 
 function getClosingDatesData(program_code){
@@ -53,6 +58,7 @@ function refreshClosingDates(closingDates){
 	sortClosingDates();
 	checkDates();
 }
+
 function checkDates() {
 	if ($('#closingDates td').length == 0) {
 		$('#closingDates').hide();
@@ -60,12 +66,13 @@ function checkDates() {
 		$('#closingDates').show();
 	}
 }
+
 function bindAddClosingDateButtonAction(){
 	$("#addClosingDate").bind('click', function(){
 		clearPreviousErrors();
 		$('#ajaxloader').show();
 		var btnAction = $("#addClosingDate").text();
-		var update = btnAction.indexOf("Update") !== -1; 
+		var update = btnAction.indexOf("Edit") !== -1; 
 		var url="/pgadmissions/prospectus/programme/addClosingDate";
 		if(update){
 			url = "/pgadmissions/prospectus/programme/updateClosingDate";
@@ -187,7 +194,9 @@ function editDate(row){
 	if(placesValue!="undefined"){
 		$('#studyPlaces').val(placesValue);
 	}
-	$('#addClosingDate').text("Update");
+	$('#addClosingDate').text("Edit");
+	$('#closingDateHeading').text("Edit Closing Date");
+	
 }
 
 function removeClosingDate(row, id){
@@ -346,6 +355,8 @@ function clearAll(){
 	$("#buttonToApply").val("");
 	$("#linkToApply").val("");
 	clearClosingDate();
+	$('#closingDates tr').remove();
+	checkDates();
 }
 
 function clearClosingDate(){
@@ -353,7 +364,7 @@ function clearClosingDate(){
 	$("#closingDate").val("");
 	$("#studyPlaces").val("");
 	$('#addClosingDate').text("Add");
-	checkDates();
+	$('#closingDateHeading').text("Add Closing Date");
 }
 
 function getErrorMessageHTML(message){

@@ -80,7 +80,7 @@ function renderAdvert(advert){
 		'<div class="applyBox">'+
 			'<a href="mailto:'+advert.email+'" class="question">Ask a question</a>'+
 			'<button id="'+advert.programCode+'" class="btn btn-primary apply">Apply Now</button>'+
-			'<a href="#" class="btn btn-primary readmore">Read More</a>'+
+			'<a href="'+getAdvertUrl(advert.id)+'" class="btn btn-primary readmore">Read More</a>'+
 		'</div>'+
 	'</div>'+
 '</li>';

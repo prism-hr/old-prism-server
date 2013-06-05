@@ -2,7 +2,8 @@
 
 <section class="form-rows">
     <h2>Manage Projects</h2>
-    <div id="projectAdvertDiv">
+    <div style="font-size:20px;"><p>Coming soon.</p></div>
+    <div id="projectAdvertDiv" style="display:none;">
         <form>
             <div class="alert alert-info">
                 <i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.

@@ -40,99 +40,16 @@
       
         <!-- Middle. -->
         <div id="middle">
-      
+      	<form id="applyForm" action="/pgadmissions/apply/new" method="POST">
+      		<input type="hidden" id="program" name="program" value=""/>
+      	</form>
 		<!-- Prospectus container -->
         <div id="pContainer">
             <div id="pholder">
                 <header>
                   <h1>Research Study Opportunities</h1></header>
                 <section id="plist">
-                	<ul>
-                    	<li class="program item selected" id="x">
-                        	<div class="pdetails">
-                                <h3>Research Degree: Civil, Environmental and Geomatic Engineering</h3>
-                                <div class="cdate">Closing date: <span>22/08/2313</span></div>
-                                <div class="duration">Study duration: <span>2 weeks</span></div>
-                                <div class="pdescription"><p>Project description. This is a large lump of text that will probably be boring as anything. I am just typing to try to illustrate how long one is likely to be. They are restricted to 200 words, so they will have to be fairly short, though I would never underestimate the power of acacemics to engender boredom.</p></div>
-                                <div class="fdescription"><p>Funding text here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget tortor vitae lectus ullamcorper porttitor id eu felis. Integer urna velit, faucibus ut feugiat eget, auctor a arcu</p></div>
-                            </div>
-                            <div class="pactions clearfix">
-                            	<div class="social">
-                                	<!-- AddThis Button BEGIN -->
-                                    <div class="addthis_toolbox addthis_default_style addthis_16x16_style">
-                                    <a class="addthis_button_facebook"></a>
-                                    <a class="addthis_button_twitter"></a>
-                                    <a class="addthis_button_google_plusone_share"></a>
-                                    <a class="addthis_button_linkedin"></a>
-                                    <a class="addthis_button_compact"></a><a class="addthis_counter addthis_bubble_style"></a>
-                                    </div>
-                                    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=undefined"></script>
-                                    <!-- AddThis Button END -->
-                                </div>
-                                <div class="applyBox">
-                                	<a href="mailto:shexpire@hotmail.com" class="question">Ask a question</a>
-                                    <button class="btn btn-primary apply">Apply Now</button>
-                                    <a href="#" class="btn btn-primary readmore">Read More</a>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="program item" id="x">
-                        	<div class="pdetails">
-                                <h3>Research Degree: Civil, Environmental and Geomatic Engineering</h3>
-                                <div class="cdate">Closing date: <span>22/08/2313</span></div>
-                                <div class="duration">Study duration: <span>2 weeks</span></div>
-                                <div class="pdescription"><p>Project description. This is a large lump of text that will probably be boring as anything. I am just typing to try to illustrate how long one is likely to be. They are restricted to 200 words, so they will have to be fairly short, though I would never underestimate the power of acacemics to engender boredom.</p></div>
-                                <div class="fdescription"><p>Funding text here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget tortor vitae lectus ullamcorper porttitor id eu felis. Integer urna velit, faucibus ut feugiat eget, auctor a arcu</p></div>
-                            </div>
-                            <div class="pactions clearfix">
-                            	<div class="social">
-                                	<!-- AddThis Button BEGIN -->
-                                    <div class="addthis_toolbox addthis_default_style addthis_16x16_style">
-                                    <a class="addthis_button_facebook"></a>
-                                    <a class="addthis_button_twitter"></a>
-                                    <a class="addthis_button_google_plusone_share"></a>
-                                    <a class="addthis_button_linkedin"></a>
-                                    <a class="addthis_button_compact"></a><a class="addthis_counter addthis_bubble_style"></a>
-                                    </div>
-                                    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=undefined"></script>
-                                    <!-- AddThis Button END -->
-                                </div>
-                                <div class="applyBox">
-                                	<a href="mailto:shexpire@hotmail.com" class="question">Ask a question</a>
-                                    <button class="btn btn-primary apply">Apply Now</button>
-                                    <a href="#" class="btn btn-primary readmore">Read More</a>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="program item" id="x">
-                        	<div class="pdetails">
-                                <h3>Research Degree: Civil, Environmental and Geomatic Engineering</h3>
-                                <div class="cdate">Closing date: <span>22/08/2313</span></div>
-                                <div class="duration">Study duration: <span>2 weeks</span></div>
-                                <div class="pdescription"><p>Project description. This is a large lump of text that will probably be boring as anything. I am just typing to try to illustrate how long one is likely to be. They are restricted to 200 words, so they will have to be fairly short, though I would never underestimate the power of acacemics to engender boredom.</p></div>
-                                <div class="fdescription"><p>Funding text here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget tortor vitae lectus ullamcorper porttitor id eu felis. Integer urna velit, faucibus ut feugiat eget, auctor a arcu</p></div>
-                            </div>
-                            <div class="pactions clearfix">
-                            	<div class="social">
-                                	<!-- AddThis Button BEGIN -->
-                                    <div class="addthis_toolbox addthis_default_style addthis_16x16_style">
-                                    <a class="addthis_button_facebook"></a>
-                                    <a class="addthis_button_twitter"></a>
-                                    <a class="addthis_button_google_plusone_share"></a>
-                                    <a class="addthis_button_linkedin"></a>
-                                    <a class="addthis_button_compact"></a><a class="addthis_counter addthis_bubble_style"></a>
-                                    </div>
-                                    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=undefined"></script>
-                                    <!-- AddThis Button END -->
-                                </div>
-                                <div class="applyBox">
-                                	<a href="mailto:shexpire@hotmail.com" class="question">Ask a question</a>
-                                    <button class="btn btn-primary apply">Apply Now</button>
-                                    <a href="#" class="btn btn-primary readmore">Read More</a>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
+                	<ul></ul>
                 </section>
                 <footer class="clearfix">
                 	<div class="left"><a href="www.engineering.ucl.ac.uk" target="_blank"><img src="<@spring.url '/design/default/images/ucl-engineering.jpg'/>" alt="" /></a></div>
@@ -207,5 +124,6 @@
     <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/login.js'/>"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/adverts.js' />"></script>
   </body>
 </html>

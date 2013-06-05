@@ -10,3 +10,4 @@
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/portico_validation.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/references.js' />"></script>

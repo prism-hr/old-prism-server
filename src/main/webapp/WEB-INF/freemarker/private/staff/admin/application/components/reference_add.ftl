@@ -113,12 +113,6 @@
       <h3>Programme Specific Questions</h3>
       <#include "/private/staff/scores.ftl"/>
     </div>
-    <!-- Add reference add button -->
-    <div class="row">
-        <div class="field">
-            <button id="addReferenceButton" type="button" class="btn btn-primary">Add Reference</button>
-        </div>
-    </div>
 </div>
 </#if>
     

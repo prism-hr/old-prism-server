@@ -225,11 +225,18 @@
                   </div>
                 </div><!-- close .row-group -->
 
+                <div id="interivewDelegateDiv"
+								<#if applicationForm.isInState('INTERVIEW') && user.isApplicationAdministrator(applicationForm)>
+								  style="display:none"
+								</#if>> 
 								
-								<div class="row-group" id="interviewDelegation" style="display:none">
-								  <#include "/private/staff/admin/interview_delegation.ftl"/>
+  								<div class="row-group" id="interviewDelegation" style="display:none">
+  								  <#include "/private/staff/admin/interview_delegation.ftl"/>
+  								</div>
+  								
 								</div>
 								
+  								
 								<div id="approvedDetails" style="display:none">
 								    <#include "/private/staff/admin/approved_details.ftl"/>
 								</div>

@@ -65,4 +65,3 @@
     var $postReferenceUrl = "/pgadmissions/approval/postReference";
 </script>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/references.js' />"></script>

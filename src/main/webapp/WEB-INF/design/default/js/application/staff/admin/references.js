@@ -32,7 +32,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // SHOW SELECTED REFEREE
     // --------------------------------------------------------------------------------
-    $('a[name="showRefereeLink"]').on("click", function() {
+    $('a[name="showRefereeLink"]').live("click", function() {
         $('a[name="showRefereeLink"]').each(function() {
             $("#" + $(this).attr("toggles")).hide();
         });
@@ -50,7 +50,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // ONLY ALLOW A MAXIMUM OF 2 REFEREES TO BE SELECTED AT THE SAME TIME
     // --------------------------------------------------------------------------------
-    $('input[name="refereeSendToUcl"]:checkbox').on("change", function() {
+    $('input[name="refereeSendToUcl"]:checkbox').live("change", function() {
         var maxAllowed = 2;
         var checked = $('input[name="refereeSendToUcl"]:checked').size();
         if (checked > maxAllowed) {
@@ -61,24 +61,22 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // POST SEND TO PORTICO REFEREE DATA
     // --------------------------------------------------------------------------------
-    $('#refereeSaveButton').on("click", function() {
+    $('#refereeSaveButton').live("click", function() {
         postRefereesData(true, false);
     });
 
     // --------------------------------------------------------------------------------
     // POST ADD REFERENCE DATA
     // --------------------------------------------------------------------------------
-    $('button[id="addReferenceButton"]').each(function() {
-    	$(this).on("click", function() {
-    		postRefereesData(false, true);
-        });
+	$("#addReferenceButton").live("click", function() {
+		postRefereesData(false, true);
     });
     
     // --------------------------------------------------------------------------------
     // EDIT REFERENCE DATA
     // --------------------------------------------------------------------------------
     $('button[id="editReferenceButton"]').each(function() {
-    	$(this).on("click", function() {
+    	$(this).live("click", function() {
     		editReferenceData(false, true);
         });
     });
@@ -128,7 +126,7 @@ function clearRefereeForm(form) {
     	$hidden.val(''); // clear field value.
     	$container.removeClass('uploaded');
 
-		$container.find('.fileupload').fileupload('clear')
+		$container.find('.fileupload').fileupload('clear');
 
     });
     
@@ -209,6 +207,11 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
     var scoreData=getScores($("#scoring-questions_"+refereeId));
     postData['scores']=scoreData;
     
+	var checkedReferees = collectRefereesSendToPortico();
+	var uncheckedReferees = collectRefereesNotSendToPortico();
+	var editedReferee =$('#editedRefereeId').val();
+
+    
     $('#ajaxloader').show();
     $.ajax({
         type : 'POST',
@@ -228,10 +231,10 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         		$('#referee-H2').trigger('click');
         	}
             addCounter();
+            refreshRefereesTable(checkedReferees, editedReferee, uncheckedReferees);
         },
         complete : function() {
            $('#ajaxloader').fadeOut('fast');
-            
         }
     });
 }
@@ -301,4 +304,28 @@ function collectRefereesSendToPortico(){
         }
     });
     return referees;
+}
+
+function collectRefereesNotSendToPortico(){
+	referees = new Array();
+	
+	$('input[name="refereeSendToUcl"]:checkbox').each(function() {
+		var checked = $(this).attr("checked");
+		if (!checked && $(this).val() != $('#editedRefereeId').val()) {
+			referees.push($(this).val());
+		}
+	});
+	return referees;
+}
+
+function refreshRefereesTable(selectedValues, newRefereeValue, unchekedValues) {
+	if (selectedValues.length == 2) {
+		$("input[value="+selectedValues[i]+"]").attr("checked", false); 
+		return;
+	}
+	
+	$("input[value=" + newRefereeValue +"]").attr("checked", true); 
+	for (var i = 0; i<unchekedValues.length; i++) {
+		$("input[value=" + unchekedValues[i] +"]").attr("checked", false); 
+	}
 }

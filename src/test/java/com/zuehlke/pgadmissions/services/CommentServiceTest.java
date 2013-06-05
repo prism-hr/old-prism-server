@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class CommentServiceTest {
@@ -145,7 +144,7 @@ public class CommentServiceTest {
 		ApplicationForm application = new ApplicationFormBuilder().applicationAdministrator(reviewerUser).latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).build();
 		service.save(comment);
 		service.createDelegateComment(reviewerUser, application);
-		Assert.assertEquals("Delegated Application for processing to joan kyp", comment.getComment());
+		Assert.assertEquals("Delegating interview administration to: joan kyp", comment.getComment());
 		Assert.assertEquals(reviewerUser, comment.getUser());
 		Assert.assertEquals(application, comment.getApplication());
 	}

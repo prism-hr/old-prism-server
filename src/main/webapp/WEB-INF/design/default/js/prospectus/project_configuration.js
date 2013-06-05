@@ -1,9 +1,13 @@
 $(document).ready(function(){
 		bindDatePicker($("#projectAdvertClosingDateInput"));
-		bindAddProjectAdvertButtonAction();
+		registerAddProjectAdvertButton();
+		registerEditProjectAdvertButton();
+		registerRemoveProjectAdvertButton();
+		
+		loadAdverts();
 });
 
-function bindAddProjectAdvertButtonAction(){
+function registerAddProjectAdvertButton(){
 	$("#addProjectAdvert").bind('click', function(){
 		clearProjectAdvertErrors();
 		
@@ -14,7 +18,7 @@ function bindAddProjectAdvertButtonAction(){
 		var active = $("input:radio[name=projectAdvertIsActiveRadio]:checked").val();
 		
 		$('#ajaxloader').show();
-		var url="/pgadmissions/prospectus/project/add";
+		var url="/pgadmissions/prospectus/projectAdverts";
 		$.ajax({
 			type: 'POST',
 			statusCode: {
@@ -61,6 +65,8 @@ function bindAddProjectAdvertButtonAction(){
 					if(map['studyPlaces']){
 						$("#projectAdvertStudyPlacesDiv").append(getErrorMessageHTML(map['studyPlaces']));
 					}
+				} else {
+					loadAdverts();
 				}
 			},
 			complete: function() {
@@ -70,6 +76,93 @@ function bindAddProjectAdvertButtonAction(){
 	});
 }
 
+function registerEditProjectAdvertButton(){
+	
+	
+}
+
+function registerRemoveProjectAdvertButton(){
+	$('#projectAdvertsTable').on('click', '.button-delete', function(){
+		var $row = $(this).closest('tr');
+		removeProjectAdvert($row);
+	});
+}
+
+function removeProjectAdvert(advertRow) {
+	program = advertRow.attr("advert-id");
+	$.ajax({
+        type: 'DELETE',
+        statusCode: {
+                401: function() { window.location.reload(); },
+                500: function() { window.location.href = "/pgadmissions/error"; },
+                404: function() { window.location.href = "/pgadmissions/404"; },
+                400: function() { window.location.href = "/pgadmissions/400"; },                  
+                403: function() { window.location.href = "/pgadmissions/404"; }
+        },
+        url:"/pgadmissions/prospectus/projectAdverts/" + program,
+        data: {
+        }, 
+        success: function(data) {
+        	advertRow.remove();
+        },
+        complete: function() {
+        }
+    });
+}
+
+function loadAdverts(){
+	$('#ajaxloader').show();
+	var url="/pgadmissions/prospectus/projectAdverts";
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() { window.location.reload(); },
+			500: function() { window.location.href = "/pgadmissions/error"; },
+			404: function() { window.location.href = "/pgadmissions/404"; },
+			400: function() { window.location.href = "/pgadmissions/400"; },                  
+			403: function() { window.location.href = "/pgadmissions/404"; }
+		},
+		url: url,
+		data: {
+		}, 
+		success: function(data) {
+			var adverts = JSON.parse(data);
+			displayAdvertList(adverts);
+		},
+		complete: function() {
+			$('#ajaxloader').fadeOut('fast');
+		}
+	});
+}
+
 function clearProjectAdvertErrors(){
 	$("#projectAdvertDiv .error").remove();
+}
+
+function displayAdvertList(adverts){
+	$('#projectAdvertsTable tbody').empty();
+	if(adverts.length == 0){
+		$("#projectAdvertsDiv").hide();
+	} else {
+		$("#projectAdvertsDiv").show();
+		$.each(adverts, function(index, advert) {
+			appendAdvertRow(advert);
+		});				
+	}
+}
+
+function appendAdvertRow(advert){
+	$('#projectAdvertsTable tbody').append(
+		'<tr advert-id="' + advert.id + '">' +
+			'<td>' + 
+				advert.title +
+			'</td>' +
+			'<td>' +
+				'<button class="button-edit" type="button" data-desc="Edit">Edit</button>' +
+			'</td>' +
+			'<td>' +
+				'<button class="button-delete" type="button" data-desc="Remove">Remove</button>' +
+			'</td>' +
+		'</tr>'	
+	);
 }

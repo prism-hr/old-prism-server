@@ -39,12 +39,24 @@ public class AdvertDAO {
         sessionFactory.getCurrentSession().merge(programAdvert);
     }
 
-	@SuppressWarnings("unchecked")
-	public List<Advert> getActiveProgramAdverts() {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("active", true))
-				 .add(Restrictions.eq("isProgramAdvert", true));
-		return criteria.list();
-	}
+    @SuppressWarnings("unchecked")
+    public List<Advert> getActiveProgramAdverts() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("active", true))
+                .add(Restrictions.eq("isProgramAdvert", true));
+        return criteria.list();
+    }
 
+    @SuppressWarnings("unchecked")
+    public List<Advert> listProjectAdverts() {
+        return sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("isProgramAdvert", false)).list();
+    }
+
+    public Advert getAdvertById(int advertId) {
+        return (Advert) sessionFactory.getCurrentSession().get(Advert.class, advertId);
+    }
+
+    public void delete(Advert advert) {
+        sessionFactory.getCurrentSession().delete(advert);
+    }
 
 }

@@ -1,5 +1,5 @@
 $(document).ready(function(){
-		bindDatePicker($("#closingDate"));
+		bindDatePicker($("#programAdvertClosingDateInput"));
 		bindAddClosingDateButtonAction();
 		bindSaveButtonAction();
 		bindProgramSelectChangeAction();
@@ -10,14 +10,14 @@ $(document).ready(function(){
 });
 
 function bindProgramSelectChangeAction(){
-	$("select#programme").bind('change', function() {
+	$("#programAdvertProgramSelect").bind('change', function() {
 		getProgramData();
 	});
 }
 
 function getProgramData(){
 	clearPreviousErrors();
-	var programme_code= $("#programme").val();
+	var programme_code= $("#programAdvertProgramSelect").val();
 	if(programme_code==""){
 		clearAll();
 	}
@@ -51,7 +51,7 @@ function getClosingDatesData(program_code){
 }
 
 function refreshClosingDates(closingDates){
-	$('#closingDates tr').remove();
+	$('#programAdvertClosingDates tr').remove();
 	jQuery.each(closingDates, function(index, closingDate) {
 		appendClosingDateRow(closingDate);
 	});
@@ -60,18 +60,18 @@ function refreshClosingDates(closingDates){
 }
 
 function checkDates() {
-	if ($('#closingDates td').length == 0) {
-		$('#closingDates').hide();
+	if ($('#programAdvertClosingDates td').length == 0) {
+		$('#programAdvertClosingDates').hide();
 	} else {
-		$('#closingDates').show();
+		$('#programAdvertClosingDates').show();
 	}
 }
 
 function bindAddClosingDateButtonAction(){
-	$("#addClosingDate").bind('click', function(){
+	$("#addProgramAdvertClosingDate").bind('click', function(){
 		clearPreviousErrors();
 		$('#ajaxloader').show();
-		var btnAction = $("#addClosingDate").text();
+		var btnAction = $("#addProgramAdvertClosingDate").text();
 		var update = btnAction.indexOf("Edit") !== -1; 
 		var url="/pgadmissions/prospectus/programme/addClosingDate";
 		if(update){
@@ -89,22 +89,22 @@ function bindAddClosingDateButtonAction(){
 			},
 			url: url,
 			data: {
-				program: $("#programme").val(),
-				id: $('#closingDateId').val(),
-				closingDate : $('#closingDate').val(),
-				studyPlaces : $('#studyPlaces').val()
+				program: $("#programAdvertProgramSelect").val(),
+				id: $('#programAdvertClosingDateId').val(),
+				closingDate : $('#programAdvertClosingDateInput').val(),
+				studyPlaces : $('#programAdvertStudyPlacesInput').val()
 			}, 
 			success: function(data) {
 				var map = JSON.parse(data);
 				if(!map['programClosingDate']){
 					if(map['program']){
-						$("#program").append(getErrorMessageHTML(map['program']));
+						$("#programProgramDiv").append(getErrorMessageHTML(map['program']));
 					}
 					if(map['closingDate']){
-						$("#closingDateRow").append(getErrorMessageHTML(map['closingDate']));
+						$("#programAdvertClosingDateDiv").append(getErrorMessageHTML(map['closingDate']));
 					}
 					if(map['studyPlaces']){
-						$("#studyPlacesRow").append(getErrorMessageHTML(map['studyPlaces']));
+						$("#programAdvertStudyPlacesDiv").append(getErrorMessageHTML(map['studyPlaces']));
 					}
 				}
 				else{
@@ -131,7 +131,7 @@ function replaceClosingDateRow(closingDate){
 }
 
 function appendClosingDateRow(closingDate){
-	$('#closingDates tbody').append(
+	$('#programAdvertClosingDates tbody').append(
 			'<tr>'+
 			'<td id="cdr-'+closingDate.id+'">'+
 				closingDateTd(closingDate)+
@@ -163,7 +163,7 @@ function formatDate(date) {
 }
 
 function sortClosingDates() {
-    var $table = $('#closingDates');
+    var $table = $('#programAdvertClosingDates');
     var $rows = $('tbody > tr',$table);
     $rows.sort(function(a, b){
     	var keyA = new Date($('#cdr-closingDate',a).val());
@@ -176,11 +176,11 @@ function sortClosingDates() {
 }
 
 function bindClosingDatesActions(){
-	$('#closingDates').on('click', '.button-edit', function(){
+	$('#programAdvertClosingDates').on('click', '.button-edit', function(){
 		var $row = $(this).closest('tr');
 		editDate($row);
 	});
-	$('#closingDates').on('click', '.button-delete', function(){
+	$('#programAdvertClosingDates').on('click', '.button-delete', function(){
 		var $row = $(this).closest('tr');
 		removeClosingDate($row, $row.find("#cdr-id").val());
 	});
@@ -188,13 +188,13 @@ function bindClosingDatesActions(){
 
 function editDate(row){
 	clearClosingDate();
-	$('#closingDateId').val(row.find("#cdr-id").val());
-	$('#closingDate').val(row.find("#cdr-closingDate").val());
+	$('#programAdvertClosingDateId').val(row.find("#cdr-id").val());
+	$('#programAdvertClosingDateInput').val(row.find("#cdr-closingDate").val());
 	var placesValue = row.find("#cdr-studyPlaces").val();
 	if(placesValue!="undefined"){
-		$('#studyPlaces').val(placesValue);
+		$('#programAdvertStudyPlacesInput').val(placesValue);
 	}
-	$('#addClosingDate').text("Edit");
+	$('#addProgramAdvertClosingDate').text("Edit");
 	$('#closingDateHeading').text("Edit Closing Date");
 	
 }
@@ -211,7 +211,7 @@ function removeClosingDate(row, id){
         },
         url:"/pgadmissions/prospectus/programme/removeClosingDate",
         data: {
-        	programCode: $("#programme").val(),
+        	programCode: $("#programAdvertProgramSelect").val(),
         	closingDateId: id
         }, 
         success: function(data) {
@@ -250,41 +250,41 @@ function getAdvertData(programme_code){
     });
 }
 function updateAdvertSection(map){
-	$("#buttonToApply").val(map['buttonToApply']);
-	$("#linkToApply").val(map['linkToApply']);
+	$("#programAdvertButtonToApply").val(map['buttonToApply']);
+	$("#programAdvertLinkToApply").val(map['linkToApply']);
 }
 
 function updateProgramSection(advert){
 	if(advert){
-		setTextAreaValue($("#programmeDescription"),advert['description']);
-    	setTextAreaValue($("#programmeFundingInformation"),advert['funding']);
+		setTextAreaValue($("#programAdvertDescriptionText"),advert['description']);
+    	setTextAreaValue($("#programAdvertFundingText"),advert['funding']);
 		
 		var durationOfStudyInMonths=advert['studyDuration'];
 		if(durationOfStudyInMonths%12==0){
-			$("#programmeDurationOfStudy").val((durationOfStudyInMonths/12).toString());
-			$("#timeUnit").val('Years');
+			$("#programAdvertStudyDurationInput").val((durationOfStudyInMonths/12).toString());
+			$("#programAdvertStudyDurationUnitSelect").val('Years');
 		}else{
-			$("#programmeDurationOfStudy").val(durationOfStudyInMonths.toString());
-			$("#timeUnit").val('Months');
+			$("#programAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
+			$("#programAdvertStudyDurationUnitSelect").val('Months');
 		}
 		
-		if(advert['active']){$("#currentlyAcceptingApplicationYes").prop("checked", true);}
-		else{$("#currentlyAcceptingApplicationNo").prop("checked", true);}
+		if(advert['active']){$("#programAdvertIsActiveRadioYes").prop("checked", true);}
+		else{$("#programAdvertIsActiveRadioNo").prop("checked", true);}
 	}else{
 		clearAdvert();
 	}
 }
 
 function bindSaveButtonAction(){
-	$("#save-go").bind('click', function(){
+	$("#programAdvertSave").bind('click', function(){
 		clearPreviousErrors();
 		var duration = {
-			value : $("#programmeDurationOfStudy").val(),
-			unit : $("#timeUnit").val()
+			value : $("#programAdvertStudyDurationInput").val(),
+			unit : $("#programAdvertStudyDurationUnitSelect").val()
 		};
 		var acceptApplications;
-		if($("#currentlyAcceptingApplicationYes").prop("checked")){acceptApplications="true";}
-		else if($("#currentlyAcceptingApplicationNo").prop("checked")){acceptApplications="false";}
+		if($("#programAdvertIsActiveRadioYes").prop("checked")){acceptApplications="true";}
+		else if($("#programAdvertIsActiveRadioNo").prop("checked")){acceptApplications="false";}
 		else {acceptApplications="";}
 		$('#ajaxloader').show();
 		$.ajax({
@@ -298,26 +298,26 @@ function bindSaveButtonAction(){
 			},
 			url:"/pgadmissions/prospectus/programme/saveProgramAdvert",
 			data: {
-				programCode: $("#programme").val(),
-				description:$("#programmeDescription").val(),
+				programCode: $("#programAdvertProgramSelect").val(),
+				description:$("#programAdvertDescriptionText").val(),
 				studyDuration:JSON.stringify(duration),
-				funding:$("#programmeFundingInformation").val(),
+				funding:$("#programAdvertFundingText").val(),
 				active:acceptApplications
 			}, 
 			success: function(data) {
 				var map = JSON.parse(data);
 				if(!map['success']){
 					if(map['program']){
-						$("#program").append(getErrorMessageHTML(map['program']));
+						$("#programProgramDiv").append(getErrorMessageHTML(map['program']));
 					}
 					if(map['description']){
-						$("#description").append(getErrorMessageHTML(map['description']));
+						$("#programAdvertDescriptionDiv").append(getErrorMessageHTML(map['description']));
 					}
 					if(map['studyDuration']){
-						$("#durationOfStudyInMonth").append(getErrorMessageHTML(map['studyDuration']));
+						$("#programAdvertStudyDurationDiv").append(getErrorMessageHTML(map['studyDuration']));
 					}
 					if(map['active']){
-						$("#isCurrentlyAcceptingApplications").append(getErrorMessageHTML(map['active']));
+						$("#programAdvertIsActiveDiv").append(getErrorMessageHTML(map['active']));
 					}
 				}
 			},
@@ -330,13 +330,13 @@ function bindSaveButtonAction(){
 }
 
 function clearAdvert(){
-	setTextAreaValue($("#programmeDescription"),"");
-	setTextAreaValue($("#programmeFundingInformation"),"");
-	$("#programmeDurationOfStudy").val("");
-	$("#timeUnit").val("");
-	$("#programmeFundingInformation").val("");
-	$("#currentlyAcceptingApplicationYes").prop("checked", false);
-	$("#currentlyAcceptingApplicationNo").prop("checked", false);
+	setTextAreaValue($("#programAdvertDescriptionText"),"");
+	setTextAreaValue($("#programAdvertFundingText"),"");
+	$("#programAdvertStudyDurationInput").val("");
+	$("#programAdvertStudyDurationUnitSelect").val("");
+	$("#programAdvertFundingText").val("");
+	$("#programAdvertIsActiveRadioYes").prop("checked", false);
+	$("#programAdvertIsActiveRadioNo").prop("checked", false);
 }
 
 function setTextAreaValue(textArea, value){
@@ -352,18 +352,18 @@ function triggerKeyUp(element) {
 function clearAll(){
 	clearPreviousErrors();
 	clearAdvert();
-	$("#buttonToApply").val("");
-	$("#linkToApply").val("");
+	$("#programAdvertButtonToApply").val("");
+	$("#programAdvertLinkToApply").val("");
 	clearClosingDate();
 	$('#closingDates tr').remove();
 	checkDates();
 }
 
 function clearClosingDate(){
-	$("#closingDateId").val("");
-	$("#closingDate").val("");
-	$("#studyPlaces").val("");
-	$('#addClosingDate').text("Add");
+	$("#programAdvertClosingDateId").val("");
+	$("#programAdvertClosingDateInput").val("");
+	$("#programAdvertStudyPlacesInput").val("");
+	$('#addProgramAdvertClosingDate').text("Add");
 	$('#closingDateHeading').text("Add Closing Date");
 }
 

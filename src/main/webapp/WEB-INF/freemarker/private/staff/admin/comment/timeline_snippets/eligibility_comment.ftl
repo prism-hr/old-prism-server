@@ -1,18 +1,12 @@
-<#assign role = "referee"/>
+<#assign role = "admitter"/>
 <#setting locale = "en_US">
 <#assign comment = timelineObject.comment/>
 <ul>            
 	<li>                          
 		<div class="box">
-			<#if comment.user.isInRole('SUPERADMINISTRATOR')>
-			   <#assign role = "administrator"/>     
-			<#else>
-			   <#assign role = "admitter"/>     
-			</#if>
-	  
                <div class="title">
 		       <span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
-		       <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+		       <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span> <span class="commented">commented:</span>
 		       <span class="datetime" data-desc="Date">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
 		     </div>
 		     <div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>

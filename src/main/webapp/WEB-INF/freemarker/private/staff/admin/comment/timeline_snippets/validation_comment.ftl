@@ -1,5 +1,5 @@
 <h3 class="answer <#if comment.qualifiedForPhd??>${comment.qualifiedForPhd?string?lower_case}</#if>">
-	<span data-desc="<#if comment.qualifiedForPhd??>${comment.qualifiedForPhd?capitalize}<#else>Unsure</#if>"></span>Is the applicant qualified for PhD entry to UCL?
+	<span data-desc="<#if comment.qualifiedForPhd??>${comment.qualifiedForPhd?capitalize}<#else>Unsure</#if>"></span>Is the applicant qualified for PhD entry to UCL? 
 </h3>
 
 <h3 class="answer <#if comment.englishCompentencyOk??>${comment.englishCompentencyOk?string?lower_case}</#if>">

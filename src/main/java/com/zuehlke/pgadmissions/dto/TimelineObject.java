@@ -50,4 +50,8 @@ public abstract class TimelineObject implements Comparable<TimelineObject> {
 	    }
 	    return String.format("%s %s (%s) as: %s", author.getFirstName(), author.getLastName(), author.getEmail(), userCapacity); 
 	}
+
+    public String getTooltipMessage(String role) {
+        return String.format("%s %s (%s) as: %s", author.getFirstName(), author.getLastName(), author.getEmail(), StringUtils.capitalize(role));
+    }
 }

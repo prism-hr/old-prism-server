@@ -176,9 +176,9 @@
 							
 								</div><!-- close .row-group -->
 								
-								<div class="row-group">
+								<div class="row-group" style="display:none;">
   								<div class="row">
-                    <label for="closingDate" class="plain-label">Assign to Closing Date</label>
+                    <label for="closingDate" class="plain-label" >Assign to Closing Date</label>
                     <span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
                     <div class="field">
                         <input type="text" class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>

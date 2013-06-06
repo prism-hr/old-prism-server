@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 
 @Service
 @Transactional
@@ -31,6 +32,10 @@ public class AdvertService {
 
     public Program getProgram(Advert advert) {
         return advertDAO.getProgram(advert);
+    }
+
+    public Project getProject(Advert advert) {
+        return advertDAO.getProject(advert);
     }
 
 }

@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -23,6 +24,8 @@ public class ProgramsServiceTest {
     private ProgramDAO programDAOMock;
     
     private AdvertDAO advertDAOMock;
+
+    private ProjectDAO projectDAOMock;
     
     private ProgramsService programsService;
 
@@ -84,6 +87,7 @@ public class ProgramsServiceTest {
     public void setUp() {
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
         advertDAOMock = EasyMock.createMock(AdvertDAO.class);
-        programsService = new ProgramsService(programDAOMock, advertDAOMock);
+        projectDAOMock = EasyMock.createMock(ProjectDAO.class);
+        programsService = new ProgramsService(programDAOMock, advertDAOMock, projectDAOMock);
     }
 }

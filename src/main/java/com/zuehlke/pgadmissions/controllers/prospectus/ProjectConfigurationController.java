@@ -31,24 +31,25 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
+import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
 import com.zuehlke.pgadmissions.validators.ProjectAdvertDTOValidator;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-//@Controller
-//@RequestMapping("/prospectus/projectAdverts")
+@Controller
+@RequestMapping("/prospectus/projects")
 public class ProjectConfigurationController {
 
     public static final String LINK_TO_APPLY = "/private/prospectus/link_to_apply.ftl";
@@ -99,7 +100,7 @@ public class ProjectConfigurationController {
     public void loadFreeMarkerTemplates() throws IOException {
         linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(LINK_TO_APPLY);
         buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(BUTTON_TO_APPLY);
-        gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+        gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).setExclusionStrategies(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes f) {
                 return false;
@@ -107,7 +108,7 @@ public class ProjectConfigurationController {
 
             @Override
             public boolean shouldSkipClass(Class<?> clazz) {
-                return Program.class == clazz;
+                return Program.class == clazz || RegisteredUser.class == clazz;
             }
         }).create();
     }
@@ -162,9 +163,7 @@ public class ProjectConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String addProjectAdvert(@ModelAttribute("projectAdvertDTO") @Valid ProjectAdvertDTO projectAdvertDTO, BindingResult result,
-            HttpServletRequest request) {
-        Gson gson = new Gson();
+    public String addProjectAdvert(@ModelAttribute("projectAdvertDTO") @Valid ProjectDTO projectAdvertDTO, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMap();
 
         if (result.hasErrors()) {
@@ -174,30 +173,30 @@ public class ProjectConfigurationController {
             }
         }
 
-        programsService.addProjectAdvert(projectAdvertDTO);
+        programsService.addProject(projectAdvertDTO, getUser());
         map.put("success", "true");
 
         return gson.toJson(map);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public String listProjectAdverts(){
-        List<Advert> adverts = programsService.listProjectAdverts();
-        return gson.toJson(adverts);
+    public String listProjects() {
+        List<Project> projects = programsService.listProjects(getUser());
+        return gson.toJson(projects);
     }
-    
-    @RequestMapping(value = "/{advertId}", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
     @ResponseBody
-    public String getProjectAdvert(@PathVariable("advertId") int advertId){
-        Advert advert = programsService.getAdvert(advertId);
-        return gson.toJson(advert);
+    public String getProject(@PathVariable("projectId") int projectId) {
+        Project project = programsService.getProject(projectId);
+        return gson.toJson(project);
     }
-    
-    @RequestMapping(value = "/{advertId}", method = RequestMethod.DELETE)
+
+    @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public String removeProjectAdvert(@PathVariable("advertId") int advertId){
-        programsService.removeAdvert(advertId);
+    public String removeProject(@PathVariable("projectId") int projectId) {
+        programsService.removeProject(projectId);
         return "ok";
     }
 

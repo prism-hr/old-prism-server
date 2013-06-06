@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 
 @Repository
 public class AdvertDAO {
@@ -33,6 +34,11 @@ public class AdvertDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("advert", advert));
         return (Program) criteria.uniqueResult();
     }
+    
+    public Project getProject(Advert advert) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("advert", advert));
+        return (Project) criteria.uniqueResult();
+    }
 
     public Advert getAdvertById(int advertId) {
         return (Advert) sessionFactory.getCurrentSession().get(Advert.class, advertId);
@@ -51,10 +57,6 @@ public class AdvertDAO {
     @SuppressWarnings("unchecked")
     public List<Advert> listProjectAdverts() {
         return sessionFactory.getCurrentSession().createCriteria(Advert.class).list();
-    }
-
-    public void delete(Advert advert) {
-        sessionFactory.getCurrentSession().delete(advert);
     }
 
 }

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
+import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 
 @Component
@@ -14,12 +14,12 @@ public class ProjectAdvertDTOValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return ProjectAdvertDTO.class.equals(clazz);
+        return ProjectDTO.class.equals(clazz);
     }
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        ProjectAdvertDTO dto = (ProjectAdvertDTO) target;
+        ProjectDTO dto = (ProjectDTO) target;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "program", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", EMPTY_FIELD_ERROR_MESSAGE);

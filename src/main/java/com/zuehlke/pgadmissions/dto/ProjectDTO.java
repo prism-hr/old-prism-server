@@ -3,9 +3,7 @@ package com.zuehlke.pgadmissions.dto;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-public class ProjectAdvertDTO {
-
-    private Integer advertId;
+public class ProjectDTO {
 
     private Program program;
 
@@ -21,14 +19,6 @@ public class ProjectAdvertDTO {
     private String funding;
 
     private Boolean active;
-
-    public Integer getAdvertId() {
-        return advertId;
-    }
-
-    public void setAdvertId(Integer advertId) {
-        this.advertId = advertId;
-    }
 
     public Program getProgram() {
         return program;

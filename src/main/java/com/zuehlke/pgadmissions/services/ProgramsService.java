@@ -8,11 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
+import com.zuehlke.pgadmissions.dto.ProjectDTO;
 
 @Service
 @Transactional
@@ -20,15 +23,17 @@ public class ProgramsService {
 
     private final ProgramDAO programDAO;
     private final AdvertDAO advertDAO;
+    private final ProjectDAO projectDAO;
 
     ProgramsService() {
-        this(null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO) {
+    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
         this.programDAO = programDAO;
         this.advertDAO = advertDAO;
+        this.projectDAO = projectDAO;
     }
 
     public List<Program> getAllPrograms() {
@@ -64,31 +69,39 @@ public class ProgramsService {
         advertDAO.merge(programAdvert);
     }
 
-    public void removeAdvert(int advertId) {
-        Advert advert = advertDAO.getAdvertById(advertId);
-        advertDAO.delete(advert);
+    public void removeProject(int projectId) {
+        Project project = getProject(projectId);
+        projectDAO.delete(project);
     }
 
     public Advert getAdvert(int advertId) {
         return advertDAO.getAdvertById(advertId);
     }
+    
+    public Project getProject(int projectId) {
+        return projectDAO.getProjectById(projectId);
+    }
 
-    public void addProjectAdvert(ProjectAdvertDTO projectAdvertDTO) {
+    public void addProject(ProjectDTO projectAdvertDTO, RegisteredUser author) {
+
         Advert advert = new Advert();
-        
-        // TODO project class needed 
-//        advert.setProgram(projectAdvertDTO.getProgram());
         advert.setTitle(projectAdvertDTO.getTitle());
         advert.setDescription(projectAdvertDTO.getDescription());
         advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
         advert.setFunding(projectAdvertDTO.getFunding());
         advert.setActive(projectAdvertDTO.getActive());
 
-        advertDAO.save(advert);
+        Project project = new Project();
+        project.setAdvert(advert);
+        project.setAuthor(author);
+        project.setPrimarySupervisor(author);
+        project.setProgram(projectAdvertDTO.getProgram());
+
+        projectDAO.save(project);
     }
 
-    public List<Advert> listProjectAdverts() {
-        return advertDAO.listProjectAdverts();
+    public List<Project> listProjects(RegisteredUser author) {
+        return projectDAO.getProjectsByAuthor(author);
     }
 
 	public void merge(Program program) {

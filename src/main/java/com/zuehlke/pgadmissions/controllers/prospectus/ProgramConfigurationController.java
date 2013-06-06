@@ -192,8 +192,12 @@ public class ProgramConfigurationController {
         }
 
         if (map.isEmpty()) {
+        	if(program.getAdvert()!=null)
+        	{
+        		advert.setId(program.getAdvert().getId());
+        	}
             program.setAdvert(advert);
-            programsService.save(program);
+            programsService.merge(program);
             map.put("success", "true");
         }
 

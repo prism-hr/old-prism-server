@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
@@ -94,10 +95,17 @@ public class AdvertsController {
             dto.setFunding(input.getFunding());
             dto.setStudyDuration(input.getStudyDuration());
             Program program = advertService.getProgram(input);
-            dto.setProgramCode(program.getCode());
-            dto.setTitle(program.getTitle());
-            dto.setClosingDate(getFirstClosingDate(program));
-            dto.setSupervisorEmail(getFirstValidAdministrator(program));
+            if (program != null) {
+                dto.setProgramCode(program.getCode());
+                dto.setTitle(program.getTitle());
+                dto.setClosingDate(getFirstClosingDate(program));
+                dto.setSupervisorEmail(getFirstValidAdministrator(program));
+            } else {
+                Project project = advertService.getProject(input);
+                dto.setProgramCode(project.getProgram().getCode());
+                dto.setTitle(input.getTitle());
+                dto.setSupervisorEmail(project.getPrimarySupervisor().getEmail());
+            }
             return dto;
         }
 

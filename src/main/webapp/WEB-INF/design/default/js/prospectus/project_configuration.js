@@ -18,7 +18,7 @@ function registerAddProjectAdvertButton(){
 		var active = $("input:radio[name=projectAdvertIsActiveRadio]:checked").val();
 		
 		$('#ajaxloader').show();
-		var url="/pgadmissions/prospectus/projectAdverts";
+		var url="/pgadmissions/prospectus/projects";
 		$.ajax({
 			type: 'POST',
 			statusCode: {
@@ -85,12 +85,12 @@ function registerEditProjectAdvertButton(){
 function registerRemoveProjectAdvertButton(){
 	$('#projectAdvertsTable').on('click', '.button-delete', function(){
 		var $row = $(this).closest('tr');
-		removeProjectAdvert($row);
+		removeProject($row);
 	});
 }
 
-function removeProjectAdvert(advertRow) {
-	program = advertRow.attr("advert-id");
+function removeProject(projectRow) {
+	project = projectRow.attr("project-id");
 	$.ajax({
         type: 'DELETE',
         statusCode: {
@@ -100,11 +100,11 @@ function removeProjectAdvert(advertRow) {
                 400: function() { window.location.href = "/pgadmissions/400"; },                  
                 403: function() { window.location.href = "/pgadmissions/404"; }
         },
-        url:"/pgadmissions/prospectus/projectAdverts/" + program,
+        url:"/pgadmissions/prospectus/projects/" + project,
         data: {
         }, 
         success: function(data) {
-        	advertRow.remove();
+        	projectRow.remove();
         },
         complete: function() {
         }
@@ -112,7 +112,7 @@ function removeProjectAdvert(advertRow) {
 }
 
 function loadProjectAdvert(advertRow) {
-	program = advertRow.attr("advert-id");
+	project = advertRow.attr("project-id");
 	$.ajax({
 		type: 'GET',
 		statusCode: {
@@ -122,12 +122,13 @@ function loadProjectAdvert(advertRow) {
 	        400: function() { window.location.href = "/pgadmissions/400"; },                  
 	        403: function() { window.location.href = "/pgadmissions/404"; }
 		},
-		url:"/pgadmissions/prospectus/projectAdverts/" + program,
+		url:"/pgadmissions/prospectus/projects/" + project,
 		data: {
 		}, 
 		success: function(data) {
 			clearProjectAdvertErrors();
-			var advert = JSON.parse(data);
+			var project = JSON.parse(data);
+			var advert = project.advert;
 			$("#projectAdvertTitleInput").val(advert.title);
 			$("#projectAdvertDescriptionText").val(advert.description);
 			
@@ -157,7 +158,7 @@ function loadProjectAdvert(advertRow) {
 
 function loadAdverts(){
 	$('#ajaxloader').show();
-	var url="/pgadmissions/prospectus/projectAdverts";
+	var url="/pgadmissions/prospectus/projects";
 	$.ajax({
 		type: 'GET',
 		statusCode: {
@@ -171,8 +172,8 @@ function loadAdverts(){
 		data: {
 		}, 
 		success: function(data) {
-			var adverts = JSON.parse(data);
-			displayAdvertList(adverts);
+			var projects = JSON.parse(data);
+			displayProjectList(projects);
 		},
 		complete: function() {
 			$('#ajaxloader').fadeOut('fast');
@@ -184,23 +185,23 @@ function clearProjectAdvertErrors(){
 	$("#projectAdvertDiv .error").remove();
 }
 
-function displayAdvertList(adverts){
+function displayProjectList(projects){
 	$('#projectAdvertsTable tbody').empty();
-	if(adverts.length == 0){
+	if(projects.length == 0){
 		$("#projectAdvertsDiv").hide();
 	} else {
 		$("#projectAdvertsDiv").show();
-		$.each(adverts, function(index, advert) {
-			appendAdvertRow(advert);
+		$.each(projects, function(index, project) {
+			appendProjectRow(project);
 		});				
 	}
 }
 
-function appendAdvertRow(advert){
+function appendProjectRow(project){
 	$('#projectAdvertsTable tbody').append(
-		'<tr advert-id="' + advert.id + '">' +
+		'<tr project-id="' + project.id + '">' +
 			'<td>' + 
-				advert.title +
+				project.advert.title +
 			'</td>' +
 			'<td>' +
 				'<button class="button-edit" type="button" data-desc="Edit">Edit</button>' +

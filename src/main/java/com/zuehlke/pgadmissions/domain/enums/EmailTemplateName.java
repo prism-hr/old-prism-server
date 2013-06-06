@@ -9,7 +9,6 @@ public enum EmailTemplateName {
 	INTERVIEW_VOTE_REMINDER("Interview Scheduling Reminder"),
 	INTERVIEW_VOTE_CONFIRMATION("Interview Availability Confirmation"),
 	NEW_PASSWORD_CONFIRMATION("New Password Confirmation"),//send on event
-	@Deprecated REGISTRY_VALIDATION_REQUEST("Eligibility Assessment Request"),
 	REGISTRATION_CONFIRMATION("Confirmation of Registration"),
 	EXPORT_ERROR("Export Error"), //sent on event
 	IMPORT_ERROR("Import Error"), //sent on event

@@ -104,4 +104,9 @@ public class ProgramsService {
         return projectDAO.getProjectsByAuthor(author);
     }
 
+	public void merge(Program program) {
+		programDAO.merge(program);
+		
+	}
+
 }

@@ -79,9 +79,12 @@ public class RegisterController {
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
-	public String submitRegistration( @Valid @ModelAttribute("pendingUser") RegisteredUser pendingUser,	BindingResult result, HttpServletRequest request) {
+	public String submitRegistration(@ModelAttribute("pendingUser") RegisteredUser pendingUser, BindingResult result, Model model, HttpServletRequest request) {
 		
+	    registerFormValidator.validate(pendingUser, result);
+	    
 		if (result.hasErrors()) {
+		    model.addAttribute("pendingUser", pendingUser);
 		    return REGISTER_USERS_VIEW_NAME;
 		}
 
@@ -93,21 +96,20 @@ public class RegisterController {
 		}
 		
 		String queryString = (String) request.getSession().getAttribute("applyRequest");
-		registrationService.updateOrSaveUser(pendingUser, queryString);
-
+		RegisteredUser registeredUser = registrationService.updateOrSaveUser(pendingUser, queryString);
+		model.addAttribute("pendingUser", registeredUser);
 		return REGISTER_COMPLETE_VIEW_NAME;
-
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/resendConfirmation")
-	public String resendConfirmation(@RequestParam String activationCode) {
+	public String resendConfirmation(@RequestParam String activationCode, Model model) {
 	
 		RegisteredUser user = userService.getUserByActivationCode(activationCode);
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
 		registrationService.sendConfirmationEmail(user);
-
+		model.addAttribute("pendingUser", user);
 		return REGISTER_COMPLETE_VIEW_NAME;
 	}
 
@@ -184,7 +186,9 @@ public class RegisterController {
             return "redirect:/login";
         } 
         
-	    pendingUser = new RegisteredUser();
+	    if (pendingUser == null) {
+	        pendingUser = new RegisteredUser();
+	    }
 	    pendingUser.setDirectToUrl(directToUrl);
 	    modelMap.addAttribute("pendingUser", pendingUser);
 	    return REGISTER_USERS_VIEW_NAME;
@@ -219,9 +223,4 @@ public class RegisterController {
         DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
         return defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new");
     }
-	
-	@InitBinder(value = "pendingUser")
-	public void registerValidator(WebDataBinder binder) {
-		binder.setValidator(registerFormValidator);
-	}
 }

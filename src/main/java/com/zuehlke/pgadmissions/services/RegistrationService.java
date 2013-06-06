@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,30 +91,28 @@ public class RegistrationService {
 		return pendingApplicantUser;
 	}
 
-	public RegisteredUser processPendingSuggestedUser(RegisteredUser pendingSuggestedUser) {
-		pendingSuggestedUser.setPassword(encryptionUtils.getMD5Hash(pendingSuggestedUser.getPassword()));
-		pendingSuggestedUser.setUsername(pendingSuggestedUser.getEmail());
-		return pendingSuggestedUser;
-
-	}
-
-	public void updateOrSaveUser(RegisteredUser pendingUser, String queryString) {
-
+	public RegisteredUser updateOrSaveUser(RegisteredUser pendingUser, String queryString) {
 		RegisteredUser user = null;
-		if (pendingUser.getId() != null) {
-			user = processPendingSuggestedUser(pendingUser);
+		if (StringUtils.isNotEmpty(pendingUser.getActivationCode())) {
+		    // User has been invited to join PRISM
+		    user = userDAO.getUserByActivationCode(pendingUser.getActivationCode());
+		    user.setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
+	        user.setUsername(user.getEmail());
 		} else {
-			user = processPendingApplicantUser(pendingUser, queryString);
+		    // User is an applicant
+		    user = processPendingApplicantUser(pendingUser, queryString);
 		}
+		
 		try {
 			userDAO.save(user);
 		}
 		catch (Exception e) {
-			log.error("Could not save user: {}", user.getEmail());
-			return;
+		    log.error("Could not save user: {}", user.getEmail());
+		    return null;
 		}
 
 		sendConfirmationEmail(user);
+		return user;
 	}
 
 	public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser user) {

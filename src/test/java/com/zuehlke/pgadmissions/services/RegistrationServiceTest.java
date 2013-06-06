@@ -11,6 +11,7 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,11 +105,12 @@ public class RegistrationServiceTest {
 		pendingSuggestedUser.setEmail("meuston@gmail.com");
 		pendingSuggestedUser.setPassword("1234");
 		pendingSuggestedUser.setConfirmPassword("1234");
+		userDAOMock.save(EasyMock.isA(RegisteredUser.class));
 		EasyMock.expect(userDAOMock.get(2)).andReturn(new RegisteredUser());
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("121");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("1234");
 		EasyMock.replay(userDAOMock, encryptionUtilsMock);
-		RegisteredUser updateUser = registrationService.processPendingSuggestedUser(pendingSuggestedUser);
+		RegisteredUser updateUser = registrationService.updateOrSaveUser(pendingSuggestedUser, StringUtils.EMPTY);
 		Assert.assertEquals("Mark", updateUser.getFirstName());
 		Assert.assertEquals("Euston", updateUser.getLastName());
 		Assert.assertEquals("meuston@gmail.com", updateUser.getEmail());
@@ -212,30 +214,20 @@ public class RegistrationServiceTest {
 		registrationService.updateOrSaveUser(expectedRecord, "queryString");
 
 		EasyMock.verify(userDAOMock, mailServiceMock);
-		
-
 	}
 
 	@Test
 	public void shouldSavePendingSuggestedUserAndSendEmail() throws UnsupportedEncodingException {
-		final RegisteredUser expectedRecord = new RegisteredUserBuilder().id(1).build();
-
-
-		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, 
-				interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST) {
-
-			@Override
-			public RegisteredUser processPendingSuggestedUser(RegisteredUser pendingSuggestedUser ) {
-				if (expectedRecord == pendingSuggestedUser ) {
-					return suggestedUser;
-				}
-				return null;
-			}
-
-
+		final RegisteredUser expectedRecord = new RegisteredUserBuilder().id(1).activationCode("ABCD").build();
+        final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).activationCode("ABCD").email("email@test.com").firstName("bob")
+                .lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+        
+        registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
+                interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST) {
 		};
 
+		EasyMock.expect(userDAOMock.getUserByActivationCode(expectedRecord.getActivationCode())).andReturn(suggestedUser);
+		
 		userDAOMock.save(suggestedUser);
 		
 		mailServiceMock.sendRegistrationConfirmation(eq(suggestedUser), eq("complete your application"));

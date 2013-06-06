@@ -33,35 +33,34 @@ public class RegisterFormValidator extends AbstractValidator {
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-	    RegisteredUser record = (RegisteredUser) target;
+	    RegisteredUser user = (RegisteredUser) target;
 
-	    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);
+	    if (StringUtils.isEmpty(user.getActivationCode())) {
+	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
+	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);	        
+	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", EMPTY_FIELD_ERROR_MESSAGE);	        
+	        if (!StringUtils.isBlank(user.getEmail())) {
+	            RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(user.getEmail());
+	            if (userWithSameEmail != null && !userWithSameEmail.getId().equals(user.getId())) {
+	                errors.rejectValue("email", "user.email.alreadyexists");
+	            }
+	        }
+	    }
 
 		// checking for length of password field
-		if(StringUtils.isBlank(record.getPassword())){
+		if(StringUtils.isBlank(user.getPassword())){
 		    errors.rejectValue("password", EMPTY_FIELD_ERROR_MESSAGE);
-		} else if(record.getPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
+		} else if(user.getPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
             errors.rejectValue("password", "user.password.small");
-        } else if(record.getPassword().length() > MAXIMUM_PASSWORD_CHARACTERS){
+        } else if(user.getPassword().length() > MAXIMUM_PASSWORD_CHARACTERS){
             errors.rejectValue("password", "user.password.large");
         }
 		
 		// check if confirm password is not empty and if matches the password
-		if(StringUtils.isBlank(record.getConfirmPassword())){
-		    errors.rejectValue("confirmPassword", EMPTY_FIELD_ERROR_MESSAGE);
-		} else if(!Objects.equal(record.getConfirmPassword(), record.getPassword())){
-		    errors.rejectValue("confirmPassword", "user.passwords.notmatch");
-		}
-		
-		if(StringUtils.isBlank(record.getEmail())){
-		    errors.rejectValue("email", EMPTY_FIELD_ERROR_MESSAGE);
-		} else {
-		    RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(record.getEmail());
-		    if (userWithSameEmail != null && !userWithSameEmail.getId().equals(record.getId())) {
-		        errors.rejectValue("email", "user.email.alreadyexists");
-		    }
-		}
-		
+        if (StringUtils.isBlank(user.getConfirmPassword())) {
+            errors.rejectValue("confirmPassword", EMPTY_FIELD_ERROR_MESSAGE);
+        } else if (!Objects.equal(user.getConfirmPassword(), user.getPassword())) {
+            errors.rejectValue("confirmPassword", "user.passwords.notmatch");
+        }
 	}
 }

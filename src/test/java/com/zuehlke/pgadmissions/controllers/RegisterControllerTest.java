@@ -73,15 +73,6 @@ public class RegisterControllerTest {
 	}
 
 	@Test
-	public void shouldRegisterValidator() {
-		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.setValidator(regusterFormValidatorMock);
-		EasyMock.replay(binderMock);
-		registerController.registerValidator(binderMock);
-		EasyMock.verify(binderMock);
-	}
-
-	@Test
 	public void shouldReturnRegisterPageIfRedirectedFromPrismInternally() {
 	    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 	    mockHttpServletRequest.addHeader("referer", "http://localhost:8080/pgadmissions/programs");
@@ -171,7 +162,7 @@ public class RegisterControllerTest {
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, registrationServiceMock);
 
-		String modelAndView = registerController.submitRegistration(pendingUser, errorsMock, new MockHttpServletRequest());
+		String modelAndView = registerController.submitRegistration(pendingUser, errorsMock, new ExtendedModelMap(),  new MockHttpServletRequest());
 		assertEquals("public/register/register_applicant", modelAndView);
 
 		EasyMock.verify(registrationServiceMock);
@@ -187,7 +178,7 @@ public class RegisterControllerTest {
         registrationServiceMock.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
         EasyMock.replay(errorsMock, userServiceMock, registrationServiceMock);
         	    
-        String modelAndView = registerController.submitRegistration(pendingUser, errorsMock, new MockHttpServletRequest());
+        String modelAndView = registerController.submitRegistration(pendingUser, errorsMock, new ExtendedModelMap(), new MockHttpServletRequest());
         assertEquals("public/register/registration_not_complete", modelAndView);
         
         EasyMock.verify(registrationServiceMock);
@@ -198,11 +189,11 @@ public class RegisterControllerTest {
 		RegisteredUser pendingUser = new RegisteredUserBuilder().id(1).build();
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		registrationServiceMock.updateOrSaveUser(pendingUser, null);
+		EasyMock.expect(registrationServiceMock.updateOrSaveUser(pendingUser, null)).andReturn(pendingUser);
 
 		EasyMock.replay(registrationServiceMock);
 
-		String view = registerController.submitRegistration(pendingUser, errorsMock, new MockHttpServletRequest());
+		String view = registerController.submitRegistration(pendingUser, errorsMock, new ExtendedModelMap(), new MockHttpServletRequest());
 		assertEquals("public/register/registration_complete", view);
 
 		EasyMock.verify(registrationServiceMock);
@@ -215,14 +206,15 @@ public class RegisterControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 
-		registrationServiceMock.updateOrSaveUser(pendingUser, queryString);
+		EasyMock.expect(registrationServiceMock.updateOrSaveUser(pendingUser, queryString)).andReturn(pendingUser);
+		
 		EasyMock.replay(registrationServiceMock);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("applyRequest", queryString);
 		request.setSession(session);
-		String view = registerController.submitRegistration(pendingUser, errorsMock, request);
+		String view = registerController.submitRegistration(pendingUser, errorsMock, new ExtendedModelMap(), request);
 		assertEquals("public/register/registration_complete", view);
 
 		EasyMock.verify(registrationServiceMock);
@@ -236,7 +228,7 @@ public class RegisterControllerTest {
 		registrationServiceMock.sendConfirmationEmail(user);
 		EasyMock.replay(userServiceMock, registrationServiceMock);
 
-		String view = registerController.resendConfirmation("abc");
+		String view = registerController.resendConfirmation("abc", new ExtendedModelMap());
 
 		EasyMock.verify(userServiceMock, registrationServiceMock);
 		assertEquals("public/register/registration_complete", view);
@@ -246,7 +238,7 @@ public class RegisterControllerTest {
 	public void shouldThrowResourveNotFoundIfUserIsNotFound() {
 		EasyMock.expect(userServiceMock.getUserByActivationCode("abc")).andReturn(null);
 		EasyMock.replay(userServiceMock);
-		registerController.resendConfirmation("abc");
+		registerController.resendConfirmation("abc", new ExtendedModelMap());
 
 	}
 

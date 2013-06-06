@@ -72,7 +72,7 @@
 		                <label class="control-label" for="firstName">First Name <em>*</em></label>
 		                <span class="hint" data-desc="Please enter your first name."></span>
 		                <div class="controls">
-			            <input id="firstName" type="text" name="firstName" value='${(pendingUser.firstName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="firstName" type="text" name="firstName" value='${(pendingUser.firstName?html)!""}' <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> />
 			            <@spring.bind "pendingUser.firstName" /> 
 	              		<#list spring.status.errorMessages as error>	
 	              		 	<div class="alert alert-error">	                                		
@@ -86,7 +86,7 @@
 		                <label class="control-label" for="lastName">Last Name <em>*</em></label>
 		                <span class="hint" data-desc="Please enter your last name."></span>
 		                <div class="controls">
-			            <input id="lastName" type="text" name="lastName" value='${(pendingUser.lastName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="lastName" type="text" name="lastName" value='${(pendingUser.lastName?html)!""}' <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> />
 	                    <@spring.bind "pendingUser.lastName" /> 
 	                    <#list spring.status.errorMessages as error>		                                		
 	                        <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>                     		
@@ -99,9 +99,9 @@
 		                <span class="hint" data-desc="Please enter your email address."></span>
 		                <div class="controls">
 			            <#if RequestParameters.activationCode?has_content>
-			            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
+			            <div id="email_tooltip_input" name="email_tooltip_input">
 			            </#if>
-			            <input id="email" type="email" placeholder="Email Address" name="email" value='${(pendingUser.email?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="email" type="email" placeholder="Email Address" name="email" value='${(pendingUser.email?html)!""}' <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> />
 			            <#if RequestParameters.activationCode?has_content>
 	                    </div>
 	                    </#if>

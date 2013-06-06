@@ -4,7 +4,7 @@
       <h2>Manage Programmes</h2>
       <div id="programAdvertDiv">
           <form>
-              <div class="alert alert-info">
+              <div class="infoBar alert alert-info">
                   <i class="icon-info-sign"></i> Manage the adverts and closing dates for your programmes here.
               </div>
               <div class="row-group">
@@ -42,6 +42,18 @@
                           <textarea id="programAdvertFundingText" class="max" rows="6" cols="150"></textarea>
                       </div>
                     </div>
+                    <div class="row" id="programAdvertIsActiveDiv">
+                  <label class="plain-label">Are you currently accepting applications? <em>*</em>
+                  </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
+                  <div class="field">
+                    <input id="programAdvertIsActiveRadioYes" type="radio" name="switch" value="true">
+                    Yes
+                    </input>
+                    <input id="programAdvertIsActiveRadioNo" type="radio" name="switch" value="false">
+                    No
+                    </input>
+                  </div>
+                </div>
               </div>
               <div class="row-group">
                   <h3>Closing Dates</h3>
@@ -82,20 +94,6 @@
                   <a id="addProgramAdvertClosingDate" role="button" class="btn btn-primary">Add</a>
                 </div>
               </div>                                        
-              <div class="row-group">
-                <div class="row" id="programAdvertIsActiveDiv">
-                  <label class="plain-label">Are you currently accepting applications? <em>*</em>
-                  </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
-                  <div class="field">
-                    <input id="programAdvertIsActiveRadioYes" type="radio" name="switch" value="true">
-                    Yes
-                    </input>
-                    <input id="programAdvertIsActiveRadioNo" type="radio" name="switch" value="false">
-                    No
-                    </input>
-                  </div>
-                </div>
-              </div>
               <div class="row-group">
                   <h3>Advert</h3>
                   <div class="alert alert-info">

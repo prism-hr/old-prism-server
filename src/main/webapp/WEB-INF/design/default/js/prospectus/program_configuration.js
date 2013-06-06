@@ -11,6 +11,7 @@ $(document).ready(function(){
 function bindProgramSelectChangeAction(){
 	$("#programAdvertProgramSelect").bind('change', function() {
 		getProgramData();
+		
 	});
 }
 
@@ -44,6 +45,7 @@ function getClosingDatesData(program_code){
         success: function(data) {
         	var map = JSON.parse(data);
         	refreshClosingDates(map['closingDates']);
+			checkIfErrors();
         },
         complete: function() {
         }
@@ -118,6 +120,7 @@ function bindAddClosingDateButtonAction(){
 					sortClosingDates();
 					checkDates();
 				}
+				checkIfErrors();
 			},
 			complete: function() {
 				$('#ajaxloader').fadeOut('fast');
@@ -320,6 +323,7 @@ function bindSaveButtonAction(){
 						$("#programAdvertIsActiveDiv").append(getErrorMessageHTML(map['active']));
 					}
 				}
+				checkIfErrors();
 			},
 			complete: function() {
 				$('#ajaxloader').fadeOut('fast');
@@ -374,4 +378,6 @@ function clearProgramAdvertClosingDateErrors(){
 
 function clearProgramAdvertErrors(){
 	$("#programAdvertDiv .error").remove();
+	$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
+	checkIfErrors();
 }

@@ -79,7 +79,6 @@
               <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#configsection">Service Levels</a></li></#if>
               <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#edit-template-section">Email Templates</a></li></#if>
               <#if user.isInRole('SUPERADMINISTRATOR')><li><a href="#edit-throttle-section">Portico Interface</a></li></#if>
-              <li><a href="#badgeS">Badge</a></li>
               <li><a href="#scoringConfiguration">Custom Forms</a></li>
           </ul>
           <#if user.isInRole('SUPERADMINISTRATOR') ><div id="configsection" class="tab-page"></div></#if>
@@ -180,16 +179,6 @@
             </section>
           </div>
           </#if>
-          <div id="badgeS" class="tab-page">
-            <section class="form-rows">
-              <h2>Badge</h2>
-              <div>
-                <div class="alert alert-info"> <i class="icon-info-sign"></i> Configure your 'apply now' badge. You embed this on external web pages to enable your programme to accept applications. </div>
-                <form id="badgeSection">
-                </form>
-              </div>
-            </section>
-          </div>
           <div id="scoringConfiguration" class="tab-page">
               <section class="form-rows">
               <h2>Manage Custom Forms</h2>

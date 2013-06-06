@@ -51,8 +51,8 @@ public class ApplicationFormController {
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam String programDeadline, @RequestParam String projectTitle,
-            @RequestParam String programhome) {
+    public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam(required = false) String programDeadline, @RequestParam(required = false) String projectTitle,
+            @RequestParam(required = false) String programhome) {
         return processApplyNew(program, programDeadline, projectTitle, programhome);
     }
 

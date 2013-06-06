@@ -6,8 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity(name = "ADVERT")
 public class Advert implements Serializable {
@@ -17,13 +15,6 @@ public class Advert implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "program_id")
-    private Program program;
-    
-    @Column(name = "is_program_advert")
-    private Boolean isProgramAdvert;
-    
     @Column(name = "title")
     private String title;
     
@@ -45,22 +36,6 @@ public class Advert implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public Boolean getIsProgramAdvert() {
-        return isProgramAdvert;
-    }
-
-    public void setIsProgramAdvert(Boolean isProgramAdvert) {
-        this.isProgramAdvert = isProgramAdvert;
     }
 
     public String getTitle() {

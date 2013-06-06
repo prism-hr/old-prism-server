@@ -1,13 +1,10 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Program;
 
 public class AdvertBuilder {
 
     private Integer id;
-    private Program program;
-    private Boolean isProgramAdvert;
     private String title;
     private String description;
     private Integer studyDuration;
@@ -16,16 +13,6 @@ public class AdvertBuilder {
 
     public AdvertBuilder id(Integer id) {
         this.id = id;
-        return this;
-    }
-
-    public AdvertBuilder program(Program program) {
-        this.program = program;
-        return this;
-    }
-
-    public AdvertBuilder isProgramAdvert(boolean isProgramAdvert) {
-        this.isProgramAdvert = isProgramAdvert;
         return this;
     }
 
@@ -57,8 +44,6 @@ public class AdvertBuilder {
     public Advert build() {
         Advert advert = new Advert();
         advert.setId(id);
-        advert.setProgram(program);
-        advert.setIsProgramAdvert(isProgramAdvert);
         advert.setTitle(title);
         advert.setDescription(description);
         advert.setStudyDuration(studyDuration);

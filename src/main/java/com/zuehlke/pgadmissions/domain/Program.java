@@ -6,10 +6,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,6 +20,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -72,7 +71,7 @@ public class Program extends Authorisable implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "program")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "program")
     private List<ProgramClosingDate> closingDates = new ArrayList<ProgramClosingDate>();
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -84,8 +83,9 @@ public class Program extends Authorisable implements Serializable {
     @JoinColumn(name = "program_id")
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
 
-    @OneToMany(mappedBy = "program")
-    private Set<Advert> adverts = new HashSet<Advert>();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
 
     public Program() {
     }
@@ -184,7 +184,7 @@ public class Program extends Authorisable implements Serializable {
     public void setSupervisors(final List<RegisteredUser> supervisors) {
         this.supervisors = supervisors;
     }
-    
+
     public boolean hasSupervisors() {
         return !supervisors.isEmpty();
     }
@@ -217,9 +217,13 @@ public class Program extends Authorisable implements Serializable {
     public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {
         return scoringDefinitions;
     }
-    
-    public Set<Advert> getAdverts() {
-        return adverts;
+
+    public Advert getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public List<ProgramClosingDate> getClosingDates() {
@@ -230,72 +234,72 @@ public class Program extends Authorisable implements Serializable {
         this.closingDates = closingDates;
     }
 
-	public void addClosingDate(ProgramClosingDate closingDate) {
-		checkNotNull(closingDate);
-		if(containsClosingDate(closingDate.getClosingDate())){
-			throw new IllegalArgumentException("Already Exists"); 
-		}
-		closingDates.add(closingDate);
-		closingDate.setProgram(this);
-	}
+    public void addClosingDate(ProgramClosingDate closingDate) {
+        checkNotNull(closingDate);
+        if (containsClosingDate(closingDate.getClosingDate())) {
+            throw new IllegalArgumentException("Already Exists");
+        }
+        closingDates.add(closingDate);
+        closingDate.setProgram(this);
+    }
 
-	public void removeClosingDate(ProgramClosingDate closingDate) {
-		if(closingDate == null){
-			return;
-		}
-		removeClosingDate(closingDate.getId());
-	}
-	
-	public void removeClosingDate(Integer closingDateId) {
-		if(closingDateId == null){
-			return;
-		}
-		int closingDateIndex = getClosingDateIndexById(closingDateId);
-		if(closingDateIndex>=0){
-			closingDates.remove(closingDateIndex);
-		}
-	}
-	
-	public ProgramClosingDate getClosingDate(Date date){
-		checkNotNull(date);
-		int closingDateIndex = getClosingDateIndexByDate(date);
-		return (closingDateIndex>=0)? closingDates.get(closingDateIndex):null;
-	}
-	
-	public boolean containsClosingDate(Date date){
-		return getClosingDateIndexByDate(date) >= 0 ;
-	}
-	
-	private int getClosingDateIndexByDate(Date date){
-		Date day = DateUtils.truncateToDay(date);
-		for(int i=0;i<closingDates.size();i++){
-			ProgramClosingDate closingDate = closingDates.get(i);
-			if(day.equals(closingDate.getClosingDate())){
-				return i;
-			}
-		}
-		return -1;
-	}
+    public void removeClosingDate(ProgramClosingDate closingDate) {
+        if (closingDate == null) {
+            return;
+        }
+        removeClosingDate(closingDate.getId());
+    }
 
-	private int getClosingDateIndexById(Integer id){
-		checkNotNull(id);
-		for(int i=0;i<closingDates.size();i++){
-			ProgramClosingDate closingDate = closingDates.get(i);
-			if(id.equals(closingDate.getId())){
-				return i;
-			}
-		}
-		return -1;
-	}
+    public void removeClosingDate(Integer closingDateId) {
+        if (closingDateId == null) {
+            return;
+        }
+        int closingDateIndex = getClosingDateIndexById(closingDateId);
+        if (closingDateIndex >= 0) {
+            closingDates.remove(closingDateIndex);
+        }
+    }
 
-	public void updateClosingDate(ProgramClosingDate closingDate) {
-		checkNotNull(closingDate);
-		int closingDateIndex = getClosingDateIndexById(closingDate.getId());
-		if(closingDateIndex>=0){
-			ProgramClosingDate storeDate = closingDates.get(closingDateIndex);
-			storeDate.setClosingDate(closingDate.getClosingDate());
-			storeDate.setStudyPlaces(closingDate.getStudyPlaces());
-		}
-	}
-	
+    public ProgramClosingDate getClosingDate(Date date) {
+        checkNotNull(date);
+        int closingDateIndex = getClosingDateIndexByDate(date);
+        return (closingDateIndex >= 0) ? closingDates.get(closingDateIndex) : null;
+    }
+
+    public boolean containsClosingDate(Date date) {
+        return getClosingDateIndexByDate(date) >= 0;
+    }
+
+    private int getClosingDateIndexByDate(Date date) {
+        Date day = DateUtils.truncateToDay(date);
+        for (int i = 0; i < closingDates.size(); i++) {
+            ProgramClosingDate closingDate = closingDates.get(i);
+            if (day.equals(closingDate.getClosingDate())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getClosingDateIndexById(Integer id) {
+        checkNotNull(id);
+        for (int i = 0; i < closingDates.size(); i++) {
+            ProgramClosingDate closingDate = closingDates.get(i);
+            if (id.equals(closingDate.getId())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void updateClosingDate(ProgramClosingDate closingDate) {
+        checkNotNull(closingDate);
+        int closingDateIndex = getClosingDateIndexById(closingDate.getId());
+        if (closingDateIndex >= 0) {
+            ProgramClosingDate storeDate = closingDates.get(closingDateIndex);
+            storeDate.setClosingDate(closingDate.getClosingDate());
+            storeDate.setStudyPlaces(closingDate.getStudyPlaces());
+        }
+    }
+
 }

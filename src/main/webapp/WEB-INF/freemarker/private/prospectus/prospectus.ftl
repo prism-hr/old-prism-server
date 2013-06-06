@@ -48,7 +48,6 @@
                       <div id="configBox" class="tabbox">
                         <ul class="tabs">
                           <li><a href="#programmeConfiguration">Manage Programmes</a></li>
-                          <li><a href="#projectConfiguration">Manage Projects</a></li>
                           <li><a href="#irisSection">Link to UCL IRIS</a></li>
                         </ul>
                     
@@ -56,10 +55,6 @@
                           <#include "/private/prospectus/program_configuration.ftl"/>
                         </div>
                         
-                        <div id="projectConfiguration" class="tab-page">
-                          <#include "/private/prospectus/project_configuration.ftl"/>
-                        </div>
-
                         <div id="irisSection" class="tab-page">
                             <section class="form-rows">
                                 <h2>Link to UCL IRIS</h2>

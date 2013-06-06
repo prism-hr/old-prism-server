@@ -47,8 +47,8 @@ import com.zuehlke.pgadmissions.validators.ProjectAdvertDTOValidator;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-@Controller
-@RequestMapping("/prospectus/projectAdverts")
+//@Controller
+//@RequestMapping("/prospectus/projectAdverts")
 public class ProjectConfigurationController {
 
     public static final String LINK_TO_APPLY = "/private/prospectus/link_to_apply.ftl";

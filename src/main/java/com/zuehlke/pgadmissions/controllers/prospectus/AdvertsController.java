@@ -28,102 +28,100 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 @Controller
 @RequestMapping("/adverts")
 public class AdvertsController {
-	
-	private final  AdvertService advertService;
-	private static final AdvertDTO NULL_ADVERT= new AdvertDTO(Integer.MIN_VALUE);
-	public AdvertsController() {
-		this(null);
-	}
-	
-	@Autowired
-	public AdvertsController(AdvertService advertService){
-		this.advertService = advertService;
-	}
 
-	@RequestMapping(value="/activeAdverts", method = RequestMethod.GET)
-	@ResponseBody
-	public String activeAdverts(@RequestParam(required=false) Integer selectedAdvertId) {
-		Map<String, Object> map = Maps.newHashMap();
-		List<AdvertDTO> activeAdverts = convertAdverts(advertService.getActiveAdverts());
-		Collections.shuffle(activeAdverts, new Random(System.currentTimeMillis()));
-		AdvertDTO selectedAdvert = getSelectedAdvert(selectedAdvertId,	activeAdverts);
-		setSelectedAndBringToFront(selectedAdvert, activeAdverts);
-		map.put("adverts", activeAdverts);
-	    return new Gson().toJson(map);
-	}
+    private final AdvertService advertService;
+    private static final AdvertDTO NULL_ADVERT = new AdvertDTO(Integer.MIN_VALUE);
 
-	private void setSelectedAndBringToFront(AdvertDTO selectedAdvert,
-			List<AdvertDTO> activeAdverts) {
-		selectedAdvert.setSelected(true);
-		if(activeAdverts.remove(selectedAdvert)){
-			activeAdverts.add(0, selectedAdvert);
-		}
-	}
+    public AdvertsController() {
+        this(null);
+    }
 
-	private AdvertDTO getSelectedAdvert(Integer selectedAdvertId,
-			List<AdvertDTO> activeAdverts) {
-		if(selectedAdvertId!=null){
-			for(AdvertDTO advert:activeAdverts){
-				if(selectedAdvertId == advert.getId()){
-					return advert;
-				}
-			}
-		}
-		return NULL_ADVERT;
-	}
+    @Autowired
+    public AdvertsController(AdvertService advertService) {
+        this.advertService = advertService;
+    }
 
-	private List<AdvertDTO> convertAdverts(List<Advert> activeAdverts) {
-		List<AdvertDTO> newList = new ArrayList<AdvertDTO>();
-		AdvertConverter converter = new AdvertConverter();
-		for(Advert advert : activeAdverts){
-			newList.add(converter.convert(advert));
-		}
-		return newList;
-	}
-	
-	static class AdvertConverter{
-		
-		private final Ordering<ProgramClosingDate> ordering = new Ordering<ProgramClosingDate>() {
-			public int compare(ProgramClosingDate left, ProgramClosingDate right){
-				return left.getClosingDate().compareTo(right.getClosingDate());
-			}
-		};
-		
-		public AdvertDTO convert(Advert input) {
-			AdvertDTO dto = new AdvertDTO(input.getId());
-			dto.setDescription(input.getDescription());
-			dto.setFunding(input.getFunding());
-			dto.setStudyDuration(input.getStudyDuration());
-			Program program = input.getProgram();
-			dto.setProgramCode(program.getCode());
-			dto.setTitle(program.getTitle());
-			dto.setClosingDate(getFirstClosingDate(program));
-			dto.setSupervisorEmail(getFirstValidAdministrator(program));
-			return dto;
-		}
+    @RequestMapping(value = "/activeAdverts", method = RequestMethod.GET)
+    @ResponseBody
+    public String activeAdverts(@RequestParam(required = false) Integer selectedAdvertId) {
+        Map<String, Object> map = Maps.newHashMap();
+        List<AdvertDTO> activeAdverts = convertAdverts(advertService.getActiveAdverts());
+        Collections.shuffle(activeAdverts, new Random(System.currentTimeMillis()));
+        AdvertDTO selectedAdvert = getSelectedAdvert(selectedAdvertId, activeAdverts);
+        setSelectedAndBringToFront(selectedAdvert, activeAdverts);
+        map.put("adverts", activeAdverts);
+        return new Gson().toJson(map);
+    }
 
-		private Date getFirstClosingDate(Program program) {
-			if(CollectionUtils.isEmpty(program.getClosingDates())){
-				return null;
-			}
-			Collections.sort(program.getClosingDates(), ordering.nullsLast());
-			ProgramClosingDate programClosingDate = program.getClosingDates().get(0);
-			return programClosingDate!=null? programClosingDate.getClosingDate():null;
-		}
+    private void setSelectedAndBringToFront(AdvertDTO selectedAdvert, List<AdvertDTO> activeAdverts) {
+        selectedAdvert.setSelected(true);
+        if (activeAdverts.remove(selectedAdvert)) {
+            activeAdverts.add(0, selectedAdvert);
+        }
+    }
 
-		private String getFirstValidAdministrator(Program program) {
-			List<RegisteredUser> administrators = program.getAdministrators();
-			for(RegisteredUser administrator:administrators){
-				if(isValid(administrator)){
-					return administrator.getEmail();
-				}
-			}
-			return null;
-		}
+    private AdvertDTO getSelectedAdvert(Integer selectedAdvertId, List<AdvertDTO> activeAdverts) {
+        if (selectedAdvertId != null) {
+            for (AdvertDTO advert : activeAdverts) {
+                if (selectedAdvertId == advert.getId()) {
+                    return advert;
+                }
+            }
+        }
+        return NULL_ADVERT;
+    }
 
-		private boolean isValid(RegisteredUser admin) {
-			return admin!=null && admin.isAccountNonExpired() && admin.isAccountNonLocked() 
-					&& admin.isCredentialsNonExpired() && admin.isEnabled();
-		}
-	}
+    private List<AdvertDTO> convertAdverts(List<Advert> activeAdverts) {
+        List<AdvertDTO> newList = new ArrayList<AdvertDTO>();
+        AdvertConverter converter = new AdvertConverter();
+        for (Advert advert : activeAdverts) {
+            newList.add(converter.convert(advert));
+        }
+        return newList;
+    }
+
+    class AdvertConverter {
+
+        private final Ordering<ProgramClosingDate> ordering = new Ordering<ProgramClosingDate>() {
+            public int compare(ProgramClosingDate left, ProgramClosingDate right) {
+                return left.getClosingDate().compareTo(right.getClosingDate());
+            }
+        };
+
+        public AdvertDTO convert(Advert input) {
+            AdvertDTO dto = new AdvertDTO(input.getId());
+            dto.setDescription(input.getDescription());
+            dto.setFunding(input.getFunding());
+            dto.setStudyDuration(input.getStudyDuration());
+            Program program = advertService.getProgram(input);
+            dto.setProgramCode(program.getCode());
+            dto.setTitle(program.getTitle());
+            dto.setClosingDate(getFirstClosingDate(program));
+            dto.setSupervisorEmail(getFirstValidAdministrator(program));
+            return dto;
+        }
+
+        private Date getFirstClosingDate(Program program) {
+            if (CollectionUtils.isEmpty(program.getClosingDates())) {
+                return null;
+            }
+            Collections.sort(program.getClosingDates(), ordering.nullsLast());
+            ProgramClosingDate programClosingDate = program.getClosingDates().get(0);
+            return programClosingDate != null ? programClosingDate.getClosingDate() : null;
+        }
+
+        private String getFirstValidAdministrator(Program program) {
+            List<RegisteredUser> administrators = program.getAdministrators();
+            for (RegisteredUser administrator : administrators) {
+                if (isValid(administrator)) {
+                    return administrator.getEmail();
+                }
+            }
+            return null;
+        }
+
+        private boolean isValid(RegisteredUser admin) {
+            return admin != null && admin.isAccountNonExpired() && admin.isAccountNonLocked() && admin.isCredentialsNonExpired() && admin.isEnabled();
+        }
+    }
 }

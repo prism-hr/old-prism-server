@@ -82,7 +82,7 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
     }
 
     public boolean canEditApplicationAsApplicant(final ApplicationForm form, final RegisteredUser user) {
-        return user == form.getApplicant() && !form.isTerminated() && form.getIsEditableByApplicant();
+        return user.getId() == form.getApplicant().getId() && !form.isTerminated() && form.getIsEditableByApplicant();
     }
 
     public boolean canEditApplicationAsAdministrator(final ApplicationForm form, final RegisteredUser user) {

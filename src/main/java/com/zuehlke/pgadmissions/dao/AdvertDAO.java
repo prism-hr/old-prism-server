@@ -29,10 +29,9 @@ public class AdvertDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(advert);
     }
 
-    public Advert getProgramAdvert(Program program) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("isProgramAdvert", true));
-        return (Advert) criteria.uniqueResult();
+    public Program getProgram(Advert advert) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("advert", advert));
+        return (Program) criteria.uniqueResult();
     }
 
     public Advert getAdvertById(int advertId) {
@@ -45,14 +44,13 @@ public class AdvertDAO {
 
     @SuppressWarnings("unchecked")
     public List<Advert> getActiveProgramAdverts() {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("active", true))
-                .add(Restrictions.eq("isProgramAdvert", true));
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("active", true));
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
     public List<Advert> listProjectAdverts() {
-        return sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("isProgramAdvert", false)).list();
+        return sessionFactory.getCurrentSession().createCriteria(Advert.class).list();
     }
 
     public void delete(Advert advert) {

@@ -57,8 +57,10 @@ public class AdvertsControllerTest {
 	@Test
 	public void shouldReturnOneAdvertsInJson(){
 		Program program = new ProgramBuilder().code("code1").title("another title").build();
-		Advert advert = new AdvertBuilder().id(1).title("Title").description("Advert").funding("Funding").isProgramAdvert(true).studyDuration(1).program(program).build();
+		Advert advert = new AdvertBuilder().id(1).title("Title").description("Advert").funding("Funding").studyDuration(1).build();
 		List<Advert> advertList = Arrays.asList(advert);
+		
+		expect(advertService.getProgram(advert)).andReturn(program);
 		expect(advertService.getActiveAdverts()).andReturn(advertList);
 		replay(advertService);
 		int expectedAdvertsSize = 1;
@@ -71,9 +73,12 @@ public class AdvertsControllerTest {
 	public void shouldReturnTwoAdvertsInJson(){
 		Program programOne = new ProgramBuilder().code("code1").title("another title").build();
 		Program programTwo = new ProgramBuilder().code("code2").title("another title2").build();
-		Advert advertOne = new AdvertBuilder().id(1).title("Title1").description("Advert1").funding("Funding1").isProgramAdvert(true).studyDuration(1).program(programOne).build();
-		Advert advertTwo = new AdvertBuilder().id(1).title("Title2").description("Advert2").funding("Funding2").isProgramAdvert(true).studyDuration(1).program(programTwo).build();
+		Advert advertOne = new AdvertBuilder().id(1).title("Title1").description("Advert1").funding("Funding1").studyDuration(1).build();
+		Advert advertTwo = new AdvertBuilder().id(1).title("Title2").description("Advert2").funding("Funding2").studyDuration(1).build();
 		List<Advert> advertList = Arrays.asList(advertOne,advertTwo);
+
+		expect(advertService.getProgram(advertOne)).andReturn(programOne);
+		expect(advertService.getProgram(advertTwo)).andReturn(programTwo);
 		expect(advertService.getActiveAdverts()).andReturn(advertList);
 		replay(advertService);
 		int expectedAdvertsSize = 2;
@@ -87,8 +92,10 @@ public class AdvertsControllerTest {
 	@Test
 	public void shouldConvertAdvertWithoutClosingDateAndWithoutEmail(){
 		Program program = new ProgramBuilder().code("code1").title("another title").build();
-		Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").isProgramAdvert(true).studyDuration(1).program(program).build();
+		Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
 		List<Advert> advertList = Arrays.asList(advert);
+	
+		expect(advertService.getProgram(advert)).andReturn(program);
 		expect(advertService.getActiveAdverts()).andReturn(advertList);
 		replay(advertService);
 		String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
@@ -113,8 +120,10 @@ public class AdvertsControllerTest {
 		RegisteredUser validAdmin=new RegisteredUserBuilder().email("accountEmail").build();;
 		Program program = new ProgramBuilder().code("code1").title("another title").closingDates(programClosingDateSecond, programClosingDateFirst).
 				administrators(expiredAdmin,lockedAdmin, credentialsExpiredAdmin, notEnabledAdmin, validAdmin).build();
-		Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").isProgramAdvert(true).studyDuration(1).program(program).build();
+		Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
 		List<Advert> advertList = Arrays.asList(advert);
+		
+		expect(advertService.getProgram(advert)).andReturn(program);
 		expect(advertService.getActiveAdverts()).andReturn(advertList);
 		replay(advertService);
 		String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
@@ -131,8 +140,10 @@ public class AdvertsControllerTest {
 	@Test
 	public void shouldHaveASelectedAdvert(){
 		Program program = new ProgramBuilder().code("code1").title("another title").build();
-		Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").isProgramAdvert(true).studyDuration(1).program(program).build();
+		Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
 		List<Advert> advertList = Arrays.asList(advert);
+		
+		expect(advertService.getProgram(advert)).andReturn(program);
 		expect(advertService.getActiveAdverts()).andReturn(advertList);
 		replay(advertService);
 		String activeAdvertsJson = controller.activeAdverts(advert.getId());
@@ -143,9 +154,12 @@ public class AdvertsControllerTest {
 	@Test
 	public void shouldHaveSelectedAdvertAsFirstElement(){
 		Program program = new ProgramBuilder().code("code1").title("another title").build();
-		Advert selectedAdvert = new AdvertBuilder().id(1).description("Advert").funding("Funding").isProgramAdvert(true).studyDuration(1).program(program).build();
-		Advert notSelectedAdvert = new AdvertBuilder().id(2).description("Advert").funding("Funding").isProgramAdvert(true).studyDuration(1).program(program).build();
+		Advert selectedAdvert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
+		Advert notSelectedAdvert = new AdvertBuilder().id(2).description("Advert").funding("Funding").studyDuration(1).build();
 		List<Advert> advertList = Arrays.asList(notSelectedAdvert,selectedAdvert);
+		
+		expect(advertService.getProgram(selectedAdvert)).andReturn(program);
+		expect(advertService.getProgram(notSelectedAdvert)).andReturn(program);
 		expect(advertService.getActiveAdverts()).andReturn(advertList);
 		replay(advertService);
 		

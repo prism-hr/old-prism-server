@@ -27,10 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
@@ -41,6 +38,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.validators.AbstractValidator;
 import com.zuehlke.pgadmissions.validators.ProgramAdvertValidator;
 import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
@@ -100,17 +98,7 @@ public class ProgramConfigurationController {
     public void loadFreeMarkerTemplates() throws IOException {
         linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(LINK_TO_APPLY);
         buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(BUTTON_TO_APPLY);
-        gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes f) {
-                return false;
-            }
-
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) {
-                return Program.class == clazz;
-            }
-        }).create();
+        gson = new Gson();
     }
 
     @InitBinder("advert")
@@ -139,7 +127,7 @@ public class ProgramConfigurationController {
         if (program == null) {
             return null;
         }
-        return programsService.getProgramAdvert(program);
+        return program.getAdvert();
     }
 
     @ModelAttribute("user")
@@ -158,7 +146,7 @@ public class ProgramConfigurationController {
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
     public String getAdvertData(@RequestParam String programCode) throws TemplateException, IOException {
-        Advert advert = getProgrameAdvert(programCode);
+        Advert advert = HibernateUtils.unproxy(getProgrameAdvert(programCode));
 
         Map<String, Object> result = Maps.newHashMap();
         result.put("advert", advert);
@@ -190,15 +178,9 @@ public class ProgramConfigurationController {
             }
         }
 
-        if (map.isEmpty()) { // no errors
-            Advert existingAdvert = programsService.getProgramAdvert(program);
-            if (existingAdvert != null) {
-                advert.setId(existingAdvert.getId());
-            }
-            advert.setProgram(program);
-            advert.setIsProgramAdvert(true);
-
-            programsService.merge(advert);
+        if (map.isEmpty()) {
+            program.setAdvert(advert);
+            programsService.save(program);
             map.put("success", "true");
         }
 

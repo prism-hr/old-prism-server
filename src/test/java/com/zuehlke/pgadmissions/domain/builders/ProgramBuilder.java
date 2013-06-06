@@ -151,7 +151,6 @@ public class ProgramBuilder {
         program.getScoringDefinitions().putAll(scoringDefinitions);
         program.getBadges().addAll(badges);
         program.setAtasRequired(atasRequired);
-        program.getAdverts().addAll(adverts);
         program.getClosingDates().addAll(programClosingDates);
         return program;
     }

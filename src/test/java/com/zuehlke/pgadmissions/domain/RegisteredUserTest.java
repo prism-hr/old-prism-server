@@ -358,10 +358,11 @@ public class RegisteredUserTest {
 
     @Test
     public void shouldNotAllowAdminToEditApplicationAsApplicant() {
+        RegisteredUser applicant = new RegisteredUserBuilder().id(8).build();
         RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program)
-                .isEditableByApplicant(true).build();
+                .isEditableByApplicant(true).applicant(applicant).build();
         assertFalse(admin.canEditAsApplicant(applicationForm));
     }
 

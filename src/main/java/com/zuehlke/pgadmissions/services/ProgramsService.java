@@ -60,10 +60,6 @@ public class ProgramsService {
         program.getScoringDefinitions().put(scoringStage, null);
     }
 
-    public Advert getProgramAdvert(Program program) {
-        return advertDAO.getProgramAdvert(program);
-    }
-
     public void merge(Advert programAdvert) {
         advertDAO.merge(programAdvert);
     }
@@ -79,13 +75,14 @@ public class ProgramsService {
 
     public void addProjectAdvert(ProjectAdvertDTO projectAdvertDTO) {
         Advert advert = new Advert();
-        advert.setProgram(projectAdvertDTO.getProgram());
+        
+        // TODO project class needed 
+//        advert.setProgram(projectAdvertDTO.getProgram());
         advert.setTitle(projectAdvertDTO.getTitle());
         advert.setDescription(projectAdvertDTO.getDescription());
         advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
         advert.setFunding(projectAdvertDTO.getFunding());
         advert.setActive(projectAdvertDTO.getActive());
-        advert.setIsProgramAdvert(false);
 
         advertDAO.save(advert);
     }

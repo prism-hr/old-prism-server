@@ -7,8 +7,8 @@ $(document).ready(function() {
     // Close button.
     // --------------------------------------------------------------------------------
 	$('#refereeCloseButton').click(function(){
-		$('#referee-H2').trigger('click');
-		return false;
+		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
+		$('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
 	});
 	
     // -------------------------------------------------------------------------------
@@ -84,6 +84,14 @@ $(document).ready(function() {
     $(".file").each(function() {
     	watchUpload($(this));
     });
+	
+	// Check if loading from other site apart from application form 
+	$('#referee_newReferee').hide();
+	$('#referencesSection .buttons').prepend('<button id="newRefecence" class="btn btn-success right" type="button">New Reference</button>');
+	$('#newRefecence').click(function () {
+		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
+		$('#referee_newReferee').show();
+	});
 });
 
 function clearRefereeFormErrors() {

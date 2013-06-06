@@ -8,8 +8,8 @@ $(document).ready(function() {
     // Close button.
     // --------------------------------------------------------------------------------
 	$('#qualificationCloseButton').click(function(){
-		$('#qualifications-H2').trigger('click');
-		return false;
+		$('#qualificationsSection').find('*[id*=qualification_]:visible').hide();
+		$('html,body').animate({ scrollTop: $('#qualifications-H2').offset().top }, 'fast');
 	});
 	
     // -------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ function showFirstQualificationEntryOrExplanationArea() {
 		
 		if(!$(qualificationCheckbox).attr("disabled")){
 			var qualificationId = $(qualificationCheckbox).attr("value");
-			$('#qualification_' + qualificationId).show();
+			//$('#qualification_' + qualificationId).show();
 			return false;
 		}
 	}

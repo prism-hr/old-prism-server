@@ -1880,4 +1880,5 @@ form#removeForm {
 #programAdvertClosingDates td{
 	vertical-align: middle;
 }
+.buttons .right {float: left;}
 #qualificationsSection .existing input[type="checkbox"], #referencesSection .existing input[type="checkbox"]{margin: 0 0 0 2px !important}

@@ -911,8 +911,20 @@ function dateToDMY(date) {
 function checkIfErrors() {
 	errors = $('.alert-error:visible').length;
 	if (errors > 0) {
-		$('#add-info-bar-div').removeClass('alert-info').addClass('alert-error').find('i').removeClass('icon-info-sign').addClass('icon-warning-sign');
-	} 
+		if ($('#add-info-bar-div').length > 0) {
+			$('#add-info-bar-div').removeClass('alert-info').addClass('alert-error').find('i').removeClass('icon-info-sign').addClass('icon-warning-sign');
+		}
+		if ($('.infoBar').length > 0) {
+			$('.infoBar').removeClass('alert-info').addClass('alert-error').find('i').removeClass('icon-info-sign').addClass('icon-warning-sign');
+		}
+	} else {
+		if ($('#add-info-bar-div').length > 0) {
+			$('#add-info-bar-div').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
+		}
+		if ($('.infoBar').length > 0) {
+			$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
+		}
+	}
 }
 /*!
  * jQuery Cookie Plugin v1.3.1

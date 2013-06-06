@@ -91,4 +91,9 @@ public class ProgramsService {
         return advertDAO.listProjectAdverts();
     }
 
+	public void merge(Program program) {
+		programDAO.merge(program);
+		
+	}
+
 }

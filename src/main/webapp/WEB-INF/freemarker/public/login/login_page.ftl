@@ -40,10 +40,11 @@
       
         <!-- Middle. -->
         <div id="middle">
+        
+        <!-- Prospectus container -->
       	<form id="applyForm" action="/pgadmissions/apply/new" method="POST">
       		<input type="hidden" id="program" name="program" value=""/>
       	</form>
-		<!-- Prospectus container -->
         <div id="pContainer">
             <div id="pholder">
                 <header>
@@ -57,6 +58,8 @@
                 </footer>
             </div>
         </div>
+        <!-- ENd Prospectus container -->
+        
         <!-- Login form. -->
         <section id="login-box">
         
@@ -71,7 +74,7 @@
                     <input type="text" id="username_or_email" name="username_or_email" value="${Session.loginUserEmail}" disabled="disabled" />
                     <input type="hidden" id="j_username" name="j_username" value="${Session.loginUserEmail}" />
                   <#else>
-                    <input type="email" id="username_or_email" name="j_username" placeholder="Email address" autofocus="autofocus" />
+                    <input type="email" id="username_or_email" name="j_username" placeholder="Email address" autofocus />
                   </#if>
                 </div>
               </div>

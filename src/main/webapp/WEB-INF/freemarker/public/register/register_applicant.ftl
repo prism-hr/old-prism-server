@@ -41,22 +41,24 @@
 		  	<!-- Middle. -->
 		  	<div id="middle">
 		  
-		    <header>
-		
-		      <!-- App logo and tagline -->
-		      <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
-		
-          <div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
-		
-		    </header>
-		    
-		    
-		    <!-- Blurb. -->
-		    <aside id="blurb">
-		          <p>Welcome to <b>UCL Prism</b>, the gateway<br />
-							to postgraduate research opportunities<br />
-							in UCL Engineering.</p>
-		    </aside>
+		    <!-- Prospectus container -->
+      	<form id="applyForm" action="/pgadmissions/apply/new" method="POST">
+      		<input type="hidden" id="program" name="program" value=""/>
+      	</form>
+        <div id="pContainer">
+            <div id="pholder">
+                <header>
+                  <h1>Research Study Opportunities</h1></header>
+                <section id="plist">
+                	<ul></ul>
+                </section>
+                <footer class="clearfix">
+                	<div class="left"><a href="www.engineering.ucl.ac.uk" target="_blank"><img src="<@spring.url '/design/default/images/ucl-engineering.jpg'/>" alt="" /></a></div>
+                	<div class="right"><a href="http://prism.ucl.ac.uk" target="_blank"><img src="<@spring.url '/design/default/images/prism_small.jpg'/>" alt="" /></a></div>
+                </footer>
+            </div>
+        </div>
+        <!-- ENd Prospectus container -->
 		
 		    <!-- Login form. -->
 		    <section id="registration-box">
@@ -148,7 +150,10 @@
 		      	</form>
 		    
 		    </section>
-		
+			<ul id="conections">
+                    <li><a href="https://www.youtube.com/user/UCLPRISM/" target="_blank"><img src="<@spring.url '/design/default/images/youtube.png'/>" alt="" /></a><span>Online demostrations</span></li>
+                    <li><a href="http://uclprism.freshdesk.com/support/home" target="_blank"><img src="<@spring.url '/design/default/images/freshdesk.png'/>" alt="" /></a><span>Help for UCL PRiSM users</span></li>
+            </ul>
 		  </div>
 		  
 		<#include "/public/common/global_footer.ftl"/>
@@ -162,5 +167,6 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/register_applicant.js'/>"></script>
         <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+        <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/adverts.js' />"></script>
 	</body>
 </html>

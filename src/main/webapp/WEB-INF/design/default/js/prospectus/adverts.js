@@ -11,13 +11,6 @@ function showAdverts(){
 	$('#pHolder').show();	
 }
 
-function bindAdvertApplyButton(){
-	$('button.apply').click(function() {
-    	$('#program').val(this.id);
-    	$('#applyForm').submit();
-   });
-}
-
 function getAdverts(){
 	var selectedAdvertId= getUrlParam("advert");
 	if(selectedAdvertId !== undefined && selectedAdvertId != "undefined"){
@@ -40,6 +33,7 @@ function getAdverts(){
 			var map = JSON.parse(data);
 			processAdverts(map.adverts);
 			bindAdvertApplyButton();
+			bindAddThisShareOverFix();
 		},
 		complete: function() {
 		}
@@ -53,6 +47,21 @@ function processAdverts(adverts){
 	});
 }
 
+function bindAdvertApplyButton(){
+	$('button.apply').click(function() {
+    	$('#program').val(this.id);
+    	$('#applyForm').submit();
+   });
+}
+
+function bindAddThisShareOverFix(){
+	$('.addthis_button_compact, .addthis_bubble_style').mousemove(function(e){
+	    $('#at15s').css({
+	        'top': e.pageY ,
+	        'left': e.pageX
+	    });
+	});
+}
 function renderAdvert(advert){
 	var selectedClass = (advert.selected) ? "selected" : "";
 	return '<li class="program item '+ selectedClass +'" id="ad-'+advert.id+'">'+

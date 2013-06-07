@@ -193,6 +193,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean canSeeReference(final ReferenceComment reference) {
         return canSeeReference(reference, this);
     }
+    
+    public boolean canSeeRestrictedInformation(final ApplicationForm form){
+        return canSeeRestrictedInformation(form, this);
+    }
 
     @Override
     public int compareTo(final RegisteredUser other) {

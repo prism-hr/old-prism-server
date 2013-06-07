@@ -120,8 +120,9 @@
 
                                 <section id="documentSection" class="folding form-rows blue"><#include "/private/staff/application/components/documents.ftl"/></section>
 
-                                <section id="additionalInformationSection" class="folding form-rows lightblue"><#include "/private/staff/application/components/additional_information.ftl"/></section>
-
+                                <#if user.canSeeRestrictedInformation(applicationForm) >
+                                  <section id="additionalInformationSection" class="folding form-rows lightblue"><#include "/private/staff/application/components/additional_information.ftl"/></section>
+                                </#if>
                                 
                                 <div class="buttons">
                                     <form>

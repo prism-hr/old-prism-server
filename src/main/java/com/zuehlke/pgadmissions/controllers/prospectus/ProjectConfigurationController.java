@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers.prospectus;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,10 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -100,17 +105,23 @@ public class ProjectConfigurationController {
     public void loadFreeMarkerTemplates() throws IOException {
         linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(LINK_TO_APPLY);
         buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(BUTTON_TO_APPLY);
-        gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).setExclusionStrategies(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes f) {
-                return false;
-            }
+        gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+                .registerTypeAdapter(Program.class, new JsonSerializer<Program>() {
+                    @Override
+                    public JsonElement serialize(Program src, Type typeOfSrc, JsonSerializationContext context) {
+                        return new JsonPrimitive(src.getCode());
+                    }
+                }).setExclusionStrategies(new ExclusionStrategy() {
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return false;
+                    }
 
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) {
-                return Program.class == clazz || RegisteredUser.class == clazz;
-            }
-        }).create();
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return RegisteredUser.class == clazz;
+                    }
+                }).create();
     }
 
     @InitBinder("projectAdvertDTO")

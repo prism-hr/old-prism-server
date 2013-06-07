@@ -23,6 +23,8 @@
               </div>
             </div>
             
+            <input type="hidden" id="projectId"/>
+            
             <div class="row-group">
                 <h3>Project Advert</h3>
                 <div class="row" id="projectAdvertProgramDiv">
@@ -129,7 +131,8 @@
                 </div>
             </div>
             <div class="buttons">
-                <button class="btn btn-primary" type="button" id="save-go">Save</button>
+                <button class="btn" type="button" id="projectsClear">Clear</button>
+                <button class="btn btn-primary" type="button" id="projectsSave">Save</button>
             </div>
         </form>
     </div>

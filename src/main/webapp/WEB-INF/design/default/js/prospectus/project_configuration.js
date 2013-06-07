@@ -3,8 +3,9 @@ $(document).ready(function(){
 		registerAddProjectAdvertButton();
 		registerEditProjectAdvertButton();
 		registerRemoveProjectAdvertButton();
+		registerClearButton();
 		
-		loadAdverts();
+		loadProjects();
 });
 
 function registerAddProjectAdvertButton(){
@@ -65,7 +66,7 @@ function registerAddProjectAdvertButton(){
 						$("#projectAdvertStudyPlacesDiv").append(getErrorMessageHTML(map['studyPlaces']));
 					}
 				} else {
-					loadAdverts();
+					loadProjects();
 				}
 			},
 			complete: function() {
@@ -78,7 +79,7 @@ function registerAddProjectAdvertButton(){
 function registerEditProjectAdvertButton(){
 	$('#projectAdvertsTable').on('click', '.button-edit', function(){
 		var $row = $(this).closest('tr');
-		loadProjectAdvert($row);
+		loadProject($row);
 	});	
 }
 
@@ -86,6 +87,21 @@ function registerRemoveProjectAdvertButton(){
 	$('#projectAdvertsTable').on('click', '.button-delete', function(){
 		var $row = $(this).closest('tr');
 		removeProject($row);
+	});
+}
+
+function registerClearButton(){
+	$("#projectsClear").bind('click', function(){
+		$("#projectAdvertProgramSelect").val("");
+		$("#projectAdvertTitleInput").val("");
+		$("#projectAdvertDescriptionText").val("");
+		$("#projectAdvertStudyDurationInput").val("");
+		$("#projectAdvertStudyDurationUnitSelect").val("");
+		$("#projectAdvertFundingText").val("");
+		$("#projectAdvertIsActiveRadioYes").prop("checked", false);
+		$("#projectAdvertIsActiveRadioNo").prop("checked", false);
+		$('#projectId').val("");
+		$('#addProjectAdvert').text("Add");
 	});
 }
 
@@ -111,8 +127,8 @@ function removeProject(projectRow) {
     });
 }
 
-function loadProjectAdvert(advertRow) {
-	project = advertRow.attr("project-id");
+function loadProject(advertRow) {
+	projectId = advertRow.attr("project-id");
 	$.ajax({
 		type: 'GET',
 		statusCode: {
@@ -122,13 +138,16 @@ function loadProjectAdvert(advertRow) {
 	        400: function() { window.location.href = "/pgadmissions/400"; },                  
 	        403: function() { window.location.href = "/pgadmissions/404"; }
 		},
-		url:"/pgadmissions/prospectus/projects/" + project,
+		url:"/pgadmissions/prospectus/projects/" + projectId,
 		data: {
 		}, 
 		success: function(data) {
 			clearProjectAdvertErrors();
 			var project = JSON.parse(data);
 			var advert = project.advert;
+			
+			$("#projectAdvertProgramSelect").val(project.program);
+			
 			$("#projectAdvertTitleInput").val(advert.title);
 			$("#projectAdvertDescriptionText").val(advert.description);
 			
@@ -149,6 +168,7 @@ function loadProjectAdvert(advertRow) {
 				$("#projectAdvertIsActiveRadioNo").prop("checked", true);
 			}
 			
+			$('#projectId').val(projectId);
 			$('#addProjectAdvert').text("Edit");
         },
         complete: function() {
@@ -156,7 +176,7 @@ function loadProjectAdvert(advertRow) {
     });
 }
 
-function loadAdverts(){
+function loadProjects(){
 	$('#ajaxloader').show();
 	var url="/pgadmissions/prospectus/projects";
 	$.ajax({

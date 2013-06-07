@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.util.Date;
+
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -17,6 +19,10 @@ public class ProjectDTO {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     private String funding;
+
+    private Boolean closingDateSpecified;
+
+    private Date closingDate;
 
     private Boolean active;
 
@@ -58,6 +64,22 @@ public class ProjectDTO {
 
     public void setFunding(String funding) {
         this.funding = funding;
+    }
+
+    public Boolean getClosingDateSpecified() {
+        return closingDateSpecified;
+    }
+
+    public void setClosingDateSpecified(Boolean closingDateSpecified) {
+        this.closingDateSpecified = closingDateSpecified;
+    }
+
+    public Date getClosingDate() {
+        return closingDate;
+    }
+
+    public void setClosingDate(Date closingDate) {
+        this.closingDate = closingDate;
     }
 
     public Boolean getActive() {

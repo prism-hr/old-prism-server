@@ -75,10 +75,10 @@
                 <label class="plain-label">Would you like to set a closing date? <em>*</em>
                 </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
                 <div class="field">
-                  <input id="projectAdvertHasClosingDateRadioYes" type="radio" name="switch" value="true">
+                  <input id="projectAdvertHasClosingDateRadioYes" type="radio" name="projectAdvertHasClosingDateRadio" value="true">
                     Yes
                   </input>
-                  <input id="projectAdvertHasClosingDateRadioNo" type="radio" name="switch" value="false">
+                  <input id="projectAdvertHasClosingDateRadioNo" type="radio" name="projectAdvertHasClosingDateRadio" value="false">
                     No
                   </input>
                 </div>

@@ -77,7 +77,7 @@ public class ProgramsService {
     public Advert getAdvert(int advertId) {
         return advertDAO.getAdvertById(advertId);
     }
-    
+
     public Project getProject(int projectId) {
         return projectDAO.getProjectById(projectId);
     }
@@ -96,6 +96,9 @@ public class ProgramsService {
         project.setAuthor(author);
         project.setPrimarySupervisor(author);
         project.setProgram(projectAdvertDTO.getProgram());
+        if (projectAdvertDTO.getClosingDateSpecified()) {
+            project.setClosingDate(projectAdvertDTO.getClosingDate());
+        }
 
         projectDAO.save(project);
     }

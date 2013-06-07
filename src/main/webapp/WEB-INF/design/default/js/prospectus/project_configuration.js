@@ -16,7 +16,6 @@ function registerAddProjectAdvertButton(){
 				value : $("#projectAdvertStudyDurationInput").val(),
 				unit : $("#projectAdvertStudyDurationUnitSelect").val()
 			};
-		var active = $("input:radio[name=projectAdvertIsActiveRadio]:checked").val();
 		
 		$('#ajaxloader').show();
 		var url="/pgadmissions/prospectus/projects";
@@ -31,15 +30,14 @@ function registerAddProjectAdvertButton(){
 			},
 			url: url,
 			data: {
-				program: $("#projectAdvertProgramSelect").val(),
-				title:$("#projectAdvertTitleInput").val(),
-				description:$("#projectAdvertDescriptionText").val(),
-				studyDuration:JSON.stringify(duration),
-				funding:$("#projectAdvertFundingText").val(),
-				active:active,
+				program : $("#projectAdvertProgramSelect").val(),
+				title : $("#projectAdvertTitleInput").val(),
+				description : $("#projectAdvertDescriptionText").val(),
+				studyDuration : JSON.stringify(duration),
+				funding : $("#projectAdvertFundingText").val(),
+				closingDateSpecified : $("input:radio[name=projectAdvertHasClosingDateRadio]:checked").val(), 
 				closingDate : $('#projectAdvertClosingDateInput').val(),
-				studyPlaces : $('#projectAdvertStudyPlacesInput').val()
-				
+				active : $("input:radio[name=projectAdvertIsActiveRadio]:checked").val()
 			}, 
 			success: function(data) {
 				var map = JSON.parse(data);
@@ -58,6 +56,9 @@ function registerAddProjectAdvertButton(){
 					}
 					if(map['active']){
 						$("#projectAdvertIsActiveDiv").append(getErrorMessageHTML(map['active']));
+					}
+					if(map['closingDateSpecified']){
+						$("#projectAdvertHasClosingDateDiv").append(getErrorMessageHTML(map['closingDateSpecified']));
 					}
 					if(map['closingDate']){
 						$("#projectAdvertClosingDateDiv").append(getErrorMessageHTML(map['closingDate']));
@@ -98,6 +99,9 @@ function registerClearButton(){
 		$("#projectAdvertStudyDurationInput").val("");
 		$("#projectAdvertStudyDurationUnitSelect").val("");
 		$("#projectAdvertFundingText").val("");
+		$("#projectAdvertHasClosingDateRadioYes").prop("checked", false);
+		$("#projectAdvertHasClosingDateRadioNo").prop("checked", false);
+		$("#projectAdvertClosingDateInput").val("");
 		$("#projectAdvertIsActiveRadioYes").prop("checked", false);
 		$("#projectAdvertIsActiveRadioNo").prop("checked", false);
 		$('#projectId').val("");
@@ -152,17 +156,24 @@ function loadProject(advertRow) {
 			$("#projectAdvertDescriptionText").val(advert.description);
 			
 			var durationOfStudyInMonths=advert.studyDuration;
-			if(durationOfStudyInMonths%12==0){
+			if(durationOfStudyInMonths%12==0) {
 				$("#projectAdvertStudyDurationInput").val((durationOfStudyInMonths/12).toString());
 				$("#projectAdvertStudyDurationUnitSelect").val('Years');
-			}else{
+			} else {
 				$("#projectAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
 				$("#projectAdvertStudyDurationUnitSelect").val('Months');
 			}
 			
 			$("#projectAdvertFundingText").val(advert.funding);
 			
-			if(advert.active){
+			if(project.closingDate) {
+				$("#projectAdvertHasClosingDateRadioYes").prop("checked", true);
+			} else {
+				$("#projectAdvertHasClosingDateRadioNo").prop("checked", true);
+			}
+			$("#projectAdvertClosingDateInput").val(project.closingDate);
+			
+			if(advert.active) {
 				$("#projectAdvertIsActiveRadioYes").prop("checked", true);
 			} else {
 				$("#projectAdvertIsActiveRadioNo").prop("checked", true);

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.prospectus;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
-import com.zuehlke.pgadmissions.validators.ProjectAdvertDTOValidator;
+import com.zuehlke.pgadmissions.validators.ProjectDTOValidator;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -69,7 +70,7 @@ public class ProjectConfigurationController {
 
     private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
-    private final ProjectAdvertDTOValidator projectAdvertDTOValidator;
+    private final ProjectDTOValidator projectDTOValidator;
 
     private final ProgramClosingDateValidator closingDateValidator;
     private final DatePropertyEditor datePropertyEditor;
@@ -86,14 +87,14 @@ public class ProjectConfigurationController {
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, @Value("${application.host}") final String host,
-            ApplicationContext applicationContext, ProjectAdvertDTOValidator projectAdvertDTOValidator,
+            ApplicationContext applicationContext, ProjectDTOValidator projectDTOValidator,
             DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, FreeMarkerConfigurer freeMarkerConfigurer,
             ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
         this.host = host;
         this.applicationContext = applicationContext;
-        this.projectAdvertDTOValidator = projectAdvertDTOValidator;
+        this.projectDTOValidator = projectDTOValidator;
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
         this.freeMarkerConfigurer = freeMarkerConfigurer;
         this.closingDateValidator = closingDateValidator;
@@ -124,11 +125,12 @@ public class ProjectConfigurationController {
                 }).create();
     }
 
-    @InitBinder("projectAdvertDTO")
+    @InitBinder("projectDTO")
     public void registerPropertyEditors(WebDataBinder binder) {
-        binder.setValidator(projectAdvertDTOValidator);
+        binder.setValidator(projectDTOValidator);
         binder.registerCustomEditor(Program.class, "program", programPropertyEditor);
         binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
+        binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
@@ -153,38 +155,19 @@ public class ProjectConfigurationController {
         return userService.getCurrentUser().getProgramsOfWhichAdministrator();
     }
 
-    @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
-    @ResponseBody
-    public String getAdvertData(@RequestParam String programCode) throws TemplateException, IOException {
-        // Advert advert = getProgrameAdvert(programCode);
-        //
-        // Map<String, Object> result = Maps.newHashMap();
-        // result.put("advert", HibernateUtils.unproxy(advert));
-        //
-        // HashMap<String, String> dataMap = new HashMap<String, String>();
-        // dataMap.put("programCode", programCode);
-        // dataMap.put("host", host);
-        //
-        // result.put("buttonToApply", processTemplate(buttonToApplyTemplate, dataMap));
-        // result.put("linkToApply", processTemplate(linkToApplyTemplate, dataMap));
-        //
-        // return new Gson().toJson(result);
-        return null;
-    }
-
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String addProjectAdvert(@ModelAttribute("projectAdvertDTO") @Valid ProjectDTO projectAdvertDTO, BindingResult result, HttpServletRequest request) {
+    public String addProject(@ModelAttribute("projectDTO") @Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMap();
 
         if (result.hasErrors()) {
             for (FieldError error : result.getFieldErrors()) {
                 map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
-                return gson.toJson(map);
             }
+            return gson.toJson(map);
         }
 
-        programsService.addProject(projectAdvertDTO, getUser());
+        programsService.addProject(projectDTO, getUser());
         map.put("success", "true");
 
         return gson.toJson(map);

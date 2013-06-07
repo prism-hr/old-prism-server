@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 
 @Component
-public class ProjectAdvertDTOValidator extends AbstractValidator {
+public class ProjectDTOValidator extends AbstractValidator {
 
     private static final String PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER = "prospectus.durationOfStudy.emptyOrNotInteger";
 
@@ -31,6 +31,11 @@ public class ProjectAdvertDTOValidator extends AbstractValidator {
             errors.rejectValue("studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
         } else if (studyDuration.equals(DurationOfStudyPropertyEditor.ERROR_UNIT_FOR_DURATION_OF_STUDY)) {
             errors.rejectValue("studyDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
+        if (dto.getClosingDateSpecified() == null) {
+            errors.rejectValue("closingDateSpecified", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        } else if (dto.getClosingDateSpecified() == true) {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "closingDate", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "active", EMPTY_DROPDOWN_ERROR_MESSAGE);

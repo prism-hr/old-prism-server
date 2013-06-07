@@ -56,6 +56,8 @@
 </section>
 
 <!-- Additional information -->
-<section id="additionalInformationSection" class="form-rows lightblue">
-<#include "/private/staff/application/components/additional_information.ftl"/>
-</section>
+<#if user.canSeeRestrictedInformation(applicationForm) >
+  <section id="additionalInformationSection" class="form-rows lightblue">
+  <#include "/private/staff/application/components/additional_information.ftl"/>
+  </section>
+</#if>

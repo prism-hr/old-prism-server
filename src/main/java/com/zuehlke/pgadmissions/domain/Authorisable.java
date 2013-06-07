@@ -148,4 +148,20 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
 
         return true;
     }
+
+    public boolean canSeeRestrictedInformation(final ApplicationForm form, final RegisteredUser user) {
+        if (user.isApplicant(form)) {
+            return true;
+        }
+        if (user.hasAdminRightsOnApplication(form)) {
+            return true;
+        }
+        if (isInRole(user, Authority.APPROVER)) {
+            return true;
+        }
+        if (isInRole(user, Authority.ADMITTER)) {
+            return true;
+        }
+        return false;
+    }
 }

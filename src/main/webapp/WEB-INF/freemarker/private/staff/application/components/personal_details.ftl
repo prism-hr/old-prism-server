@@ -205,8 +205,22 @@
       
       <div class="admin_row">
         <span class="admin_row_label">Skype Name</span>
-		<div class="field"><#if (applicationForm.personalDetails.messenger)?has_content>${(applicationForm.personalDetails.messenger?html)}<#else>Not Provided</#if></div>
+		    <div class="field"><#if (applicationForm.personalDetails.messenger)?has_content>${(applicationForm.personalDetails.messenger?html)}<#else>Not Provided</#if></div>
       </div>
+      
+      <#if user.canSeeRestrictedInformation(applicationForm) >
+      
+        <div class="admin_row">
+          <span class="admin_row_label">Ethnicity</span>
+          <div class="field">${(applicationForm.personalDetails.ethnicity.name?html)!"Not Provided"}</div>
+        </div>
+        
+        <div class="admin_row">
+          <span class="admin_row_label">Disability</span>
+          <div class="field">${(applicationForm.personalDetails.disability.name?html)!"Not Provided"}</div>
+        </div>
+      
+      </#if>
       
     </div>            
   </form>

@@ -14,7 +14,10 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ConfirmEligibilityEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReferenceEvent;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -137,7 +140,9 @@ public class TimelineService {
 		TimelineReference timelineReference = new TimelineReference();
 		timelineReference.setEventDate(event.getDate());
 		timelineReference.setAuthor(event.getUser());
-		timelineReference.setReferee(((ReferenceEvent) event).getReferee());
+		
+		Referee referee = ((ReferenceEvent) event).getReferee();
+		timelineReference.setReferee(referee);
 		return timelineReference;
 	}
 	

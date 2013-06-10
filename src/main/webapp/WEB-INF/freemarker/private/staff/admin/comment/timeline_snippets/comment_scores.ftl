@@ -1,5 +1,5 @@
 <#assign notProvided = "Not provided">
-     <#if comment.scores?size &gt; 0>
+     <#if comment?? && comment.scores?size &gt; 0>
      </div>
      <div class="box scores">
         <div class="score-results">

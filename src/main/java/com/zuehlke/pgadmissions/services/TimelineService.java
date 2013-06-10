@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +17,7 @@ import com.zuehlke.pgadmissions.domain.ConfirmEligibilityEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReferenceEvent;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -44,12 +44,13 @@ public class TimelineService {
 
 	}
 
-	private void addCommentsToCorrectPhase(ApplicationForm applicationForm, List<TimelinePhase> phases) {
+	private void addCommentsToCorrectPhaseExcludingEligibility(ApplicationForm applicationForm, List<TimelinePhase> phases, Set<Comment> loadedComments) {
 		List<Comment> visibleComments = applicationForm.getVisibleComments(userService.getCurrentUser());
 		for (Comment comment : visibleComments) {
 			for (TimelinePhase phase : phases) {
 				if (CommentType.REFERENCE != comment.getType() && comment.getDate().compareTo(phase.getEventDate()) >= 0 
-						&& (phase.getExitedPhaseDate() == null || comment.getDate().before(phase.getExitedPhaseDate()))) {
+						&& (phase.getExitedPhaseDate() == null || comment.getDate().before(phase.getExitedPhaseDate()))
+						&& !loadedComments.contains(comment)) {
 					phase.getComments().add(comment);
 				}
 			}
@@ -110,18 +111,20 @@ public class TimelineService {
 			phases.add(createUnsubmittedPhase(applicationForm));
 		}
 		List<Event> events = applicationForm.getEvents();
-
+		Set<Comment> confirmEligibilityComments =new HashSet<Comment>();
+		
 		for (Event event : events) {
 			if (event instanceof StateChangeEvent) {
 				phases.add(createTimelinePhaseForEvent(event, applicationForm));
 			} else if (event instanceof ConfirmEligibilityEvent) {
 			    timelineObjects.add(createTimelineConfirmEligibilityEvent(event));
+			    confirmEligibilityComments.add(((ConfirmEligibilityEvent) event).getComment());
 			}else if (event instanceof ReferenceEvent) {
 				timelineObjects.add(createTimelineReferenceFromEvent(event));
 			}
 		}
 		setExitDates(phases);
-		addCommentsToCorrectPhase(applicationForm, phases);
+		addCommentsToCorrectPhaseExcludingEligibility(applicationForm, phases, confirmEligibilityComments);
 		timelineObjects.addAll(phases);
 		Collections.sort(timelineObjects);
 		return timelineObjects;

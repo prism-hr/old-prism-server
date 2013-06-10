@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.util.StringUtils;
 
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class TimelineReference extends TimelineObject {
@@ -40,9 +41,12 @@ public class TimelineReference extends TimelineObject {
 	
 	@Override
 	public String getTooltipMessage() {
-	    RegisteredUser providedBy = referee.getReference().getProvidedBy();
-	    if (providedBy != null) {
-	        return String.format("%s %s (%s) as: %s", providedBy.getFirstName(), providedBy.getLastName(), providedBy.getEmail(), StringUtils.capitalize(getUserCapacity()));
+		ReferenceComment comment = referee.getReference();
+	    if(comment!=null){
+			RegisteredUser providedBy = comment.getProvidedBy();
+		    if (providedBy != null) {
+		        return String.format("%s %s (%s) as: %s", providedBy.getFirstName(), providedBy.getLastName(), providedBy.getEmail(), StringUtils.capitalize(getUserCapacity()));
+		    }
 	    }
 	    return super.getTooltipMessage();
 	    

@@ -52,7 +52,7 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
     	
     	assertNotNull(program.getClosingDates());
     	assertEquals(1, program.getClosingDates().size());
-    	ProgramClosingDate closingDateDetails = program.getClosingDates().get(0);
+    	ProgramClosingDate closingDateDetails = program.getClosingDate(closingDate.getClosingDate());
     	assertSameClosingDates(closingDateDetails, closingDate);
     }
 
@@ -109,7 +109,7 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 	
 
 	private void removeClosingDateFromProgram(ProgramClosingDate closingDate, Program program) {
-		program.removeClosingDate(closingDate);
+		program.removeClosingDate(closingDate.getId());
     	update(program);
 	}
 

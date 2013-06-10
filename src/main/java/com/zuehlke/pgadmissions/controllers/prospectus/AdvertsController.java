@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -25,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Controller
 @RequestMapping("/adverts")
@@ -83,12 +83,6 @@ public class AdvertsController {
 
     class AdvertConverter {
 
-        private final Ordering<ProgramClosingDate> ordering = new Ordering<ProgramClosingDate>() {
-            public int compare(ProgramClosingDate left, ProgramClosingDate right) {
-                return left.getClosingDate().compareTo(right.getClosingDate());
-            }
-        };
-
         public AdvertDTO convert(Advert input) {
             AdvertDTO dto = new AdvertDTO(input.getId());
             dto.setDescription(input.getDescription());
@@ -113,9 +107,13 @@ public class AdvertsController {
             if (CollectionUtils.isEmpty(program.getClosingDates())) {
                 return null;
             }
-            Collections.sort(program.getClosingDates(), ordering.nullsLast());
-            ProgramClosingDate programClosingDate = program.getClosingDates().get(0);
-            return programClosingDate != null ? programClosingDate.getClosingDate() : null;
+            Date now = DateUtils.truncateToDay(new Date());
+            for(ProgramClosingDate closingDate:program.getClosingDates()){
+            	if(now.compareTo(closingDate.getClosingDate())<=0){
+            		return closingDate.getClosingDate();
+            	}
+            }
+			return null;
         }
 
         private String getFirstValidAdministrator(Program program) {

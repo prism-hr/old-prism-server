@@ -45,4 +45,9 @@ public class ProgramDAO {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
     }
 
+	public void merge(Program program) {
+		sessionFactory.getCurrentSession().merge(program);
+		
+	}
+
 }

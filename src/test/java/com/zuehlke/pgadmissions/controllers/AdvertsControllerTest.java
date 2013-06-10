@@ -154,8 +154,8 @@ public class AdvertsControllerTest {
 	@Test
 	public void shouldHaveSelectedAdvertAsFirstElement(){
 		Program program = new ProgramBuilder().code("code1").title("another title").build();
-		Advert selectedAdvert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
-		Advert notSelectedAdvert = new AdvertBuilder().id(2).description("Advert").funding("Funding").studyDuration(1).build();
+		Advert selectedAdvert = new AdvertBuilder().id(new Integer(1)).description("Advert").funding("Funding").studyDuration(1).build();
+		Advert notSelectedAdvert = new AdvertBuilder().id(new Integer(2)).description("Advert").funding("Funding").studyDuration(1).build();
 		List<Advert> advertList = Arrays.asList(notSelectedAdvert,selectedAdvert);
 		
 		expect(advertService.getProgram(selectedAdvert)).andReturn(program);
@@ -163,7 +163,7 @@ public class AdvertsControllerTest {
 		expect(advertService.getActiveAdverts()).andReturn(advertList);
 		replay(advertService);
 		
-		String resultJson = controller.activeAdverts(selectedAdvert.getId());
+		String resultJson = controller.activeAdverts(new Integer(1));
 		
 		Map<?,?> resultMap = new Gson().fromJson(resultJson, Map.class);
 		List<?> activeAdvertsList = (List<?>)resultMap.get("adverts");

@@ -64,7 +64,7 @@ public class AdvertsController {
     private AdvertDTO getSelectedAdvert(Integer selectedAdvertId, List<AdvertDTO> activeAdverts) {
         if (selectedAdvertId != null) {
             for (AdvertDTO advert : activeAdverts) {
-                if (selectedAdvertId == advert.getId()) {
+                if (selectedAdvertId.equals(advert.getId())) {
                     return advert;
                 }
             }

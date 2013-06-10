@@ -4,6 +4,7 @@
       <h2>Manage Programmes</h2>
       <div id="programAdvertDiv">
           <form>
+          	  <input type="hidden" id="programAdvertId" value=""/>
               <div class="infoBar alert alert-info">
                   <i class="icon-info-sign"></i> Manage the adverts and closing dates for your programmes here.
               </div>

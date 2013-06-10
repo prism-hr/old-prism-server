@@ -38,4 +38,8 @@ public class AdvertService {
         return advertDAO.getProject(advert);
     }
 
+	public void edit(Advert advert) {
+		advertDAO.save(advert);
+	}
+
 }

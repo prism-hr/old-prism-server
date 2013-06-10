@@ -112,4 +112,12 @@ public class ProgramsService {
 		
 	}
 
+	public void addProgramAdvert(String programCode, Advert advert) {
+		Program program = getProgramByCode(programCode);
+		advertDAO.delete(program.getAdvert());
+		program.setAdvert(advert);
+		programDAO.save(program);
+	}
+
+
 }

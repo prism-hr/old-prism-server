@@ -9,7 +9,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -111,14 +110,16 @@ public class AdvertsControllerTest {
 	
 	@Test
 	public void shouldConvertAdvertWithFirstClosingDateAndFirstValidAdministratorEmail() throws Exception{
-		ProgramClosingDate programClosingDateSecond=new ProgramClosingDateBuilder().closingDate(parseDate("01-Aug-2013")).build();
-		ProgramClosingDate programClosingDateFirst=new ProgramClosingDateBuilder().closingDate(parseDate("01-Jun-2013")).build();
+		Date now = com.zuehlke.pgadmissions.utils.DateUtils.truncateToDay(new Date());
+		ProgramClosingDate programClosingDateOld=new ProgramClosingDateBuilder().closingDate(DateUtils.addDays(now, -1)).build();
+		ProgramClosingDate programClosingDateSecond=new ProgramClosingDateBuilder().closingDate(DateUtils.addDays(now, 10)).build();
+		ProgramClosingDate programClosingDateFirst=new ProgramClosingDateBuilder().closingDate(DateUtils.addDays(now, 1)).build();
 		RegisteredUser expiredAdmin= new RegisteredUserBuilder().email("invalidAccountEmail").accountNonExpired(false).build();
 		RegisteredUser lockedAdmin= new RegisteredUserBuilder().email("invalidAccountEmail").accountNonLocked(false).build();
 		RegisteredUser credentialsExpiredAdmin= new RegisteredUserBuilder().email("invalidAccountEmail").credentialsNonExpired(false).build();
 		RegisteredUser notEnabledAdmin= new RegisteredUserBuilder().email("invalidAccountEmail").enabled(false).build();
 		RegisteredUser validAdmin=new RegisteredUserBuilder().email("accountEmail").build();;
-		Program program = new ProgramBuilder().code("code1").title("another title").closingDates(programClosingDateSecond, programClosingDateFirst).
+		Program program = new ProgramBuilder().code("code1").title("another title").closingDates(programClosingDateOld,programClosingDateSecond, programClosingDateFirst).
 				administrators(expiredAdmin,lockedAdmin, credentialsExpiredAdmin, notEnabledAdmin, validAdmin).build();
 		Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
 		List<Advert> advertList = Arrays.asList(advert);
@@ -195,10 +196,5 @@ public class AdvertsControllerTest {
 		List<?> activeAdvertsList = (List<?>)resultMap.get("adverts");
 		assertThat(activeAdvertsList, hasSize(expectedAdvertsSize));
 	}
-	
-	private Date parseDate(String strDate) throws ParseException{
-		return DateUtils.parseDate(strDate, new String[] {"dd-MMM-yyyy", "dd MMM yyyy"});
-	}
-	
 	
 }

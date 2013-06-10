@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,7 +26,10 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
+import com.google.common.base.Predicate;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -72,7 +77,8 @@ public class Program extends Authorisable implements Serializable {
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "program")
-    private List<ProgramClosingDate> closingDates = new ArrayList<ProgramClosingDate>();
+    @Sort(type=SortType.COMPARATOR, comparator = ProgramClosingDate.class)
+    private SortedSet<ProgramClosingDate> closingDates = new TreeSet<ProgramClosingDate>();
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
@@ -226,80 +232,77 @@ public class Program extends Authorisable implements Serializable {
         this.advert = advert;
     }
 
-    public List<ProgramClosingDate> getClosingDates() {
+    public SortedSet<ProgramClosingDate> getClosingDates() {
         return closingDates;
     }
 
-    public void setClosingDates(List<ProgramClosingDate> closingDates) {
+    public void setClosingDates(SortedSet<ProgramClosingDate> closingDates) {
         this.closingDates = closingDates;
     }
 
-    public void addClosingDate(ProgramClosingDate closingDate) {
+    public boolean addClosingDate(ProgramClosingDate closingDate) {
         checkNotNull(closingDate);
         if (containsClosingDate(closingDate.getClosingDate())) {
             throw new IllegalArgumentException("Already Exists");
         }
-        closingDates.add(closingDate);
         closingDate.setProgram(this);
+        return closingDates.add(closingDate);
     }
 
-    public void removeClosingDate(ProgramClosingDate closingDate) {
-        if (closingDate == null) {
-            return;
-        }
-        removeClosingDate(closingDate.getId());
-    }
-
-    public void removeClosingDate(Integer closingDateId) {
-        if (closingDateId == null) {
-            return;
-        }
-        int closingDateIndex = getClosingDateIndexById(closingDateId);
-        if (closingDateIndex >= 0) {
-            closingDates.remove(closingDateIndex);
-        }
-    }
-
-    public ProgramClosingDate getClosingDate(Date date) {
+    public ProgramClosingDate getClosingDate(final Date date) {
         checkNotNull(date);
-        int closingDateIndex = getClosingDateIndexByDate(date);
-        return (closingDateIndex >= 0) ? closingDates.get(closingDateIndex) : null;
+        Predicate<ProgramClosingDate> findByDate = new Predicate<ProgramClosingDate>() {
+        	@Override
+        	public boolean apply(ProgramClosingDate closingDate){
+        		return DateUtils.truncateToDay(date).equals(closingDate.getClosingDate());
+        	}
+		};
+        return getClosingDateByPredicate(findByDate);
     }
-
-    public boolean containsClosingDate(Date date) {
-        return getClosingDateIndexByDate(date) >= 0;
+    
+	public void removeClosingDate(Integer closingDateId) {
+        checkNotNull(closingDateId);
+        closingDates.remove(getClosingDate(closingDateId));
     }
-
-    private int getClosingDateIndexByDate(Date date) {
-        Date day = DateUtils.truncateToDay(date);
-        for (int i = 0; i < closingDates.size(); i++) {
-            ProgramClosingDate closingDate = closingDates.get(i);
-            if (day.equals(closingDate.getClosingDate())) {
-                return i;
-            }
-        }
-        return -1;
+	
+	public boolean containsClosingDate(Date date) {
+        return getClosingDate(date) != null;
     }
-
-    private int getClosingDateIndexById(Integer id) {
-        checkNotNull(id);
-        for (int i = 0; i < closingDates.size(); i++) {
-            ProgramClosingDate closingDate = closingDates.get(i);
-            if (id.equals(closingDate.getId())) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public void updateClosingDate(ProgramClosingDate closingDate) {
+	
+    public boolean updateClosingDate(ProgramClosingDate closingDate) {
         checkNotNull(closingDate);
-        int closingDateIndex = getClosingDateIndexById(closingDate.getId());
-        if (closingDateIndex >= 0) {
-            ProgramClosingDate storeDate = closingDates.get(closingDateIndex);
-            storeDate.setClosingDate(closingDate.getClosingDate());
-            storeDate.setStudyPlaces(closingDate.getStudyPlaces());
+        ProgramClosingDate storedDate = getClosingDate(closingDate.getId());
+        if(closingDate.compareTo(storedDate)!=0 && containsClosingDate(closingDate.getClosingDate())){
+        	throw new IllegalArgumentException("Already Exists");
         }
+        if(storedDate!=null){
+	        storedDate.setClosingDate(closingDate.getClosingDate());
+	        storedDate.setStudyPlaces(closingDate.getStudyPlaces());
+	        return true;
+        }
+        return false;
     }
+    
+    private ProgramClosingDate getClosingDate(final Integer id) {
+   	 checkNotNull(id);
+   	 Predicate<ProgramClosingDate> findById = new Predicate<ProgramClosingDate>() {
+        	@Override
+        	public boolean apply(ProgramClosingDate closingDate){
+        		return id.equals(closingDate.getId());
+        	}
+		};
+		return getClosingDateByPredicate(findById);
+	}
+    
+    private ProgramClosingDate getClosingDateByPredicate(Predicate<ProgramClosingDate> matchClosingDate) {
+    	for (ProgramClosingDate closingDate:closingDates) {
+            if(matchClosingDate.apply(closingDate)){
+            	return closingDate;
+            }
+        }
+    	return null;
+	}
+
+	
 
 }

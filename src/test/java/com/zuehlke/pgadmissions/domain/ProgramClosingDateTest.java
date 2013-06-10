@@ -5,6 +5,8 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 import static org.hamcrest.Matchers.*;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,7 +14,6 @@ import org.junit.rules.ExpectedException;
 
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 public class ProgramClosingDateTest {
 
@@ -21,8 +22,11 @@ public class ProgramClosingDateTest {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 
+	private Date day;
+
 	@Before
 	public void setUp(){
+		day = com.zuehlke.pgadmissions.utils.DateUtils.truncateToDay(new Date());
 		program = new ProgramBuilder().code("123").title("title").build();
 	}
 	
@@ -30,7 +34,6 @@ public class ProgramClosingDateTest {
 	public void shouldAddClosingDateToProgram(){
 		assertThat(program.getClosingDates().size(), is(0));
 		
-		Date day = DateUtils.truncateToDay(new Date());
 		ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(day).build();
 		program.addClosingDate(closingDate);
 
@@ -43,7 +46,6 @@ public class ProgramClosingDateTest {
 
 	@Test
 	public void shouldThrowExceptionWhenAddingAnExistingClosingDateToProgram(){
-		Date day = DateUtils.truncateToDay(new Date());
 		ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(day).build();
 		program.addClosingDate(closingDate);
 		
@@ -58,12 +60,11 @@ public class ProgramClosingDateTest {
 	public void shouldRemoveClosingDateFromProgram(){
 		assertThat(program.getClosingDates().size(), is(0));
 		
-		Date day = DateUtils.truncateToDay(new Date());
 		ProgramClosingDate closingDate = new ProgramClosingDateBuilder().id(5).closingDate(day).build();
 		program.addClosingDate(closingDate);
 
 		ProgramClosingDate sameClosingDate = new ProgramClosingDateBuilder().id(5).closingDate(day).build();
-		program.removeClosingDate(sameClosingDate);
+		program.removeClosingDate(sameClosingDate.getId());
 		assertThat(program.getClosingDates().size(), is(0));
 		assertThat(program.containsClosingDate(day), is(false));
 		assertThat(program.getClosingDate(day), nullValue());
@@ -73,7 +74,6 @@ public class ProgramClosingDateTest {
 	public void shouldUpdateClosingDateFromProgram(){
 		assertThat(program.getClosingDates().size(), is(0));
 		
-		Date day = DateUtils.truncateToDay(new Date());
 		ProgramClosingDate closingDate = new ProgramClosingDateBuilder().id(5).closingDate(day).build();
 		program.addClosingDate(closingDate);
 		
@@ -85,5 +85,42 @@ public class ProgramClosingDateTest {
 		assertNotSame(closingDate, updatedClosingDate);
 		assertThat(closingDate.getClosingDate(), equalTo(updatedClosingDate.getClosingDate()));
 		assertThat(closingDate.getStudyPlaces(), equalTo(updatedClosingDate.getStudyPlaces()));
+	}
+	
+	@Test
+	public void shouldAllowUpdateSameDateUpdateValues(){
+		ProgramClosingDate closingDate = new ProgramClosingDateBuilder().id(1).closingDate(day).build();
+		program.addClosingDate(closingDate);
+
+		ProgramClosingDate updatedDate = new ProgramClosingDateBuilder().id(1).closingDate(day).studyPlaces(3).build();
+		program.updateClosingDate(updatedDate);
+		
+		assertThat(closingDate.getStudyPlaces(), equalTo(updatedDate.getStudyPlaces()));
+	}
+
+	@Test
+	public void shouldAllowUpdateSameClosingDateToANonExistingDate(){
+		ProgramClosingDate closingDate = new ProgramClosingDateBuilder().id(1).closingDate(day).build();
+		program.addClosingDate(closingDate);
+		
+		ProgramClosingDate updatedDate = new ProgramClosingDateBuilder().id(1).closingDate(DateUtils.addDays(day, 1)).studyPlaces(3).build();
+		program.updateClosingDate(updatedDate);
+		
+		assertThat(closingDate.getClosingDate(), equalTo(updatedDate.getClosingDate()));
+	}
+	
+	@Test
+	public void shouldThrowExceptionWhenEditingClosingDateToAnExistingDate(){
+		ProgramClosingDate closingDate = new ProgramClosingDateBuilder().id(1).closingDate(day).build();
+		ProgramClosingDate anotherClosingDate = new ProgramClosingDateBuilder().id(2).closingDate(DateUtils.addDays(day, 2)).build();
+		program.addClosingDate(closingDate);
+		program.addClosingDate(anotherClosingDate);
+		ProgramClosingDate updatingDate = new ProgramClosingDateBuilder().id(1).closingDate(DateUtils.addDays(day, 2)).build();
+		
+		exception.expect(IllegalArgumentException.class);
+		exception.expectMessage(containsString("Already Exists"));
+
+		program.updateClosingDate(updatingDate);
+		
 	}
 }

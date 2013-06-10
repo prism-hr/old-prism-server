@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
@@ -75,18 +76,20 @@ public class ProgramConfigurationController {
     private Template buttonToApplyTemplate;
     private Template linkToApplyTemplate;
     private Gson gson;
+	private final AdvertService advertsService;
 
     public ProgramConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null,null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public ProgramConfigurationController(UserService userService, ProgramsService programsService, @Value("${application.host}") final String host,
+    public ProgramConfigurationController(UserService userService, ProgramsService programsService, AdvertService advertsService, @Value("${application.host}") final String host,
             ApplicationContext applicationContext, ProgramAdvertValidator programAdvertValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor,
             FreeMarkerConfigurer freeMarkerConfigurer, ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor,
             ProgramPropertyEditor programPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
+		this.advertsService = advertsService;
         this.host = host;
         this.applicationContext = applicationContext;
         this.programAdvertValidator = programAdvertValidator;
@@ -182,7 +185,6 @@ public class ProgramConfigurationController {
         Program program = programsService.getProgramByCode(programCode);
         if (program == null) {
             map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
-
         }
 
         if (result.hasErrors()) {
@@ -192,16 +194,26 @@ public class ProgramConfigurationController {
         }
 
         if (map.isEmpty()) {
-        	if(program.getAdvert()!=null)
-        	{
-        		advert.setId(program.getAdvert().getId());
-        	}
-            program.setAdvert(advert);
-            programsService.merge(program);
-            map.put("success", "true");
+        	programsService.addProgramAdvert(programCode, advert);
+            map.put("advertId", advert.getId());
         }
-
         return gson.toJson(map);
+    }
+
+    @RequestMapping(value = "/editProgramAdvert", method = RequestMethod.POST)
+    @ResponseBody
+    public String editProgramAdvert(@RequestParam String programCode, @Valid Advert advert, BindingResult result, HttpServletRequest request) {
+    	Map<String, Object> map = Maps.newHashMap();
+		if (result.hasErrors()) {
+		    for (FieldError error : result.getFieldErrors()) {
+		        map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
+		    }
+		}
+		if (map.isEmpty()) {
+			advertsService.edit(advert);
+		    map.put("advertId", advert.getId());
+		}
+		return gson.toJson(map);
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
@@ -217,7 +229,6 @@ public class ProgramConfigurationController {
             Program program = programClosingDate.getProgram();
             program.addClosingDate(programClosingDate);
             programsService.save(program);
-            programClosingDate.setProgram(null);
             map.put("programClosingDate", programClosingDate);
         }
 
@@ -237,7 +248,6 @@ public class ProgramConfigurationController {
             Program program = programClosingDate.getProgram();
             program.updateClosingDate(programClosingDate);
             programsService.save(program);
-            programClosingDate.setProgram(null);
             map.put("programClosingDate", programClosingDate);
         }
 

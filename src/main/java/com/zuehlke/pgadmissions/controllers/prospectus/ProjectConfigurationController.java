@@ -22,6 +22,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
@@ -158,17 +160,12 @@ public class ProjectConfigurationController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String addProject(@ModelAttribute("projectDTO") @Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
-        Map<String, Object> map = Maps.newHashMap();
+        Map<String, Object> map = getErrorValues(result, request);
 
-        if (result.hasErrors()) {
-            for (FieldError error : result.getFieldErrors()) {
-                map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
-            }
-            return gson.toJson(map);
+        if(map.isEmpty()){
+	        programsService.addProject(projectDTO, getUser());
+	        map.put("success", "true");
         }
-
-        programsService.addProject(projectDTO, getUser());
-        map.put("success", "true");
 
         return gson.toJson(map);
     }
@@ -186,6 +183,27 @@ public class ProjectConfigurationController {
         Project project = programsService.getProject(projectId);
         return gson.toJson(project);
     }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public String saveProject(@Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
+    	Map<String, Object> map = getErrorValues(result, request);
+    	if(!result.hasErrors()){
+          programsService.saveProject(projectDTO);
+          map.put("success", "true");
+    	}
+    	return gson.toJson(map);
+    }
+
+	private Map<String,Object> getErrorValues(BindingResult result,	HttpServletRequest request) {
+		Map<String, Object> map = Maps.newHashMapWithExpectedSize(result.getErrorCount());
+		if (result.hasErrors()) {
+			for (FieldError error : result.getFieldErrors()) {
+				map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
+			}
+		}
+		return map;
+	}
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody

@@ -153,7 +153,7 @@ function appendClosingDateRow(closingDate){
 }
 
 function closingDateTd(closingDate){
-	var date = formatDate(new Date(closingDate.closingDate));
+	var date = formatProgramClosingDate(new Date(closingDate.closingDate));
 	var studyPlaces ="";
 	if(closingDate.studyPlaces > 0){	
 		studyPlaces = " ("+closingDate.studyPlaces+" Places)";
@@ -164,7 +164,7 @@ function closingDateTd(closingDate){
 	'<input id="cdr-studyPlaces" type="hidden" value="'+closingDate.studyPlaces+'"/>';
 }
 
-function formatDate(date) {
+function formatProgramClosingDate(date) {
 	return $.datepicker.formatDate('d M yy', date);
 }
 

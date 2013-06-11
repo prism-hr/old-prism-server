@@ -3,10 +3,13 @@ package com.zuehlke.pgadmissions.dto;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class ProjectDTO {
 
+	private Integer id;
+	
     private Program program;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
@@ -79,7 +82,7 @@ public class ProjectDTO {
     }
 
     public void setClosingDate(Date closingDate) {
-        this.closingDate = closingDate;
+        this.closingDate = closingDate == null? closingDate : DateUtils.truncateToDay(closingDate);
     }
 
     public Boolean getActive() {
@@ -89,5 +92,13 @@ public class ProjectDTO {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 }

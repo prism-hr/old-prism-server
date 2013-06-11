@@ -1,5 +1,5 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/project_configuration.js' />"></script>
-
+<script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
 <section class="form-rows">
     <h2>Manage Projects</h2>
     <div id="projectAdvertDiv">
@@ -61,14 +61,33 @@
                         </select>
                     </div>
                 </div>
-                <div class="row" id="projectAdvertFundingDiv">
-                    <label for="projectAdvertFundingText" class="plain-label">Funding Information</label> <span class="hint" data-desc="<@spring.message 'prospectus.fundingInformation'/>"></span>
-                    <div class="field">
-                        <textarea id="projectAdvertFundingText" class="max" rows="6" cols="150"></textarea>
-                    </div>
-                </div>
+			</div>
+            <!-- supervisors -->
+            <div class="row-group">
+				<h3>Primary Supervisor</h3>
+				<div class="row">
+				  <label id="primarySupervisorFirstNameLabel" class="plain-label normal" for="primarySupervisorFirstName">First Name<em>*</em></label>
+				  <span class="hint" data-desc="<@spring.message 'prospectus.primarySupervisorFirstName'/>"></span>
+				  <div class="field">
+				    <input class="full" type="text" name="primarySupervisorFirstName" id="primarySupervisorFirstName" autocomplete="off"/>
+				  </div>
+				</div>
+				<div class="row">
+				  <label id="primarySupervisorLastNameLabel" class="plain-label normal" for="primarySupervisorLastName">Last Name<em>*</em></label>
+				  <span class="hint" data-desc="<@spring.message 'prospectus.primarySupervisorLastName'/>"></span>
+				  <div class="field">
+				    <input class="full" type="text" name="primarySupervisorLastName" id="primarySupervisorLastName" autocomplete="off"/>
+				  </div>
+				</div>
+				<div class="row">
+				  <label id="primarySupervisorEmailLabel" class="plain-label normal" for="primarySupervisorEmail">Email<em>*</em></label>
+				  <span class="hint" data-desc="<@spring.message 'prospectus.primarySupervisorEmail'/>"></span>
+				  <div class="field">
+				    <input class="full" type="text" name="primarySupervisorEmail" id="primarySupervisorEmail" autocomplete="off"/>
+				  </div>
+				</div>
             </div>
-            
+            <!-- supervisors END-->
             <div class="row-group">
               <h3>Closing Date</h3>
               <div class="row" id="projectAdvertHasClosingDateDiv">
@@ -88,7 +107,7 @@
                 <label for="closingDate" class="plain-label">Closing Date <em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'prospectus.closingDate'/>"></span>
                 <div class="field">
-                  <input type="text" id="projectAdvertClosingDateInput" class="full date"/>
+                  <input type="text" id="projectAdvertClosingDateInput" class="full date" disabled/>
                 </div>
               </div>
             </div>     

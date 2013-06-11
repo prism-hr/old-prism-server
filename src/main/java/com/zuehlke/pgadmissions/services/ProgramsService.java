@@ -85,23 +85,40 @@ public class ProgramsService {
     public void addProject(ProjectDTO projectAdvertDTO, RegisteredUser author) {
 
         Advert advert = new Advert();
-        advert.setTitle(projectAdvertDTO.getTitle());
-        advert.setDescription(projectAdvertDTO.getDescription());
-        advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
-        advert.setFunding(projectAdvertDTO.getFunding());
-        advert.setActive(projectAdvertDTO.getActive());
+        updateProjectAdvertFromDTO(advert, projectAdvertDTO);
 
         Project project = new Project();
         project.setAdvert(advert);
         project.setAuthor(author);
         project.setPrimarySupervisor(author);
-        project.setProgram(projectAdvertDTO.getProgram());
-        if (projectAdvertDTO.getClosingDateSpecified()) {
-            project.setClosingDate(projectAdvertDTO.getClosingDate());
-        }
+        updateProjectFromDTO(project, projectAdvertDTO);
 
         projectDAO.save(project);
     }
+
+
+	private void updateProjectAdvertFromDTO(Advert advert, ProjectDTO projectAdvertDTO) {
+		advert.setTitle(projectAdvertDTO.getTitle());
+        advert.setDescription(projectAdvertDTO.getDescription());
+        advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
+        advert.setFunding(projectAdvertDTO.getFunding());
+        advert.setActive(projectAdvertDTO.getActive());
+	}
+
+	private void updateProjectFromDTO(Project project, ProjectDTO projectAdvertDTO) {
+		project.setProgram(projectAdvertDTO.getProgram());
+		if (projectAdvertDTO.getClosingDateSpecified()) {
+			project.setClosingDate(projectAdvertDTO.getClosingDate());
+		}
+	}
+    
+    public void saveProject(ProjectDTO projectDTO) {
+    	Project project = getProject(projectDTO.getId());
+    	Advert advert = project.getAdvert();
+    	updateProjectAdvertFromDTO(advert, projectDTO);
+    	updateProjectFromDTO(project, projectDTO);
+    	projectDAO.save(project);
+	}
 
     public List<Project> listProjects(RegisteredUser author) {
         return projectDAO.getProjectsByAuthor(author);
@@ -118,6 +135,8 @@ public class ProgramsService {
 		program.setAdvert(advert);
 		programDAO.save(program);
 	}
+
+	
 
 
 }

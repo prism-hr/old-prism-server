@@ -1,11 +1,14 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.Date;
+
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Component
 public class ProjectDTOValidator extends AbstractValidator {
@@ -36,6 +39,9 @@ public class ProjectDTOValidator extends AbstractValidator {
             errors.rejectValue("closingDateSpecified", EMPTY_DROPDOWN_ERROR_MESSAGE);
         } else if (dto.getClosingDateSpecified() == true) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "closingDate", EMPTY_FIELD_ERROR_MESSAGE);
+            if(!dto.getClosingDate().after(DateUtils.truncateToDay(new Date()))){
+        		errors.rejectValue("closingDate", MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE);
+        	}
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "active", EMPTY_DROPDOWN_ERROR_MESSAGE);

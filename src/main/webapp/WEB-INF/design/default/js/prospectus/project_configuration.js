@@ -3,78 +3,82 @@ $(document).ready(function(){
 		registerAddProjectAdvertButton();
 		registerEditProjectAdvertButton();
 		registerRemoveProjectAdvertButton();
+		registerHasClosingDateProjectAdvertRadio();
 		registerClearButton();
-		
+		registerAutosuggest();
+		clearAll();
 		loadProjects();
+		
 });
+
+function registerAutosuggest(){
+	autosuggest($("#primarySupervisorFirstName"), $("#primarySupervisorLastName"), $("#primarySupervisorEmail"));
+}
 
 function registerAddProjectAdvertButton(){
 	$("#addProjectAdvert").bind('click', function(){
-		clearProjectAdvertErrors();
-		
-		var duration = {
-				value : $("#projectAdvertStudyDurationInput").val(),
-				unit : $("#projectAdvertStudyDurationUnitSelect").val()
-			};
-		
-		$('#ajaxloader').show();
-		var url="/pgadmissions/prospectus/projects";
-		$.ajax({
-			type: 'POST',
-			statusCode: {
-				401: function() { window.location.reload(); },
-				500: function() { window.location.href = "/pgadmissions/error"; },
-				404: function() { window.location.href = "/pgadmissions/404"; },
-				400: function() { window.location.href = "/pgadmissions/400"; },                  
-				403: function() { window.location.href = "/pgadmissions/404"; }
-			},
-			url: url,
-			data: {
-				program : $("#projectAdvertProgramSelect").val(),
-				title : $("#projectAdvertTitleInput").val(),
-				description : $("#projectAdvertDescriptionText").val(),
-				studyDuration : JSON.stringify(duration),
-				funding : $("#projectAdvertFundingText").val(),
-				closingDateSpecified : $("input:radio[name=projectAdvertHasClosingDateRadio]:checked").val(), 
-				closingDate : $('#projectAdvertClosingDateInput').val(),
-				active : $("input:radio[name=projectAdvertIsActiveRadio]:checked").val()
-			}, 
-			success: function(data) {
-				var map = JSON.parse(data);
-				if(!map['success']){
-					if(map['program']){
-						$("#projectAdvertProgramDiv").append(getErrorMessageHTML(map['program']));
-					}
-					if(map['title']){
-						$("#projectAdvertTitleDiv").append(getErrorMessageHTML(map['title']));
-					}
-					if(map['description']){
-						$("#projectAdvertDescriptionDiv").append(getErrorMessageHTML(map['description']));
-					}
-					if(map['studyDuration']){
-						$("#projectAdvertStudyDurationDiv").append(getErrorMessageHTML(map['studyDuration']));
-					}
-					if(map['active']){
-						$("#projectAdvertIsActiveDiv").append(getErrorMessageHTML(map['active']));
-					}
-					if(map['closingDateSpecified']){
-						$("#projectAdvertHasClosingDateDiv").append(getErrorMessageHTML(map['closingDateSpecified']));
-					}
-					if(map['closingDate']){
-						$("#projectAdvertClosingDateDiv").append(getErrorMessageHTML(map['closingDate']));
-					}
-					if(map['studyPlaces']){
-						$("#projectAdvertStudyPlacesDiv").append(getErrorMessageHTML(map['studyPlaces']));
-					}
-				} else {
-					loadProjects();
-				}
-			},
-			complete: function() {
-				$('#ajaxloader').fadeOut('fast');
-			}
-		});
+		addOrEditProjectAdvert();
 	});
+}
+
+function addOrEditProjectAdvert(){
+	clearProjectAdvertErrors();
+	var duration = {
+			value : $("#projectAdvertStudyDurationInput").val(),
+			unit : $("#projectAdvertStudyDurationUnitSelect").val()
+		};
+	var projectId=$('#projectId').val();
+	var url="/pgadmissions/prospectus/projects";
+	var method='POST';
+	if(projectId){
+		url+='/'+projectId;
+	}
+	showLoader();
+	$.ajax({
+		type: method,
+		statusCode: {
+			401: function() { window.location.reload(); },
+			500: function() { window.location.href = "/pgadmissions/error"; },
+			404: function() { window.location.href = "/pgadmissions/404"; },
+			400: function() { window.location.href = "/pgadmissions/400"; },                  
+			403: function() { window.location.href = "/pgadmissions/404"; }
+		},
+		url: url,
+		data: {
+			id : projectId,
+			program : $("#projectAdvertProgramSelect").val(),
+			title : $("#projectAdvertTitleInput").val(),
+			description : $("#projectAdvertDescriptionText").val(),
+			studyDuration : JSON.stringify(duration),
+			funding : $("#projectAdvertFundingText").val(),
+			closingDateSpecified : projectAdvertHasClosingDate(), 
+			closingDate : $('#projectAdvertClosingDateInput').val(),
+			active : $("input:radio[name=projectAdvertIsActiveRadio]:checked").val()
+		}, 
+		success: function(data) {
+			var map = JSON.parse(data);
+			if(!map['success']){
+				displayErrors(map);
+			} else {
+				loadProjects();
+				clearAll();
+			}
+		},
+		complete: function() {
+			hideLoader();
+		}
+	});
+}
+
+function displayErrors(map){
+	appendErrorToElementIfPresent(map['program'],$("#projectAdvertProgramDiv"));
+	appendErrorToElementIfPresent(map['title'],$("#projectAdvertTitleDiv"));
+	appendErrorToElementIfPresent(map['description'],$("#projectAdvertDescriptionDiv"));
+	appendErrorToElementIfPresent(map['studyDuration'],$("#projectAdvertStudyDurationDiv"));
+	appendErrorToElementIfPresent(map['active'],$("#projectAdvertIsActiveDiv"));
+	appendErrorToElementIfPresent(map['closingDateSpecified'],$("#projectAdvertHasClosingDateDiv"));
+	appendErrorToElementIfPresent(map['closingDate'],$("#projectAdvertClosingDateDiv"));
+	appendErrorToElementIfPresent(map['studyPlaces'],$("#projectAdvertStudyPlacesDiv"));
 }
 
 function registerEditProjectAdvertButton(){
@@ -93,20 +97,43 @@ function registerRemoveProjectAdvertButton(){
 
 function registerClearButton(){
 	$("#projectsClear").bind('click', function(){
-		$("#projectAdvertProgramSelect").val("");
-		$("#projectAdvertTitleInput").val("");
-		$("#projectAdvertDescriptionText").val("");
-		$("#projectAdvertStudyDurationInput").val("");
-		$("#projectAdvertStudyDurationUnitSelect").val("");
-		$("#projectAdvertFundingText").val("");
-		$("#projectAdvertHasClosingDateRadioYes").prop("checked", false);
-		$("#projectAdvertHasClosingDateRadioNo").prop("checked", false);
-		$("#projectAdvertClosingDateInput").val("");
-		$("#projectAdvertIsActiveRadioYes").prop("checked", false);
-		$("#projectAdvertIsActiveRadioNo").prop("checked", false);
-		$('#projectId').val("");
-		$('#addProjectAdvert').text("Add");
+		clearAll();
 	});
+}
+
+function clearAll(){
+	$("#projectAdvertProgramSelect").val("");
+	$("#projectAdvertTitleInput").val("");
+	$("#projectAdvertDescriptionText").val("");
+	$("#projectAdvertStudyDurationInput").val("");
+	$("#projectAdvertStudyDurationUnitSelect").val("");
+	$("#projectAdvertFundingText").val("");
+	$("#projectAdvertHasClosingDateRadioYes").prop("checked", false);
+	$("#projectAdvertHasClosingDateRadioNo").prop("checked", true);
+	$("#projectAdvertClosingDateInput").val("");
+	$("#projectAdvertIsActiveRadioYes").prop("checked", false);
+	$("#projectAdvertIsActiveRadioNo").prop("checked", false);
+	$('#projectId').val("");
+	$('#addProjectAdvert').text("Add");
+	clearProjectAdvertErrors();
+}
+
+function registerHasClosingDateProjectAdvertRadio(){
+	$("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']").each(function () { 
+		$(this).bind('change', function(){
+			checkProjectClosingDate();
+		});
+	});
+}
+
+function checkProjectClosingDate(){
+	if(projectAdvertHasClosingDate()){
+		$('#projectAdvertClosingDateInput').removeAttr('disabled');
+	}
+	else{
+		$('#projectAdvertClosingDateInput').val("");
+		$('#projectAdvertClosingDateInput').attr('disabled','disabled');		
+	}
 }
 
 function removeProject(projectRow) {
@@ -133,6 +160,7 @@ function removeProject(projectRow) {
 
 function loadProject(advertRow) {
 	projectId = advertRow.attr("project-id");
+	showLoader();
 	$.ajax({
 		type: 'GET',
 		statusCode: {
@@ -146,50 +174,56 @@ function loadProject(advertRow) {
 		data: {
 		}, 
 		success: function(data) {
-			clearProjectAdvertErrors();
 			var project = JSON.parse(data);
-			var advert = project.advert;
-			
-			$("#projectAdvertProgramSelect").val(project.program);
-			
-			$("#projectAdvertTitleInput").val(advert.title);
-			$("#projectAdvertDescriptionText").val(advert.description);
-			
-			var durationOfStudyInMonths=advert.studyDuration;
-			if(durationOfStudyInMonths%12==0) {
-				$("#projectAdvertStudyDurationInput").val((durationOfStudyInMonths/12).toString());
-				$("#projectAdvertStudyDurationUnitSelect").val('Years');
-			} else {
-				$("#projectAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
-				$("#projectAdvertStudyDurationUnitSelect").val('Months');
-			}
-			
-			$("#projectAdvertFundingText").val(advert.funding);
-			
-			if(project.closingDate) {
-				$("#projectAdvertHasClosingDateRadioYes").prop("checked", true);
-			} else {
-				$("#projectAdvertHasClosingDateRadioNo").prop("checked", true);
-			}
-			$("#projectAdvertClosingDateInput").val(project.closingDate);
-			
-			if(advert.active) {
-				$("#projectAdvertIsActiveRadioYes").prop("checked", true);
-			} else {
-				$("#projectAdvertIsActiveRadioNo").prop("checked", true);
-			}
-			
-			$('#projectId').val(projectId);
-			$('#addProjectAdvert').text("Edit");
+			fillProjectAdvertForm(project);
         },
         complete: function() {
+        	hideLoader();
         }
     });
 }
 
+function fillProjectAdvertForm(project){
+	clearProjectAdvertErrors();
+	var advert = project.advert;
+	
+	$("#projectAdvertProgramSelect").val(project.program);
+	
+	$("#projectAdvertTitleInput").val(advert.title);
+	$("#projectAdvertDescriptionText").val(advert.description);
+	
+	var durationOfStudyInMonths=advert.studyDuration;
+	if(durationOfStudyInMonths%12==0) {
+		$("#projectAdvertStudyDurationInput").val((durationOfStudyInMonths/12).toString());
+		$("#projectAdvertStudyDurationUnitSelect").val('Years');
+	} else {
+		$("#projectAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
+		$("#projectAdvertStudyDurationUnitSelect").val('Months');
+	}
+	
+	$("#projectAdvertFundingText").val(advert.funding);
+	
+	if(project.closingDate) {
+		$("#projectAdvertHasClosingDateRadioYes").prop("checked", true);
+		$("#projectAdvertClosingDateInput").val(formatProjectClosingDate(new Date(project.closingDate)));
+	} else {
+		$("#projectAdvertHasClosingDateRadioNo").prop("checked", true);
+		$("#projectAdvertClosingDateInput").val("");
+	}
+	
+	if(advert.active) {
+		$("#projectAdvertIsActiveRadioYes").prop("checked", true);
+	} else {
+		$("#projectAdvertIsActiveRadioNo").prop("checked", true);
+	}
+	
+	$('#projectId').val(projectId);
+	$('#addProjectAdvert').text("Edit");
+}
+
 function loadProjects(){
-	$('#ajaxloader').show();
 	var url="/pgadmissions/prospectus/projects";
+	showLoader();
 	$.ajax({
 		type: 'GET',
 		statusCode: {
@@ -207,7 +241,7 @@ function loadProjects(){
 			displayProjectList(projects);
 		},
 		complete: function() {
-			$('#ajaxloader').fadeOut('fast');
+			hideLoader();
 		}
 	});
 }
@@ -242,4 +276,20 @@ function appendProjectRow(project){
 			'</td>' +
 		'</tr>'	
 	);
+}
+
+function projectAdvertHasClosingDate(){
+	return $("input:radio[name='projectAdvertHasClosingDateRadio']:checked").val()=="true";
+}
+
+function formatProjectClosingDate(date) {
+	return $.datepicker.formatDate('d M yy', date); 
+}
+
+function showLoader(){
+	$('#ajaxloader').show();
+}
+
+function hideLoader(){
+	$('#ajaxloader').fadeOut('fast');
 }

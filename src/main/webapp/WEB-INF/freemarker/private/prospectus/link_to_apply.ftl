@@ -1,1 +1,1 @@
-${host}/apply/new?program=${programCode}
+${host}/pgadmissions/apply/new?program=${programCode}

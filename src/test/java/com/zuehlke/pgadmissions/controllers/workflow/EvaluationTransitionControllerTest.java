@@ -94,7 +94,7 @@ public class EvaluationTransitionControllerTest {
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
 
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
         assertEquals("bob", view);
@@ -130,7 +130,7 @@ public class EvaluationTransitionControllerTest {
         EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
         ModelMap modelMap = new ModelMap();
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, modelMap, null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, modelMap, null, null, false);
 
         EasyMock.verify(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
         assertEquals("move.approved", modelMap.get("messageCode"));
@@ -166,7 +166,7 @@ public class EvaluationTransitionControllerTest {
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
         assertEquals("bob", view);
         EasyMock.verify(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
     }
@@ -198,7 +198,7 @@ public class EvaluationTransitionControllerTest {
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
         assertEquals("bob", view);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
@@ -235,7 +235,7 @@ public class EvaluationTransitionControllerTest {
         applicationServiceMock.refresh(applicationForm);
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, applicationServiceMock, userServiceMock);
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
         EasyMock.verify(commentServiceMock, commentServiceMock, stateTransitionViewServiceMock, applicationServiceMock, userServiceMock);
 
         assertEquals("bob", view);
@@ -268,7 +268,7 @@ public class EvaluationTransitionControllerTest {
         ModelMap modelMap = new ModelMap();
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, modelMap, true, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, modelMap, true, null, false);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
         assertEquals("redirect:/applications?messageCode=delegate.success&application=ABC", view);
@@ -302,7 +302,7 @@ public class EvaluationTransitionControllerTest {
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
         assertEquals("bob", view);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
@@ -349,7 +349,7 @@ public class EvaluationTransitionControllerTest {
 
         EasyMock.replay(approvalServiceMock, commentServiceMock, userServiceMock);
 
-        String resultView = controller.addComment(applicationForm.getApplicationNumber(), stateChangeComment, bindingResultMock, new ModelMap(), null, null, false);
+        String resultView = controller.addComment(applicationForm, stateChangeComment, bindingResultMock, new ModelMap(), null, null, false);
 
         assertEquals("redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7", resultView);
         EasyMock.verify(approvalServiceMock, commentServiceMock, userServiceMock);

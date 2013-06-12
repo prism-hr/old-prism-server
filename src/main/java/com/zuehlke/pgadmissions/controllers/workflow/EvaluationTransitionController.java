@@ -66,13 +66,14 @@ public class EvaluationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
-    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
+    public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
             ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer,
             @RequestParam(required = false) Boolean fastTrackApplication) {
         modelMap.put("delegate", delegate);
-
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        if (result.hasErrors() || (fastTrackApplication == null && applicationForm.getBatchDeadline() != null)) {
+        
+        boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPROVED.equals(stateChangeComment.getNextStatus())||ApplicationFormStatus.REJECTED.equals(stateChangeComment.getNextStatus()));
+        boolean fastrackValueMissing = fastTrackApplication == null && applicationForm.getBatchDeadline() != null;
+		if (result.hasErrors() || (stateChangeRequiresFastTrack && fastrackValueMissing)) {
             if (fastTrackApplication == null) {
                 modelMap.addAttribute("fastTrackMissing", true);
             }

@@ -71,7 +71,7 @@ public class EvaluationTransitionController extends StateTransitionController {
             @RequestParam(required = false) Boolean fastTrackApplication) {
         modelMap.put("delegate", delegate);
         
-        boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPROVED.equals(stateChangeComment.getNextStatus())||ApplicationFormStatus.REJECTED.equals(stateChangeComment.getNextStatus()));
+        boolean stateChangeRequiresFastTrack = stateChangeComment==null || !(ApplicationFormStatus.APPROVED.equals(stateChangeComment.getNextStatus())||ApplicationFormStatus.REJECTED.equals(stateChangeComment.getNextStatus()));
         boolean fastrackValueMissing = fastTrackApplication == null && applicationForm.getBatchDeadline() != null;
 		if (result.hasErrors() || (stateChangeRequiresFastTrack && fastrackValueMissing)) {
             if (fastTrackApplication == null) {

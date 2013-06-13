@@ -489,6 +489,8 @@ div#ajaxloader {
 .program .pactions .social{
   float: left;
   margin-top: 5px;
+  width: auto;
+  min-width: 140px;
 }
 .program .pactions .applyBox{
   float: right;

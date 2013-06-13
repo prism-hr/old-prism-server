@@ -6,7 +6,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // Close button.
     // --------------------------------------------------------------------------------
-	$('#refereeCloseButton').click(function(){
+	$('#refereeCloseButton').live("click", function(){
 		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
 		$('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
 	});
@@ -14,7 +14,7 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
     // Clear button.
     // -------------------------------------------------------------------------------
-    $('#refereeClearButton').click(function() {
+    $('#refereeClearButton').live("click", function() {
     	$('input[name="refereeSendToUcl"]').each(function() {
     		$(this).attr("checked", false);
         });
@@ -23,7 +23,7 @@ $(document).ready(function() {
     	$('a[name="showRefereeLink"]').each(function() {
             $("#" + $(this).attr("toggles")).hide();
         });
-        $("#referee_newReferee").show();
+        //$("#referee_newReferee").show();
         $('#editedRefereeId').val("newReferee");
         
         clearRefereeFormErrors();
@@ -84,16 +84,21 @@ $(document).ready(function() {
     $(".file").each(function() {
     	watchUpload($(this));
     });
-	
+	addNewRefButt();
+});
+function addNewRefButt() {
 	// Check if loading from other site apart from application form 
 	$('#referee_newReferee').hide();
 	$('#referencesSection .buttons').prepend('<button id="newRefecence" class="btn btn-success right" type="button">New Reference</button>');
 	$('#newRefecence').click(function () {
 		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
 		$('#referee_newReferee').show();
+		$('#referee_newReferee input').val('');
+		$('#refereeComment_newReferee').attr('value', '');
+		$('#suitableRB_true, #suitableRB_false, #willingRB_true, #willingRB_false').prop('checked', false);
 	});
-});
-
+	
+}
 function clearRefereeFormErrors() {
     $("#referencesSection").find('div.alert-error').remove(); // remove all previous form errors
 }
@@ -234,12 +239,13 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         data :  postData,
         success : function(data) {
         	$("#referencesSection").html(data);
-        	$("#referee_" + $("#editedRefereeId").val()).show();
+        	//$("#referee_" + $("#editedRefereeId").val()).show();
         	if($closeReferenceSectionAfterSaving && postSendToPorticoData && $('#anyReferenceErrors').val() == 'false'){
         		$('#referee-H2').trigger('click');
         	}
             addCounter();
             refreshRefereesTable(checkedReferees, editedReferee, uncheckedReferees);
+			addNewRefButt();
         },
         complete : function() {
            $('#ajaxloader').fadeOut('fast');

@@ -87,17 +87,22 @@ $(document).ready(function() {
 	addNewRefButt();
 });
 function addNewRefButt() {
-	// Check if loading from other site apart from application form 
-	$('#referee_newReferee').hide();
-	$('#referencesSection .buttons').prepend('<button id="newRefecence" class="btn btn-success right" type="button">New Reference</button>');
-	$('#newRefecence').click(function () {
-		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
-		$('#referee_newReferee').show();
-		$('#referee_newReferee input').val('');
-		$('#refereeComment_newReferee').attr('value', '');
-		$('#suitableRB_true, #suitableRB_false, #willingRB_true, #willingRB_false').prop('checked', false);
-	});
-	
+		// Check if loading from other site apart from application form 
+		if ($("#referee_newReferee").find('div.alert-error').length == 0){
+			$('#referee_newReferee').hide();
+		} else {
+			$('#referee_newReferee').show();
+		}
+		if ($('#newReference').length == 0){
+			$('#referencesSection .buttons').prepend('<button id="newReference" class="btn btn-success right" type="button">New Reference</button>');
+		}
+		$('#newReference').click(function () {
+			$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
+			$('#referee_newReferee').show();
+			$('#referee_newReferee input').val('');
+			$('#refereeComment_newReferee').attr('value', '');
+			$('#suitableRB_true, #suitableRB_false, #willingRB_true, #willingRB_false').prop('checked', false);
+		});
 }
 function clearRefereeFormErrors() {
     $("#referencesSection").find('div.alert-error').remove(); // remove all previous form errors

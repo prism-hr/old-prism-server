@@ -79,7 +79,7 @@
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
-            <button id="editReferenceButton" type="button" class="btn btn-primary">Save chages</button>
+            <button id="editReferenceButton" type="button" class="btn btn-primary">Update Reference</button>
         </div>
     </div>
     

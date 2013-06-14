@@ -364,7 +364,7 @@ public class ConfigurationController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/fakeSubmitScores")
-	public String dummySubmitScores(@ModelAttribute("dummyComment") Comment dummyComment, @RequestParam String scoringContent, BindingResult result, Model model)
+	public String dummySubmitScores(@ModelAttribute("dummyComment") Comment dummyComment, BindingResult result, @RequestParam String scoringContent, Model model)
 	                throws ScoringDefinitionParseException {
 		List<Score> scores = dummyComment.getScores();
 		CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);

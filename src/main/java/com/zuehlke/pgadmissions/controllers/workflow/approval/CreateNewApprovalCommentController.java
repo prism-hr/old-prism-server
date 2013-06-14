@@ -60,6 +60,7 @@ public class CreateNewApprovalCommentController {
     private final MessageSource messageSource;
     
     private final ApplicationFormAccessService accessService;
+
     
     public CreateNewApprovalCommentController() {
         this(null, null, null, null, null, null, null);
@@ -119,8 +120,8 @@ public class CreateNewApprovalCommentController {
     @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment/validate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public String validate(final @PathVariable("applicationNumber") String applicationNumber,
-            @Valid final ApprovalComment approvalComment, @RequestParam final String comment,
-            @RequestParam final String confirmNextStage, final BindingResult bindingResult) {
+            @Valid final ApprovalComment approvalComment, final BindingResult bindingResult, @RequestParam final String comment,
+            @RequestParam final String confirmNextStage) {
         Gson gson = new Gson();
         Map<String, Object> fieldErrorMap = new HashMap<String, Object>();
         RegisteredUser currentUser = getCurrentUser();

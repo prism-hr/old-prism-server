@@ -94,7 +94,7 @@
 		      	
 		    </section>
             <ul id="conections">
-                    <li><a href="https://www.youtube.com/user/UCLPRISM/" target="_blank"><img src="<@spring.url '/design/default/images/youtube.png'/>" alt="" /></a><span>Online demostrations</span></li>
+                    <li><a href="https://www.youtube.com/user/UCLPRISM/" target="_blank"><img src="<@spring.url '/design/default/images/youtube.png'/>" alt="" /></a><span>online demonstrations</span></li>
                     <li><a href="http://uclprism.freshdesk.com/support/home" target="_blank"><img src="<@spring.url '/design/default/images/freshdesk.png'/>" alt="" /></a><span>Help for UCL PRiSM users</span></li>
             </ul>
 

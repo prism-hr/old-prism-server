@@ -141,7 +141,7 @@
       </#list> </div>
   </div>
 </div>
-<div class="row-group"> 
+<div class="row-group aSDisplay"> 
   
   <!-- Email address -->
   
@@ -150,7 +150,7 @@
     <label class="plain-label" for="email_${encRefereeId}">Email<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
     <div class="field">
-      <input type="text" class="full" type="email" id="email_${encRefereeId}" autocomplete="off" name="ref_email" value="${(refereesAdminEditDTO.email?html)!}"/>
+      <input class="full" type="email" id="email_${encRefereeId}" autocomplete="off" name="ref_email" value="${(refereesAdminEditDTO.email?html)!}"/>
       <@spring.bind "refereesAdminEditDTO.email" />
       <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>

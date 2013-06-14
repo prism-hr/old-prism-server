@@ -24,14 +24,16 @@ public class ProgramsService {
     private final ProgramDAO programDAO;
     private final AdvertDAO advertDAO;
     private final ProjectDAO projectDAO;
+	private final UserService userService;
 
     ProgramsService() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
-        this.programDAO = programDAO;
+    public ProgramsService(UserService userService, ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
+        this.userService = userService;
+		this.programDAO = programDAO;
         this.advertDAO = advertDAO;
         this.projectDAO = projectDAO;
     }
@@ -90,7 +92,6 @@ public class ProgramsService {
         Project project = new Project();
         project.setAdvert(advert);
         project.setAuthor(author);
-        project.setPrimarySupervisor(author);
         updateProjectFromDTO(project, projectAdvertDTO);
 
         projectDAO.save(project);
@@ -110,6 +111,9 @@ public class ProgramsService {
 		if (projectAdvertDTO.getClosingDateSpecified()) {
 			project.setClosingDate(projectAdvertDTO.getClosingDate());
 		}
+		String email = projectAdvertDTO.getPrimarySupervisor().getEmail();
+		RegisteredUser primarySupervisor = userService.getUserByEmailIncludingDisabledAccounts(email);
+		project.setPrimarySupervisor(primarySupervisor);
 	}
     
     public void saveProject(ProjectDTO projectDTO) {

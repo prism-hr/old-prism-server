@@ -22,7 +22,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,17 +34,19 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -77,6 +78,7 @@ public class ProjectConfigurationController {
     private final ProgramClosingDateValidator closingDateValidator;
     private final DatePropertyEditor datePropertyEditor;
     private final ProgramPropertyEditor programPropertyEditor;
+    private final PersonPropertyEditor personPropertyEditor;
 
     private final FreeMarkerConfigurer freeMarkerConfigurer;
     private Template buttonToApplyTemplate;
@@ -84,14 +86,14 @@ public class ProjectConfigurationController {
     private Gson gson;
 
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null,null);
     }
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, @Value("${application.host}") final String host,
             ApplicationContext applicationContext, ProjectDTOValidator projectDTOValidator,
             DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, FreeMarkerConfigurer freeMarkerConfigurer,
-            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor) {
+            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,PersonPropertyEditor personPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
         this.host = host;
@@ -102,6 +104,7 @@ public class ProjectConfigurationController {
         this.closingDateValidator = closingDateValidator;
         this.datePropertyEditor = datePropertyEditor;
         this.programPropertyEditor = programPropertyEditor;
+		this.personPropertyEditor = personPropertyEditor;
     }
 
     @PostConstruct
@@ -114,15 +117,15 @@ public class ProjectConfigurationController {
                     public JsonElement serialize(Program src, Type typeOfSrc, JsonSerializationContext context) {
                         return new JsonPrimitive(src.getCode());
                     }
-                }).setExclusionStrategies(new ExclusionStrategy() {
+                })
+                .registerTypeAdapter(RegisteredUser.class, new JsonSerializer<RegisteredUser>() {
                     @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return RegisteredUser.class == clazz;
+                    public JsonElement serialize(RegisteredUser supervisor, Type typeOfSrc, JsonSerializationContext context) {
+                        Person person = new Person();
+                        person.setEmail(supervisor.getEmail());
+                        person.setFirstname(supervisor.getFirstName());
+                        person.setLastname(supervisor.getLastName());
+                        return new Gson().toJsonTree(person);
                     }
                 }).create();
     }
@@ -134,9 +137,10 @@ public class ProjectConfigurationController {
         binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(Person.class, "primarySupervisor", personPropertyEditor);
     }
 
-    @ModelAttribute("program")
+	@ModelAttribute("program")
     public Program getProgram(@RequestParam(required = false) String programCode) {
         if (programCode == null) {
             return null;
@@ -175,6 +179,16 @@ public class ProjectConfigurationController {
     public String listProjects() {
         List<Project> projects = programsService.listProjects(getUser());
         return gson.toJson(projects);
+    }
+
+    @RequestMapping(value="/defaultPrimarySupervisor", method = RequestMethod.GET)
+    @ResponseBody
+    public String defaultSupervisor(@ModelAttribute("user") RegisteredUser user) {
+    	Person person = new Person();
+    	person.setFirstname(user.getFirstName());
+    	person.setLastname(user.getLastName());
+    	person.setEmail(user.getEmail());
+    	return gson.toJson(person);
     }
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)

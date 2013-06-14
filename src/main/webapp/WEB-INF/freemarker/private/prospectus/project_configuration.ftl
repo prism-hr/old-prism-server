@@ -63,27 +63,63 @@
                 </div>
 			</div>
             <!-- supervisors -->
-            <div class="row-group">
+            <div class="row-group aSDisplay" id="primarySupervisorDiv">
 				<h3>Primary Supervisor</h3>
-				<div class="row">
+				<div class="row" id="primarySupervisorFirstNameDiv">
 				  <label id="primarySupervisorFirstNameLabel" class="plain-label normal" for="primarySupervisorFirstName">First Name<em>*</em></label>
 				  <span class="hint" data-desc="<@spring.message 'prospectus.primarySupervisorFirstName'/>"></span>
 				  <div class="field">
 				    <input class="full" type="text" name="primarySupervisorFirstName" id="primarySupervisorFirstName" autocomplete="off"/>
 				  </div>
 				</div>
-				<div class="row">
+				<div class="row" id="primarySupervisorLastNameDiv">
 				  <label id="primarySupervisorLastNameLabel" class="plain-label normal" for="primarySupervisorLastName">Last Name<em>*</em></label>
 				  <span class="hint" data-desc="<@spring.message 'prospectus.primarySupervisorLastName'/>"></span>
 				  <div class="field">
 				    <input class="full" type="text" name="primarySupervisorLastName" id="primarySupervisorLastName" autocomplete="off"/>
 				  </div>
 				</div>
-				<div class="row">
+				<div class="row" id="primarySupervisorEmailDiv">
 				  <label id="primarySupervisorEmailLabel" class="plain-label normal" for="primarySupervisorEmail">Email<em>*</em></label>
 				  <span class="hint" data-desc="<@spring.message 'prospectus.primarySupervisorEmail'/>"></span>
 				  <div class="field">
 				    <input class="full" type="text" name="primarySupervisorEmail" id="primarySupervisorEmail" autocomplete="off"/>
+				  </div>
+				</div>
+            </div>
+             <div class="row-group aSDisplay" id="secondarySupervisorDiv">
+				<h3>Secondary Supervisor</h3>
+				<div class="row" id="projectAdvertHasSecondarySupervisorDiv">
+                <label class="plain-label">Would you like to specify a secondary Supervisor? <em>*</em>
+                </label> <span class="hint" data-desc="<@spring.message 'prospectus.hasSecondarySupervisor'/>"></span>
+                <div class="field">
+                  <input id="projectAdvertHasSecondarySupervisorRadioYes" type="radio" name="projectAdvertHasSecondarySupervisorRadio" value="true">
+                    Yes
+                  </input>
+                  <input id="projectAdvertHasSecondarySupervisorRadioNo" type="radio" name="projectAdvertHasSecondarySupervisorRadio" value="false" checked>
+                    No
+                  </input>
+                </div>
+              </div>
+				<div class="row" id="secondarySupervisorFirstNameDiv">
+				  <label id="secondarySupervisorFirstNameLabel" class="plain-label normal" for="secondarySupervisorFirstName">First Name<em>*</em></label>
+				  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorFirstName'/>"></span>
+				  <div class="field">
+				    <input class="full" type="text" name="secondarySupervisorFirstName" id="secondarySupervisorFirstName" autocomplete="off" disabled/>
+				  </div>
+				</div>
+				<div class="row" id="secondarySupervisorLastNameDiv">
+				  <label id="secondarySupervisorLastNameLabel" class="plain-label normal" for="secondarySupervisorLastName">Last Name<em>*</em></label>
+				  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorLastName'/>"></span>
+				  <div class="field">
+				    <input class="full" type="text" name="secondarySupervisorLastName" id="secondarySupervisorLastName" autocomplete="off" disabled/>
+				  </div>
+				</div>
+				<div class="row" id="secondarySupervisorEmailDiv">
+				  <label id="secondarySupervisorEmailLabel" class="plain-label normal" for="secondarySupervisorEmail">Email<em>*</em></label>
+				  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorEmail'/>"></span>
+				  <div class="field">
+				    <input class="full" type="text" name="secondarySupervisorEmail" id="secondarySupervisorEmail" autocomplete="off" disabled/>
 				  </div>
 				</div>
             </div>

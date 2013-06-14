@@ -7,17 +7,34 @@ $(document).ready(function(){
 		getProgramData();
 		checkDates();
 });
-
 function bindProgramSelectChangeAction(){
 	$("#programAdvertProgramSelect").bind('change', function() {
 		getProgramData();
-		
 	});
 }
-
+function checktoDisable() {
+	if ($("#programAdvertProgramSelect").val() != "") {
+		$("#advertGroup label, #programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+		$("#advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input").removeAttr("readonly", "readonly");
+		$("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, #programAdvertClosingDateGroup input").removeAttr("disabled", "disabled");
+		$("#programAdvertClosingDateGroup a").removeClass("disabled");
+	} else {
+		$("#advertGroup label, #programAdvertClosingDateGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
+		$("#advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input").attr("readonly", "readonly");
+		$("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, #programAdvertClosingDateGroup input").attr("disabled", "disabled");
+		$("#programAdvertClosingDateGroup a").addClass("disabled");
+		$("#advertGroup input, #advertGroup textarea, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
+		$("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
+		$("#programAdvertClosingDates").css("display", "none");
+		$(".badge.count").text('2000 Characters left');
+	}
+}
 function getProgramData(){
 	clearProgramAdvertErrors();
 	var programme_code= $("#programAdvertProgramSelect").val();
+	var programme_name= $("#programAdvertProgramSelect option:selected").text();
+	checktoDisable();
+	changeInfoBarName(programme_name,false);
 	if(programme_code==""){
 		clearAll();
 	}
@@ -25,8 +42,37 @@ function getProgramData(){
 		getAdvertData(programme_code);
 		getClosingDatesData(programme_code);
 	}
+	
 }
-
+function changeInfoBarName(text,advertUpdated) {
+	if (advertUpdated) {
+		var programme_name = $("#programAdvertProgramSelect option:selected").text();
+		infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>"+programme_name+"</b> has been "+text+".";
+		if ($('.infoBar').hasClass('alert-info')) {
+			$('.infoBar').addClass('alert-success').removeClass('alert-info').html(infohtml);
+		} else {
+			$('.infoBar').html(infohtml);
+		}
+	} else {
+		if (text != "Select...") {
+			infohtml = "<i class='icon-info-sign'></i> Manage the advert for: <b>"+text+"</b>.";
+			infodate = "<i class='icon-info-sign'></i> Manage closing dates for: <b>"+text+"</b>.";
+			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>"+text+"</b>."; 
+		} else {
+			infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your programme here."
+			infodate = "<i class='icon-info-sign'></i> Manage closing dates for your programme here.";
+			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your programme."; 
+		}
+		$('#infodates').html(infodate);
+		$('#infoResources').html(inforesource);
+		if ($('.infoBar').hasClass('alert-success')) {
+			$('.infoBar').addClass('alert-info').removeClass('alert-success').html(infohtml);
+		} else {
+			$('.infoBar').html(infohtml);
+		}
+	}
+	
+}
 function getClosingDatesData(program_code){
 	clearClosingDate();
 	$.ajax({
@@ -299,8 +345,10 @@ function saveAdvert(){
 
 	var update = isAdvertLoaded(); 
 	var url="/pgadmissions/prospectus/programme/saveProgramAdvert";
+	labeltext = 'saved';
 	if(update){
 		url = "/pgadmissions/prospectus/programme/editProgramAdvert";
+		labeltext = 'updated';
 	}
 
 	$('#ajaxloader').show();
@@ -337,11 +385,14 @@ function saveAdvert(){
 				if(map['active']){
 					$("#programAdvertIsActiveDiv").append(getErrorMessageHTML(map['active']));
 				}
+				checkIfErrors();
 			}
 			else{
-				$('#programAdvertId').val("advertId");
+				$('#programAdvertId').val(map['advertId']);
+				advertUpdated = true;
+				changeInfoBarName(labeltext,true);
 			}
-			checkIfErrors();
+			
 		},
 		complete: function() {
 			$('#ajaxloader').fadeOut('fast');

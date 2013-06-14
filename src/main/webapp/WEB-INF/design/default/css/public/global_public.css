@@ -546,6 +546,10 @@ div#ajaxloader {
   color: white;
   margin-left: 6px;
 }
+#conections li a:hover {
+  text-decoration: none;
+}
+
 /* Small variation of the feeder */
 #pholder.small .readmore {
   display: block;

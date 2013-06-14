@@ -922,8 +922,10 @@ function checkIfErrors() {
 			$('#add-info-bar-div').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
 		}
 		if ($('.infoBar').length > 0) {
-			$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
-		}
+			if (!$('.infoBar').hasClass('alert-success')) {
+				$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
+			}
+		} 
 	}
 }
 /*!

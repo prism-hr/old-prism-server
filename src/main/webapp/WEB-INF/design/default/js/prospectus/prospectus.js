@@ -86,3 +86,4 @@ function appendErrorToElementIfPresent(message, element){
 function getErrorMessageHTML(message){
 	return "<div class=\"row error\"><div class=\"field\"><div class=\"alert alert-error\"><i class=\"icon-warning-sign\"></i> "+message+"</div></div></div>";
 }
+

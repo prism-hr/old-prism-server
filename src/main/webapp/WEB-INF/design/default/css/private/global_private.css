@@ -1882,3 +1882,6 @@ form#removeForm {
 }
 .buttons .right {float: left;}
 #qualificationsSection .existing input[type="checkbox"], #referencesSection .existing input[type="checkbox"]{margin: 0 0 0 2px !important}
+.list-select-from, .list-select-to {
+	max-height: 260px;
+}

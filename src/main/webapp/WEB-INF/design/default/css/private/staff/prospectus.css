@@ -94,3 +94,10 @@
 #linkToApply, #buttonToApply {
   cursor: text !important;
 }
+section.form-rows .field .label {
+  float: none;
+  width: auto;
+  left: 9px;
+  position: relative;
+  top: -4px;
+}

@@ -11,6 +11,7 @@
 
 /* REGISTRATION page * new design - date:27-03-12 * -------------------------------------------------------------------------------------------- */
 #registration-box {
+	z-index:999;
 	background: white;
 
 	/* Mofified height from 108px to auto - Manish*/

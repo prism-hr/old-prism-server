@@ -60,7 +60,7 @@ public class ProspectusController {
 
     @ModelAttribute("projectProgrammes")
     public List<Program> getProjectProgrammes() {
-        return programsService.getAllPrograms();
+        return programsService.getProgramsForWhichCanManageProjects(getUser());
     }
 
 }

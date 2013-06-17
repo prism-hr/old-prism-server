@@ -13,10 +13,10 @@
                 <li <#if activeTab=="account">class="current"</#if>><a href="<@spring.url '/myAccount'/>"><i class="icon-user"></i> My Account</a></li>           
                 <li <#if activeTab=="applications">class="current"</#if>><a href="<@spring.url '/applications'/>"><i class="icon-file"></i> My Applications </a></li>    
                 <#if user?? && (user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR'))>
-                <li <#if activeTab=="users">class="current"</#if>><a href="<@spring.url '/manageUsers/edit'/>"><i class="icon-pencil"></i> Manage Users</a></li>
-                <li <#if activeTab=="config">class="current"</#if>><a href="<@spring.url '/configuration'/>"><i class="icon-wrench"></i> Configuration</a></li>
-                <li <#if activeTab=="prospectus">class="current"</#if>><a href="<@spring.url '/prospectus'/>"><i class="icon-tasks"></i> Prospectus</a></li>
+                  <li <#if activeTab=="users">class="current"</#if>><a href="<@spring.url '/manageUsers/edit'/>"><i class="icon-pencil"></i> Manage Users</a></li>
+                  <li <#if activeTab=="config">class="current"</#if>><a href="<@spring.url '/configuration'/>"><i class="icon-wrench"></i> Configuration</a></li>
                 </#if>
+                <li <#if activeTab=="prospectus">class="current"</#if>><a href="<@spring.url '/prospectus'/>"><i class="icon-tasks"></i> Prospectus</a></li>
             </ul>
         </div>
      

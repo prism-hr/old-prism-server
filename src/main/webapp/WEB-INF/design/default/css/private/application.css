@@ -277,3 +277,9 @@ select.list-select-to option { padding: 5px; }
 #confirmNextStage {
 	margin-top: -4px;
 }
+/* Scrools*/
+.existing  table { margin-bottom: 0; width: 100% }
+.existing  table tr td:first-child {border-left:none;}
+.existing  td.scrollparent { padding: 0; }
+.existing  .scroll { max-height: 159px; overflow: auto; } /* roughly five rows high. */
+.existing  .scroll table { border-collapse: collapse; width: 100%; }

@@ -1373,7 +1373,11 @@ span.icon-status.not-submitted:before {
 	padding: 3px 5px;
 }
 #linkAccountsSection table{
-  margin-bottom: 0px;
+  margin-bottom: 10px;
+  border-radius: 4px 4px 4px 4px;
+}
+#linkAccountsSection table table {
+	margin-bottom: 0 !important;
 }
 #linkAccountsSection table td {
   vertical-align: middle;
@@ -1885,3 +1889,11 @@ form#removeForm {
 .list-select-from, .list-select-to {
 	max-height: 260px;
 }
+#linkedAccounts {
+	width: 100%;
+	background: white;
+}
+#linkAccountsSection table { width: 100% }
+#linkAccountsSection td.scrollparent { padding: 0; }
+#linkAccountsSection .scroll { max-height: 137px; overflow: auto; } /* roughly 4 rows high. */
+#linkAccountsSection .scroll table { border-collapse: collapse; width: 100%; }

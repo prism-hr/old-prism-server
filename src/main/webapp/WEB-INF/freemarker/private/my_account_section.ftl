@@ -141,8 +141,13 @@
                     <i class="icon-info-sign"></i> Link <span style="text-decoration: underline">${user.email!}</span> to another account that you own.</div>
                 </#if>
                 <#if user.allLinkedAccounts?has_content>
-                    <div class="row-group">               
-                            <table class="table table-striped table-condensed table-bordered table-hover">
+
+                    <table id="linkedAccounts">
+                    <tbody>
+                    <tr>
+                        <td class="scrollparent">
+                    	<div class="scroll">              
+                            <table class="table table-hover table-striped table-condensed table-bordered">
                                 <colgroup>
                                     <col />
                                     <col style="width: 10px;" />
@@ -156,7 +161,11 @@
                                     </#list>
                                 </tbody>
                             </table>
-                    </div>
+                        </div>
+                        </td>
+                        </tr>
+                        </tbody>
+                        </table>
                 </#if>
                  <div class="row-group">
                     <h3 >Link new account</h3>

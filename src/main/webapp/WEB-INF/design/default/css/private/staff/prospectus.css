@@ -101,3 +101,10 @@ section.form-rows .field .label {
   position: relative;
   top: -4px;
 }
+#projectAdvertsDiv .tableContainer table{
+  background: white;
+  border-radius: 4px;
+}
+#projectAdvertsDiv {
+  border-radius: 4px;
+}

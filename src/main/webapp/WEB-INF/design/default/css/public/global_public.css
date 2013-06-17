@@ -440,11 +440,11 @@ div#ajaxloader {
 #pholder #plist ul li:last-child {
   margin-bottom: 0px;
 }
-.program .pdetails {
+.item .pdetails {
   border-radius: 4px 4px 0 0 ;
   padding: 4px 10px;
 }
-.program .pdetails h3{
+.item .pdetails h3{
   font-size: 14px;
   font-style: italic;
   color: #26AADF;
@@ -452,10 +452,10 @@ div#ajaxloader {
   line-height: 14px;
   margin: 6px 0;
 }
-.program .pdetails .duration { 
+.item .pdetails .duration { 
   margin-left: 14px;
 }
-.program .pdetails .cdate, .program .pdetails .duration {
+.item .pdetails .cdate, .item .pdetails .duration {
   display: inline-block;
   float: left;
   padding-bottom: 4px;
@@ -463,39 +463,39 @@ div#ajaxloader {
   font-weight: bold;
   color: #9797A5;
 }
-.program .pdetails .cdate:before, .program .pdetails .duration:before {
+.item .pdetails .cdate:before, .item .pdetails .duration:before {
   content: "•";
   color: #26AADF;
   margin-right: 3px;
   font-size: 14px;
 }
-.program .pdetails .cdate span, .program .pdetails .duration span {
+.item .pdetails .cdate span, .item .pdetails .duration span {
   color: #26AADF;
 }
-.program .pdetails .pdescription, .program .pdetails .fdescription {
+.item .pdetails .pdescription, .item .pdetails .fdescription {
   clear: both;
   font-size: 12px;
 }
-.program .pdetails .pdescription p, .program .pdetails .fdescription p{
+.item .pdetails .pdescription p, .item .pdetails .fdescription p{
   line-height: 15px;
 }
-.program .pactions {
+.item .pactions {
   display: block;
   background: #E7F5FC;
   border-radius: 0 0 4px 4px;
   border-top: 1px solid #DDD;
   padding: 6px 10px;
 }
-.program .pactions .social{
+.item .pactions .social{
   float: left;
   margin-top: 5px;
   width: auto;
   min-width: 140px;
 }
-.program .pactions .applyBox{
+.item .pactions .applyBox{
   float: right;
 }
-.program .pactions .applyBox a.question{ 
+.item .pactions .applyBox a.question{ 
    background: url(../../images/email-ico.jpg)  0 2px no-repeat !important;
    padding-left: 20px;
   font-size: 12px;
@@ -505,10 +505,10 @@ div#ajaxloader {
   font-weight: bold;
   margin-right: 10px;
 }
-.program.selected .pdetails {
+.item.selected .pdetails {
   background: #F8FCFE;
 }
-.program.selected {
+.item.selected {
   color: #212121;
 }
 
@@ -516,17 +516,17 @@ div#ajaxloader {
   border-color: #057FAD;
   border-radius: 4px;
 }
-.program.selected h3,
-.program.selected .cdate span,
-.program.selected .duration span,
-.program.selected .pdetails .cdate:before,
-.program.selected .pdetails .duration:before  {
+.item.selected h3,
+.item.selected .cdate span,
+.item.selected .duration span,
+.item.selected .pdetails .cdate:before,
+.item.selected .pdetails .duration:before  {
   color: #057FAD;
 }
-.program.selected .pactions {
+.item.selected .pactions {
   background: #C0E6F8;
 }
-.program.selected .pdetails .cdate, .program.selected .pdetails .duration {
+.item.selected .pdetails .cdate, .item.selected .pdetails .duration {
   color: #212121;
 }
 

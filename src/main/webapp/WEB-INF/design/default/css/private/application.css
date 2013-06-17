@@ -86,7 +86,7 @@ section.form-rows footer { background: #EEE; border-top: 1px solid #999; padding
 
 
 .old-ie section.form-rows { display: inline-block; margin-bottom: 0px !important; } /* fixes unsightly space at the bottom of a folding section. */
-section.form-rows h3 { margin-bottom: 1em; margin-top: 0px; }
+section.form-rows h3:first-child { margin-bottom: 1em; margin-top: 0px; }
 section.form-rows .row { line-height: 24px; margin-bottom: 2px; clear: left; }
 
 .admin_row { border-bottom: 1px solid #999; clear: left; overflow: hidden; padding: 8px 0; }

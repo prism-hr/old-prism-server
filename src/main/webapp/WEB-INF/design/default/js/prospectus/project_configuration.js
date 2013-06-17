@@ -345,7 +345,7 @@ function clearSecondarySupervisor(){
 }
 
 function displayProjectList(projects){
-	$('#projectAdvertsTable tbody').empty();
+	$('#projectAdvertsTable tbody tbody').empty();
 	if(projects.length == 0){
 		$("#projectAdvertsDiv").hide();
 	} else {
@@ -403,7 +403,7 @@ function setValue(element,value){
 	element.val(value);
 }
 function appendProjectRow(project){
-	$('#projectAdvertsTable tbody').append(
+	$('#projectAdvertsTable tbody tbody').append(
 		'<tr project-id="' + project.id + '">' +
 			'<td>' + 
 				project.advert.title +

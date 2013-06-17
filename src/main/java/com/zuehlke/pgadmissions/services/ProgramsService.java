@@ -28,17 +28,15 @@ public class ProgramsService {
     private final ProgramDAO programDAO;
     private final AdvertDAO advertDAO;
     private final ProjectDAO projectDAO;
-    private final UserService userService;
 	private final BadgeDAO badgeDAO;
 
 	
     ProgramsService() {
-        this(null, null, null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public ProgramsService(UserService userService, ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO, BadgeDAO badgeDAO) {
-        this.userService = userService;
+    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO, BadgeDAO badgeDAO) {
 		this.programDAO = programDAO;
         this.advertDAO = advertDAO;
         this.projectDAO = projectDAO;

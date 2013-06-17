@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.dto.ProjectDTO;
 
 @Service
 @Transactional
@@ -24,15 +23,13 @@ public class ProgramsService {
     private final ProgramDAO programDAO;
     private final AdvertDAO advertDAO;
     private final ProjectDAO projectDAO;
-	private final UserService userService;
 
-    ProgramsService() {
-        this(null, null, null, null);
+	ProgramsService() {
+        this(null, null, null);
     }
 
     @Autowired
-    public ProgramsService(UserService userService, ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
-        this.userService = userService;
+    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
 		this.programDAO = programDAO;
         this.advertDAO = advertDAO;
         this.projectDAO = projectDAO;
@@ -84,43 +81,7 @@ public class ProgramsService {
         return projectDAO.getProjectById(projectId);
     }
 
-    public void addProject(ProjectDTO projectAdvertDTO, RegisteredUser author) {
-
-        Advert advert = new Advert();
-        updateProjectAdvertFromDTO(advert, projectAdvertDTO);
-
-        Project project = new Project();
-        project.setAdvert(advert);
-        project.setAuthor(author);
-        updateProjectFromDTO(project, projectAdvertDTO);
-
-        projectDAO.save(project);
-    }
-
-
-	private void updateProjectAdvertFromDTO(Advert advert, ProjectDTO projectAdvertDTO) {
-		advert.setTitle(projectAdvertDTO.getTitle());
-        advert.setDescription(projectAdvertDTO.getDescription());
-        advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
-        advert.setFunding(projectAdvertDTO.getFunding());
-        advert.setActive(projectAdvertDTO.getActive());
-	}
-
-	private void updateProjectFromDTO(Project project, ProjectDTO projectAdvertDTO) {
-		project.setProgram(projectAdvertDTO.getProgram());
-		if (projectAdvertDTO.getClosingDateSpecified()) {
-			project.setClosingDate(projectAdvertDTO.getClosingDate());
-		}
-		String email = projectAdvertDTO.getPrimarySupervisor().getEmail();
-		RegisteredUser primarySupervisor = userService.getUserByEmailIncludingDisabledAccounts(email);
-		project.setPrimarySupervisor(primarySupervisor);
-	}
-    
-    public void saveProject(ProjectDTO projectDTO) {
-    	Project project = getProject(projectDTO.getId());
-    	Advert advert = project.getAdvert();
-    	updateProjectAdvertFromDTO(advert, projectDTO);
-    	updateProjectFromDTO(project, projectDTO);
+	public void saveProject(Project project) {
     	projectDAO.save(project);
 	}
 

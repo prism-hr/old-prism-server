@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.prospectus;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -26,18 +24,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.zuehlke.pgadmissions.converters.ProjectConverter;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -51,23 +46,16 @@ import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
-import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
 import com.zuehlke.pgadmissions.validators.ProjectDTOValidator;
-
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 @Controller
 @RequestMapping("/prospectus/projects")
 public class ProjectConfigurationController {
 
-    public static final String LINK_TO_APPLY = "/private/prospectus/link_to_apply.ftl";
-    public static final String BUTTON_TO_APPLY = "/private/prospectus/button_to_apply.ftl";
 
     private final UserService userService;
 
     private final ProgramsService programsService;
-    private final String host;
 
     private final ApplicationContext applicationContext;
 
@@ -75,42 +63,35 @@ public class ProjectConfigurationController {
 
     private final ProjectDTOValidator projectDTOValidator;
 
-    private final ProgramClosingDateValidator closingDateValidator;
     private final DatePropertyEditor datePropertyEditor;
     private final ProgramPropertyEditor programPropertyEditor;
     private final PersonPropertyEditor personPropertyEditor;
+    private final ProjectConverter projectConverter;
 
-    private final FreeMarkerConfigurer freeMarkerConfigurer;
-    private Template buttonToApplyTemplate;
-    private Template linkToApplyTemplate;
     private Gson gson;
 
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null,null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public ProjectConfigurationController(UserService userService, ProgramsService programsService, @Value("${application.host}") final String host,
-            ApplicationContext applicationContext, ProjectDTOValidator projectDTOValidator,
-            DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, FreeMarkerConfigurer freeMarkerConfigurer,
-            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,PersonPropertyEditor personPropertyEditor) {
+    public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
+            ProjectDTOValidator projectDTOValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor,
+            DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
+            PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter) {
         this.userService = userService;
         this.programsService = programsService;
-        this.host = host;
         this.applicationContext = applicationContext;
         this.projectDTOValidator = projectDTOValidator;
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
-        this.freeMarkerConfigurer = freeMarkerConfigurer;
-        this.closingDateValidator = closingDateValidator;
         this.datePropertyEditor = datePropertyEditor;
         this.programPropertyEditor = programPropertyEditor;
 		this.personPropertyEditor = personPropertyEditor;
+		this.projectConverter = projectConverter;
     }
 
     @PostConstruct
-    public void loadFreeMarkerTemplates() throws IOException {
-        linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(LINK_TO_APPLY);
-        buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(BUTTON_TO_APPLY);
+    public void customizeJsonSerializer() throws IOException {
         gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
                 .registerTypeAdapter(Program.class, new JsonSerializer<Program>() {
                     @Override
@@ -138,6 +119,7 @@ public class ProjectConfigurationController {
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(Person.class, "primarySupervisor", personPropertyEditor);
+        binder.registerCustomEditor(Person.class, "secondarySupervisor", personPropertyEditor);
     }
 
 	@ModelAttribute("program")
@@ -167,7 +149,10 @@ public class ProjectConfigurationController {
         Map<String, Object> map = getErrorValues(result, request);
 
         if(map.isEmpty()){
-	        programsService.addProject(projectDTO, getUser());
+        	RegisteredUser currentUser = getUser();
+        	Project project = projectConverter.toDomainObject(projectDTO);
+        	project.setAuthor(currentUser);
+			programsService.saveProject(project);
 	        map.put("success", "true");
         }
 
@@ -183,7 +168,8 @@ public class ProjectConfigurationController {
 
     @RequestMapping(value="/defaultPrimarySupervisor", method = RequestMethod.GET)
     @ResponseBody
-    public String defaultSupervisor(@ModelAttribute("user") RegisteredUser user) {
+    public String defaultSupervisor() {
+    	RegisteredUser user = getUser();
     	Person person = new Person();
     	person.setFirstname(user.getFirstName());
     	person.setLastname(user.getLastName());
@@ -203,7 +189,8 @@ public class ProjectConfigurationController {
     public String saveProject(@Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
     	Map<String, Object> map = getErrorValues(result, request);
     	if(!result.hasErrors()){
-          programsService.saveProject(projectDTO);
+          Project project = projectConverter.toDomainObject(projectDTO);
+          programsService.saveProject(project);
           map.put("success", "true");
     	}
     	return gson.toJson(map);
@@ -226,11 +213,4 @@ public class ProjectConfigurationController {
         return "ok";
     }
 
-    protected String processTemplate(Template template, Map<String, String> dataMap) throws TemplateException, IOException {
-        StringWriter writer = new StringWriter();
-        template.process(dataMap, writer);
-        String result = writer.toString();
-        writer.close();
-        return result;
-    }
 }

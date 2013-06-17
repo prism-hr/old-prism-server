@@ -4,6 +4,7 @@ $(document).ready(function(){
 		registerEditProjectAdvertButton();
 		registerRemoveProjectAdvertButton();
 		registerHasClosingDateProjectAdvertRadio();
+		registerHasSecondarySupervisorRadio();
 		registerClearButton();
 		registerAutosuggest();
 		clearAll();
@@ -32,6 +33,11 @@ function addOrEditProjectAdvert(){
 		lastname : $("#primarySupervisorLastName").val(),
 		email : $("#primarySupervisorEmail").val()	
 		};
+	var secondarySupervisor = {
+			firstname : $("#secondarySupervisorFirstName").val(),
+			lastname : $("#secondarySupervisorLastName").val(),
+			email : $("#secondarySupervisorEmail").val()	
+	};
 	var projectId=$('#projectId').val();
 	var url="/pgadmissions/prospectus/projects";
 	var method='POST';
@@ -59,7 +65,9 @@ function addOrEditProjectAdvert(){
 			closingDateSpecified : projectAdvertHasClosingDate(), 
 			closingDate : $('#projectAdvertClosingDateInput').val(),
 			active : $("input:radio[name=projectAdvertIsActiveRadio]:checked").val(),
-			primarySupervisor : JSON.stringify(primarySupervisor)
+			primarySupervisor : JSON.stringify(primarySupervisor),
+			secondarySupervisorSpecified : projectAdvertHasSecondarySupervisor(), 
+			secondarySupervisor : JSON.stringify(secondarySupervisor)
 		}, 
 		success: function(data) {
 			var map = JSON.parse(data);
@@ -89,6 +97,10 @@ function displayErrors(map){
 	appendErrorToElementIfPresent(map['primarySupervisor.lastname'],$("#primarySupervisorLastNameDiv"));
 	appendErrorToElementIfPresent(map['primarySupervisor.email'],$("#primarySupervisorEmailDiv"));
 	appendErrorToElementIfPresent(map['primarySupervisor'],$("#primarySupervisorEmailDiv"));
+	appendErrorToElementIfPresent(map['secondarySupervisor.firstname'],$("#secondarySupervisorFirstNameDiv"));
+	appendErrorToElementIfPresent(map['secondarySupervisor.lastname'],$("#secondarySupervisorLastNameDiv"));
+	appendErrorToElementIfPresent(map['secondarySupervisor.email'],$("#secondarySupervisorEmailDiv"));
+	appendErrorToElementIfPresent(map['secondarySupervisor'],$("#secondarySupervisorEmailDiv"));
 }
 
 function registerEditProjectAdvertButton(){
@@ -126,6 +138,9 @@ function clearAll(){
 	$('#projectId').val("");
 	$('#addProjectAdvert').text("Add");
 	loadDefaultPrimarySupervisor();
+	$("#projectAdvertHasSecondarySupervisorRadioYes").prop("checked", false);
+	$("#projectAdvertHasSecondarySupervisorRadioNo").prop("checked", true);
+	checkSecondarySupervisor();
 	clearProjectAdvertErrors();
 }
 
@@ -133,6 +148,14 @@ function registerHasClosingDateProjectAdvertRadio(){
 	$("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']").each(function () { 
 		$(this).bind('change', function(){
 			checkProjectClosingDate();
+		});
+	});
+}
+
+function registerHasSecondarySupervisorRadio(){
+	$("#projectAdvertHasSecondarySupervisorDiv [name='projectAdvertHasSecondarySupervisorRadio']").each(function () { 
+		$(this).bind('change', function(){
+			checkSecondarySupervisor();
 		});
 	});
 }
@@ -145,6 +168,28 @@ function checkProjectClosingDate(){
 		$('#projectAdvertClosingDateInput').val("");
 		$('#projectAdvertClosingDateInput').attr('disabled','disabled');		
 	}
+}
+
+function checkSecondarySupervisor(){
+	var secondarySupervisorFields = $('#secondarySupervisorDiv input:text');
+	if(projectAdvertRadioHasValue('projectAdvertHasSecondarySupervisorRadio')){
+		secondarySupervisorFields.each(function (){
+			enableField($(this));
+		});
+	}
+	else{
+		secondarySupervisorFields.each(function (){
+			clearAndDisable($(this));
+		});
+	}
+}
+
+function enableField(input){
+	input.removeAttr('disabled');
+}
+function clearAndDisable(input){
+	input.val("");
+	input.attr('disabled','disabled');
 }
 
 function removeProject(projectRow) {
@@ -228,6 +273,7 @@ function fillProjectAdvertForm(project){
 		$("#projectAdvertIsActiveRadioNo").prop("checked", true);
 	}
 	displayPrimarySupervisor(project.primarySupervisor);
+	displaySecondarySupervisor(project.secondarySupervisor);
 	$('#projectId').val(projectId);
 	$('#addProjectAdvert').text("Edit");
 }
@@ -259,6 +305,12 @@ function loadProjects(){
 
 function clearProjectAdvertErrors(){
 	$("#projectAdvertDiv .error").remove();
+}
+
+function clearSecondarySupervisor(){
+	$('#secondarySupervisorDiv input:text').each(function (){
+		$(this).val("");
+	});
 }
 
 function displayProjectList(projects){
@@ -298,10 +350,22 @@ function loadDefaultPrimarySupervisor(){
 	});
 }
 
-function displayPrimarySupervisor(author){
-	setValue($('#primarySupervisorFirstName'), author.firstname);
-	setValue($('#primarySupervisorLastName'), author.lastname);
-	setValue($('#primarySupervisorEmail'), author.email);
+function displayPrimarySupervisor(supervisor){
+	setValue($('#primarySupervisorFirstName'), supervisor.firstname);
+	setValue($('#primarySupervisorLastName'), supervisor.lastname);
+	setValue($('#primarySupervisorEmail'), supervisor.email);
+}
+
+function displaySecondarySupervisor(supervisor){
+	if(supervisor) {
+		setValue($('#secondarySupervisorFirstName'), supervisor.firstname);
+		setValue($('#secondarySupervisorLastName'), supervisor.lastname);
+		setValue($('#secondarySupervisorEmail'), supervisor.email);
+		$("#projectAdvertHasSecondarySupervisorRadioYes").prop("checked", true);
+	} else {
+		$("#projectAdvertHasSecondarySupervisorRadioNo").prop("checked", true);
+	}
+	checkSecondarySupervisor();
 }
 
 function setValue(element,value){
@@ -322,9 +386,16 @@ function appendProjectRow(project){
 		'</tr>'	
 	);
 }
-
 function projectAdvertHasClosingDate(){
-	return $("input:radio[name='projectAdvertHasClosingDateRadio']:checked").val()=="true";
+	return projectAdvertRadioHasValue('projectAdvertHasClosingDateRadio');
+}
+
+function projectAdvertHasSecondarySupervisor(){
+	return projectAdvertRadioHasValue('projectAdvertHasSecondarySupervisorRadio');
+}
+
+function projectAdvertRadioHasValue(radioName){
+	return $("input:radio[name='"+radioName+"']:checked").val()=="true";
 }
 
 function formatProjectClosingDate(date) {

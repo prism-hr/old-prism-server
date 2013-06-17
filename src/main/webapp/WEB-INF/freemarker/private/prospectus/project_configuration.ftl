@@ -101,26 +101,28 @@
                   </input>
                 </div>
               </div>
-				<div class="row" id="secondarySupervisorFirstNameDiv">
-				  <label id="secondarySupervisorFirstNameLabel" class="plain-label normal" for="secondarySupervisorFirstName">First Name<em>*</em></label>
-				  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorFirstName'/>"></span>
-				  <div class="field">
-				    <input class="full" type="text" name="secondarySupervisorFirstName" id="secondarySupervisorFirstName" autocomplete="off" disabled/>
-				  </div>
-				</div>
-				<div class="row" id="secondarySupervisorLastNameDiv">
-				  <label id="secondarySupervisorLastNameLabel" class="plain-label normal" for="secondarySupervisorLastName">Last Name<em>*</em></label>
-				  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorLastName'/>"></span>
-				  <div class="field">
-				    <input class="full" type="text" name="secondarySupervisorLastName" id="secondarySupervisorLastName" autocomplete="off" disabled/>
-				  </div>
-				</div>
-				<div class="row" id="secondarySupervisorEmailDiv">
-				  <label id="secondarySupervisorEmailLabel" class="plain-label normal" for="secondarySupervisorEmail">Email<em>*</em></label>
-				  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorEmail'/>"></span>
-				  <div class="field">
-				    <input class="full" type="text" name="secondarySupervisorEmail" id="secondarySupervisorEmail" autocomplete="off" disabled/>
-				  </div>
+              <div id="secondarySupervisorFields">
+					<div class="row" id="secondarySupervisorFirstNameDiv">
+					  <label id="secondarySupervisorFirstNameLabel" class="plain-label normal" for="secondarySupervisorFirstName">First Name<em>*</em></label>
+					  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorFirstName'/>"></span>
+					  <div class="field">
+					    <input class="full" type="text" name="secondarySupervisorFirstName" id="secondarySupervisorFirstName" autocomplete="off" disabled/>
+					  </div>
+					</div>
+					<div class="row" id="secondarySupervisorLastNameDiv">
+					  <label id="secondarySupervisorLastNameLabel" class="plain-label normal" for="secondarySupervisorLastName">Last Name<em>*</em></label>
+					  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorLastName'/>"></span>
+					  <div class="field">
+					    <input class="full" type="text" name="secondarySupervisorLastName" id="secondarySupervisorLastName" autocomplete="off" disabled/>
+					  </div>
+					</div>
+					<div class="row" id="secondarySupervisorEmailDiv">
+					  <label id="secondarySupervisorEmailLabel" class="plain-label normal" for="secondarySupervisorEmail">Email<em>*</em></label>
+					  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorEmail'/>"></span>
+					  <div class="field">
+					    <input class="full" type="text" name="secondarySupervisorEmail" id="secondarySupervisorEmail" autocomplete="off" disabled/>
+					  </div>
+					</div>
 				</div>
             </div>
             <!-- supervisors END-->

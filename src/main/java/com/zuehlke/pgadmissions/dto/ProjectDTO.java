@@ -32,6 +32,10 @@ public class ProjectDTO {
     
     private Person primarySupervisor;
 
+    private Boolean secondarySupervisorSpecified;
+
+    private Person secondarySupervisor;
+
     public Program getProgram() {
         return program;
     }
@@ -116,4 +120,21 @@ public class ProjectDTO {
 		this.primarySupervisor = primarySupervisor;
 	}
 
+	public Boolean getSecondarySupervisorSpecified() {
+		return secondarySupervisorSpecified;
+	}
+
+	public void setSecondarySupervisorSpecified(Boolean secondarySupervisorSpecified) {
+		this.secondarySupervisorSpecified = secondarySupervisorSpecified;
+	}
+	
+	public Person getSecondarySupervisor() {
+		return secondarySupervisor;
+	}
+
+	public void setSecondarySupervisor(Person secondarySupervisor) {
+		this.secondarySupervisor = secondarySupervisor;
+	}
+
+	
 }

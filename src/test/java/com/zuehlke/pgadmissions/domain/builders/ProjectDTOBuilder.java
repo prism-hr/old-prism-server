@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 
 public class ProjectDTOBuilder {
@@ -19,6 +18,8 @@ public class ProjectDTOBuilder {
 	private Date closingDate;
 	private Boolean active;
 	private Person primarySupervisor;
+	private Boolean secondarySupervisorSpecified;
+	private Person secondarySupervisor;
 
 	public ProjectDTO build() {
 		ProjectDTO projectDTO = new ProjectDTO();
@@ -32,6 +33,8 @@ public class ProjectDTOBuilder {
 		projectDTO.setClosingDate(closingDate);
 		projectDTO.setActive(active);
 		projectDTO.setPrimarySupervisor(primarySupervisor);
+		projectDTO.setSecondarySupervisorSpecified(secondarySupervisorSpecified);
+		projectDTO.setSecondarySupervisor(secondarySupervisor);
 		return projectDTO;
 	}
 
@@ -82,6 +85,16 @@ public class ProjectDTOBuilder {
 
 	public ProjectDTOBuilder primarySupervisor(Person primarySupervisor) {
 		this.primarySupervisor = primarySupervisor;
+		return this;
+	}
+
+	public ProjectDTOBuilder secondarySupervisorSpecified(Boolean secondarySupervisorSpecified) {
+		this.secondarySupervisorSpecified = secondarySupervisorSpecified;
+		return this;
+	}
+
+	public ProjectDTOBuilder secondarySupervisor(Person secondarySupervisor) {
+		this.secondarySupervisor = secondarySupervisor;
 		return this;
 	}
 

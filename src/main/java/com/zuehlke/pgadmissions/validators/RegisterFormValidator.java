@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -44,6 +45,9 @@ public class RegisterFormValidator extends AbstractValidator {
 	            if (userWithSameEmail != null && !userWithSameEmail.getId().equals(user.getId())) {
 	                errors.rejectValue("email", "user.email.alreadyexists");
 	            }
+	        }
+	        if (!EmailValidator.getInstance().isValid(user.getEmail())) {
+	            errors.rejectValue("email", "text.email.notvalid");
 	        }
 	    }
 

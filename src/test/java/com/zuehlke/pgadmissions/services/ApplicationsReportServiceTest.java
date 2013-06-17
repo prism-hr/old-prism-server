@@ -231,6 +231,61 @@ public class ApplicationsReportServiceTest {
         assertEquals("Conditional", getTextValue(table, row, "outcomeType"));
         assertEquals("Conditions", getTextValue(table, row, "outcomeNote"));
     }
+    
+    @Test
+    public void shouldIgnoreApplicationIfPersonalDetailsIsEmpty() {
+        // GIVEN
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.set(1939, 8, 1);
+        Date today = calendar.getTime();
+        Date yesterday = DateUtils.addDays(today, -1);
+        Date tomorrow = DateUtils.addDays(today, 1);
+        Date dayAfterTomorrow = DateUtils.addDays(today, 2);
+        
+        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
+        ProgramInstance programInstance = new ProgramInstanceBuilder().applicationStartDate(tomorrow).applicationDeadline(dayAfterTomorrow).academicYear("1939").build();
+        Program program1 = new ProgramBuilder().code("ABC").title("BBC").instances(programInstance).build();
+        PersonalDetails personalDetails = null;
+        
+        SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisorBuilder().firstname("suggested").lastname("supervisor1").build();
+        SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisorBuilder().firstname("suggested").lastname("supervisor2").build();
+        ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).studyOption("Part-time").suggestedSupervisors(suggestedSupervisor1, suggestedSupervisor2).startDate(tomorrow).build();
+
+        StateChangeEvent validationEvent = new StateChangeEventBuilder().date(DateUtils.addDays(today, -10)).newStatus(ApplicationFormStatus.VALIDATION).build();
+        StateChangeEvent reviewEvent = new StateChangeEventBuilder().date(DateUtils.addDays(today, -9)).newStatus(ApplicationFormStatus.REVIEW).build();
+        StateChangeEvent interviewEvent1 = new StateChangeEventBuilder().date(DateUtils.addDays(today, -8)).newStatus(ApplicationFormStatus.INTERVIEW).build();
+        StateChangeEvent interviewEvent2 = new StateChangeEventBuilder().date(DateUtils.addDays(today, -4)).newStatus(ApplicationFormStatus.INTERVIEW).build();
+        StateChangeEvent approveEvent = new StateChangeEventBuilder().date(today).newStatus(ApplicationFormStatus.APPROVED).build();
+        ValidationComment validationComment = new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.OVERSEAS).qualifiedForPhd(ValidationQuestionOptions.UNSURE).englishCompentencyOk(ValidationQuestionOptions.UNSURE).build();
+        
+        Referee referee1 = new RefereeBuilder().reference(new ReferenceCommentBuilder().suitableForProgramme(true).suitableForUcl(true).build()).build();
+        Referee referee2 = new RefereeBuilder().reference(new ReferenceCommentBuilder().suitableForProgramme(true).suitableForUcl(false).build()).build();
+        Referee referee3 = new RefereeBuilder().declined(true).build();
+        
+        Interviewer interviewer1 = new InterviewerBuilder().interviewComment(new InterviewCommentBuilder().suitableCandidateForProgramme(true).suitableCandidateForUcl(true).build()).build();
+        Interviewer interviewer2 = new InterviewerBuilder().interviewComment(new InterviewCommentBuilder().suitableCandidateForProgramme(true).suitableCandidateForUcl(false).build()).build();
+        Interview interview = new InterviewBuilder().interviewers(interviewer1, interviewer2).build();
+        
+        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).user(new RegisteredUserBuilder().firstName("Primary").lastName("Supervisor").build()).build();
+        Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(new RegisteredUserBuilder().firstName("Secondary").lastName("Supervisor").build()).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().projectTitle("title").supervisors(primarySupervisor, secondarySupervisor).recommendedConditionsAvailable(true).recommendedConditions("Conditions").build();
+        
+        ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1)
+                .approvalRounds(approvalRound).personalDetails(personalDetails).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).build();
+        List<ApplicationForm> applications = Lists.newArrayList(app1);
+
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(new ArrayList<ApplicationForm>());
+
+        // WHEN
+        EasyMock.replay(applicationsServiceMock);
+        DataTable table = service.getApplicationsReport(user, filtering);
+        EasyMock.verify(applicationsServiceMock);
+
+        // THEN
+        assertEquals(0, table.getRows().size());
+    }
 
     @Before
     public void setUp() {

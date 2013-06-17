@@ -120,6 +120,14 @@ public class ApplicationsReportService {
                     continue;
                 }
                 
+                if (app.isPersonalDetailsNull()) {
+                    // Quick fix for PRISM-425
+                    // Some users managed to submit their applications without 
+                    // providing their personal details. Namely RRDCOMSING01-2013-000144
+                    // and TMRCOMSVEI01-2013-000158.
+                    continue;
+                }
+                
                 RegisteredUser applicant = app.getApplicant();
                 PersonalDetails personalDetails = app.getPersonalDetails();
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
@@ -138,8 +146,8 @@ public class ApplicationsReportService {
                 row.addCell(firstNames);
                 row.addCell(applicant.getLastName());
                 row.addCell(applicant.getEmail());
-                row.addCell(personalDetails.getFirstNationality().getName());
-                row.addCell(personalDetails.getSecondNationality() != null ? app.getPersonalDetails().getSecondNationality().getName() : StringUtils.EMPTY);
+                row.addCell(personalDetails.getFirstNationality() != null ? personalDetails.getFirstNationality().getName() : StringUtils.EMPTY);
+                row.addCell(personalDetails.getSecondNationality() != null ? personalDetails.getSecondNationality().getName() : StringUtils.EMPTY);
                 row.addCell(getDateValue(personalDetails.getDateOfBirth()));
                 row.addCell(personalDetails.getGender().getDisplayValue());
                 row.addCell(program.getCode());

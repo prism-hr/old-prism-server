@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Collections;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Service
@@ -37,7 +39,7 @@ public class ProgramsService {
 
     @Autowired
     public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO, BadgeDAO badgeDAO) {
-		this.programDAO = programDAO;
+        this.programDAO = programDAO;
         this.advertDAO = advertDAO;
         this.projectDAO = projectDAO;
         this.badgeDAO = badgeDAO;
@@ -89,25 +91,30 @@ public class ProgramsService {
         return projectDAO.getProjectById(projectId);
     }
 
-	public void saveProject(Project project) {
-    	projectDAO.save(project);
-	}
-
-    public List<Project> listProjects(RegisteredUser author) {
-        return projectDAO.getProjectsByAuthor(author);
+    public void saveProject(Project project) {
+        projectDAO.save(project);
     }
 
-	public void merge(Program program) {
-		programDAO.merge(program);
-		
-	}
+    public List<Project> listProjects(RegisteredUser user, Program program) {
+        boolean canSeeProjects = false;
+        if (user.isInRole(user, Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(program)) {
+            canSeeProjects = true;
+        } else if (user.isReviewerInProgramme(program) || user.isInterviewerInProgram(program) || user.isSupervisorInProgramme(program)) {
+            canSeeProjects = true;
+        }
+        return canSeeProjects ? projectDAO.getProjectsForProgram(program) : Collections.<Project>emptyList();
+    }
 
-	public void addProgramAdvert(String programCode, Advert advert) {
-		Program program = getProgramByCode(programCode);
-		advertDAO.delete(program.getAdvert());
-		program.setAdvert(advert);
-		programDAO.save(program);
-	}
+    public void merge(Program program) {
+        programDAO.merge(program);
+    }
+
+    public void addProgramAdvert(String programCode, Advert advert) {
+        Program program = getProgramByCode(programCode);
+        advertDAO.delete(program.getAdvert());
+        program.setAdvert(advert);
+        programDAO.save(program);
+    }
 
     public Map<String, String> getDefaultClosingDates() {
         Map<String, String> result = new HashMap<String, String>();

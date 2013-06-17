@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers.prospectus;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
@@ -51,7 +51,6 @@ import com.zuehlke.pgadmissions.validators.ProjectDTOValidator;
 @Controller
 @RequestMapping("/prospectus/projects")
 public class ProjectConfigurationController {
-
 
     private final UserService userService;
 
@@ -76,9 +75,8 @@ public class ProjectConfigurationController {
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
-            ProjectDTOValidator projectDTOValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor,
-            DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
-            PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter) {
+            ProjectDTOValidator projectDTOValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, DatePropertyEditor datePropertyEditor,
+            ProgramPropertyEditor programPropertyEditor, PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter) {
         this.userService = userService;
         this.programsService = programsService;
         this.applicationContext = applicationContext;
@@ -86,8 +84,8 @@ public class ProjectConfigurationController {
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
         this.datePropertyEditor = datePropertyEditor;
         this.programPropertyEditor = programPropertyEditor;
-		this.personPropertyEditor = personPropertyEditor;
-		this.projectConverter = projectConverter;
+        this.personPropertyEditor = personPropertyEditor;
+        this.projectConverter = projectConverter;
     }
 
     @PostConstruct
@@ -98,8 +96,7 @@ public class ProjectConfigurationController {
                     public JsonElement serialize(Program src, Type typeOfSrc, JsonSerializationContext context) {
                         return new JsonPrimitive(src.getCode());
                     }
-                })
-                .registerTypeAdapter(RegisteredUser.class, new JsonSerializer<RegisteredUser>() {
+                }).registerTypeAdapter(RegisteredUser.class, new JsonSerializer<RegisteredUser>() {
                     @Override
                     public JsonElement serialize(RegisteredUser supervisor, Type typeOfSrc, JsonSerializationContext context) {
                         Person person = new Person();
@@ -122,7 +119,7 @@ public class ProjectConfigurationController {
         binder.registerCustomEditor(Person.class, "secondarySupervisor", personPropertyEditor);
     }
 
-	@ModelAttribute("program")
+    @ModelAttribute("program")
     public Program getProgram(@RequestParam(required = false) String programCode) {
         if (programCode == null) {
             return null;
@@ -135,25 +132,17 @@ public class ProjectConfigurationController {
         return userService.getCurrentUser();
     }
 
-    @ModelAttribute("programmes")
-    public List<Program> getProgrammes() {
-        if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllPrograms();
-        }
-        return userService.getCurrentUser().getProgramsOfWhichAdministrator();
-    }
-
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String addProject(@ModelAttribute("projectDTO") @Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = getErrorValues(result, request);
 
-        if(map.isEmpty()){
-        	RegisteredUser currentUser = getUser();
-        	Project project = projectConverter.toDomainObject(projectDTO);
-        	project.setAuthor(currentUser);
-			programsService.saveProject(project);
-	        map.put("success", "true");
+        if (map.isEmpty()) {
+            RegisteredUser currentUser = getUser();
+            Project project = projectConverter.toDomainObject(projectDTO);
+            project.setAuthor(currentUser);
+            programsService.saveProject(project);
+            map.put("success", "true");
         }
 
         return gson.toJson(map);
@@ -161,20 +150,24 @@ public class ProjectConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public String listProjects() {
-        List<Project> projects = programsService.listProjects(getUser());
+    public String listProjects(@RequestParam String programCode) {
+        Program program = programsService.getProgramByCode(programCode);
+        List<Project> projects = Collections.emptyList();
+        if (program != null) {
+            projects = programsService.listProjects(getUser(), program);
+        }
         return gson.toJson(projects);
     }
 
-    @RequestMapping(value="/defaultPrimarySupervisor", method = RequestMethod.GET)
+    @RequestMapping(value = "/defaultPrimarySupervisor", method = RequestMethod.GET)
     @ResponseBody
     public String defaultSupervisor() {
-    	RegisteredUser user = getUser();
-    	Person person = new Person();
-    	person.setFirstname(user.getFirstName());
-    	person.setLastname(user.getLastName());
-    	person.setEmail(user.getEmail());
-    	return gson.toJson(person);
+        RegisteredUser user = getUser();
+        Person person = new Person();
+        person.setFirstname(user.getFirstName());
+        person.setLastname(user.getLastName());
+        person.setEmail(user.getEmail());
+        return gson.toJson(person);
     }
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
@@ -187,24 +180,24 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     @ResponseBody
     public String saveProject(@Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
-    	Map<String, Object> map = getErrorValues(result, request);
-    	if(!result.hasErrors()){
-          Project project = projectConverter.toDomainObject(projectDTO);
-          programsService.saveProject(project);
-          map.put("success", "true");
-    	}
-    	return gson.toJson(map);
+        Map<String, Object> map = getErrorValues(result, request);
+        if (!result.hasErrors()) {
+            Project project = projectConverter.toDomainObject(projectDTO);
+            programsService.saveProject(project);
+            map.put("success", "true");
+        }
+        return gson.toJson(map);
     }
 
-	private Map<String,Object> getErrorValues(BindingResult result,	HttpServletRequest request) {
-		Map<String, Object> map = Maps.newHashMapWithExpectedSize(result.getErrorCount());
-		if (result.hasErrors()) {
-			for (FieldError error : result.getFieldErrors()) {
-				map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
-			}
-		}
-		return map;
-	}
+    private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(result.getErrorCount());
+        if (result.hasErrors()) {
+            for (FieldError error : result.getFieldErrors()) {
+                map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
+            }
+        }
+        return map;
+    }
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody

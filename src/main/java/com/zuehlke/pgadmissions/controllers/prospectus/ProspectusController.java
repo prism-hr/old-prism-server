@@ -58,4 +58,9 @@ public class ProspectusController {
         return programsService.getDefaultClosingDates();
     }
 
+    @ModelAttribute("projectProgrammes")
+    public List<Program> getProjectProgrammes() {
+        return programsService.getAllPrograms();
+    }
+
 }

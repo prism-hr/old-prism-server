@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 public abstract class AbstractAuthorisationAPI {
 
     private final Logger log = LoggerFactory.getLogger(AbstractAuthorisationAPI.class);
-    
+
     protected boolean containsUser(final RegisteredUser user, final List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (areEqual(entry, user)) {
@@ -24,12 +24,12 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     protected boolean containsProgramme(final Program programme, final List<Program> programmes) {
         if (programme == null) {
             return false;
         }
-        
+
         for (Program entry : programmes) {
             if (programme != null && entry.getId().equals(programme.getId())) {
                 return true;
@@ -37,7 +37,7 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     protected boolean containsReferee(final Referee referee, final List<Referee> referees) {
         for (Referee entry : referees) {
             if (referee != null && entry.getId().equals(referee.getId())) {
@@ -46,7 +46,7 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     protected boolean containsInterviewer(final RegisteredUser user, final List<Interviewer> interviewers) {
         for (Interviewer entry : interviewers) {
             if (areEqual(entry.getUser(), user)) {
@@ -55,7 +55,7 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     protected boolean containsReviewer(final RegisteredUser user, final List<Reviewer> reviewers) {
         for (Reviewer entry : reviewers) {
             if (areEqual(entry.getUser(), user)) {
@@ -64,7 +64,7 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     protected boolean containsSupervisor(final RegisteredUser user, final List<Supervisor> supervisors) {
         for (Supervisor entry : supervisors) {
             if (areEqual(entry.getUser(), user)) {
@@ -73,7 +73,7 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     public boolean isInRole(final RegisteredUser user, final String strAuthority) {
         try {
             return isInRole(user, Authority.valueOf(strAuthority));
@@ -82,7 +82,7 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     public boolean isInRole(final RegisteredUser user, final Authority authority) {
         for (Role role : user.getRoles()) {
             if (role.getAuthorityEnum() == authority) {
@@ -91,15 +91,15 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     public boolean isNotInRole(final RegisteredUser user, final Authority authority) {
         return !isInRole(user, authority);
     }
-    
+
     public boolean isNotInRole(final RegisteredUser user, final String authority) {
         return !isInRole(user, authority);
     }
-    
+
     public boolean isInRoleInProgramme(final Program programme, final RegisteredUser user, final String authority) {
         try {
             return getAuthoritiesForProgramme(programme, user).contains(Authority.valueOf(authority));
@@ -108,18 +108,18 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     public boolean isInRoleInProgramme(final Program programme, final RegisteredUser user, final Authority authority) {
         if (programme == null) {
             return false;
         }
-        
+
         if (Authority.SUPERADMINISTRATOR == authority && isInRole(user, Authority.SUPERADMINISTRATOR)) {
             return true;
         }
         return getAuthoritiesForProgramme(programme, user).contains(authority);
     }
-    
+
     public List<Authority> getAuthoritiesForProgramme(final Program programme, final RegisteredUser user) {
         List<Authority> authorities = new ArrayList<Authority>();
         if (containsProgramme(programme, user.getProgramsOfWhichAdministrator())) {
@@ -146,18 +146,18 @@ public abstract class AbstractAuthorisationAPI {
     public boolean isNotInRoleInProgramme(final Program programme, final RegisteredUser user, final Authority authority) {
         return !isInRoleInProgramme(programme, user, authority);
     }
-    
+
     protected boolean areEqual(RegisteredUser u1, RegisteredUser u2) {
         if (u1 == null || u2 == null) {
             return false;
         }
         return u1.getId().equals(u2.getId());
     }
-    
+
     protected boolean areNotEqual(RegisteredUser u1, RegisteredUser u2) {
         return !areEqual(u1, u2);
     }
-    
+
     protected boolean isStatus(final ApplicationForm form, final ApplicationFormStatus... stati) {
         for (ApplicationFormStatus status : stati) {
             if (form.getStatus().equals(status)) {
@@ -187,7 +187,7 @@ public abstract class AbstractAuthorisationAPI {
         }
         return containsSupervisor(user, approvalRound.getSupervisors());
     }
-    
+
     public boolean isSupervisorOfApplicationForm(final ApplicationForm form, final RegisteredUser user) {
         return isSupervisorInApprovalRound(form.getLatestApprovalRound(), user);
     }
@@ -203,7 +203,7 @@ public abstract class AbstractAuthorisationAPI {
     public boolean isProgrammeAdministrator(final ApplicationForm form, final RegisteredUser user) {
         return containsUser(user, form.getProgram().getAdministrators());
     }
-    
+
     public boolean isViewerOfProgramme(final ApplicationForm form, final RegisteredUser user) {
         return containsUser(user, form.getProgram().getViewers());
     }
@@ -211,7 +211,7 @@ public abstract class AbstractAuthorisationAPI {
     public boolean isPastOrPresentReviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
         for (ReviewRound reviewRound : form.getReviewRounds()) {
             for (Reviewer reviewer : reviewRound.getReviewers()) {
-                if (areEqual(user,  reviewer.getUser())) {
+                if (areEqual(user, reviewer.getUser())) {
                     return true;
                 }
             }
@@ -253,31 +253,35 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
+
     public boolean isInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
         return isInterviewerInInterview(form.getLatestInterview(), user);
     }
-    
+
     public boolean isReviewerInLatestReviewRoundOfApplication(final ApplicationForm form, final RegisteredUser user) {
         return isReviewerInReviewRound(form.getLatestReviewRound(), user);
     }
-    
+
     public boolean isReviewerInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
             return false;
         }
-        
+
         if (containsUser(user, programme.getProgramReviewers())) {
             return true;
         }
         return false;
     }
 
+    public boolean isSupervisorInProgramme(final Program programme, final RegisteredUser user) {
+        return containsUser(user, programme.getSupervisors());
+    }
+
     public boolean isAdminOrReviewerInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
             return false;
         }
-        
+
         if (containsUser(user, programme.getAdministrators()) || containsUser(user, programme.getProgramReviewers())) {
             return true;
         }
@@ -288,11 +292,11 @@ public abstract class AbstractAuthorisationAPI {
         if (programme == null) {
             return false;
         }
-        
+
         if (isNotInRole(user, Authority.ADMINISTRATOR)) {
             return false;
         }
-        
+
         if (containsUser(user, programme.getAdministrators())) {
             return true;
         }
@@ -303,18 +307,18 @@ public abstract class AbstractAuthorisationAPI {
         if (programme == null) {
             return false;
         }
-        
+
         if (isNotInRole(user, Authority.APPROVER)) {
             return false;
         }
         return containsUser(user, programme.getApprovers());
     }
-    
+
     public boolean isViewerInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
             return false;
         }
-        
+
         if (isNotInRole(user, Authority.VIEWER)) {
             return false;
         }

@@ -8,6 +8,22 @@
                 <i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
             </div>
             
+            <div class="row-group">
+              <div class="row" id="projectAdvertProgramDiv">
+                <label for="projectAdvertProgramSelect" class="plain-label">Programme<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
+                <div class="field">
+                  <select id="projectAdvertProgramSelect" class="max">
+                    <option value="">Select...</option>
+                      <#list projectProgrammes as programme>
+                        <option value="${programme.code}"
+                          <#if program?? && programme.code == program.code>selected</#if>
+                            >${programme.title?html}</option>
+                      </#list>
+                  </select>
+                </div>
+              </div>            
+            </div>
+            
             <div id="projectAdvertsDiv" class="row-group" style="display:none">
               <div class="tableContainer table table-condensed ">
                 <table id="projectAdvertsTable" class="table table-striped table-condensed table-hover table-bordered">
@@ -27,15 +43,6 @@
             
             <div class="row-group">
                 <h3>Project Advert</h3>
-                <div class="row" id="projectAdvertProgramDiv">
-                  <label for="projectAdvertProgramSelect" class="plain-label">Programme<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
-                  <div class="field">
-                      <select id="projectAdvertProgramSelect" class="max">
-                          <option value="">Select...</option> <#list programmes as programme>
-                          <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option> </#list>
-                      </select>
-                  </div>
-                </div>
                 <div class="row" id="projectAdvertTitleDiv">
                     <label for="projectAdvertTitleInput" class="plain-label">Title <em>*</em></label>
                     <span class="hint" data-desc=""></span>
@@ -62,8 +69,8 @@
                     </div>
                 </div>
 			</div>
-            <!-- supervisors -->
-            <div class="row-group aSDisplay" id="primarySupervisorDiv">
+      <!-- supervisors -->
+      <div class="row-group aSDisplay" id="primarySupervisorDiv">
 				<h3>Primary Supervisor</h3>
 				<div class="row" id="primarySupervisorFirstNameDiv">
 				  <label id="primarySupervisorFirstNameLabel" class="plain-label normal" for="primarySupervisorFirstName">First Name<em>*</em></label>
@@ -86,21 +93,21 @@
 				    <input class="full" type="text" name="primarySupervisorEmail" id="primarySupervisorEmail" autocomplete="off"/>
 				  </div>
 				</div>
-            </div>
-             <div class="row-group aSDisplay" id="secondarySupervisorDiv">
-				<h3>Secondary Supervisor</h3>
+      </div>
+      <div class="row-group aSDisplay" id="secondarySupervisorDiv">
+      <h3>Secondary Supervisor</h3>
 				<div class="row" id="projectAdvertHasSecondarySupervisorDiv">
-                <label class="plain-label">Would you like to specify a secondary Supervisor? <em>*</em>
-                </label> <span class="hint" data-desc="<@spring.message 'prospectus.hasSecondarySupervisor'/>"></span>
-                <div class="field">
-                  <input id="projectAdvertHasSecondarySupervisorRadioYes" type="radio" name="projectAdvertHasSecondarySupervisorRadio" value="true">
-                    Yes
-                  </input>
-                  <input id="projectAdvertHasSecondarySupervisorRadioNo" type="radio" name="projectAdvertHasSecondarySupervisorRadio" value="false" checked>
-                    No
-                  </input>
-                </div>
-              </div>
+            <label class="plain-label">Would you like to specify a secondary Supervisor? <em>*</em>
+            </label> <span class="hint" data-desc="<@spring.message 'prospectus.hasSecondarySupervisor'/>"></span>
+            <div class="field">
+              <input id="projectAdvertHasSecondarySupervisorRadioYes" type="radio" name="projectAdvertHasSecondarySupervisorRadio" value="true">
+                Yes
+              </input>
+              <input id="projectAdvertHasSecondarySupervisorRadioNo" type="radio" name="projectAdvertHasSecondarySupervisorRadio" value="false" checked>
+                No
+              </input>
+            </div>
+        </div>
               <div id="secondarySupervisorFields">
 					<div class="row" id="secondarySupervisorFirstNameDiv">
 					  <label id="secondarySupervisorFirstNameLabel" class="plain-label normal" for="secondarySupervisorFirstName">First Name<em>*</em></label>

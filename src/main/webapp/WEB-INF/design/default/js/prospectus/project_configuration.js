@@ -1,5 +1,6 @@
 $(document).ready(function(){
 		bindDatePicker($("#projectAdvertClosingDateInput"));
+		registerDefaultClosingDateSelector();
 		registerAddProjectAdvertButton();
 		registerEditProjectAdvertButton();
 		registerRemoveProjectAdvertButton();
@@ -10,6 +11,12 @@ $(document).ready(function(){
 		clearAll();
 		loadProjects();
 });
+
+function registerDefaultClosingDateSelector() {
+	$("#projectAdvertProgramSelect").change(function () {
+		selectDefaultClosingDate();
+	});
+}
 
 function registerAutosuggest(){
 	autosuggest($("#primarySupervisorFirstName"), $("#primarySupervisorLastName"), $("#primarySupervisorEmail"));
@@ -150,6 +157,25 @@ function registerHasClosingDateProjectAdvertRadio(){
 			checkProjectClosingDate();
 		});
 	});
+	$("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']").change(function () { 
+		selectDefaultClosingDate();
+	});
+}
+
+function selectDefaultClosingDate() {
+	if ($('#projectAdvertProgramSelect :selected').text()!='Select...' && $("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']")[0].checked) {
+		var programCode = $('#projectAdvertProgramSelect :selected').val();
+		var closingDate = $('#programsClosingDates option[value='+programCode+']').text();
+		if (closingDate != 'null') {
+			$('#projectAdvertClosingDateInput').val(closingDate);
+		}
+		else {
+			$('#projectAdvertClosingDateInput').val('');
+		}
+	}
+	else {
+		$('#projectAdvertClosingDateInput').val('');
+	}
 }
 
 function registerHasSecondarySupervisorRadio(){

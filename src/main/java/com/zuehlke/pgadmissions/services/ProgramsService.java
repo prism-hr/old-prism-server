@@ -1,12 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
+import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
@@ -23,16 +28,21 @@ public class ProgramsService {
     private final ProgramDAO programDAO;
     private final AdvertDAO advertDAO;
     private final ProjectDAO projectDAO;
+    private final UserService userService;
+	private final BadgeDAO badgeDAO;
 
-	ProgramsService() {
-        this(null, null, null);
+	
+    ProgramsService() {
+        this(null, null, null, null, null);
     }
 
     @Autowired
-    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
+    public ProgramsService(UserService userService, ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO, BadgeDAO badgeDAO) {
+        this.userService = userService;
 		this.programDAO = programDAO;
         this.advertDAO = advertDAO;
         this.projectDAO = projectDAO;
+        this.badgeDAO = badgeDAO;
     }
 
     public List<Program> getAllPrograms() {
@@ -46,7 +56,7 @@ public class ProgramsService {
     public void save(Program program) {
         programDAO.save(program);
     }
-
+    
     public Program getProgramByCode(String code) {
         return programDAO.getProgramByCode(code);
     }
@@ -100,6 +110,20 @@ public class ProgramsService {
 		program.setAdvert(advert);
 		programDAO.save(program);
 	}
+
+    public Map<String, String> getDefaultClosingDates() {
+        Map<String, String> result = new HashMap<String, String>();
+        List<Program> programs = getAllPrograms();
+        for (Program program : programs) {
+            Date closingDate = badgeDAO.getNextClosingDateForProgram(program, new Date());
+            String formattedDate = null;
+            if (closingDate !=null) {
+                formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);
+            }
+            result.put(program.getCode(), formattedDate);
+        }
+        return result;
+    }
 
 	
 

@@ -129,7 +129,7 @@ public class ProjectConfigurationController {
         }
         return programsService.getProgramByCode(programCode);
     }
-
+	
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();

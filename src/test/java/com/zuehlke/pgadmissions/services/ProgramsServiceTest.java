@@ -1,17 +1,28 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import junit.framework.Assert;
+
+import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
+import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -28,6 +39,8 @@ public class ProgramsServiceTest {
     private ProjectDAO projectDAOMock;
     
     private ProgramsService programsService;
+    
+    private BadgeDAO badgeDAOMock;
 
     @Test
     public void shouldGetAllPrograms() {
@@ -82,12 +95,35 @@ public class ProgramsServiceTest {
         assertNotNull(definition);
         assertEquals("Siala baba mak", definition.getContent());
     }
+    
+    @Test
+    public void shouldReturnClosingDatesMap() {
+        Program program1 = new ProgramBuilder().code("p1").id(1).build();
+        Program program2 = new ProgramBuilder().code("p2").id(2).build();
+        expect(programDAOMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
+        
+        Capture<Date> dateCaptor = new Capture<Date>();
+        expect(badgeDAOMock.getNextClosingDateForProgram(eq(program1), EasyMock.capture(dateCaptor)))
+            .andReturn(new DateTime(2013, 2, 15, 00, 15).toDate());
+        expect(badgeDAOMock.getNextClosingDateForProgram(eq(program2), EasyMock.capture(dateCaptor)))
+            .andReturn(new DateTime(2013, 2, 13, 13, 15).toDate());
+        
+        replay(programDAOMock, badgeDAOMock);
+        Map<String, String> result = programsService.getDefaultClosingDates();
+        verify(programDAOMock, badgeDAOMock);
+        
+        Assert.assertNotNull(result);
+        Assert.assertEquals(2, result.size());
+        Assert.assertEquals("15 Feb 2013", result.get("p1"));
+        Assert.assertEquals("13 Feb 2013", result.get("p2"));
+    }
 
     @Before
     public void setUp() {
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
         advertDAOMock = EasyMock.createMock(AdvertDAO.class);
         projectDAOMock = EasyMock.createMock(ProjectDAO.class);
-        programsService = new ProgramsService(programDAOMock, advertDAOMock, projectDAOMock);
+        badgeDAOMock = EasyMock.createMock(BadgeDAO.class);
+        programsService = new ProgramsService(null, programDAOMock, advertDAOMock, projectDAOMock, badgeDAOMock);
     }
 }

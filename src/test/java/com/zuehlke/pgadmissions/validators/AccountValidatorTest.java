@@ -210,7 +210,7 @@ public class AccountValidatorTest {
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
         EasyMock.replay(userServiceMock, encryptionUtilsMock);
         accountValidator.validate(user, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter a valid email address.", mappingResult.getFieldError("email").getDefaultMessage());
     }
 

@@ -7,7 +7,8 @@ import static com.zuehlke.pgadmissions.validators.AbstractValidator.EMPTY_FIELD_
 import static com.zuehlke.pgadmissions.validators.AbstractValidator.MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE;
 import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER;
 import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_NO_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_SUPERVISOR_NOT_EXISTS;
+import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_NO_SECONDARY_SUPERVISOR;
+import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.*;
 
 import java.util.Date;
 
@@ -32,19 +33,22 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 
 	private static final String INVALID_SUPERVISOR_EMAIL = "invalid@email.test";
-	private static final String VALID_SUPERVISOR_EMAIL = "email@test.com";
+	private static final String VALID_PRIMARY_SUPERVISOR_EMAIL = "primary@test.com";
+	private static final String VALID_SECONDARY_SUPERVISOR_EMAIL = "secondary@test.com";
 	private static final String _256_CHARACTERS_TEXT = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor..";
 	private static final String _2001_CHARACTERS_TEXT = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea....";
 	private ProjectDTO projectDTO;
 	private PersonValidator personValidator;
 	private Person primarySupervisor;
 	private UserService userService;
+	private Person secondarySupervisor;
 	
 	@Override
 	public void setUp(){
 		userService = EasyMock.createMock(UserService.class);
 		personValidator = EasyMock.createMock(PersonValidator.class);
-		primarySupervisor = createValidSupervisor();
+		primarySupervisor = createValidPrimarySupervisor();
+		secondarySupervisor = createValidSecondarySupervisor();
 		setupPersonValidatorMock_WithSuccessfullValidation();
 		setupUserServiceMock_WithValidRegisteredUserEmail();
 		super.setUp();
@@ -149,7 +153,7 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 	@Test
 	public void shouldRejectIf_PrimarySupervisor_HasValidationErrors(){
 		primarySupervisor.setFirstname(null); //SYMBOLIC. Supervisor validation is mocked, not performed.
-		setupPersonValidatorMock_WithFirstNameEmptyError();
+		setupPersonValidatorMock_WithFirstNameEmptyError(primarySupervisor);
 		assertThatObjectFieldHasErrorCode(projectDTO, "primarySupervisor.firstname", EMPTY_FIELD_ERROR_MESSAGE);
 		EasyMock.verify(personValidator);
 	}
@@ -159,6 +163,39 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 		primarySupervisor.setEmail(INVALID_SUPERVISOR_EMAIL);
 		setupUserServiceMock_WithInvalidRegisteredUserEmail();
 		assertThatObjectFieldHasErrorCode(projectDTO, "primarySupervisor", PROSPECTUS_SUPERVISOR_NOT_EXISTS);
+	}
+	
+	@Test
+	public void shouldRejectIf_SecondarySupervisorSpecified_IsMissing() {
+		projectDTO.setSecondarySupervisorSpecified(null);
+		assertThatObjectFieldHasErrorCode(projectDTO, "secondarySupervisorSpecified", EMPTY_DROPDOWN_ERROR_MESSAGE);
+	}
+
+	@Test
+	public void shouldRejectIf_SecondarySupervisorSpecified_IsTrue_And_SecondarySupervisor_IsMissing() {
+		projectDTO.setSecondarySupervisorSpecified(true);
+		projectDTO.setSecondarySupervisor(null);
+		assertThatObjectFieldHasErrorCode(projectDTO, "secondarySupervisor", PROSPECTUS_NO_SECONDARY_SUPERVISOR);
+	}
+	
+	@Test
+	public void shouldRejectIf_SecondarySupervisor_HasValidationErrors(){
+		projectDTO.setSecondarySupervisorSpecified(true);
+		projectDTO.setSecondarySupervisor(secondarySupervisor);
+		secondarySupervisor.setFirstname(null); //SYMBOLIC. Supervisor validation is mocked, not performed.
+		setupPersonValidatorMock_WithFirstNameEmptyError(secondarySupervisor);
+		assertThatObjectFieldHasErrorCode(projectDTO, "secondarySupervisor.firstname", EMPTY_FIELD_ERROR_MESSAGE);
+		EasyMock.verify(personValidator);
+	}
+
+	@Test
+	public void shouldRejectIf_Same_SecondaryAndPrimarySupervisor(){
+		secondarySupervisor.setEmail(VALID_PRIMARY_SUPERVISOR_EMAIL);
+		projectDTO.setSecondarySupervisorSpecified(true);
+		projectDTO.setSecondarySupervisor(secondarySupervisor);
+		String[][] expectedErrors = new String[][]{	{"secondarySupervisor", PROSPECTUS_SAME_SUPERVISORS_SECONDARY},	{"primarySupervisor", PROSPECTUS_SAME_SUPERVISORS_PRIMARY}};
+		assertThatObjectFieldsHaveErrorCodes(projectDTO, expectedErrors);
+		EasyMock.verify(personValidator);
 	}
 
 	//SETUP
@@ -187,6 +224,7 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 				.funding("funding").studyDuration(1).closingDateSpecified(true)
 				.closingDate(futureClosingDate)
 				.primarySupervisor(primarySupervisor).program(program)
+				.secondarySupervisorSpecified(false)
 				.active(true);
 		return builder.build();
 	}
@@ -197,26 +235,40 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 		return builder.build();
 	}
 
-	private Person createValidSupervisor() {
+	private Person createValidPrimarySupervisor() {
 		PersonBuilder builder = new PersonBuilder();
-		builder.id(1).firstname("Name").lastname("Last Name")
-				.email(VALID_SUPERVISOR_EMAIL);
+		builder.id(1).firstname("Name").lastname("LastName")
+				.email(VALID_PRIMARY_SUPERVISOR_EMAIL);
 		primarySupervisor = builder.build();
 		return primarySupervisor;
 	}
 
+	private Person createValidSecondarySupervisor() {
+		PersonBuilder builder = new PersonBuilder();
+		builder.id(2).firstname("Name2").lastname("LastName2")
+		.email(VALID_SECONDARY_SUPERVISOR_EMAIL);
+		secondarySupervisor = builder.build();
+		return secondarySupervisor;
+	}
+
 	private void setupPersonValidatorMock_WithSuccessfullValidation() {
 		EasyMock.reset(personValidator);
-		EasyMock.expect(personValidator.supports(Person.class)).andReturn(true);
-		personValidator.validate(EasyMock.anyObject(Person.class), EasyMock.anyObject(Errors.class));
-		EasyMock.expectLastCall();
+		EasyMock.expect(personValidator.supports(Person.class)).andReturn(true).anyTimes();
+		personValidator.validate(EasyMock.eq(primarySupervisor), EasyMock.anyObject(Errors.class));
+		EasyMock.expectLastCall().times(1);
+		personValidator.validate(EasyMock.eq(secondarySupervisor), EasyMock.anyObject(Errors.class));
+		EasyMock.expectLastCall().times(0,1);
 		EasyMock.replay(personValidator);
 	}
 	
-	private void setupPersonValidatorMock_WithFirstNameEmptyError() {
+	private void setupPersonValidatorMock_WithFirstNameEmptyError(Person person) {
 		EasyMock.reset(personValidator);
 		EasyMock.expect(personValidator.supports(Person.class)).andReturn(true).anyTimes();
-		personValidator.validate(EasyMock.anyObject(Person.class), EasyMock.anyObject(Errors.class));
+
+		personValidator.validate(EasyMock.not(EasyMock.eq(person)), EasyMock.anyObject(Errors.class));
+		EasyMock.expectLastCall().times(0,1);
+		
+		personValidator.validate(EasyMock.eq(person), EasyMock.anyObject(Errors.class));
 		EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
 			@Override
 			public Object answer() throws Throwable {
@@ -230,7 +282,8 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 	
 	private void setupUserServiceMock_WithValidRegisteredUserEmail() {
 		EasyMock.reset(userService);
-		EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts(VALID_SUPERVISOR_EMAIL)).andReturn(createRegisteredUser()).times(1);
+		EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts(VALID_PRIMARY_SUPERVISOR_EMAIL)).andReturn(createRegisteredUser()).times(1,2);
+		EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts(VALID_SECONDARY_SUPERVISOR_EMAIL)).andReturn(createRegisteredUser()).times(0,1);
 		EasyMock.replay(userService);
 	}
 

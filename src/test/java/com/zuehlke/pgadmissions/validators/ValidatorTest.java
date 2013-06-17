@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -8,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.validation.Validator;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,6 +60,8 @@ public abstract class ValidatorTest<T> {
 	}
 	
 	public void assertThatObjectFieldHasErrorCode(T object, String fieldName,String errorCode) {
+		assertThat(fieldName, notNullValue());
+		assertThat(errorCode, notNullValue());
 		validate(object);
 		assertThat("error count", errors.getErrorCount(), is(equalTo(1)));
 		assertThat(String.format("%s error ", fieldName), errors.getFieldError(fieldName), notNullValue());
@@ -67,11 +69,31 @@ public abstract class ValidatorTest<T> {
 	}
 
 	public void assertThatObjectFieldHasErrorMessage(T object, String fieldName,String errorMessage) {
+		assertThat(fieldName, notNullValue());
+		assertThat(errorMessage, notNullValue());
 		validate(object);
 		assertThat("error count", errors.getErrorCount(), is(equalTo(1)));
 		assertThat(String.format("%s error ", fieldName), errors.getFieldError(fieldName), notNullValue());
 		assertThat(String.format("error code %s", fieldName), errors.getFieldError(fieldName).getDefaultMessage(), is(errorMessage));
 	}
+	
+	protected void assertThatObjectFieldsHaveErrorCodes(T object, String[]... expectedErrors) {
+		assertThat(expectedErrors, notNullValue());
+		assertThat(expectedErrors.length, greaterThanOrEqualTo(1));
+		validate(object);
+		assertThat("error count", errors.getErrorCount(), is(equalTo(expectedErrors.length)));
+		for(String[] fieldErrorPair:expectedErrors){
+			assertThat(fieldErrorPair, notNullValue());
+			assertThat(fieldErrorPair.length, is(2));
+			String fieldName = fieldErrorPair[0];
+			String errorCode = fieldErrorPair[1];
+			assertThat(fieldName, notNullValue());
+			assertThat(errorCode, notNullValue());
+			assertThat(String.format("%s error ", fieldName), errors.getFieldError(fieldName), notNullValue());
+			assertThat(String.format("error code %s", fieldName), errors.getFieldError(fieldName).getCode(), is(errorCode));
+		}
+				
+	};
 
 	protected BindingResult validate(T object) {
 		assertThat(object, notNullValue());
@@ -104,6 +126,6 @@ public abstract class ValidatorTest<T> {
 	/**
 	 * should reset all the mocks used,if any
 	 */
-	protected void resetMocks() {};
+	protected void resetMocks() {}
 
 }

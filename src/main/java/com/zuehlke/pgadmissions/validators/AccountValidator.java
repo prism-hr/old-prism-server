@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -77,6 +78,8 @@ public class AccountValidator extends AbstractValidator {
 
         if(StringUtils.isBlank(updatedUser.getEmail())){
             errors.rejectValue("email", EMPTY_FIELD_ERROR_MESSAGE);
+        }else if (!EmailValidator.getInstance().isValid(updatedUser.getEmail())) {
+            errors.rejectValue("email", "text.email.notvalid");
         } else {
             RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
             if (userWithSameEmail != null && !userWithSameEmail.getId().equals(existingUser.getId())) {

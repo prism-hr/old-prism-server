@@ -1,12 +1,12 @@
 <#assign errorCode = RequestParameters.errorCode! /> <#if applicationForm.employmentPositions?has_content> <#assign hasEmploymentPositions = true> <#else> <#assign hasEmploymentPositions = false> </#if> <#setting locale = "en_US"> <#import "/spring.ftl" as spring /> <a name="position-details"></a>
 <h2 id="position-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Employment </h2>
 <div style="display:none;"> <#if hasEmploymentPositions>
-  <table class="existing table table-striped table-condensed table-bordered table-hover">
+  <table class="existing table table-condensed table-bordered">
     <colgroup>
     <col>
     <col style="width: 220px">
-    <col style="width: 30px">
-    <col style="width: 30px">
+    <col style="width: 36px">
+    <col style="width: 36px">
     </colgroup>
     <thead>
       <tr>
@@ -15,27 +15,42 @@
       </tr>
     </thead>
     <tbody>
-    <#list applicationForm.employmentPositions as position>
-    <tr>
-      <td>${(position.position?html)!}
-        ${(position.employerName?html)!}
-        ${(position.employerCountry.name)!}</td>
-      <td>${(position.startDate?string('dd MMM yyyy'))!}
-        -
-        ${(position.endDate?string('dd MMM yyyy'))!"Ongoing"}</td>
-      <td><a name="positionEditButton"<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="position_
-        ${encrypter.encrypt(position.id)}
-        " class="button-edit button-hint">edit</a></td>
-      <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-      <td><a name="deleteEmploymentButton" data-desc="Delete" id="position_${encrypter.encrypt(position.id)}" class="button-delete button-hint">delete</a></td>
-      <#else>
-      <td></td>
-      <td></td>
-      </#if> </tr>
-    </#list>
-      </tbody>
-    
-  </table>
+     <tr>
+        <td colspan="4" class="scrollparent">
+    	  <div class="scroll">
+            <table class="table-striped table-hover">
+                <colgroup>
+                <col />
+                <col style="width: 220px" />
+                <col style="width: 30px" />
+                <col style="width: 30px" />
+                </colgroup>
+            	<tbody>
+                <#list applicationForm.employmentPositions as position>
+                <tr>
+                  <td>${(position.position?html)!}
+                    ${(position.employerName?html)!}
+                    ${(position.employerCountry.name)!}</td>
+                  <td>${(position.startDate?string('dd MMM yyyy'))!}
+                    -
+                    ${(position.endDate?string('dd MMM yyyy'))!"Ongoing"}</td>
+                  <td><a name="positionEditButton"<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="position_
+                    ${encrypter.encrypt(position.id)}
+                    " class="button-edit button-hint">edit</a></td>
+                  <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+                  <td><a name="deleteEmploymentButton" data-desc="Delete" id="position_${encrypter.encrypt(position.id)}" class="button-delete button-hint">delete</a></td>
+                  <#else>
+                  <td></td>
+                  <td></td>
+                  </#if> </tr>
+                </#list>
+      		    </tbody>
+               </table>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+     </table>
   </#if>
   <input type="hidden" id="positionId" name="positionId" value="<#if employmentPosition?? && employmentPosition.id??>${(encrypter.encrypt(employmentPosition.id))!}</#if>" />
   <form>

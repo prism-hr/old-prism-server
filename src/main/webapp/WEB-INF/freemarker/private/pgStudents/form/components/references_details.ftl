@@ -8,11 +8,11 @@
 </#if> <a name="references-details"></a>
 <h2 id="referee-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Referees<em>*</em> </h2>
 <div style="display:none;"> <#if hasReferees>
-  <table class="existing table table-striped table-condensed table-bordered table-hover">
+  <table class="existing table table-condensed table-bordered">
     <colgroup>
     <col/>
-    <col style="width: 30px" />
-    <col style="width: 30px" />
+    <col style="width: 36px" />
+    <col style="width: 36px" />
     </colgroup>
     <thead>
       <tr>
@@ -21,33 +21,47 @@
       </tr>
     </thead>
     <tbody>
-    <#list applicationForm.referees as existingReferee>
-    <tr>
-      <td>${(existingReferee.firstname?html)!} ${(existingReferee.lastname?html)!} (${(existingReferee.email?html)!})</td>
-      <#assign encExistingRefereeId = encrypter.encrypt(existingReferee.id) />
-      <#if existingReferee.editable> 
-       <td><a name="editRefereeLink" data-desc="Edit" id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a> 
-      </td>
-      <#elseif existingReferee.declined || existingReferee.hasProvidedReference()> 
-       <td>
-      <a name="editRefereeLink" id="referee_${encExistingRefereeId}" class="button-responded" data-desc="Responded">Responded</a> 
-      </td>
-      <#else> 
-      <td><a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-show button-hint">show</a></td>
-      
-      </#if>
-      <#if applicationForm.isInState('UNSUBMITTED')> 
-      <td><a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a> 
-      </td>
-      <#else>
-       <td>
-       <a name="" id="" class="button-delete grey button-hint">delete</a> 
-       </td>
-      </#if> 
-    </tr>
-    </#list>
-      </tbody>
-    
+      <tr>
+         <td colspan="3" class="scrollparent">
+    	   <div class="scroll">
+            <table class="table-striped table-hover">
+                <colgroup>
+                <col />
+                <col style="width: 30px" />
+                <col style="width: 30px" />
+                </colgroup>
+            	<tbody>
+                <#list applicationForm.referees as existingReferee>
+                <tr>
+                  <td>${(existingReferee.firstname?html)!} ${(existingReferee.lastname?html)!} (${(existingReferee.email?html)!})</td>
+                  <#assign encExistingRefereeId = encrypter.encrypt(existingReferee.id) />
+                  <#if existingReferee.editable> 
+                   <td><a name="editRefereeLink" data-desc="Edit" id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a> 
+                  </td>
+                  <#elseif existingReferee.declined || existingReferee.hasProvidedReference()> 
+                   <td>
+                  <a name="editRefereeLink" id="referee_${encExistingRefereeId}" class="button-responded" data-desc="Responded">Responded</a> 
+                  </td>
+                  <#else> 
+                  <td><a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-show button-hint">show</a></td>
+                  
+                  </#if>
+                  <#if applicationForm.isInState('UNSUBMITTED')> 
+                  <td><a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a> 
+                  </td>
+                  <#else>
+                   <td>
+                   <a name="" id="" class="button-delete grey button-hint">delete</a> 
+                   </td>
+                  </#if> 
+                </tr>
+                </#list>
+                  </tbody>
+               </table>
+            </div>
+          </td>
+       </tr>
+     </tbody>
   </table>
   </#if>
   <form id="refereeForm">

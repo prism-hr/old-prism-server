@@ -9,12 +9,12 @@
 <#setting locale = "en_US"> <a name="funding-details"></a>
 <h2 id="funding-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Funding </h2>
 <div style="display:none;"> <#if hasFundings>
-  <table class="existing table table-striped table-condensed table-bordered table-hover">
+  <table class="existing table table-condensed table-bordered">
     <colgroup>
     <col />
     <col style="width: 90px" />
-    <col style="width: 30px" />
-    <col style="width: 28px" />
+    <col style="width: 36px" />
+    <col style="width: 36px" />
     </colgroup>
     <thead>
       <tr>
@@ -25,24 +25,40 @@
       </tr>
     </thead>
     <tbody>
-    <#list applicationForm.fundings as existingFunding>
-    <tr>
-      <td><#if existingFunding.document??> <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(existingFunding.document.id)}" data-desc="Proof of Award" class="button-hint" target="_blank">
-        ${existingFunding.type.displayValue}
-        (&pound;
-        ${(existingFunding.value?html)!}) </a> <#else>
-        ${existingFunding.type.displayValue}
-        (&pound;
-        ${(existingFunding.value?html)!}) - no document!
-        </#if> </td>
-      <td>${existingFunding.awardDate?string('dd MMM yyyy')}</td>
-      <td><a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_
-        ${encrypter.encrypt(existingFunding.id)}
-        " class="button-edit button-hint">edit</a></td>
-      <td><#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a name="deleteFundingButton" data-desc="Delete" id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-delete button-hint">delete</a> </#if> </td>
+     <tr>
+        <td colspan="4" class="scrollparent">
+    	  <div class="scroll">
+            <table class="table-striped table-hover">
+                <colgroup>
+                <col />
+                <col style="width: 90px" />
+                <col style="width: 30px" />
+                <col style="width: 30px" />
+                </colgroup>
+            	<tbody>
+                    <#list applicationForm.fundings as existingFunding>
+                    <tr>
+                      <td><#if existingFunding.document??> <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(existingFunding.document.id)}" data-desc="Proof of Award" class="button-hint" target="_blank">
+                        ${existingFunding.type.displayValue}
+                        (&pound;
+                        ${(existingFunding.value?html)!}) </a> <#else>
+                        ${existingFunding.type.displayValue}
+                        (&pound;
+                        ${(existingFunding.value?html)!}) - no document!
+                        </#if> </td>
+                      <td>${existingFunding.awardDate?string('dd MMM yyyy')}</td>
+                      <td><a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_
+                        ${encrypter.encrypt(existingFunding.id)}
+                        " class="button-edit button-hint">edit</a></td>
+                      <td><#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a name="deleteFundingButton" data-desc="Delete" id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-delete button-hint">delete</a> </#if> </td>
+                   </tr>
+                 </#list>
+              </tbody>
+           </table>
+          </div>
+        </td>
     </tr>
-    </#list>
-      </tbody>
+  </tbody>
     
   </table>
   </#if> 

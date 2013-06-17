@@ -1,12 +1,12 @@
 <#assign errorCode = RequestParameters.errorCode! /> <#if applicationForm.qualifications?has_content> <#assign hasQualifications = true> <#else> <#assign hasQualifications = false> </#if> <#import "/spring.ftl" as spring /> <#setting locale = "en_US"> <a name="qualification-details"></a>
 <h2 id="qualifications-H2" class="empty"> <span class="left"></span><span class="right"></span><span class="status"></span> Qualifications </h2>
 <div style="display:none;"> <#if hasQualifications>
-  <table class="existing table table-striped table-condensed table-bordered table-hover">
+  <table class="existing table table-condensed table-bordered ">
     <colgroup>
     <col />
     <col style="width: 150px" />
-    <col style="width: 30px" />
-    <col style="width: 30px" />
+    <col style="width: 36px" />
+    <col style="width: 36px" />
     </colgroup>
     <thead>
       <tr>
@@ -15,40 +15,54 @@
       </tr>
     </thead>
     <tbody>
-    <#list applicationForm.qualifications as existingQualification>
-    <tr>
-      <td><#if existingQualification.proofOfAward?? && existingQualification.proofOfAward.id?? > 
-        <#assign encProofOfAwardId = encrypter.encrypt(existingQualification.proofOfAward.id) /> 
-        <a href="<@spring.url '/download?documentId=${encProofOfAwardId}'/>" data-desc="Proof Of Award" class="button-hint" target="_blank"> <#if existingQualification.otherQualificationInstitution?has_content>
-        ${(existingQualification.otherQualificationInstitution?html)!}
-        <#else>
-        ${(existingQualification.qualificationInstitution?html)!}
-        </#if>
-        ${(existingQualification.qualificationTitle?html)!}
-        ${(existingQualification.qualificationSubject?html)!}
-        (${(existingQualification.qualificationGrade?html)!})</a> <#else>
-        <#if existingQualification.otherQualificationInstitution?has_content>
-        ${(existingQualification.otherQualificationInstitution?html)!}
-        <#else>
-        ${(existingQualification.qualificationInstitution?html)!}
-        </#if>
-        ${(existingQualification.qualificationTitle?html)!}
-        ${(existingQualification.qualificationSubject?html)!}
-        (${(existingQualification.qualificationGrade?html)!}) 
-        </#if> </td>
-      <td><#if existingQualification.isQualificationCompleted()>
-        ${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}
-        <#else>
-        ${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}
-        (Expected) 
-        </#if> </td>
-      <#assign encQualificationId = encrypter.encrypt(existingQualification.id) />
-      <td><a name="editQualificationLink" id="qualification_${encQualificationId}" class="button-edit button-hint" data-desc="<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>Edit<#else>Show</#if>">edit</a></td>
-      <td><#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a name="deleteQualificationButton" data-desc="Delete" id="qualification_${encQualificationId}" class="button-delete button-hint">delete</a> <#else> 
-        &nbsp; 
-        </#if> </td>
-    </tr>
-    </#list>
+        <tr>
+            <td colspan="4" class="scrollparent">
+    		<div class="scroll">
+            <table class="table-hover table-striped">
+                <colgroup>
+                <col />
+                <col style="width: 150px" />
+                <col style="width: 30px" />
+                <col style="width: 30px" />
+                </colgroup>
+            	<tbody>
+            <#list applicationForm.qualifications as existingQualification>
+            <tr>
+              <td><#if existingQualification.proofOfAward?? && existingQualification.proofOfAward.id?? > 
+                <#assign encProofOfAwardId = encrypter.encrypt(existingQualification.proofOfAward.id) /> 
+                <a href="<@spring.url '/download?documentId=${encProofOfAwardId}'/>" data-desc="Proof Of Award" class="button-hint" target="_blank"> <#if existingQualification.otherQualificationInstitution?has_content>
+                ${(existingQualification.otherQualificationInstitution?html)!}
+                <#else>
+                ${(existingQualification.qualificationInstitution?html)!}
+                </#if>
+                ${(existingQualification.qualificationTitle?html)!}
+                ${(existingQualification.qualificationSubject?html)!}
+                (${(existingQualification.qualificationGrade?html)!})</a> <#else>
+                <#if existingQualification.otherQualificationInstitution?has_content>
+                ${(existingQualification.otherQualificationInstitution?html)!}
+                <#else>
+                ${(existingQualification.qualificationInstitution?html)!}
+                </#if>
+                ${(existingQualification.qualificationTitle?html)!}
+                ${(existingQualification.qualificationSubject?html)!}
+                (${(existingQualification.qualificationGrade?html)!}) 
+                </#if> </td>
+              <td><#if existingQualification.isQualificationCompleted()>
+                ${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}
+                <#else>
+                ${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}
+                (Expected) 
+                </#if> </td>
+              <#assign encQualificationId = encrypter.encrypt(existingQualification.id) />
+              <td><a name="editQualificationLink" id="qualification_${encQualificationId}" class="button-edit button-hint" data-desc="<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>Edit<#else>Show</#if>">edit</a></td>
+              <td><#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a name="deleteQualificationButton" data-desc="Delete" id="qualification_${encQualificationId}" class="button-delete button-hint">delete</a> <#else> 
+                &nbsp; 
+                </#if> </td>
+            </tr>
+            </#list>
+          </tbody>
+       </table>
+    </div>
       </tbody>
     
   </table>

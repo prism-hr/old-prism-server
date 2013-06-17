@@ -1,4 +1,4 @@
-<table class="existing  table table-striped table-condensed table-bordered table-hover">
+<table class="existing  table table-condensed table-bordered">
     <colgroup>
         <col style="width: 32px" />
         <col style="width: 680px" />
@@ -15,7 +15,7 @@
         <tr>
             <td colspan="5" class="scrollparent">
                 <div class="scroll">
-                    <table>
+                    <table class="table-striped table-hover">
                         <colgroup>
                             <col style="width: 30px" />
                             <col style="width: 650px" />

@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -16,8 +15,6 @@ import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -76,6 +73,12 @@ public class RegisterController {
 		this.applicationsService = applicationsService;
 		this.programService = programService;
 		this.applicationQueryStringParser = applicationQueryStringParser;
+	}
+	
+	@RequestMapping(value = "/submit", method = RequestMethod.GET)
+	public String defaultGet(@ModelAttribute("pendingUser") RegisteredUser pendingUser, Model model) {
+	    model.addAttribute("pendingUser", pendingUser);
+	    return REGISTER_USERS_VIEW_NAME;
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)

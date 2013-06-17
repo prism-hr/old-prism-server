@@ -4,9 +4,37 @@
     <h2>Manage Projects</h2>
     <div id="projectAdvertDiv">
         <form>
-            <div class="alert alert-info">
-                <i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
+          <div id="projectAdvertsDiv" style="display:none">
+           	<div class="tableContainer">
+                <table id="projectAdvertsTable" class="existing table table-condensed table-bordered">
+                  <colgroup>
+                    <col />
+                    <col style="width: 36px;" />
+                    <col style="width: 36px;" />
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td colspan="3" class="scrollparent">
+                        <div class="scroll">
+                        <table class="table-hover table-striped">
+                            <colgroup>
+                            <col />
+                            <col style="width: 30px" />
+                            <col style="width: 30px" />
+                            </colgroup>
+                            <tbody>
+                            
+                            </tbody>
+                        </table>
+                       </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
+            
+            <input type="hidden" id="projectId"/>
             
             <div class="row-group">
               <div class="row" id="projectAdvertProgramDiv">
@@ -23,26 +51,12 @@
                 </div>
               </div>            
             </div>
-            
-            <div id="projectAdvertsDiv" class="row-group" style="display:none">
-              <div class="tableContainer table table-condensed ">
-                <table id="projectAdvertsTable" class="table table-striped table-condensed table-hover table-bordered">
-                  <colgroup>
-                    <col />
-                    <col style="width: 30px;" />
-                    <col style="width: 30px;" />
-                  </colgroup>
-                  <tbody>
-                  
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            
-            <input type="hidden" id="projectId"/>
-            
-            <div class="row-group">
-                <h3>Project Advert</h3>
+ 
+          <div class="row-group">
+                <h3>Advert</h3>
+                 <div class="alert alert-info">
+                	<i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
+           		 </div>
                 <div class="row" id="projectAdvertTitleDiv">
                     <label for="projectAdvertTitleInput" class="plain-label">Title <em>*</em></label>
                     <span class="hint" data-desc=""></span>
@@ -68,6 +82,33 @@
                         </select>
                     </div>
                 </div>
+                <h3>Closing Date</h3>
+              <div class="row" id="projectAdvertHasClosingDateDiv">
+                <label class="plain-label">Would you like to set a closing date? <em>*</em>
+                </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
+                <div class="field">
+                  <input id="projectAdvertHasClosingDateRadioYes" type="radio" name="projectAdvertHasClosingDateRadio" value="true">
+                    Yes
+                  </input>
+                  <input id="projectAdvertHasClosingDateRadioNo" type="radio" name="projectAdvertHasClosingDateRadio" value="false">
+                    No
+                  </input>
+                </div>
+              </div>
+              <div class="row" id="projectAdvertClosingDateDiv">
+                <label for="closingDate" class="plain-label">Closing Date <em>*</em></label>
+                <span class="hint" data-desc="<@spring.message 'prospectus.closingDate'/>"></span>
+                <div class="field">
+                  <input type="text" id="projectAdvertClosingDateInput" class="full date" disabled/>
+                </div>
+                <div class="field" style="display:none">
+                      <select id="programsClosingDates" class="max">
+                          <#list closingDates?keys as key>
+                          	<option value="${key}"><#if closingDates[key]??>${closingDates[key]}<#else>null</#if></option>
+                          </#list>
+                      </select>
+                </div>
+              </div>
 			</div>
       <!-- supervisors -->
       <div class="row-group aSDisplay" id="primarySupervisorDiv">
@@ -132,39 +173,9 @@
 					</div>
 				</div>
             </div>
-            <!-- supervisors END-->
-            <div class="row-group">
-              <h3>Closing Date</h3>
-              <div class="row" id="projectAdvertHasClosingDateDiv">
-                <label class="plain-label">Would you like to set a closing date? <em>*</em>
-                </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
-                <div class="field">
-                  <input id="projectAdvertHasClosingDateRadioYes" type="radio" name="projectAdvertHasClosingDateRadio" value="true">
-                    Yes
-                  </input>
-                  <input id="projectAdvertHasClosingDateRadioNo" type="radio" name="projectAdvertHasClosingDateRadio" value="false">
-                    No
-                  </input>
-                </div>
-              </div>
-              
-              <div class="row" id="projectAdvertClosingDateDiv">
-                <label for="closingDate" class="plain-label">Closing Date <em>*</em></label>
-                <span class="hint" data-desc="<@spring.message 'prospectus.closingDate'/>"></span>
-                <div class="field">
-                  <input type="text" id="projectAdvertClosingDateInput" class="full date" disabled/>
-                </div>
-                <div class="field" style="display:none">
-                      <select id="programsClosingDates" class="max">
-                          <#list closingDates?keys as key>
-                          	<option value="${key}"><#if closingDates[key]??>${closingDates[key]}<#else>null</#if></option>
-                          </#list>
-                      </select>
-                </div>
-              </div>
-            </div>     
+            <!-- supervisors END-->   
                                                
-            <div class="row-group">
+          <div class="row-group">
               <div class="row" id="projectAdvertIsActiveDiv">
                 <label class="plain-label">Are you currently accepting applications? <em>*</em>
                 </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
@@ -184,7 +195,7 @@
             </div>
             
             <div class="row-group">
-                <h3>Advert</h3>
+                <h3>Resources </h3>
                 <div class="alert alert-info">
                     <i class="icon-info-sign"></i> Embed these resources in emails and on webpages to provide applicants with links to apply for your project.
                 </div>
@@ -200,10 +211,6 @@
                         <textarea id="projectAdvertButtonToApply" class="input-xxlarge" rows="6" cols="150" readonly></textarea>
                     </div>
                 </div>
-            </div>
-            <div class="buttons">
-                <button class="btn" type="button" id="projectsClear">Clear</button>
-                <button class="btn btn-primary" type="button" id="projectsSave">Save</button>
             </div>
         </form>
     </div>

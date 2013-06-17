@@ -124,6 +124,6 @@ public class ProgramsServiceTest {
         advertDAOMock = EasyMock.createMock(AdvertDAO.class);
         projectDAOMock = EasyMock.createMock(ProjectDAO.class);
         badgeDAOMock = EasyMock.createMock(BadgeDAO.class);
-        programsService = new ProgramsService(null, programDAOMock, advertDAOMock, projectDAOMock, badgeDAOMock);
+        programsService = new ProgramsService(programDAOMock, advertDAOMock, projectDAOMock, badgeDAOMock);
     }
 }

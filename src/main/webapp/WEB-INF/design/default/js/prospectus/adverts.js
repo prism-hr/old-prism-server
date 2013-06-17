@@ -64,7 +64,7 @@ function bindAddThisShareOverFix(){
 }
 function renderAdvert(advert){
 	var selectedClass = (advert.selected) ? "selected" : "";
-	return '<li class="program item '+ selectedClass +'" id="ad-'+advert.id+'">'+
+	return '<li class="program item '+ selectedClass +' '+ advert.programCode +'" id="ad-'+advert.id+'">'+
 	'<div class="pdetails">'+
 		'<h3>'+advert.title+'</h3>'+
 		'<div class="cdate">'+closingDateString(advert.closingDate)+'</div>'+

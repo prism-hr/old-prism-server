@@ -165,7 +165,7 @@ public class CreateNewApprovalCommentControllerTest {
         EasyMock.expect(bindingResultMock.getFieldErrors()).andReturn(Arrays.asList(new FieldError(Comment.class.getName(), "comment", "")));
         EasyMock.replay(userServiceMock, applicationsServiceMock, bindingResultMock, approvalServiceMock, commentServiceMock);
         
-        String json = controller.validate(form.getApplicationNumber(), newComment, "", "", bindingResultMock);
+        String json = controller.validate(form.getApplicationNumber(), newComment, bindingResultMock, "", "");
         Assert.assertEquals("{\"success\":false}", json);
         
         EasyMock.verify(userServiceMock, applicationsServiceMock, bindingResultMock, approvalServiceMock, commentServiceMock);

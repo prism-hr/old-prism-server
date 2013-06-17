@@ -8,11 +8,11 @@ $(document).ready(function(){
 		registerAutosuggest();
 		clearAll();
 		loadProjects();
-		
 });
 
 function registerAutosuggest(){
 	autosuggest($("#primarySupervisorFirstName"), $("#primarySupervisorLastName"), $("#primarySupervisorEmail"));
+	autosuggest($("#secondarySupervisorFirstName"), $("#secondarySupervisorLastName"), $("#secondarySupervisorEmail"));
 }
 
 function registerAddProjectAdvertButton(){
@@ -26,6 +26,11 @@ function addOrEditProjectAdvert(){
 	var duration = {
 			value : $("#projectAdvertStudyDurationInput").val(),
 			unit : $("#projectAdvertStudyDurationUnitSelect").val()
+		};
+	var primarySupervisor = {
+		firstname : $("#primarySupervisorFirstName").val(),
+		lastname : $("#primarySupervisorLastName").val(),
+		email : $("#primarySupervisorEmail").val()	
 		};
 	var projectId=$('#projectId').val();
 	var url="/pgadmissions/prospectus/projects";
@@ -53,7 +58,8 @@ function addOrEditProjectAdvert(){
 			funding : $("#projectAdvertFundingText").val(),
 			closingDateSpecified : projectAdvertHasClosingDate(), 
 			closingDate : $('#projectAdvertClosingDateInput').val(),
-			active : $("input:radio[name=projectAdvertIsActiveRadio]:checked").val()
+			active : $("input:radio[name=projectAdvertIsActiveRadio]:checked").val(),
+			primarySupervisor : JSON.stringify(primarySupervisor)
 		}, 
 		success: function(data) {
 			var map = JSON.parse(data);
@@ -79,6 +85,10 @@ function displayErrors(map){
 	appendErrorToElementIfPresent(map['closingDateSpecified'],$("#projectAdvertHasClosingDateDiv"));
 	appendErrorToElementIfPresent(map['closingDate'],$("#projectAdvertClosingDateDiv"));
 	appendErrorToElementIfPresent(map['studyPlaces'],$("#projectAdvertStudyPlacesDiv"));
+	appendErrorToElementIfPresent(map['primarySupervisor.firstname'],$("#primarySupervisorFirstNameDiv"));
+	appendErrorToElementIfPresent(map['primarySupervisor.lastname'],$("#primarySupervisorLastNameDiv"));
+	appendErrorToElementIfPresent(map['primarySupervisor.email'],$("#primarySupervisorEmailDiv"));
+	appendErrorToElementIfPresent(map['primarySupervisor'],$("#primarySupervisorEmailDiv"));
 }
 
 function registerEditProjectAdvertButton(){
@@ -115,6 +125,7 @@ function clearAll(){
 	$("#projectAdvertIsActiveRadioNo").prop("checked", false);
 	$('#projectId').val("");
 	$('#addProjectAdvert').text("Add");
+	loadDefaultPrimarySupervisor();
 	clearProjectAdvertErrors();
 }
 
@@ -216,7 +227,7 @@ function fillProjectAdvertForm(project){
 	} else {
 		$("#projectAdvertIsActiveRadioNo").prop("checked", true);
 	}
-	
+	displayPrimarySupervisor(project.primarySupervisor);
 	$('#projectId').val(projectId);
 	$('#addProjectAdvert').text("Edit");
 }
@@ -262,6 +273,40 @@ function displayProjectList(projects){
 	}
 }
 
+function loadDefaultPrimarySupervisor(){
+	var url="/pgadmissions/prospectus/projects/defaultPrimarySupervisor";
+	showLoader();
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() { window.location.reload(); },
+			500: function() { window.location.href = "/pgadmissions/error"; },
+			404: function() { window.location.href = "/pgadmissions/404"; },
+			400: function() { window.location.href = "/pgadmissions/400"; },                  
+			403: function() { window.location.href = "/pgadmissions/404"; }
+		},
+		url: url,
+		data: {
+		}, 
+		success: function(data) {
+			var primarySupervisor = JSON.parse(data);
+			displayPrimarySupervisor(primarySupervisor);
+		},
+		complete: function() {
+			hideLoader();
+		}
+	});
+}
+
+function displayPrimarySupervisor(author){
+	setValue($('#primarySupervisorFirstName'), author.firstname);
+	setValue($('#primarySupervisorLastName'), author.lastname);
+	setValue($('#primarySupervisorEmail'), author.email);
+}
+
+function setValue(element,value){
+	element.val(value);
+}
 function appendProjectRow(project){
 	$('#projectAdvertsTable tbody').append(
 		'<tr project-id="' + project.id + '">' +

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -28,6 +29,8 @@ public class ProjectDTO {
     private Date closingDate;
 
     private Boolean active;
+    
+    private Person primarySupervisor;
 
     public Program getProgram() {
         return program;
@@ -81,6 +84,10 @@ public class ProjectDTO {
         return closingDate;
     }
 
+    /**
+     * Sets the date with day as most significant value.
+     * @param closingDate
+     */
     public void setClosingDate(Date closingDate) {
         this.closingDate = closingDate == null? closingDate : DateUtils.truncateToDay(closingDate);
     }
@@ -99,6 +106,14 @@ public class ProjectDTO {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Person getPrimarySupervisor() {
+		return primarySupervisor;
+	}
+
+	public void setPrimarySupervisor(Person primarySupervisor) {
+		this.primarySupervisor = primarySupervisor;
 	}
 
 }

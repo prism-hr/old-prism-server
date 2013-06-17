@@ -80,10 +80,10 @@ public class RegisterFormValidatorTest {
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("nonvalidemail")).andReturn(user);
         EasyMock.replay(userServiceMock);
         recordValidator.validate(user, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter a valid email address.", mappingResult.getFieldError("email").getDefaultMessage());
     }
-
+    
     @Test
     @DirtiesContext
     public void shouldRejectIfNoConfirmPassword() {
@@ -196,7 +196,7 @@ public class RegisterFormValidatorTest {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 
         recordValidator.validate(user, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("email").getCode());
     }
 

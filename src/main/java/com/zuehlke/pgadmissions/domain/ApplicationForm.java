@@ -402,6 +402,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return personalDetails;
     }
+    
+    public boolean isPersonalDetailsNull() {
+        return personalDetails == null;
+    }
 
     public void setPersonalDetails(PersonalDetails personalDetails) {
         this.personalDetails = personalDetails;

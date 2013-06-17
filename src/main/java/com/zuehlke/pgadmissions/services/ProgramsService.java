@@ -6,11 +6,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
@@ -47,6 +50,21 @@ public class ProgramsService {
 
     public List<Program> getAllPrograms() {
         return programDAO.getAllPrograms();
+    }
+    
+    public List<Program> getProgramsForWhichCanManageProjects(RegisteredUser user) {
+        if(user.isInRole(Authority.SUPERADMINISTRATOR)){
+            return programDAO.getAllPrograms();
+        }
+        Set<Program> programs = Sets.newHashSet();
+        programs.addAll(user.getProgramsOfWhichAdministrator());
+        programs.addAll(user.getProgramsOfWhichApprover());
+        programs.addAll(user.getProgramsOfWhichReviewer());
+        programs.addAll(user.getProgramsOfWhichInterviewer());
+        programs.addAll(user.getProgramsOfWhichSupervisor());
+        programs.addAll(programDAO.getProgramsOfWhichPreviousInterviewer(user));
+        
+        return Lists.newArrayList(programs);
     }
 
     public Program getProgramById(Integer programId) {

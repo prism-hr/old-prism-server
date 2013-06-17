@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +19,10 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.InterviewParticipant;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -26,17 +30,24 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewVoteCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisionConfirmationCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
@@ -290,5 +301,65 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
             }
         }
         return false;
+    }
+    
+    @Test(expected=ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneReferenceCommentPerReferee(){
+    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+                .password("password").build();
+    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+    	Referee author = new RefereeBuilder().application(application).id(5).build();
+        ReferenceCommentBuilder referenceCommentBuilder = new ReferenceCommentBuilder().comment("reference").user(applicant).referee(author).application(application);
+        
+        save(applicant, application, referenceCommentBuilder.build(),referenceCommentBuilder.build());
+
+    }
+
+    @Test(expected=ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneReviewCommentPerReviewer(){
+    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+    			.password("password").build();
+    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+    	Reviewer author = new ReviewerBuilder().id(5).build();
+    	ReviewCommentBuilder reviewCommentBuilder = new ReviewCommentBuilder().comment("reference").user(applicant).reviewer(author).application(application);
+    	
+    	save(applicant, application, reviewCommentBuilder.build(),reviewCommentBuilder.build());
+    	
+    }
+    
+    @Test(expected=ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneInterviewCommentPerInterviewer(){
+    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+    			.password("password").build();
+    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+    	Interviewer author = new InterviewerBuilder().id(5).build();
+    	InterviewCommentBuilder interviewCommentBuilder = new InterviewCommentBuilder().comment("reference").user(applicant).interviewer(author).application(application);
+    	
+    	save(applicant, application, interviewCommentBuilder.build(),interviewCommentBuilder.build());
+    	
+    }
+
+    @Test(expected=ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneInterviewVoteCommentPerInterviewParticipant(){
+    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+    			.password("password").build();
+    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+    	InterviewParticipant author = new InterviewParticipantBuilder().id(5).build();
+    	InterviewVoteCommentBuilder interviewCommentBuilder = new InterviewVoteCommentBuilder().user(applicant).interviewParticipant(author);
+    	
+    	save(applicant, application, interviewCommentBuilder.build(),interviewCommentBuilder.build());
+    	
+    }
+
+    @Test(expected=ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneSupervisionConfirmationCommentPerSupervisor(){
+    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+    			.password("password").build();
+    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+    	Supervisor author = new SupervisorBuilder().id(5).build();
+    	SupervisionConfirmationCommentBuilder supervisorCommentBuilder = new SupervisionConfirmationCommentBuilder().user(applicant).supervisor(author);
+    	
+    	save(applicant, application, supervisorCommentBuilder.build(),supervisorCommentBuilder.build());
+    	
     }
 }

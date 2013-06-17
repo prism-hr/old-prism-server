@@ -58,7 +58,8 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 			return null;
 		}
 		Person person = (Person) getValue();
-		return "{\"id\": \"" + encryptionHelper.encrypt(person.getId()) + "\",\"firstname\": \"" + person.getFirstname() + "\",\"lastname\": \""
+		String encrypt = person.getId()!=null?encryptionHelper.encrypt(person.getId()):"";
+		return "{\"id\": \"" + encrypt + "\",\"firstname\": \"" + person.getFirstname() + "\",\"lastname\": \""
 				+ person.getLastname() + "\",\"email\": \"" + person.getEmail() + "\"}";
 	}
 }

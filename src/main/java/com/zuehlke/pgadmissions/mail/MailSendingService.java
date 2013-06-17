@@ -83,7 +83,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending reference request mail: ", e, message);
+            log.error("Error while sending reference request mail: {}", e);
         }
     }
 

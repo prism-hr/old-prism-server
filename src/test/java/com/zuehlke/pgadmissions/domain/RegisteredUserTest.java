@@ -554,14 +554,14 @@ public class RegisteredUserTest {
     public void shouldReturnFalseForInterviewersIfUserIsInterviewerButNotInProgram() {
         RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).build()).build();
         Program program = new ProgramBuilder().id(1).build();
-        assertFalse(interviewer.isInterviewerOfProgram(program));
+        assertFalse(interviewer.isInterviewerInProgram(program));
     }
 
     @Test
     public void shouldReturnTrueForInterviewersIfUserIsInterviewerOfProgram() {
         RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).build()).build();
         Program program = new ProgramBuilder().interviewers(interviewer).id(1).build();
-        assertTrue(interviewer.isInterviewerOfProgram(program));
+        assertTrue(interviewer.isInterviewerInProgram(program));
     }
 
     @Test

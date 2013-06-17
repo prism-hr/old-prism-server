@@ -540,7 +540,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return isInterviewerOfApplication(form, this);
     }
 
-    public boolean isInterviewerOfProgram(final Program programme) {
+    public boolean isInterviewerInProgram(final Program programme) {
         return isInterviewerOfProgram(programme, this);
     }
 
@@ -582,6 +582,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
         return isReviewerInLatestReviewRoundOfApplication(form, this);
+    }
+    
+    public boolean isSupervisorInProgramme(final Program programme){
+        return isSupervisorInProgramme(programme, this);
     }
 
     public boolean isReviewerInProgramme(final Program programme) {

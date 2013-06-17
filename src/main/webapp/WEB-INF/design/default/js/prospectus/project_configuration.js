@@ -1,5 +1,6 @@
 $(document).ready(function(){
 		bindDatePicker($("#projectAdvertClosingDateInput"));
+		registerProgramSelect();
 		registerDefaultClosingDateSelector();
 		registerAddProjectAdvertButton();
 		registerEditProjectAdvertButton();
@@ -21,6 +22,12 @@ function registerDefaultClosingDateSelector() {
 function registerAutosuggest(){
 	autosuggest($("#primarySupervisorFirstName"), $("#primarySupervisorLastName"), $("#primarySupervisorEmail"));
 	autosuggest($("#secondarySupervisorFirstName"), $("#secondarySupervisorLastName"), $("#secondarySupervisorEmail"));
+}
+
+function registerProgramSelect() {
+	$("#projectAdvertProgramSelect").change(function() {
+		loadProjects();
+	});
 }
 
 function registerAddProjectAdvertButton(){
@@ -131,7 +138,6 @@ function registerClearButton(){
 }
 
 function clearAll(){
-	$("#projectAdvertProgramSelect").val("");
 	$("#projectAdvertTitleInput").val("");
 	$("#projectAdvertDescriptionText").val("");
 	$("#projectAdvertStudyDurationInput").val("");
@@ -269,8 +275,6 @@ function fillProjectAdvertForm(project){
 	clearProjectAdvertErrors();
 	var advert = project.advert;
 	
-	$("#projectAdvertProgramSelect").val(project.program);
-	
 	$("#projectAdvertTitleInput").val(advert.title);
 	$("#projectAdvertDescriptionText").val(advert.description);
 	
@@ -318,6 +322,7 @@ function loadProjects(){
 		},
 		url: url,
 		data: {
+			 programCode : $("#projectAdvertProgramSelect").val()
 		}, 
 		success: function(data) {
 			var projects = JSON.parse(data);

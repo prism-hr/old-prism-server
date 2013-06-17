@@ -224,7 +224,7 @@ public class UserDAO {
         }
         return users;
     }
-
+    
     public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
         List<Reviewer> reviewers = sessionFactory.getCurrentSession().createCriteria(Reviewer.class)
                 .createAlias("reviewRound", "reviewRound").createAlias("reviewRound.application", "application")

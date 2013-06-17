@@ -7,8 +7,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -33,8 +33,8 @@ public class ProjectDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(project);
     }
 
-    public List<Project> getProjectsByAuthor(RegisteredUser author) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("author", author)).list();
+    public List<Project> getProjectsForProgram(Program program) {
+        return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program)).list();
     }
     
     public void delete(Project project) {

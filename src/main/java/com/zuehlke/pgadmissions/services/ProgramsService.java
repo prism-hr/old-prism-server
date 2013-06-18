@@ -113,13 +113,11 @@ public class ProgramsService {
     }
 
     public List<Project> listProjects(RegisteredUser user, Program program) {
-        boolean canSeeProjects = false;
         if (user.isInRole(user, Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(program)) {
-            canSeeProjects = true;
-        } else if (user.isReviewerInProgramme(program) || user.isInterviewerInProgram(program) || user.isSupervisorInProgramme(program)) {
-            canSeeProjects = true;
+            return projectDAO.getProjectsForProgram(program);
+        } else {
+            return projectDAO.getProjectsForProgramOfWhichAuthor(program, user);
         }
-        return canSeeProjects ? projectDAO.getProjectsForProgram(program) : Collections.<Project>emptyList();
     }
 
     public void merge(Program program) {

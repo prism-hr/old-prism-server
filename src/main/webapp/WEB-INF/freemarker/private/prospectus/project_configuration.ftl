@@ -105,7 +105,7 @@
               </div>
 			</div>
       <!-- supervisors -->
-      <div class="row-group aSDisplay projectGroup" id="primarySupervisorDiv">
+      <div class="row-group aSDisplay projectGroup <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>isAdmin</#if>" id="primarySupervisorDiv">
 				<h3>Primary Supervisor</h3>
 				<div class="row" id="primarySupervisorFirstNameDiv">
 				  <label id="primarySupervisorFirstNameLabel" class="plain-label normal" for="primarySupervisorFirstName">First Name<em>*</em></label>
@@ -129,8 +129,9 @@
 				  </div>
 				</div>
       </div>
+      
       <div class="row-group aSDisplay projectGroup" id="secondarySupervisorDiv">
-      <h3>Secondary Supervisor</h3>
+        <h3>Secondary Supervisor</h3>
 				<div class="row" id="projectAdvertHasSecondarySupervisorDiv">
             <label class="plain-label">Would you like to specify a secondary Supervisor? <em>*</em>
             </label> <span class="hint" data-desc="<@spring.message 'prospectus.hasSecondarySupervisor'/>"></span>
@@ -143,7 +144,7 @@
               </input>
             </div>
         </div>
-              <div id="secondarySupervisorFields">
+        <div id="secondarySupervisorFields">
 					<div class="row" id="secondarySupervisorFirstNameDiv">
 					  <label id="secondarySupervisorFirstNameLabel" class="plain-label normal" for="secondarySupervisorFirstName">First Name<em>*</em></label>
 					  <span class="hint" data-desc="<@spring.message 'prospectus.secondarySupervisorFirstName'/>"></span>
@@ -166,7 +167,7 @@
 					  </div>
 					</div>
 				</div>
-            </div>
+      </div>
             <!-- supervisors END-->   
                                                
           <div class="row-group projectGroup">

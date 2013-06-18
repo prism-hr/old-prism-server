@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.prospectus;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,11 +52,6 @@ public class ProspectusController {
         return userService.getCurrentUser().getProgramsOfWhichAdministrator();
     }
     
-    @ModelAttribute("closingDates")
-    public Map<String, String> getDefaultClosingDateForProgramme() {
-        return programsService.getDefaultClosingDates();
-    }
-
     @ModelAttribute("projectProgrammes")
     public List<Program> getProjectProgrammes() {
         return programsService.getProgramsForWhichCanManageProjects(getUser());

@@ -100,13 +100,7 @@
                 <span class="hint" data-desc="<@spring.message 'prospectus.closingDate'/>"></span>
                 <div class="field">
                   <input type="text" id="projectAdvertClosingDateInput" class="full date" disabled/>
-                </div>
-                <div class="field" style="display:none">
-                      <select id="programsClosingDates" class="max">
-                          <#list closingDates?keys as key>
-                          	<option value="${key}"><#if closingDates[key]??>${closingDates[key]}<#else>null</#if></option>
-                          </#list>
-                      </select>
+                  <input type="hidden" id="closingDate" />
                 </div>
               </div>
 			</div>

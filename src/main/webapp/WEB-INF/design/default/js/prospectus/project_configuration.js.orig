@@ -55,8 +55,10 @@ function addOrEditProjectAdvert(){
 	var projectId=$('#projectId').val();
 	var url="/pgadmissions/prospectus/projects";
 	var method='POST';
+	labeltext = 'saved';
 	if(projectId){
 		url+='/'+projectId;
+		labeltext = 'updated';
 	}
 	showLoader();
 	$.ajax({
@@ -90,7 +92,9 @@ function addOrEditProjectAdvert(){
 			} else {
 				loadProjects();
 				clearAll();
+				changeInfoBarNameProject(labeltext,true);
 			}
+			checkIfErrors();
 		},
 		complete: function() {
 			hideLoader();
@@ -150,8 +154,6 @@ function clearAll(){
 	$("#projectAdvertIsActiveRadioNo").prop("checked", false);
 	$('#projectId').val("");
 	$('#addProjectAdvert').text("Add");
-	$('#projectAdvertLinkToApply').val('');
-	$('#projectAdvertButtonToApply').val('');
 	loadDefaultPrimarySupervisor();
 	$("#projectAdvertHasSecondarySupervisorRadioYes").prop("checked", false);
 	$("#projectAdvertHasSecondarySupervisorRadioNo").prop("checked", true);
@@ -264,9 +266,8 @@ function loadProject(advertRow) {
 		data: {
 		}, 
 		success: function(data) {
-			var map = JSON.parse(data);
-			fillProjectAdvertForm(map);
-			
+			var project = JSON.parse(data);
+			fillProjectAdvertForm(project);
         },
         complete: function() {
         	hideLoader();
@@ -274,9 +275,7 @@ function loadProject(advertRow) {
     });
 }
 
-function fillProjectAdvertForm(data){
-	project = data['project'];
-	
+function fillProjectAdvertForm(project){
 	clearProjectAdvertErrors();
 	var advert = project.advert;
 	
@@ -311,10 +310,48 @@ function fillProjectAdvertForm(data){
 	displaySecondarySupervisor(project.secondarySupervisor);
 	$('#projectId').val(projectId);
 	$('#addProjectAdvert').text("Edit");
-	$('#projectAdvertLinkToApply').val(data['linkToApply']);
-	$('#projectAdvertButtonToApply').val(data['buttonToApply']);
 }
-
+function checktoDisableProjet() {
+	if ($("#projectAdvertProgramSelect").val() != "") {
+		$(".projectGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select,").removeAttr("readonly", "readonly");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button").removeAttr("disabled", "disabled");
+		$("#addProjectAdvert").removeClass("disabled");
+	} else {
+		$(".projectGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select").attr("readonly", "readonly");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button").attr("disabled", "disabled");
+		$("#addProjectAdvert").addClass("disabled");
+		clearAll();
+		$(".badge.count").text('2000 Characters left');
+	}
+}
+function changeInfoBarNameProject(text,advertUpdated) {
+	if (advertUpdated) {
+		var programme_name = $("#projectAdvertProgramSelect option:selected").text();
+		infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>"+programme_name+"</b> has been "+text+".";
+		if ($('#infoBarproject').hasClass('alert-info')) {
+			$('#infoBarproject').addClass('alert-success').removeClass('alert-info').html(infohtml);
+		} else {
+			$('#infoBarproject').html(infohtml);
+		}
+	} else {
+		if (text != "Select...") {
+			infohtml = "<i class='icon-info-sign'></i> Manage the advert for: <b>"+text+"</b>.";
+			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>"+text+"</b>."; 
+		} else {
+			infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your project here.";
+			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your project."; 
+		}
+		$('#infoResourcesProject').html(inforesource);
+		if ($('#infoBarproject').hasClass('alert-success')) {
+			$('#infoBarproject').addClass('alert-info').removeClass('alert-success').html(infohtml);
+		} else {
+			$('#infoBarproject').html(infohtml);
+		}
+	}
+	
+}
 function loadProjects(){
 	var url="/pgadmissions/prospectus/projects";
 	showLoader();
@@ -333,7 +370,10 @@ function loadProjects(){
 		}, 
 		success: function(data) {
 			var projects = JSON.parse(data);
+			var programme_name= $("#projectAdvertProgramSelect option:selected").text();
 			displayProjectList(projects);
+			checktoDisableProjet();
+			changeInfoBarNameProject(programme_name,false);
 		},
 		complete: function() {
 			hideLoader();

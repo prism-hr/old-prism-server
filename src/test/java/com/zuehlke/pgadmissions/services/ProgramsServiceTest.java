@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
-import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -40,7 +39,6 @@ public class ProgramsServiceTest {
     
     private ProgramsService programsService;
     
-    private BadgeDAO badgeDAOMock;
 
     @Test
     public void shouldGetAllPrograms() {
@@ -103,14 +101,14 @@ public class ProgramsServiceTest {
         expect(programDAOMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
         
         Capture<Date> dateCaptor = new Capture<Date>();
-        expect(badgeDAOMock.getNextClosingDateForProgram(eq(program1), EasyMock.capture(dateCaptor)))
+        expect(programDAOMock.getNextClosingDateForProgram(eq(program1), EasyMock.capture(dateCaptor)))
             .andReturn(new DateTime(2013, 2, 15, 00, 15).toDate());
-        expect(badgeDAOMock.getNextClosingDateForProgram(eq(program2), EasyMock.capture(dateCaptor)))
+        expect(programDAOMock.getNextClosingDateForProgram(eq(program2), EasyMock.capture(dateCaptor)))
             .andReturn(new DateTime(2013, 2, 13, 13, 15).toDate());
         
-        replay(programDAOMock, badgeDAOMock);
+        replay(programDAOMock);
         Map<String, String> result = programsService.getDefaultClosingDates();
-        verify(programDAOMock, badgeDAOMock);
+        verify(programDAOMock);
         
         Assert.assertNotNull(result);
         Assert.assertEquals(2, result.size());
@@ -123,7 +121,6 @@ public class ProgramsServiceTest {
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
         advertDAOMock = EasyMock.createMock(AdvertDAO.class);
         projectDAOMock = EasyMock.createMock(ProjectDAO.class);
-        badgeDAOMock = EasyMock.createMock(BadgeDAO.class);
-        programsService = new ProgramsService(programDAOMock, advertDAOMock, projectDAOMock, badgeDAOMock);
+        programsService = new ProgramsService(programDAOMock, advertDAOMock, projectDAOMock);
     }
 }

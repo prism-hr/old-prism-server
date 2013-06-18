@@ -99,7 +99,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     @Column(name = "upi")
     private String upi;
-    
+
     private boolean enabled;
 
     private boolean accountNonExpired;
@@ -178,6 +178,9 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Column(name = "ucl_user_id")
     private String uclUserId;
 
+    @Transient
+    private boolean canManageProjects;
+
     public boolean canSee(ApplicationForm applicationForm) {
         return canSeeApplication(applicationForm, this);
     }
@@ -193,8 +196,8 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean canSeeReference(final ReferenceComment reference) {
         return canSeeReference(reference, this);
     }
-    
-    public boolean canSeeRestrictedInformation(final ApplicationForm form){
+
+    public boolean canSeeRestrictedInformation(final ApplicationForm form) {
         return canSeeRestrictedInformation(form, this);
     }
 
@@ -206,7 +209,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         }
         return firstNameResult;
     }
-    
+
     public String getActivationCode() {
         return activationCode;
     }
@@ -583,8 +586,8 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
         return isReviewerInLatestReviewRoundOfApplication(form, this);
     }
-    
-    public boolean isSupervisorInProgramme(final Program programme){
+
+    public boolean isSupervisorInProgramme(final Program programme) {
         return isSupervisorInProgramme(programme, this);
     }
 
@@ -749,9 +752,17 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public String getUpi() {
         return upi;
     }
-    
+
     public void setUpi(final String upi) {
         this.upi = upi;
+    }
+
+    public boolean isCanManageProjects() {
+        return canManageProjects;
+    }
+
+    public void setCanManageProjects(boolean canManageProjects) {
+        this.canManageProjects = canManageProjects;
     }
 
     @Override
@@ -763,7 +774,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         CollectionUtils.filter(roles, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
-                return ((Role)object).getAuthorityEnum() != authority;
+                return ((Role) object).getAuthorityEnum() != authority;
             }
         });
     }

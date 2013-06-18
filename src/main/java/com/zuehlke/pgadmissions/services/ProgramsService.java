@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Collections;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
-import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
@@ -33,19 +32,17 @@ public class ProgramsService {
     private final ProgramDAO programDAO;
     private final AdvertDAO advertDAO;
     private final ProjectDAO projectDAO;
-	private final BadgeDAO badgeDAO;
 
 	
     ProgramsService() {
-        this(null, null, null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO, BadgeDAO badgeDAO) {
+    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
         this.programDAO = programDAO;
         this.advertDAO = advertDAO;
         this.projectDAO = projectDAO;
-        this.badgeDAO = badgeDAO;
     }
 
     public List<Program> getAllPrograms() {
@@ -62,7 +59,9 @@ public class ProgramsService {
         programs.addAll(user.getProgramsOfWhichReviewer());
         programs.addAll(user.getProgramsOfWhichInterviewer());
         programs.addAll(user.getProgramsOfWhichSupervisor());
+        programs.addAll(programDAO.getProgramsOfWhichPreviousReviewer(user));
         programs.addAll(programDAO.getProgramsOfWhichPreviousInterviewer(user));
+        programs.addAll(programDAO.getProgramsOfWhichPreviousSupervisor(user));
         
         return Lists.newArrayList(programs);
     }
@@ -114,13 +113,11 @@ public class ProgramsService {
     }
 
     public List<Project> listProjects(RegisteredUser user, Program program) {
-        boolean canSeeProjects = false;
         if (user.isInRole(user, Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(program)) {
-            canSeeProjects = true;
-        } else if (user.isReviewerInProgramme(program) || user.isInterviewerInProgram(program) || user.isSupervisorInProgramme(program)) {
-            canSeeProjects = true;
+            return projectDAO.getProjectsForProgram(program);
+        } else {
+            return projectDAO.getProjectsForProgramOfWhichAuthor(program, user);
         }
-        return canSeeProjects ? projectDAO.getProjectsForProgram(program) : Collections.<Project>emptyList();
     }
 
     public void merge(Program program) {
@@ -138,14 +135,18 @@ public class ProgramsService {
         Map<String, String> result = new HashMap<String, String>();
         List<Program> programs = getAllPrograms();
         for (Program program : programs) {
-            Date closingDate = badgeDAO.getNextClosingDateForProgram(program, new Date());
-            String formattedDate = null;
-            if (closingDate !=null) {
-                formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);
-            }
-            result.put(program.getCode(), formattedDate);
+            result.put(program.getCode(), getDefaultClosingDate(program));
         }
         return result;
+    }
+    
+    public String getDefaultClosingDate(Program program) {
+        Date closingDate = programDAO.getNextClosingDateForProgram(program, new Date());
+        String formattedDate = "null";
+        if (closingDate !=null) {
+            formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);
+        }
+        return  formattedDate;
     }
 
 	

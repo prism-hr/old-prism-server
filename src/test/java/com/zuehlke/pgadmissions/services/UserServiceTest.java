@@ -23,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -64,6 +65,8 @@ public class UserServiceTest {
     private EncryptionUtils encryptionUtilsMock;
 
     private MailSendingService mailServiceMock;
+
+    private ProgramsService programsServiceMock;
 
     @Test
     public void shouldGetUserFromDAO() {
@@ -155,10 +158,14 @@ public class UserServiceTest {
     public void shouldGetUserFromSecurityContextAndRefresh() {
         RegisteredUser refreshedUser = new RegisteredUser();
         EasyMock.expect(userDAOMock.get(8)).andReturn(refreshedUser);
-        EasyMock.replay(userDAOMock);
+        EasyMock.expect(programsServiceMock.getProgramsForWhichCanManageProjects(refreshedUser)).andReturn(Lists.newArrayList(new Program()));
+
+        EasyMock.replay(userDAOMock, programsServiceMock);
         RegisteredUser user = userService.getCurrentUser();
+        EasyMock.verify(userDAOMock, programsServiceMock);
+
         assertSame(refreshedUser, user);
-        EasyMock.verify(userDAOMock);
+        assertTrue(refreshedUser.isCanManageProjects());
     }
 
     @Test
@@ -639,7 +646,8 @@ public class UserServiceTest {
     @Test
     public void shouldUpdateCurrentUserAndSendEmailConfirmation() throws UnsupportedEncodingException {
         final RegisteredUser currentUser = new RegisteredUserBuilder().firstName("f").lastName("l").id(7).password("12").email("em").username("em").build();
-        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock) {
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
+                programsServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -667,7 +675,8 @@ public class UserServiceTest {
     @Test
     public void shouldNotChangePassIfPasswordIsBlank() {
         final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").build();
-        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock) {
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
+                programsServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -693,7 +702,8 @@ public class UserServiceTest {
 
         secondAccount.setPrimaryAccount(currentAccount);
 
-        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock) {
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
+                programsServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -721,7 +731,8 @@ public class UserServiceTest {
         final RegisteredUser secondAccount = new RegisteredUserBuilder().id(2).accountNonExpired(true).accountNonLocked(true).enabled(false)
                 .activationCode("abcd").email("A@B.com").password("password").build();
 
-        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock) {
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
+                programsServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -745,7 +756,8 @@ public class UserServiceTest {
         final RegisteredUser secondAccount = new RegisteredUserBuilder().id(2).accountNonExpired(false).accountNonLocked(true).enabled(true)
                 .activationCode("abcd").email("A@B.com").password("password").build();
 
-        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock) {
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
+                programsServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -777,8 +789,10 @@ public class UserServiceTest {
         filteringDAOMock = EasyMock.createMock(ApplicationsFilteringDAO.class);
         userFactoryMock = EasyMock.createMock(UserFactory.class);
         mailServiceMock = createMock(MailSendingService.class);
-        userService = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock);
-        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock) {
+        programsServiceMock = createMock(ProgramsService.class);
+        userService = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock, programsServiceMock);
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
+                programsServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {

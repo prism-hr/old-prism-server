@@ -176,8 +176,7 @@ function registerHasClosingDateProjectAdvertRadio(){
 
 function selectDefaultClosingDate() {
 	if ($('#projectAdvertProgramSelect :selected').text()!='Select...' && $("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']")[0].checked) {
-		var programCode = $('#projectAdvertProgramSelect :selected').val();
-		var closingDate = $('#programsClosingDates option[value='+programCode+']').text();
+		var closingDate = $('#closingDate').val();
 		if (closingDate != 'null') {
 			$('#projectAdvertClosingDateInput').val(closingDate);
 		}
@@ -347,7 +346,7 @@ function changeInfoBarNameProject(text,advertUpdated) {
 			infohtml = "<i class='icon-info-sign'></i> Manage the advert for: <b>"+text+"</b>.";
 			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>"+text+"</b>."; 
 		} else {
-			infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your project here."
+			infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your project here.";
 			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your project."; 
 		}
 		$('#infoResourcesProject').html(inforesource);
@@ -376,7 +375,8 @@ function loadProjects(){
 			 programCode : $("#projectAdvertProgramSelect").val()
 		}, 
 		success: function(data) {
-			var projects = JSON.parse(data);
+			var projects = JSON.parse(data['projects']);
+			$('#closingDate').val(data['closingDate']);
 			var programme_name= $("#projectAdvertProgramSelect option:selected").text();
 			displayProjectList(projects);
 			checktoDisableProjet();

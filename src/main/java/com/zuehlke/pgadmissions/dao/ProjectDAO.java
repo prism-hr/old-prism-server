@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -36,7 +37,12 @@ public class ProjectDAO {
     public List<Project> getProjectsForProgram(Program program) {
         return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program)).list();
     }
-    
+
+    public List<Project> getProjectsForProgramOfWhichAuthor(Program program, RegisteredUser author) {
+        return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program)).add(Restrictions.eq("author", author))
+                .list();
+    }
+
     public void delete(Project project) {
         sessionFactory.getCurrentSession().delete(project);
     }

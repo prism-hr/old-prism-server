@@ -38,20 +38,22 @@ public class UserService {
     private final UserFactory userFactory;
     private final EncryptionUtils encryptionUtils;
     private final MailSendingService mailService;
+    private final ProgramsService programsService;
 
     public UserService() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO,
-            UserFactory userFactory, EncryptionUtils encryptionUtils, MailSendingService mailService) {
+    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, UserFactory userFactory, EncryptionUtils encryptionUtils,
+            MailSendingService mailService, ProgramsService programsService) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.filteringDAO = filteringDAO;
         this.userFactory = userFactory;
         this.encryptionUtils = encryptionUtils;
         this.mailService = mailService;
+        this.programsService = programsService;
     }
 
     public RegisteredUser getUser(Integer id) {
@@ -96,7 +98,10 @@ public class UserService {
 
     public RegisteredUser getCurrentUser() {
         RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        return userDAO.get(currentUser.getId());
+        RegisteredUser user = userDAO.get(currentUser.getId());
+        boolean canManageProjects = !programsService.getProgramsForWhichCanManageProjects(user).isEmpty();
+        user.setCanManageProjects(canManageProjects);
+        return user;
     }
 
     public void addRoleToUser(RegisteredUser user, Authority authority) {
@@ -392,7 +397,7 @@ public class UserService {
     }
 
     private boolean listContainsId(Program program, List<Program> programs) {
-        if (program==null) {
+        if (program == null) {
             return false;
         }
         for (Program entry : programs) {
@@ -405,7 +410,7 @@ public class UserService {
 
     public void setFiltering(final RegisteredUser user, final ApplicationsFiltering filtering) {
         ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
-        user.setFiltering(mergedFilter );
+        user.setFiltering(mergedFilter);
         userDAO.save(user);
     }
 
@@ -420,7 +425,7 @@ public class UserService {
     public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
     }
-    
+
     public List<RegisteredUser> getUsersWithUpi(final String upi) {
         return userDAO.getUsersWithUpi(upi);
     }

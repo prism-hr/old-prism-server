@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.validators;
 
-import static com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor.ERROR_UNIT_FOR_DURATION_OF_STUDY;
 import static com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY;
 import static com.zuehlke.pgadmissions.validators.AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE;
 import static com.zuehlke.pgadmissions.validators.AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE;
 import static com.zuehlke.pgadmissions.validators.AbstractValidator.MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE;
-import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER;
 import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_NO_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_NO_SECONDARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.*;
@@ -81,24 +79,6 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 	public void shouldRejectIf_Description_IsMissing() {
 		projectDTO.setDescription(null);
 		assertThatObjectFieldHasErrorCode(projectDTO, "description", EMPTY_FIELD_ERROR_MESSAGE);
-	}
-
-	@Test
-	public void shouldRejectIf_StudyDuration_IsMissing() {
-		projectDTO.setStudyDuration(null);
-		assertThatObjectFieldHasErrorCode(projectDTO, "studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
-	}
-
-	@Test
-	public void shouldRejectIf_StudyDuration_IsErrorFor_Value() {
-		projectDTO.setStudyDuration(ERROR_VALUE_FOR_DURATION_OF_STUDY);
-		assertThatObjectFieldHasErrorCode(projectDTO, "studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
-	}
-
-	@Test
-	public void shouldRejectIf_StudyDuration_IsErrorFor_Unit() {
-		projectDTO.setStudyDuration(ERROR_UNIT_FOR_DURATION_OF_STUDY);
-		assertThatObjectFieldHasErrorCode(projectDTO, "studyDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
 	}
 
 	@Test
@@ -221,7 +201,7 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 		Program program = createValidProgram();
 		Date futureClosingDate = DateUtils.addMonths(new Date(), 1);
 		builder.id(1).title("title").description("description")
-				.funding("funding").studyDuration(1).closingDateSpecified(true)
+				.funding("funding").closingDateSpecified(true)
 				.closingDate(futureClosingDate)
 				.primarySupervisor(primarySupervisor).program(program)
 				.secondarySupervisorSpecified(false)

@@ -42,7 +42,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -62,8 +61,6 @@ public class ProjectConfigurationController {
 
     private final ApplicationContext applicationContext;
 
-    private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
-
     private final ProjectDTOValidator projectDTOValidator;
 
     private final DatePropertyEditor datePropertyEditor;
@@ -77,18 +74,17 @@ public class ProjectConfigurationController {
 
     
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
-            ProjectDTOValidator projectDTOValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, DatePropertyEditor datePropertyEditor,
-            ProgramPropertyEditor programPropertyEditor, PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer, @Value("${application.host}") final String host) {
+            ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
+            PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer, @Value("${application.host}") final String host) {
         this.userService = userService;
         this.programsService = programsService;
         this.applicationContext = applicationContext;
         this.projectDTOValidator = projectDTOValidator;
-        this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
         this.datePropertyEditor = datePropertyEditor;
         this.programPropertyEditor = programPropertyEditor;
         this.personPropertyEditor = personPropertyEditor;
@@ -121,7 +117,6 @@ public class ProjectConfigurationController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(projectDTOValidator);
         binder.registerCustomEditor(Program.class, "program", programPropertyEditor);
-        binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(Person.class, "primarySupervisor", personPropertyEditor);
@@ -196,6 +191,7 @@ public class ProjectConfigurationController {
 		Map<String, Object> dataMap = Maps.newHashMapWithExpectedSize(3);
         dataMap.put("programCode", project.getProgram().getCode());
         dataMap.put("projectId", project.getId());
+        dataMap.put("advertId", project.getAdvert().getId());
         dataMap.put("host", host);
         Map<String, Object> templateMap = Maps.newHashMapWithExpectedSize(2);
         templateMap.put("buttonToApply", templateRenderer.renderButton(dataMap));

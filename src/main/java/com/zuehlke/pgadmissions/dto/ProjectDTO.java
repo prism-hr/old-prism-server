@@ -19,8 +19,6 @@ public class ProjectDTO {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     private String description;
 
-    private Integer studyDuration;
-
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     private String funding;
 
@@ -58,14 +56,6 @@ public class ProjectDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Integer getStudyDuration() {
-        return studyDuration;
-    }
-
-    public void setStudyDuration(Integer studyDuration) {
-        this.studyDuration = studyDuration;
     }
 
     public String getFunding() {

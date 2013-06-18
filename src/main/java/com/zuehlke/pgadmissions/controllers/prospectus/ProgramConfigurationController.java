@@ -158,6 +158,9 @@ public class ProgramConfigurationController {
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("programCode", programCode);
+        if(advert!=null){
+        	dataMap.put("advertId", advert.getId());
+        }
         dataMap.put("host", host);
 
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));

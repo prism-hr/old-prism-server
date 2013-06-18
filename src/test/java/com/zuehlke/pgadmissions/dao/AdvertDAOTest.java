@@ -42,7 +42,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
     private boolean advertInList(Advert programAdvert, List<Advert> activeAdverts) {
         for (Advert loadedAdvert : activeAdverts) {
-            if (loadedAdvert.getId() == programAdvert.getId()) {
+            if (loadedAdvert.getId().equals(programAdvert.getId())) {
                 assertThat(loadedAdvert.getId(), equalTo(programAdvert.getId()));
                 assertThat(loadedAdvert.getDescription(), equalTo(programAdvert.getDescription()));
                 assertThat(loadedAdvert.getStudyDuration(), equalTo(programAdvert.getStudyDuration()));

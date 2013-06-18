@@ -417,47 +417,6 @@ public class MailSendingServiceTest {
 		assertModelEquals(model, message.getModel());
 	}
 	
-	@Test(expected = PrismMailMessageException.class)
-	public void sendConfirmationEmailToRegisteringUserShouldThrowExceptionIfActionIsNull() throws Exception {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
-		
-		mockMailSender.sendEmail(isA(PrismEmailMessage.class));
-		
-		expect(mockMailSender.resolveSubject(REGISTRATION_CONFIRMATION, (Object[])null)).andReturn("Your Registration for UCL Prism");
-		
-		replay(mockMailSender);
-		service.sendRegistrationConfirmation(user, null);
-		verify(mockMailSender);
-	}
-	
-	@Test(expected = PrismMailMessageException.class)
-	public void sendResetPasswordShouldThrowExceptionIfUserIsNull() throws Exception {
-		String newPassword = "password";
-		
-		mockMailSender.sendEmail(isA(PrismEmailMessage.class));
-		
-		expect(mockMailSender.resolveSubject(NEW_PASSWORD_CONFIRMATION, (Object[])null)).andReturn("New Password for UCL Prism");
-		
-		replay(mockMailSender);
-		service.sendResetPasswordMessage(null, newPassword);
-		verify(mockMailSender);
-	}
-	
-	@Test(expected = PrismMailMessageException.class)
-	public void sendResetPasswordShouldThrowExceptionIfSenderFails() throws Exception {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
-		String newPassword = "password";
-		
-		expect(mockMailSender.resolveSubject(NEW_PASSWORD_CONFIRMATION, (Object[])null)).andReturn("New Password for UCL Prism");
-
-		mockMailSender.sendEmail(isA(PrismEmailMessage.class));
-		expectLastCall().andThrow(new RuntimeException());
-		
-		replay(mockMailSender);
-		service.sendResetPasswordMessage(user, newPassword);
-		verify(mockMailSender);
-	}
-	
 	@Test
 	public void shouldSendSubmissionConfirmationToApplicant() {
 		Person person1 = new PersonBuilder()

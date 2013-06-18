@@ -175,7 +175,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(applicant, subject, model, APPLICATION_SUBMIT_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending submission confirmation to applicant: ", e, message);
+            log.error("Error while sending submission confirmation to applicant: {}", e);
         }
     }
 
@@ -241,7 +241,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending rejection confirmation to applicant: ", e, message);
+            log.error("Error while sending rejection confirmation to applicant: {}", e);
         }
     }
 
@@ -304,7 +304,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending approved notification email to applicant: ", e, message);
+            log.error("Error while sending approved notification email to applicant: {}", e);
         }
     }
 
@@ -353,8 +353,7 @@ public class MailSendingService extends AbstractMailSendingService {
                 message = buildMessage(interviewer.getUser(), subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
                 sendEmail(message);
             } catch (Exception e) {
-                log.error(e.getMessage());
-                throw new PrismMailMessageException("Error while sending interview confirmation email to interviewer: ", e, message);
+                log.error("Error while sending interview confirmation email to interviewer: {}", e);
             }
         }
     }
@@ -415,8 +414,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(applicationForm.getApplicant(), subject, model, MOVED_TO_INTERVIEW_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new PrismMailMessageException("Error while sending interview confirmation email to applicant: ", e, message);
+            log.error("Error while sending interview confirmation email to applicant: {}", e);
         }
     }
 
@@ -495,7 +493,8 @@ public class MailSendingService extends AbstractMailSendingService {
     public void sendExportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
-            throw new PrismMailMessageException("Error while sending export error message: messageCode is null", message);
+            log.error("Error while sending export error message: messageCode is null");
+            return;
         }
         String subject = resolveMessage(EXPORT_ERROR, (Object[]) null);
         for (RegisteredUser user : superadmins) {
@@ -505,7 +504,7 @@ public class MailSendingService extends AbstractMailSendingService {
                 message = buildMessage(user, subject, modelBuilder.build(), EXPORT_ERROR);
                 sendEmail(message);
             } catch (Exception e) {
-                throw new PrismMailMessageException("Error while sending export error message: ", e, message);
+                log.error("Error while sending export error message: {}", e);
             }
         }
     }
@@ -685,7 +684,8 @@ public class MailSendingService extends AbstractMailSendingService {
     public void sendImportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
-            throw new PrismMailMessageException("Error while sending import error message: messageCode is null", message);
+            log.error("Error while sending import error message: messageCode is null");
+            return;
         }
         String subject = resolveMessage(IMPORT_ERROR, (Object[]) null);
         for (RegisteredUser user : superadmins) {
@@ -695,7 +695,7 @@ public class MailSendingService extends AbstractMailSendingService {
                 message = buildMessage(user, subject, modelBuilder.build(), IMPORT_ERROR);
                 sendEmail(message);
             } catch (Exception e) {
-                throw new PrismMailMessageException("Error while sending import error message: ", e, message);
+                log.error("Error while sending import error message: {}", e);
             }
         }
     }
@@ -735,7 +735,8 @@ public class MailSendingService extends AbstractMailSendingService {
     public void sendRegistrationConfirmation(RegisteredUser user, String action) {
         PrismEmailMessage message = null;
         if (action == null) {
-            throw new PrismMailMessageException("Error while sending confirmation email to registering user: action is null", message);
+            log.error("Error while sending confirmation email to registering user: action is null");
+            return;
         }
 
         try {
@@ -744,7 +745,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending confirmation email to registering user: ", e, message);
+            log.error("Error while sending confirmation email to registering user: {}", e);
         }
     }
 
@@ -787,7 +788,7 @@ public class MailSendingService extends AbstractMailSendingService {
             message = buildMessage(user, subject, modelBuilder.build(), NEW_PASSWORD_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {
-            throw new PrismMailMessageException("Error while sending reset password email: ", e, message);
+            log.error("Error while sending reset password email: {}", e);
         }
     }
 

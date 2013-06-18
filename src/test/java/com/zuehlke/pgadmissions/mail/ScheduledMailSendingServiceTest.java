@@ -1549,6 +1549,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).build();
         Supervisor supervisor2 = new SupervisorBuilder().user(supervisorUser2).id(2).build();
 
+        supervisor1.setApprovalRound(new ApprovalRoundBuilder().application(getSampleApplicationForm()).build());
+        supervisor2.setApprovalRound(new ApprovalRoundBuilder().application(getSampleApplicationForm()).build());
         
         
         expect(supervisorDAOMock.getPrimarySupervisorsDueNotification()).andReturn(asList(supervisor1, supervisor2));
@@ -1575,6 +1577,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).build();
         Supervisor supervisor2 = new SupervisorBuilder().user(supervisorUser2).id(2).build();
         
+        supervisor1.setApprovalRound(new ApprovalRoundBuilder().application(getSampleApplicationForm()).build());
+        supervisor2.setApprovalRound(new ApprovalRoundBuilder().application(getSampleApplicationForm()).build());
         
         
         expect(supervisorDAOMock.getPrimarySupervisorsDueNotification()).andReturn(asList(supervisor1));
@@ -1602,6 +1606,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).build();
         Supervisor supervisor2 = new SupervisorBuilder().user(supervisorUser2).id(2).build();
         
+        supervisor1.setApprovalRound(new ApprovalRoundBuilder().application(getSampleApplicationForm()).build());
+        supervisor2.setApprovalRound(new ApprovalRoundBuilder().application(getSampleApplicationForm()).build());
         
         
         expect(supervisorDAOMock.getPrimarySupervisorsDueNotification()).andReturn(Collections.EMPTY_LIST);

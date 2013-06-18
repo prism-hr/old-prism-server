@@ -1,0 +1,20 @@
+@charset "utf-8";
+
+/* LOGIN page -------------------------------------------------------------------------------------------- */
+#login-box {
+	background: white;
+	border-radius: 10px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: auto; position: absolute; right: 25px; top: 35px; width: 240px;
+	padding-bottom: 10px;
+}
+
+
+#login-box em {	color: red;}
+#login-box form { padding: 10px; }
+#login-box p { line-height: 18px; }
+#login-box form button { position: absolute; bottom: 10px; margin-top: 0; right: 10px; width: 50px; }
+#login-box form input { font-size: 8.5pt; margin-top: 3px; width: 212px; }
+
+/* Added float:left - Manish*/
+#login-box a {  color: white; font-size: 8.5pt; margin: 10px; margin-top: 0px; float:left;}
+/* Changed Error msg - Manish*/
+#login-box form span.invalid { color:white; margin-top: 10px;}

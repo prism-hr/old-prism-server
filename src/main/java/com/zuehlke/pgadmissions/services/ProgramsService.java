@@ -62,7 +62,9 @@ public class ProgramsService {
         programs.addAll(user.getProgramsOfWhichReviewer());
         programs.addAll(user.getProgramsOfWhichInterviewer());
         programs.addAll(user.getProgramsOfWhichSupervisor());
+        programs.addAll(programDAO.getProgramsOfWhichPreviousReviewer(user));
         programs.addAll(programDAO.getProgramsOfWhichPreviousInterviewer(user));
+        programs.addAll(programDAO.getProgramsOfWhichPreviousSupervisor(user));
         
         return Lists.newArrayList(programs);
     }

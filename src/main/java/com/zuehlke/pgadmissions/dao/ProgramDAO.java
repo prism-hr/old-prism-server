@@ -9,8 +9,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,6 +16,8 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -55,7 +55,16 @@ public class ProgramDAO {
 		sessionFactory.getCurrentSession().merge(program);
 	}
 	
-    public List<Program> getProgramsOfWhichPreviousInterviewer(RegisteredUser user){
+    public List<Program> getProgramsOfWhichPreviousReviewer(RegisteredUser user){
+        return sessionFactory.getCurrentSession().createCriteria(Reviewer.class, "r")
+               .createAlias("r.reviewRound", "rr")
+               .createAlias("rr.application", "a")
+               .add(eq("r.user", user))
+               .setProjection(distinct(property("a.program")))
+               .list();
+    }
+	
+	public List<Program> getProgramsOfWhichPreviousInterviewer(RegisteredUser user){
         return sessionFactory.getCurrentSession().createCriteria(Interviewer.class, "u")
                .createAlias("u.interview", "i")
                .createAlias("i.application", "a")
@@ -63,5 +72,17 @@ public class ProgramDAO {
                .setProjection(distinct(property("a.program")))
                .list();
     }
+    
+    
+	public List<Program> getProgramsOfWhichPreviousSupervisor(RegisteredUser user){
+	    return sessionFactory.getCurrentSession().createCriteria(Supervisor.class, "s")
+	            .createAlias("s.approvalRound", "ar")
+	            .createAlias("ar.application", "a")
+	            .add(eq("s.user", user))
+	            .setProjection(distinct(property("a.program")))
+	            .list();
+	}
+	
+	
 
 }

@@ -62,7 +62,7 @@ public class ApplicationsReportService {
     }
 
     public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering) {
-        filtering.setBlockCount(0);
+        filtering.setBlockCount(1);
 
         DataTable data = new DataTable();
 

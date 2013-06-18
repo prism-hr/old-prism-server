@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -82,6 +83,22 @@ public class ApplicationsReportServiceTest {
 
         // THEN
         assertTrue(dataTable.getRows().isEmpty());
+    }
+    
+    @Test
+    public void shouldInitialiseTheBlockCountCorrectly() {
+        ApplicationsFiltering filtering = EasyMock.createMock(ApplicationsFiltering.class);
+        filtering.setBlockCount(1);
+        
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(Collections.<ApplicationForm>emptyList());
+        EasyMock.expect(filtering.getBlockCount()).andReturn(1);
+        filtering.setBlockCount(2);
+        
+        EasyMock.replay(filtering, applicationsServiceMock);
+        
+        service.getApplicationsReport(user, filtering);
+        
+        EasyMock.verify(filtering);
     }
 
     @Test

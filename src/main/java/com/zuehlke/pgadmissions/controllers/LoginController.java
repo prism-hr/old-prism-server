@@ -76,7 +76,7 @@ public class LoginController {
 		clearApplyRequestInSession(request);
 		return LOGIN_PAGE;
 	}
-	
+
 	private boolean isAnApplyNewRequest(final HttpServletRequest request) {
 	    DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
 	    return defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new");
@@ -137,6 +137,8 @@ public class LoginController {
 		composeQueryStringPart(savedRequest, "programhome", "programhome", sb);
 		composeQueryStringPart(savedRequest, "programDeadline", "bacthdeadline", sb);
 		composeQueryStringPart(savedRequest, "projectTitle", "projectTitle", sb);
+		composeQueryStringPart(savedRequest, "advert", "advert", sb);
+		composeQueryStringPart(savedRequest, "project", "project", sb);
 		return sb.toString();
 	}
 	

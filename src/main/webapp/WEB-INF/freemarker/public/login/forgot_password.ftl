@@ -22,6 +22,12 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 	
+	<!-- Scripts -->
+		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/forgot_password.js'/>"></script>
 	</head>
 
 	<!--[if IE 9]>
@@ -42,21 +48,9 @@
 		  	<div id="middle">
 		  	
             <!-- Prospectus container -->
-      	<form id="applyForm" action="/pgadmissions/apply/new" method="POST">
-      		<input type="hidden" id="program" name="program" value=""/>
-      	</form>
+      
         <div id="pContainer">
-            <div id="pholder">
-                <header>
-                  <h1>Research Study Opportunities</h1></header>
-                <section id="plist">
-                	<ul></ul>
-                </section>
-                <footer class="clearfix">
-                	<div class="left"><a href="www.engineering.ucl.ac.uk" target="_blank"><img src="<@spring.url '/design/default/images/ucl-engineering.jpg'/>" alt="" /></a></div>
-                	<div class="right"><a href="http://prism.ucl.ac.uk" target="_blank"><img src="<@spring.url '/design/default/images/prism_small.jpg'/>" alt="" /></a></div>
-                </footer>
-            </div>
+           <#include "/private/prospectus/adverts.ftl"/>
         </div>
         <!-- ENd Prospectus container -->
 		
@@ -104,12 +98,6 @@
 		
 		</div>
 		
-		<!-- Scripts -->
-		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/forgot_password.js'/>"></script>
-        <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/adverts.js' />"></script>
+		
 	</body>
 </html>

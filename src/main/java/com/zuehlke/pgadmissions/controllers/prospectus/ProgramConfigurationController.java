@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.prospectus;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Maps;
 import com.google.gson.ExclusionStrategy;
@@ -47,15 +45,11 @@ import com.zuehlke.pgadmissions.validators.AbstractValidator;
 import com.zuehlke.pgadmissions.validators.ProgramAdvertValidator;
 import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
 
-import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 @Controller
 @RequestMapping("/prospectus/programme")
 public class ProgramConfigurationController {
-
-    public static final String LINK_TO_APPLY = "/private/prospectus/link_to_apply.ftl";
-    public static final String BUTTON_TO_APPLY = "/private/prospectus/button_to_apply.ftl";
 
     private final UserService userService;
 
@@ -72,10 +66,8 @@ public class ProgramConfigurationController {
     private final DatePropertyEditor datePropertyEditor;
     private final ProgramPropertyEditor programPropertyEditor;
 
-    private final FreeMarkerConfigurer freeMarkerConfigurer;
-    private Template buttonToApplyTemplate;
-    private Template linkToApplyTemplate;
-    private Gson gson;
+    private final ApplyTemplateRenderer templateRenderer;
+	private Gson gson;
 	private final AdvertService advertsService;
 
     public ProgramConfigurationController() {
@@ -85,8 +77,7 @@ public class ProgramConfigurationController {
     @Autowired
     public ProgramConfigurationController(UserService userService, ProgramsService programsService, AdvertService advertsService, @Value("${application.host}") final String host,
             ApplicationContext applicationContext, ProgramAdvertValidator programAdvertValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor,
-            FreeMarkerConfigurer freeMarkerConfigurer, ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor,
-            ProgramPropertyEditor programPropertyEditor) {
+            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor, ApplyTemplateRenderer templateRenderer) {
         this.userService = userService;
         this.programsService = programsService;
 		this.advertsService = advertsService;
@@ -94,16 +85,14 @@ public class ProgramConfigurationController {
         this.applicationContext = applicationContext;
         this.programAdvertValidator = programAdvertValidator;
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
-        this.freeMarkerConfigurer = freeMarkerConfigurer;
         this.closingDateValidator = closingDateValidator;
         this.datePropertyEditor = datePropertyEditor;
         this.programPropertyEditor = programPropertyEditor;
+		this.templateRenderer = templateRenderer;
     }
 
     @PostConstruct
-    public void loadFreeMarkerTemplates() throws IOException {
-        linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(LINK_TO_APPLY);
-        buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(BUTTON_TO_APPLY);
+    public void customizeGsonBuilder() throws IOException {
         gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes f) {
@@ -167,12 +156,12 @@ public class ProgramConfigurationController {
         Map<String, Object> result = Maps.newHashMap();
         result.put("advert", advert);
 
-        HashMap<String, String> dataMap = new HashMap<String, String>();
+        HashMap<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("programCode", programCode);
         dataMap.put("host", host);
 
-        result.put("buttonToApply", processTemplate(buttonToApplyTemplate, dataMap));
-        result.put("linkToApply", processTemplate(linkToApplyTemplate, dataMap));
+        result.put("buttonToApply", templateRenderer.renderButton(dataMap));
+        result.put("linkToApply", templateRenderer.renderLink(dataMap));
 
         return gson.toJson(result);
     }
@@ -289,13 +278,5 @@ public class ProgramConfigurationController {
             map.put("removedDate", closingDateId);
         }
         return gson.toJson(map);
-    }
-
-    protected String processTemplate(Template template, Map<String, String> dataMap) throws TemplateException, IOException {
-        StringWriter writer = new StringWriter();
-        template.process(dataMap, writer);
-        String result = writer.toString();
-        writer.close();
-        return result;
     }
 }

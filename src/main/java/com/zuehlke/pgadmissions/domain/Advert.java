@@ -29,7 +29,7 @@ public class Advert implements Serializable {
 
     @Column(name = "active")
     private Boolean active = true;
-
+    
     public Integer getId() {
         return id;
     }

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -48,6 +49,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.ProjectDTOValidator;
 
+import freemarker.template.TemplateException;
+
 @Controller
 @RequestMapping("/prospectus/projects")
 public class ProjectConfigurationController {
@@ -66,17 +69,20 @@ public class ProjectConfigurationController {
     private final ProgramPropertyEditor programPropertyEditor;
     private final PersonPropertyEditor personPropertyEditor;
     private final ProjectConverter projectConverter;
+    private final ApplyTemplateRenderer templateRenderer;
+    private final String host;
 
     private Gson gson;
 
+    
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
             ProjectDTOValidator projectDTOValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor, DatePropertyEditor datePropertyEditor,
-            ProgramPropertyEditor programPropertyEditor, PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter) {
+            ProgramPropertyEditor programPropertyEditor, PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer, @Value("${application.host}") final String host) {
         this.userService = userService;
         this.programsService = programsService;
         this.applicationContext = applicationContext;
@@ -86,6 +92,8 @@ public class ProjectConfigurationController {
         this.programPropertyEditor = programPropertyEditor;
         this.personPropertyEditor = personPropertyEditor;
         this.projectConverter = projectConverter;
+		this.templateRenderer = templateRenderer;
+		this.host = host;
     }
 
     @PostConstruct
@@ -172,10 +180,24 @@ public class ProjectConfigurationController {
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
     @ResponseBody
-    public String getProject(@PathVariable("projectId") int projectId) {
+    public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
+    	Map<String, Object> map = Maps.newHashMap();
         Project project = programsService.getProject(projectId);
-        return gson.toJson(project);
+        map.put("project", project);
+        map.putAll(createApplyTemplates(project));
+        return gson.toJson(map);
     }
+
+	private Map<String,Object> createApplyTemplates(Project project) throws TemplateException, IOException{
+		Map<String, Object> dataMap = Maps.newHashMapWithExpectedSize(3);
+        dataMap.put("programCode", project.getProgram().getCode());
+        dataMap.put("projectId", project.getId());
+        dataMap.put("host", host);
+        Map<String, Object> templateMap = Maps.newHashMapWithExpectedSize(2);
+        templateMap.put("buttonToApply", templateRenderer.renderButton(dataMap));
+        templateMap.put("linkToApply", templateRenderer.renderLink(dataMap));
+        return templateMap;
+	}
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     @ResponseBody

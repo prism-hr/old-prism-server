@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
@@ -79,9 +80,9 @@ public class ApplicationsService {
     }
 
     public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser user, final Program program, final Date programDeadline,
-            final String projectTitle, final String researchHomePage) {
+            final String projectTitle, final String researchHomePage, Project project) {
 
-        ApplicationForm applicationForm = findMostRecentApplication(user, program);
+        ApplicationForm applicationForm = findMostRecentApplication(user, program, project);
         if (applicationForm != null) {
             return applicationForm;
         }
@@ -91,6 +92,7 @@ public class ApplicationsService {
         applicationForm = new ApplicationForm();
         applicationForm.setApplicant(user);
         applicationForm.setProgram(program);
+        applicationForm.setProject(project);
         applicationForm.setBatchDeadline(programDeadline);
 
         applicationForm.setProjectTitle(projectTitle);
@@ -101,8 +103,9 @@ public class ApplicationsService {
         return applicationForm;
     }
 
-    private ApplicationForm findMostRecentApplication(final RegisteredUser user, final Program program) {
-        List<ApplicationForm> applications = applicationFormDAO.getApplicationsByApplicantAndProgram(user, program);
+    private ApplicationForm findMostRecentApplication(final RegisteredUser user, final Program program, Project project) {
+        List<ApplicationForm> applications = project == null ? applicationFormDAO.getApplicationsByApplicantAndProgram(user, program)
+        		: applicationFormDAO.getApplicationsByApplicantAndProgramAndProject(user, program, project) ;
 
         Iterable<ApplicationForm> filteredApplications = Iterables.filter(applications, new Predicate<ApplicationForm>() {
             @Override

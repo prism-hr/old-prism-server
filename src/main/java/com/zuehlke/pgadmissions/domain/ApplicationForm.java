@@ -252,6 +252,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "withdrawn_before_submit")
     private Boolean withdrawnBeforeSubmit = false;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     public List<Qualification> getQualifications() {
         return qualifications;
@@ -1143,6 +1147,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         Date today = DateUtils.truncate(new Date(), Calendar.DATE);
         return today.after(dueDate);
     }
+
+    public Project getProject(){
+    	return project;
+    }
+    
+	public void setProject(Project project) {
+		this.project = project;
+	}
 
     
 }

@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -109,6 +110,12 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
             public AlertDefinition handlePgadmissionsException(CannotApplyToProgramException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, ex.getProgram().getTitle() + " is no longer accepting applications" , null);
             }
+        });
+        addHandler(CannotApplyToProjectException.class, new PgadmissionExceptionHandler<CannotApplyToProjectException>() {
+        	@Override
+        	public AlertDefinition handlePgadmissionsException(CannotApplyToProjectException ex, HttpServletRequest request) {
+        		return new AlertDefinition(AlertType.INFO, ex.getProject().getAdvert().getTitle() + " is no longer accepting applications" , null);
+        	}
         });
 
     }

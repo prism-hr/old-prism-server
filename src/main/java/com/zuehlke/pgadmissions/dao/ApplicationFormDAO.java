@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
@@ -416,5 +417,11 @@ public class ApplicationFormDAO {
 	public List<ApplicationForm> getApplicationsByApplicantAndProgram(RegisteredUser applicant, Program program) {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
 				.add(Restrictions.eq("applicant", applicant)).add(Restrictions.eq("program", program)).list();
+	}
+
+	public List<ApplicationForm> getApplicationsByApplicantAndProgramAndProject(
+			RegisteredUser applicant, Program program, Project project) {
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("applicant", applicant)).add(Restrictions.eq("program", program)).add(Restrictions.eq("project", project)).list();
 	}
 }

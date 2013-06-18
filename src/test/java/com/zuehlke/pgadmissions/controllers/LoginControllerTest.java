@@ -45,11 +45,14 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programhome")).andReturn(new String[]{"programhome"});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programDeadline")).andReturn(new String[]{"programDeadline"});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{"projectTitle"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("advert")).andReturn(new String[]{"1"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("project")).andReturn(new String[]{"1"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{"projectTitle"});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null).anyTimes();
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);		
 		assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
-		assertEquals("program:code||programhome:programhome||bacthdeadline:programDeadline||projectTitle:projectTitle", session.getAttribute("applyRequest"));
+		assertEquals("program:code||programhome:programhome||bacthdeadline:programDeadline||projectTitle:projectTitle||advert:1||project:1", session.getAttribute("applyRequest"));
 	}
 	
 	@Test
@@ -63,6 +66,8 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programhome")).andReturn(new String[]{});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programDeadline")).andReturn(new String[]{});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("advert")).andReturn(new String[]{});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("project")).andReturn(new String[]{});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null).anyTimes();
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	

@@ -23,6 +23,10 @@ public class AdvertDTO {
 
 		private boolean selected;
 		
+		private String type;
+		
+		private Integer projectId;
+		
 		public AdvertDTO(Integer id){
 			this.id=id;
 		}
@@ -98,6 +102,22 @@ public class AdvertDTO {
 
 		public boolean isSelected() {
 			return selected;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		public Integer getProjectId() {
+			return projectId;
+		}
+
+		public void setProjectId(Integer projectId) {
+			this.projectId = projectId;
 		}
 		
 		

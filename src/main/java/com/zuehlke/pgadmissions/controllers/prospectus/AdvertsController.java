@@ -7,9 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,14 +47,31 @@ public class AdvertsController {
     public AdvertsController(AdvertService advertService) {
         this.advertService = advertService;
     }
-
+    
+    @ModelAttribute("advertId")
+    public Integer getSelectedAdvert(final Integer advert, final HttpServletRequest request){
+    	return advert == null ? getSelectedAdvertFromSession(request) : advert ;
+    }
+    
+    private Integer getSelectedAdvertFromSession(final HttpServletRequest request) {
+    	DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+    	if(defaultSavedRequest!=null){
+			String[] values = defaultSavedRequest.getParameterValues("advert");
+		    if (!ArrayUtils.isEmpty(values) && !StringUtils.isBlank(values[0]) && StringUtils.isNumeric(values[0])) {
+		    	return Integer.valueOf(values[0]);
+		    }
+    	}
+    	return null;
+    }
+    
+    
     @RequestMapping(value = "/activeAdverts", method = RequestMethod.GET)
     @ResponseBody
-    public String activeAdverts(@RequestParam(required = false) Integer selectedAdvertId) {
+    public String activeAdverts(@ModelAttribute("advertId") Integer advert) {
         Map<String, Object> map = Maps.newHashMap();
         List<AdvertDTO> activeAdverts = convertAdverts(advertService.getActiveAdverts());
         Collections.shuffle(activeAdverts, new Random(System.currentTimeMillis()));
-        AdvertDTO selectedAdvert = getSelectedAdvert(selectedAdvertId, activeAdverts);
+        AdvertDTO selectedAdvert = getSelectedAdvert(advert, activeAdverts);
         setSelectedAndBringToFront(selectedAdvert, activeAdverts);
         map.put("adverts", activeAdverts);
         return new Gson().toJson(map);
@@ -94,11 +117,14 @@ public class AdvertsController {
                 dto.setTitle(program.getTitle());
                 dto.setClosingDate(getFirstClosingDate(program));
                 dto.setSupervisorEmail(getFirstValidAdministrator(program));
+                dto.setType("program");
             } else {
                 Project project = advertService.getProject(input);
+                dto.setProjectId(project.getId());
                 dto.setProgramCode(project.getProgram().getCode());
                 dto.setTitle(input.getTitle());
                 dto.setSupervisorEmail(project.getPrimarySupervisor().getEmail());
+                dto.setType("project");
             }
             return dto;
         }

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +32,6 @@ public class ProgramsService {
     private final AdvertDAO advertDAO;
     private final ProjectDAO projectDAO;
 
-	
     ProgramsService() {
         this(null, null, null);
     }
@@ -48,9 +46,21 @@ public class ProgramsService {
     public List<Program> getAllPrograms() {
         return programDAO.getAllPrograms();
     }
-    
+
+    public Program getProgramById(Integer programId) {
+        return programDAO.getProgramById(programId);
+    }
+
+    public void save(Program program) {
+        programDAO.save(program);
+    }
+
+    public Program getProgramByCode(String code) {
+        return programDAO.getProgramByCode(code);
+    }
+
     public List<Program> getProgramsForWhichCanManageProjects(RegisteredUser user) {
-        if(user.isInRole(Authority.SUPERADMINISTRATOR)){
+        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
             return programDAO.getAllPrograms();
         }
         Set<Program> programs = Sets.newHashSet();
@@ -62,20 +72,8 @@ public class ProgramsService {
         programs.addAll(programDAO.getProgramsOfWhichPreviousReviewer(user));
         programs.addAll(programDAO.getProgramsOfWhichPreviousInterviewer(user));
         programs.addAll(programDAO.getProgramsOfWhichPreviousSupervisor(user));
-        
+
         return Lists.newArrayList(programs);
-    }
-
-    public Program getProgramById(Integer programId) {
-        return programDAO.getProgramById(programId);
-    }
-
-    public void save(Program program) {
-        programDAO.save(program);
-    }
-    
-    public Program getProgramByCode(String code) {
-        return programDAO.getProgramByCode(code);
     }
 
     public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent) {
@@ -139,17 +137,14 @@ public class ProgramsService {
         }
         return result;
     }
-    
+
     public String getDefaultClosingDate(Program program) {
         Date closingDate = programDAO.getNextClosingDateForProgram(program, new Date());
         String formattedDate = "null";
-        if (closingDate !=null) {
+        if (closingDate != null) {
             formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);
         }
-        return  formattedDate;
+        return formattedDate;
     }
-
-	
-
 
 }

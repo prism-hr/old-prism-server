@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.Person;
+
 
 public class AdvertDTO {
 
@@ -26,6 +28,8 @@ public class AdvertDTO {
 		private String type;
 		
 		private Integer projectId;
+		
+		private Person primarySupervisor;
 		
 		public AdvertDTO(Integer id){
 			this.id=id;
@@ -118,6 +122,14 @@ public class AdvertDTO {
 
 		public void setProjectId(Integer projectId) {
 			this.projectId = projectId;
+		}
+
+		public Person getPrimarySupervisor() {
+			return primarySupervisor;
+		}
+
+		public void setPrimarySupervisor(Person primarySupervisor) {
+			this.primarySupervisor = primarySupervisor;
 		}
 		
 		

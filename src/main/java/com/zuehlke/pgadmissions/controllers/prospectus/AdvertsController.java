@@ -18,17 +18,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -107,25 +108,35 @@ public class AdvertsController {
     class AdvertConverter {
 
         public AdvertDTO convert(Advert input) {
-            AdvertDTO dto = new AdvertDTO(input.getId());
-            dto.setDescription(input.getDescription());
-            dto.setFunding(input.getFunding());
-            dto.setStudyDuration(input.getStudyDuration());
-            Program program = advertService.getProgram(input);
+        	Program program = advertService.getProgram(input);
+        	AdvertDTO dto = null;
             if (program != null) {
+            	dto = new AdvertDTO(input.getId());
                 dto.setProgramCode(program.getCode());
                 dto.setTitle(program.getTitle());
                 dto.setClosingDate(getFirstClosingDate(program));
-                dto.setSupervisorEmail(getFirstValidAdministrator(program));
+                Person primarySupervisor = getFirstValidAdministrator(program);
+				dto.setPrimarySupervisor(primarySupervisor);
+                if(primarySupervisor!=null){
+                	dto.setSupervisorEmail(primarySupervisor.getEmail());
+                }
                 dto.setType("program");
             } else {
-                Project project = advertService.getProject(input);
-                dto.setProjectId(project.getId());
-                dto.setProgramCode(project.getProgram().getCode());
-                dto.setTitle(input.getTitle());
-                dto.setSupervisorEmail(project.getPrimarySupervisor().getEmail());
-                dto.setType("project");
+            	Project project = advertService.getProject(input);
+            	ProjectAdvertDTO projectDto = new ProjectAdvertDTO(input.getId());
+                projectDto.setProjectId(project.getId());
+                projectDto.setProgramCode(project.getProgram().getCode());
+                projectDto.setTitle(input.getTitle());
+                RegisteredUser supervisor = project.getPrimarySupervisor();
+				projectDto.setPrimarySupervisor(toPerson(supervisor));
+                projectDto.setSupervisorEmail(supervisor.getEmail());
+                projectDto.setSecondarySupervisor(toPerson(project.getSecondarySupervisor()));
+                projectDto.setType("project");
+                dto = projectDto;
             }
+            dto.setDescription(input.getDescription());
+            dto.setFunding(input.getFunding());
+            dto.setStudyDuration(input.getStudyDuration());
             return dto;
         }
 
@@ -142,17 +153,28 @@ public class AdvertsController {
 			return null;
         }
 
-        private String getFirstValidAdministrator(Program program) {
+        private Person getFirstValidAdministrator(Program program) {
             List<RegisteredUser> administrators = program.getAdministrators();
             for (RegisteredUser administrator : administrators) {
                 if (isValid(administrator)) {
-                    return administrator.getEmail();
+                    return toPerson(administrator);
                 }
             }
             return null;
         }
 
-        private boolean isValid(RegisteredUser admin) {
+        private Person toPerson(RegisteredUser user) {
+        	if(user==null){
+        		return null;
+        	}
+			Person person = new Person();
+			person.setFirstname(user.getFirstName());
+			person.setLastname(user.getLastName());
+			person.setEmail(user.getEmail());
+			return person;
+		}
+
+		private boolean isValid(RegisteredUser admin) {
             return admin != null && admin.isAccountNonExpired() && admin.isAccountNonLocked() && admin.isCredentialsNonExpired() && admin.isEnabled();
         }
     }

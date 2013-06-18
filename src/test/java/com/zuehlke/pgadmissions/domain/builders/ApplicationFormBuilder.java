@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -60,6 +61,7 @@ public class ApplicationFormBuilder {
 	private Date rejectNotificationDate;
 	
 	
+	
 	private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
 	private List<Interview> interviews = new ArrayList<Interview>();
 	private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
@@ -77,6 +79,7 @@ public class ApplicationFormBuilder {
     private Boolean suppressChangeStateNotifications;
     private Boolean withdrawnBeforeSubmit = false;
     private Boolean isEditableByApplicant = true;
+    private Project project = null;
 	
     public ApplicationFormBuilder withdrawnBeforeSubmit(Boolean flag) {
         this.withdrawnBeforeSubmit = flag;
@@ -343,6 +346,11 @@ public class ApplicationFormBuilder {
 	    this.isEditableByApplicant = isEditableByApplicant;
 	    return this;
 	}
+	
+	public ApplicationFormBuilder project(Project project){
+		this.project = project;
+		return this;
+	}
 
 	public ApplicationForm build() {
 		ApplicationForm application = new ApplicationForm();
@@ -400,6 +408,7 @@ public class ApplicationFormBuilder {
 		
 		application.setWithdrawnBeforeSubmit(withdrawnBeforeSubmit);
 		application.setIsEditableByApplicant(isEditableByApplicant);
+		application.setProject(project);
 		
 		try {
 		    application.setIpAddressAsString(ipAddress);

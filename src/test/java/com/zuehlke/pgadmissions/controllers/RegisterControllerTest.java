@@ -310,7 +310,7 @@ public class RegisterControllerTest {
 		EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(new String[] { "code", "http://www.url.com", "01-Mar-2012", "project title" });
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
 		userServiceMock.save(user);
-		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(user, program, batchDeadline, "project title", "http://www.url.com"))
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(user, program, batchDeadline, "project title", "http://www.url.com", null))
 				.andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
@@ -332,7 +332,7 @@ public class RegisterControllerTest {
 		EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(new String[] { "code", "http://www.url.com", "bob", "project title" });
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
 		userServiceMock.save(user);
-		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(user, program, null, "project title", "http://www.url.com")).andReturn(
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(user, program, null, "project title", "http://www.url.com", null)).andReturn(
 				applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
@@ -354,7 +354,7 @@ public class RegisterControllerTest {
 		EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(new String[] { "code", "http://bob", null, "project title" });
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
 		userServiceMock.save(user);
-		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(user, program, null, "project title", null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(user, program, null, "project title", null, null)).andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
@@ -375,7 +375,7 @@ public class RegisterControllerTest {
 		EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(new String[] { "code", null, null, null });
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
 		userServiceMock.save(user);
-		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(user, program, null, null, null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(user, program, null, null, null, null)).andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);

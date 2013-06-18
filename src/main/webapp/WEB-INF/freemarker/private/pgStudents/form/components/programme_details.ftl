@@ -93,13 +93,13 @@
         <label class="plain-label grey-label" for="projectName">Project</label>
         <span class="hint grey" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
         <div class="field">
-        	<#if applicationForm.projectTitle?has_content>
+        	<#if applicationForm.project??>
         		<#assign project = true>
         	<#else>
         		<#assign project = false>
         	</#if>
         	
-          <input class="full" id="projectName" name="projectName" type="text" value="<#if project>${(applicationForm.projectTitle?html)}<#else>Not Required</#if>" disabled="disabled"/>
+          <input class="full" id="projectName" name="projectName" type="text" value="<#if project>${(applicationForm.project.advert.title?html)}<#else>Not Required</#if>" disabled="disabled"/>
         </div>
       </div>
   

@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
@@ -38,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
+import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
@@ -49,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
@@ -66,6 +70,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
     private RegisteredUser user;
     private Program program;
+    private Project project;
     private RegisteredUser reviewerUser;
     private RegisteredUser interviewerUser;
     private RegisteredUser applicationAdmin;
@@ -79,6 +84,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setApplicant(user);
         application.setLastUpdated(lastUpdatedDate);
         application.setProgram(program);
+        application.setProject(project);
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setProjectTitle("bob");
         application.setApplicationAdministrator(applicationAdmin);
@@ -104,7 +110,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertEquals(user.getId(), reloadedApplication.getApplicant().getId());
 
         assertEquals(program.getId(), reloadedApplication.getProgram().getId());
-
+        assertEquals(project.getId(), reloadedApplication.getProject().getId());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals("bob", reloadedApplication.getProjectTitle());
         assertNotNull(application.getPersonalDetails());
@@ -463,8 +469,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
                 .enabled(false).build();
 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
+        
+        Advert advert = new AdvertBuilder().title("title").description("description").funding("funding").studyDuration(6).build();
+		project = new ProjectBuilder().advert(advert).author(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
 
-        save(user, reviewerUser, program, interviewerUser, applicationAdmin, approver);
+        save(user, reviewerUser, program, interviewerUser, applicationAdmin, approver, project);
 
         flushAndClearSession();
     }

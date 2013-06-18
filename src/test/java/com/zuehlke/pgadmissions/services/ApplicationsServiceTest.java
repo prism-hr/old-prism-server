@@ -27,11 +27,15 @@ import org.unitils.inject.annotation.TestedObject;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.BadgeDAO;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -162,7 +166,7 @@ public class ApplicationsServiceTest {
 
 		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
-				program, null, null, null);
+				program, null, null, null, null);
 		verify();
 
 		assertNotNull(returnedForm);
@@ -193,7 +197,7 @@ public class ApplicationsServiceTest {
 
 		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
-				program, batchDeadline, projectTitle, researchHomePage);
+				program, batchDeadline, projectTitle, researchHomePage, null);
 		verify();
 
 		assertNotNull(returnedForm);
@@ -204,6 +208,8 @@ public class ApplicationsServiceTest {
 		assertEquals(projectTitle, returnedForm.getProjectTitle());
 		assertEquals("http://" + researchHomePage, returnedForm.getResearchHomePage());
 	}
+	
+	
 
 	@Test
 	public void shouldGetRecentlyEditedUnsubmittedApplicationForGivenQueryString() throws ParseException {
@@ -226,7 +232,7 @@ public class ApplicationsServiceTest {
 		// WHEN
 		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
-				program, null, null, null);
+				program, null, null, null, null);
 		// THEN
 		verify();
 
@@ -256,7 +262,7 @@ public class ApplicationsServiceTest {
 		// WHEN
 		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
-				program, null, null, null);
+				program, null, null, null, null);
 
 		// THEN
 		verify();
@@ -285,7 +291,7 @@ public class ApplicationsServiceTest {
 		// WHEN
 		replay();
 		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
-				program, null, null, null);
+				program, null, null, null, null);
 		// THEN
 		verify();
 
@@ -300,6 +306,33 @@ public class ApplicationsServiceTest {
 	    applicationsService.fastTrackApplication(form.getApplicationNumber());
 	    verify();
 	    Assert.assertNull(form.getBatchDeadline());
+	}
+	
+	
+	@Test
+	public void shouldCreateAndSaveNewApplicationFormWithProject()	throws ParseException {
+		Program program = new ProgramBuilder().code("KLOP").id(1).build();
+		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
+		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
+		Advert advert = new AdvertBuilder().id(1).title("title").studyDuration(6).build();
+		RegisteredUser primarySupervisor =  new RegisteredUserBuilder().id(1).build();
+		Project project = new ProjectBuilder().id(1).advert(advert).program(program).primarySupervisor(primarySupervisor ).build();
+	
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgramAndProject(registeredUser, program, project)).andReturn(Lists.<ApplicationForm>newArrayList());
+		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
+		applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
+
+		replay();
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
+				program, null, null, null, project);
+		verify();
+
+		assertNotNull(returnedForm);
+		assertEquals(registeredUser, returnedForm.getApplicant());
+		assertEquals(program, returnedForm.getProgram());
+		assertEquals("KLOP-" + thisYear + "-000024", returnedForm.getApplicationNumber());
+		assertNull(returnedForm.getBatchDeadline());
+		assertEquals(project, returnedForm.getProject());
 	}
 
 }

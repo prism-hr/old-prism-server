@@ -4,17 +4,20 @@ import static org.hibernate.criterion.Projections.distinct;
 import static org.hibernate.criterion.Projections.property;
 import static org.hibernate.criterion.Restrictions.eq;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -71,6 +74,20 @@ public class ProgramDAO {
                .add(eq("u.user", user))
                .setProjection(distinct(property("a.program")))
                .list();
+    }
+    
+    
+    public Date getNextClosingDateForProgram(Program program, Date today) {
+        List<Date> result = (List<Date>) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).setProjection(Projections.property("closingDate"))
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.gt("closingDate", today))
+                .addOrder(Order.asc("closingDate"))
+                .setMaxResults(1)
+                .list();
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
     }
     
     

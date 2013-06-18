@@ -3,9 +3,11 @@ package com.zuehlke.pgadmissions.dao;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
@@ -25,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
@@ -171,4 +175,69 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         Assert.assertEquals(program.getId(), programs.iterator().next().getId());
     }
 
+    @Test
+    public void shouldReturnNextClosingDateForProgram() {
+        DateTime closingDates = new DateTime(2013, 05, 20, 00, 00);
+        ProgramClosingDate badge1 = new ProgramClosingDateBuilder()
+            .closingDate(closingDates.minusMonths(1).toDate()).build();
+        ProgramClosingDate badge2 = new ProgramClosingDateBuilder()
+            .closingDate(closingDates.plusMonths(1).toDate()).build();
+        ProgramClosingDate badge3 = new ProgramClosingDateBuilder()
+            .closingDate(closingDates.plusMonths(2).toDate()).build();
+        Program program = new ProgramBuilder().code("code").build();
+        badge1.setProgram(program);
+        badge2.setProgram(program);
+        badge3.setProgram(program);
+        
+        save(program, badge1, badge2, badge3);
+        flushAndClearSession();
+        
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        Date result = programDAO.getNextClosingDateForProgram(program, closingDates.toDate());
+        
+        Assert.assertNotNull(result);
+        
+        Assert.assertEquals(0, result.compareTo(badge2.getClosingDate()));
+    }
+    
+    @Test
+    public void shouldReturnNullIfThereIsNoClosingDateAvailableForProgram() {
+        DateTime closingDates = new DateTime(2013, 05, 20, 00, 00);
+        ProgramClosingDate badge1 = new ProgramClosingDateBuilder()
+        .closingDate(closingDates.minusMonths(1).toDate()).build();
+        ProgramClosingDate badge2 = new ProgramClosingDateBuilder()
+        .closingDate(closingDates.plusMonths(1).toDate()).build();
+        ProgramClosingDate badge3 = new ProgramClosingDateBuilder()
+        .closingDate(closingDates.plusMonths(2).toDate()).build();
+        Program program = new ProgramBuilder().code("code").build();
+        badge1.setProgram(program);
+        badge2.setProgram(program);
+        badge3.setProgram(program);
+        
+        save(program, badge1, badge2, badge3);
+        flushAndClearSession();
+        
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        Date result = programDAO.getNextClosingDateForProgram(program, closingDates.plusMonths(3).toDate());
+        
+        Assert.assertNull(result);
+    }
+    
+    @Test
+    public void shouldReturnNullIfProgramHasNoClosingDates() {
+        DateTime closingDates = new DateTime(2013, 05, 20, 00, 00);
+        Program program = new ProgramBuilder().code("code").build();
+        
+        save(program);
+        flushAndClearSession();
+        
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        Date result = programDAO.getNextClosingDateForProgram(program, closingDates.toDate());
+        
+        Assert.assertNull(result);
+        
+    }
+    
+    
+    
 }

@@ -541,7 +541,7 @@ li.project.selected {
   color: #057FAD;
 }
 .project.selected h3,
-.program.selected .cdate span,
+.project.selected .cdate span,
 .project.selected .duration span,
 .project.selected .pdetails .cdate:before,
 .project.selected .pdetails .duration:before  {

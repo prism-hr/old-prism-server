@@ -52,9 +52,9 @@
               </div>            
             </div>
  
-          <div class="row-group">
+          <div class="row-group projectGroup">
                 <h3>Advert</h3>
-                 <div class="alert alert-info">
+                 <div class="alert alert-info" id="infoBarproject">
                 	<i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
            		 </div>
                 <div class="row" id="projectAdvertTitleDiv">
@@ -111,7 +111,7 @@
               </div>
 			</div>
       <!-- supervisors -->
-      <div class="row-group aSDisplay" id="primarySupervisorDiv">
+      <div class="row-group aSDisplay projectGroup" id="primarySupervisorDiv">
 				<h3>Primary Supervisor</h3>
 				<div class="row" id="primarySupervisorFirstNameDiv">
 				  <label id="primarySupervisorFirstNameLabel" class="plain-label normal" for="primarySupervisorFirstName">First Name<em>*</em></label>
@@ -135,7 +135,7 @@
 				  </div>
 				</div>
       </div>
-      <div class="row-group aSDisplay" id="secondarySupervisorDiv">
+      <div class="row-group aSDisplay projectGroup" id="secondarySupervisorDiv">
       <h3>Secondary Supervisor</h3>
 				<div class="row" id="projectAdvertHasSecondarySupervisorDiv">
             <label class="plain-label">Would you like to specify a secondary Supervisor? <em>*</em>
@@ -175,7 +175,7 @@
             </div>
             <!-- supervisors END-->   
                                                
-          <div class="row-group">
+          <div class="row-group projectGroup">
               <div class="row" id="projectAdvertIsActiveDiv">
                 <label class="plain-label">Are you currently accepting applications? <em>*</em>
                 </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
@@ -196,7 +196,7 @@
             
             <div class="row-group">
                 <h3>Resources </h3>
-                <div class="alert alert-info">
+                <div class="alert alert-info" id="infoResourcesProject">
                     <i class="icon-info-sign"></i> Embed these resources in emails and on webpages to provide applicants with links to apply for your project.
                 </div>
                 <div class="row">

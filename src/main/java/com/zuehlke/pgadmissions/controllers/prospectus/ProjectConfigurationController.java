@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -158,13 +159,16 @@ public class ProjectConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public String listProjects(@RequestParam String programCode) {
+    public Map<String, Object> listProjects(@RequestParam String programCode) {
+        Map<String, Object> json = new HashMap<String, Object>();
         Program program = programsService.getProgramByCode(programCode);
         List<Project> projects = Collections.emptyList();
         if (program != null) {
             projects = programsService.listProjects(getUser(), program);
         }
-        return gson.toJson(projects);
+        json.put("projects", gson.toJson(projects));
+        json.put("closingDate", programsService.getDefaultClosingDate(program));
+        return json;
     }
 
     @RequestMapping(value = "/defaultPrimarySupervisor", method = RequestMethod.GET)

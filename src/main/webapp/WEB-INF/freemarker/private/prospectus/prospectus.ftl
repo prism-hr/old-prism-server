@@ -46,58 +46,38 @@
                     <div class="content-box-inner">
                       <div id="configBox" class="tabbox">
                         <ul class="tabs">
-                          <li><a href="#programmeConfiguration">Manage Programmes</a></li>
-                          <li><a href="#projectConfiguration">Manage Projects</a></li>
-                          <li><a href="#irisSection">Link to UCL IRIS</a></li>
+                        
+                          <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+                            <li><a href="#programmeConfiguration">Manage Programmes</a></li>
+                          </#if>
+                          
+                          <#if user.isCanManageProjects()>
+                            <li><a href="#projectConfiguration">Manage Projects</a></li>
+                          </#if>
+                          
+                          <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+                            <li><a href="#irisSection">Link to UCL IRIS</a></li>
+                          </#if>
+                          
                         </ul>
                     
-                        <div id="programmeConfiguration" class="tab-page">
-                          <#include "/private/prospectus/program_configuration.ftl"/>
-                        </div>
+                        <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+                          <div id="programmeConfiguration" class="tab-page">
+                            <#include "/private/prospectus/program_configuration.ftl"/>
+                          </div>
+                        </#if>
                         
-                        <div id="projectConfiguration" class="tab-page">
-                          <#include "/private/prospectus/project_configuration.ftl"/>
-                        </div>
+                        <#if user.isCanManageProjects()>
+                          <div id="projectConfiguration" class="tab-page">
+                            <#include "/private/prospectus/project_configuration.ftl"/>
+                          </div>
+                        </#if>
                         
-                        <div id="irisSection" class="tab-page">
-                            <section class="form-rows">
-                                <h2>Link to UCL IRIS</h2>
-                                <div>
-                                    <form>
-                                        <div class="alert alert-info" id="iris-account-not-linked-message" style="display:none">
-                                            <i class="icon-info-sign"></i> Link your UCL Prism profile to UCL IRIS. This will display your Research Opportunities Feed on your UCL IRIS profile.
-                                        </div>
-    									<div class="alert alert-success" id="iris-account-linked-message" style="display:none">
-                                            <i class="icon-ok-sign"></i> Your account is linked to UCL UPI: <span></span>
-                                        </div>
-                                        <div class="row-group">
-                                            <div class="row">
-                                                <label for="upi" class="plain-label">UCL Staff Indentifier (UPI)</label> 
-                                                <span class="hint" data-desc="<@spring.message 'prospectus.iris.upi'/>"></span>
-                                                <div class="field">
-                                                    <input id="upi" name="upi" class="input-small" type="text" />
-                                                </div>
-                                                
-                                                <div class="row">
-                                                    <div class="field">
-                                                        <!--
-                                                        <div class="alert alert-error">
-                                                            <i class="icon-warning-sign"></i>
-                                                        </div>
-                                                        -->
-                                                    </div>
-                                                </div>
-                                                
-                                            </div>
-                                        </div>
-                                        <div class="buttons">
-                                            <button class="btn btn-primary" type="button" id="save-upi-go">Submit</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </section>
-
-                        </div>
+                        <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+                          <div id="irisSection" class="tab-page">
+                            <#include "/private/prospectus/iris_configuration.ftl"/>
+                          </div>
+                        </#if>
                       </div>
                         <!-- .content-box-inner -->
                     </div>

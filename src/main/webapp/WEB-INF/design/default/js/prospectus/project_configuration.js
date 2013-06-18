@@ -92,9 +92,8 @@ function addOrEditProjectAdvert(){
 			} else {
 				loadProjects();
 				clearAll();
-				changeInfoBarNameProject(labeltext,true);
 			}
-			checkIfErrors();
+			changeInfoBarNameProject(labeltext,true);
 		},
 		complete: function() {
 			hideLoader();
@@ -222,7 +221,7 @@ function checkSecondarySupervisor(){
 }
 
 function enableField(input){
-	input.removeAttr('disabled');
+	input.removeAttr('disabled').removeAttr('readonly');
 }
 function clearAndDisable(input){
 	input.val("");
@@ -269,7 +268,6 @@ function loadProject(advertRow) {
 		success: function(data) {
 			var map = JSON.parse(data);
 			fillProjectAdvertForm(map);
-			
         },
         complete: function() {
         	hideLoader();
@@ -320,43 +318,55 @@ function fillProjectAdvertForm(data){
 function checktoDisableProjet() {
 	if ($("#projectAdvertProgramSelect").val() != "") {
 		$(".projectGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-		$(".projectGroup input, .projectGroup textarea, .projectGroup select,").removeAttr("readonly", "readonly");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select").removeAttr("readonly", "readonly");
 		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button").removeAttr("disabled", "disabled");
 		$("#addProjectAdvert").removeClass("disabled");
+		$("#projectAdvertClosingDateInput, #secondarySupervisorFirstName, #secondarySupervisorLastName, #secondarySupervisorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
+		if ($("#primarySupervisorDiv").hasClass('isAdmin')) {
+			$("#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail").removeAttr("disabled").removeAttr("readonly");
+		} else {
+			$("#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
+		}
 	} else {
 		$(".projectGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
-		$(".projectGroup input, .projectGroup textarea, .projectGroup select").attr("readonly", "readonly");
-		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button").attr("disabled", "disabled");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo").attr("readonly", "readonly");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo").attr("disabled", "disabled");
 		$("#addProjectAdvert").addClass("disabled");
 		clearAll();
 		$(".badge.count").text('2000 Characters left');
+		
 	}
 }
 function changeInfoBarNameProject(text,advertUpdated) {
-	if (advertUpdated) {
-		var programme_name = $("#projectAdvertProgramSelect option:selected").text();
-		infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>"+programme_name+"</b> has been "+text+".";
-		if ($('#infoBarproject').hasClass('alert-info')) {
-			$('#infoBarproject').addClass('alert-success').removeClass('alert-info').html(infohtml);
-		} else {
-			$('#infoBarproject').html(infohtml);
-		}
+	errors = $('.alert-error:visible').length;
+	if (errors > 0) {
+		$('.infoBar').removeClass('alert-info').addClass('alert-error').find('i').removeClass('icon-info-sign').addClass('icon-warning-sign');
 	} else {
-		if (text != "Select...") {
-			infohtml = "<i class='icon-info-sign'></i> Manage the advert for: <b>"+text+"</b>.";
-			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>"+text+"</b>."; 
+		$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
+		if (advertUpdated) {
+			var programme_name = $("#projectAdvertProgramSelect option:selected").text();
+			infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>"+programme_name+"</b> has been "+text+".";
+			if ($('#infoBarproject').hasClass('alert-info')) {
+				$('#infoBarproject').addClass('alert-success').removeClass('alert-info').html(infohtml);
+			} else {
+				$('#infoBarproject').html(infohtml);
+			}
 		} else {
-			infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your project here.";
-			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your project."; 
-		}
-		$('#infoResourcesProject').html(inforesource);
-		if ($('#infoBarproject').hasClass('alert-success')) {
-			$('#infoBarproject').addClass('alert-info').removeClass('alert-success').html(infohtml);
-		} else {
-			$('#infoBarproject').html(infohtml);
+			if (text != "Select...") {
+				infohtml = "<i class='icon-info-sign'></i> Manage the advert for: <b>"+text+"</b>.";
+				inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>"+text+"</b>."; 
+			} else {
+				infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your project here.";
+				inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your project."; 
+			}
+			$('#infoResourcesProject').html(inforesource);
+			if ($('#infoBarproject').hasClass('alert-success')) {
+				$('#infoBarproject').addClass('alert-info').removeClass('alert-success').html(infohtml);
+			} else {
+				$('#infoBarproject').html(infohtml);
+			}
 		}
 	}
-	
 }
 function loadProjects(){
 	var url="/pgadmissions/prospectus/projects";
@@ -380,6 +390,7 @@ function loadProjects(){
 			var programme_name= $("#projectAdvertProgramSelect option:selected").text();
 			displayProjectList(projects);
 			checktoDisableProjet();
+			clearProjectAdvertErrors();
 			changeInfoBarNameProject(programme_name,false);
 		},
 		complete: function() {
@@ -390,6 +401,7 @@ function loadProjects(){
 
 function clearProjectAdvertErrors(){
 	$("#projectAdvertDiv .error").remove();
+	$('#infoBarproject').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
 }
 
 function clearSecondarySupervisor(){

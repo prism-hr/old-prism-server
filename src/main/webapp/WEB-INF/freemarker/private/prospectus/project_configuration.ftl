@@ -54,7 +54,7 @@
  
           <div class="row-group projectGroup">
                 <h3>Advert</h3>
-                 <div class="alert alert-info" id="infoBarproject">
+                 <div class="infoBar alert alert-info" id="infoBarproject">
                 	<i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
            		 </div>
                 <div class="row" id="projectAdvertTitleDiv">

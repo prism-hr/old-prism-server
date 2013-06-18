@@ -6,8 +6,10 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPD
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -209,6 +211,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             if (form.getLatestApprovalRound().getPrimarySupervisor().hasResponded()) {
                 createNotificationRecordIfNotExists(form, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
                 CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
+                trace("scheduleApprovalRequest", DigestNotificationType.TASK_NOTIFICATION, form.getApplicationNumber(), form.getProgram().getApprovers());
                 idsForWhichRequestWasFired.add(form.getId());
             }
         }
@@ -225,6 +228,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                     DateTime approvalRoundExpiryDate = DateUtils.addWorkingDaysInMinutes(new DateTime(approvalRound.getCreatedDate()),
                             approvalDuration.getDurationInMinutes());
                     if (approvalRoundExpiryDate.isAfterNow()) {
+                        trace("scheduleApprovalReminder", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), form.getProgram().getApprovers());
                         CollectionUtils.forAllDo(form.getProgram().getApprovers(), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
                     }
                 }
@@ -232,6 +236,13 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
     }
 
+    private void trace(String emailType, DigestNotificationType digestType, String formNumber, Collection<RegisteredUser> users) {
+        if (log.isTraceEnabled()) {
+            for (RegisteredUser user : users) {
+                log.trace("Email type: {}. Setting digest type: {}, for user: {}, application form: {}", emailType, digestType, user.getEmail(), formNumber);
+            }
+        }
+    }
     /**
      * <p>
      * <b>Summary</b><br/>
@@ -339,6 +350,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
             if (sendDigest && !form.hasInterviewEvaluationComment()) {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_EVALUATION_REMINDER);
+                trace("scheduleInterviewFeedbackEvaluationReminder", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), form.getProgram().getAdministrators());
                 CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
                 RegisteredUser delegate = form.getApplicationAdministrator();
                 if (delegate != null) {
@@ -398,6 +410,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             idsForWhichRequestWasFired.add(form.getId());
             for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
                 if (reviewer.getReview() == null) {
+                    trace("scheduleReviewRequest", DigestNotificationType.TASK_NOTIFICATION, form.getApplicationNumber(), asList(reviewer.getUser()));
                     setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_NOTIFICATION);
                 }
             }
@@ -407,6 +420,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 createNotificationRecordIfNotExists(form, NotificationType.REVIEW_REMINDER);
                 for (Reviewer reviewer : form.getLatestReviewRound().getReviewers()) {
                     if (reviewer.getReview() == null) {
+                        trace("scheduleReviewReminder", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), asList(reviewer.getUser()));
                         setDigestNotificationType(reviewer.getUser(), DigestNotificationType.TASK_REMINDER);
                     }
                 }
@@ -455,6 +469,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleUpdateConfirmation() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueUpdateNotification()) {
             createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
+            trace("scheduleUpdateConfirmation", DigestNotificationType.UPDATE_NOTIFICATION, form.getApplicationNumber(), form.getProgram().getAdministrators());
             CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
         }
     }
@@ -501,10 +516,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 ApplicationFormStatus.VALIDATION)) {
             idsForWhichRequestWasFired.add(form.getId());
             createNotificationRecordIfNotExists(form, NotificationType.UPDATED_NOTIFICATION);
+            trace("scheduleValidationRequest", DigestNotificationType.TASK_NOTIFICATION, form.getApplicationNumber(), form.getProgram().getAdministrators());
             CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
         }
         for (ApplicationForm form : applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION)) {
             if (!idsForWhichRequestWasFired.contains(form.getId())) {
+                trace("scheduleValidationRemidner", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), form.getProgram().getAdministrators());
                 createNotificationRecordIfNotExists(form, NotificationType.VALIDATION_REMINDER);
                 CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
             }
@@ -558,10 +575,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueApprovalRequestNotification()) {
             idsForWhichRequestWasFired.add(form.getId());
             createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+            trace("scheduleRestartApprovalRequest", DigestNotificationType.TASK_NOTIFICATION, form.getApplicationNumber(), form.getProgram().getAdministrators());
             CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_NOTIFICATION));
         }
         for (ApplicationForm form : applicationDAO.getApplicationDueApprovalRestartRequestReminder()) {
             if (!idsForWhichRequestWasFired.contains(form.getId())) {
+                trace("scheduleRestartApprovalReminder", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), form.getProgram().getAdministrators());
                 createNotificationRecordIfNotExists(form, NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
                 CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
             }
@@ -610,6 +629,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
             RegisteredUser primarySupervisor = getPrimarySupervisorAsUserFromLatestApprovalRound(form);
             if (null != primarySupervisor) {
+                trace("scheduleApprovedConfirmation", DigestNotificationType.UPDATE_NOTIFICATION, form.getApplicationNumber(), asList(primarySupervisor));
                 setDigestNotificationType(primarySupervisor, DigestNotificationType.UPDATE_NOTIFICATION);
             }
         }
@@ -669,6 +689,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             if (interviewAdministrationRequestHasToBeSent(form)) {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REQUEST);
                 idsForWhichRequestWasFired.add(form.getId());
+                trace("scheduleInterviewAdministrationRequest", DigestNotificationType.TASK_NOTIFICATION, form.getApplicationNumber(), asList(form.getApplicationAdministrator()));
                 setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_NOTIFICATION);
             }
         }
@@ -676,6 +697,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewAdministration(NotificationType.INTERVIEW_ADMINISTRATION_REMINDER)) {
             if (!idsForWhichRequestWasFired.contains(form.getId()) && interviewAdministrationRequestHasToBeSent(form)) {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+                trace("scheduleInterviewAdministrationReminder", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), asList(form.getApplicationAdministrator()));
                 setDigestNotificationType(form.getApplicationAdministrator(), DigestNotificationType.TASK_REMINDER);
             }
         }
@@ -733,6 +755,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleInterviewFeedbackConfirmation() {
         for (InterviewComment comment : commentDAO.getInterviewCommentsDueNotification()) {
             comment.setAdminsNotified(true);
+            trace("scheduleInterviewFeedbackConfirmation", DigestNotificationType.UPDATE_NOTIFICATION, comment.getApplication().getApplicationNumber(), getProgramAdministrators(comment.getApplication()));
             CollectionUtils.forAllDo(getProgramAdministrators(comment.getApplication()), new UpdateDigestNotificationClosure(
                     DigestNotificationType.UPDATE_NOTIFICATION));
         }
@@ -785,6 +808,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueInterviewFeedbackNotification()) {
             idsForWhichRequestWasFired.add(form.getId());
             createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_FEEDBACK_REQUEST);
+            trace("scheduleInterviewFeedbackRequest", DigestNotificationType.TASK_NOTIFICATION, form.getApplicationNumber(), getInterviewersFromLatestInterviewRound(form));
             CollectionUtils.forAllDo(getInterviewersFromLatestInterviewRound(form), new UpdateDigestNotificationClosure(
                     DigestNotificationType.TASK_NOTIFICATION));
         }
@@ -794,6 +818,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 createNotificationRecordIfNotExists(form, NotificationType.INTERVIEW_FEEDBACK_REMINDER);
                 for (Interviewer interviewer : form.getLatestInterview().getInterviewers()) {
                     if (interviewer.getInterviewComment() == null) {
+                        trace("scheduleInterviewReminder", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), asList(interviewer.getUser()));
                         setDigestNotificationType(interviewer.getUser(), DigestNotificationType.TASK_REMINDER);
                     }
                 }
@@ -840,6 +865,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleApplicationUnderApprovalNotification() {
         for (ApplicationForm form : applicationDAO.getApplicationsDueMovedToApprovalNotifications()) {
             createNotificationRecordIfNotExists(form, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
+            trace("scheduleApplicationUnderApprovalNotification", DigestNotificationType.UPDATE_NOTIFICATION, form.getApplicationNumber(), asList(form.getApplicant()));
             setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
         }
     }
@@ -884,6 +910,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION,
                 ApplicationFormStatus.REVIEW)) {
             createNotificationRecordIfNotExists(form, NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION);
+            trace("scheduleApplicationUnderReviewNotification", DigestNotificationType.UPDATE_NOTIFICATION, form.getApplicationNumber(), asList(form.getApplicant()));
             setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
         }
     }
@@ -937,6 +964,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message;
         try {
             Referee referee = refereeDAO.getRefereeById(refereeId);
+            trace("sendReferenceReminder", DigestNotificationType.NONE, referee.getApplication().getApplicationNumber(), asList(referee.getUser()));
             String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
 
             ApplicationForm applicationForm = referee.getApplication();
@@ -969,6 +997,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message;
         InterviewParticipant participant = interviewParticipantDAO.getParticipantById(participantId);
         ApplicationForm application = participant.getInterview().getApplication();
+        trace("sendInterviewParticipantVoteReminder", DigestNotificationType.NONE, application.getApplicationNumber(), asList(participant.getUser()));
         try {
             String subject = resolveMessage(INTERVIEW_VOTE_REMINDER, application);
 
@@ -999,6 +1028,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public boolean sendNewUserInvitation(Integer userId) {
         PrismEmailMessage message = null;
         RegisteredUser user = userDAO.get(userId);
+        trace("sendNewUserInvitation", DigestNotificationType.NONE, "NA", asList(user));
         String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
         for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
             if (notification.getNotificationDate() == null) {
@@ -1030,6 +1060,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             createNotificationRecordIfNotExists(form, NotificationType.REPEAT_VALIDATION_REQUEST);
             for (Person person : registryContacts) {
                 RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(person.getEmail());
+                trace("scheduleRegistryRevalidationRequest", DigestNotificationType.TASK_NOTIFICATION, form.getApplicationNumber(), asList(user));
                 setDigestNotificationType(user, DigestNotificationType.TASK_NOTIFICATION);
             }
         }
@@ -1039,6 +1070,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 createNotificationRecordIfNotExists(form, NotificationType.REPEAT_VALIDATION_REMINDER);
                 for (Person person : registryContacts) {
                     RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(person.getEmail());
+                    trace("scheduleRegistryRevalidationReminder", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), asList(user));
                     setDigestNotificationType(user, DigestNotificationType.TASK_REMINDER);
                 }
             }
@@ -1091,7 +1123,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             form.setRejectNotificationDate(new Date());
             RegisteredUser supervisor = getPrimarySupervisorAsUserFromLatestApprovalRound(form);
             CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
+            trace("scheduleRejectionConfirmationToAdministrators", DigestNotificationType.UPDATE_NOTIFICATION, form.getApplicationNumber(),form.getProgram().getAdministrators());
             if (supervisor != null) {
+                trace("scheduleRejectionConfirmationToSupervisor", DigestNotificationType.UPDATE_NOTIFICATION, form.getApplicationNumber(), asList(supervisor));
                 setDigestNotificationType(supervisor, DigestNotificationType.UPDATE_NOTIFICATION);
             }
         }
@@ -1136,6 +1170,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void scheduleReviewSubmittedConfirmation() {
         for (ReviewComment comment : commentDAO.getReviewCommentsDueNotification()) {
             comment.setAdminsNotified(true);
+            trace("scheduleReviewSubmittedConfirmation", DigestNotificationType.UPDATE_NOTIFICATION, comment.getApplication().getApplicationNumber(), getProgramAdministrators(comment.getApplication()));
             CollectionUtils.forAllDo(getProgramAdministrators(comment.getApplication()), new UpdateDigestNotificationClosure(
                     DigestNotificationType.UPDATE_NOTIFICATION));
         }
@@ -1196,6 +1231,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
             if (sendDigest && !form.hasReviewEvaluationComment()) {
                 createNotificationRecordIfNotExists(form, NotificationType.REVIEW_EVALUATION_REMINDER);
+                trace("scheduleReviewEvaluationReminder", DigestNotificationType.TASK_REMINDER, form.getApplicationNumber(), getProgramAdministrators(form));
                 CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.TASK_REMINDER));
                 RegisteredUser delegate = form.getApplicationAdministrator();
                 if (delegate != null) {
@@ -1252,12 +1288,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueNotification()) {
             idsForWhichRequestWasFired.add(supervisor.getId());
             supervisor.setLastNotified(new Date());
+            trace("scheduleConfirmSupervisionRequest", DigestNotificationType.TASK_NOTIFICATION, supervisor.getApprovalRound().getApplication().getApplicationNumber(), asList(supervisor.getUser()));
             setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_NOTIFICATION);
         }
 
         for (Supervisor supervisor : supervisorDAO.getPrimarySupervisorsDueReminder()) {
             if (!idsForWhichRequestWasFired.contains(supervisor.getId())) {
                 supervisor.setLastNotified(new Date());
+                trace("scheduleConfirmSupervisionReminder", DigestNotificationType.TASK_REMINDER, supervisor.getApprovalRound().getApplication().getApplicationNumber(), asList(supervisor.getUser()));
                 setDigestNotificationType(supervisor.getUser(), DigestNotificationType.TASK_REMINDER);
             }
         }
@@ -1305,6 +1343,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (ApplicationForm form : applicationDAO.getApplicationsDueNotificationForStateChangeEvent(
                 NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION, ApplicationFormStatus.INTERVIEW)) {
             createNotificationRecordIfNotExists(form, NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION);
+            trace("scheduleApplicationUnderInterviewNotification", DigestNotificationType.UPDATE_NOTIFICATION, form.getApplicationNumber(), asList(form.getApplicant()));
             setDigestNotificationType(form.getApplicant(), DigestNotificationType.UPDATE_NOTIFICATION);
         }
     }

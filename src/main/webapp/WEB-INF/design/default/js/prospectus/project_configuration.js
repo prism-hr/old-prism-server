@@ -38,10 +38,6 @@ function registerAddProjectAdvertButton(){
 
 function addOrEditProjectAdvert(){
 	clearProjectAdvertErrors();
-	var duration = {
-			value : $("#projectAdvertStudyDurationInput").val(),
-			unit : $("#projectAdvertStudyDurationUnitSelect").val()
-		};
 	var primarySupervisor = {
 		firstname : $("#primarySupervisorFirstName").val(),
 		lastname : $("#primarySupervisorLastName").val(),
@@ -76,7 +72,6 @@ function addOrEditProjectAdvert(){
 			program : $("#projectAdvertProgramSelect").val(),
 			title : $("#projectAdvertTitleInput").val(),
 			description : $("#projectAdvertDescriptionText").val(),
-			studyDuration : JSON.stringify(duration),
 			funding : $("#projectAdvertFundingText").val(),
 			closingDateSpecified : projectAdvertHasClosingDate(), 
 			closingDate : $('#projectAdvertClosingDateInput').val(),
@@ -105,7 +100,6 @@ function displayErrors(map){
 	appendErrorToElementIfPresent(map['program'],$("#projectAdvertProgramDiv"));
 	appendErrorToElementIfPresent(map['title'],$("#projectAdvertTitleDiv"));
 	appendErrorToElementIfPresent(map['description'],$("#projectAdvertDescriptionDiv"));
-	appendErrorToElementIfPresent(map['studyDuration'],$("#projectAdvertStudyDurationDiv"));
 	appendErrorToElementIfPresent(map['active'],$("#projectAdvertIsActiveDiv"));
 	appendErrorToElementIfPresent(map['closingDateSpecified'],$("#projectAdvertHasClosingDateDiv"));
 	appendErrorToElementIfPresent(map['closingDate'],$("#projectAdvertClosingDateDiv"));
@@ -143,8 +137,6 @@ function registerClearButton(){
 function clearAll(){
 	$("#projectAdvertTitleInput").val("");
 	$("#projectAdvertDescriptionText").val("");
-	$("#projectAdvertStudyDurationInput").val("");
-	$("#projectAdvertStudyDurationUnitSelect").val("");
 	$("#projectAdvertFundingText").val("");
 	$("#projectAdvertHasClosingDateRadioYes").prop("checked", false);
 	$("#projectAdvertHasClosingDateRadioNo").prop("checked", true);
@@ -283,15 +275,6 @@ function fillProjectAdvertForm(data){
 	
 	$("#projectAdvertTitleInput").val(advert.title);
 	$("#projectAdvertDescriptionText").val(advert.description);
-	
-	var durationOfStudyInMonths=advert.studyDuration;
-	if(durationOfStudyInMonths%12==0) {
-		$("#projectAdvertStudyDurationInput").val((durationOfStudyInMonths/12).toString());
-		$("#projectAdvertStudyDurationUnitSelect").val('Years');
-	} else {
-		$("#projectAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
-		$("#projectAdvertStudyDurationUnitSelect").val('Months');
-	}
 	
 	$("#projectAdvertFundingText").val(advert.funding);
 	

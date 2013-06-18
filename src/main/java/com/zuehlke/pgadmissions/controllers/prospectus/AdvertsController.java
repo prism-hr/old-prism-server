@@ -121,11 +121,16 @@ public class AdvertsController {
                 	dto.setSupervisorEmail(primarySupervisor.getEmail());
                 }
                 dto.setType("program");
+                dto.setStudyDuration(input.getStudyDuration());
             } else {
             	Project project = advertService.getProject(input);
             	ProjectAdvertDTO projectDto = new ProjectAdvertDTO(input.getId());
                 projectDto.setProjectId(project.getId());
-                projectDto.setProgramCode(project.getProgram().getCode());
+                program = project.getProgram();
+				projectDto.setProgramCode(program.getCode());
+				if(program.getAdvert()!=null){
+					projectDto.setStudyDuration(program.getAdvert().getStudyDuration());
+				}
                 projectDto.setTitle(input.getTitle());
                 RegisteredUser supervisor = project.getPrimarySupervisor();
 				projectDto.setPrimarySupervisor(toPerson(supervisor));
@@ -136,7 +141,6 @@ public class AdvertsController {
             }
             dto.setDescription(input.getDescription());
             dto.setFunding(input.getFunding());
-            dto.setStudyDuration(input.getStudyDuration());
             return dto;
         }
 

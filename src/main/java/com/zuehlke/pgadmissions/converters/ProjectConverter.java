@@ -58,7 +58,6 @@ public class ProjectConverter {
 	private void updateProjectAdvert(Advert advert, ProjectDTO projectAdvertDTO) {
 		advert.setTitle(projectAdvertDTO.getTitle());
 	    advert.setDescription(projectAdvertDTO.getDescription());
-	    advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
 	    advert.setFunding(projectAdvertDTO.getFunding());
 	    advert.setActive(projectAdvertDTO.getActive());
 	}

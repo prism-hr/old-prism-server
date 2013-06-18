@@ -82,7 +82,7 @@ public class ProjectConverterTest {
 		assertThat(project.getAdvert().getActive(), equalTo(dto.getActive()));
 		assertThat(project.getAdvert().getDescription(), equalTo(dto.getDescription()));
 		assertThat(project.getAdvert().getFunding(), equalTo(dto.getFunding()));
-		assertThat(project.getAdvert().getStudyDuration(), equalTo(dto.getStudyDuration()));
+		assertThat(project.getAdvert().getStudyDuration(), nullValue());
 		assertThat(project.getAdvert().getTitle(), equalTo(dto.getTitle()));
 		assertThat(project.getProgram(), equalTo(dto.getProgram()));
 		assertThat(project.getClosingDate(), equalTo(dto.getClosingDate()));
@@ -122,7 +122,7 @@ public class ProjectConverterTest {
 		ProjectDTOBuilder builder = new ProjectDTOBuilder();
 		builder.id(PROJECT_ID)
 		.program(program)
-		.title("title").description("description").funding("funding").studyDuration(6)
+		.title("title").description("description").funding("funding")
 		.closingDateSpecified(true).closingDate(DateUtils.truncateToDay(new Date()))
 		.primarySupervisor(primarySupervisor)
 		.secondarySupervisorSpecified(true).secondarySupervisor(secondarySupervisor)

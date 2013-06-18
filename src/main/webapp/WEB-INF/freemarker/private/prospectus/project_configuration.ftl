@@ -70,18 +70,7 @@
                         <textarea id="projectAdvertDescriptionText" class="max" rows="6" cols="150"></textarea>
                     </div>
                 </div>
-                <div class="row" id="projectAdvertStudyDurationDiv">
-                    <label for="projectDuration" class="plain-label">Duration of Study <em>*</em>
-                    </label> <span class="hint" data-desc="<@spring.message 'prospectus.durationOfStudy'/>"></span>
-                    <div class="field">
-                        <input class="numeric input-small" type="text" size="4" id="projectAdvertStudyDurationInput" />
-                        <select id="projectAdvertStudyDurationUnitSelect" class="input small">
-                            <option value="">Select...</option>
-                            <option value="Months">Months</option>
-                            <option value="Years">Years</option>
-                        </select>
-                    </div>
-                </div>
+                
                 <h3>Closing Date</h3>
               <div class="row" id="projectAdvertHasClosingDateDiv">
                 <label class="plain-label">Would you like to set a closing date? <em>*</em>

@@ -103,6 +103,8 @@
     <bean id="pdfdocumentBuilder" class="com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder" />
     
     <bean id="userService" class="com.zuehlke.pgadmissions.services.UserService" />
+
+    <bean id="programService" class="com.zuehlke.pgadmissions.services.ProgramsService" />
     
     <bean id="userFactory" class="com.zuehlke.pgadmissions.services.UserFactory" />
 

@@ -72,7 +72,12 @@
                         <textarea id="projectAdvertDescriptionText" class="max" rows="6" cols="150"></textarea>
                     </div>
                 </div>
-                
+                <div class="row">
+                      <label for="projectAdvertFundingText" class="plain-label">Funding Information</label> <span class="hint" data-desc="<@spring.message 'prospectus.fundingInformation'/>"></span>
+                      <div class="field">
+                          <textarea id="projectAdvertFundingText" class="max" rows="6" cols="150"></textarea>
+                      </div>
+                    </div>
               <div class="row" id="projectAdvertHasClosingDateDiv">
                 <label class="plain-label">Would you like to set a closing date? <em>*</em>
                 </label> <span class="hint" data-desc="<@spring.message 'prospectus.projectClosingDate'/>"></span>

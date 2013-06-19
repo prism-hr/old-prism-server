@@ -28,6 +28,7 @@ function registerAutosuggest(){
 
 function registerProgramSelect() {
 	$("#projectAdvertProgramSelect").change(function() {
+		clearAll();
 		loadProjects();
 	});
 }
@@ -300,6 +301,7 @@ function fillProjectAdvertForm(data){
 		$("#projectAdvertHasClosingDateRadioNo").prop("checked", true);
 		$("#projectAdvertClosingDateInput").val("");
 	}
+	checkProjectClosingDate();
 	
 	if(advert.active) {
 		$("#projectAdvertIsActiveRadioYes").prop("checked", true);

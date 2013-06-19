@@ -19,7 +19,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.dao.BadgeDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
@@ -44,7 +44,7 @@ public class ApplicationsService {
 
     private MailSendingService mailService;
     
-    private BadgeDAO badgeDAO;
+    private ProgramDAO programDAO;
     
     public ApplicationsService() {
         this(null, null, null, null);
@@ -52,15 +52,15 @@ public class ApplicationsService {
 
     @Autowired
     public ApplicationsService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormListDAO applicationFormListDAO,
-            final MailSendingService mailService, final BadgeDAO badgeDAO) {
+            final MailSendingService mailService, final ProgramDAO programDAO) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
-        this.badgeDAO = badgeDAO;
+        this.programDAO = programDAO;
     }
     
     public Date getBatchDeadlineForApplication(ApplicationForm form) {
-        Date closingDate = badgeDAO.getNextClosingDateForProgram(form.getProgram(), new Date());
+        Date closingDate = programDAO.getNextClosingDateForProgram(form.getProgram(), new Date());
         if (closingDate == null) {
             return new Date();
         }

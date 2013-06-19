@@ -8,9 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.Badge;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -32,7 +31,6 @@ public class ProgramBuilder {
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
-    private List<Badge> badges = new ArrayList<Badge>();
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private Set<Advert> adverts = new HashSet<Advert>();
@@ -116,18 +114,11 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder badges(Badge... badges) {
-        for (Badge badge : badges) {
-            this.badges.add(badge);
+    public ProgramBuilder closingDates(ProgramClosingDate... programClosingDates) {
+        for (ProgramClosingDate programClosingDate : programClosingDates) {
+            this.programClosingDates.add(programClosingDate);
         }
         return this;
-    }
-
-    public ProgramBuilder closingDates(ProgramClosingDate... programClosingDates) {
-    	for (ProgramClosingDate programClosingDate : programClosingDates) {
-    		this.programClosingDates.add(programClosingDate);
-    	}
-    	return this;
     }
 
     public ProgramBuilder adverts(Advert... adverts) {
@@ -149,7 +140,6 @@ public class ProgramBuilder {
         program.getInstances().addAll(instances);
         program.getViewers().addAll(viewers);
         program.getScoringDefinitions().putAll(scoringDefinitions);
-        program.getBadges().addAll(badges);
         program.setAtasRequired(atasRequired);
         program.getClosingDates().addAll(programClosingDates);
         return program;

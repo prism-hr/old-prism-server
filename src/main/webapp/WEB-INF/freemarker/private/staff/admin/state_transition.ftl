@@ -176,29 +176,6 @@
 							
 								</div><!-- close .row-group -->
 								
-								<div class="row-group" style="display:none;">
-  								<div class="row">
-                    <label for="closingDate" class="plain-label" >Assign to Closing Date</label>
-                    <span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
-                    <div class="field">
-                        <input type="text" class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>
-                        <#if closingDate_error??>
-                            <span class="invalid">${closingDate_error}</span>
-                        </#if>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <label class="plain-label" for="projectTitle">Assign to Project</label>
-                    <span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
-                    <div class="field">
-                      <input id="projectTitle" name="projectTitle" class="full ui-autocomplete-input" type="text" value="${(projectTitle)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
-                      <#if projectTitle_error??>
-                        <span class="invalid">${projectTitle_error}</span>
-                      </#if>
-                    </div>
-                  </div>
-								</div><!-- close .row-group -->
-								
 								</#if>
 	
                 <div class="row-group">

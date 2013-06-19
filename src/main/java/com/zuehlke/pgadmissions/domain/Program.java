@@ -18,7 +18,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
@@ -80,10 +79,6 @@ public class Program extends Authorisable implements Serializable {
     @Sort(type=SortType.COMPARATOR, comparator = ProgramClosingDate.class)
     private SortedSet<ProgramClosingDate> closingDates = new TreeSet<ProgramClosingDate>();
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
-    private List<Badge> badges = new ArrayList<Badge>();
-
     @MapKey(name = "stage")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id")
@@ -110,14 +105,6 @@ public class Program extends Authorisable implements Serializable {
 
     public String getCode() {
         return code;
-    }
-
-    public List<Badge> getBadges() {
-        return badges;
-    }
-
-    public void setBadges(final List<Badge> badges) {
-        this.badges = badges;
     }
 
     public String getTitle() {

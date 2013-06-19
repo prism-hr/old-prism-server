@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
 import java.beans.PropertyEditorSupport;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,10 @@ public class DurationOfStudyPropertyEditor extends PropertyEditorSupport {
             return;
         }
 
-        java.util.Map durationOfStudyMap = new Gson().fromJson(jsonString, java.util.Map.class);
-        String durationOfStudyAsString = (String) durationOfStudyMap.get("value");
-        String durationOfStudyUnitAsString = (String) durationOfStudyMap.get("unit");
+        @SuppressWarnings("unchecked")
+        Map<String, String> durationOfStudyMap = new Gson().fromJson(jsonString, Map.class);
+        String durationOfStudyAsString = durationOfStudyMap.get("value");
+        String durationOfStudyUnitAsString = durationOfStudyMap.get("unit");
 
         
         Integer result = getDurationOfStudyAsIntOrError(durationOfStudyAsString);

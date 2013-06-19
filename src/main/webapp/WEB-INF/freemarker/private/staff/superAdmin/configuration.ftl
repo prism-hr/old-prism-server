@@ -29,7 +29,6 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/configuration.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/templateEdit/actions.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/serviceThrottling/actions.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/configuration/scoringConfiguration.js'/>"></script>

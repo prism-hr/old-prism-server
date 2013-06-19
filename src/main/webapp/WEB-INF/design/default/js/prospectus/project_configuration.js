@@ -11,6 +11,8 @@ $(document).ready(function(){
 		registerAutosuggest();
 		clearAll();
 		loadProjects();
+		$('#projectsClear').hide();
+		
 });
 
 function registerDefaultClosingDateSelector() {
@@ -144,7 +146,7 @@ function clearAll(){
 	$("#projectAdvertIsActiveRadioYes").prop("checked", false);
 	$("#projectAdvertIsActiveRadioNo").prop("checked", false);
 	$('#projectId').val("");
-	$('#addProjectAdvert').text("Add");
+	$('#addProjectAdvert').text("Add Project");
 	$('#projectAdvertLinkToApply').val('');
 	$('#projectAdvertButtonToApply').val('');
 	loadDefaultPrimarySupervisor();
@@ -152,6 +154,8 @@ function clearAll(){
 	$("#projectAdvertHasSecondarySupervisorRadioNo").prop("checked", true);
 	checkSecondarySupervisor();
 	clearProjectAdvertErrors();
+	$('#projectsClear').hide();
+	$('html, body').animate({ scrollTop: $("#projectConfiguration").offset().top}, 300);
 }
 
 function registerHasClosingDateProjectAdvertRadio(){
@@ -191,10 +195,12 @@ function registerHasSecondarySupervisorRadio(){
 function checkProjectClosingDate(){
 	if(projectAdvertHasClosingDate()){
 		$('#projectAdvertClosingDateInput').removeAttr('disabled');
+		$('#projectAdvertClosingDateInput').parent().parent().find('label').removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	}
 	else{
 		$('#projectAdvertClosingDateInput').val("");
-		$('#projectAdvertClosingDateInput').attr('disabled','disabled');		
+		$('#projectAdvertClosingDateInput').attr('disabled','disabled');	
+		$('#projectAdvertClosingDateInput').parent().parent().find('label').addClass("grey-label").parent().find('.hint').addClass("grey");
 	}
 }
 
@@ -214,10 +220,12 @@ function checkSecondarySupervisor(){
 
 function enableField(input){
 	input.removeAttr('disabled').removeAttr('readonly');
+	$(input).parent().parent().find('label').removeClass("grey-label").parent().find('.hint').removeClass("grey");
 }
 function clearAndDisable(input){
 	input.val("");
 	input.attr('disabled','disabled');
+	$(input).parent().parent().find('label').addClass("grey-label").parent().find('.hint').addClass("grey");
 }
 
 function removeProject(projectRow) {
@@ -260,6 +268,7 @@ function loadProject(advertRow) {
 		success: function(data) {
 			var map = JSON.parse(data);
 			fillProjectAdvertForm(map);
+			$('#projectsClear').show();
         },
         complete: function() {
         	hideLoader();
@@ -294,7 +303,7 @@ function fillProjectAdvertForm(data){
 	displayPrimarySupervisor(project.primarySupervisor);
 	displaySecondarySupervisor(project.secondarySupervisor);
 	$('#projectId').val(projectId);
-	$('#addProjectAdvert').text("Edit");
+	$('#addProjectAdvert').text("Edit Project");
 	$('#projectAdvertLinkToApply').val(data['linkToApply']);
 	$('#projectAdvertButtonToApply').val(data['buttonToApply']);
 }
@@ -307,9 +316,17 @@ function checktoDisableProjet() {
 		$("#projectAdvertClosingDateInput, #secondarySupervisorFirstName, #secondarySupervisorLastName, #secondarySupervisorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
 		if ($("#primarySupervisorDiv").hasClass('isAdmin')) {
 			$("#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail").removeAttr("disabled").removeAttr("readonly");
+			$("#primarySupervisorDiv label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 		} else {
 			$("#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
+			$("#primarySupervisorDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
 		}
+		/* Exceptions */
+		
+		$("#projectAdvertClosingDateDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#secondarySupervisorFirstNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#secondarySupervisorLastNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#secondarySupervisorEmailLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
 	} else {
 		$(".projectGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
 		$(".projectGroup input, .projectGroup textarea, .projectGroup select, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo").attr("readonly", "readonly");
@@ -317,18 +334,18 @@ function checktoDisableProjet() {
 		$("#addProjectAdvert").addClass("disabled");
 		clearAll();
 		$(".badge.count").text('2000 Characters left');
-		
 	}
 }
 function changeInfoBarNameProject(text,advertUpdated) {
 	errors = $('.alert-error:visible').length;
 	if (errors > 0) {
 		$('.infoBar').removeClass('alert-info').addClass('alert-error').find('i').removeClass('icon-info-sign').addClass('icon-warning-sign');
+		$('html, body').animate({ scrollTop: $("#projectConfiguration").offset().top}, 300);
 	} else {
 		$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
 		if (advertUpdated) {
 			var programme_name = $("#projectAdvertProgramSelect option:selected").text();
-			infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>"+programme_name+"</b> has been "+text+".";
+			infohtml = "<i class='icon-ok-sign'></i> Your advert for your project has been "+text+".";
 			if ($('#infoBarproject').hasClass('alert-info')) {
 				$('#infoBarproject').addClass('alert-success').removeClass('alert-info').html(infohtml);
 			} else {
@@ -336,13 +353,10 @@ function changeInfoBarNameProject(text,advertUpdated) {
 			}
 		} else {
 			if (text != "Select...") {
-				infohtml = "<i class='icon-info-sign'></i> Manage the advert for: <b>"+text+"</b>.";
-				inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>"+text+"</b>."; 
+				infohtml = "<i class='icon-info-sign'></i> Manage the adverts and closing dates for your project here.";
 			} else {
-				infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your project here.";
-				inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your project."; 
+				infohtml =  "<i class='icon-info-sign'></i> Manage the adverts and closing dates for your project here.";
 			}
-			$('#infoResourcesProject').html(inforesource);
 			if ($('#infoBarproject').hasClass('alert-success')) {
 				$('#infoBarproject').addClass('alert-info').removeClass('alert-success').html(infohtml);
 			} else {
@@ -375,6 +389,7 @@ function loadProjects(){
 			checktoDisableProjet();
 			clearProjectAdvertErrors();
 			changeInfoBarNameProject(programme_name,false);
+			$('#projectsClear').hide();
 		},
 		complete: function() {
 			hideLoader();

@@ -1,8 +1,18 @@
 $(document).ready(function(){
 	hideAdverts();
 	getAdverts();
+	setClass();
+	$(window).bind('resize', function() { 
+    	setClass(); 
+    });
 });
-
+function setClass() {
+	if ($('#pholder').width() < 390) {
+		$('#pholder').addClass('small');
+	} else {
+		$('#pholder').removeClass('small');
+	}
+}
 function hideAdverts(){
 	$('#pHolder').hide();
 }
@@ -78,14 +88,33 @@ function bindAddThisShareOverFix(){
 	});
 }
 function renderAdvert(advert){
+	var psupervisor = '';
+	var ssupervisor = '';
+	var funding = '';
 	var selectedClass = (advert.selected) ? "selected" : "";
+	if(advert.type == 'program') {
+		funding = '<div class="fdescription"><p>'+advert.funding+'</p></div>';
+		psupervisor = '';
+		ssupervisor = '';
+	} else if (advert.type == 'project') {
+		funding = '';
+		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisor.firstname + ' ' + advert.primarySupervisor.lastname;
+		if (advert.secondarySupervisorSpecified) {
+			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisor.firstname + ' ' + advert.secondarySupervisor.lastname+'</span></p></div>'; 
+		} else {
+			ssupervisor = '</p></div>'
+		}
+		
+	}
 	return '<li class="'+ advert.type+' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
-	'<div class="pdetails">'+
+	'<div class="pdetails clearfix">'+
 		'<h3>'+advert.title+'</h3>'+
+		psupervisor +
+		ssupervisor +
+		'<div class="pdescription"><p>'+advert.description+'</p></div>'+
+		funding	+	
 		'<div class="cdate">'+closingDateString(advert.closingDate)+'</div>'+
 		'<div class="duration">Study duration: <span>'+durationOfStudyString(advert.studyDuration)+'</span></div>'+
-		'<div class="pdescription"><p>'+advert.description+'</p></div>'+
-		'<div class="fdescription"><p>'+advert.funding+'</p></div>'+
 	'</div>'+
 	'<div class="pactions clearfix">'+
 		'<div class="social">'+
@@ -118,7 +147,13 @@ function closingDateString(closingDate){
 }
 
 function formatDate(dateString) {
-	return $.datepicker.formatDate('dd M yy', new Date(dateString));
+	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	var formattedDate = new Date(dateString);
+	var d = formattedDate.getDate();
+	var m =  formattedDate.getMonth();
+	var y = formattedDate.getFullYear();
+	
+	return d + " " + months[m] + " " + y;
 }
 
 function durationOfStudyString(studyDuration){

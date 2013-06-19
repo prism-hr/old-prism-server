@@ -10,7 +10,6 @@ import java.util.Date;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
@@ -31,8 +30,6 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
-import com.zuehlke.pgadmissions.exceptions.InvalidParameterFormatException;
-import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -43,7 +40,6 @@ public class ApplicationFormControllerTest {
     private ApplicationFormController applicationController;
     private ApplicationForm applicationForm;
     private ApplicationsService applicationsServiceMock;
-    private PlainTextUserPropertyEditor userPropertyEditorMock;
     private RegisteredUser student;
     private ProgramInstanceDAO programInstanceDAOMock;
     private UserService userServiceMock;
@@ -57,125 +53,35 @@ public class ApplicationFormControllerTest {
         program.setInstances(Arrays.asList(programInstance));
 
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, null, null)).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null)).andReturn(applicationForm);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 
         EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-        applicationController.createNewApplicationForm("ABC", null, null, null, null);
+        applicationController.createNewApplicationForm("ABC", null);
         EasyMock.verify(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-    }
-
-    @Test
-    public void shouldCreateNewApplicationFormWithBatchDeadlineInFirstAcceptedFormat() throws ParseException {
-        Program program = new ProgramBuilder().id(12).enabled(true).build();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        Date batchDeadline = dateFormat.parse("2012/08/02");
-        ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
-                .applicationDeadline(parseDate("2030/08/06")).build();
-        program.setInstances(Arrays.asList(programInstance));
-
-        EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, batchDeadline, null, null, null)).andReturn(applicationForm);
-        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
-
-        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-        applicationController.createNewApplicationForm("ABC", "02-Aug-2012", null, null, null);
-        EasyMock.verify(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-    }
-
-    @Test
-    public void shouldCreateNewApplicationFormWithBatchDeadlineInSecondAcceptedFormat() throws ParseException {
-
-        Program program = new ProgramBuilder().id(12).enabled(true).build();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        Date batchDeadline = dateFormat.parse("2012/08/02");
-        ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
-                .applicationDeadline(parseDate("2030/08/06")).build();
-        program.setInstances(Arrays.asList(programInstance));
-
-        EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, batchDeadline, null, null, null)).andReturn(applicationForm);
-        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
-
-        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-
-        applicationController.createNewApplicationForm("ABC", "02 Aug 2012", null, null, null);
-        EasyMock.verify(applicationsServiceMock);
-    }
-
-    @Test(expected = InvalidParameterFormatException.class)
-    public void shouldThrowInvalidParameterFormatExceptionIfBatchDeadlinInIncorrectFormat() throws ParseException {
-        Program program = new ProgramBuilder().id(12).enabled(true).build();
-
-        ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
-                .applicationDeadline(parseDate("2030/08/06")).build();
-        program.setInstances(Arrays.asList(programInstance));
-
-        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-
-        applicationController.createNewApplicationForm("ABC", "bob", null, null, null);
-    }
-
-    @Test
-    public void shouldCreateNewApplicationFormWithProjectTitle() throws ParseException {
-
-        Program program = new ProgramBuilder().id(12).enabled(true).build();
-        ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
-                .applicationDeadline(parseDate("2030/08/06")).build();
-        program.setInstances(Arrays.asList(programInstance));
-
-        EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, "project title", null, null))
-                .andReturn(applicationForm);
-        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
-
-        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-
-        applicationController.createNewApplicationForm("ABC", null, "project title", null, null);
-        EasyMock.verify(applicationsServiceMock);
-    }
-
-    @Test
-    public void shouldCreateNewApplicationFormWithValidResearchHomePage() throws ParseException {
-
-        Program program = new ProgramBuilder().id(12).enabled(true).build();
-        ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
-                .applicationDeadline(parseDate("2030/08/06")).build();
-        program.setInstances(Arrays.asList(programInstance));
-
-        EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-        String researchHomePage = "https://www.researchhomepage.com";
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, researchHomePage, null)).andReturn(
-                applicationForm);
-        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
-
-        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-
-        applicationController.createNewApplicationForm("ABC", null, null, researchHomePage, null);
-        EasyMock.verify(applicationsServiceMock);
-
     }
 
     @Test
     public void shouldCreateNewApplicationFormWithProject() throws ParseException {
-    	ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1").applicationDeadline(parseDate("2030/08/06")).build();
-    	Program program = new ProgramBuilder().id(12).enabled(true).build();
-    	program.setInstances(Arrays.asList(programInstance));
-    	RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).firstName("first").lastName("last").email("primary@supervisor.com").build();
-		Advert advert = new AdvertBuilder().id(1).title("title").build();
-		Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert ).build();
-    	Integer projectId= 1;
+        ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
+                .applicationDeadline(parseDate("2030/08/06")).build();
+        Program program = new ProgramBuilder().id(12).enabled(true).build();
+        program.setInstances(Arrays.asList(programInstance));
+        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).firstName("first").lastName("last").email("primary@supervisor.com").build();
+        Advert advert = new AdvertBuilder().id(1).title("title").build();
+        Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).build();
+        Integer projectId = 1;
 
-    	EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-    	EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(project);
-    	EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, null, project)).andReturn(applicationForm);
-    	EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
-    	
-    	EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock, programsServiceMock);
-    	
-    	applicationController.createNewApplicationForm("ABC", null, null, null, projectId);
-    	EasyMock.verify(applicationsServiceMock);
-    	
+        EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
+        EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(project);
+        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
+        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
+
+        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock, programsServiceMock);
+
+        applicationController.createNewApplicationForm("ABC", projectId);
+        EasyMock.verify(applicationsServiceMock);
+
     }
 
     @Test
@@ -186,11 +92,11 @@ public class ApplicationFormControllerTest {
         program.setInstances(Arrays.asList(programInstance));
 
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, null, null)).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null)).andReturn(applicationForm);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
         EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 
-        ModelAndView modelAndView = applicationController.createNewApplicationForm("ABC", null, null, null, null);
+        ModelAndView modelAndView = applicationController.createNewApplicationForm("ABC", null);
         assertEquals(applicationForm.getApplicationNumber(), modelAndView.getModel().get("applicationId"));
         assertEquals("redirect:/application", modelAndView.getViewName());
 
@@ -201,7 +107,7 @@ public class ApplicationFormControllerTest {
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(null);
 
         EasyMock.replay(programDAOMock);
-        applicationController.createNewApplicationForm("ABC", null, null, null, null);
+        applicationController.createNewApplicationForm("ABC", null);
     }
 
     @Test(expected = CannotApplyToProgramException.class)
@@ -213,9 +119,9 @@ public class ApplicationFormControllerTest {
 
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(null);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program1)).andReturn(null);
-        
+
         EasyMock.replay(programDAOMock, programInstanceDAOMock);
-        applicationController.createNewApplicationForm("ABC", null, null, null, null);
+        applicationController.createNewApplicationForm("ABC", null);
     }
 
     @Test(expected = CannotApplyToProgramException.class)
@@ -226,35 +132,27 @@ public class ApplicationFormControllerTest {
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(null);
 
         EasyMock.replay(programDAOMock, programInstanceDAOMock);
-        applicationController.createNewApplicationForm("ABC", null, null, null, null);
+        applicationController.createNewApplicationForm("ABC", null);
     }
 
     @Test(expected = CannotApplyToProjectException.class)
     public void shouldThrowExceptionIfProjectIsNotActive() throws ParseException {
-    	ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1").applicationDeadline(parseDate("2030/08/06")).build();
-    	Program program = new ProgramBuilder().id(12).enabled(true).build();
-    	program.setInstances(Arrays.asList(programInstance));
-    	RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).firstName("first").lastName("last").email("primary@supervisor.com").build();
-    	Advert advert = new AdvertBuilder().id(1).title("title").active(false).build();
-		Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).build();
-    	Integer projectId= 1;
+        ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
+                .applicationDeadline(parseDate("2030/08/06")).build();
+        Program program = new ProgramBuilder().id(12).enabled(true).build();
+        program.setInstances(Arrays.asList(programInstance));
+        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).firstName("first").lastName("last").email("primary@supervisor.com").build();
+        Advert advert = new AdvertBuilder().id(1).title("title").active(false).build();
+        Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).build();
+        Integer projectId = 1;
 
-    	EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-    	EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(project);
-    	EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, null, project)).andReturn(applicationForm);
-    	EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
-    	
-    	EasyMock.replay(programDAOMock,programsServiceMock,applicationsServiceMock,programInstanceDAOMock);
-    	applicationController.createNewApplicationForm("ABC", null, null, null, projectId);
-    }
+        EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
+        EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(project);
+        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
+        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 
-    @Test
-    public void shouldBindPropertyEditors() {
-        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-        binderMock.registerCustomEditor(RegisteredUser.class, userPropertyEditorMock);
-        EasyMock.replay(binderMock);
-        applicationController.registerPropertyEditors(binderMock);
-        EasyMock.verify(binderMock);
+        EasyMock.replay(programDAOMock, programsServiceMock, applicationsServiceMock, programInstanceDAOMock);
+        applicationController.createNewApplicationForm("ABC", projectId);
     }
 
     @Before
@@ -263,26 +161,21 @@ public class ApplicationFormControllerTest {
 
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-        userPropertyEditorMock = EasyMock.createMock(PlainTextUserPropertyEditor.class);
         programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         programsServiceMock = EasyMock.createMock(ProgramsService.class);
 
-        applicationController = new ApplicationFormController(programDAOMock, applicationsServiceMock, userPropertyEditorMock, programInstanceDAOMock,
-                userServiceMock, programsServiceMock) {
-            ApplicationForm newApplicationForm() {
-                return applicationForm;
-            }
-        };
+        applicationController = new ApplicationFormController(programDAOMock, applicationsServiceMock, programInstanceDAOMock, userServiceMock,
+                programsServiceMock);
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
                 .role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
         EasyMock.replay(userServiceMock);
     }
-    
-    private Date parseDate(String date)	throws ParseException {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		return simpleDateFormat.parse(date);
-	}
+
+    private Date parseDate(String date) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        return simpleDateFormat.parse(date);
+    }
 }

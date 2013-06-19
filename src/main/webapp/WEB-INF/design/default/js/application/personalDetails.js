@@ -535,6 +535,7 @@ function isEnglishFirstLanguage() {
 	if (selected_radio == 'true') {
 		$("#lbl-languageQualificationAvailable").addClass("grey-label")
 				.parent().find('.hint').addClass("grey");
+		$("#lbl-languageQualificationAvailable").parent().find('label').addClass("grey-label");
 		$("input[name='languageQualificationAvailable']").attr("disabled",
 				"disabled");
 		$("input[name='languageQualificationAvailable']")
@@ -546,6 +547,7 @@ function isEnglishFirstLanguage() {
 	} else if (selected_radio == 'false') {
 		$("#lbl-languageQualificationAvailable").removeClass("grey-label")
 				.parent().find('.hint').removeClass("grey");
+		$("#lbl-languageQualificationAvailable").parent().find('label').removeClass("grey-label");
 		$("input[name='languageQualificationAvailable']")
 				.removeAttr("disabled");
 		return false;
@@ -558,10 +560,12 @@ function isRequireVisa() {
 	if (selected_radio == 'true') {
 		$("#lbl-passportAvailable").removeClass("grey-label").parent().find(
 				'.hint').removeClass("grey");
+		$("#lbl-passportAvailable").parent().find('label').removeClass("grey-label");
 		$("input[name='passportAvailable']").removeAttr("disabled", "disabled");
 	} else {
 		$("#lbl-passportAvailable").addClass("grey-label").parent().find(
 				'.hint').addClass("grey");
+		$("#lbl-passportAvailable").parent().find('label').addClass("grey-label");
 		$("input[name='passportAvailable']").attr("disabled", "disabled");
 		$("input[name='passportAvailable']").prop('checked', false);
 		disablePassportInformation();

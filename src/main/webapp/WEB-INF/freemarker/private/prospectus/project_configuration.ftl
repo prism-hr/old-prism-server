@@ -55,7 +55,7 @@
           <div class="row-group projectGroup">
                 <h3>Advert</h3>
                  <div class="infoBar alert alert-info" id="infoBarproject">
-                	<i class="icon-info-sign"></i> Manage the adverts and closing dates for your projects here.
+                	<i class="icon-info-sign"></i> Manage the adverts and closing dates for your project here.
            		 </div>
                 <div class="row" id="projectAdvertTitleDiv">
                     <label for="projectAdvertTitleInput" class="plain-label">Title <em>*</em></label>
@@ -71,7 +71,6 @@
                     </div>
                 </div>
                 
-                <h3>Closing Date</h3>
               <div class="row" id="projectAdvertHasClosingDateDiv">
                 <label class="plain-label">Would you like to set a closing date? <em>*</em>
                 </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
@@ -172,13 +171,13 @@
                   </input>
                 </div>
               </div>
-              
               <div class="field">
-                <a id="addProjectAdvert" role="button" class="btn btn-primary">Add</a>
-              </div>
+                <a id="addProjectAdvert" role="button" class="btn btn-primary">Add Project</a>
+                <button id="projectsClear" type="button" class="btn btn-success">Add New Project</button>
+              </div> 
             </div>
             
-            <div class="row-group">
+            <div class="row-group" id="resourcesProject">
                 <h3>Resources </h3>
                 <div class="alert alert-info" id="infoResourcesProject">
                     <i class="icon-info-sign"></i> Embed these resources in emails and on webpages to provide applicants with links to apply for your project.

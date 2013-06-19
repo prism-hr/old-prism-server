@@ -66,6 +66,11 @@ public class AdvertsController {
     }
     
     
+    @RequestMapping(value = "/standaloneAdverts", method = RequestMethod.GET)
+    public String standaloneAdverts(@ModelAttribute("advertId") Integer advert) {
+    	return "public/login/standalone";
+    }
+    
     @RequestMapping(value = "/activeAdverts", method = RequestMethod.GET)
     @ResponseBody
     public String activeAdverts(@ModelAttribute("advertId") Integer advert) {

@@ -372,6 +372,7 @@ div#ajaxloader {
 
 /* RSS box container */
 #pContainer {
+  height: 490px;
   overflow: hidden;
   box-shadow: 0 0 3px 1px #888888;
   width: 530px;

@@ -256,7 +256,7 @@
                 <label id="lbl-languageQualificationAvailable" class="plain-label grey-label">Do you have an English language qualification?<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.available'/>"></span>
                 <div class="field">
-                    <label>
+                    <label class="grey-label">
                         <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailableYes" value="true" disabled="disabled"
                         <#if personalDetails.isLanguageQualificationAvailableSet() && personalDetails.getLanguageQualificationAvailable()>
                             checked="checked"
@@ -265,7 +265,7 @@
                             disabled="disabled"
                         </#if>/> Yes
                     </label>                            
-                    <label>
+                    <label class="grey-label">
                         <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailableNo" value="false" disabled="disabled"
                         <#if personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()>
                             checked="checked"

@@ -40,7 +40,6 @@ a:hover, a:focus { color: #005580; text-decoration: underline;}
   display: block;
 }
 #pholder #plist {
-  height: 400px;
   margin: 4px 0 0 0;
   overflow-y: auto;
 }

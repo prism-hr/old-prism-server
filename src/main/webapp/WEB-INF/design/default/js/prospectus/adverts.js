@@ -2,10 +2,19 @@ $(document).ready(function(){
 	hideAdverts();
 	getAdverts();
 	setClass();
+	setHsize();
 	$(window).bind('resize', function() { 
     	setClass(); 
     });
 });
+function setHsize() {
+	var paddings = 30;
+	var header = $('#pholder header').height();
+	var footer = $('#pholder footer').height();
+	var container =  $('#pholder').parent().parent().height();
+	var sum = container - header - footer - paddings;
+	$('#plist').height(sum);
+}
 function setClass() {
 	if ($('#pholder').width() < 390) {
 		$('#pholder').addClass('small');

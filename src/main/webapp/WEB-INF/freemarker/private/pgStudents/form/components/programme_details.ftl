@@ -167,7 +167,7 @@
                 ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})
               </td>
               
-                <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>  
+                <#if !applicationForm.project??>  
                 <td>                  
                 <a class="button-edit" data-desc="Edit" id="supervisor_<#if supervisor.id??>${encrypter.encrypt(supervisor.id)!}</#if>" name="editSupervisorLink">edit</a>
                 </td>
@@ -187,55 +187,56 @@
           </tbody>
         </table>
       </div><!-- .row-group -->
-      <div class="row-group">
-        <h3>Add a Supervisor</h3>
-      <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-      <!-- supervisor rows -->
-      <input type="hidden" id="supervisorId" name="supervisorId"/>
       
-      <div class="row">
-        <label class="plain-label" for="supervisorFirstname">Supervisor First Name<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
-        <div class="field">
-          <input class="full" type="text" placeholder="First Name" autocomplete="off" id="supervisorFirstname" name="supervisorFirstname"/>
-        </div>
-      </div>
-      
-      <div class="row">
-        <label class="plain-label" for="supervisorLastname">Supervisor Last Name<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
-        <div class="field"> 
-          <input class="full" type="text" placeholder="Last Name" autocomplete="off" id="supervisorLastname" name="supervisorLastname"/>
-        </div>
-      </div>
-  
-      <div class="row">
-        <label class="plain-label" for="supervisorEmail">Supervisor Email<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
-        <div class="field">
-          <input class="full" type="email" placeholder="Email address" autocomplete="off" id="supervisorEmail" name="supervisorEmail"/>
-        </div>
-      </div>
-  
-      <div class="row">
-        <label class="plain-label">Is this supervisor aware of your application?<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
-        <div class="field">
-          <label for="awareYes"><input id="awareYes" type="radio" name="awareSupervisor" value="YES" /> Yes</label>
-          <label for="awareNo"><input id="awareNo" type="radio" name="awareSupervisor" value="NO" /> No</label>
-        </div>
-      </div>
-  
-      <div class="row">
-        <span class="supervisorAction"></span>       
-        <div class="field">
-          <button id="updateSupervisorButton" class="btn" type="button" style="display:none;">Update</button>
-          <button id="addSupervisorButton" class="btn" type="button">Add</button>
-        </div>
-      </div>
+      <#if !applicationForm.project??>
+        <div class="row-group">
+          <h3>Add a Supervisor</h3>
+            <!-- supervisor rows -->
+            <input type="hidden" id="supervisorId" name="supervisorId"/>
+            
+            <div class="row">
+              <label class="plain-label" for="supervisorFirstname">Supervisor First Name<em>*</em></label>
+              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
+              <div class="field">
+                <input class="full" type="text" placeholder="First Name" autocomplete="off" id="supervisorFirstname" name="supervisorFirstname"/>
+              </div>
+            </div>
+            
+            <div class="row">
+              <label class="plain-label" for="supervisorLastname">Supervisor Last Name<em>*</em></label>
+              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
+              <div class="field"> 
+                <input class="full" type="text" placeholder="Last Name" autocomplete="off" id="supervisorLastname" name="supervisorLastname"/>
+              </div>
+            </div>
+        
+            <div class="row">
+              <label class="plain-label" for="supervisorEmail">Supervisor Email<em>*</em></label>
+              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
+              <div class="field">
+                <input class="full" type="email" placeholder="Email address" autocomplete="off" id="supervisorEmail" name="supervisorEmail"/>
+              </div>
+            </div>
+        
+            <div class="row">
+              <label class="plain-label">Is this supervisor aware of your application?<em>*</em></label>
+              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
+              <div class="field">
+                <label for="awareYes"><input id="awareYes" type="radio" name="awareSupervisor" value="YES" /> Yes</label>
+                <label for="awareNo"><input id="awareNo" type="radio" name="awareSupervisor" value="NO" /> No</label>
+              </div>
+            </div>
+        
+            <div class="row">
+              <span class="supervisorAction"></span>       
+              <div class="field">
+                <button id="updateSupervisorButton" class="btn" type="button" style="display:none;">Update</button>
+                <button id="addSupervisorButton" class="btn" type="button">Add</button>
+              </div>
+            </div>
+        
+        </div><!-- .row-group -->
       </#if>
-      
-    </div><!-- .row-group -->
     </div>
     
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>

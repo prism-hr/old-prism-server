@@ -90,7 +90,7 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
                                                 + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (8,'SUPERVISOR');"
                                                 + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (9,'VIEWER');").executeUpdate();
 
-                applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null);
+                applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null);
                 stateTransitionViewResolverMock = EasyMock.createMock(StateTransitionViewResolver.class);
                 roleDAO = new RoleDAO(sessionFactory);
                 user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

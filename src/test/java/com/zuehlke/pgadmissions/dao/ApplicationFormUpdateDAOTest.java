@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 import java.util.Date;
 import java.util.List;
@@ -98,15 +97,21 @@ public class ApplicationFormUpdateDAOTest extends AutomaticRollbackTestCase {
         save(update1, update2, lastAccess);
         flushAndClearSession();
         
-        Integer id1 = update1.getId();
-        Integer id2 = update2.getId();
-        
         List<ApplicationFormUpdate> result = dao.getUpdatesForUser(form, user);
+
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(2, result.size());
-        assertEquals(id1, result.get(0).getId());
-        assertEquals(id2, result.get(1).getId());
+        assertListContain(update1, result);
+        assertListContain(update2, result);
+    }
+    
+    private void assertListContain(ApplicationFormUpdate expected, List<ApplicationFormUpdate> actual) {
+        for (ApplicationFormUpdate update : actual) {
+            if (update.getId().equals(expected.getId())) {
+                return;
+            }
+        }
+        fail("Update: "+expected+" was not found in list: "+actual);
     }
     
     @Test
@@ -128,15 +133,12 @@ public class ApplicationFormUpdateDAOTest extends AutomaticRollbackTestCase {
         save(update1, update2);
         flushAndClearSession();
         
-        Integer id1 = update1.getId();
-        Integer id2 = update2.getId();
-        
         List<ApplicationFormUpdate> result = dao.getUpdatesForUser(form, user);
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(2, result.size());
-        assertEquals(id1, result.get(0).getId());
-        assertEquals(id2, result.get(1).getId());
+
+        assertListContain(update1, result);
+        assertListContain(update2, result);
     }
     
     @Test
@@ -166,7 +168,17 @@ public class ApplicationFormUpdateDAOTest extends AutomaticRollbackTestCase {
         
         List<ApplicationFormUpdate> result = dao.getUpdatesForUser(form, user);
         
-        assertTrue(result.isEmpty());
+        assertListNotContain(update2, result);
+        assertListNotContain(update1, result);
+    }
+    
+    private void assertListNotContain(ApplicationFormUpdate expected, List<ApplicationFormUpdate> actual) {
+        for (ApplicationFormUpdate update : actual) {
+            if (update.getId().equals(expected.getId())) {
+                fail("Update: "+expected+" was found in list: "+actual);
+            }
+        }
+        return;
     }
     
     @Test
@@ -199,15 +211,13 @@ public class ApplicationFormUpdateDAOTest extends AutomaticRollbackTestCase {
         save(update1, update2, update3, lastAccess);
         flushAndClearSession();
         
-        Integer id1 = update1.getId();
-        Integer id2 = update2.getId();
         
         List<ApplicationFormUpdate> result = dao.getUpdatesForUser(form, user);
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(2, result.size());
-        assertEquals(id1, result.get(0).getId());
-        assertEquals(id2, result.get(1).getId());
+        assertListContain(update1, result);
+        assertListContain(update2, result);
+        assertListNotContain(update3, result);
     }
     
 }

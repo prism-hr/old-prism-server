@@ -4,16 +4,17 @@ ul {  padding-left: 0px;}
 ul li {line-height: 20px;}
 ul li p {margin: 0 0 10px;}
 a {color: #0088CC; font-family:Arial,​Helvetica,​sans-serif ;text-decoration: none;}
+a:hover, a:focus { color: #005580; text-decoration: underline;}
 /* Current style for the RSS box */
 #pholder .readmore {
   display: none;
 }
 #pholder {
-    font-family:Arial,​Helvetica,​sans-serif;
-    background: none repeat scroll 0 0 white;
-    border: 1px solid #DDDDDD;
-    border-radius: 4px 4px 4px 4px;
-    padding: 6px 7px;
+  font-family:Arial,​Helvetica,​sans-serif;
+  background: white;
+  padding: 6px 7px;
+  border-radius:4px;
+  border: 1px solid #DDD;
 }
 #pholder h1{
   font-size: 16px;
@@ -223,6 +224,10 @@ li.project.selected {
   margin-left: 0px;
   padding-bottom: 0px;
   float: none;
+}
+#pholder.small footer .right a img {
+  width: 100px;
+  margin-top: 4px;
 }
 .small .ssupervisor {
   display: none;

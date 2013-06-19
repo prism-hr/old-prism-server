@@ -100,7 +100,7 @@ public class SubmitApplicationFormController {
         assignValidationDueDate(applicationForm);
         applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
-        applicationForm.setBatchDeadline(applicationService.getBatchDeadlineForApplication(applicationForm));
+        assignBatchDeadline(applicationForm);
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
@@ -110,6 +110,14 @@ public class SubmitApplicationFormController {
         StageDuration validationDuration = stageDurationService.getByStatus(ApplicationFormStatus.VALIDATION);
         Date dueDate = DateUtils.addWorkingDaysInMinutes(applicationForm.getSubmittedDate(), validationDuration.getDurationInMinutes());
         applicationForm.setDueDate(dueDate);
+    }
+    public void assignBatchDeadline(ApplicationForm applicationForm) {
+        if (applicationForm.getProject()!=null) {
+            applicationForm.setBatchDeadline(applicationForm.getProject().getClosingDate());
+        }
+        else {
+            applicationForm.setBatchDeadline(applicationService.getBatchDeadlineForApplication(applicationForm));
+        }
     }
 
     @InitBinder("applicationForm")

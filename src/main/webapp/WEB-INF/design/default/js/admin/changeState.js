@@ -81,7 +81,8 @@ function saveComment() {
     $('#commentField').val($('#comment').val());
 
     if ($('input:radio[name=fastTrackProcessing]:checked').length > 0) {
-    	$('#stateChangeForm').append('<input type="hidden" name="fastTrackApplication" value="true"/>');
+    	var fastTrack = $('input:radio[name=fastTrackProcessing]')[1].checked;
+    	$('#stateChangeForm').append('<input type="hidden" name="fastTrackApplication" value="'+fastTrack+'"/>');
     }
     
     if ($('input:radio[name=qualifiedForPhd]:checked').length > 0) {

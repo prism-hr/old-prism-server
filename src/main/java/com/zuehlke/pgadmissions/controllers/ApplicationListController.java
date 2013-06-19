@@ -55,7 +55,7 @@ public class ApplicationListController {
     private static final String APPLICATION_LIST_SECTION_VIEW_NAME = "private/my_applications_section";
 
     private final ApplicationsService applicationsService;
-    
+
     private final ApplicationsReportService applicationsReportService;
 
     private final UserService userService;
@@ -65,9 +65,9 @@ public class ApplicationListController {
     private final ApplicationSummaryService applicationSummaryService;
 
     private final ApplicationsFilteringService filteringService;
-    
+
     private final ApplicationFormAccessService accessService;
-    
+
     private final ActionsProvider actionsProvider;
 
     public ApplicationListController() {
@@ -112,22 +112,28 @@ public class ApplicationListController {
             } else if ("urgent".equals(applyFilters)) {
                 filtering = new ApplicationsFiltering();
                 filtering.setPreFilter(ApplicationsPreFilter.URGENT);
-            } 
+            }
         }
-        
+
         if (filtering == null) {
             filtering = filteringService.getStoredOrDefaultFiltering(getUser());
         }
-        
+
         model.addAttribute("filtering", filtering);
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
-    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam Boolean useDisjunction, final ModelMap model) {
+    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam Boolean useDisjunction,
+            final ModelMap model, HttpServletResponse response) {
         RegisteredUser user = getUser();
         filtering.setUseDisjunction(useDisjunction);
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
+
+        if (applications.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
+
         Map<String, Boolean> updatedApplications = new HashMap<String, Boolean>();
         Map<String, ActionsDefinitions> actionDefinitions = new LinkedHashMap<String, ActionsDefinitions>();
         for (ApplicationForm applicationForm : applications) {
@@ -135,6 +141,7 @@ public class ApplicationListController {
             ActionsDefinitions actionsDefinition = actionsProvider.calculateActions(user, applicationForm);
             actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
         }
+
         model.addAttribute("updateApplications", updatedApplications);
         model.addAttribute("applications", applications);
         model.addAttribute("actionDefinitions", actionDefinitions);
@@ -205,7 +212,7 @@ public class ApplicationListController {
         }
         return statuses;
     }
-    
+
     @ModelAttribute("applications")
     public List<ApplicationForm> getApplications() {
         return java.util.Collections.emptyList();

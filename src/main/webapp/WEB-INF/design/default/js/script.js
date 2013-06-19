@@ -289,6 +289,7 @@ function bindDatePickerEnabled(selector){
 function addCounter() {
 	var $textArea = $("textarea");
     $.each($textArea, function() {
+		display = true;
         if ($(this).attr('id') == 'convictionsText') {
 			$(this).data("maxlength", 400);
 		} else if  ($(this).attr('id') == 'projectAbstract'||$(this).attr('id') == 'programmeDescription') {
@@ -297,21 +298,21 @@ function addCounter() {
 			$(this).data("maxlength", 250);
 		} else if  ($(this).attr('id') == 'explanationText'||$(this).attr('id') == 'programmeFundingInformation') {
 		    $(this).data("maxlength", 500);
-		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply') {
-			return false;
+		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply') {
+			display = false;
 		} else {
 			$(this).data("maxlength", 2000);
 		}
         // Create the span with all the content and characters left
-        $(this).after('<span class="badge count">' + ( $(this).data("maxlength") - $(this).val().length) + ' Characters left</span>');
-
-         if ($(this).val().length > ($(this).data("maxlength")-10)) {
-            $(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
-            if ($(this).val().length > $(this).data("maxlength")) {
-                $(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
-            }
-        }
-
+		if ($(this).parent().find('.count').length == 0 && display == true) {
+			$(this).after('<span class="badge count">' + ( $(this).data("maxlength") - $(this).val().length) + ' Characters left</span>');
+		}
+		if ($(this).val().length > ($(this).data("maxlength")-10)) {
+			$(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
+			if ($(this).val().length > $(this).data("maxlength")) {
+				$(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
+			}
+		}
         // Counting on keyup
         $(this).keyup(function count(){
             

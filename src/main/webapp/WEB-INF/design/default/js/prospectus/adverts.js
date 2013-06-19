@@ -98,11 +98,11 @@ function renderAdvert(advert){
 		ssupervisor = '';
 	} else if (advert.type == 'project') {
 		funding = '';
-		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisor.firstname + ' ' + advert.primarySupervisor.lastname;
+		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisor.firstname + ' ' + advert.primarySupervisor.lastname + ' (PI)';
 		if (advert.secondarySupervisorSpecified) {
 			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisor.firstname + ' ' + advert.secondarySupervisor.lastname+'</span></p></div>'; 
 		} else {
-			ssupervisor = '</p></div>'
+			ssupervisor = '</p></div>';
 		}
 		
 	}

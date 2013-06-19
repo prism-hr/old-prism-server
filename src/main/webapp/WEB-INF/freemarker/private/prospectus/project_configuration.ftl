@@ -11,14 +11,16 @@
                     <col />
                     <col style="width: 36px;" />
                     <col style="width: 36px;" />
+                    <col style="width: 36px;" />
                   </colgroup>
                   <tbody>
                     <tr>
-                      <td colspan="3" class="scrollparent">
+                      <td colspan="4" class="scrollparent">
                         <div class="scroll">
                         <table class="table-hover table-striped">
                             <colgroup>
                             <col />
+                            <col style="width: 30px" />
                             <col style="width: 30px" />
                             <col style="width: 30px" />
                             </colgroup>
@@ -59,13 +61,13 @@
            		 </div>
                 <div class="row" id="projectAdvertTitleDiv">
                     <label for="projectAdvertTitleInput" class="plain-label">Title <em>*</em></label>
-                    <span class="hint" data-desc=""></span>
+                    <span class="hint" data-desc="<@spring.message 'prospectus.title'/>"></span>
                     <div class="field">
                         <input class="numeric max" type="text" id="projectAdvertTitleInput" />
                     </div>
                 </div>
                 <div class="row" id="projectAdvertDescriptionDiv">
-                    <label for="projectAdvertDescriptionText" class="plain-label">Description <em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.description'/>"></span>
+                    <label for="projectAdvertDescriptionText" class="plain-label">Description <em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.projectDec'/>"></span>
                     <div class="field">
                         <textarea id="projectAdvertDescriptionText" class="max" rows="6" cols="150"></textarea>
                     </div>
@@ -73,7 +75,7 @@
                 
               <div class="row" id="projectAdvertHasClosingDateDiv">
                 <label class="plain-label">Would you like to set a closing date? <em>*</em>
-                </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
+                </label> <span class="hint" data-desc="<@spring.message 'prospectus.projectClosingDate'/>"></span>
                 <div class="field">
                   <input id="projectAdvertHasClosingDateRadioYes" type="radio" name="projectAdvertHasClosingDateRadio" value="true">
                     Yes

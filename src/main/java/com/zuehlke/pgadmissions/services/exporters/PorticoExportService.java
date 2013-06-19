@@ -147,9 +147,9 @@ public class PorticoExportService {
                     webServiceMessage.writeTo(requestMessageBuffer);
                 }});
             
-            log.info(String.format("Sent web service request [applicationNumber=%s, request=%s]", form.getApplicationNumber(), requestMessageBuffer.toString()));
+            log.trace(String.format("Sent web service request [applicationNumber=%s, request=%s]", form.getApplicationNumber(), requestMessageBuffer.toString()));
             
-            log.info(String.format("Received response from web service [applicationNumber=%s, applicantId=%s, applicationId=%s]", 
+            log.trace(String.format("Received response from web service [applicationNumber=%s, applicantId=%s, applicationId=%s]", 
                     form.getApplicationNumber(), response.getReference().getApplicantID(), response.getReference().getApplicationID()));
             
             applicationFormTransferService.updateApplicationFormPorticoIds(form, response);

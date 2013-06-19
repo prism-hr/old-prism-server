@@ -1,13 +1,8 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,20 +148,7 @@ public class RegisterController {
 	private String createApplicationAndReturnApplicationViewValue(final RegisteredUser user, final String redirectView) {
 		String[] params = applicationQueryStringParser.parse(user.getOriginalApplicationQueryString());		
 		Program program = programService.getProgramByCode(params[0]);
-		Date batchDeadline = null;
-		if (params[2] != null && StringUtils.isNotBlank(params[2])) {
-            try {
-                batchDeadline = DateUtils.parseDate(params[2], new String[] {"dd-MMM-yyyy", "dd MMM yyyy"});
-            } catch (ParseException e) {
-                //log, but don't prevent user activating account!
-                log.warn(String.format("Unparseable date in stored querystring: %s", params[2]), e);
-            }
-		}
-		String researchHomePage = params[1];
-		if(!UrlValidator.getInstance().isValid(researchHomePage)){
-			researchHomePage = null;
-		}
-		ApplicationForm newApplicationForm = applicationsService.createOrGetUnsubmittedApplicationForm(user, program, batchDeadline, params[3],researchHomePage, null);
+		ApplicationForm newApplicationForm = applicationsService.createOrGetUnsubmittedApplicationForm(user, program,  null);
 		return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
 	}
 	

@@ -154,7 +154,7 @@ public class ApplicationsServiceTest {
         applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
 
         replay();
-        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null, null, null, null);
+        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null);
         verify();
 
         assertNotNull(returnedForm);
@@ -177,22 +177,15 @@ public class ApplicationsServiceTest {
 
         EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
         applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
-        Date batchDeadline = new SimpleDateFormat("dd/MM/yyyy").parse("12/12/2012");
-        String projectTitle = "This is the project title";
-        String researchHomePage = "researchHomePage";
 
         replay();
-        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, batchDeadline, projectTitle,
-                researchHomePage, null);
+        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null);
         verify();
 
         assertNotNull(returnedForm);
         assertEquals(registeredUser, returnedForm.getApplicant());
         assertEquals(program, returnedForm.getProgram());
         assertEquals("KLOP-" + thisYear + "-000024", returnedForm.getApplicationNumber());
-        assertEquals(batchDeadline, returnedForm.getBatchDeadline());
-        assertEquals(projectTitle, returnedForm.getProjectTitle());
-        assertEquals("http://" + researchHomePage, returnedForm.getResearchHomePage());
     }
 
     @Test
@@ -214,7 +207,7 @@ public class ApplicationsServiceTest {
 
         // WHEN
         replay();
-        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null, null, null, null);
+        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null);
         // THEN
         verify();
 
@@ -240,7 +233,7 @@ public class ApplicationsServiceTest {
 
         // WHEN
         replay();
-        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null, null, null, null);
+        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null);
 
         // THEN
         verify();
@@ -267,7 +260,7 @@ public class ApplicationsServiceTest {
 
         // WHEN
         replay();
-        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null, null, null, null);
+        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null);
         // THEN
         verify();
 
@@ -299,7 +292,7 @@ public class ApplicationsServiceTest {
         applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
 
         replay();
-        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null, null, null, project);
+        ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, project);
         verify();
 
         assertNotNull(returnedForm);

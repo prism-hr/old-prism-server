@@ -79,8 +79,7 @@ public class ApplicationsService {
         applicationFormDAO.save(application);
     }
 
-    public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser user, final Program program, final Date programDeadline,
-            final String projectTitle, final String researchHomePage, Project project) {
+    public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser user, final Program program, Project project) {
 
         ApplicationForm applicationForm = findMostRecentApplication(user, program, project);
         if (applicationForm != null) {
@@ -93,10 +92,7 @@ public class ApplicationsService {
         applicationForm.setApplicant(user);
         applicationForm.setProgram(program);
         applicationForm.setProject(project);
-        applicationForm.setBatchDeadline(programDeadline);
 
-        applicationForm.setProjectTitle(projectTitle);
-        applicationForm.setResearchHomePage(researchHomePage);
         Long runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
         applicationForm.setApplicationNumber(program.getCode() + "-" + thisYear + "-" + String.format("%06d", ++runningCount));
         applicationFormDAO.save(applicationForm);

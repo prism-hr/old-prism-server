@@ -549,7 +549,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public String getProjectTitle() {
-        return projectTitle;
+        if (getProject() != null) {
+            return getProject().getAdvert().getTitle();
+        } else {
+            return projectTitle;
+        }
     }
 
     public void setProjectTitle(String projectTitle) {

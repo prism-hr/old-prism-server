@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
@@ -24,8 +25,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -43,22 +46,25 @@ public class ApplicationsService {
     private ApplicationFormListDAO applicationFormListDAO;
 
     private MailSendingService mailService;
+
+    private ProgrammeDetailsService programmeDetailsService;
     
     private ProgramDAO programDAO;
-    
+
     public ApplicationsService() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationsService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormListDAO applicationFormListDAO,
-            final MailSendingService mailService, final ProgramDAO programDAO) {
+            final MailSendingService mailService, final ProgrammeDetailsService programmeDetailsService, final ProgramDAO programDAO) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
+        this.programmeDetailsService = programmeDetailsService;
         this.programDAO = programDAO;
     }
-    
+
     public Date getBatchDeadlineForApplication(ApplicationForm form) {
         Date closingDate = programDAO.getNextClosingDateForProgram(form.getProgram(), new Date());
         if (closingDate == null) {
@@ -93,15 +99,48 @@ public class ApplicationsService {
         applicationForm.setProgram(program);
         applicationForm.setProject(project);
 
+
         Long runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
         applicationForm.setApplicationNumber(program.getCode() + "-" + thisYear + "-" + String.format("%06d", ++runningCount));
         applicationFormDAO.save(applicationForm);
+
+        
+        if (project != null) {
+            List<SuggestedSupervisor> suggestedSupervisors = createSuggestedSupervisors(project);
+            ProgrammeDetails programmeDetails = new ProgrammeDetails();
+            programmeDetails.getSuggestedSupervisors().addAll(suggestedSupervisors);
+            programmeDetails.setProgrammeName(applicationForm.getProgram().getTitle());
+            
+            applicationForm.setProgrammeDetails(programmeDetails);
+            programmeDetails.setApplication(applicationForm);
+            programmeDetailsService.save(programmeDetails);
+        }
+        
         return applicationForm;
     }
 
+    private List<SuggestedSupervisor> createSuggestedSupervisors(Project project) {
+        List<SuggestedSupervisor> suggestedSupervisors = Lists.newArrayListWithCapacity(2);
+        List<RegisteredUser> projectSupervisors = Lists.newArrayListWithCapacity(2);
+        projectSupervisors.add(project.getPrimarySupervisor());
+        if (project.getSecondarySupervisor() != null) {
+            projectSupervisors.add(project.getSecondarySupervisor());
+        }
+
+        for (RegisteredUser projectSupervisor : projectSupervisors) {
+            SuggestedSupervisor supervisor = new SuggestedSupervisor();
+            supervisor.setEmail(projectSupervisor.getEmail());
+            supervisor.setFirstname(projectSupervisor.getFirstName());
+            supervisor.setLastname(projectSupervisor.getLastName());
+            supervisor.setAware(true);
+            suggestedSupervisors.add(supervisor);
+        }
+        return suggestedSupervisors;
+    }
+
     private ApplicationForm findMostRecentApplication(final RegisteredUser user, final Program program, Project project) {
-        List<ApplicationForm> applications = project == null ? applicationFormDAO.getApplicationsByApplicantAndProgram(user, program)
-        		: applicationFormDAO.getApplicationsByApplicantAndProgramAndProject(user, program, project) ;
+        List<ApplicationForm> applications = project == null ? applicationFormDAO.getApplicationsByApplicantAndProgram(user, program) : applicationFormDAO
+                .getApplicationsByApplicantAndProgramAndProject(user, program, project);
 
         Iterable<ApplicationForm> filteredApplications = Iterables.filter(applications, new Predicate<ApplicationForm>() {
             @Override
@@ -164,7 +203,7 @@ public class ApplicationsService {
             log.warn("{}", e);
         }
     }
-    
+
     public void fastTrackApplication(final String applicationNumber) {
         ApplicationForm form = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
         form.setBatchDeadline(null);
@@ -193,5 +232,5 @@ public class ApplicationsService {
     public List<ApplicationForm> getAllApplicationsByStatus(final ApplicationFormStatus status) {
         return applicationFormDAO.getAllApplicationsByStatus(status);
     }
-    
+
 }

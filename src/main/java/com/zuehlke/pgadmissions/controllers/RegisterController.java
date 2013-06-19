@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -30,8 +33,6 @@ import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 @Controller
 @RequestMapping(value = "/register")
 public class RegisterController {
-    
-    private final Logger log = LoggerFactory.getLogger(RegisterController.class);
     
     private static final String REGISTER_USERS_VIEW_NAME = "public/register/register_applicant";
 	
@@ -146,10 +147,17 @@ public class RegisterController {
 	}
 
 	private String createApplicationAndReturnApplicationViewValue(final RegisteredUser user, final String redirectView) {
-		String[] params = applicationQueryStringParser.parse(user.getOriginalApplicationQueryString());		
-		Program program = programService.getProgramByCode(params[0]);
-		ApplicationForm newApplicationForm = applicationsService.createOrGetUnsubmittedApplicationForm(user, program,  null);
-		return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
+		Map<String, String> params = applicationQueryStringParser.parse(user.getOriginalApplicationQueryString());		
+		Program program = programService.getProgramByCode(params.get("program"));
+		Project project = null;
+		String projectId = params.get("project");
+		if(!StringUtils.isBlank(projectId)&&StringUtils.isNumeric(projectId)){
+			project = programService.getProject(Integer.valueOf(projectId));
+		}
+		String applyingAdvertId = params.get("advert");
+		String applyingAdvert = !StringUtils.isBlank(applyingAdvertId)?"&advert="+applyingAdvertId:"";
+		ApplicationForm newApplicationForm = applicationsService.createOrGetUnsubmittedApplicationForm(user, program,  project);
+		return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber()+applyingAdvert;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)

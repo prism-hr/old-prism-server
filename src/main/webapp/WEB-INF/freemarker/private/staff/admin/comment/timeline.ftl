@@ -250,7 +250,7 @@
 		          </ul>
 		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)> 
 		            	<#include "timeline_snippets/reference_comment.ftl"/>
-		          <#elseif timelineObject.type == 'confirmEligibility' && user.hasStaffRightsOnApplicationForm(applicationForm)>
+		          <#elseif timelineObject.type == 'confirmEligibility' && (user.hasStaffRightsOnApplicationForm(applicationForm) ||  user.isInRole('ADMITTER'))>
 		            	<#include "timeline_snippets/eligibility_comment.ftl"/>
 		          </#if> 
                   </div>

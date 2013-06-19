@@ -142,10 +142,19 @@
                 </#if>
                 <#assign shownTargetForCompletingStage = true>
               </#if>							          
-							                      
-		          
-		          <#if timelineObject.comments??>
+		          <#if timelineObject.comments?? || timelineObject.projectTitle??>
 		          <ul>
+		          	<#if timelineObject.projectTitle??>
+			         <li>                          
+  			           <div class="box">
+						 <p class="project_title"><span data-desc="Project title and description" aria-describedby="ui-tooltip-2"></span>
+                		   <b>${timelineObject.projectTitle}</b><br>
+            			   <i>${timelineObject.projectDescription}</i>
+            			 </p>
+		              </div>
+  			         </li>
+		          	</#if>
+		          
 		            <#list timelineObject.comments as comment>
 			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'VALIDATION' || comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE' || comment.type == 'INTERVIEW_SCHEDULE'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>

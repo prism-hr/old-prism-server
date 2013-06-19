@@ -19,10 +19,12 @@ import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceEvent;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.dto.ApplicationCreatedPhase;
 import com.zuehlke.pgadmissions.dto.TimelineConfirmEligibility;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
@@ -107,9 +109,9 @@ public class TimelineService {
 	public List<TimelineObject> getTimelineObjects(ApplicationForm applicationForm) {
 		List<TimelineObject> timelineObjects = new ArrayList<TimelineObject>();
 		List<TimelinePhase> phases = new ArrayList<TimelinePhase>();
-		if (applicationForm.getApplicant() != null && userService.getCurrentUser().getId().equals(applicationForm.getApplicant().getId())) {
-			phases.add(createUnsubmittedPhase(applicationForm));
-		}
+		
+		phases.add(createUnsubmittedPhase(applicationForm));
+
 		List<Event> events = applicationForm.getEvents();
 		Set<Comment> confirmEligibilityComments =new HashSet<Comment>();
 		
@@ -131,10 +133,16 @@ public class TimelineService {
 	}
 
 	private TimelinePhase createUnsubmittedPhase(ApplicationForm applicationForm) {
-		TimelinePhase phase = new TimelinePhase();
+		ApplicationCreatedPhase phase = new ApplicationCreatedPhase();
 		phase.setEventDate(applicationForm.getApplicationTimestamp());
 		phase.setStatus(ApplicationFormStatus.UNSUBMITTED);
 		phase.setAuthor(applicationForm.getApplicant());
+
+		if (applicationForm.getProject() != null) {
+			phase.setProjectTitle(applicationForm.getProject().getAdvert().getTitle());
+			phase.setProjectDescription(applicationForm.getProject().getAdvert().getDescription());
+		}
+		
 		return phase;
 		
 	}

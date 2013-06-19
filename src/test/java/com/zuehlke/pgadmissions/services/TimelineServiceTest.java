@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ApplicationCreatedPhase;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.dto.TimelineReference;
@@ -76,7 +77,7 @@ public class TimelineServiceTest {
 		applicationForm.getEvents().addAll(Arrays.asList(rejectedPhaseEnteredEvent, validationPhaseEnteredEvent, reviewPhaseEnteredEvent, referenceEvent));
 
 		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
-		assertEquals(4, objects.size());
+		assertEquals(5, objects.size());
 
 		TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(0);
 
@@ -144,10 +145,11 @@ public class TimelineServiceTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(reviewPhaseEnteredEvent, referenceEvent).comments(comment).program(new ProgramBuilder().build()).build();
 
 		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
-		assertEquals(2, objects.size());
+		assertEquals(3, objects.size());
 
-		assertTrue(objects.get(1) instanceof TimelinePhase);
 		assertTrue(objects.get(0) instanceof TimelineReference);
+		assertTrue(objects.get(1) instanceof TimelinePhase);
+		assertTrue(objects.get(2) instanceof ApplicationCreatedPhase);
 
 	}
 
@@ -161,7 +163,7 @@ public class TimelineServiceTest {
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
 
-		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(0);
+		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
 
 		assertEquals(reviewRound, phase.getReviewRound());
 
@@ -178,7 +180,7 @@ public class TimelineServiceTest {
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(interviewStateChangeEvent));
 
-		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(0);
+		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
 
 		assertEquals(interview, phase.getInterview());
 
@@ -195,7 +197,7 @@ public class TimelineServiceTest {
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
 
-		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(0);
+		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
 
 		assertEquals(approvalRound, phase.getApprovalRound());
 
@@ -240,12 +242,13 @@ public class TimelineServiceTest {
 		Event reviewPhaseEnteredEvent = new StateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).build();
 
 		ApplicationForm applicationForm = EasyMock.createNiceMock(ApplicationForm.class);
+		EasyMock.expect(applicationForm.getApplicationTimestamp()).andReturn(new Date(0));
 		EasyMock.expect(applicationForm.getEvents()).andReturn(Arrays.asList(validationPhaseEnteredEvent, reviewPhaseEnteredEvent));
 		EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(Arrays.asList(commentThree, commentOne, referenceComment, commentTwo));
 		EasyMock.replay(applicationForm);
 
 		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
-		assertEquals(2, phases.size());
+		assertEquals(3, phases.size());
 
 		TimelinePhase timelinePhaseOne = (TimelinePhase) phases.get(0);
 		assertEquals(ApplicationFormStatus.REVIEW, timelinePhaseOne.getStatus());
@@ -273,7 +276,7 @@ public class TimelineServiceTest {
 		applicationForm.getEvents().add(event);
 
 		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
-		TimelinePhase phase = (TimelinePhase) phases.get(0);
+		TimelinePhase phase = (TimelinePhase) phases.get(1);
 		assertTrue(phase.isRejectedByApprover());
 	}
 
@@ -311,13 +314,15 @@ public class TimelineServiceTest {
 			ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).events(approvalEventOne, approvalEventTwo, approvalEventThree).build();
 
 			List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
-			assertEquals(3, objects.size());
-			TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(0);
-			assertEquals("timeline.phase.approval.restart", timelinePhaseOne.getMessageCode());
-			TimelinePhase timelinePhaseTwo = (TimelinePhase) objects.get(1);
-			assertEquals("timeline.phase.approval.restart", timelinePhaseTwo.getMessageCode());
-			TimelinePhase timelinePhaseThree = (TimelinePhase) objects.get(2);
-			assertEquals("timeline.phase.approval", timelinePhaseThree.getMessageCode());
+			assertEquals(4, objects.size());
+			TimelinePhase timelinePhase2 = (TimelinePhase) objects.get(0);
+			assertEquals("timeline.phase.approval.restart", timelinePhase2.getMessageCode());
+			TimelinePhase timelinePhase3 = (TimelinePhase) objects.get(1);
+			assertEquals("timeline.phase.approval.restart", timelinePhase3.getMessageCode());
+			TimelinePhase timelinePhase4 = (TimelinePhase) objects.get(2);
+			assertEquals("timeline.phase.approval", timelinePhase4.getMessageCode());
+			TimelinePhase timelinePhase1 = (TimelinePhase) objects.get(3);
+			assertEquals("timeline.phase.not_submitted", timelinePhase1.getMessageCode());
 			
 
 	}

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dto;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
@@ -28,9 +29,10 @@ public abstract class TimelineObject implements Comparable<TimelineObject> {
 		this.author = author;
 	}
 	
+	
 	@Override
 	public int compareTo(TimelineObject otherPhase) {
-		return otherPhase.getMostRecentActivityDate().compareTo(this.getMostRecentActivityDate());
+		return new CompareToBuilder().append(otherPhase.getMostRecentActivityDate(), getMostRecentActivityDate()).toComparison();
 	}
 
 	abstract String getMessageCode(); 

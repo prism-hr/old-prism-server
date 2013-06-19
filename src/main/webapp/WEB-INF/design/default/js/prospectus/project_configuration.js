@@ -4,6 +4,7 @@ $(document).ready(function(){
 		registerDefaultClosingDateSelector();
 		registerAddProjectAdvertButton();
 		registerEditProjectAdvertButton();
+		registerShowProjectAdvertButton()
 		registerRemoveProjectAdvertButton();
 		registerHasClosingDateProjectAdvertRadio();
 		registerHasSecondarySupervisorRadio();
@@ -12,7 +13,6 @@ $(document).ready(function(){
 		clearAll();
 		loadProjects();
 		$('#projectsClear').hide();
-		
 });
 
 function registerDefaultClosingDateSelector() {
@@ -122,7 +122,13 @@ function registerEditProjectAdvertButton(){
 		loadProject($row);
 	});	
 }
-
+function registerShowProjectAdvertButton(){
+	$('#projectAdvertsTable').on('click', '.button-show', function(){
+		var $row = $(this).closest('tr');
+		loadProject($row);
+		$('html, body').animate({ scrollTop: $("#resourcesProject").offset().top}, 300);
+	});	
+}
 function registerRemoveProjectAdvertButton(){
 	$('#projectAdvertsTable').on('click', '.button-delete', function(){
 		var $row = $(this).closest('tr');
@@ -155,7 +161,7 @@ function clearAll(){
 	checkSecondarySupervisor();
 	clearProjectAdvertErrors();
 	$('#projectsClear').hide();
-	$('html, body').animate({ scrollTop: $("#projectConfiguration").offset().top}, 300);
+	$('html, body').animate({ scrollTop: $('body').offset().top}, 300);
 }
 
 function registerHasClosingDateProjectAdvertRadio(){
@@ -416,7 +422,8 @@ function displayProjectList(projects){
 		$("#projectAdvertsDiv").show();
 		$.each(projects, function(index, project) {
 			appendProjectRow(project);
-		});				
+		});	
+		addToolTips();			
 	}
 }
 
@@ -473,10 +480,13 @@ function appendProjectRow(project){
 				project.advert.title +
 			'</td>' +
 			'<td>' +
-				'<button class="button-edit" type="button" data-desc="Edit">Edit</button>' +
+				'<button class="button-show button-hint" type="button" data-desc="Get Advertising Resources">Show</button>' +
 			'</td>' +
 			'<td>' +
-				'<button class="button-delete" type="button" data-desc="Remove">Remove</button>' +
+				'<button class="button-edit button-hint" type="button" data-desc="Edit Advert">Edit</button>' +
+			'</td>' +
+			'<td>' +
+				'<button class="button-delete button-hint" type="button" data-desc="Delete Advert">Remove</button>' +
 			'</td>' +
 		'</tr>'	
 	);

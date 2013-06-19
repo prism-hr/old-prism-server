@@ -39,7 +39,6 @@ public class ApplicationFormBuilder {
 	private RegisteredUser approver;
 	private RegisteredUser applicant;
 	private String projectTitle;
-	private String researchHomePage;
 	private Boolean registryUsersNotified=false;
 	private Program program;
 	private Date appDate;
@@ -197,11 +196,6 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder researchHomePage(String researchHomePage) {
-		this.researchHomePage = researchHomePage;
-		return this;
-	}
-
 	public ApplicationFormBuilder acceptedTerms(CheckedStatus acceptedTerms) {
 		this.acceptedTerms = acceptedTerms;
 		return this;
@@ -376,7 +370,6 @@ public class ApplicationFormBuilder {
 		application.setProgram(program);
 		application.setEvents(events);
 		application.setProjectTitle(projectTitle);
-		application.setResearchHomePage(researchHomePage);
 		application.setStatus(status);
 		application.setAdditionalInformation(info);
 		application.setNotificationRecords(notificationRecords);

@@ -87,7 +87,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "application_form_id")
     private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
-    
+
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "application_form_id")
@@ -158,9 +158,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "project_title")
     private String projectTitle;
-
-    @Column(name = "research_home_page")
-    private String researchHomePage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -252,7 +249,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "withdrawn_before_submit")
     private Boolean withdrawnBeforeSubmit = false;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
@@ -308,7 +305,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isModifiable() {
         if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN
-                        || !getIsEditableByApplicant()) {
+                || !getIsEditableByApplicant()) {
             return false;
         }
         return true;
@@ -355,8 +352,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isWithdrawn() {
         return status == ApplicationFormStatus.WITHDRAWN;
     }
-    
-    public boolean isTerminated(){
+
+    public boolean isTerminated() {
         return isDecided() || isWithdrawn();
     }
 
@@ -406,7 +403,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return personalDetails;
     }
-    
+
     public boolean isPersonalDetailsNull() {
         return personalDetails == null;
     }
@@ -483,7 +480,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             for (Comment comment : applicationComments) {
                 if (comment instanceof InterviewVoteComment && comment.getUser().getId().equals(user.getId())) {
                     returnList.add(comment);
-                } else if(comment instanceof InterviewScheduleComment){
+                } else if (comment instanceof InterviewScheduleComment) {
                     returnList.add(comment);
                 }
             }
@@ -499,7 +496,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return returnList;
         }
 
-
         if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user) || user.isInRole(Authority.ADMITTER)) {
             returnList.addAll(applicationComments);
             Collections.sort(returnList);
@@ -511,7 +507,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean shouldOpenFirstSection() {
         return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv, additionalInformation)
-                        && isEmpty(fundings, referees, employmentPositions, qualifications);
+                && isEmpty(fundings, referees, employmentPositions, qualifications);
     }
 
     private boolean isEmpty(List<?>... objects) {
@@ -579,11 +575,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isInValidationStage() {
         return status == ApplicationFormStatus.VALIDATION;
     }
-    
+
     public boolean isInReviewStage() {
         return status == ApplicationFormStatus.REVIEW;
     }
-    
+
     public boolean isInInterviewStage() {
         return status == ApplicationFormStatus.INTERVIEW;
     }
@@ -844,17 +840,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.batchDeadline = batchDeadline;
     }
 
-    public String getResearchHomePage() {
-        if (researchHomePage == null || researchHomePage.startsWith("http://") || researchHomePage.startsWith("https://")) {
-            return researchHomePage;
-        }
-        return "http://" + researchHomePage;
-    }
-
-    public void setResearchHomePage(String researchHomePage) {
-        this.researchHomePage = researchHomePage;
-    }
-
     public Boolean isRegistryUsersDueNotification() {
         return registryUsersDueNotification;
     }
@@ -870,16 +855,16 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public List<ApplicationFormUpdate> getApplicationUpdates() {
         return applicationUpdates;
     }
-    
+
     public void setApplicationUpdates(List<ApplicationFormUpdate> applicationUpdates) {
         this.applicationUpdates.clear();
         this.applicationUpdates.addAll(applicationUpdates);
     }
-    
+
     public void addApplicationUpdate(ApplicationFormUpdate applicationUpdate) {
         this.applicationUpdates.add(applicationUpdate);
     }
-    
+
     public void setAdminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
         this.adminRequestedRegistry = adminRequestedRegistry;
     }
@@ -1137,7 +1122,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean hasConfirmElegibilityComment() {
         for (Comment comment : applicationComments) {
-            if (comment instanceof AdmitterComment){
+            if (comment instanceof AdmitterComment) {
                 return true;
             }
         }
@@ -1152,13 +1137,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return today.after(dueDate);
     }
 
-    public Project getProject(){
-    	return project;
+    public Project getProject() {
+        return project;
     }
-    
-	public void setProject(Project project) {
-		this.project = project;
-	}
 
-    
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public String getProjectOrProgramTitle() {
+        if (getProjectTitle() != null) {
+            return getProjectTitle();
+        }
+        return getProgram().getTitle();
+    }
+
 }

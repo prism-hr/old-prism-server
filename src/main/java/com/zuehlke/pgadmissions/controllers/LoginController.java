@@ -134,9 +134,6 @@ public class LoginController {
 	private String composeQueryString(DefaultSavedRequest savedRequest) {
 		StringBuilder sb = new StringBuilder();
 		composeQueryStringPart(savedRequest, "program", "program", sb);
-		composeQueryStringPart(savedRequest, "programhome", "programhome", sb);
-		composeQueryStringPart(savedRequest, "programDeadline", "bacthdeadline", sb);
-		composeQueryStringPart(savedRequest, "projectTitle", "projectTitle", sb);
 		composeQueryStringPart(savedRequest, "advert", "advert", sb);
 		composeQueryStringPart(savedRequest, "project", "project", sb);
 		return sb.toString();

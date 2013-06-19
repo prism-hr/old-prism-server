@@ -238,7 +238,8 @@ function validateAndSaveUpdatedProjectDetails() {
             'recommendedConditionsAvailable' : ($('input:radio[name=recommendedConditionsAvailable]:checked').val() === "true" ? true : false),
             'projectDescriptionAvailable' : true,
             'comment' : $('#comment').val(),
-            'confirmNextStage' : $('#confirmNextStage').is(':checked')
+            'confirmNextStage' : $('#confirmNextStage').is(':checked'),
+            'projectStillAcceptsApplications': isProjectAcceptingApplications()
     };
     
     $('#ajaxloader').show();
@@ -294,13 +295,15 @@ function validateAndSaveUpdatedProjectDetails() {
 }
 
 function saveUpdatedProjectDetails() {
+
     var postData = {
             'projectTitle' : $('#projectTitle').val(),
             'projectAbstract' : $('#projectAbstract').val(),
             'recommendedConditions' : $('#recommendedConditions').val(),
             'recommendedStartDate' : $('#recommendedStartDate').val(),
             'recommendedConditionsAvailable' : ($('input:radio[name=recommendedConditionsAvailable]:checked').val() === "true" ? true : false),
-            'projectDescriptionAvailable' : true
+            'projectDescriptionAvailable' : true,
+            'projectStillAcceptsApplications': isProjectAcceptingApplications()
     };
     
     $('#ajaxloader').show();
@@ -342,6 +345,13 @@ function saveUpdatedProjectDetails() {
             $('#ajaxloader').fadeOut('fast');
         }
     });
+}
+
+function isProjectAcceptingApplications(){
+	if("$input[name=acceptingApplications]"){
+		return acceptingApplications = ($('input:radio[name=acceptingApplications]:checked').val() === "true" ? true : false);
+	}
+	return null;
 }
 
 function saveInterviewDelegate() {

@@ -14,6 +14,21 @@
             <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6"></textarea>
         </div>
     </div>
+    
+   	<#if applicationForm?? && applicationForm.project??>
+	    <div class="row" />
+	        <label id="lbl_acceptingApplications" class="plain-label" for="acceptingApplications">Are you still accepting applications?<em>*</em></label>
+	        <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
+	        <div class="field">
+	          <input id="acceptingApplicationsRadioYes" type="radio" name="acceptingApplications" value="true" <#if applicationForm.project.advert.active> checked</#if>>
+	          Yes
+	          </input>
+	          <input id="acceptingApplicationsRadioNo" type="radio" name="acceptingApplications" value="false" <#if !applicationForm.project.advert.active> checked</#if>>
+	          No
+	          </input>
+	        </div>
+	    </div>
+    </#if>
 </div>
 
 <div class="row-group">

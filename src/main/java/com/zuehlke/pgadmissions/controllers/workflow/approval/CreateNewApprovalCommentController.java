@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -40,6 +41,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.validators.ApprovalCommentValidator;
@@ -61,9 +63,11 @@ public class CreateNewApprovalCommentController {
     
     private final ApplicationFormAccessService accessService;
 
+	private ProgramsService programService;
+
     
     public CreateNewApprovalCommentController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null,null);
     }
 
     @Autowired
@@ -74,7 +78,8 @@ public class CreateNewApprovalCommentController {
             final CommentService commentService,
             final ApprovalCommentValidator validator,
             final MessageSource messageSource,
-            final ApplicationFormAccessService accessService) {
+            final ApplicationFormAccessService accessService,
+            final ProgramsService programService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.validator = validator;
@@ -82,6 +87,7 @@ public class CreateNewApprovalCommentController {
         this.commentService = commentService;
         this.messageSource = messageSource;
         this.accessService = accessService;
+		this.programService = programService;
     }
     
     @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment", method = RequestMethod.GET, produces = "application/json")
@@ -121,7 +127,7 @@ public class CreateNewApprovalCommentController {
     @ResponseBody
     public String validate(final @PathVariable("applicationNumber") String applicationNumber,
             @Valid final ApprovalComment approvalComment, final BindingResult bindingResult, @RequestParam final String comment,
-            @RequestParam final String confirmNextStage) {
+            @RequestParam final String confirmNextStage, @RequestParam(required=false) Boolean projectStillAcceptsApplications) {
         Gson gson = new Gson();
         Map<String, Object> fieldErrorMap = new HashMap<String, Object>();
         RegisteredUser currentUser = getCurrentUser();
@@ -147,6 +153,10 @@ public class CreateNewApprovalCommentController {
             fieldErrorMap.put("comment", FieldErrorUtils.resolveMessage("text.field.empty", messageSource));
         }
         
+        if(form.getProject()!=null && projectStillAcceptsApplications==null){
+        	fieldErrorMap.put("acceptingApplications", FieldErrorUtils.resolveMessage("dropdown.radio.select.none", messageSource));
+        }
+        
         if (StringUtils.equalsIgnoreCase("false", confirmNextStage)) {
             fieldErrorMap.put("confirmNextStage", FieldErrorUtils.resolveMessage("checkbox.mandatory", messageSource));
         }
@@ -161,7 +171,7 @@ public class CreateNewApprovalCommentController {
     
     @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String save(final @PathVariable("applicationNumber") String applicationNumber, @Valid final ApprovalComment approvalComment, final BindingResult bindingResult) {
+    public String save(final @PathVariable("applicationNumber") String applicationNumber, @Valid final ApprovalComment approvalComment, final BindingResult bindingResult, @RequestParam(required=false) Boolean projectStillAcceptsApplications) {
         
         Gson gson = new Gson();
         RegisteredUser currentUser = getCurrentUser();
@@ -170,6 +180,11 @@ public class CreateNewApprovalCommentController {
 
         if (!currentUser.hasAdminRightsOnApplication(form) && !currentUser.isInRoleInProgram(Authority.APPROVER, form.getProgram())) {
             throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
+        }
+        if(form.getProject()!=null && projectStillAcceptsApplications!=null){
+        	Project project = form.getProject(); 
+        	project.getAdvert().setActive(projectStillAcceptsApplications);
+        	programService.saveProject(project);
         }
         
         approvalComment.setType(CommentType.APPROVAL);
@@ -189,7 +204,6 @@ public class CreateNewApprovalCommentController {
         
         approvalService.save(latestApprovalRound);
         commentService.save(approvalComment);
-        
         form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(form, getCurrentUser(), new Date());
         applicationsService.save(form);

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.utils;
 
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;

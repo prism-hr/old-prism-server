@@ -55,7 +55,7 @@
                             <li><a href="#projectConfiguration">Manage Projects</a></li>
                           </#if>
                           
-                          <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+                          <#if user.isCanManageProjects()>
                             <li><a href="#irisSection">Link to UCL IRIS</a></li>
                           </#if>
                           
@@ -73,7 +73,7 @@
                           </div>
                         </#if>
                         
-                        <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+                        <#if user.isCanManageProjects()>
                           <div id="irisSection" class="tab-page">
                             <#include "/private/prospectus/iris_configuration.ftl"/>
                           </div>

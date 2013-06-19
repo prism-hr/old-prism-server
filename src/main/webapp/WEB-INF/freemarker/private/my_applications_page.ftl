@@ -92,21 +92,6 @@
              <span>Show applications matching</span> <div id="operatorSwitch" class="switch switch-mini" data-on-label="ANY" data-off-label="ALL">
                 <input id="useDisjunctionId" type="checkbox" <#if filtering.useDisjunction> checked="checked" </#if> />
              </div> <span>of the following filters.</span>
-             <!--div class="btn-group">
-             
-              <#if filtering.useDisjunction>
-              <button value="OR" disabled id="useDisjunctionId" class="btn">OR</button>	
-              <#else>
-              <button value="AND" disabled id="useDisjunctionId" class="btn">AND</button>	
-              </#if>
-              <button data-toggle="dropdown" class="btn dropdown-toggle">
-                <span class="caret"></span>
-              </button>
-                  <ul id="filterOperators" class="dropdown-menu">
-                    <li><a href="AND">AND</a></li>
-                    <li><a href="OR">OR</a></li>
-                  </ul>
-              </div-->
              
             </div>
            

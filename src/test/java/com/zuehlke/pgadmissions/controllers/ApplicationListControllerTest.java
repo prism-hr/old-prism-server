@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import junit.framework.Assert;
@@ -209,21 +210,22 @@ public class ApplicationListControllerTest {
 
         // GIVEN
         ModelMap model = new ExtendedModelMap();
-
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-
         List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
         expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
         // WHEN
         EasyMock.replay(userServiceMock, applicationsServiceMock);
-        assertEquals("private/my_applications_section", controller.getApplicationListSection(filtering, true, model));
+        assertEquals("private/my_applications_section", controller.getApplicationListSection(filtering, true, model, response));
         EasyMock.verify(userServiceMock, applicationsServiceMock);
 
         // THEN
         assertSame(applications, model.get("applications"));
+        assertEquals(HttpServletResponse.SC_NO_CONTENT, response.getStatus());
     }
 
     @Test

@@ -1,9 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -13,10 +18,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.time.DateUtils;
+import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.hamcrest.Matcher;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
@@ -30,8 +36,10 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -57,6 +65,10 @@ public class ApplicationsServiceTest {
     @Mock
     @InjectIntoByType
     private ProgramDAO programDAOMock;
+
+    @Mock
+    @InjectIntoByType
+    private ProgrammeDetailsService programmeDetailsServiceMock;;
 
     @Test
     public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {
@@ -277,30 +289,42 @@ public class ApplicationsServiceTest {
         Assert.assertNull(form.getBatchDeadline());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldCreateAndSaveNewApplicationFormWithProject() throws ParseException {
         Program program = new ProgramBuilder().code("KLOP").id(1).build();
         RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
         String thisYear = new SimpleDateFormat("yyyy").format(new Date());
         Advert advert = new AdvertBuilder().id(1).title("title").studyDuration(6).build();
-        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).build();
-        Project project = new ProjectBuilder().id(1).advert(advert).program(program).primarySupervisor(primarySupervisor).build();
+        RegisteredUser primarySupervisor = new RegisteredUserBuilder().firstName("Ezio").lastName("Imbecilo").email("ezio@mail.com").id(1).build();
+        RegisteredUser secondarySupervisor = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@mail.com").id(2).build();
+        Project project = new ProjectBuilder().id(1).advert(advert).program(program).primarySupervisor(primarySupervisor)
+                .secondarySupervisor(secondarySupervisor).build();
 
         EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgramAndProject(registeredUser, program, project)).andReturn(
                 Lists.<ApplicationForm> newArrayList());
         EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
         applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
+        Capture<ProgrammeDetails> programDetails = new Capture<ProgrammeDetails>();
+        programmeDetailsServiceMock.save(EasyMock.capture(programDetails));
 
         replay();
         ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, project);
         verify();
 
+        List<SuggestedSupervisor> suggestedSupervisors = programDetails.getValue().getSuggestedSupervisors();
         assertNotNull(returnedForm);
         assertEquals(registeredUser, returnedForm.getApplicant());
         assertEquals(program, returnedForm.getProgram());
         assertEquals("KLOP-" + thisYear + "-000024", returnedForm.getApplicationNumber());
         assertNull(returnedForm.getBatchDeadline());
         assertEquals(project, returnedForm.getProject());
+
+        Matcher<SuggestedSupervisor> primarySupervisorMatcher = allOf(hasProperty("firstname", equalTo("Ezio")), hasProperty("lastname", equalTo("Imbecilo")),
+                hasProperty("email", equalTo("ezio@mail.com")));
+        Matcher<SuggestedSupervisor> secondarySupervisorMatcher = allOf(hasProperty("firstname", equalTo("Genowefa")), hasProperty("lastname", equalTo("Pigwa")),
+                hasProperty("email", equalTo("gienia@mail.com")));
+        assertThat(suggestedSupervisors, hasItems(primarySupervisorMatcher, secondarySupervisorMatcher));
     }
 
     @Test

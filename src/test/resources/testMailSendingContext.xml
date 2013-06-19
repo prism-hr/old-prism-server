@@ -105,6 +105,8 @@
     <bean id="userService" class="com.zuehlke.pgadmissions.services.UserService" />
 
     <bean id="programService" class="com.zuehlke.pgadmissions.services.ProgramsService" />
+
+    <bean id="ProgrammeDetailsService" class="com.zuehlke.pgadmissions.services.ProgrammeDetailsService" />
     
     <bean id="userFactory" class="com.zuehlke.pgadmissions.services.UserFactory" />
 

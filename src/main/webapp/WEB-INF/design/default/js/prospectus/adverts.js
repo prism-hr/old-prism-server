@@ -101,12 +101,13 @@ function renderAdvert(advert){
 	var ssupervisor = '';
 	var funding = '';
 	var selectedClass = (advert.selected) ? "selected" : "";
-	if(advert.type == 'program') {
+	if(advert.funding){
 		funding = '<div class="fdescription"><p>'+advert.funding+'</p></div>';
+	}
+	if(advert.type == 'program') {
 		psupervisor = '';
 		ssupervisor = '';
 	} else if (advert.type == 'project') {
-		funding = '';
 		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisor.firstname + ' ' + advert.primarySupervisor.lastname + ' (PI)';
 		if (advert.secondarySupervisorSpecified) {
 			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisor.firstname + ' ' + advert.secondarySupervisor.lastname+'</span></p></div>'; 

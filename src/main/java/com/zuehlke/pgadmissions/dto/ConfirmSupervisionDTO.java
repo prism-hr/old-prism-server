@@ -20,6 +20,8 @@ public class ConfirmSupervisionDTO {
     private Date recommendedStartDate;
 
     private Boolean recommendedConditionsAvailable;
+    
+    private Boolean projectAcceptingApplications;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
     private String recommendedConditions;
@@ -79,5 +81,13 @@ public class ConfirmSupervisionDTO {
     public void setRecommendedConditions(String recommendedConditions) {
         this.recommendedConditions = recommendedConditions;
     }
+
+	public Boolean getProjectAcceptingApplications() {
+		return projectAcceptingApplications;
+	}
+
+	public void setProjectAcceptingApplications(Boolean projectAcceptingApplications) {
+		this.projectAcceptingApplications = projectAcceptingApplications;
+	}
 
 }

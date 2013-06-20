@@ -52,6 +52,11 @@ function disableProjectDescription() {
     $("#projectAbstract").attr("disabled", "disabled");
     $("#lbl_projectAbstract").addClass("grey-label").parent().find('.hint').addClass("grey");
     $("#lbl_projectAbstract").html("Project Abstract");
+
+    $("#projectAcceptingApplicationsRadioYes").attr("disabled", "disabled");
+    $("#projectAcceptingApplicationsRadioNo").attr("disabled", "disabled");
+    $("#lbl_projectAcceptingApplications").addClass("grey-label").parent().find('.hint').addClass("grey");
+    $("#lbl_projectAcceptingApplications").html("Do you wish to continue accepting applications?");
     
 }
 
@@ -65,6 +70,11 @@ function enableProjectDescription() {
     $("#projectAbstract").removeAttr("disabled", "disabled");
     $("#lbl_projectAbstract").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_projectAbstract").html("Project Abstract<em>*</em>");
+    
+    $("#projectAcceptingApplicationsRadioYes").removeAttr("disabled", "disabled");
+    $("#projectAcceptingApplicationsRadioNo").removeAttr("disabled", "disabled");
+    $("#lbl_projectAcceptingApplications").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+    $("#lbl_projectAcceptingApplications").html("Do you wish to continue accepting applications?<em>*</em>");
 }
 
 function disableRecommendedOffer() {

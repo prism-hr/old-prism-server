@@ -104,6 +104,7 @@ public class CreateNewApprovalCommentController {
                 jsonObject.addProperty("recommendedConditionsAvailable", BooleanUtils.toString(src.getRecommendedConditionsAvailable(), "true", "false", StringUtils.EMPTY));
                 jsonObject.addProperty("recommendedConditions", src.getRecommendedConditions());
                 jsonObject.addProperty("recommendedStartDate", new DateTime(src.getRecommendedStartDate()).toString("dd MMM yyyy"));
+                jsonObject.addProperty("projectAcceptingApplications", BooleanUtils.toString(src.getProjectAcceptingApplications(), "true", "false", StringUtils.EMPTY));
                 return jsonObject;
             }
         }).create();

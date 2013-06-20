@@ -133,8 +133,12 @@ $(document).ready(function() {
             projectTitle : $('#projectTitle').val(),
             projectAbstract : $('#projectAbstract').val(),
             recommendedStartDate : $('#offerStartDate').val(),
-            recommendedConditions : $('#offerConditions').val()
+            recommendedConditions : $('#offerConditions').val()            
         };
+        
+        if($('input:radio[name=projectAcceptingApplications]').val()!==undefined){
+        	postData.projectAcceptingApplications =  $('input:radio[name=projectAcceptingApplications]:checked').val();
+        }
         
         if ($('input:radio[name=provideProjectDescription]:checked').length > 0) {
         	var provide = $('input:radio[name=provideProjectDescription]:checked').val();
@@ -365,5 +369,5 @@ function enableAddingSupervisorsToList() {
     $("#lbl_newSupervisorEmail").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     $("#lbl_newSupervisorEmail").html("Email<em>*</em>");
     
-    $("#createSupervisor").removeAttr('disabled')
+    $("#createSupervisor").removeAttr('disabled');
 }

@@ -15,15 +15,15 @@
         </div>
     </div>
     
-   	<#if applicationForm?? && applicationForm.project??>
+   	<#if applicationForm?? && applicationForm.project?? && !applicationForm.project.disabled>
 	    <div class="row" />
-	        <label id="lbl_acceptingApplications" class="plain-label" for="acceptingApplications">Are you still accepting applications?<em>*</em></label>
+	        <label id="lbl_acceptingApplications" class="plain-label" for="acceptingApplications">Do you wish to continue accepting applications?<em>*</em></label>
 	        <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
 	        <div class="field">
-	          <input id="acceptingApplicationsRadioYes" type="radio" name="acceptingApplications" value="true" <#if applicationForm.project.advert.active> checked</#if>>
+	          <input id="acceptingApplicationsRadioYes" type="radio" name="acceptingApplications" value="true" >
 	          Yes
 	          </input>
-	          <input id="acceptingApplicationsRadioNo" type="radio" name="acceptingApplications" value="false" <#if !applicationForm.project.advert.active> checked</#if>>
+	          <input id="acceptingApplicationsRadioNo" type="radio" name="acceptingApplications" value="false" >
 	          No
 	          </input>
 	        </div>

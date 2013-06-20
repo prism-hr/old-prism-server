@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -69,7 +70,23 @@ public class EvaluationTransitionController extends StateTransitionController {
     public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
             ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer,
             @RequestParam(required = false) Boolean fastTrackApplication) {
+    	
         modelMap.put("delegate", delegate);
+        
+        // validate validation action is still available
+        switch (stateChangeComment.getType()) {
+        case APPROVAL_EVALUATION:
+        	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+	        break;
+        case REVIEW_EVALUATION:
+        	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_REVIEW_STAGE);
+	        break;
+        case INTERVIEW_EVALUATION:
+        	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_INTERVIEW_STAGE);
+	        break;
+        default:
+        	throw new IllegalStateException("illegal StateChangeComment type passed to evaluation controller");
+        }
         
         boolean stateChangeRequiresFastTrack = stateChangeComment==null || !(ApplicationFormStatus.APPROVED.equals(stateChangeComment.getNextStatus())||ApplicationFormStatus.REJECTED.equals(stateChangeComment.getNextStatus()));
         boolean fastrackValueMissing = fastTrackApplication == null && applicationForm.getBatchDeadline() != null;

@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -77,6 +78,10 @@ public class ValidationTransitionController extends StateTransitionController {
 
         model.put("delegate", delegate);
         ApplicationForm form = getApplicationForm(applicationId);
+
+        // validate action is still available
+        actionsProvider.validateAction(form, getCurrentUser(), ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
+        
         try {
             if ((fastTrackApplication == null && form.getBatchDeadline() != null) || result.hasErrors()) {
                 if (fastTrackApplication == null) {

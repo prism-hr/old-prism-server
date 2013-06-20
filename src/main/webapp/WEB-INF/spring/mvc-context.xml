@@ -21,7 +21,7 @@
         </bean>
     </mvc:interceptors>
 
-    <mvc:resources mapping="/design/**" location="/WEB-INF/design/" />
+    <mvc:resources mapping="/design/**" location="/WEB-INF/design/" cache-period="300" />
 
     <!-- JSR-303 support will be detected on classpath and enabled automatically -->
     <mvc:annotation-driven />

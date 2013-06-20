@@ -37,17 +37,21 @@ public class MailSender {
 
     private final Logger log = LoggerFactory.getLogger(MailSender.class);
 
-    protected final JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
-    protected final boolean emailProductionSwitch;
+    private final boolean emailProductionSwitch;
 
-    protected final String emailAddressFrom;
+    private final String emailAddressFrom;
 
-    protected final String emailAddressTo;
+    private final String emailAddressTo;
 
     private final EmailTemplateService emailTemplateService;
 
     private final FreeMarkerConfig freemarkerConfig;
+    
+    public JavaMailSender getJavaMailSender() {
+        return javaMailSender;
+    }
 
     @Autowired
     public MailSender(final JavaMailSender javaMailSender, @Value("${email.prod}") final String production,

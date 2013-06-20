@@ -78,9 +78,10 @@ public class ValidationTransitionController extends StateTransitionController {
 
         model.put("delegate", delegate);
         ApplicationForm form = getApplicationForm(applicationId);
-
+        RegisteredUser user = getCurrentUser();
+        
         // validate action is still available
-        actionsProvider.validateAction(form, getCurrentUser(), ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
+        actionsProvider.validateAction(form, user, ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
         
         try {
             if ((fastTrackApplication == null && form.getBatchDeadline() != null) || result.hasErrors()) {
@@ -99,7 +100,7 @@ public class ValidationTransitionController extends StateTransitionController {
             }
 
             form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
-            accessService.updateAccessTimestamp(form, getCurrentUser(), new Date());
+            accessService.updateAccessTimestamp(form, user, new Date());
             applicationsService.save(form);
             comment.setDate(new Date());
             commentService.save(comment);
@@ -109,12 +110,13 @@ public class ValidationTransitionController extends StateTransitionController {
             }
 
             if (answeredOneOfTheQuestionsUnsure(comment) && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
-                form.setAdminRequestedRegistry(getCurrentUser());
+                form.setAdminRequestedRegistry(user);
                 form.setRegistryUsersDueNotification(true);
                 applicationsService.save(form);
             }
 
         } catch (Exception e) {
+        	e.printStackTrace();
             return STATE_TRANSITION_VIEW;
         }
 

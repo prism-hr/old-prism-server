@@ -321,7 +321,10 @@ public class EvaluationTransitionControllerTest {
             }
         };
 
-        String view = controller.addComment(null, null, bindingResultMock, new ModelMap(), null, null, false);
+        StateChangeComment stateComment = new StateChangeComment();
+        stateComment.setType(CommentType.REVIEW_EVALUATION);
+
+        String view = controller.addComment(null, stateComment, bindingResultMock, new ModelMap(), null, null, false);
 
         EasyMock.verify(commentServiceMock, applicationServiceMock);
         assertEquals("private/staff/admin/state_transition", view);

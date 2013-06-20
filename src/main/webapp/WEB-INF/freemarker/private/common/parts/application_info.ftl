@@ -6,6 +6,11 @@
      <div class="icon">
       ${applicationForm.status.displayValue()}
         <span class="icon-status ${applicationForm.status.displayValue()?lower_case?replace(' ','-')}"></span>
+        <#if applicationForm.nextStatus??>
+          <#assign nextStatus = applicationForm.nextStatus>
+          <i class="icon-chevron-right"></i>
+          <span class="icon-status ${nextStatus.displayValue()?lower_case?replace(' ','-')}" data-desc="${nextStatus.displayValue()}">${nextStatus.displayValue()}</span>
+        </#if>
       </div>
 
         <#assign actions = actionsDefinition.actions>

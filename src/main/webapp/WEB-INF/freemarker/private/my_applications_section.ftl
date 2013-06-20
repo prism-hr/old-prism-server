@@ -21,7 +21,14 @@
   <td class="program-title">${application.program.title} 
   <#if (application.projectTitle)?has_content><span class="project">${(application.projectTitle?html)}</span></#if>
   </td>
-  <td class="status"><span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span></td>
+  <td class="status">
+    <span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
+    <#if application.nextStatus??>
+      <#assign nextStatus = application.nextStatus>
+      <i class="icon-chevron-right"></i>
+      <span class="icon-status ${nextStatus.displayValue()?lower_case?replace(' ','-')}" data-desc="${nextStatus.displayValue()}">${nextStatus.displayValue()}</span>
+    </#if>
+  </td>
   <td class="centre">
       <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
         <option>Actions</option>

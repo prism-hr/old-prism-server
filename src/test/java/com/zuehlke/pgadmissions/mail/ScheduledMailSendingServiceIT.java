@@ -158,7 +158,7 @@ public class ScheduledMailSendingServiceIT {
     class CustomMailSender extends MailSender {
 
         CustomMailSender() {
-            this(service.getMailSender().javaMailSender, "false", "pgadmissions.jenkins@zuhlke.com", " uclprism@gmail.com", service.getMailSender()
+            this(service.getMailSender().getJavaMailSender(), "false", "pgadmissions.jenkins@zuhlke.com", " uclprism@gmail.com", service.getMailSender()
                     .getEmailTemplateService(), service.getMailSender().getFreemarkerConfig());
         }
 

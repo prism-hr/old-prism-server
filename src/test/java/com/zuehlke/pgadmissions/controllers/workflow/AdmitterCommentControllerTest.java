@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMMENT;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_ELIGIBILITY;
+import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -11,9 +14,10 @@ import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.validation.BindingResult;
@@ -35,6 +39,8 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientPrivilegesException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -93,10 +99,6 @@ public class AdmitterCommentControllerTest {
     
     private RegisteredUser currentUser;
     
-    @Before
-    public void prepare() {
-    }
-    
     @Test(expected = InsufficientPrivilegesException.class)
     public void shouldThrowExceptionIfCurrentUserHasNotenoughPrivileges() {
         currentUser = new RegisteredUserBuilder()
@@ -107,6 +109,54 @@ public class AdmitterCommentControllerTest {
         replay();
         controller.getApplicationForm("id");
         verify();
+    }
+    
+    @Test
+    public void shouldGetActionsDefinitions() {
+        ApplicationForm form = new ApplicationFormBuilder()
+            .applicationNumber("app_id")
+            .id(12).build();
+        currentUser = new RegisteredUserBuilder()
+            .roles(new RoleBuilder().authorityEnum(Authority.ADMITTER).build())
+            .build();
+        Set<ApplicationFormAction> actionsSet = new HashSet<ApplicationFormAction>();
+        actionsSet.addAll(asList(COMMENT, CONFIRM_ELIGIBILITY));
+        ActionsDefinitions actions = new ActionsDefinitions(actionsSet, false);
+        
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("app_id")).andReturn(form);
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actions);
+        
+        replay();
+        ActionsDefinitions result = controller.getActionsDefinition("app_id");
+        verify();
+        
+        assertNotNull(result);
+        assertNotNull(result.getActions());
+        assertEquals(2, result.getActions().size());
+        assertTrue(result.getActions().contains(COMMENT));
+        assertTrue(result.getActions().contains(CONFIRM_ELIGIBILITY));
+    }
+    
+    @Test
+    public void shouldGetComment() {
+        ApplicationForm form = new ApplicationFormBuilder()
+        .applicationNumber("app_id")
+        .id(12).build();
+        currentUser = new RegisteredUserBuilder()
+        .roles(new RoleBuilder().authorityEnum(Authority.ADMITTER).build())
+        .build();
+                
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("app_id")).andReturn(form);
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        
+        replay();
+        AdmitterComment result = controller.getComment("app_id");
+        verify();
+        
+        assertNotNull(result);
+        assertEquals(form.getId(), result.getApplication().getId());
+        assertEquals(currentUser.getId(), result.getUser().getId());
     }
     
     @Test(expected = ResourceNotFoundException.class)

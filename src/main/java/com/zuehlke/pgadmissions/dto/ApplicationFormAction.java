@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPROVAL;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REJECTED;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REVIEW;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
@@ -245,6 +246,15 @@ public enum ApplicationFormAction {
             }
         }
     }), //
+    COMPLETE_REJECTION("completeRejection", "Complete Rejection", new ActionPredicate() {
+        @Override
+        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
+            if (nextStatus == REJECTED && user.hasAdminRightsOnApplication(application)) {
+                actions.addAction(COMPLETE_REJECTION);
+                actions.setRequiresAttention(true);
+            }
+        }
+    })
     ;
 
     private final String id;

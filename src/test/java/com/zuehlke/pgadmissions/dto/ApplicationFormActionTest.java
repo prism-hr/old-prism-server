@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPROVAL;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REJECTED;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REVIEW;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_INTERVIEW_FEEDBACK;
@@ -13,6 +14,7 @@ import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_SUPERVIS
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMMENT;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_REJECTION;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_REVIEW_STAGE;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_ELIGIBILITY;
@@ -1406,7 +1408,38 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false);
     }
+    
+    @Test
+    public void shouldAddCompleteRejectionAction() {
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
 
+        EasyMock.replay(userMock, applicationMock);
+        COMPLETE_REJECTION.applyAction(actionsDefinitions, userMock, applicationMock, REJECTED);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, true, COMPLETE_REJECTION);
+    }
+    
+    @Test
+    public void shouldNotAddCompleteRejectionActionIfNoRights() {
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
+
+        EasyMock.replay(userMock, applicationMock);
+        COMPLETE_REJECTION.applyAction(actionsDefinitions, userMock, applicationMock, REJECTED);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddCompleteRejectionActionIfNextStatusNotRejected() {
+        EasyMock.replay(userMock, applicationMock);
+        COMPLETE_REJECTION.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+    
     private void assertActionsDefinitions(ActionsDefinitions actionsDefinitions, boolean requiresAttention, ApplicationFormAction... actions) {
         assertEquals(requiresAttention, actionsDefinitions.isRequiresAttention());
         Assert.assertThat(actionsDefinitions.getActions(), CoreMatchers.hasItems(actions));

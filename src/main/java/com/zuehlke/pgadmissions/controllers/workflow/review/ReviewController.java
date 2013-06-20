@@ -111,12 +111,4 @@ public abstract class ReviewController {
 		return possibleUser;
 	}
 
-	private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-		for (RegisteredUser entry : users) {
-			if (entry.getId().equals(user.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

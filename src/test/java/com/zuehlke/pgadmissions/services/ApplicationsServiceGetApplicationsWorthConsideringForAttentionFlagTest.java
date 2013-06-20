@@ -106,7 +106,6 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
                 sessionFactory.getCurrentSession().save(superUser);
                 sessionFactory.getCurrentSession().save(program);
                 
-                EasyMock.expect(stateTransitionViewResolverMock.getNextStatus(EasyMock.isA(ApplicationForm.class))).andReturn(null).anyTimes();
                 EasyMock.replay(stateTransitionViewResolverMock);
             }
         });

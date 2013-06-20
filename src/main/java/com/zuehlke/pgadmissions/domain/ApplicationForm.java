@@ -41,6 +41,7 @@ import org.hibernate.annotations.GenerationTime;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity(name = "APPLICATION_FORM")
@@ -1150,6 +1151,90 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return getProjectTitle();
         }
         return getProgram().getTitle();
+    }
+    
+    public ApplicationFormStatus getNextStatus() {
+        StateChangeComment stateChangeComment = null;
+        switch (getStatus()) {
+        case APPROVAL:
+            stateChangeComment = getEvaluationCommentForLatestApprovalRound();
+            break;
+        case REVIEW:
+            stateChangeComment = getEvaluationCommentForLatestRoundOfReview();
+            break;
+        case VALIDATION:
+            stateChangeComment = getValidationComment();
+            break;
+        case INTERVIEW:
+            stateChangeComment = getEvaluationCommentForLatestInterview();
+            break;
+        default:
+        }
+        if (stateChangeComment != null) {
+            return stateChangeComment.getNextStatus();
+        }
+        return null;
+    }
+
+    private ReviewEvaluationComment getEvaluationCommentForLatestRoundOfReview() {
+        ReviewRound latestReviewRound = getLatestReviewRound();
+        if (latestReviewRound != null) {
+            Integer latestReviewRoundId = latestReviewRound.getId();
+            for (Comment comment : getApplicationComments()) {
+                if (comment instanceof ReviewEvaluationComment) {
+                    ReviewEvaluationComment reviewEvaluationComment = (ReviewEvaluationComment) comment;
+                    Integer reviewEvaluationCommentId = reviewEvaluationComment.getReviewRound().getId();
+                    if (latestReviewRoundId.equals(reviewEvaluationCommentId)) {
+                        return reviewEvaluationComment;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private ApprovalEvaluationComment getEvaluationCommentForLatestApprovalRound() {
+        ApprovalRound latestApprovalRound = getLatestApprovalRound();
+        if (latestApprovalRound != null) {
+            Integer latestApprovalRoundId = latestApprovalRound.getId();
+            for (Comment comment : getApplicationComments()) {
+                if (comment instanceof ApprovalEvaluationComment) {
+                    ApprovalEvaluationComment approvalEvaluationComment = (ApprovalEvaluationComment) comment;
+                    Integer approvalEvaluationCommentId = approvalEvaluationComment.getApprovalRound().getId();
+                    if (latestApprovalRoundId.equals(approvalEvaluationCommentId)) {
+                        return approvalEvaluationComment;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private InterviewEvaluationComment getEvaluationCommentForLatestInterview() {
+        Interview latestInterview = getLatestInterview();
+        if (latestInterview != null) {
+            Integer latestInterviewId = latestInterview.getId();
+            for (Comment comment : getApplicationComments()) {
+                if (comment instanceof InterviewEvaluationComment) {
+                    InterviewEvaluationComment interviewEvaluationComment = (InterviewEvaluationComment) comment;
+                    Integer interviewEvaluationCommentId = interviewEvaluationComment.getInterview().getId();
+                    if (latestInterviewId.equals(interviewEvaluationCommentId)) {
+                        return interviewEvaluationComment;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private ValidationComment getValidationComment() {
+        List<Comment> applicationComments = getApplicationComments();
+        for (Comment comment : applicationComments) {
+            if (comment instanceof ValidationComment && comment.getType() != CommentType.ADMITTER_COMMENT) {
+                return (ValidationComment) comment;
+            }
+        }
+        return null;
     }
 
 }

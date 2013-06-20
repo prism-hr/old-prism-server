@@ -1,21 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
-import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.StateChangeComment;
-import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Service
 public class StateTransitionViewResolver {
@@ -37,7 +25,7 @@ public class StateTransitionViewResolver {
             return MY_APPLICATIONS_VIEW;
         }
 
-        ApplicationFormStatus nextStatus = getNextStatus(applicationForm);
+        ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
         if (nextStatus != null) {
             switch (nextStatus) {
             case REVIEW:
@@ -56,87 +44,4 @@ public class StateTransitionViewResolver {
 
     }
 
-    public ApplicationFormStatus getNextStatus(ApplicationForm applicationForm) {
-        StateChangeComment stateChangeComment = null;
-        switch (applicationForm.getStatus()) {
-        case APPROVAL:
-            stateChangeComment = getEvaluationCommentForLatestApprovalRound(applicationForm);
-            break;
-        case REVIEW:
-            stateChangeComment = getEvaluationCommentForLatestRoundOfReview(applicationForm);
-            break;
-        case VALIDATION:
-            stateChangeComment = getValidationComment(applicationForm);
-            break;
-        case INTERVIEW:
-            stateChangeComment = getEvaluationCommentForLatestInterview(applicationForm);
-            break;
-        default:
-        }
-        if (stateChangeComment != null) {
-            return stateChangeComment.getNextStatus();
-        }
-        return null;
-    }
-
-    private ReviewEvaluationComment getEvaluationCommentForLatestRoundOfReview(final ApplicationForm applicationForm) {
-        ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-        if (latestReviewRound != null) {
-            Integer latestReviewRoundId = latestReviewRound.getId();
-            for (Comment comment : applicationForm.getApplicationComments()) {
-                if (comment instanceof ReviewEvaluationComment) {
-                    ReviewEvaluationComment reviewEvaluationComment = (ReviewEvaluationComment) comment;
-                    Integer reviewEvaluationCommentId = reviewEvaluationComment.getReviewRound().getId();
-                    if (latestReviewRoundId.equals(reviewEvaluationCommentId)) {
-                        return reviewEvaluationComment;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private ApprovalEvaluationComment getEvaluationCommentForLatestApprovalRound(final ApplicationForm applicationForm) {
-        ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
-        if (latestApprovalRound != null) {
-            Integer latestApprovalRoundId = latestApprovalRound.getId();
-            for (Comment comment : applicationForm.getApplicationComments()) {
-                if (comment instanceof ApprovalEvaluationComment) {
-                    ApprovalEvaluationComment approvalEvaluationComment = (ApprovalEvaluationComment) comment;
-                    Integer approvalEvaluationCommentId = approvalEvaluationComment.getApprovalRound().getId();
-                    if (latestApprovalRoundId.equals(approvalEvaluationCommentId)) {
-                        return approvalEvaluationComment;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private InterviewEvaluationComment getEvaluationCommentForLatestInterview(final ApplicationForm applicationForm) {
-        Interview latestInterview = applicationForm.getLatestInterview();
-        if (latestInterview != null) {
-            Integer latestInterviewId = latestInterview.getId();
-            for (Comment comment : applicationForm.getApplicationComments()) {
-                if (comment instanceof InterviewEvaluationComment) {
-                    InterviewEvaluationComment interviewEvaluationComment = (InterviewEvaluationComment) comment;
-                    Integer interviewEvaluationCommentId = interviewEvaluationComment.getInterview().getId();
-                    if (latestInterviewId.equals(interviewEvaluationCommentId)) {
-                        return interviewEvaluationComment;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private ValidationComment getValidationComment(final ApplicationForm applicationForm) {
-        List<Comment> applicationComments = applicationForm.getApplicationComments();
-        for (Comment comment : applicationComments) {
-            if (comment instanceof ValidationComment && comment.getType() != CommentType.ADMITTER_COMMENT) {
-                return (ValidationComment) comment;
-            }
-        }
-        return null;
-    }
 }

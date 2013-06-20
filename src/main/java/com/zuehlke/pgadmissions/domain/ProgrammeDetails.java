@@ -18,6 +18,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 @Entity(name = "APPLICATION_FORM_PROGRAMME_DETAIL")
 public class ProgrammeDetails implements FormSectionObject, Serializable {
 
@@ -50,6 +52,7 @@ public class ProgrammeDetails implements FormSectionObject, Serializable {
     @JoinColumn(name = "sources_of_interest_id")
     private SourcesOfInterest sourcesOfInterest;
 	
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	@Column (name = "sources_of_interest_text")
 	private String sourcesOfInterestText;
 

@@ -117,7 +117,8 @@ public class CreateNewApprovalCommentControllerTest {
                 .latestApprovalRound(
                         new ApprovalRoundBuilder().projectTitle("projectTitle").projectAbstract("projectAbstract")
                                 .projectDescriptionAvailable(true).recommendedConditions("recommendedConditions")
-                                .recommendedConditionsAvailable(true).recommendedStartDate(now.toDate()).build())
+                                .recommendedConditionsAvailable(true).recommendedStartDate(now.toDate())
+                                .projectAcceptingApplications(true).build())
                 .build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber(form.getApplicationNumber())).andReturn(form);
@@ -125,7 +126,7 @@ public class CreateNewApprovalCommentControllerTest {
         
         String json = controller.get(form.getApplicationNumber());
         
-        Assert.assertEquals("{\"projectTitle\":\"projectTitle\",\"projectAbstract\":\"projectAbstract\",\"projectDescriptionAvailable\":\"true\",\"recommendedConditionsAvailable\":\"true\",\"recommendedConditions\":\"recommendedConditions\",\"recommendedStartDate\":\"" + now.toString("dd MMM yyyy") +"\"}", json);
+        Assert.assertEquals("{\"projectTitle\":\"projectTitle\",\"projectAbstract\":\"projectAbstract\",\"projectDescriptionAvailable\":\"true\",\"recommendedConditionsAvailable\":\"true\",\"recommendedConditions\":\"recommendedConditions\",\"recommendedStartDate\":\"" + now.toString("dd MMM yyyy") +"\",\"projectAcceptingApplications\":\"true\"}", json);
         EasyMock.verify(applicationsServiceMock, userServiceMock);
     }
     

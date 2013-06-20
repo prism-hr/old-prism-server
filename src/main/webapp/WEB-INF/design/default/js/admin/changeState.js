@@ -222,6 +222,11 @@ function getProjectDetailsFromLatestApprovalRound() {
                 $("#recommendedConditionsUnavailable").prop('checked', true);
                 disableConditions();
             }
+            if (data.projectAcceptingApplications === "true") {
+            	$("#acceptingApplicationsRadioYes").prop('checked', true);
+            } else {
+            	$("#acceptingApplicationsRadioNo").prop('checked', true);
+            }
         },
         complete : function() {
             $('#ajaxloader').fadeOut('fast');

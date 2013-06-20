@@ -114,6 +114,7 @@ public class ConfirmSupervisionController {
         confirmSupervisionDTO.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
         confirmSupervisionDTO.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
         confirmSupervisionDTO.setRecommendedConditions(approvalRound.getRecommendedConditions());
+        confirmSupervisionDTO.setProjectAcceptingApplications(approvalRound.getProjectAcceptingApplications());
 
         return confirmSupervisionDTO;
     }

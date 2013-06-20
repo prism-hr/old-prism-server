@@ -136,7 +136,7 @@ public class ApplicationFormControllerTest {
     }
 
     @Test(expected = CannotApplyToProjectException.class)
-    public void shouldThrowExceptionIfProjectIsNotActive() throws ParseException {
+    public void shouldThrowExceptionIfProjectAdvertIsNotActive() throws ParseException {
         ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
                 .applicationDeadline(parseDate("2030/08/06")).build();
         Program program = new ProgramBuilder().id(12).enabled(true).build();
@@ -153,6 +153,46 @@ public class ApplicationFormControllerTest {
 
         EasyMock.replay(programDAOMock, programsServiceMock, applicationsServiceMock, programInstanceDAOMock);
         applicationController.createNewApplicationForm("ABC", projectId);
+    }
+
+    @Test(expected = CannotApplyToProjectException.class)
+    public void shouldThrowExceptionIfProjectIsDisabled() throws ParseException {
+    	ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
+    			.applicationDeadline(parseDate("2030/08/06")).build();
+    	Program program = new ProgramBuilder().id(12).enabled(true).build();
+    	program.setInstances(Arrays.asList(programInstance));
+    	RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).firstName("first").lastName("last").email("primary@supervisor.com").build();
+    	Advert advert = new AdvertBuilder().id(1).title("title").active(false).build();
+    	Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).disabled(true).build();
+    	Integer projectId = 1;
+    	
+    	EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
+    	EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(project);
+    	EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
+    	EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
+    	
+    	EasyMock.replay(programDAOMock, programsServiceMock, applicationsServiceMock, programInstanceDAOMock);
+    	applicationController.createNewApplicationForm("ABC", projectId);
+    }
+
+    @Test(expected = CannotApplyToProjectException.class)
+    public void shouldThrowExceptionIfProjectNotExists() throws ParseException {
+    	ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode("1")
+    			.applicationDeadline(parseDate("2030/08/06")).build();
+    	Program program = new ProgramBuilder().id(12).enabled(true).build();
+    	program.setInstances(Arrays.asList(programInstance));
+    	RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).firstName("first").lastName("last").email("primary@supervisor.com").build();
+    	Advert advert = new AdvertBuilder().id(1).title("title").active(false).build();
+    	Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).disabled(true).build();
+    	Integer projectId = 1;
+    	
+    	EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
+    	EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(null);
+    	EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
+    	EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
+    	
+    	EasyMock.replay(programDAOMock, programsServiceMock, applicationsServiceMock, programInstanceDAOMock);
+    	applicationController.createNewApplicationForm("ABC", projectId);
     }
 
     @Before

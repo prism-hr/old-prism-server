@@ -8,6 +8,7 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
+
+import ognl.ListPropertyAccessor;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -27,9 +30,12 @@ import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
@@ -150,6 +156,79 @@ public class ProgramsServiceTest {
         Assert.assertEquals("15 Feb 2013", result.get("p1"));
         Assert.assertEquals("13 Feb 2013", result.get("p2"));
     }
+    
+    @Test
+    public void shouldGetProjectById() {
+        Project project = EasyMock.createMock(Project.class);
+        expect(projectDAOMock.getProjectById(1)).andReturn(project);
+        replay(project, projectDAOMock);
+        assertEquals(project, programsService.getProject(1));
+        verify(projectDAOMock);
+    }
+    
+    @Test
+    public void shouldDelegateSaveProjectToDAO() {
+        Project project = EasyMock.createMock(Project.class);
+        projectDAOMock.save(project);
+        EasyMock.replay(projectDAOMock);
+        programsService.saveProject(project);
+        EasyMock.verify(projectDAOMock);
+    }
+    
+    @Test
+    public void shouldDisableProjectAndAdvertOnRemoveProject(){
+        Project project = new ProjectBuilder().advert(new AdvertBuilder().build()).build();
+        expect(projectDAOMock.getProjectById(1)).andReturn(project);
+        projectDAOMock.save(project);
+        EasyMock.replay(projectDAOMock);
+        
+        programsService.removeProject(1);
+        
+        EasyMock.verify(projectDAOMock);
+        assertTrue(project.isDisabled());
+        assertFalse(project.getAdvert().getActive());
+    }
+    
+   
+    
+    @Test
+    public void shouldReturnAllProjectsForSuperAdministrator(){
+    	Program program = EasyMock.createMock(Program.class);
+    	RegisteredUser superAdmin = EasyMock.createMock(RegisteredUser.class);
+    	expect(superAdmin.isInRole(superAdmin, Authority.SUPERADMINISTRATOR)).andReturn(true);
+		List<Project> allProjects = Collections.emptyList();
+		expect(projectDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
+		replay(projectDAOMock, superAdmin, program);
+		List<Project> loadedProjects = programsService.listProjects(superAdmin, program);
+		assertSame(allProjects, loadedProjects);
+    }
+
+    @Test
+    public void shouldReturnAllProjectsForProgramAdministrator(){
+    	Program program = EasyMock.createMock(Program.class);
+    	RegisteredUser admin = EasyMock.createMock(RegisteredUser.class);
+    	expect(admin.isInRole(admin, Authority.SUPERADMINISTRATOR)).andReturn(false);
+    	expect(admin.isAdminInProgramme(program)).andReturn(true);
+		List<Project> allProjects = Collections.emptyList();
+		expect(projectDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
+		replay(projectDAOMock, admin, program);
+		List<Project> loadedProjects = programsService.listProjects(admin, program);
+		assertSame(allProjects, loadedProjects);
+    }
+
+    @Test
+    public void shouldReturnProjectsForProgramOfAuthor(){
+    	Program program = EasyMock.createMock(Program.class);
+    	RegisteredUser user = EasyMock.createMock(RegisteredUser.class);
+    	expect(user.isInRole(user, Authority.SUPERADMINISTRATOR)).andReturn(false);
+    	expect(user.isAdminInProgramme(program)).andReturn(false);
+		List<Project> allProjects = Collections.emptyList();
+		expect(projectDAOMock.getProjectsForProgramOfWhichAuthor(program,user)).andReturn(allProjects);
+		replay(projectDAOMock, user, program);
+		List<Project> loadedProjects = programsService.listProjects(user, program);
+		assertSame(allProjects, loadedProjects);
+    }
+
 
     @Before
     public void setUp() {

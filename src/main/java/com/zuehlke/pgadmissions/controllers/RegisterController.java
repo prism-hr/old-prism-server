@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -151,6 +152,9 @@ public class RegisterController {
 		String projectId = params.get("project");
 		if(!StringUtils.isBlank(projectId)&&StringUtils.isNumeric(projectId)){
 			project = programService.getProject(Integer.valueOf(projectId));
+			if (project==null || !project.isAcceptingApplications()) {
+	            throw new CannotApplyToProjectException(project);
+	        }
 		}
 		String applyingAdvertId = params.get("advert");
 		String applyingAdvert = !StringUtils.isBlank(applyingAdvertId)?"&advert="+applyingAdvertId:"";

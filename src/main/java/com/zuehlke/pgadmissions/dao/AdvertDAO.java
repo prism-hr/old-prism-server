@@ -54,11 +54,6 @@ public class AdvertDAO {
         return criteria.list();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Advert> listProjectAdverts() {
-        return sessionFactory.getCurrentSession().createCriteria(Advert.class).list();
-    }
-
 	public void delete(Advert advert) {
 		if(advert==null||advert.getId()==null){
 			return;

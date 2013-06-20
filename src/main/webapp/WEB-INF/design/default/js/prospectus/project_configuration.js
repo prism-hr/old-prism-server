@@ -4,7 +4,7 @@ $(document).ready(function(){
 		registerDefaultClosingDateSelector();
 		registerAddProjectAdvertButton();
 		registerEditProjectAdvertButton();
-		registerShowProjectAdvertButton()
+		registerShowProjectAdvertButton();
 		registerRemoveProjectAdvertButton();
 		registerHasClosingDateProjectAdvertRadio();
 		registerHasSecondarySupervisorRadio();
@@ -237,6 +237,9 @@ function clearAndDisable(input){
 
 function removeProject(projectRow) {
 	project = projectRow.attr("project-id");
+	if($('#projectId').val()==project){
+		clearAll();
+	}
 	$.ajax({
         type: 'DELETE',
         statusCode: {
@@ -352,7 +355,6 @@ function changeInfoBarNameProject(text,advertUpdated) {
 	} else {
 		$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
 		if (advertUpdated) {
-			var programme_name = $("#projectAdvertProgramSelect option:selected").text();
 			infohtml = "<i class='icon-ok-sign'></i> Your advert for your project has been "+text+".";
 			if ($('#infoBarproject').hasClass('alert-info')) {
 				$('#infoBarproject').addClass('alert-success').removeClass('alert-info').html(infohtml);

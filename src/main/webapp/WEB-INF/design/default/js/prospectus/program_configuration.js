@@ -59,7 +59,7 @@ function changeInfoBarName(text,advertUpdated) {
 			infodate = "<i class='icon-info-sign'></i> Manage closing dates for: <b>"+text+"</b>.";
 			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>"+text+"</b>."; 
 		} else {
-			infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your programme here."
+			infohtml =  "<i class='icon-info-sign'></i> Manage the advert for your programme here.";
 			infodate = "<i class='icon-info-sign'></i> Manage closing dates for your programme here.";
 			inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your programme."; 
 		}

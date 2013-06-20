@@ -32,6 +32,8 @@ public class ApprovalRoundBuilder {
     private Integer id;
 
     private Date createdDate;
+    
+    private Boolean projectAcceptingApplications;
 
     public ApprovalRoundBuilder id(Integer id) {
         this.id = id;
@@ -88,6 +90,11 @@ public class ApprovalRoundBuilder {
         return this;
     }
 
+    public ApprovalRoundBuilder projectAcceptingApplications(Boolean projectAcceptingApplications) {
+    	this.projectAcceptingApplications = projectAcceptingApplications;
+    	return this;
+    }
+
     public ApprovalRound build() {
         ApprovalRound approvalRound = new ApprovalRound();
         approvalRound.setApplication(application);
@@ -100,6 +107,7 @@ public class ApprovalRoundBuilder {
         approvalRound.setRecommendedStartDate(recommendedStartDate);
         approvalRound.setRecommendedConditionsAvailable(recommendedConditionsAvailable);
         approvalRound.setRecommendedConditions(recommendedConditions);
+        approvalRound.setProjectAcceptingApplications(projectAcceptingApplications);
         approvalRound.setId(id);
         return approvalRound;
     }

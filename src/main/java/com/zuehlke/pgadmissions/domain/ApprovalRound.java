@@ -73,6 +73,9 @@ public class ApprovalRound implements Serializable {
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
+    
+    @Column(name = "project_accepting_applications")
+    private Boolean projectAcceptingApplications;
 
     public void setId(Integer id) {
         this.id = id;
@@ -189,5 +192,13 @@ public class ApprovalRound implements Serializable {
         Supervisor primarySupervisor = getPrimarySupervisor();
         return primarySupervisor != null && primarySupervisor.hasResponded();
     }
+
+	public Boolean getProjectAcceptingApplications() {
+		return projectAcceptingApplications;
+	}
+
+	public void setProjectAcceptingApplications(Boolean projectAcceptingApplications) {
+		this.projectAcceptingApplications = projectAcceptingApplications;
+	}
     
 }

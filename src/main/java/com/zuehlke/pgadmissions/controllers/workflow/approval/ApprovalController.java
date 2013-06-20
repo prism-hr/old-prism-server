@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -270,6 +271,14 @@ public class ApprovalController {
 		ApprovalRound approvalRound = new ApprovalRound();
 		ApplicationForm applicationForm = getApplicationForm((String) applicationId);
 		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+		if(applicationForm.getProject()!=null){
+			Project project = applicationForm.getProject();
+			approvalRound.setProjectTitle(project.getAdvert().getTitle());
+			approvalRound.setProjectAbstract(project.getAdvert().getDescription());
+			approvalRound.setProjectDescriptionAvailable(true);
+			approvalRound.setProjectAcceptingApplications(project.getAdvert().getActive());
+			
+		}
 		if (latestApprovalRound != null) {
 			approvalRound.setSupervisors(latestApprovalRound.getSupervisors());
 		}

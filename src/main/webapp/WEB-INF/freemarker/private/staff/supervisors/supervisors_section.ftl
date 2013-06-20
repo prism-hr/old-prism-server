@@ -143,6 +143,20 @@
     </#list>
     </div>
      </div>
+     <#if applicationForm?? && applicationForm.project?? && !applicationForm.project.disabled>
+	    <div class="row" />
+	        <label id="lbl_projectAcceptingApplications" class="plain-label" for="acceptingApplications">Do you wish to continue accepting applications?<em>*</em></label>
+	        <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
+	        <div class="field">
+	          <input id="acceptingApplicationsRadioYes" type="radio" name="projectAcceptingApplications" value="true" <#if approvalRound.projectAcceptingApplications?? && approvalRound.projectAcceptingApplications> checked</#if>>
+	          Yes
+	          </input>
+	          <input id="acceptingApplicationsRadioNo" type="radio" name="projectAcceptingApplications" value="false" <#if approvalRound.projectAcceptingApplications?? && !approvalRound.projectAcceptingApplications> checked</#if>>
+	          No
+	          </input>
+	        </div>
+	    </div>
+    </#if>
 </div>
 
 <!-- Recommended Offer -->

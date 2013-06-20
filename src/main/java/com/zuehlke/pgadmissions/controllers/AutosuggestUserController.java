@@ -35,19 +35,19 @@ public class AutosuggestUserController {
         this.searchService = searchService;
     }
     
-    @RequestMapping(value="/users/firstname/{searchTerm}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value="/users/firstname/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String provideSuggestionsForFirstname(@PathVariable final String searchTerm) {
         return convertToJson(searchService.getMatchingUsersWithFirstnameLike(searchTerm));
     }
     
-    @RequestMapping(value="/users/lastname/{searchTerm}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value="/users/lastname/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String provideSuggestionsForLastname(@PathVariable final String searchTerm) {
         return convertToJson(searchService.getMatchingUsersWithLastnameLike(searchTerm));
     }
     
-    @RequestMapping(value="/users/email/{searchTerm}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value="/users/email/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String provideSuggestionsForEmail(@PathVariable final String searchTerm) {
         return convertToJson(searchService.getMatchingUsersWithEmailLike(searchTerm));

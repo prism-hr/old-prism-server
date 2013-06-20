@@ -7,6 +7,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 
 @Component
 public class ActionsProvider {
@@ -22,4 +23,12 @@ public class ActionsProvider {
 
         return actions;
     }
+    
+    public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
+    	if (!calculateActions(user, applicationForm).getActions().contains(action)) {
+    		throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+    	}
+    }
+    
 }
+

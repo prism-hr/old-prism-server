@@ -15,6 +15,7 @@ public class ProjectBuilder{
     private Date closingDate;
     private RegisteredUser primarySupervisor;
     private RegisteredUser secondarySupervisor;
+    private boolean disabled=false;
 
     public ProjectBuilder id(Integer id) {
         this.id = id;
@@ -50,6 +51,11 @@ public class ProjectBuilder{
         this.secondarySupervisor = secondarySupervisor;
         return this;
     }
+
+    public ProjectBuilder disabled(boolean disabled) {
+    	this.disabled = disabled;
+    	return this;
+    }
     
     public Project build(){
     	Project project = new Project();
@@ -60,6 +66,7 @@ public class ProjectBuilder{
 	    project.setClosingDate( closingDate) ;
 	    project.setPrimarySupervisor( primarySupervisor) ;
 	    project.setSecondarySupervisor( secondarySupervisor) ;
+	    project.setDisabled(disabled);
 	    return project;
     }
 

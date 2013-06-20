@@ -58,20 +58,13 @@ public class ApplicationFormController {
         Project project = null;
         if (projectId != null) {
             project = programsService.getProject(projectId);
-            checkProjectAcceptsApplications(project);
+            if (project==null || !project.isAcceptingApplications()) {
+                throw new CannotApplyToProjectException(project);
+            }
         }
         ApplicationForm applicationForm = applicationService.createOrGetUnsubmittedApplicationForm(user, program, project);
         return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
     }
 
-    private void checkProjectAcceptsApplications(Project project) {
-        if (project == null) {
-            return;
-        }
-        if (!project.getAdvert().getActive()) {
-            throw new CannotApplyToProjectException(project);
-        }
-
-    }
 
 }

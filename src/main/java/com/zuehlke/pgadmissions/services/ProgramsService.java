@@ -89,15 +89,6 @@ public class ProgramsService {
         program.getScoringDefinitions().put(scoringStage, null);
     }
 
-    public void merge(Advert programAdvert) {
-        advertDAO.merge(programAdvert);
-    }
-
-    public void removeProject(int projectId) {
-        Project project = getProject(projectId);
-        projectDAO.delete(project);
-    }
-
     public Advert getAdvert(int advertId) {
         return advertDAO.getAdvertById(advertId);
     }
@@ -109,6 +100,16 @@ public class ProgramsService {
     public void saveProject(Project project) {
         projectDAO.save(project);
     }
+    
+    public void removeProject(int projectId) {
+        Project project = getProject(projectId);
+        if(project==null){
+        	return;
+        }
+        project.setDisabled(true);
+        project.getAdvert().setActive(false);
+        projectDAO.save(project);
+    }
 
     public List<Project> listProjects(RegisteredUser user, Program program) {
         if (user.isInRole(user, Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(program)) {
@@ -116,10 +117,6 @@ public class ProgramsService {
         } else {
             return projectDAO.getProjectsForProgramOfWhichAuthor(program, user);
         }
-    }
-
-    public void merge(Program program) {
-        programDAO.merge(program);
     }
 
     public void addProgramAdvert(String programCode, Advert advert) {

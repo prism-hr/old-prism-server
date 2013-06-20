@@ -28,6 +28,9 @@ public class ProjectConverter {
 			return null;
 		}
 		Project project = projectAdvertDTO.getId() == null ?  new Project() : programService.getProject(projectAdvertDTO.getId());
+		if(project==null){
+			return null;
+		}
 		Advert advert = project.getAdvert()==null ? new Advert() : project.getAdvert();
 		project.setAdvert(advert);
 		updateProjectFromDTO(project, projectAdvertDTO);

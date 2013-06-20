@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
@@ -182,6 +183,9 @@ public class ProjectConfigurationController {
     public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
     	Map<String, Object> map = Maps.newHashMap();
         Project project = programsService.getProject(projectId);
+        if(project==null || project.isDisabled()){
+        	throw new ResourceNotFoundException();
+        }
         map.put("project", project);
         map.putAll(createApplyTemplates(project));
         return gson.toJson(map);
@@ -205,6 +209,9 @@ public class ProjectConfigurationController {
         Map<String, Object> map = getErrorValues(result, request);
         if (!result.hasErrors()) {
             Project project = projectConverter.toDomainObject(projectDTO);
+            if(project==null){
+            	throw new ResourceNotFoundException();
+            }
             programsService.saveProject(project);
             map.put("success", "true");
         }

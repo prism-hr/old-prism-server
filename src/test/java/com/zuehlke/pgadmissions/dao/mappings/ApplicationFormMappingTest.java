@@ -442,6 +442,53 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
         assertEquals(approver.getId(), reloadedApplication.getApproverRequestedRestart().getId());
     }
+    
+    @Test
+    public void shouldLoadApplicationFormWithADisabledProject() throws ParseException {
+
+        Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");
+        ApplicationForm application = new ApplicationForm();
+        application.setApplicant(user);
+        application.setLastUpdated(lastUpdatedDate);
+        application.setProgram(program);
+        application.setProject(project);
+        application.setStatus(ApplicationFormStatus.APPROVED);
+        application.setApplicationAdministrator(applicationAdmin);
+        application.setApplicationNumber("ABC");
+        application.setPendingApprovalRestart(true);
+        assertNotNull(application.getPersonalDetails());
+        assertNull(application.getId());
+
+        sessionFactory.getCurrentSession().save(application);
+        project.setDisabled(true);
+        project.getAdvert().setActive(false);
+        sessionFactory.getCurrentSession().update(project);
+
+        assertNotNull(application.getId());
+        Integer id = application.getId();
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+        assertSame(application, reloadedApplication);
+
+        flushAndClearSession();
+
+        reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+        assertNotSame(application, reloadedApplication);
+        assertEquals(application.getId(), reloadedApplication.getId());
+
+        assertEquals(user.getId(), reloadedApplication.getApplicant().getId());
+
+        assertEquals(program.getId(), reloadedApplication.getProgram().getId());
+        assertEquals(project.getId(), reloadedApplication.getProject().getId());
+        assertTrue(project.isDisabled());
+        assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
+        assertEquals("title", reloadedApplication.getProjectTitle());
+        assertNotNull(application.getPersonalDetails());
+        assertEquals(lastUpdatedDate, application.getLastUpdated());
+        assertNull(application.getPersonalDetails().getId());
+        assertEquals(applicationAdmin, application.getApplicationAdministrator());
+        assertEquals("ABC", application.getApplicationNumber());
+        assertTrue(application.isPendingApprovalRestart());
+    }
 
     @Before
     public void prepare() {

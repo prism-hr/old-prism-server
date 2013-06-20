@@ -64,6 +64,14 @@ public class ProjectConverterTest {
 		resetAndReplayMocks();
 		assertThat(converter.toDomainObject(null), nullValue());
 	}
+
+	@Test
+	public void shouldReturn_NullProject_WhenProjectDoesNotExists(){
+		reset(programService, userService);
+		EasyMock.expect(programService.getProject(PROJECT_ID)).andReturn(null);
+		EasyMock.replay(programService, userService);
+		assertThat(converter.toDomainObject(projectDTO), nullValue());
+	}
 	
 	@Test
 	public void shouldReturn_NewProject(){
@@ -75,6 +83,14 @@ public class ProjectConverterTest {
 		assertThatConvertedProjectHasSameFieldsAsDto(convertedProject, projectDTO);
 	}
 
+
+	@Test
+	public void shouldReturn_ExistingProject_ForDtoWithProjectId(){
+		Project convertedProject = converter.toDomainObject(projectDTO);
+		assertThat(convertedProject, equalTo(project));
+		assertThatConvertedProjectHasSameFieldsAsDto(convertedProject, projectDTO);
+	}
+	
 	private void assertThatConvertedProjectHasSameFieldsAsDto(Project project, ProjectDTO dto) {
 		assertThat(project.getId(), equalTo(dto.getId()));
 		assertThat(project.getAuthor(), nullValue());
@@ -89,14 +105,6 @@ public class ProjectConverterTest {
 		assertThat(project.getPrimarySupervisor(), equalTo(primarySupervisorUser));
 		assertThat(project.getSecondarySupervisor(), equalTo(secondarySupervisorUser));
 	}
-
-	@Test
-	public void shouldReturn_ExistingProject_ForDtoWithProjectId(){
-		Project convertedProject = converter.toDomainObject(projectDTO);
-		assertThat(convertedProject, equalTo(project));
-		assertThatConvertedProjectHasSameFieldsAsDto(convertedProject, projectDTO);
-	}
-	
 	
 	private void resetAndReplayMocks() {
 		EasyMock.reset(userService, programService);

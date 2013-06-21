@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -28,8 +29,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
@@ -82,16 +82,9 @@ public class ReviewCommentController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = userService.getCurrentUser();
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
-        }
-        if (applicationForm.isDecided() || applicationForm.isWithdrawn() || getUser().hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)) {
-            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
         return applicationForm;
     }
@@ -100,11 +93,6 @@ public class ReviewCommentController {
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return actionsProvider.calculateActions(getUser(), application);
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String getReviewFeedbackPage() {
-        return REVIEW_FEEDBACK_PAGE;
     }
 
     @ModelAttribute("user")
@@ -138,26 +126,27 @@ public class ReviewCommentController {
         return reviewComment;
     }
 
-    private List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
-        if (scoringDefinition != null) {
-            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-            return customQuestion.getQuestion();
-        }
-        return null;
-    }
-
     @InitBinder(value = "comment")
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(reviewFeedbackValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
         binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
+    
+    @RequestMapping(method = RequestMethod.GET)
+    public String getReviewFeedbackPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REVIEW);
+        return REVIEW_FEEDBACK_PAGE;
+    }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = comment.getApplication();
+    public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result, ModelMap modelMap) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REVIEW);
+        
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {
             List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
@@ -178,5 +167,16 @@ public class ReviewCommentController {
         commentService.save(comment);
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }
+    
+    private List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
+        if (scoringDefinition != null) {
+            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+            return customQuestion.getQuestion();
+        }
+        return null;
+    }
+
 
 }

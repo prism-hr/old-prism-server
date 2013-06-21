@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_INTERVIEW_FEEDBACK;
+
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -28,8 +31,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
@@ -82,17 +83,9 @@ public class InterviewCommentController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = userService.getCurrentUser();
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
-        }
-        if (applicationForm.isDecided() || applicationForm.isWithdrawn()
-                || currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
-            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
         return applicationForm;
     }
@@ -101,11 +94,6 @@ public class InterviewCommentController {
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return actionsProvider.calculateActions(getUser(), application);
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String getInterviewFeedbackPage() {
-        return INTERVIEW_FEEDBACK_PAGE;
     }
 
     @ModelAttribute("user")
@@ -148,9 +136,20 @@ public class InterviewCommentController {
         binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public String getInterviewFeedbackPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ADD_INTERVIEW_FEEDBACK);
+        return INTERVIEW_FEEDBACK_PAGE;
+    }
+
     @RequestMapping(method = RequestMethod.POST)
-    public String addComment(@ModelAttribute("comment") InterviewComment comment, BindingResult result) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = comment.getApplication();
+    public String addComment(@ModelAttribute("comment") InterviewComment comment, BindingResult result, ModelMap modelMap) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ADD_INTERVIEW_FEEDBACK);
+        
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {
             List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());

@@ -30,6 +30,7 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -47,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
@@ -54,6 +57,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -906,4 +910,48 @@ public class ApprovalControllerTest {
 		                scoreFactoryMock, accessServiceMock, actionsProviderMock);
 
 	}
+	
+	@Test
+	public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfApplicationHasProject() {
+		Date startDate = new Date();
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
+				.enabled(true).studyOption("1", "full").build();
+		Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
+		RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).email("primary.supervisor@email.test").build();
+		RegisteredUser secondarySupervisor = new RegisteredUserBuilder().id(2).email("secondary.supervisor@email.test").build();
+		Advert advert = new AdvertBuilder().description("desc").funding("fund")
+				.studyDuration(1).title("title").build();
+		Project project = new ProjectBuilder().program(program).advert(advert)
+				.primarySupervisor(primarySupervisor).secondarySupervisor(secondarySupervisor)
+				.build();
+		final ApplicationForm application = new ApplicationFormBuilder()
+				.id(2).applicationNumber("abc").program(program)
+				.programmeDetails(programmeDetails).project(project).build();
+
+		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
+		                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock,
+		                qualificationServiceMock, refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock,
+		                datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock,
+		                scoreFactoryMock, accessServiceMock, actionsProviderMock) {
+			@Override
+			public ApplicationForm getApplicationForm(String applicationId) {
+				if (applicationId.equals("bob")) {
+					return application;
+				}
+				return null;
+			}
+		};
+		ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
+		assertNull(returnedApprovalRound.getId());
+		List<Supervisor> supervisors = returnedApprovalRound.getSupervisors();
+		assertEquals(2, supervisors.size());
+		Supervisor supervisorOne = supervisors.get(0);
+		assertEquals(supervisorOne.getUser(), primarySupervisor);
+		assertTrue(supervisorOne.getIsPrimary());
+		Supervisor supervisorTwo = supervisors.get(1);
+		assertEquals(supervisorTwo.getUser(), secondarySupervisor);
+		assertFalse(supervisorTwo.getIsPrimary());
+	}
+
 }

@@ -233,7 +233,7 @@ public class ApprovalController {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
 		if (latestApprovalRound == null) {
-			List<SuggestedSupervisor> suggestedSupervisors = getApplicationForm(applicationId).getProgrammeDetails().getSuggestedSupervisors();
+			List<SuggestedSupervisor> suggestedSupervisors = applicationForm.getProgrammeDetails().getSuggestedSupervisors();
 			for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
 				nominatedSupervisors.add(findOrCreateRegisterUserFromSuggestedSupervisorForForm(suggestedSupervisor, applicationForm));
 			}
@@ -271,8 +271,9 @@ public class ApprovalController {
 		ApprovalRound approvalRound = new ApprovalRound();
 		ApplicationForm applicationForm = getApplicationForm((String) applicationId);
 		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
-		if(applicationForm.getProject()!=null){
-			Project project = applicationForm.getProject();
+		Project project = applicationForm.getProject();
+		boolean applicationHasProject = project!=null;
+		if(applicationHasProject){
 			approvalRound.setProjectTitle(project.getAdvert().getTitle());
 			approvalRound.setProjectAbstract(project.getAdvert().getDescription());
 			approvalRound.setProjectDescriptionAvailable(true);
@@ -282,13 +283,13 @@ public class ApprovalController {
 		if (latestApprovalRound != null) {
 			approvalRound.setSupervisors(latestApprovalRound.getSupervisors());
 		}
+		else if( applicationHasProject){
+			addUserAsSupervisorInApprovalRound(project.getPrimarySupervisor(),approvalRound, true);
+			addUserAsSupervisorInApprovalRound(project.getSecondarySupervisor(), approvalRound, false);
+		}
 		List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
 		for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
-			if (!registeredUser.isSupervisorInApprovalRound(approvalRound)) {
-				Supervisor supervisor = new Supervisor();
-				supervisor.setUser(registeredUser);
-				approvalRound.getSupervisors().add(supervisor);
-			}
+			addUserAsSupervisorInApprovalRound(registeredUser, approvalRound, false);
 		}
 
 		Date startDate = applicationForm.getProgrammeDetails().getStartDate();
@@ -297,6 +298,16 @@ public class ApprovalController {
 		}
 		approvalRound.setRecommendedStartDate(startDate);
 		return approvalRound;
+	}
+
+	private void addUserAsSupervisorInApprovalRound(RegisteredUser user, ApprovalRound approvalRound, boolean isPrimary) {
+		if(user==null || approvalRound == null || user.isSupervisorInApprovalRound(approvalRound)){
+			return;
+		}
+		Supervisor supervisor = new Supervisor();
+		supervisor.setIsPrimary(isPrimary);
+		supervisor.setUser(user);
+		approvalRound.getSupervisors().add(supervisor);
 	}
 
 	@ModelAttribute("explanation")

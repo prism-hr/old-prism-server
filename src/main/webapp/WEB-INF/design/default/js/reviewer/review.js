@@ -11,7 +11,7 @@ $(document).ready(function()
 			firstName: $('#newReviewerFirstName').val(),
 			lastName: $('#newReviewerLastName').val(),
 			email: $('#newReviewerEmail').val()				
-		}
+		};
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -71,12 +71,6 @@ $(document).ready(function()
 	$('#moveToReviewBtn').click(function() {
 		
 		$('#ajaxloader').show();
-		var url = null;
-		if($('#assign').val() == 'true'){
-			url = "/pgadmissions/review/assign";
-		}else{
-			url = "/pgadmissions/review/move";
-		}
 		$('#applicationReviewers option').each(function(){	
 			$('#postReviewData').append("<input name='reviewers' type='hidden' value='" +  $(this).val() + "'/>");
 		});
@@ -84,7 +78,7 @@ $(document).ready(function()
 		var postData = {
 				applicationId : $('#applicationId').val(),
 				reviewers: ''
-		}
+		};
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -104,19 +98,13 @@ $(document).ready(function()
 					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
-			url: url,
+			url: "/pgadmissions/review/move",
 			data:	$.param(postData) + "&" + $('input[name="pendingReviewer"]').serialize()+ "&" + $('input[name="reviewers"]').serialize(),
 			success: function(data)
 			{	
-				if(data == "OK"){
-					var url = null;
-					if($('#assign').val() == 'true'){
-						window.location.href = '/pgadmissions/applications?messageCode=assign.review&application=' + $('#applicationId').val();
-					}else{
-						window.location.href = '/pgadmissions/applications?messageCode=move.review&application=' + $('#applicationId').val();
-					}
-				
-				}else{
+				if(data == "OK") {
+					window.location.href = '/pgadmissions/applications?messageCode=move.review&application=' + $('#applicationId').val();
+				} else {
 					$('#assignReviewersToAppSection').html(data);
 					$('#postReviewData').html('');
 				}
@@ -136,12 +124,6 @@ $(document).ready(function()
 function getReviewersSection(){
 	$('#ajaxloader').show();
 	
-	var url = null;
-	if($('#assign').val() == 'true'){
-		url = "/pgadmissions/review/assignReviewersSection";
-	}else{
-		url = "/pgadmissions/review/reviewersSection";
-	}
 	$.ajax({
 		type: 'GET',
 		 statusCode: {
@@ -161,7 +143,7 @@ function getReviewersSection(){
 				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
-		url: url +"?applicationId=" + $('#applicationId').val(), 
+		url: "/pgadmissions/review/reviewersSection?applicationId=" + $('#applicationId').val(), 
 		success: function(data)
 		{
 			$('#assignReviewersToAppSection').html(data);

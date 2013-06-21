@@ -1101,7 +1101,7 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   font-size: 15px;
   padding: 6px 14px;
 }
-input[readonly].date-input, input[readonly].second-date-input, input[readonly]#fundingAwardDate, .filter input[readonly].date  ,input[readonly]#recommendedStartDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate, input[readonly]#availableDates, input[readonly]#programAdvertClosingDateInput, input[readonly]#projectAdvertClosingDateInput {
+input[readonly].date-input, input[readonly].second-date-input, textarea[readonly]#feedCode, input[readonly]#fundingAwardDate, .filter input[readonly].date  ,input[readonly]#recommendedStartDate, input[readonly]#offerStartDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate, input[readonly]#availableDates, input[readonly]#programAdvertClosingDateInput, input[readonly]#projectAdvertClosingDateInput {
 	background-color: #FFFFFF;
 	cursor:auto;
 }
@@ -1463,7 +1463,7 @@ i {
 	overflow: visible !important;
 }
 
-#section-registryusers .table-bordered th, #section-registryusers .table-bordered td{
+#section-registryusers .table-bordered th, #section-registryusers .table-bordered td, #existing-feed-table td{
   vertical-align: middle !important;
 }
 form#removeForm {

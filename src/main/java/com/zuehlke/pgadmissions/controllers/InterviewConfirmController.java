@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_INTERVIEW_TIME;
+
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -7,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -20,12 +23,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -68,17 +68,9 @@ public class InterviewConfirmController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = userService.getCurrentUser();
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isApplicationAdministrator(application)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
-        }
-        Interview interview = application.getLatestInterview();
-        if (!application.isInState(ApplicationFormStatus.INTERVIEW) || !interview.isScheduling()) {
-            throw new ActionNoLongerRequiredException(application.getApplicationNumber());
         }
         return application;
     }
@@ -94,11 +86,6 @@ public class InterviewConfirmController {
         return actionsProvider.calculateActions(userService.getCurrentUser(), application);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String getInterviewVotePage() {
-        return INTERVIEW_CONFIRM_PAGE;
-    }
-
     @ModelAttribute(value = "interviewConfirmDTO")
     public InterviewConfirmDTO getInterviewConfirmDTO() {
         return new InterviewConfirmDTO();
@@ -110,13 +97,24 @@ public class InterviewConfirmController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public String getInterviewConfirmPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, CONFIRM_INTERVIEW_TIME);
+        return INTERVIEW_CONFIRM_PAGE;
+    }
+    
     @RequestMapping(method = RequestMethod.POST)
-    public String submitInterviewConfirmation(@ModelAttribute ApplicationForm applicationForm,
-            @ModelAttribute(value = "interviewConfirmDTO") @Valid InterviewConfirmDTO interviewConfirmDTO, BindingResult result) {
+    public String submitInterviewConfirmation(
+            @ModelAttribute(value = "interviewConfirmDTO") @Valid InterviewConfirmDTO interviewConfirmDTO, BindingResult result, ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, CONFIRM_INTERVIEW_TIME);
+        
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;
         }
-        RegisteredUser user = getUser();
         Interview interview = applicationForm.getLatestInterview();
         interviewService.confirmInterview(user, interview, interviewConfirmDTO);
 

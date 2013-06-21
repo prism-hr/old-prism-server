@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -14,14 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -59,18 +59,9 @@ public class InterviewVoteController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = userService.getCurrentUser();
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        Interview interview = applicationForm.getLatestInterview();
-        if (!interview.isParticipant(currentUser)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
-        }
-        InterviewParticipant participant = interview.getParticipant(currentUser);
-        if (!applicationForm.isInState(ApplicationFormStatus.INTERVIEW) || participant.getResponded()) {
-            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
         return applicationForm;
     }
@@ -103,13 +94,20 @@ public class InterviewVoteController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getInterviewVotePage() {
+    public String getInterviewVotePage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, PROVIDE_INTERVIEW_AVAILABILITY);
         return INTERVIEW_VOTE_PAGE;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitInterviewVotes(@Valid @ModelAttribute InterviewParticipant currentParticipant, BindingResult bindingResult,
-            @ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String comment) {
+            @RequestParam(required = false) String comment, ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, PROVIDE_INTERVIEW_AVAILABILITY);
+        
         if (bindingResult.hasErrors()) {
             return INTERVIEW_VOTE_PAGE;
         }

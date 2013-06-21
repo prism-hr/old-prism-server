@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
@@ -17,6 +18,8 @@ import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 @Service
 public class ResearchOpportunitiesFeedService {
 
+    private final UserService userService;
+    
     private final ResearchOpportunitiesFeedDAO dao;
     
     private final ProgramDAO programDAO;
@@ -44,14 +47,15 @@ public class ResearchOpportunitiesFeedService {
     private final String host;
     
     public ResearchOpportunitiesFeedService() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
     
     @Autowired
-    public ResearchOpportunitiesFeedService(final ResearchOpportunitiesFeedDAO dao, final ProgramDAO programDAO, @Value("${application.host}") final String host) {
+    public ResearchOpportunitiesFeedService(final ResearchOpportunitiesFeedDAO dao, final ProgramDAO programDAO, final UserService userService, @Value("${application.host}") final String host) {
         this.dao = dao;
         this.programDAO = programDAO;
         this.host = host;
+        this.userService = userService;
     }
     
     public String getIframeHtmlCode(final ResearchOpportunitiesFeed feed) {
@@ -90,17 +94,25 @@ public class ResearchOpportunitiesFeedService {
 
     @Transactional
     public void deleteById(final Integer feedId) {
+        Assert.isTrue(isOwner(feedId));
         dao.deleteById(feedId);
+    }
+    
+    private boolean isOwner(final Integer feedId) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        return dao.getById(feedId).getUser().getId().equals(currentUser.getId());
     }
 
     @Transactional(readOnly = true)
     public ResearchOpportunitiesFeed getById(final Integer feedId) {
+        Assert.isTrue(isOwner(feedId));
         return dao.getById(feedId);
     }
 
     @Transactional
     public ResearchOpportunitiesFeed updateFeed(final Integer feedId, final List<Integer> selectedProgramIds,
             final RegisteredUser currentUser, final FeedFormat format, final String title) {
+        Assert.isTrue(isOwner(feedId));
         ResearchOpportunitiesFeed feed = dao.getById(feedId);
         feed.setFeedFormat(format);
         feed.getPrograms().clear();

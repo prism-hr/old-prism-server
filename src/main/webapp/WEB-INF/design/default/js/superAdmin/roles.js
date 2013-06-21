@@ -8,6 +8,10 @@ $(document).ready(function()
 	// ------------------------------------------------------------------------------
 	// Load a list of assigned users for a specific programme.
 	// ------------------------------------------------------------------------------
+	if ($('#programs').val()!="") {
+		loadUsersForProgram();
+	}
+	
 	$('#programs').change(function()
 	{
 		$('#editRoles .alert-error').remove();

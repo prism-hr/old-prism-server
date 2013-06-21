@@ -146,6 +146,7 @@ function deleteFeed(feedId) {
 }
 
 function editFeed(feedId) {
+	$("#researchOpportunityFeedSection").find("div.alert-error").remove();
 	$.ajax({
 		type: 'GET',
 		dataType: "json",

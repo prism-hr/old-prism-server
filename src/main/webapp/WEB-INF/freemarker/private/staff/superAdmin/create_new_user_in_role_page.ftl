@@ -38,12 +38,11 @@
 		<article id="content" role="main">
 			<div class="content-box">
 				<div class="content-box-inner">
-					
+					<input type="hidden" id="currentUserEmail" value="${user.email}">
+                    <input type="hidden" id="userIsAdmin" value=<#if user.isInRole('ADMINISTRATOR')>"true"<#else>"false"</#if>>
 					<div id="configManageUsersBox" class="tabbox">
-						<input type="hidden" id="currentUserEmail" value="${user.email}">
-						<input type="hidden" id="userIsAdmin" value=<#if user.isInRole('ADMINISTRATOR')>"true"<#else>"false"</#if>>
+						
 				        <ul class="tabs">
-				        <li style="display:none;"></li>
 				            <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
 				            	<li><a href="#manageUsers">Manage Users</a></li>
 				            </#if>

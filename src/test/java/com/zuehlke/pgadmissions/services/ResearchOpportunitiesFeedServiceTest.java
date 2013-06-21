@@ -133,9 +133,8 @@ public class ResearchOpportunitiesFeedServiceTest {
         RegisteredUser user = new RegisteredUserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed").user(user).build();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         
-        EasyMock.expect(daoMock.getById(1)).andReturn(feed).times(2);
+        EasyMock.expect(daoMock.getById(1)).andReturn(feed).times(1);
         EasyMock.replay(daoMock, userServiceMock);
         service.getById(1);
         EasyMock.verify(daoMock, userServiceMock);

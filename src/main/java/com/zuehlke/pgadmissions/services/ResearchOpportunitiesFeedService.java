@@ -105,7 +105,7 @@ public class ResearchOpportunitiesFeedService {
 
     @Transactional(readOnly = true)
     public ResearchOpportunitiesFeed getById(final Integer feedId) {
-        Assert.isTrue(isOwner(feedId));
+        //Assert.isTrue(isOwner(feedId));
         return dao.getById(feedId);
     }
 

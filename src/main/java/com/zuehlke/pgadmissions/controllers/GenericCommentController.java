@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -24,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -74,20 +72,10 @@ public class GenericCommentController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = userService.getCurrentUser();
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-
         if (applicationForm == null) {
             throw new ResourceNotFoundException();
         }
-
-        if (currentUser.isInRole(Authority.APPLICANT) || currentUser.isRefereeOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
-            // overwrite the decision if the currentUser is in fact the ADMINISTRATOR or SUPERADMINISTRATOR
-            if (!(listContainsId(currentUser, applicationForm.getProgram().getAdministrators()) || currentUser.isInRole(Authority.SUPERADMINISTRATOR))) {
-                throw new ResourceNotFoundException();
-            }
-        }
-
         return applicationForm;
     }
 
@@ -142,12 +130,4 @@ public class GenericCommentController {
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }
 
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

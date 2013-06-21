@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -57,109 +56,6 @@ public class GenericCommentControllerTest {
         EasyMock.replay(applicationsServiceMock);
         ApplicationForm returnedApplication = controller.getApplicationForm("5");
         assertEquals(returnedApplication, applicationForm);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
-        EasyMock.replay(applicationsServiceMock);
-        controller.getApplicationForm("5");
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfCurrentUserApplicant() {
-        Program program = new ProgramBuilder().id(7).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
-        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
-        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-        EasyMock.replay(currentUser, userServiceMock);
-
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock);
-        controller.getApplicationForm("5");
-
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfCurrentUserReferee() {
-        Program program = new ProgramBuilder().id(7).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
-        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-        EasyMock.replay(currentUser, userServiceMock);
-
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock);
-        controller.getApplicationForm("5");
-
-    }
-
-    @Test
-    public void shouldNotThrowResourceNotFoundExceptionIfCurrentUserIsRefereeAndAdministrator() {
-        Program program = new ProgramBuilder().id(7).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
-        applicationForm.getProgram().getAdministrators().add(currentUser);
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.replay(currentUser, userServiceMock);
-
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock);
-        controller.getApplicationForm("5");
-    }
-
-    @Test
-    public void shouldNotThrowResourceNotFoundExceptionIfCurrentUserIsRefereeAndSuperAdministrator() {
-        Program program = new ProgramBuilder().id(7).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        applicationForm.getProgram().getAdministrators().add(currentUser);
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-        EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
-
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.replay(currentUser, userServiceMock);
-
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock);
-        controller.getApplicationForm("5");
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
-        Program program = new ProgramBuilder().id(7).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
-        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-        EasyMock.replay(currentUser, userServiceMock);
-
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock);
-        controller.getApplicationForm("5");
-
     }
 
     @Test

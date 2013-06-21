@@ -109,10 +109,10 @@
                     </#list> </div>
                 </div>
               </div>
-              <div class="row-group aSDisplay">
+              <div class="row-group aSDisplay secondarySupervisor_group">
                 <h3 id="lbl_secondarySupervisor">Secondary Supervisor</h3>
                 <div class="row">
-                  <label class="plain-label" for="secondarySupervisorFirstname">Supervisor First Name<em>*</em></label>
+                  <label class="plain-label" id="lbl_secondarySupervisorFirstName" for="secondarySupervisorFirstname">Supervisor First Name<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'confirmSupervision.secondSupervisor.firstName'/>"></span>
                   <div class="field">
                     <input type="text" value="${(secondarySupervisor.user.firstName?html)!}" id="secondarySupervisorFirstName" name="secondarySupervisorFirstName" autocomplete="off" class="full" />
@@ -125,7 +125,7 @@
                     </div>
                 </div>
                 <div class="row">
-                  <label class="plain-label" for="secondarySupervisorLastname">Supervisor Last Name<em>*</em></label>
+                  <label class="plain-label" id="lbl_secondarySupervisorLastName" for="secondarySupervisorLastname">Supervisor Last Name<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'confirmSupervision.secondSupervisor.lastName'/>"></span>
                   <div class="field">
                     <input type="text" value="${(secondarySupervisor.user.lastName?html)!}" id="secondarySupervisorLastName" name="secondarySupervisorLastName" autocomplete="off" class="full" />
@@ -138,7 +138,7 @@
                     </div>
                 </div>
                 <div class="row">
-                  <label class="plain-label" for="secondarySupervisorEmail">Supervisor Email<em>*</em></label>
+                  <label class="plain-label" id="lbl_secondarySupervisorEmail" for="secondarySupervisorEmail">Supervisor Email<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'confirmSupervision.secondSupervisor.email'/>"></span>
                   <div class="field">
                     <input type="email" value="${(secondarySupervisor.user.email?html)!}" id="secondarySupervisorEmail" name="secondarySupervisorEmail" autocomplete="off" class="full"/>

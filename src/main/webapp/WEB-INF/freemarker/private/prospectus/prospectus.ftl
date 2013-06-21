@@ -56,12 +56,13 @@
                           </#if>
                           
                           <#if user.isCanManageProjects()>
-                            <li><a href="#irisSection">Link to UCL IRIS</a></li>
+                            <li><a href="#researchOpportunitiesFeedSection">Research Opportunities Feed</a></li>
                           </#if>
                           
                           <#if user.isCanManageProjects()>
-                            <li><a href="#researchOpportunitiesFeedSection">Research Opportunities Feed</a></li>
+                            <li><a href="#irisSection">Link to UCL IRIS</a></li>
                           </#if>
+                          
                         </ul>
                     
                         <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
@@ -77,14 +78,14 @@
                         </#if>
                         
                         <#if user.isCanManageProjects()>
-                          <div id="irisSection" class="tab-page">
-                            <#include "/private/prospectus/iris_configuration.ftl"/>
+                          <div id="researchOpportunitiesFeedSection" class="tab-page">
+                            <#include "/private/prospectus/research_opportunities_feed_configuration.ftl"/>
                           </div>
                         </#if>
                         
                         <#if user.isCanManageProjects()>
-                          <div id="researchOpportunitiesFeedSection" class="tab-page">
-                            <#include "/private/prospectus/research_opportunities_feed_configuration.ftl"/>
+                          <div id="irisSection" class="tab-page">
+                            <#include "/private/prospectus/iris_configuration.ftl"/>
                           </div>
                         </#if>
                       </div>
@@ -99,7 +100,6 @@
     </div>
     <!-- Wrapper Ends -->
 
-
     <div id="iris-profile-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
@@ -113,9 +113,6 @@
             <button class="btn btn-primary" id="iris-profile-modal-confirm-btn">I confirm this is me</button>
         </div>
     </div>
-
-
-
 
 </body>
 </html>

@@ -216,9 +216,10 @@ public class ResearchOpportunitiesFeedControllerTest {
         Map<String, Object> map = controller.saveFeed(json);
 
         EasyMock.verify(feedServiceMock);
-        Assert.assertEquals(2, map.size());
+        Assert.assertEquals(3, map.size());
         Assert.assertEquals(true, map.get("success"));
         Assert.assertEquals(StringUtils.EMPTY, map.get("iframeCode"));
+        Assert.assertEquals(1, map.get("id"));
     }
     
     @Test

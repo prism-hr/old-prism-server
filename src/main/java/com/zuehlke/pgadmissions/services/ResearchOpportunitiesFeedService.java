@@ -24,7 +24,7 @@ public class ResearchOpportunitiesFeedService {
     private static final String LARGE_IFRAME = ""
             + "<html> "
             + "<body> "
-            + "<iframe src=\"http://localhost:8080/pgadmissions/adverts/standaloneAdverts?feed=${id}\" " 
+            + "<iframe src=\"${host}/pgadmissions/adverts/standaloneAdverts?feed=${id}\" " 
             + "width=\"430\" " 
             + "height=\"514\" " 
             + "style=\"border:none;\"> "

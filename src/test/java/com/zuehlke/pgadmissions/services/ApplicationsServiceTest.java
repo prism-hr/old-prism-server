@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,6 +21,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -324,7 +324,7 @@ public class ApplicationsServiceTest {
                 hasProperty("email", equalTo("ezio@mail.com")));
         Matcher<SuggestedSupervisor> secondarySupervisorMatcher = allOf(hasProperty("firstname", equalTo("Genowefa")), hasProperty("lastname", equalTo("Pigwa")),
                 hasProperty("email", equalTo("gienia@mail.com")));
-        assertThat(suggestedSupervisors, hasItems(primarySupervisorMatcher, secondarySupervisorMatcher));
+        assertThat(suggestedSupervisors, Matchers.<SuggestedSupervisor>hasItems(primarySupervisorMatcher, secondarySupervisorMatcher));
     }
 
     @Test

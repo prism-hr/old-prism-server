@@ -181,6 +181,9 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Transient
     private boolean canManageProjects;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
+    
     public boolean canSee(ApplicationForm applicationForm) {
         return canSeeApplication(applicationForm, this);
     }
@@ -777,5 +780,13 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
                 return ((Role) object).getAuthorityEnum() != authority;
             }
         });
+    }
+
+    public List<ResearchOpportunitiesFeed> getResearchOpportunitiesFeeds() {
+        return researchOpportunitiesFeeds;
+    }
+
+    public void setResearchOpportunitiesFeeds(List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds) {
+        this.researchOpportunitiesFeeds = researchOpportunitiesFeeds;
     }
 }

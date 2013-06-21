@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -50,5 +52,40 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
         Assert.assertEquals(feed.getTitle(), feedFromDb.getTitle());
         Assert.assertEquals(1, user.getResearchOpportunitiesFeeds().size());
         Assert.assertEquals(feed.getTitle(), user.getResearchOpportunitiesFeeds().get(0).getTitle());
+    }
+    
+    @Test
+    public void shouldReturnWhetherATitleIsUniqueForAUser() {
+        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed").user(user).build();
+        
+        save(user, program);
+        flushAndClearSession();
+        
+        dao.save(feed);
+        flushAndClearSession();
+        
+        sessionFactory.getCurrentSession().refresh(user);
+        
+        Assert.assertFalse(dao.isUniqueFeedTitleForUser("Hello Feed", user));
+    }
+    
+    @Test
+    public void shouldReturnAllFeedsForAUser() {
+        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed").user(user).build();
+        
+        save(user, program);
+        flushAndClearSession();
+        
+        dao.save(feed);
+        flushAndClearSession();
+        
+        List<ResearchOpportunitiesFeed> allFeedsForUser = dao.getAllFeedsForUser(user);
+        
+        Assert.assertEquals(1, allFeedsForUser.size());
+        Assert.assertEquals(feed.getId(), allFeedsForUser.get(0).getId());
     }
 }

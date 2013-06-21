@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_INTERVIEW_FEEDBACK;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_SUPERVISION;
 
 import java.util.Date;

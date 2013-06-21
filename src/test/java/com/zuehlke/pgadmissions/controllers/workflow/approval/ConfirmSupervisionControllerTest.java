@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_SUPERVISION;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
@@ -7,6 +8,7 @@ import java.util.Collections;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 
@@ -19,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
@@ -43,19 +46,31 @@ public class ConfirmSupervisionControllerTest {
     private DatePropertyEditor datePropertyEditorMock;
 
     private ConfirmSupervisionDTOValidator confirmSupervisionDTOValidatorMock;
-    
+
     private ApplicationFormAccessService accessServiceMock;
-    
+
     private ActionsProvider actionsProviderMock;
 
     @Test
     public void testLoadConfirmSupervisionPage() {
-        String res = controller.confirmSupervision(null);
+        ApplicationForm applicationForm = new ApplicationForm();
+        RegisteredUser user = new RegisteredUser();
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", user);
+
+        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
+
+        EasyMock.replay(actionsProviderMock);
+        String res = controller.confirmSupervision(modelMap);
+        EasyMock.verify(actionsProviderMock);
+
         assertEquals("/private/staff/supervisors/confirm_supervision_page", res);
     }
 
     @Test
     public void testApplyConfirmSupervision() {
+        RegisteredUser user = new RegisteredUser();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").build();
 
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
@@ -63,101 +78,42 @@ public class ConfirmSupervisionControllerTest {
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
 
         approvalServiceMock.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-        EasyMock.expectLastCall().once();
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", user);
 
-        EasyMock.replay(approvalServiceMock);
+        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
 
-        String res = controller.applyConfirmSupervision(applicationForm, confirmSupervisionDTO, result);
+        EasyMock.replay(approvalServiceMock, actionsProviderMock);
+        String res = controller.applyConfirmSupervision(confirmSupervisionDTO, result, modelMap);
+        EasyMock.verify(approvalServiceMock, actionsProviderMock);
+
         assertEquals("redirect:/applications?messageCode=supervision.confirmed&application=app1", res);
-
-        EasyMock.verify(approvalServiceMock);
     }
 
     @Test
     public void testDontApplyConfirmSupervisionIfFormErrors() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").build();
-
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
         confirmSupervisionDTO.setConfirmedSupervision(true);
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         result.reject("error");
 
         EasyMock.replay(approvalServiceMock);
-
-        String res = controller.applyConfirmSupervision(applicationForm, confirmSupervisionDTO, result);
-        assertEquals("/private/staff/supervisors/confirm_supervision_page", res);
-
+        String res = controller.applyConfirmSupervision(confirmSupervisionDTO, result, new ModelMap());
         EasyMock.verify(approvalServiceMock);
-    }
 
-    @Test(expected = PrimarySupervisorNotDefinedException.class)
-    public void shouldNotReturnApplicationFormIfPrimarySupervisorIsNotDefined() {
-        Supervisor supervisor = new SupervisorBuilder().id(13).build();
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).latestApprovalRound(approvalRound).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-
-        EasyMock.replay(applicationServiceMock);
-
-        controller.getApplicationForm("app1");
-    }
-
-    @Test(expected = ActionNoLongerRequiredException.class)
-    public void shouldNotReturnApplicationFormIfPrimarySupervisorAlreadyConfirmed() {
-        RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();
-
-        Supervisor primarySupervisor = new SupervisorBuilder().id(14).user(primarySupervisorUser).isPrimary(true).confirmedSupervision(true).build();
-
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(primarySupervisor).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).latestApprovalRound(approvalRound).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(primarySupervisorUser);
-
-        EasyMock.replay(applicationServiceMock, userServiceMock);
-
-        controller.getApplicationForm("app1");
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldNotReturnApplicationFormIfCurrentUserIsNotPrimarySupervisor() {
-        RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();
-        RegisteredUser secondarySupervisorUser = new RegisteredUserBuilder().id(89).build();
-
-        Supervisor secondarySupervisor = new SupervisorBuilder().id(13).user(secondarySupervisorUser).build();
-        Supervisor primarySupervisor = new SupervisorBuilder().id(14).user(primarySupervisorUser).isPrimary(true).build();
-
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(secondarySupervisor, primarySupervisor).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).latestApprovalRound(approvalRound).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(secondarySupervisorUser);
-
-        EasyMock.replay(applicationServiceMock, userServiceMock);
-
-        controller.getApplicationForm("app1");
+        assertEquals("/private/staff/supervisors/confirm_supervision_page", res);
     }
 
     @Test
     public void shouldReturnApplicationFormIfCurrentUserIsPrimarySupervisor() {
-        RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();
-        RegisteredUser secondarySupervisorUser = new RegisteredUserBuilder().id(89).build();
-
-        Supervisor secondarySupervisor = new SupervisorBuilder().id(13).user(secondarySupervisorUser).build();
-        Supervisor primarySupervisor = new SupervisorBuilder().id(14).user(primarySupervisorUser).isPrimary(true).build();
-
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(secondarySupervisor, primarySupervisor).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).latestApprovalRound(approvalRound).build();
+        ApplicationForm applicationForm = new ApplicationForm();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(primarySupervisorUser);
 
-        EasyMock.replay(applicationServiceMock, userServiceMock);
-
+        EasyMock.replay(applicationServiceMock);
         assertEquals(applicationForm, controller.getApplicationForm("app1"));
-
-        EasyMock.verify(applicationServiceMock, userServiceMock);
+        EasyMock.verify(applicationServiceMock);
     }
 
     @Before
@@ -169,8 +125,8 @@ public class ConfirmSupervisionControllerTest {
         confirmSupervisionDTOValidatorMock = EasyMock.createMock(ConfirmSupervisionDTOValidator.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock,
-                datePropertyEditorMock, confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock);
+        controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock, datePropertyEditorMock,
+                confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock);
 
     }
 

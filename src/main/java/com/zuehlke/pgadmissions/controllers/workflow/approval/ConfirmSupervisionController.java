@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_INTERVIEW_FEEDBACK;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_SUPERVISION;
+
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -8,6 +11,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -21,14 +25,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -78,21 +78,6 @@ public class ConfirmSupervisionController {
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        
-        Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
-        
-        if (primarySupervisor == null) {
-            throw new PrimarySupervisorNotDefinedException(applicationId);
-        }
-        
-        if (!getUser().getId().equals(primarySupervisor.getUser().getId())) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
-        }
-        
-        if (primarySupervisor.getConfirmedSupervision() != null) {
-            throw new ActionNoLongerRequiredException(applicationId);
-        }
-        
         return application;
     }
     
@@ -132,17 +117,19 @@ public class ConfirmSupervisionController {
     }
 
     @RequestMapping(value = "confirmSupervision", method = RequestMethod.GET)
-    public String confirmSupervision(ApplicationForm applicationForm) {
+    public String confirmSupervision(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
         return CONFIRM_SUPERVISION_PAGE;
     }
     
-    @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.GET)
-    public void defaultGet() {
-        return;
-    }
-
     @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.POST)
-    public String applyConfirmSupervision(ApplicationForm applicationForm, @Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result) {
+    public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
+        
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;
         }

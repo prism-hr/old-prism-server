@@ -1,12 +1,9 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -33,7 +30,7 @@ public class ProgramBuilder {
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
-    private Set<Advert> adverts = new HashSet<Advert>();
+    private Advert advert;
 
     public ProgramBuilder atasRequired(boolean flag) {
         atasRequired = flag;
@@ -121,8 +118,8 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder adverts(Advert... adverts) {
-        this.adverts.addAll(Arrays.asList(adverts));
+    public ProgramBuilder adverts(Advert advert) {
+        this.advert = advert;
         return this;
     }
 
@@ -142,6 +139,7 @@ public class ProgramBuilder {
         program.getScoringDefinitions().putAll(scoringDefinitions);
         program.setAtasRequired(atasRequired);
         program.getClosingDates().addAll(programClosingDates);
+        program.setAdvert(advert);
         return program;
     }
 }

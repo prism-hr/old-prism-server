@@ -35,28 +35,45 @@ function getAdverts(){
 	if(selectedAdvertId !== undefined && selectedAdvertId != "undefined"){
 		selectedAdvertId = decodeURIComponent(selectedAdvertId);
 	}
-	$.ajax({
-		type: 'GET',
-		statusCode: {
-			401: function() { window.location.reload(); },
-			500: function() { window.location.href = "/pgadmissions/error"; },
-			404: function() { window.location.href = "/pgadmissions/404"; },
-			400: function() { window.location.href = "/pgadmissions/400"; },                  
-			403: function() { window.location.href = "/pgadmissions/404"; }
-		},
-		data: {
-			advert: selectedAdvertId,
-        }, 
-		url: "/pgadmissions/adverts/activeAdverts",
-		success: function(data) {
-			var map = JSON.parse(data);
-			processAdverts(map.adverts);
-			highlightSelectedAdvert();
-			bindAddThisShareOverFix();
-		},
-		complete: function() {
-		}
-	});
+	var feedId = $('#feedId').val();
+	if (feedId === undefined) {
+		$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() { window.location.reload(); },
+				500: function() { window.location.href = "/pgadmissions/error"; },
+				404: function() { window.location.href = "/pgadmissions/404"; },
+				400: function() { window.location.href = "/pgadmissions/400"; },                  
+				403: function() { window.location.href = "/pgadmissions/404"; }
+			},
+			data: {
+				advert: selectedAdvertId,
+	        }, 
+			url: "/pgadmissions/adverts/activeAdverts",
+			success: function(data) {
+				var map = JSON.parse(data);
+				processAdverts(map.adverts);
+				highlightSelectedAdvert();
+				bindAddThisShareOverFix();
+			},
+			complete: function() {
+			}
+		});
+	} else {
+		// standalone adverts for feed
+		$.ajax({
+			type: 'GET',
+			data: {
+				feedId: feedId,
+	        }, 
+			url: "/pgadmissions/adverts/feedAdverts",
+			success: function(data) {
+				processAdverts(data.adverts);
+				highlightSelectedAdvert();
+				bindAddThisShareOverFix();
+			}
+		});
+	}
 }
 
 function processAdverts(adverts){

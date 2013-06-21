@@ -20,6 +20,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/prospectus.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/underscore-min.js' />"></script>
 <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
@@ -46,7 +47,6 @@
                     <div class="content-box-inner">
                       <div id="configBox" class="tabbox">
                         <ul class="tabs">
-                        
                           <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
                             <li><a href="#programmeConfiguration">Manage Programmes</a></li>
                           </#if>
@@ -59,6 +59,9 @@
                             <li><a href="#irisSection">Link to UCL IRIS</a></li>
                           </#if>
                           
+                          <#if user.isCanManageProjects()>
+                            <li><a href="#researchOpportunitiesFeedSection">Research Opportunities Feed</a></li>
+                          </#if>
                         </ul>
                     
                         <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
@@ -76,6 +79,12 @@
                         <#if user.isCanManageProjects()>
                           <div id="irisSection" class="tab-page">
                             <#include "/private/prospectus/iris_configuration.ftl"/>
+                          </div>
+                        </#if>
+                        
+                        <#if user.isCanManageProjects()>
+                          <div id="researchOpportunitiesFeedSection" class="tab-page">
+                            <#include "/private/prospectus/research_opportunities_feed_configuration.ftl"/>
                           </div>
                         </#if>
                       </div>

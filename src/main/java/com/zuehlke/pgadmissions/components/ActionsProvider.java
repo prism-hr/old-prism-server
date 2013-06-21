@@ -16,19 +16,21 @@ public class ActionsProvider {
         ApplicationFormStatus nextStatus = application.getNextStatus();
 
         ActionsDefinitions actions = new ActionsDefinitions();
-        
-        for(ApplicationFormAction action : ApplicationFormAction.values()){
+
+        for (ApplicationFormAction action : ApplicationFormAction.values()) {
             action.applyAction(actions, user, application, nextStatus);
         }
 
         return actions;
     }
-    
-    public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
-    	if (!calculateActions(user, applicationForm).getActions().contains(action)) {
-    		throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
-    	}
-    }
-    
-}
 
+    public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
+        ActionsDefinitions actions = new ActionsDefinitions();
+        action.applyAction(actions, user, applicationForm, applicationForm.getNextStatus());
+
+        if (actions.getActions().isEmpty()) {
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        }
+    }
+
+}

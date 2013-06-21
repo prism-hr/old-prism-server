@@ -116,7 +116,6 @@ public class ValidationTransitionController extends StateTransitionController {
             }
 
         } catch (Exception e) {
-        	e.printStackTrace();
             return STATE_TRANSITION_VIEW;
         }
 

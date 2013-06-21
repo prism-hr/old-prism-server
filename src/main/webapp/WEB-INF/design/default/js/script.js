@@ -1029,6 +1029,10 @@ function generalTabing() {
 	
 	var tabslected = $.cookie(setCookieName);
 	
+//	if ($(''+tabslected+'').length == 0) {
+//		tabslected=undefined;
+//	}
+	
 	id = $.find('.tabbox');
 	$.each($('.tab-page'), function() {
 		$('.tabs li').removeClass('current');

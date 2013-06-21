@@ -211,6 +211,7 @@ public class ApplicationListControllerTest {
         // GIVEN
         ModelMap model = new ExtendedModelMap();
         ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setPreFilter(ApplicationsPreFilter.URGENT);
         List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
         MockHttpServletResponse response = new MockHttpServletResponse();
         

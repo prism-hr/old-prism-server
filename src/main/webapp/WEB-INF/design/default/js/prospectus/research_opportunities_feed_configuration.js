@@ -3,13 +3,18 @@ $(document).ready(function() {
 	
 	loadExistingFeeds();
 	
+	$('#new-feed-go').hide();
+	
 	$("#save-feed-go").on("click", function() {
 		var url = '/pgadmissions/prospectus/researchOpportunitiesFeed';
 		if ($('#editingFeedId').val() == "") {
-			onFeedSaveOrUpdate(url, 'POST');
+			onFeedSaveOrUpdate(url, 'POST', function(feedId) {
+				editFeed(feedId);
+			});
 		} else {
 			url = url + "/" + $('#editingFeedId').val();
-			onFeedSaveOrUpdate(url, 'PUT');
+			onFeedSaveOrUpdate(url, 'PUT', function() {
+			});
 		}
 	});
 	
@@ -27,11 +32,15 @@ $(document).ready(function() {
 		}
 	});
 	
+	$('#new-feed-go').on('click', function() {
+		clearForm();
+		$('#new-feed-go').hide();
+	});
 });
 
 function loadExistingFeeds() {
 	$('#existing-feed-table-row-group').hide();
-	$('#existing-feed-table > tbody > tr').remove();
+	$('#existing-feed-table tbody tbody > tr').remove();
 	$.ajax({
 		type: 'GET',
 		dataType: "json",
@@ -47,7 +56,7 @@ function loadExistingFeeds() {
 			$.each(data, function(index, item) {
 				$("#existing-feed-table-row-group").show();
 				var newTr = '<tr data-feedid="' + item.id + '"><td>' + item.title + '</td><td><button class="button-edit" type="button" data-desc="Edit">Edit</button></td><td><button class="button-delete" type="button" data-desc="Remove">Remove</button></td></tr>';
-				$('#existing-feed-table > tbody').append(newTr);
+				$('#existing-feed-table tbody tbody').append(newTr);
 			});
 		}
 	});
@@ -74,16 +83,17 @@ function loadProgrammes() {
 }
 
 function clearForm() {
+	$("#researchOpportunityFeedSection").find("div.alert-error").remove();
 	$('#feed-programmes').find("option").attr("selected", false);
 	$('#feed-title').val("");
 	$('#feedformat').find("option").attr("selected", false);
 	$('#feedformat > option:first').attr("selected", true);
 	$('#editingFeedId').val("");
 	$("#feedCode").val("");
-	$("#save-feed-go").text("Submit");
+	$("#save-feed-go").text("Create");
 }
 
-function onFeedSaveOrUpdate(url, method) {
+function onFeedSaveOrUpdate(url, method, returnFunction) {
 	$("#researchOpportunityFeedSection").find("div.alert-error").remove();
 	
 	var selectedPrograms = new Array();
@@ -119,7 +129,8 @@ function onFeedSaveOrUpdate(url, method) {
                 }
 			} else {
 				loadExistingFeeds();
-				$("#feedCode").val(data.iframeCode);
+				//$("#feedCode").val(data.iframeCode);
+				returnFunction(data.id);
 			}
 		}
 	});
@@ -147,6 +158,7 @@ function deleteFeed(feedId) {
 
 function editFeed(feedId) {
 	$("#researchOpportunityFeedSection").find("div.alert-error").remove();
+	$('#new-feed-go').show();
 	$.ajax({
 		type: 'GET',
 		dataType: "json",

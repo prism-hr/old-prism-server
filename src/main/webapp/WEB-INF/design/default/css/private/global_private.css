@@ -1897,6 +1897,13 @@ form#removeForm {
 #linkAccountsSection td.scrollparent { padding: 0; }
 #linkAccountsSection .scroll { max-height: 137px; overflow: auto; } /* roughly 4 rows high. */
 #linkAccountsSection .scroll table { border-collapse: collapse; width: 100%; }
+
+#existing-feed-table table { width: 100% }
+#existing-feed-table td.scrollparent { padding: 0; }
+#existing-feed-table .scroll { max-height: 156px; overflow: auto; } /* roughly 4 rows high. */
+#existing-feed-table .scroll table { border-collapse: collapse; width: 100%; }
+#existing-feed-table .scroll table tr td:first-child { border-left:none;}
+
 .status .icon-chevron-right, .icon .icon-chevron-right{
     background: none repeat scroll 0 0 #999999;
     border-radius: 10px 10px 10px 10px;

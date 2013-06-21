@@ -122,6 +122,7 @@ public class ResearchOpportunitiesFeedController {
         if ((Boolean) responseMap.get(SUCCESS)) {
             ResearchOpportunitiesFeed feed = feedService.saveNewFeed(selectedProgramIds, currentUser, FeedFormat.valueOf(feedFormat), title);
             responseMap.put("iframeCode", feedService.getIframeHtmlCode(feed));
+            responseMap.put("id", feed.getId());
         } 
         return responseMap;
     }

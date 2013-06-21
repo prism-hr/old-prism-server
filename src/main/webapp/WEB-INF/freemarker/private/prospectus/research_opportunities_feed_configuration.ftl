@@ -5,14 +5,29 @@
         <div id="researchOpportunityFeedSection">
             <div class="row-group" id="existing-feed-table-row-group">
                 <div class="tableContainer table table-condensed">
-                    <table id="existing-feed-table" class="table table-striped table-condensed table-hover table-bordered" style="">
+                    <table id="existing-feed-table" class="table table-condensed table-bordered" style="">
                         <colgroup>
                                 <col>
-                                <col style="width: 30px;">
-                                <col style="width: 30px;">
+                                <col style="width: 36px;">
+                                <col style="width: 36px;">
                         </colgroup>
                         <tbody>
-                            <tr></tr>
+                            <tr>
+                                <td colspan="3" class="scrollparent">
+                                    <div class="scroll">
+                                        <table class="table-hover table-hover table-striped" style="">
+                                            <colgroup>
+                                                <col>
+                                                <col style="width: 30px;">
+                                                <col style="width: 30px;">
+                                            </colgroup>
+                                            <tbody>
+                                                <tr></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>   
                     </table>
                 </div>
@@ -62,7 +77,8 @@
             </div>
             
             <div class="buttons">
-                <button class="btn btn-primary" type="button" id="save-feed-go">Submit</button>
+                <button class="btn btn-success" type="button" id="new-feed-go">Add New</button>
+                <button class="btn btn-primary" type="button" id="save-feed-go">Create</button>
             </div>
             
             

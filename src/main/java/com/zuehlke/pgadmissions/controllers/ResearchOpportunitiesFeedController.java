@@ -126,7 +126,7 @@ public class ResearchOpportunitiesFeedController {
         return responseMap;
     }
     
-    private RegisteredUser getCurrentUser() {
+    protected RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
     

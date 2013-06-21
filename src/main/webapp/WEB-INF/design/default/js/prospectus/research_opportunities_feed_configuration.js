@@ -84,7 +84,7 @@ function clearForm() {
 }
 
 function onFeedSaveOrUpdate(url, method) {
-	$("#researchOpportunityFeedSection").find("div.alert").remove();
+	$("#researchOpportunityFeedSection").find("div.alert-error").remove();
 	
 	var selectedPrograms = new Array();
 	var feedSize = $('#feedformat').val();

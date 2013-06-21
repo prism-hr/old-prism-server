@@ -3,7 +3,6 @@ $(document).ready(function() {
 	
     //Add Counter
     addCounter();
-    //$(".dropdown-toggle").dropdown();
 
     // --------------------------------------------------------------------------------
     // SWITCH USER ACCOUNTS
@@ -259,32 +258,6 @@ function bindDatePickerEnabled(selector){
 	bindDatePicker(selector,true);
 }
 
-// ------------------------------------------------------------------------------
-// Restrict TEXTAREA fields to a certain number of characters.
-// ------------------------------------------------------------------------------
-/*function limitTextArea() {
-    $('textarea[maxlength]').keyup(function() {
-        // get the limit from maxlength attribute
-        var limit = parseInt($(this).attr('maxlength'));
-        // get the current text inside the textarea
-        var text = $(this).val();
-        // count the number of characters in the text
-        var chars = text.length;
-
-        // check if there are more characters than allowed
-        if (chars > limit) {
-            // and if there are use substr to get the text before the limit
-            var new_text = text.substr(0, limit);
-
-            // and change the current text with the new text
-            $(this).val(new_text);
-        } else if (chars == limit) {
-            // alert('You have entered the maximum allowed characters for this
-            // field: '+ limit);
-            return false;
-        }
-    });
-}*/
 // Textarea Counter
 function addCounter() {
 	var $textArea = $("textarea");
@@ -298,7 +271,7 @@ function addCounter() {
 			$(this).data("maxlength", 250);
 		} else if  ($(this).attr('id') == 'explanationText'||$(this).attr('id') == 'programmeFundingInformation') {
 		    $(this).data("maxlength", 500);
-		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply') {
+		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'feedCode' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply') {
 			display = false;
 		} else {
 			$(this).data("maxlength", 2000);

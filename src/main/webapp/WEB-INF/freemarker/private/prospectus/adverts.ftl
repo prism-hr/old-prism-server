@@ -1,5 +1,5 @@
- <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/advert.css' />"/>
- <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/adverts.js' />"></script>
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/advert.css' />"/>
+<script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/adverts.js' />"></script>
 <div style="overflow:hidden; position:relative">
  <div id="pholder">
 	 <form id="applyForm" action="/pgadmissions/apply/new" method="POST">

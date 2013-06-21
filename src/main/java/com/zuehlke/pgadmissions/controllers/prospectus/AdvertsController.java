@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.prospectus;
 
+import static java.util.Collections.singletonMap;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,9 +17,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Maps;
@@ -28,9 +32,11 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Controller
@@ -38,15 +44,19 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 public class AdvertsController {
 
     private final AdvertService advertService;
+    
     private static final AdvertDTO NULL_ADVERT = new AdvertDTO(Integer.MIN_VALUE);
 
+    private final ResearchOpportunitiesFeedService feedService;
+    
     public AdvertsController() {
-        this(null);
+        this(null, null);
     }
 
     @Autowired
-    public AdvertsController(AdvertService advertService) {
+    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService) {
         this.advertService = advertService;
+        this.feedService = feedService;
     }
     
     @ModelAttribute("advertId")
@@ -65,9 +75,9 @@ public class AdvertsController {
     	return null;
     }
     
-    
     @RequestMapping(value = "/standaloneAdverts", method = RequestMethod.GET)
-    public String standaloneAdverts(@ModelAttribute("advertId") Integer advert) {
+    public String standaloneAdverts(final HttpServletRequest request, ModelMap model) {
+        model.put("feedId", request.getParameter("feed"));
     	return "public/login/standalone";
     }
     
@@ -83,6 +93,21 @@ public class AdvertsController {
         return new Gson().toJson(map);
     }
 
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(value = "/feedAdverts", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public Map getFeedAdverts(@RequestParam Integer feedId) {
+        ResearchOpportunitiesFeed feed = feedService.getById(feedId);
+        List<Advert> advertList = new ArrayList<Advert>();
+        for (Program p : feed.getPrograms()) {
+            Advert advert = p.getAdvert();
+            if (advert != null) {
+                advertList.add(advert);
+            }
+        }
+        return singletonMap("adverts", convertAdverts(advertList));
+    }
+    
     private void setSelectedAndBringToFront(AdvertDTO selectedAdvert, List<AdvertDTO> activeAdverts) {
         selectedAdvert.setSelected(true);
         if (activeAdverts.remove(selectedAdvert)) {

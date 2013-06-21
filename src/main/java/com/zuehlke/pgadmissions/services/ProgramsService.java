@@ -1,18 +1,19 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
@@ -63,7 +64,14 @@ public class ProgramsService {
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
             return programDAO.getAllPrograms();
         }
-        Set<Program> programs = Sets.newHashSet();
+        
+        Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
+            @Override
+            public int compare(Program p1, Program p2) {
+                return p1.getTitle().compareTo(p2.getTitle());
+            }
+        });
+        
         programs.addAll(user.getProgramsOfWhichAdministrator());
         programs.addAll(user.getProgramsOfWhichApprover());
         programs.addAll(user.getProgramsOfWhichReviewer());

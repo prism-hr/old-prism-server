@@ -23,6 +23,8 @@ $(document).ready(function() {
     confirmedSupervisionChange();
     recomendedConditionsChange();
     
+    autosuggest($("#secondarySupervisorFirstName"), $("#secondarySupervisorLastName"), $("#secondarySupervisorEmail"));
+    
 });
 
 function confirmedSupervisionChange() {

@@ -25,6 +25,16 @@ public class ConfirmSupervisionDTO {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
     private String recommendedConditions;
+    
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
+    private String secondarySupervisorFirstName;
+    
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
+    private String secondarySupervisorLastName;
+    
+    @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
+    private String secondarySupervisorEmail;
+    
 
     public Boolean getConfirmedSupervision() {
         return confirmedSupervision;
@@ -89,5 +99,31 @@ public class ConfirmSupervisionDTO {
 	public void setProjectAcceptingApplications(Boolean projectAcceptingApplications) {
 		this.projectAcceptingApplications = projectAcceptingApplications;
 	}
+
+	public String getSecondarySupervisorFirstName() {
+		return secondarySupervisorFirstName;
+	}
+
+	public void setSecondarySupervisorFirstName(String secondarySupervisorFirstName) {
+		this.secondarySupervisorFirstName = secondarySupervisorFirstName;
+	}
+
+	public String getSecondarySupervisorLastName() {
+		return secondarySupervisorLastName;
+	}
+
+	public void setSecondarySupervisorLastName(String secondarySupervisorLastName) {
+		this.secondarySupervisorLastName = secondarySupervisorLastName;
+	}
+
+	public String getSecondarySupervisorEmail() {
+		return secondarySupervisorEmail;
+	}
+
+	public void setSecondarySupervisorEmail(String secondarySupervisorEmail) {
+		this.secondarySupervisorEmail = secondarySupervisorEmail;
+	}
+	
+	
 
 }

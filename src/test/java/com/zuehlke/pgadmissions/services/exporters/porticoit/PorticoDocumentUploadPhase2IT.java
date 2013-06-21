@@ -45,9 +45,9 @@ import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
+import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
-import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/testPorticoIntegrationContext.xml"})

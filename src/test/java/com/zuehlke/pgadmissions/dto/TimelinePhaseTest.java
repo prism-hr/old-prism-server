@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

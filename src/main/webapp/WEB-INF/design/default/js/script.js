@@ -16,6 +16,7 @@ $(document).ready(function() {
         }
 
         if (userEmail === "Logout") {
+        	$.removeCookie('currentTab',  { path: '/' });
             return;
         }
 
@@ -1001,6 +1002,10 @@ function generalTabing() {
 	var setCookieName = 'currentTab';
 	
 	var tabslected = $.cookie(setCookieName);
+	
+//	if ($(''+tabslected+'').length == 0) {
+//		tabslected=undefined;
+//	}
 	
 	id = $.find('.tabbox');
 	$.each($('.tab-page'), function() {

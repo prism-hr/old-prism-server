@@ -1,13 +1,15 @@
 package com.zuehlke.pgadmissions.converters;
 
-import static org.easymock.EasyMock.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.reset;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 import java.util.Date;
 
 import org.easymock.EasyMock;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

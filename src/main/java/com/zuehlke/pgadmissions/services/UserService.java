@@ -127,11 +127,27 @@ public class UserService {
 
     public void deleteUserFromProgramme(final RegisteredUser selectedUser, final Program selectedProgram) {
         selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
+        if (selectedUser.getProgramsOfWhichAdministrator().isEmpty()) {
+            selectedUser.removeRole(Authority.ADMINISTRATOR);
+        }
         selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
+        if (selectedUser.getProgramsOfWhichApprover().isEmpty()) {
+            selectedUser.removeRole(Authority.APPROVER);
+        }
         selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
+        if (selectedUser.getProgramsOfWhichReviewer().isEmpty()) {
+            selectedUser.removeRole(Authority.REVIEWER);
+        }
         selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
+        if (selectedUser.getProgramsOfWhichInterviewer().isEmpty()) {
+            selectedUser.removeRole(Authority.INTERVIEWER);
+        }
         selectedUser.getProgramsOfWhichSupervisor().remove(selectedProgram);
+        if (selectedUser.getProgramsOfWhichSupervisor().isEmpty()) {
+            selectedUser.removeRole(Authority.SUPERVISOR);
+        }
         selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
+        
         userDAO.save(selectedUser);
     }
 

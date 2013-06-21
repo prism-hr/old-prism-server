@@ -168,6 +168,7 @@ public class ManageUsersControllerTest {
     public void shouldThrowResourceNotFoundExceptionIfUserNeitherSuperAdminOrAdmin() {
         EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
         EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false).anyTimes();
+        EasyMock.expect(currentUserMock.isNotInRole(Authority.ADMITTER)).andReturn(true).anyTimes();
         EasyMock.replay(currentUserMock, userServiceMock);
         controller.getAddUsersView();
         EasyMock.verify(currentUserMock, userServiceMock);
@@ -324,6 +325,7 @@ public class ManageUsersControllerTest {
         RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
         userServiceMock.deleteUserFromProgramme(existingUser, program);
+        EasyMock.expect(currentUserMock.getId()).andReturn(1);
 
         EasyMock.replay(currentUserMock, userServiceMock);
 

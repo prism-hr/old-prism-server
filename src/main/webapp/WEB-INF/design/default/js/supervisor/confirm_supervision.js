@@ -33,15 +33,47 @@ function confirmedSupervisionChange() {
         enableDeclinedSupervisionReason();
         disableProjectDescription();
         disableRecommendedOffer();
+        disableSecondarySupervisor();
     } else if (selected_radio == 'true')   {
         disableDeclinedSupervisionReason();
         enableProjectDescription();
         enableRecommendedOffer();
+        endableSecondarySupervisor();
     } else {
         disableDeclinedSupervisionReason();
         disableProjectDescription();
         disableRecommendedOffer();
+        disableSecondarySupervisor();
     }
+}
+
+function disableSecondarySupervisor() {
+	$('.secondarySupervisor_group input').attr("disabled", "disabled");
+	$('#lbl_secondarySupervisor').addClass("grey-label").parent().find('.hint').addClass("grey");
+	
+	$('#lbl_secondarySupervisorFirstName').addClass("grey-label").parent().find('.hint').addClass("grey");
+	$('#lbl_secondarySupervisorLastName').addClass("grey-label").parent().find('.hint').addClass("grey");
+	$('#lbl_secondarySupervisorEmail').addClass("grey-label").parent().find('.hint').addClass("grey");
+
+	$('#lbl_secondarySupervisorFirstName').html('Supervisor First Name');
+	$('#lbl_secondarySupervisorLastName').html('Supervisor Last Name');
+	$('#lbl_secondarySupervisorEmail').html('Supervisor Email');
+	
+}
+
+function endableSecondarySupervisor() {
+	$('.secondarySupervisor_group input').removeAttr("disabled");
+	$('#lbl_secondarySupervisor').removeClass("grey-label").parent().find('.hint').removeClass("grey");
+
+	$('#lbl_secondarySupervisorFirstName').removeClass("grey-label").parent().find('.hint').removeClass("grey");
+	$('#lbl_secondarySupervisorLastName').removeClass("grey-label").parent().find('.hint').removeClass("grey");
+	$('#lbl_secondarySupervisorEmail').removeClass("grey-label").parent().find('.hint').removeClass("grey");
+
+	$('#lbl_secondarySupervisorFirstName').html('Supervisor First Name<em>*</em>');
+	$('#lbl_secondarySupervisorLastName').html('Supervisor Last Name<em>*</em>');
+	$('#lbl_secondarySupervisorEmail').html('Supervisor Email<em>*</em>');
+	
+
 }
 
 function disableProjectDescription() {

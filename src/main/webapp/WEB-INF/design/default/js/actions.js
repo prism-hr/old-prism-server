@@ -26,12 +26,6 @@ $(document).ready(function() {
             case 'view':
                 window.location.href = "/pgadmissions/application?view=view&applicationId="+ id;
                 break;
-            case 'assignReviewer':
-                window.location.href = "/pgadmissions/review/assignReviewers?applicationId="+ id;
-                break;
-            case 'assignInterviewer':
-                window.location.href = "/pgadmissions/interview/assignInterviewers?applicationId="+ id;
-                break;
             case 'comment':
                 window.location.href = "/pgadmissions/comment?applicationId="+ id;
                 break;

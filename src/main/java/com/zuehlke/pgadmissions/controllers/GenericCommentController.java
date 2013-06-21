@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -37,107 +39,109 @@ import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 @RequestMapping(value = { "/comment" })
 public class GenericCommentController {
 
-	private static final String GENERIC_COMMENT_PAGE = "private/staff/admin/comment/genericcomment";
-	
-	private final ApplicationsService applicationsService;
-	
-	private final UserService userService;
-	
-	private final GenericCommentValidator genericCommentValidator;
-	
-	private final CommentService commentService;
-	
-	private final DocumentPropertyEditor documentPropertyEditor;
-	
-	private final ActionsProvider actionsProvider;
+    private static final String GENERIC_COMMENT_PAGE = "private/staff/admin/comment/genericcomment";
+
+    private final ApplicationsService applicationsService;
+
+    private final UserService userService;
+
+    private final GenericCommentValidator genericCommentValidator;
+
+    private final CommentService commentService;
+
+    private final DocumentPropertyEditor documentPropertyEditor;
+
+    private final ActionsProvider actionsProvider;
 
     private final ApplicationFormAccessService accessService;
 
-	public GenericCommentController() {
-		this(null, null, null, null, null, null, null);
-	}
+    public GenericCommentController() {
+        this(null, null, null, null, null, null, null);
+    }
 
     @Autowired
-    public GenericCommentController(ApplicationsService applicationsService,
-            UserService userService, CommentService commentService,
-            GenericCommentValidator genericCommentValidator,
-            DocumentPropertyEditor documentPropertyEditor,
-            ActionsProvider actionsProvider,
+    public GenericCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+            GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor, ActionsProvider actionsProvider,
             ApplicationFormAccessService accessService) {
-	this.applicationsService = applicationsService;
-		this.userService = userService;
-		this.commentService = commentService;
-		this.genericCommentValidator = genericCommentValidator;
-		this.documentPropertyEditor = documentPropertyEditor;
-		this.actionsProvider = actionsProvider;
+        this.applicationsService = applicationsService;
+        this.userService = userService;
+        this.commentService = commentService;
+        this.genericCommentValidator = genericCommentValidator;
+        this.documentPropertyEditor = documentPropertyEditor;
+        this.actionsProvider = actionsProvider;
         this.accessService = accessService;
-	}
+    }
 
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		
-		if (applicationForm == null) {
-		    throw new ResourceNotFoundException();
-		}
-		
-		if (currentUser.isInRole(Authority.APPLICANT) || currentUser.isRefereeOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
-			// overwrite the decision if the currentUser is in fact the ADMINISTRATOR or SUPERADMINISTRATOR
-		    if (!(listContainsId(currentUser, applicationForm.getProgram().getAdministrators()) || currentUser.isInRole(Authority.SUPERADMINISTRATOR))) {
-		        throw new ResourceNotFoundException();
-		    }
-		}
-		
-		return applicationForm;
-	}
-	
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+
+        if (applicationForm == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        if (currentUser.isInRole(Authority.APPLICANT) || currentUser.isRefereeOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
+            // overwrite the decision if the currentUser is in fact the ADMINISTRATOR or SUPERADMINISTRATOR
+            if (!(listContainsId(currentUser, applicationForm.getProgram().getAdministrators()) || currentUser.isInRole(Authority.SUPERADMINISTRATOR))) {
+                throw new ResourceNotFoundException();
+            }
+        }
+
+        return applicationForm;
+    }
+
     @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
+    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return actionsProvider.calculateActions(getUser(), application);
     }
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String getGenericCommentPage() {
-		return GENERIC_COMMENT_PAGE;
-	}
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
 
-	@ModelAttribute("comment")
-	public Comment getComment(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		Comment comment = new Comment();
-		comment.setApplication(applicationForm);
-		comment.setUser(userService.getCurrentUser());
-		return comment;
-	}
+    @ModelAttribute("comment")
+    public Comment getComment(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Comment comment = new Comment();
+        comment.setApplication(applicationForm);
+        comment.setUser(userService.getCurrentUser());
+        return comment;
+    }
 
-	@InitBinder(value = "comment")
-	public void registerBinders(WebDataBinder binder) {
-		binder.setValidator(genericCommentValidator);
-		binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
-		binder.registerCustomEditor(Document.class, documentPropertyEditor);
+    @InitBinder(value = "comment")
+    public void registerBinders(WebDataBinder binder) {
+        binder.setValidator(genericCommentValidator);
+        binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
+        binder.registerCustomEditor(Document.class, documentPropertyEditor);
 
-	}
+    }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result) {
-		if (result.hasErrors()) {
-			return GENERIC_COMMENT_PAGE;
-		}
-		ApplicationForm applicationForm = comment.getApplication();
-		applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
-	    accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
-	    applicationsService.save(applicationForm);
-		commentService.save(comment);
-		return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
-	}
-	
+    @RequestMapping(method = RequestMethod.GET)
+    public String getGenericCommentPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+        return GENERIC_COMMENT_PAGE;
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result, ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+        if (result.hasErrors()) {
+            return GENERIC_COMMENT_PAGE;
+        }
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
+        applicationsService.save(applicationForm);
+        commentService.save(comment);
+        return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
+    }
+
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (entry.getId().equals(user.getId())) {
@@ -145,5 +149,5 @@ public class GenericCommentController {
             }
         }
         return false;
-    }   	
+    }
 }

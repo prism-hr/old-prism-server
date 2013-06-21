@@ -349,9 +349,11 @@ public class ApprovalServiceTest {
     @Test
     public void shouldConfirmSupervision() {
         RegisteredUser currentUser = new RegisteredUserBuilder().id(2).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(3).email("a.user@ucl.co.uk").build();
         Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
+        Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(user).build();
 
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor, secondarySupervisor).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
 
         Date startDate = Calendar.getInstance().getTime();
@@ -363,6 +365,7 @@ public class ApprovalServiceTest {
         confirmSupervisionDTO.setRecommendedStartDate(startDate);
         confirmSupervisionDTO.setRecommendedConditionsAvailable(true);
         confirmSupervisionDTO.setRecommendedConditions("conditions");
+        confirmSupervisionDTO.setSecondarySupervisorEmail("a.user@ucl.co.uk");
 
         Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
         commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
@@ -400,22 +403,62 @@ public class ApprovalServiceTest {
     }
 
     @Test
+    public void shouldModifySecondarySupervision() {
+    	RegisteredUser currentUser = new RegisteredUserBuilder().id(2).build();
+    	RegisteredUser user = new RegisteredUserBuilder().id(3).email("a.user@ucl.co.uk").build();
+    	RegisteredUser anotherUser = new RegisteredUserBuilder().id(3).email("a.n.other@ucl.co.uk").build();
+    	Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
+    	Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(user).build();
+    	
+    	ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor, secondarySupervisor).build();
+    	ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+    	
+    	Date startDate = Calendar.getInstance().getTime();
+    	
+    	ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
+    	confirmSupervisionDTO.setConfirmedSupervision(true);
+    	confirmSupervisionDTO.setProjectTitle("title");
+    	confirmSupervisionDTO.setProjectAbstract("abstract");
+    	confirmSupervisionDTO.setRecommendedStartDate(startDate);
+    	confirmSupervisionDTO.setRecommendedConditionsAvailable(true);
+    	confirmSupervisionDTO.setRecommendedConditions("conditions");
+    	confirmSupervisionDTO.setSecondarySupervisorEmail("a.n.other@ucl.co.uk");
+    	
+    	Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
+    	commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
+    	EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+    	EasyMock.expect(userServiceMock.getUserByEmail("a.n.other@ucl.co.uk")).andReturn(anotherUser);
+    	    	
+    	EasyMock.replay(commentDAOMock, userServiceMock);
+    	approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
+    	EasyMock.verify(commentDAOMock, userServiceMock);
+    	
+
+    	Assert.assertEquals(anotherUser, secondarySupervisor.getUser());
+    	
+    	
+    }
+    
+    @Test
     public void shouldDeclineSupervisionAndRestartApprovalRound() {
-        RegisteredUser user = new RegisteredUserBuilder().firstName("John Paul").lastName("Jones").build();
-        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).user(user).build();
+        RegisteredUser user1 = new RegisteredUserBuilder().firstName("John Paul").lastName("Jones").build();
+        RegisteredUser user2 = new RegisteredUserBuilder().firstName("Dave").lastName("Jones").email("d.jones@ucl.ac.uk").build();
+        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).user(user1).build();
+        Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(user2).build();
 
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").projectDescriptionAvailable(false)
-                .supervisors(primarySupervisor).build();
+                .supervisors(primarySupervisor, secondarySupervisor).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
 
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
         confirmSupervisionDTO.setConfirmedSupervision(false);
         confirmSupervisionDTO.setDeclinedSupervisionReason("reason");
+        confirmSupervisionDTO.setSecondarySupervisorEmail("d.jones@ucl.ac.uk");
 
         commentDAOMock.save(EasyMock.isA(RequestRestartComment.class));
         Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
         commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user1);
 
         EasyMock.replay(commentDAOMock, userServiceMock);
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
@@ -424,7 +467,7 @@ public class ApprovalServiceTest {
         assertFalse(primarySupervisor.getConfirmedSupervision());
         assertEquals("reason", primarySupervisor.getDeclinedSupervisionReason());
         assertTrue(applicationForm.isPendingApprovalRestart());
-        assertEquals(user, applicationForm.getApproverRequestedRestart());
+        assertEquals(user1, applicationForm.getApproverRequestedRestart());
 
         SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();
         assertSame(applicationForm, comment.getApplication());
@@ -432,7 +475,7 @@ public class ApprovalServiceTest {
         assertNotNull(comment.getDate());
         assertSame(primarySupervisor, comment.getSupervisor());
         assertEquals(CommentType.SUPERVISION_CONFIRMATION, comment.getType());
-        assertSame(user, comment.getUser());
+        assertSame(user1, comment.getUser());
 
         assertFalse(approvalRound.getProjectDescriptionAvailable());
     }

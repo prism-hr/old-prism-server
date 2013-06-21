@@ -23,6 +23,7 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js' />"></script>
 
 <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -108,27 +109,45 @@
                     </#list> </div>
                 </div>
               </div>
-              <div class="row-group">
+              <div class="row-group aSDisplay">
                 <h3 id="lbl_secondarySupervisor">Secondary Supervisor</h3>
                 <div class="row">
                   <label class="plain-label" for="secondarySupervisorFirstname">Supervisor First Name<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'confirmSupervision.secondSupervisor.firstName'/>"></span>
                   <div class="field">
-                    <input type="text" value="${(secondarySupervisor.user.firstName?html)!}" disabled="disabled" id="secondarySupervisorFirstname" class="full" />
-                  </div>
+                    <input type="text" value="${(secondarySupervisor.user.firstName?html)!}" id="secondarySupervisorFirstName" name="secondarySupervisorFirstName" autocomplete="off" class="full" />
+                    <@spring.bind "confirmSupervisionDTO.secondarySupervisorFirstName" />
+                    <#list spring.status.errorMessages as error >
+                    <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                      ${error}
+                    </div>
+                    </#list> 
+                    </div>
                 </div>
                 <div class="row">
                   <label class="plain-label" for="secondarySupervisorLastname">Supervisor Last Name<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'confirmSupervision.secondSupervisor.lastName'/>"></span>
                   <div class="field">
-                    <input type="text" value="${(secondarySupervisor.user.lastName?html)!}" disabled="disabled" id="secondarySupervisorLastname" class="full" />
-                  </div>
+                    <input type="text" value="${(secondarySupervisor.user.lastName?html)!}" id="secondarySupervisorLastName" name="secondarySupervisorLastName" autocomplete="off" class="full" />
+                    <@spring.bind "confirmSupervisionDTO.secondarySupervisorLastName" />
+                    <#list spring.status.errorMessages as error >
+                    <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                      ${error}
+                    </div>
+                    </#list> 
+                    </div>
                 </div>
                 <div class="row">
                   <label class="plain-label" for="secondarySupervisorEmail">Supervisor Email<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'confirmSupervision.secondSupervisor.email'/>"></span>
                   <div class="field">
-                    <input type="email" value="${(secondarySupervisor.user.email?html)!}" disabled="disabled" id="secondarySupervisorEmail" class="full"/>
+                    <input type="email" value="${(secondarySupervisor.user.email?html)!}" id="secondarySupervisorEmail" name="secondarySupervisorEmail" autocomplete="off" class="full"/>
+                    <@spring.bind "confirmSupervisionDTO.secondarySupervisorEmail" />
+                    <#list spring.status.errorMessages as error >
+                    <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                      ${error}
+                    </div>
+                    </#list> 
                   </div>
                 </div>
               </div>

@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -212,13 +213,21 @@ public class ProjectConfigurationController {
             if(project==null){
             	throw new ResourceNotFoundException();
             }
+            addSupervisorsRoles(project);
             programsService.saveProject(project);
             map.put("success", "true");
         }
         return gson.toJson(map);
     }
 
-    private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {
+    private void addSupervisorsRoles(Project project) {
+    	userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
+    	if(project!=null){
+    		userService.updateUserWithNewRoles(project.getSecondarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
+    	}
+	}
+
+	private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(result.getErrorCount());
         if (result.hasErrors()) {
             for (FieldError error : result.getFieldErrors()) {

@@ -17,6 +17,7 @@ $(document).ready(function() {
         }
 
         if (userEmail === "Logout") {
+        	$.removeCookie('currentTab',  { path: '/' });
             return;
         }
 

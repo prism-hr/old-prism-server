@@ -8,7 +8,6 @@ $(document).ready(function()
 	// ------------------------------------------------------------------------------
 	// Load a list of assigned users for a specific programme.
 	// ------------------------------------------------------------------------------
-	loadUsersForProgram();
 	$('#programs').change(function()
 	{
 		$('#editRoles .alert-error').remove();
@@ -103,7 +102,7 @@ $(document).ready(function()
 		}
 	});
 	
-	
+	generalTabing();
 });
 
 function checkTableForm() {
@@ -118,9 +117,7 @@ function checkTableForm() {
 
 function loadUsersForProgram()
 {
-	if ($('#manageUsersId').length==0) {
-		return;
-	}
+
 	var visibleTabPage = '#'+$('.tab-page:visible').attr('id');
 	$('#ajaxloader').show();
 	
@@ -170,7 +167,6 @@ function loadUsersForProgram()
 	});	
 	
 	/* Tabs */
-	generalTabing();
 }
 
 function validateEmail(email)

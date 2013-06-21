@@ -1,10 +1,13 @@
 package com.zuehlke.pgadmissions.domain;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertThat;
+
 import java.util.Date;
-
-import static org.junit.Assert.*;
-
-import static org.hamcrest.Matchers.*;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;

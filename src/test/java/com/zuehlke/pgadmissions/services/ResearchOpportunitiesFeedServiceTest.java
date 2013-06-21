@@ -21,6 +21,8 @@ import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 
 public class ResearchOpportunitiesFeedServiceTest {
 
+    private UserService userServiceMock;
+    
     private ResearchOpportunitiesFeedDAO daoMock;
     
     private ProgramDAO programDAOMock;
@@ -53,7 +55,8 @@ public class ResearchOpportunitiesFeedServiceTest {
     public void prepare() {
         daoMock = EasyMock.createMock(ResearchOpportunitiesFeedDAO.class);
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
-        service = new ResearchOpportunitiesFeedService(daoMock, programDAOMock, HOST);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        service = new ResearchOpportunitiesFeedService(daoMock, programDAOMock, userServiceMock, HOST);
     }
     
     @Test
@@ -113,34 +116,46 @@ public class ResearchOpportunitiesFeedServiceTest {
     
     @Test
     public void shouldDeleteFeedById() {
+        RegisteredUser user = new RegisteredUserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed").user(user).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+        
         daoMock.deleteById(1);
-        EasyMock.replay(daoMock);
+        EasyMock.expect(daoMock.getById(1)).andReturn(feed);
+        EasyMock.replay(daoMock, userServiceMock);
         service.deleteById(1);
-        EasyMock.verify(daoMock);
+        EasyMock.verify(daoMock, userServiceMock);
     }
     
     @Test
     public void shouldGetFeedById() {
-        EasyMock.expect(daoMock.getById(1)).andReturn(null);
-        EasyMock.replay(daoMock);
+        RegisteredUser user = new RegisteredUserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed").user(user).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+        
+        EasyMock.expect(daoMock.getById(1)).andReturn(feed).times(2);
+        EasyMock.replay(daoMock, userServiceMock);
         service.getById(1);
-        EasyMock.verify(daoMock);
+        EasyMock.verify(daoMock, userServiceMock);
     }
     
     @Test
     public void shouldUpdateFeed() {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").id(1).username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed").user(user).build();
         
         EasyMock.expect(programDAOMock.getProgramById(1)).andReturn(program);
-        EasyMock.expect(daoMock.getById(1)).andReturn(feed);
+        EasyMock.expect(daoMock.getById(1)).andReturn(feed).times(2);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         
-        EasyMock.replay(programDAOMock, daoMock);
+        EasyMock.replay(programDAOMock, daoMock, userServiceMock);
         
         ResearchOpportunitiesFeed saveNewFeed = service.updateFeed(1, Arrays.asList(1), user, FeedFormat.SMALL, "hello1");
         
-        EasyMock.verify(programDAOMock, daoMock);
+        EasyMock.verify(programDAOMock, daoMock, userServiceMock);
         
         Assert.assertEquals(saveNewFeed.getPrograms().get(0), program);
         Assert.assertEquals(saveNewFeed.getTitle(), "hello1");

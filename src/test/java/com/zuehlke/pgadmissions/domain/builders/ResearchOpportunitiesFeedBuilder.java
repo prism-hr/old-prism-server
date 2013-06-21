@@ -42,7 +42,7 @@ public class ResearchOpportunitiesFeedBuilder {
     }
     
     public ResearchOpportunitiesFeedBuilder programs(final Program... programs) {
-        this.programs = Arrays.asList(programs);
+        this.programs = new ArrayList<Program>(Arrays.asList(programs));
         return this;
     }
     

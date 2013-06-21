@@ -136,7 +136,7 @@
 		        	<div class="control-group">
                			<div class="controls">  
                				<#if Session.applyRequest?has_content>
-                        		<a href="/pgadmissions/login">Already Registered?</a>
+                        		<a href="/pgadmissions/alreadyRegistered">Already Registered?</a>
 		                    </#if>
                			 </div>
 		            </div>	

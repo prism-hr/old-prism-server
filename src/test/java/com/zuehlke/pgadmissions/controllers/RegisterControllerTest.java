@@ -60,6 +60,8 @@ public class RegisterControllerTest {
 	
 	private EncryptionHelper encryptionHelper;
 
+	private MockHttpSession mockHttpSession;
+
 	@Before
 	public void setUp() {
 		regusterFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
@@ -72,18 +74,23 @@ public class RegisterControllerTest {
         registerController = new RegisterController(regusterFormValidatorMock, userServiceMock,
                 registrationServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock,
                 encryptionHelper);
+        mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED, true);
 	}
 
 	@Test
 	public void shouldReturnRegisterPageIfRedirectedFromPrismInternally() {
 	    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 	    mockHttpServletRequest.addHeader("referer", "http://localhost:8080/pgadmissions/programs");
-		assertEquals("public/register/register_applicant", registerController.getRegisterPage(null, null, new ExtendedModelMap(), mockHttpServletRequest));
+		assertEquals("public/register/register_applicant", registerController.getRegisterPage(null, null, new ExtendedModelMap(), mockHttpServletRequest, mockHttpSession));
+		assertNull(mockHttpSession.getAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED));
 	}
 	
 	@Test
     public void shouldReturnLoginPageIfRedirectedFromOutsidePrism() {
-        assertEquals("redirect:/login", registerController.getRegisterPage(null, null, new ExtendedModelMap(), new MockHttpServletRequest()));
+        assertEquals("redirect:/login", registerController.getRegisterPage(null, null, new ExtendedModelMap(), new MockHttpServletRequest(), mockHttpSession));
+        assertNull(mockHttpSession.getAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED));
+        
     }
 
 	@Test
@@ -92,8 +99,9 @@ public class RegisterControllerTest {
 	    RegisteredUser pendingUser = new RegisteredUserBuilder().enabled(true).directURL("/directHere").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(pendingUser);
 	    EasyMock.replay(userServiceMock);
-		assertEquals("redirect:/directHere", registerController.getRegisterPage(activationCode, "/directHere", new ExtendedModelMap(), new MockHttpServletRequest()));
+		assertEquals("redirect:/directHere", registerController.getRegisterPage(activationCode, "/directHere", new ExtendedModelMap(), new MockHttpServletRequest(), mockHttpSession));
 		EasyMock.verify(userServiceMock);
+		assertNull(mockHttpSession.getAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED));
 	}
 
 	@Test
@@ -102,8 +110,9 @@ public class RegisterControllerTest {
         RegisteredUser pendingUser = new RegisteredUserBuilder().enabled(false).directURL("/directHere").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(pendingUser);
         EasyMock.replay(userServiceMock);
-	    assertEquals("public/register/register_applicant", registerController.getRegisterPage(activationCode, "/directHere", new ExtendedModelMap(), new MockHttpServletRequest()));
+	    assertEquals("public/register/register_applicant", registerController.getRegisterPage(activationCode, "/directHere", new ExtendedModelMap(), new MockHttpServletRequest(), mockHttpSession));
 	       EasyMock.verify(userServiceMock);
+	       assertNull(mockHttpSession.getAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED));
 	}
 	
 	@Test
@@ -114,15 +123,14 @@ public class RegisterControllerTest {
 	    EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 	    
 	    MockHttpServletRequest requestMock = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        requestMock.setSession(session);
+        requestMock.setSession(mockHttpSession);
         
         EasyMock.replay(userServiceMock);
         
-        String page = registerController.getRegisterPage(activationCode, null, new ExtendedModelMap(), requestMock);
-        
+        String page = registerController.getRegisterPage(activationCode, null, new ExtendedModelMap(), requestMock, mockHttpSession);
+        assertNull(mockHttpSession.getAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED));
         assertEquals("public/register/register_applicant", page);
-        assertEquals("/directHere", session.getAttribute("directToUrl"));
+        assertEquals("/directHere", mockHttpSession.getAttribute("directToUrl"));
         EasyMock.verify(userServiceMock);
 	}
 
@@ -213,9 +221,8 @@ public class RegisterControllerTest {
 		EasyMock.replay(registrationServiceMock);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpSession session = new MockHttpSession();
-		session.setAttribute("applyRequest", queryString);
-		request.setSession(session);
+		mockHttpSession.setAttribute("applyRequest", queryString);
+		request.setSession(mockHttpSession);
 		String view = registerController.submitRegistration(pendingUser, errorsMock, new ExtendedModelMap(), request);
 		assertEquals("public/register/registration_complete", view);
 
@@ -280,9 +287,8 @@ public class RegisterControllerTest {
                 .id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").build();
         
         MockHttpServletRequest requestMock = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        session.putValue("directToUrl", "/directLink");
-        requestMock.setSession(session);
+        mockHttpSession.putValue("directToUrl", "/directLink");
+        requestMock.setSession(mockHttpSession);
         
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         

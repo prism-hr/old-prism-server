@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +71,9 @@ public class RegisterController {
 		this.applicationQueryStringParser = applicationQueryStringParser;
 	}
 	
+	
 	@RequestMapping(value = "/submit", method = RequestMethod.GET)
-	public String defaultGet(@ModelAttribute("pendingUser") RegisteredUser pendingUser, Model model) {
+	public String defaultGet(@ModelAttribute("pendingUser") RegisteredUser pendingUser, Model model, HttpSession session) {
 	    model.addAttribute("pendingUser", pendingUser);
 	    return REGISTER_USERS_VIEW_NAME;
 	}
@@ -163,7 +165,8 @@ public class RegisterController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String getRegisterPage(@RequestParam(required=false) String activationCode, @RequestParam(required=false) String directToUrl, Model modelMap, HttpServletRequest request) {
+	public String getRegisterPage(@RequestParam(required=false) String activationCode, @RequestParam(required=false) String directToUrl, Model modelMap, HttpServletRequest request, HttpSession session) {
+		session.removeAttribute("CLICKED_ON_ALREADY_REGISTERED");
         RegisteredUser pendingUser = getPendingUser(activationCode, directToUrl);
         if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
             return "redirect:/login";

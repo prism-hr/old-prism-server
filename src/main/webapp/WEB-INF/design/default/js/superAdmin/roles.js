@@ -8,7 +8,11 @@ $(document).ready(function()
 	// ------------------------------------------------------------------------------
 	// Load a list of assigned users for a specific programme.
 	// ------------------------------------------------------------------------------
-	loadUsersForProgram();
+
+	if ($('#programs').val()!="" && $('#userIsAdmin').val()=="true") {
+		loadUsersForProgram();
+	}
+	
 	$('#programs').change(function()
 	{
 		$('#editRoles .alert-error').remove();
@@ -47,10 +51,11 @@ $(document).ready(function()
 	
 	$('#registryUsers').on('click', '.button-delete', function()
 	{
+		var redirectToAppList = $(this).closest('tr').children()[1].textContent.indexOf($('#currentUserEmail').val())!=-1;
 		var $row = $(this).closest('tr');
 		$row.remove();
 		checkTableForm();
-		submitRegistryUsers();
+		submitRegistryUsers(redirectToAppList);
 	});
 	
 	/* Add button. */
@@ -102,7 +107,7 @@ $(document).ready(function()
 		}
 	});
 	
-	
+	generalTabing();
 });
 
 function checkTableForm() {
@@ -117,6 +122,7 @@ function checkTableForm() {
 
 function loadUsersForProgram()
 {
+
 	var visibleTabPage = '#'+$('.tab-page:visible').attr('id');
 	$('#ajaxloader').show();
 	
@@ -166,7 +172,6 @@ function loadUsersForProgram()
 	});	
 	
 	/* Tabs */
-	generalTabing();
 }
 
 function validateEmail(email)
@@ -177,7 +182,7 @@ function validateEmail(email)
     return result;
 } 
 
-function submitRegistryUsers()
+function submitRegistryUsers(redirect)
 {
 	// REGISTRY USERS
 	// Remove the hidden fields generated when posting registry user info.
@@ -222,6 +227,9 @@ function submitRegistryUsers()
 			{
 				$('#configsection').html(data);
 				addToolTips();
+				if (redirect) {
+					window.location="/pgadmissions/applications";
+				}
 			},
 			complete: function()
 			{

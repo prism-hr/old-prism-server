@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.List;
 

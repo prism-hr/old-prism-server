@@ -156,7 +156,7 @@ public class ManageUsersController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = {"/edit", "/edit/saveSuperadmin", "/edit/saveUser", "/edit/saveRegistryContact"})
 	public String getAddUsersView() {
-		if (!isCurrentUserAdministrator()) {
+		if (!isCurrentUserAdministrator() && getCurrentUser().isNotInRole(Authority.ADMITTER)) {
 		    throw new ResourceNotFoundException();
 		}
 		return NEW_USER_VIEW_NAME;
@@ -209,10 +209,13 @@ public class ManageUsersController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/edit/saveRegistryUsers")
     public String handleEditRegistryUsers(@ModelAttribute RegistryUserDTO registryUserDTO) {
-        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMITTER)) {
             throw new ResourceNotFoundException();
         }
         configurationService.saveRegistryUsers(registryUserDTO.getRegistryUsers(), getUser());
+        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMITTER)) {
+            return "redirect:/applications";
+        }
         return "redirect:/manageUsers/edit";
     }
 	
@@ -221,8 +224,12 @@ public class ManageUsersController {
         if (!isCurrentUserAdministrator()) {
             throw new ResourceNotFoundException();
         }
-        userService.deleteUserFromProgramme(userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail()),
+        RegisteredUser userToRemove = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
+        userService.deleteUserFromProgramme(userToRemove,
                 userDTO.getSelectedProgram());
+        if (userToRemove.getId().equals(getCurrentUser().getId()) && userToRemove.getProgramsOfWhichAdministrator().isEmpty()) {
+            return "redirect:/applications";
+        }
         return "redirect:/manageUsers/edit?programCode=" + userDTO.getSelectedProgram().getCode();
     }
 	

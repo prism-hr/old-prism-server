@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.validators;
 
-import static com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY;
 import static com.zuehlke.pgadmissions.validators.AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE;
 import static com.zuehlke.pgadmissions.validators.AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE;
 import static com.zuehlke.pgadmissions.validators.AbstractValidator.MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE;
 import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_NO_PRIMARY_SUPERVISOR;
 import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_NO_SECONDARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.*;
+import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_SAME_SUPERVISORS_PRIMARY;
+import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_SAME_SUPERVISORS_SECONDARY;
+import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS_SUPERVISOR_NOT_EXISTS;
 
 import java.util.Date;
 

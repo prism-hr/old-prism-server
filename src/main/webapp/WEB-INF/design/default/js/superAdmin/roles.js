@@ -47,10 +47,11 @@ $(document).ready(function()
 	
 	$('#registryUsers').on('click', '.button-delete', function()
 	{
+		var redirectToAppList = $(this).closest('tr').children()[1].textContent.indexOf($('#currentUserEmail').val())!=-1;
 		var $row = $(this).closest('tr');
 		$row.remove();
 		checkTableForm();
-		submitRegistryUsers();
+		submitRegistryUsers(redirectToAppList);
 	});
 	
 	/* Add button. */
@@ -117,6 +118,9 @@ function checkTableForm() {
 
 function loadUsersForProgram()
 {
+	if ($('#manageUsersId').length==0) {
+		return;
+	}
 	var visibleTabPage = '#'+$('.tab-page:visible').attr('id');
 	$('#ajaxloader').show();
 	
@@ -177,7 +181,7 @@ function validateEmail(email)
     return result;
 } 
 
-function submitRegistryUsers()
+function submitRegistryUsers(redirect)
 {
 	// REGISTRY USERS
 	// Remove the hidden fields generated when posting registry user info.
@@ -222,6 +226,9 @@ function submitRegistryUsers()
 			{
 				$('#configsection').html(data);
 				addToolTips();
+				if (redirect) {
+					window.location="/pgadmissions/applications";
+				}
 			},
 			complete: function()
 			{

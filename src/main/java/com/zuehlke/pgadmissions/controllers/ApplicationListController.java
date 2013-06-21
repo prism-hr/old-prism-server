@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter.URGENT;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -130,7 +132,7 @@ public class ApplicationListController {
         filtering.setUseDisjunction(useDisjunction);
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
 
-        if (applications.isEmpty()) {
+        if (filtering.getPreFilter() == URGENT && applications.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
 

@@ -147,6 +147,7 @@ public class ProjectConfigurationController {
             RegisteredUser currentUser = getUser();
             Project project = projectConverter.toDomainObject(projectDTO);
             project.setAuthor(currentUser);
+            addSupervisorsRoles(project);
             programsService.saveProject(project);
             map.put("success", "true");
         }
@@ -222,7 +223,7 @@ public class ProjectConfigurationController {
 
     private void addSupervisorsRoles(Project project) {
     	userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-    	if(project!=null){
+    	if(project.getSecondarySupervisor()!=null){
     		userService.updateUserWithNewRoles(project.getSecondarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
     	}
 	}

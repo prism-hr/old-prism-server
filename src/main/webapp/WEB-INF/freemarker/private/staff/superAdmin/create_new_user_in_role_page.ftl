@@ -41,6 +41,7 @@
 					
 					<div id="configManageUsersBox" class="tabbox">
 						<input type="hidden" id="currentUserEmail" value="${user.email}">
+						<input type="hidden" id="userIsAdmin" value=<#if user.isInRole('ADMINISTRATOR')>"true"<#else>"false"</#if>>
 				        <ul class="tabs">
 				        <li style="display:none;"></li>
 				            <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
@@ -258,7 +259,7 @@
 							</div>
 						</#if>
 						
-						<#if user.isInRole('ADMITTER') || user.isInRole('ADMINISTRATOR')>
+						<#if user.isInRole('ADMITTER') || user.isInRole('SUPERADMINISTRATOR')>
 							<div id="manageRegistryContacts" class="tab-page">
 									<section class="form-rows">
 											<h2>Manage Registry Contacts</h2>

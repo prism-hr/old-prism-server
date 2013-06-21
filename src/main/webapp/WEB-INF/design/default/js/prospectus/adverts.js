@@ -2,7 +2,6 @@ $(document).ready(function(){
 	hideAdverts();
 	getAdverts();
 	setClass();
-	setHsize();
 	$(window).bind('resize', function() { 
     	setClass(); 
     });
@@ -26,6 +25,7 @@ function setClass() {
 	} else {
 		$('#pholder').removeClass('small');
 	}
+	setHsize();
 }
 function hideAdverts(){
 	$('#pHolder').hide();

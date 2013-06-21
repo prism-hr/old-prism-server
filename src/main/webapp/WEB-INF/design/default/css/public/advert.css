@@ -219,9 +219,12 @@ li.project.selected {
 #pholder.small .social, #pholder.small .duration, #pholder.small .question, #pholder.small .btn.apply,#pholder.small .fdescription, #pholder.small .pdescription {
   display: none;
 }
-#pholder.small footer .left a, #pholder.small footer .right a {
+#pholder.small footer .right a {
   width: 100px;
   display: block;
+}
+#pholder.small footer .left {
+  display: none;
 }
 #pholder.small .cdate, #pholder.small .duration {
   margin-left: 0px;
@@ -231,9 +234,6 @@ li.project.selected {
 #pholder.small footer .right a img {
   width: 100px;
   margin-top: 4px;
-}
-.small .ssupervisor {
-  display: none;
 }
 #applyForm {
   margin:0;

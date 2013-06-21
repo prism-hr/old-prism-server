@@ -7,6 +7,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -21,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -162,7 +164,17 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldReturnGenericCommentPage() {
-        assertEquals("private/staff/admin/comment/genericcomment", controller.getGenericCommentPage());
+        ApplicationForm applicationForm = new ApplicationForm();
+        RegisteredUser user = new RegisteredUser();
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", user);
+
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+
+        EasyMock.replay(actionsProviderMock);
+        assertEquals("private/staff/admin/comment/genericcomment", controller.getGenericCommentPage(modelMap));
+        EasyMock.verify(actionsProviderMock);
     }
 
     @Test
@@ -212,23 +224,31 @@ public class GenericCommentControllerTest {
     public void shouldReturnToCommentsPageIfErrors() {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+
         EasyMock.replay(errorsMock);
-        assertEquals("private/staff/admin/comment/genericcomment", controller.addComment(null, errorsMock));
+        assertEquals("private/staff/admin/comment/genericcomment", controller.addComment(null, errorsMock, new ModelMap()));
+        EasyMock.verify(errorsMock);
     }
 
     @Test
     public void shouldSaveCommentAndRedirectBackToPageIfNoErrors() {
-        Comment comment = new CommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).applicationNumber("ABC").build()).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).applicationNumber("ABC").build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+
+        Comment comment = new CommentBuilder().id(1).build();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         commentServiceMock.save(comment);
+
         EasyMock.replay(errorsMock, commentServiceMock);
-        assertEquals("redirect:/comment?applicationId=ABC", controller.addComment(comment, errorsMock));
+        assertEquals("redirect:/comment?applicationId=ABC", controller.addComment(comment, errorsMock, modelMap));
+        EasyMock.verify(errorsMock, commentServiceMock);
+
     }
 
     @Before
     public void setUp() {
-
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         genericCommentValidatorMock = EasyMock.createMock(GenericCommentValidator.class);

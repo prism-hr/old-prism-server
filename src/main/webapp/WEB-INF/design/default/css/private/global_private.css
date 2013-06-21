@@ -1897,3 +1897,18 @@ form#removeForm {
 #linkAccountsSection td.scrollparent { padding: 0; }
 #linkAccountsSection .scroll { max-height: 137px; overflow: auto; } /* roughly 4 rows high. */
 #linkAccountsSection .scroll table { border-collapse: collapse; width: 100%; }
+.status .icon-chevron-right, .icon .icon-chevron-right{
+    background: none repeat scroll 0 0 #999999;
+    border-radius: 10px 10px 10px 10px;
+    color: white;
+    font-size: 4px;
+    margin-left: -8px;
+    margin-right: -12px;
+    margin-top: 5px;
+    padding: 2px 4px;
+    position: absolute;
+}
+.icon .icon-chevron-right{
+	margin-left: -6px;
+	margin-top: 2px;
+}

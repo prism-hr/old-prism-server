@@ -8,12 +8,17 @@ $(document).ready(function(){
     });
 });
 function setHsize() {
-	var paddings = 30;
-	var header = $('#pholder header').height();
-	var footer = $('#pholder footer').height();
-	var container =  $('#pholder').parent().parent().height();
-	var sum = container - header - footer - paddings;
-	$('#plist').height(sum);
+	 var paddings = 32;
+	 var header = $('#pholder header').height();
+	 var footer = $('#pholder footer').height();
+	 var isEmbed = window != window.parent;
+	 if (isEmbed) {
+	 	var container =  $(window).height();
+	 } else {
+	 	var container =  $('#pholder').parent().parent().height();
+	 }
+	 var sum = container - header - footer - paddings;
+	 $('#plist').height(sum);
 }
 function setClass() {
 	if ($('#pholder').width() < 390) {

@@ -5,6 +5,10 @@ ul li {line-height: 20px;}
 ul li p {margin: 0 0 10px;}
 a {color: #0088CC; font-family:Arial,​Helvetica,​sans-serif ;text-decoration: none;}
 a:hover, a:focus { color: #005580; text-decoration: underline;}
+body {
+  padding: 0;
+  margin: 0;
+}
 /* Current style for the RSS box */
 #pholder .readmore {
   display: none;

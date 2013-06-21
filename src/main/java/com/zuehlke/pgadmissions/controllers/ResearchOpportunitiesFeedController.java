@@ -154,7 +154,7 @@ public class ResearchOpportunitiesFeedController {
         HashMap<String, Object> responseMap = new HashMap<String, Object>();
         responseMap.put(SUCCESS, true);
         
-        if (selectedProgramIds.isEmpty()) {
+        if (selectedProgramIds == null || selectedProgramIds.isEmpty()) {
             responseMap.put(SUCCESS, false);
             responseMap.put("selectedPrograms", FieldErrorUtils.resolveMessage("dropdown.radio.select.none", messageSource));
         }

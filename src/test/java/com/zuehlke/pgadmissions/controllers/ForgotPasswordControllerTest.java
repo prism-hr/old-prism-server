@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.services.UserService;
@@ -25,10 +26,23 @@ public class ForgotPasswordControllerTest {
 	@Test
 	public void shouldReturnForgottenPasswordPageViewName() {
 		EasyMock.replay(userService);
-		
-		String viewName = controllerUT.getForgotPasswordPage();
+		MockHttpSession session = new MockHttpSession();
+		String viewName = controllerUT.getForgotPasswordPage(session);
 		
 		Assert.assertEquals(FORGOT_PW_PAGE, viewName);
+		EasyMock.verify(userService);
+	}
+	
+	@Test
+	public void shouldClearAlreadyRegisteredAttributeInSessionIfExists() {
+		EasyMock.replay(userService);
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED, true);
+		Assert.assertTrue((Boolean)session.getAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED));
+		String viewName = controllerUT.getForgotPasswordPage(session);
+		
+		Assert.assertEquals(FORGOT_PW_PAGE, viewName);
+		Assert.assertNull(session.getAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED));
 		EasyMock.verify(userService);
 	}
 

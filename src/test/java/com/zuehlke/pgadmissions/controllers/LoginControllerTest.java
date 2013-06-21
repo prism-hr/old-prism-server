@@ -146,7 +146,7 @@ public class LoginControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         
         request.setSession(session);
-        request.setRequestURI("/login");
+        request.setRequestURI("/alreadyRegistered");
         request.addHeader("referer", "/register");
         
         assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));

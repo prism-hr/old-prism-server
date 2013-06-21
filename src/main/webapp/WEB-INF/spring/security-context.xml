@@ -15,6 +15,7 @@
         <intercept-url pattern="/autosuggest/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER')" />
         
         <intercept-url pattern="/login" access="permitAll" />
+        <intercept-url pattern="/alreadyRegistered" access="permitAll" />
         <intercept-url pattern="/forgotPassword/**" access="permitAll" />
         <intercept-url pattern="/design/**" access="permitAll" />
         <intercept-url pattern="/programs" access="permitAll" />

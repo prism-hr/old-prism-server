@@ -16,10 +16,10 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
-@RequestMapping("/login")
+@RequestMapping(value={"/login","/alreadyRegistered"})
 public class LoginController {
 
-    private static final String CLICKED_ON_ALREADY_REGISTERED = "CLICKED_ON_ALREADY_REGISTERED";
+    public static final String CLICKED_ON_ALREADY_REGISTERED = "CLICKED_ON_ALREADY_REGISTERED";
 
     private static final String APPLY_REQUEST_SESSION_ATTRIBUTE = "applyRequest";
 
@@ -47,7 +47,7 @@ public class LoginController {
 		
 	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		if (hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(request)) {
+		if (hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(request, session)) {
 		    clearUserEmailInSession(request);
             //clearApplyRequestInSession(request);
             session.setAttribute(CLICKED_ON_ALREADY_REGISTERED, true);
@@ -82,9 +82,9 @@ public class LoginController {
 	    return defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new");
 	}
 	
-	private boolean hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(final HttpServletRequest request) {
-	    return StringUtils.contains(getReferrerFromHeader(request), "register") 
-	            && StringUtils.contains(request.getRequestURI().toString(), "/login");
+	private boolean hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(final HttpServletRequest request, HttpSession session) {
+	    return session.getAttribute(CLICKED_ON_ALREADY_REGISTERED) != null || (StringUtils.contains(getReferrerFromHeader(request), "register") 
+	            && StringUtils.contains(request.getRequestURI().toString(), "/alreadyRegistered"));
 	}
 	
 	private boolean isAnApplyNewRequestAndLoginFailed(final HttpServletRequest request, final HttpSession session) {

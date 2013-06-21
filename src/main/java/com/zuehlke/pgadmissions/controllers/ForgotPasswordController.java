@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,7 +30,8 @@ public class ForgotPasswordController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getForgotPasswordPage() {
+	public String getForgotPasswordPage(HttpSession session) {
+		session.removeAttribute("CLICKED_ON_ALREADY_REGISTERED");
 		return FORGOT_PW_VIEW_NAME;
 	}
 

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -30,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -71,7 +73,8 @@ public class ReferenceController {
     @Autowired
     public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
             DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
-            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
+            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;
@@ -105,21 +108,12 @@ public class ReferenceController {
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(getUser(), application);
-    }
-
-    RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
+        return actionsProvider.calculateActions(getCurrentUser(), application);
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
-        return getCurrentUser();
-    }
-
-    @RequestMapping(value = "/addReferences", method = RequestMethod.GET)
-    public String getUploadReferencesPage() {
-        return ADD_REFERENCES_VIEW_NAME;
+    RegisteredUser getCurrentUser() {
+        return userService.getCurrentUser();
     }
 
     @ModelAttribute("comment")
@@ -154,22 +148,25 @@ public class ReferenceController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(referenceValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
         binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
-
-    public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
-    }
-
-    @RequestMapping(value = "/submitReference", method = RequestMethod.GET)
-    public void defaultGet() {
-        return;
+    
+    @RequestMapping(value = "/addReferences", method = RequestMethod.GET)
+    public String getUploadReferencesPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REFERENCE);
+        return ADD_REFERENCES_VIEW_NAME;
     }
 
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
-    public String handleReferenceSubmission(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("comment") ReferenceComment comment,
-            BindingResult bindingResult) throws ScoringDefinitionParseException {
+    public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment,
+            BindingResult bindingResult, ModelMap modelMap) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REFERENCE);
+        
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {
             List<Question> questions = getCustomQuestions(applicationForm);
@@ -189,7 +186,7 @@ public class ReferenceController {
             commentService.save(comment);
             refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
         }
-        
+
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         applicationsService.save(applicationForm);
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();

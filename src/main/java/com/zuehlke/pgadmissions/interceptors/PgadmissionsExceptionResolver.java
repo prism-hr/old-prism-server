@@ -82,8 +82,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(ActionNoLongerRequiredException.class, new PgadmissionExceptionHandler<ActionNoLongerRequiredException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(ActionNoLongerRequiredException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Your action upon application form " + ex.getApplicationNumber()
-                        + " is no longer required.");
+                return new AlertDefinition(AlertType.INFO, "You cannot perform this action", "Check that the action has not been performed already or superseded.");
             }
         });
         addHandler(PrimarySupervisorNotDefinedException.class, new PgadmissionExceptionHandler<PrimarySupervisorNotDefinedException>() {

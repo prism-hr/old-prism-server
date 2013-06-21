@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.interceptors;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,8 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
-
-import static org.junit.Assert.assertEquals;
 
 public class PgadmissionsExceptionResolverTest {
 

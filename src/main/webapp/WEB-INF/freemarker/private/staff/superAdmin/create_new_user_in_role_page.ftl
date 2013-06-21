@@ -43,7 +43,7 @@
 						<input type="hidden" id="currentUserEmail" value="${user.email}">
 				        <ul class="tabs">
 				            <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
-				            	<li id="manageUsersId"><a href="#manageUsers">Manage Users</a></li>
+				            	<li><a href="#manageUsers">Manage Users</a></li>
 				            </#if>
 				            <#if user.isInRole('SUPERADMINISTRATOR')>
 				            	<li><a href="#manageSuperadmins">Manage Super Administrators</a></li>

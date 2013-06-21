@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.referees;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REFERENCE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -11,6 +12,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -34,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -106,7 +109,16 @@ public class ReferenceControllerTest {
 
     @Test
     public void shouldReturnUploadReferencePage() {
-        assertEquals("private/referees/upload_references", controller.getUploadReferencesPage());
+        ApplicationForm applicationForm = new ApplicationForm();
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", currentUser);
+        
+        actionsProviderMock.validateAction(applicationForm, currentUser, ApplicationFormAction.ADD_REFERENCE);
+        
+        EasyMock.replay(actionsProviderMock);
+        assertEquals("private/referees/upload_references", controller.getUploadReferencesPage(modelMap));
+        EasyMock.verify(actionsProviderMock);
     }
 
     @Test(expected = ActionNoLongerRequiredException.class)
@@ -211,10 +223,12 @@ public class ReferenceControllerTest {
         final Program program = new ProgramBuilder().build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("app1").program(program).build();
         final ReferenceComment comment = new ReferenceCommentBuilder().application(applicationForm).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
 
         BindingResult errors = new DirectFieldBindingResult(comment, "comment");
         errors.reject("error");
-        assertEquals("private/referees/upload_references", controller.handleReferenceSubmission(applicationForm, comment, errors));
+        assertEquals("private/referees/upload_references", controller.handleReferenceSubmission(comment, errors, modelMap));
     }
 
     @Test
@@ -224,15 +238,19 @@ public class ReferenceControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").program(program).build();
         final Referee referee = new RefereeBuilder().id(1).build();
         final ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();
-
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", application);
+        modelMap.put("user", currentUser);
+        
         commentServiceMock.save(reference);
         refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
-
-        EasyMock.replay(commentServiceMock, refereeServiceMock);
-        assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(application, reference, errors));
-        EasyMock.verify(commentServiceMock, refereeServiceMock);
+        actionsProviderMock.validateAction(application, currentUser, ADD_REFERENCE);
+        
+        EasyMock.replay(commentServiceMock, refereeServiceMock, actionsProviderMock);
+        assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors, modelMap));
+        EasyMock.verify(commentServiceMock, refereeServiceMock, actionsProviderMock);
     }
 
     @Before

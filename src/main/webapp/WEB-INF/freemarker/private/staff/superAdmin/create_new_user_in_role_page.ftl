@@ -42,6 +42,7 @@
 					<div id="configManageUsersBox" class="tabbox">
 						<input type="hidden" id="currentUserEmail" value="${user.email}">
 				        <ul class="tabs">
+				        <li style="display:none;"></li>
 				            <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
 				            	<li><a href="#manageUsers">Manage Users</a></li>
 				            </#if>
@@ -263,7 +264,6 @@
 											<h2>Manage Registry Contacts</h2>
 										<div>
 											<form id="addRemoveRegistryUsers"  autocomplete="off">
-											<div class="tableContainer table table-condensed ">
 	                                        <div class="tableContainer table table-condensed existingUsers">
 													<table class="data" border="0">
 														<tbody>

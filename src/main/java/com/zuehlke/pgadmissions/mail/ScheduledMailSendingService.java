@@ -111,9 +111,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         List<Integer> users = userService.getAllUsersInNeedOfADigestNotification();
         for (Integer userId : users) {
             RegisteredUser user = userService.getUser(userId);
-            if (applicationContext.getBean(this.getClass()).sendDigestToUser(user, taskNotificationSubject, taskReminderSubject, updateNotificationSubject)) {
-                setDigestNotificationType(user, DigestNotificationType.NONE);
-            }
+            applicationContext.getBean(this.getClass()).sendDigestToUser(user, taskNotificationSubject, taskReminderSubject, updateNotificationSubject);
         }
     }
 
@@ -155,6 +153,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             default:
                 break;
             }
+            setDigestNotificationType(user, DigestNotificationType.NONE);
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);

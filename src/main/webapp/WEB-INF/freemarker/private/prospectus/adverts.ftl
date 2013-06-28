@@ -2,7 +2,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/adverts.js' />"></script>
 <div style="overflow:hidden; position:relative">
  <div id="pholder">
-	 <form id="applyForm" action="/pgadmissions/apply/new" method="POST">
+	 <form id="applyForm" action="/pgadmissions/apply/new" method="POST" target="_blank">
 		<input type="hidden" id="program" name="program" value=""/>
 		<input type="hidden" id="advert" name="advert" value=""/>
 		<input type="hidden" id="project" name="project" value=""/>

@@ -90,20 +90,21 @@ public class ApprovalService {
         ApprovalRound approvalRound = form.getLatestApprovalRound();
         Supervisor supervisor = approvalRound.getPrimarySupervisor();
         Boolean confirmed = confirmSupervisionDTO.getConfirmedSupervision();
-
-        Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
-        if (!secondarySupervisor.getUser().getEmail().equals(confirmSupervisionDTO.getSecondarySupervisorEmail())) {
-        	RegisteredUser user = userService.getUserByEmail(confirmSupervisionDTO.getSecondarySupervisorEmail());
-        	for (Supervisor s : approvalRound.getSupervisors()) {
-        		if (!s.getIsPrimary()) {
-        			s.setUser(user);
-        		}
-        	}
-        }
         
         supervisor.setConfirmedSupervision(confirmed);
 
         if (BooleanUtils.isTrue(confirmed)) {
+            // override secondary supervisor
+            Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
+            if (!secondarySupervisor.getUser().getEmail().equals(confirmSupervisionDTO.getSecondarySupervisorEmail())) {
+                RegisteredUser user = userService.getUserByEmail(confirmSupervisionDTO.getSecondarySupervisorEmail());
+                for (Supervisor s : approvalRound.getSupervisors()) {
+                    if (!s.getIsPrimary()) {
+                        s.setUser(user);
+                    }
+                }
+            }
+            
             approvalRound.setProjectDescriptionAvailable(true);
             approvalRound.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
             approvalRound.setProjectAbstract(confirmSupervisionDTO.getProjectAbstract());

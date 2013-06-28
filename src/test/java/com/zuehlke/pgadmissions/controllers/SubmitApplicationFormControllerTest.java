@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
@@ -37,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -64,11 +66,11 @@ public class SubmitApplicationFormControllerTest {
     private UserService userServiceMock;
 
     private MockHttpServletRequest httpServletRequestMock;
-    
+
     private ApplicationFormAccessService accessServiceMock;
-    
+
     private ActionsProvider actionsProviderMock;
-    
+
     @Test
     public void shouldReturnCurrentUser() {
         assertEquals(student, applicationController.getUser());
@@ -90,14 +92,14 @@ public class SubmitApplicationFormControllerTest {
 
     @Test
     public void shouldReturnAdminApplicationViewOnGetForApplicantForEndStateApp() {
-        
+
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
-        
-        
+
         String view = applicationController.getApplicationView(null,
-                new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(1).program(new ProgramBuilder().id(1).build()).applicant(student).build());
+                new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(1).program(new ProgramBuilder().id(1).build()).applicant(student)
+                        .build());
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -106,11 +108,11 @@ public class SubmitApplicationFormControllerTest {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).applicationNumber("abc").program(program)
                 .applicant(student).build();
-        
+
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
-        
+
         String view = applicationController.getApplicationView(null, applicationForm);
         assertEquals("redirect:/editApplicationFormAsProgrammeAdmin?applicationId=abc", view);
     }
@@ -118,12 +120,13 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsNotSubmitted() {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).id(1).program(program).applicant(student).build();
-        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).id(1).program(program).applicant(student)
+                .build();
+
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
-        
+
         String view = applicationController.getApplicationView(null, applicationForm);
         assertEquals("/private/staff/application/main_application_page", view);
     }
@@ -132,12 +135,11 @@ public class SubmitApplicationFormControllerTest {
     public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsDecided() {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(1).program(program).applicant(student).build();
-        
+
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
-        
-        
+
         String view = applicationController.getApplicationView(null, applicationForm);
         assertEquals("/private/staff/application/main_application_page", view);
     }
@@ -145,11 +147,11 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsWithdrawn() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).id(1).applicant(student).build();
-        
+
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
-        
+
         String view = applicationController.getApplicationView(null, applicationForm);
         assertEquals("/private/staff/application/main_application_page", view);
     }
@@ -157,12 +159,13 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsInValidation() {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).program(program).applicant(student).build();
-        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).program(program).applicant(student)
+                .build();
+
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
-        
+
         String view = applicationController.getApplicationView(null, applicationForm);
         assertEquals("/private/staff/application/main_application_page", view);
     }
@@ -172,7 +175,8 @@ public class SubmitApplicationFormControllerTest {
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
-        String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build()).applicant(student).build());
+        String view = applicationController.getApplicationView(null,
+                new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build()).applicant(student).build());
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -196,9 +200,23 @@ public class SubmitApplicationFormControllerTest {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).build();
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+        EasyMock.expect(errorsMock.getFieldError("program")).andReturn(null);
+        
         EasyMock.replay(errorsMock);
         String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
+        EasyMock.verify(errorsMock);
+        
         assertEquals("/private/pgStudents/form/main_application_page", view);
+    }
+
+    @Test(expected = CannotApplyToProgramException.class)
+    public void shouldThrowCannotApplyToProgramExceptionIfNotAvailable() {
+        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).build();
+        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+        EasyMock.expect(errorsMock.getFieldError("program")).andReturn(new FieldError("applicationForm", "application.program.invalid", null));
+        EasyMock.replay(errorsMock);
+        applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
     }
 
     @Test
@@ -210,19 +228,15 @@ public class SubmitApplicationFormControllerTest {
 
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.VALIDATION)).andReturn(event);
-        
+
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
-        
+
         Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
         EasyMock.expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
 
-        StageDuration validationDuration = new StageDurationBuilder()
-                .duration(1)
-                .stage(ApplicationFormStatus.VALIDATION)
-                .unit(DurationUnitEnum.WEEKS)
-                .build();
+        StageDuration validationDuration = new StageDurationBuilder().duration(1).stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).build();
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(validationDuration);
-        
+
         EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock);
 
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
@@ -234,7 +248,7 @@ public class SubmitApplicationFormControllerTest {
         Date submittedDate = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
         Date dueDate = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(submittedDate, validationDuration.getDurationInMinutes());
         assertEquals(0, dueDate.compareTo(applicationForm.getDueDate()));
-        
+
         assertEquals(1, applicationForm.getEvents().size());
         assertNotNull(applicationForm.getDueDate());
         assertEquals(event, applicationForm.getEvents().get(0));

@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -85,6 +86,9 @@ public class SubmitApplicationFormController {
         }
 
         if (result.hasErrors()) {
+            if(result.getFieldError("program") != null) {
+                throw new CannotApplyToProgramException(applicationForm.getProgram());
+            }
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
 

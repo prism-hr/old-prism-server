@@ -52,8 +52,11 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetSupervisorWithId() {
-        Supervisor supervisor = new SupervisorBuilder().id(1).isPrimary(false).build();
-        sessionFactory.getCurrentSession().save(supervisor);
+        RegisteredUser supervisorUser = new RegisteredUserBuilder().firstName("Super").lastName("Visor").email("super@test.com")
+                .username("supervisor").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(true).build();
+        Supervisor supervisor = new SupervisorBuilder().id(1).isPrimary(false).user(supervisorUser).build();
+        save(supervisorUser, supervisor);
         flushAndClearSession();
 
         Supervisor returnedSupervisor = dao.getSupervisorWithId(supervisor.getId());

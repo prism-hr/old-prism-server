@@ -78,6 +78,7 @@ public class AdvertsController {
     @RequestMapping(value = "/standaloneAdverts", method = RequestMethod.GET)
     public String standaloneAdverts(final HttpServletRequest request, ModelMap model) {
         model.put("feedId", request.getParameter("feed"));
+        model.put("shouldOpenNewTab", "true");
     	return "public/login/standalone";
     }
     

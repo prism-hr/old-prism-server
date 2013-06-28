@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+    xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd      
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+        http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd">
+
+    <mvc:interceptors>
+        <bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor" />
+        <bean class="com.zuehlke.pgadmissions.interceptors.EncryptionKeyInterceptor" />
+        <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
+            <property name="sessionFactory" ref="sessionFactory" />
+        </bean>
+    </mvc:interceptors>
+
+    <mvc:resources mapping="/design/**" location="/WEB-INF/design/" cache-period="300" />
+
+    <!-- JSR-303 support will be detected on classpath and enabled automatically -->
+    <mvc:annotation-driven />
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="2097152" />
+        <property name="maxInMemorySize" value="2097152" />
+    </bean>
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>messages</value>
+                <value>tooltips</value>
+                <value>email_subjects</value>
+                <value>timeline_messages</value>
+                <value>actionmessages</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- custom exception resolver -->
+    <bean class="com.zuehlke.pgadmissions.interceptors.PgadmissionsExceptionResolver">
+    </bean>
+
+    <!-- freemarker config -->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
+        <property name="freemarkerVariables">
+            <map>
+                <entry key="encrypter" value-ref="encryptionHelper" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="freemarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="cache" value="true" />
+        <property name="prefix" value="" />
+        <property name="suffix" value=".ftl" />
+        <property name="contentType" value="text/html;charset=UTF-8" />
+        <property name="exposeSessionAttributes" value="true" />
+        <property name="allowSessionOverride" value="true" />
+    </bean>
+
+    <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver">
+        <property name="defaultThemeName" value="default" />
+    </bean>
+
+    <mvc:view-controller path="/register/complete" view-name="public/register/registration_complete" />
+    <mvc:view-controller path="/error" view-name="public/error/error" />
+    <mvc:view-controller path="/404" view-name="public/error/404" />
+    <mvc:view-controller path="/400" view-name="public/error/400" />
+
+</beans>

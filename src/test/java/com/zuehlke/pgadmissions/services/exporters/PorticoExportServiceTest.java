@@ -1031,6 +1031,39 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         EasyMock.verify(applicationFormDAOMock);
         assertEquals(2, applicationForm.getRefereessToSendToPortico().size());
     }
+    
+    @Test
+    public void shouldPrepareApplicationFormIfLessThan2RefereesHaveBeenSelected() throws PorticoExportServiceException {
+        applicationForm = new ValidApplicationFormBuilder().build();
+        exportService = new PorticoExportService(
+                webServiceTemplateMock, 
+                applicationFormDAOMock,
+                commentDAOMock, 
+                attachmentsSendingService, 
+                applicationFormTransferService,
+                applicationContextMock) {
+            @Override
+            public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws PorticoExportServiceException {
+                prepareApplicationForm(applicationForm);
+            }
+        };
+        applicationForm.setStatus(ApplicationFormStatus.REJECTED);
+        for (Referee referee : applicationForm.getReferees()) {
+            referee.setSendToUCL(false);
+        }
+        
+        applicationForm.getReferees().get(0).setSendToUCL(null);
+        applicationForm.getReferees().get(1).setSendToUCL(true);
+        
+        applicationFormDAOMock.save(applicationForm);
+        
+        EasyMock.replay(applicationFormDAOMock);
+        
+        exportService.sendToPortico(applicationForm, null);
+        
+        EasyMock.verify(applicationFormDAOMock);
+        assertEquals(2, applicationForm.getRefereessToSendToPortico().size());        
+    }
 
     @Before
     public void prepare() {

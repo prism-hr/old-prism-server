@@ -102,22 +102,27 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
-    @Transactional
     public void sendDigestsToUsers() {
         log.info("Sending daily digests to users");
         String taskNotificationSubject = resolveMessage(DIGEST_TASK_NOTIFICATION, (Object[]) null);
         String taskReminderSubject = resolveMessage(DIGEST_TASK_REMINDER, (Object[]) null);
         String updateNotificationSubject = resolveMessage(DIGEST_UPDATE_NOTIFICATION, (Object[]) null);
-        List<Integer> users = userService.getAllUsersInNeedOfADigestNotification();
+        List<Integer> users = getAllUsersForDigestNotification();
         for (Integer userId : users) {
-            RegisteredUser user = userService.getUser(userId);
-            applicationContext.getBean(this.getClass()).sendDigestToUser(user, taskNotificationSubject, taskReminderSubject, updateNotificationSubject);
+            applicationContext.getBean(this.getClass()).sendDigestToUser(userId, taskNotificationSubject, taskReminderSubject, updateNotificationSubject);
         }
     }
 
+    @Transactional
+    private List<Integer> getAllUsersForDigestNotification() {
+        List<Integer> users = userService.getAllUsersInNeedOfADigestNotification();
+        return users;
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendDigestToUser(final RegisteredUser user, String taskNotificationSubject, String taskReminderSubject, String updateNotificationSubject) {
+    public boolean sendDigestToUser(final Integer userId, String taskNotificationSubject, String taskReminderSubject, String updateNotificationSubject) {
         try {
+            final RegisteredUser user = userService.getUser(userId);
             EmailModelBuilder modelBuilder = new EmailModelBuilder() {
 
                 @Override

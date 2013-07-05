@@ -19,7 +19,8 @@
   </span>
   </td>
   <td class="program-title">${application.program.title} 
-  <#if (application.projectTitle)?has_content><span class="project">${(application.projectTitle?html)}</span></#if>
+  <#if (application.projectTitle)?has_content><span class="project">
+  <span style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; width:250px; display:inline-block;" title="${(application.projectTitle?html)}">${(application.projectTitle?html)}</span></span></#if>
   </td>
   <td class="status">
     <span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>

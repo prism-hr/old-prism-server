@@ -51,7 +51,9 @@
   <#if (applicationForm.projectTitle)?has_content>
   <div class="row">
     <label>Project</label>
-     ${(applicationForm.projectTitle?html)}
+    <span style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; width:412px; display:inline-block;" title="${(applicationForm.projectTitle?html)}">
+        ${(applicationForm.projectTitle?html)}
+     </div
   </div>
   </#if>
 

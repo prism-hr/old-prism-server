@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,7 +254,7 @@ public class PorticoExportService {
     @Transactional
     protected void prepareApplicationForm(final ApplicationForm form) {
         if (form.getStatus() == ApplicationFormStatus.WITHDRAWN || form.getStatus() == ApplicationFormStatus.REJECTED) {
-            if (form.getReferencesToSendToPortico().isEmpty()) {
+            if (form.getReferencesToSendToPortico().size() < 2) {
                 final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
 
                 // try to find two referees which have provided a reference.
@@ -262,7 +263,9 @@ public class PorticoExportService {
                         break;
                     }
                     
-                    if (referee.hasProvidedReference()) {
+                    if (BooleanUtils.isTrue(referee.getSendToUCL())) {
+                        refereesToSend.put(referee.getId(), referee);
+                    } else if (referee.hasProvidedReference()) {
                         referee.setSendToUCL(true);
                         refereesToSend.put(referee.getId(), referee);
                     }

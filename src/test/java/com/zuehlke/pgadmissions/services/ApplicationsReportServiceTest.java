@@ -247,6 +247,8 @@ public class ApplicationsReportServiceTest {
         assertEquals("1939-09-01", getDateValue(table, row, "outcomedate"));
         assertEquals("Conditional", getTextValue(table, row, "outcomeType"));
         assertEquals("Conditions", getTextValue(table, row, "outcomeNote"));
+        assertEquals("fooBar", getTextValue(table, row, "sourcesOfInterest"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "sourcesOfInterestText"));
     }
     
     @Test
@@ -302,6 +304,66 @@ public class ApplicationsReportServiceTest {
 
         // THEN
         assertEquals(0, table.getRows().size());
+    }
+    
+    @Test
+    public void shouldNotThrowExceptionIfSourcesOfInterestIsNull() {
+        // GIVEN
+        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
+        Program program1 = new ProgramBuilder().code("ABC").title("BBC").build();
+        PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
+        ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(null).build();
+        ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1).build();
+        List<ApplicationForm> applications = Lists.newArrayList(app1);
+
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(new ArrayList<ApplicationForm>());
+
+        // WHEN
+        EasyMock.replay(applicationsServiceMock);
+        DataTable table = service.getApplicationsReport(user, filtering);
+        EasyMock.verify(applicationsServiceMock);
+
+        // THEN
+        assertEquals(1, table.getRows().size());
+
+        TableRow row = table.getRow(0);
+        assertEquals("07", getTextValue(table, row, "applicationId"));
+        assertEquals("Genowefa", getTextValue(table, row, "firstNames"));
+        assertEquals("Pigwa", getTextValue(table, row, "lastName"));
+        assertEquals("gienia@pigwa.pl", getTextValue(table, row, "email"));
+        assertEquals("ABC", getTextValue(table, row, "programmeId"));
+        assertEquals("BBC", getTextValue(table, row, "programmeName"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "projectTitle"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "studyOption"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "provisionalSupervisors"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "academicYear"));
+        assertEquals("null", getDateValue(table, row, "submittedDate"));
+        assertEquals("null", getDateValue(table, row, "lastEditedDate"));
+        assertEquals("Validation", getTextValue(table, row, "status"));
+        assertEquals(0, getNumberValue(table, row, "validationTime"), 0);
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "feeStatus"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "academicallyQualified"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "adequateEnglish"));
+        assertEquals(0, getNumberValue(table, row, "receivedReferences"), 0);
+        assertEquals(0, getNumberValue(table, row, "positiveReviewEndorsements"), 0);
+        assertEquals(0, getNumberValue(table, row, "negativeReviewEndorsements"),0);
+        assertEquals(0, getNumberValue(table, row, "declinedReferences"),0);
+        assertEquals(0, getNumberValue(table, row, "interviewTime"),0);
+        assertEquals(0, getNumberValue(table, row, "interviewReports"),0);
+        assertEquals(0, getNumberValue(table, row, "positiveInterviewEndorsements"),0);
+        assertEquals(0, getNumberValue(table, row, "negativeInterviewEndorsements"),0);
+        assertEquals(0, getNumberValue(table, row, "approvalTime"),0);
+        assertEquals(0, getNumberValue(table, row, "approvalStages"),0);
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "primarySupervisor"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "secondarySupervisor"));
+        assertEquals("Not approved", getTextValue(table, row, "outcome"));
+        assertEquals("null", getDateValue(table, row, "outcomedate"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "outcomeType"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "outcomeNote"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "sourcesOfInterest"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "sourcesOfInterestText"));
     }
 
     @Before

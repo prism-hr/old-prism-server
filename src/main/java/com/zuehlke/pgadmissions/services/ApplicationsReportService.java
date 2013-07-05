@@ -154,7 +154,7 @@ public class ApplicationsReportService {
                 row.addCell(program.getTitle());
                 row.addCell(getProjectTitle(app));
                 row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : StringUtils.EMPTY);
-                row.addCell(programmeDetails.getSourcesOfInterest().getName());
+                row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterest().getName()) : StringUtils.EMPTY);
                 row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterestText()));
                 row.addCell(getSuggestedSupervisors(programmeDetails));
                 row.addCell(getAcademicYear(app));

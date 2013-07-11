@@ -87,7 +87,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
-    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap) {
+    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
 
         if (result.hasErrors()) {

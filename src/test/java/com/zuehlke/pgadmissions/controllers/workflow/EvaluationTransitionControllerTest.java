@@ -77,24 +77,24 @@ public class EvaluationTransitionControllerTest {
         stateComment.setDocuments(documents);
         stateComment.setNextStatus(ApplicationFormStatus.REJECTED);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
+        stateComment.setFastTrackApplication(false);
         ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().id(6).build();
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                accessServiceMock, actionsProviderMock) {
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
             }
 
         };
-        EasyMock.expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(), stateComment.getType(), stateComment.getNextStatus()))
-                .andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
+                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
-        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null);
 
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
         assertEquals("bob", view);
@@ -110,19 +110,19 @@ public class EvaluationTransitionControllerTest {
         stateComment.setDocuments(documents);
         stateComment.setNextStatus(ApplicationFormStatus.APPROVED);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
+        stateComment.setFastTrackApplication(false);
         ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVED).id(6).build();
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                accessServiceMock, actionsProviderMock) {
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
             }
 
         };
-        EasyMock.expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(), stateComment.getType(), stateComment.getNextStatus()))
-                .andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
+                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         EasyMock.expect(approvalServiceMock.moveToApproved(applicationForm)).andReturn(true);
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
@@ -130,7 +130,7 @@ public class EvaluationTransitionControllerTest {
         EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
         ModelMap modelMap = new ModelMap();
-        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, modelMap, null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, modelMap, null, null);
 
         EasyMock.verify(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
         assertEquals("move.approved", modelMap.get("messageCode"));
@@ -148,25 +148,25 @@ public class EvaluationTransitionControllerTest {
         stateComment.setDocuments(documents);
         stateComment.setNextStatus(ApplicationFormStatus.REJECTED);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
+        stateComment.setFastTrackApplication(false);
         ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).id(6).build();
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                accessServiceMock, actionsProviderMock) {
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
             }
 
         };
-        EasyMock.expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),stateComment.getType(), ApplicationFormStatus.REJECTED))
-                .andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
+                        stateComment.getType(), ApplicationFormStatus.REJECTED)).andReturn(comment);
         commentServiceMock.save(comment);
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
-        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null);
         assertEquals("bob", view);
         EasyMock.verify(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
     }
@@ -181,9 +181,10 @@ public class EvaluationTransitionControllerTest {
         stateComment.setDocuments(documents);
         stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
+        stateComment.setFastTrackApplication(false);
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                accessServiceMock, actionsProviderMock) {
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -191,14 +192,13 @@ public class EvaluationTransitionControllerTest {
 
         };
         InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).build();
-        EasyMock.expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),stateComment.getType(), stateComment.getNextStatus()))
-                .andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
+                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
-        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null);
         assertEquals("bob", view);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
@@ -213,9 +213,10 @@ public class EvaluationTransitionControllerTest {
         stateComment.setDocuments(documents);
         stateComment.setNextStatus(ApplicationFormStatus.APPROVAL);
         stateComment.setType(CommentType.REVIEW_EVALUATION);
+        stateComment.setFastTrackApplication(false);
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                accessServiceMock, actionsProviderMock) {
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -224,9 +225,8 @@ public class EvaluationTransitionControllerTest {
         };
 
         ReviewEvaluationComment comment = new ReviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVAL).id(6).build();
-        EasyMock.expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),stateComment.getType(), stateComment.getNextStatus()))
-                .andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
+                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
@@ -235,7 +235,7 @@ public class EvaluationTransitionControllerTest {
         applicationServiceMock.refresh(applicationForm);
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, applicationServiceMock, userServiceMock);
-        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null);
         EasyMock.verify(commentServiceMock, commentServiceMock, stateTransitionViewServiceMock, applicationServiceMock, userServiceMock);
 
         assertEquals("bob", view);
@@ -251,9 +251,10 @@ public class EvaluationTransitionControllerTest {
         stateComment.setDocuments(documents);
         stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
+        stateComment.setFastTrackApplication(false);
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                accessServiceMock, actionsProviderMock) {
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -261,14 +262,13 @@ public class EvaluationTransitionControllerTest {
 
         };
         InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).build();
-        EasyMock.expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),stateComment.getType(), stateComment.getNextStatus()))
-                .andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
+                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         ModelMap modelMap = new ModelMap();
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
-        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, modelMap, true, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, modelMap, true, null);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
         assertEquals("redirect:/applications?messageCode=delegate.success&application=ABC", view);
@@ -285,9 +285,10 @@ public class EvaluationTransitionControllerTest {
         stateComment.setDocuments(documents);
         stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
         stateComment.setType(CommentType.REVIEW_EVALUATION);
+        stateComment.setFastTrackApplication(false);
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                accessServiceMock, actionsProviderMock) {
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -295,14 +296,13 @@ public class EvaluationTransitionControllerTest {
 
         };
         ReviewEvaluationComment comment = new ReviewEvaluationCommentBuilder().id(6).build();
-        EasyMock.expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),stateComment.getType(), stateComment.getNextStatus()))
-                .andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
+                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
-        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null);
         assertEquals("bob", view);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
@@ -312,8 +312,10 @@ public class EvaluationTransitionControllerTest {
     public void shouldReturnViewIfErrors() {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock);
-        
-        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock) {
+
+        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock) {
             @Override
             @ModelAttribute("applicationForm")
             public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -323,8 +325,9 @@ public class EvaluationTransitionControllerTest {
 
         StateChangeComment stateComment = new StateChangeComment();
         stateComment.setType(CommentType.REVIEW_EVALUATION);
+        stateComment.setFastTrackApplication(false);
 
-        String view = controller.addComment(null, stateComment, bindingResultMock, new ModelMap(), null, null, false);
+        String view = controller.addComment(null, stateComment, bindingResultMock, new ModelMap(), null, null);
 
         EasyMock.verify(commentServiceMock, applicationServiceMock);
         assertEquals("private/staff/admin/state_transition", view);
@@ -336,11 +339,12 @@ public class EvaluationTransitionControllerTest {
         stateChangeComment.setComment("comment");
         stateChangeComment.setNextStatus(ApplicationFormStatus.APPROVED);
         stateChangeComment.setType(CommentType.APPROVAL_EVALUATION);
+        stateChangeComment.setFastTrackApplication(false);
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABCD-EFG").build();
 
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, new CommentFactory(),
-                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock) {
+                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -352,7 +356,7 @@ public class EvaluationTransitionControllerTest {
 
         EasyMock.replay(approvalServiceMock, commentServiceMock, userServiceMock);
 
-        String resultView = controller.addComment(applicationForm, stateChangeComment, bindingResultMock, new ModelMap(), null, null, false);
+        String resultView = controller.addComment(applicationForm, stateChangeComment, bindingResultMock, new ModelMap(), null, null);
 
         assertEquals("redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7", resultView);
         EasyMock.verify(approvalServiceMock, commentServiceMock, userServiceMock);
@@ -374,8 +378,8 @@ public class EvaluationTransitionControllerTest {
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                accessServiceMock, actionsProviderMock);
+                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
+                        accessServiceMock, actionsProviderMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }
 

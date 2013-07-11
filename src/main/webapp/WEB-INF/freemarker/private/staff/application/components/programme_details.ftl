@@ -46,15 +46,7 @@
       <!-- Project -->
       <div class="admin_row">
         <label class="admin_row_label">Project</label>
-        <div class="field">
-            <#if (applicationForm.projectTitle)?has_content>
-            <span style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; width:580px; display:inline-block;" title="${(applicationForm.projectTitle?html)}">
-                ${(applicationForm.projectTitle?html)}
-            </span>
-            <#else>
-                Not Required
-            </#if>
-        </div>
+        <div class="field"><#if (applicationForm.projectTitle)?has_content>${(applicationForm.projectTitle?html)}<#else>Not Required</#if></div>
       </div>
       
       <!-- Referrer -->

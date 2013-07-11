@@ -49,11 +49,11 @@
       ${applicationForm.program.code} - ${applicationForm.program.title}
   </div> 
   <#if (applicationForm.projectTitle)?has_content>
-  <div class="row">
+  <div class="row project">
     <label>Project</label>
-    <span style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; width:412px; display:inline-block;" title="${(applicationForm.projectTitle?html)}">
+    <span>
         ${(applicationForm.projectTitle?html)}
-     </div
+     </span>
   </div>
   </#if>
 

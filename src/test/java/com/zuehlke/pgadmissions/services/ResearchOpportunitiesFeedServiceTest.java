@@ -32,24 +32,17 @@ public class ResearchOpportunitiesFeedServiceTest {
     private ResearchOpportunitiesFeedService service;
     
     private static final String LARGE_IFRAME = ""
-            + "<html> "
-            + "<body> "
             + "<iframe src=\"http://localhost:8080/pgadmissions/adverts/standaloneAdverts?feed=1\" " 
             + "width=\"430\" " 
             + "height=\"514\" " 
-            + "style=\"border:none;\"> "
-            + "</body> "
-            + "</html> ";
+            + "style=\"border:none;\"> ";
     
     private static final String SMALL_IFRAME = ""
-            + "<html> "
-            + "<body> "
+
             + "<iframe src=\"http://localhost:8080/pgadmissions/adverts/standaloneAdverts?feed=1\" " 
             + "width=\"210\" " 
             + "height=\"514\" " 
-            + "style=\"border:none;\"> "
-            + "</body> "
-            + "</html> ";
+            + "style=\"border:none;\"> ";
     
     @Before
     public void prepare() {

@@ -184,7 +184,8 @@ public class PorticoExportService {
     }
 
     @Transactional
-    public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener) throws PorticoExportServiceException {
+    public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transferObj, final TransferListener listener) throws PorticoExportServiceException {
+        ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         try {
             listener.sftpTransferStarted(form);
             log.info(String.format("Calling PORTICO SFTP service [applicationNumber=%s]", form.getApplicationNumber()));

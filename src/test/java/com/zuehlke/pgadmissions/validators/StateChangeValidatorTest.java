@@ -12,8 +12,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
@@ -43,6 +45,8 @@ public class StateChangeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "comment");
 		validationComment.setComment("");
 		validationComment.setConfirmNextStage(true);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        validationComment.setApplication(application);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
@@ -53,6 +57,8 @@ public class StateChangeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "englishCompentencyOk");
 		validationComment.setEnglishCompentencyOk(null);
         validationComment.setConfirmNextStage(true);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        validationComment.setApplication(application);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("englishCompentencyOk").getCode());
@@ -63,6 +69,8 @@ public class StateChangeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "homeOrOverseas");
 		validationComment.setHomeOrOverseas(null);
         validationComment.setConfirmNextStage(true);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        validationComment.setApplication(application);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("homeOrOverseas").getCode());
@@ -73,6 +81,8 @@ public class StateChangeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "qualifiedForPhd");
 		validationComment.setQualifiedForPhd(null);
         validationComment.setConfirmNextStage(true);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        validationComment.setApplication(application);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("qualifiedForPhd").getCode());
@@ -83,6 +93,8 @@ public class StateChangeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(validationComment, "nextStatus");
 		validationComment.setNextStatus(null);
         validationComment.setConfirmNextStage(true);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        validationComment.setApplication(application);
 		stateChangeValidator.validate(validationComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("nextStatus").getCode());
@@ -93,6 +105,8 @@ public class StateChangeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeComment, "comment");
 		stateChangeComment.setComment("");
 		stateChangeComment.setConfirmNextStage(true);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        stateChangeComment.setApplication(application);
 		stateChangeValidator.validate(stateChangeComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
@@ -103,6 +117,8 @@ public class StateChangeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeComment, "nextStatus");
 		stateChangeComment.setNextStatus(null);
         stateChangeComment.setConfirmNextStage(true);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        stateChangeComment.setApplication(application);
 		stateChangeValidator.validate(stateChangeComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("nextStatus").getCode());
@@ -112,6 +128,8 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoConfirmationFieldWasSubmitted() {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeComment, "confirmNextStage");
 	    stateChangeComment.setConfirmNextStage(null);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        stateChangeComment.setApplication(application);
 	    stateChangeValidator.validate(stateChangeComment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
@@ -121,6 +139,8 @@ public class StateChangeValidatorTest {
     public void shouldRejectIfNoConfirmationWasSelected() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeComment, "confirmNextStage");
         stateChangeComment.setConfirmNextStage(false);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        stateChangeComment.setApplication(application);
         stateChangeValidator.validate(stateChangeComment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());

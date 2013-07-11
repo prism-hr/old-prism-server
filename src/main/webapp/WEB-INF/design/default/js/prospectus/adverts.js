@@ -172,7 +172,7 @@ function renderAdvert(advert){
 }
 
 function closingDateString(closingDate){
-	if(closingDate === undefined || closingDate=="undefined"){
+	if(closingDate == null){
 		return "No closing date";
 	}
 	return 'Closing date: <span>'+formatDate(closingDate)+'</span>';

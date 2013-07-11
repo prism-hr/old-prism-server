@@ -51,7 +51,7 @@ public class RejectApplicationController {
     private final RejectionValidator rejectionValidator;
 
     private final ApplicationsService applicationsService;
-    
+
     private final ApplicationFormAccessService accessService;
 
     private final ActionsProvider actionsProvider;
@@ -78,16 +78,9 @@ public class RejectApplicationController {
         return REJECT_VIEW_NAME;
     }
 
-    @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.GET)
-    public void defaultGet() {
-        return;
-    }
-
-    @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,
             @ModelAttribute("applicationForm") ApplicationForm application, ModelMap modelMap) {
-        checkPermissionForApplication(application);
-        checkApplicationStatus(application);
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;
         }

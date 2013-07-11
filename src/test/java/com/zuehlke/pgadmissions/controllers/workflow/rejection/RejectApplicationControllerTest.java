@@ -307,16 +307,4 @@ public class RejectApplicationControllerTest {
         Assert.assertEquals(VIEW_RESULT, nextView);
     }
 
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void throwExceptionWhenMovingToReviewAsInvalidUser() {
-        RegisteredUser applicant = new RegisteredUserBuilder().id(156).username("appl")//
-                .role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build())//
-                .build();
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
-        EasyMock.replay(userServiceMock);
-        Rejection rejection = new RejectionBuilder().id(3).build();
-        controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
-    }
-
 }

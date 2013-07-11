@@ -65,7 +65,7 @@
           <section class="form-rows">
             <h2 class="no-arrow">Reject</h2>
             <div>
-              <form method="POST" action="<@spring.url '/rejectApplication/moveApplicationToReject'/>">				
+              <form method="POST" action="<@spring.url '/rejectApplication'/>">				
               		  <@spring.bind "rejection.rejectionReason" />
                       <#if spring.status.errors.hasErrors()>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i> 

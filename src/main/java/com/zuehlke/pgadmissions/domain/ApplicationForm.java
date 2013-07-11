@@ -1146,13 +1146,21 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.project = project;
     }
 
+    public String getProgramAndProjectTitle() {
+        if (getProjectTitle() == null) {
+            return getProgram().getTitle();
+        }
+        String format = "%s (project: %s)";
+        return String.format(format, getProgram().getTitle(), getProjectTitle());
+    }
+
     public String getProjectOrProgramTitle() {
         if (getProjectTitle() != null) {
             return getProjectTitle();
         }
         return getProgram().getTitle();
     }
-    
+
     public ApplicationFormStatus getNextStatus() {
         StateChangeComment stateChangeComment = null;
         switch (getStatus()) {

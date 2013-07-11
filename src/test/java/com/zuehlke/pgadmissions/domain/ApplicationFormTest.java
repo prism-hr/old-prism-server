@@ -155,7 +155,7 @@ public class ApplicationFormTest {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build())
                 .comments(genericComment, interviewComment, scheduleComment, applicantVoteComment, interviewerVoteComment).build();
-        
+
         List<Comment> visibleComments = applicationForm.getVisibleComments(user);
         assertThat(visibleComments, CoreMatchers.hasItems(scheduleComment, applicantVoteComment));
     }
@@ -786,6 +786,18 @@ public class ApplicationFormTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
 
         assertFalse("Should have returned false because the study options do not match the programme instances", applicationForm.isProgrammeStillAvailable());
+    }
+
+    @Test
+    public void shouldGetProgramAndProjectTitle() {
+        ApplicationForm application = new ApplicationFormBuilder().program(new ProgramBuilder().title("Ppp").build()).projectTitle("Rrr").build();
+        assertEquals("Ppp (project: Rrr)", application.getProgramAndProjectTitle());
+    }
+    
+    @Test
+    public void shouldGetProgramAndProjectTitleWhenProjectTitleIsNull() {
+        ApplicationForm application = new ApplicationFormBuilder().program(new ProgramBuilder().title("Ppp").build()).build();
+        assertEquals("Ppp", application.getProgramAndProjectTitle());
     }
 
     @After

@@ -25,24 +25,16 @@ public class ResearchOpportunitiesFeedService {
     private final ProgramDAO programDAO;
     
     private static final String LARGE_IFRAME = ""
-            + "<html> "
-            + "<body> "
             + "<iframe src=\"${host}/pgadmissions/adverts/standaloneAdverts?feed=${id}\" " 
             + "width=\"430\" " 
             + "height=\"514\" " 
-            + "style=\"border:none;\"> "
-            + "</body> "
-            + "</html> ";
+            + "style=\"border:none;\"> ";
     
     private static final String SMALL_IFRAME = ""
-            + "<html> "
-            + "<body> "
             + "<iframe src=\"${host}/pgadmissions/adverts/standaloneAdverts?feed=${id}\" " 
             + "width=\"210\" " 
             + "height=\"514\" " 
-            + "style=\"border:none;\"> "
-            + "</body> "
-            + "</html> ";
+            + "style=\"border:none;\"> ";
     
     private final String host;
     

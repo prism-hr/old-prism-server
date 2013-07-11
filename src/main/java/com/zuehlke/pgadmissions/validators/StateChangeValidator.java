@@ -8,6 +8,7 @@ import org.springframework.validation.ValidationUtils;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Component
 public class StateChangeValidator extends AbstractValidator {
@@ -32,8 +33,17 @@ public class StateChangeValidator extends AbstractValidator {
                 errors.rejectValue("homeOrOverseas", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
         }
-
+        
         StateChangeComment comment = (StateChangeComment) target;
+        
+        ApplicationFormStatus nextStatus = comment.getNextStatus();
+        boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPROVED.equals(nextStatus)||ApplicationFormStatus.REJECTED.equals(nextStatus));
+        boolean fastrackValueMissing = comment.getFastTrackApplication() == null && comment.getApplication().getBatchDeadline() != null;        
+        
+        if(stateChangeRequiresFastTrack&&fastrackValueMissing){
+            errors.rejectValue("fastTrackApplication", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
+
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
         if (comment.getNextStatus() == null) {
             errors.rejectValue("nextStatus", EMPTY_DROPDOWN_ERROR_MESSAGE);

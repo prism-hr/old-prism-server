@@ -87,14 +87,10 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
-    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
-            @RequestParam(required = false) Boolean fastTrackApplication, ModelMap modelMap) {
+    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        
-        if (result.hasErrors() || (fastTrackApplication == null && applicationForm.getBatchDeadline() != null)) {
-            if (fastTrackApplication == null) {
-                modelMap.addAttribute("fastTrackMissing", true);
-            }
+
+        if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
 
@@ -117,7 +113,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
             applicationForm.setDueDate(new Date());
         }
         
-        if (BooleanUtils.isTrue(fastTrackApplication)) {
+        if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
 

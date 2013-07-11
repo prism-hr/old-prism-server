@@ -49,11 +49,11 @@ public class EvaluationTransitionController extends StateTransitionController {
 
     @Autowired
     public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+                    CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+                    StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
+                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
+                        documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
     }
 
     @ModelAttribute("comment")
@@ -67,48 +67,44 @@ public class EvaluationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
-    public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
-            ModelMap modelMap, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer,
-            @RequestParam(required = false) Boolean fastTrackApplication) {
-    	
+    public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
+                    @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap,
+                    @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+
         modelMap.put("delegate", delegate);
-        
+
         // validate validation action is still available
         switch (stateChangeComment.getType()) {
         case APPROVAL_EVALUATION:
-        	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
-	        break;
+            actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+            break;
         case REVIEW_EVALUATION:
-        	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_REVIEW_STAGE);
-	        break;
+            actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_REVIEW_STAGE);
+            break;
         case INTERVIEW_EVALUATION:
-        	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_INTERVIEW_STAGE);
-	        break;
+            actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_INTERVIEW_STAGE);
+            break;
         default:
-        	throw new IllegalStateException("illegal StateChangeComment type passed to evaluation controller");
+            throw new IllegalStateException("illegal StateChangeComment type passed to evaluation controller");
         }
-        
-        boolean stateChangeRequiresFastTrack = stateChangeComment==null || !(ApplicationFormStatus.APPROVED.equals(stateChangeComment.getNextStatus())||ApplicationFormStatus.REJECTED.equals(stateChangeComment.getNextStatus()));
-        boolean fastrackValueMissing = fastTrackApplication == null && applicationForm.getBatchDeadline() != null;
-		if (result.hasErrors() || (stateChangeRequiresFastTrack && fastrackValueMissing)) {
-            if (fastTrackApplication == null) {
-                modelMap.addAttribute("fastTrackMissing", true);
-            }
+
+        if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
 
         RegisteredUser user = getCurrentUser();
-        
+
         if (BooleanUtils.isNotTrue(delegate)) {
             applicationForm.setApplicationAdministrator(null);
         }
-        
-        if (BooleanUtils.isTrue(fastTrackApplication)) {
+
+        if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
-        
-        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(), stateChangeComment.getType(),
-                stateChangeComment.getNextStatus());
+        ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
+
+        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
+                        stateChangeComment.getType(), nextStatus);
 
         if (newComment instanceof ApprovalEvaluationComment) {
 
@@ -122,7 +118,8 @@ public class EvaluationTransitionController extends StateTransitionController {
                     modelMap.put("messageCode", "move.approved");
                     modelMap.put("application", applicationForm.getApplicationNumber());
                 } else {
-                    Comment genericComment = commentFactory.createComment(applicationForm, user, newComment.getComment(), newComment.getDocuments(), CommentType.GENERIC, null);
+                    Comment genericComment = commentFactory.createComment(applicationForm, user, newComment.getComment(), newComment.getDocuments(),
+                                    CommentType.GENERIC, null);
                     commentService.save(genericComment);
                     return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7";
                 }
@@ -134,7 +131,7 @@ public class EvaluationTransitionController extends StateTransitionController {
         applicationsService.save(applicationForm);
         commentService.save(newComment);
 
-        if (stateChangeComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
+        if (nextStatus == ApplicationFormStatus.APPROVAL) {
             applicationsService.makeApplicationNotEditable(applicationForm);
         }
 

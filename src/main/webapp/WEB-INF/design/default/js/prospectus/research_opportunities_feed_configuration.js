@@ -129,7 +129,7 @@ function onFeedSaveOrUpdate(url, method, returnFunction) {
                 }
 			} else {
 				loadExistingFeeds();
-				//$("#feedCode").val(data.iframeCode);
+				$("#feedCode").val(data.iframeCode);
 				returnFunction(data.id);
 			}
 		}

@@ -6,5 +6,5 @@
 	<#if advertId??>
 		<input type="hidden" id="advert" name="advert" value="${projectId}" />
 	</#if>
-	<button style="border: none; cursor: pointer; padding: 0" type="submit" disabled="disabled"><img border="0" src="${host}/pgadmissions/design/default/images/prism_apply_now.png" /></button>
+	<button style="border: none; cursor: pointer; padding: 0" type="submit"><img border="0" src="${host}/pgadmissions/design/default/images/prism_apply_now.png" /></button>
 </form>

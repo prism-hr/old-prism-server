@@ -297,6 +297,7 @@ public class ApprovalService {
         }
         
         form.setStatus(ApplicationFormStatus.APPROVED);
+        form.setPendingApprovalRestart(false);
         form.setApprover(userService.getCurrentUser());
         form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         sendNotificationToApplicant(form);

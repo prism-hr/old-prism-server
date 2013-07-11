@@ -590,6 +590,37 @@ public class ApprovalServiceTest {
         assertEquals(1, application.getEvents().size());
         assertEquals(event, application.getEvents().get(0));
     }
+    
+    @Test
+    public void shouldResetIsPendingApprovalRestartFlagWhenApproved(){
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.replay(userServiceMock);
+
+        Date startDate = new Date();
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
+                .enabled(true).studyOption("1", "full").build();
+        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
+                .programmeDetails(programmeDetails).pendingApprovalRestart(true).build();
+
+        applicationFormDAOMock.save(application);
+
+        StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
+        EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
+        EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock);
+
+        approvalService.moveToApproved(application);
+
+        EasyMock.verify(applicationFormDAOMock, commentDAOMock);
+        assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
+        assertEquals(false, application.isPendingApprovalRestart());
+        assertEquals(currentUser, application.getApprover());
+
+        assertEquals(1, application.getEvents().size());
+        assertEquals(event, application.getEvents().get(0));
+    }
 
     @Test
     public void shouldChangeStartDate() {

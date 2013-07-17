@@ -64,7 +64,10 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
 
     @ModelAttribute("comment")
     public InterviewEvaluationComment getComment(@RequestParam String applicationId) {
-        return new InterviewEvaluationComment();
+        InterviewEvaluationComment comment = new InterviewEvaluationComment();
+        comment.setApplication(getApplicationForm(applicationId));
+        comment.setUser(getCurrentUser());
+        return comment;
     }
 
     @ModelAttribute("applicationForm")

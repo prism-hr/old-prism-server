@@ -58,7 +58,10 @@ public class EvaluationTransitionController extends StateTransitionController {
 
     @ModelAttribute("comment")
     public StateChangeComment getComment(@RequestParam String applicationId) {
-        return new StateChangeComment();
+        StateChangeComment comment = new StateChangeComment();
+        comment.setApplication(getApplicationForm(applicationId));
+        comment.setUser(getCurrentUser());
+        return comment;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/submitEvaluationComment")

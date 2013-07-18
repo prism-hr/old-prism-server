@@ -120,8 +120,6 @@ public class MoveToInterviewController {
         return "/private/common/ajax_OK";
     }
 
-
-
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);

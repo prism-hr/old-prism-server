@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.PassportInformation;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -191,12 +192,12 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         headerEvent = new HeaderEvent(new Chunk(form.getProgram().getTitle(), SMALLER_FONT), new Chunk(form.getApplicationNumber(), SMALLER_FONT),
-                submittedDateHeader);
+                        submittedDateHeader);
         writer.setPageEvent(headerEvent);
     }
 
     protected void addCoverPage(final ApplicationForm form, final Document pdfDocument, final PdfWriter writer) throws MalformedURLException, IOException,
-            DocumentException {
+                    DocumentException {
         pdfDocument.newPage();
 
         Image image = Image.getInstance(this.getClass().getResource("/prism_logo.png"));
@@ -222,11 +223,13 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
         RegisteredUser applicant = form.getApplicant();
         String fullName = Joiner.on(" ").skipNulls()
-                .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
+                        .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
         table.addCell(newTableCell(fullName, SMALL_FONT));
         table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
-
         table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
+
+        addProjectTitleToTable(table,form);
+        addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Application Number", SMALL_BOLD_FONT));
         table.addCell(newTableCell(form.getApplicationNumber(), SMALL_FONT));
@@ -260,12 +263,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
-        table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
-        if (!StringUtils.isBlank(form.getProgrammeDetails().getProjectName())) {
-            table.addCell(newTableCell(form.getProgrammeDetails().getProjectName(), SMALL_FONT));
-        } else {
-            table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
-        }
+        addProjectTitleToTable(table, form);
+        
+        addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
         if (form.getProgrammeDetails().getStartDate() != null) {
@@ -1005,8 +1005,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     try {
                         readPdf(pdfDocument, doc, pdfWriter);
                     } catch (Exception e) {
-                        log.warn(
-                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
+                        log.warn(String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
                                         doc.getFileName()), e);
                     }
                 }
@@ -1049,8 +1048,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     try {
                         readPdf(pdfDocument, refDocument, pdfWriter);
                     } catch (Exception e) {
-                        log.warn(
-                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
+                        log.warn(String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
                                         refDocument.getFileName()), e);
                     }
                 }
@@ -1068,6 +1066,28 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             headerEvent.setAddHeaderAndFooter(false);
             cb.addTemplate(page, 0, 0);
             pdfDocument.setPageSize(PageSize.A4);
+        }
+    }
+    
+    private void addClosingDateToTable(PdfPTable table, final ApplicationForm form) {
+        table.addCell(newTableCell("Closing date", SMALL_BOLD_FONT));
+        Project project = form.getProject();
+        String closingDate = NOT_PROVIDED;
+        if (project != null && project.getClosingDate() != null) {
+            closingDate = dateFormat.format(project.getClosingDate());
+            table.addCell(newTableCell(closingDate, SMALL_FONT));
+        }else{
+            table.addCell(newTableCell(closingDate, SMALL_GREY_FONT));
+        }
+    }
+    
+    private void addProjectTitleToTable(PdfPTable table, final ApplicationForm form) {
+        table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
+        String projectTitle = form.getProjectTitle();
+        if (StringUtils.isBlank(projectTitle)) {
+            table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+        } else {
+            table.addCell(newTableCell(projectTitle, SMALL_FONT));
         }
     }
 
@@ -1156,5 +1176,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         public void setAddHeaderAndFooter(boolean addHeader) {
             this.addHeaderAndFooter = addHeader;
         }
+
     }
+
 }

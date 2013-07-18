@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -26,6 +27,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -65,7 +67,8 @@ public class MoveToInterviewController {
     @Autowired
     public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
             InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
-            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider) {
+            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService,
+            final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -85,7 +88,7 @@ public class MoveToInterviewController {
         }
         return application;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "moveToInterview")
     public String getInterviewDetailsPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
@@ -99,18 +102,17 @@ public class MoveToInterviewController {
         return INTERVIEWERS_SECTION;
 
     }
-    
+
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToInterview(@Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult,
-            ModelMap modelMap) {
+    public String moveToInterview(@Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ASSIGN_INTERVIEWERS);
-        
+
         if (bindingResult.hasErrors()) {
             return INTERVIEWERS_SECTION;
         }
-        
+
         interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
         if (interview.isParticipant(getUser())) {
@@ -168,7 +170,12 @@ public class MoveToInterviewController {
         ApplicationForm applicationForm = getApplicationForm((String) applicationId);
         Interview latestInterview = applicationForm.getLatestInterview();
         if (latestInterview != null) {
-            interview.setInterviewers(latestInterview.getInterviewers());
+            for (Interviewer interviewer : latestInterview.getInterviewers()) {
+                InterviewComment interviewComment = interviewer.getInterviewComment();
+                if (interviewComment == null || BooleanUtils.isNotTrue(interviewComment.isDecline())) {
+                    interview.getInterviewers().add(interviewer);
+                }
+            }
         }
         Set<RegisteredUser> defaultInterviewers = Sets.newLinkedHashSet(applicationForm.getReviewersWillingToInterview());
         if (applicationForm.getApplicationAdministrator() != null) {
@@ -198,8 +205,6 @@ public class MoveToInterviewController {
         binder.registerCustomEditor(null, "timeslots", interviewTimeslotsPropertyEditor);
         binder.registerCustomEditor(null, "duration", new CustomNumberEditor(Integer.class, true));
     }
-
-
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {

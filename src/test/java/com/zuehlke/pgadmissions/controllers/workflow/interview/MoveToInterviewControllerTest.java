@@ -27,6 +27,7 @@ import org.springframework.web.bind.WebDataBinder;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -36,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -224,8 +226,13 @@ public class MoveToInterviewControllerTest {
         ReviewComment reviewThree = new ReviewCommentBuilder().id(3).user(userThree).willingToInterview(true).build();
         Interviewer interviewerOne = new InterviewerBuilder().id(1).user(userOne).build();
         Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(userTwo).build();
+        
+        RegisteredUser decliningUser = new RegisteredUserBuilder().id(4).build();
+        InterviewComment interviewComment = new InterviewCommentBuilder().decline(true).build();
+        Interviewer decliningInterviewer = new InterviewerBuilder().id(4).user(decliningUser).interviewComment(interviewComment).build();
+        
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(reviewOne, reviewTwo, reviewThree)
-                .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
+                .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo, decliningInterviewer).build()).build();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
         EasyMock.replay(applicationServiceMock);

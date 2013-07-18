@@ -105,7 +105,7 @@ public class MoveToReviewController {
             List<Reviewer> newReviewers = Lists.newArrayList();
             for (Reviewer lastReviewer : latestReviewRound.getReviewers()) {
                 ReviewComment lastReview = lastReviewer.getReview();
-                if (lastReview == null || !BooleanUtils.isTrue(lastReview.isDecline())) {
+                if (lastReview == null || BooleanUtils.isNotTrue(lastReview.isDecline())) {
                     newReviewers.add(lastReviewer);
                 }
             }

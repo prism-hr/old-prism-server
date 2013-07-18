@@ -98,9 +98,7 @@
                                                 <#assign size_users = timelineObject.approvalRound.supervisors?size>
                                                 <#list timelineObject.approvalRound.supervisors as supervisor>
                                                   <#assign index_i = supervisor_index>
-                                                  ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}
-                                                  <#if supervisor.isPrimary> (Primary)</#if>
-                                                  <#if (index_i &lt; (size_users - 1))>, </#if>
+                                                  ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if supervisor.isPrimary> (Primary)</#if><#if (index_i &lt; (size_users - 1))>, </#if>
                                                 </#list>
                                                 added as supervisor<#if size_users &gt; 1>s</#if>.
                                             </p>

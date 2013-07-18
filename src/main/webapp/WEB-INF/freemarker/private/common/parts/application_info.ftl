@@ -12,8 +12,7 @@
           <span class="icon-status ${nextStatus.displayValue()?lower_case?replace(' ','-')}" data-desc="${nextStatus.displayValue()}">${nextStatus.displayValue()}</span>
         </#if>
       </div>
-
-        <#assign actions = actionsDefinition.actions>
+        <#assign actions = applicationDescriptor.actionsDefinition.actions>
         <select id="actionTypeSelect" class="actionType" name="app_[${applicationForm.applicationNumber}]" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">
             <option>Actions</option>
             <#list actions as action>
@@ -32,8 +31,18 @@
 </div>
   <div class="row">
     <div class="applicantinfo"> 
+   
+	  <#assign requiresAttention=applicationDescriptor.actionsDefinition.requiresAttention>
+	  <#assign needsToSeeUpdate=applicationDescriptor.needsToSeeUpdate>
+	  <span <#if requiresAttention> data-desc="This application requires your attention" 
+	  <#elseif needsToSeeUpdate> data-desc="This application has been updated"
+	  <#else> data-desc="Application is progressing normally"</#if>>
+  		<#if requiresAttention> <i class="icon-bell-alt flagred"></i> 
+  		<#elseif needsToSeeUpdate> <i class="icon-refresh"></i>
+  		<#else> <i class="icon-coffee flaggreen"></i> </#if>
+  	   </span>
+  		
       ${applicationForm.applicationNumber} 
-
       ${(applicationForm.personalDetails.title?capitalize)!} ${(applicationForm.applicant.firstName?html)!} ${(applicationForm.applicant.firstName2?html)!} ${(applicationForm.applicant.firstName3?html)!} ${(applicationForm.applicant.lastName?html)!}
     </div>
   </div>

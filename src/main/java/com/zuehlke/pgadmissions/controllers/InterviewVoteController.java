@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
@@ -40,21 +41,24 @@ public class InterviewVoteController {
     private final InterviewParticipantValidator interviewParticipantValidator;
     private final AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor;
     private final ActionsProvider actionsProvider;
+    private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     public InterviewVoteController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewVoteController(ApplicationsService applicationsService, UserService userService,
-            InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
-            AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider) {
+                    InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
+                    AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider,
+                    ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
         this.interviewParticipantValidator = interviewParticipantValidator;
         this.acceptedTimeslotsPropertyEditor = acceptedTimeslotsPropertyEditor;
         this.actionsProvider = actionsProvider;
+        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -87,10 +91,11 @@ public class InterviewVoteController {
         return userService.getCurrentUser();
     }
 
-    @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
-        ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(userService.getCurrentUser(), application);
+    @ModelAttribute("applicationDescriptor")
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -103,11 +108,11 @@ public class InterviewVoteController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitInterviewVotes(@Valid @ModelAttribute InterviewParticipant currentParticipant, BindingResult bindingResult,
-            @RequestParam(required = false) String comment, ModelMap modelMap) {
+                    @RequestParam(required = false) String comment, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, PROVIDE_INTERVIEW_AVAILABILITY);
-        
+
         if (bindingResult.hasErrors()) {
             return INTERVIEW_VOTE_PAGE;
         }

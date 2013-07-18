@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
@@ -28,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -59,15 +60,17 @@ public class ReviewCommentController {
     private final ScoreFactory scoreFactory;
     private final ApplicationFormAccessService accessService;
     private final ActionsProvider actionsProvider;
+    private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     ReviewCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+                    FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor,
+                    ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
+                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -78,6 +81,7 @@ public class ReviewCommentController {
         this.scoreFactory = scoreFactory;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
+        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -89,10 +93,11 @@ public class ReviewCommentController {
         return applicationForm;
     }
 
-    @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
-        ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(getUser(), application);
+    @ModelAttribute("applicationDescriptor")
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")
@@ -114,11 +119,11 @@ public class ReviewCommentController {
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
         if (scoringDefinition != null) {
             try {
-            CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-            List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
-            reviewComment.getScores().addAll(scores);
-            reviewComment.setAlert(customQuestion.getAlert());
-            } catch (ScoringDefinitionParseException e){
+                CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+                List<Score> scores = scoreFactory.createScores(customQuestion.getQuestion());
+                reviewComment.getScores().addAll(scores);
+                reviewComment.setAlert(customQuestion.getAlert());
+            } catch (ScoringDefinitionParseException e) {
                 log.error("Incorrect scoring XML configuration for review stage in program: " + applicationForm.getProgram().getTitle());
             }
         }
@@ -132,7 +137,7 @@ public class ReviewCommentController {
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
         binder.registerCustomEditor(null, "scores", scoresPropertyEditor);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET)
     public String getReviewFeedbackPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
@@ -146,7 +151,7 @@ public class ReviewCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REVIEW);
-        
+
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {
             List<Question> questions = getCustomQuestions(applicationForm.getApplicationNumber());
@@ -167,7 +172,7 @@ public class ReviewCommentController {
         commentService.save(comment);
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }
-    
+
     private List<Question> getCustomQuestions(@RequestParam String applicationId) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
@@ -177,6 +182,5 @@ public class ReviewCommentController {
         }
         return null;
     }
-
 
 }

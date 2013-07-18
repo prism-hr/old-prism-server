@@ -18,13 +18,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
@@ -55,14 +56,16 @@ public class RejectApplicationController {
 
     private final ActionsProvider actionsProvider;
 
+    private final ApplicationDescriptorProvider applicationDescriptorProvider;
+
     public RejectApplicationController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ActionsProvider actionsProvider,
-            ApplicationFormAccessService accessService) {
+                    RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ActionsProvider actionsProvider,
+                    ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.rejectService = rejectService;
         this.userService = userService;
@@ -70,6 +73,7 @@ public class RejectApplicationController {
         this.rejectionValidator = rejectionValidator;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
+        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -81,12 +85,11 @@ public class RejectApplicationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,
-            ModelMap modelMap) {
+    public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors, ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(application, user, ApplicationFormAction.COMPLETE_REJECTION);
-        
+
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;
         }
@@ -111,10 +114,11 @@ public class RejectApplicationController {
         return application;
     }
 
-    @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
-        ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(getUser(), application);
+    @ModelAttribute("applicationDescriptor")
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     protected RegisteredUser getCurrentUser() {

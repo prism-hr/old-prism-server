@@ -20,12 +20,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -50,18 +51,21 @@ public class ConfirmSupervisionController {
     private final DatePropertyEditor datePropertyEditor;
 
     private final ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
-    
+
     private final ApplicationFormAccessService accessService;
-    
+
     private final ActionsProvider actionsProvider;
 
+    private final ApplicationDescriptorProvider applicationDescriptorProvider;
+
     public ConfirmSupervisionController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ConfirmSupervisionController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-            DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator, ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+                    DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator,
+                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
@@ -69,6 +73,7 @@ public class ConfirmSupervisionController {
         this.confirmSupervisionDTOValidator = confirmSupervisionDTOValidator;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
+        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -79,11 +84,12 @@ public class ConfirmSupervisionController {
         }
         return application;
     }
-    
-    @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
-        ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(getUser(), application);
+
+    @ModelAttribute("applicationDescriptor")
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("confirmSupervisionDTO")
@@ -122,22 +128,22 @@ public class ConfirmSupervisionController {
         actionsProvider.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
         return CONFIRM_SUPERVISION_PAGE;
     }
-    
+
     @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.POST)
     public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
-        
+
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;
         }
-        
+
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-        
+
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
-        
+
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();
         } else {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -41,16 +42,16 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class ValidationTransitionController extends StateTransitionController {
 
     public ValidationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ValidationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+                    CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+                    StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
+                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
+                        documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
@@ -73,15 +74,16 @@ public class ValidationTransitionController extends StateTransitionController {
 
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
     public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") ValidationComment comment, BindingResult result,
-            ModelMap model, @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+                    ModelMap model, @RequestParam(required = false) Boolean delegate,
+                    @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
 
         model.put("delegate", delegate);
         ApplicationForm form = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        
+
         // validate action is still available
         actionsProvider.validateAction(form, user, ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
-        
+
         try {
             if (result.hasErrors()) {
                 return STATE_TRANSITION_VIEW;
@@ -125,7 +127,7 @@ public class ValidationTransitionController extends StateTransitionController {
 
     private boolean answeredOneOfTheQuestionsUnsure(final ValidationComment comment) {
         return comment.getHomeOrOverseas() == HomeOrOverseas.UNSURE || comment.getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
-                || comment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
+                        || comment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
     }
 
     @ModelAttribute("validationQuestionOptions")

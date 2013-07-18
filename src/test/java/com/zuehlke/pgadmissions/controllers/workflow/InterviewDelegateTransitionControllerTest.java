@@ -11,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
@@ -73,8 +72,8 @@ public class InterviewDelegateTransitionControllerTest {
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
         stateComment.setFastTrackApplication(false);
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
+                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -82,9 +81,8 @@ public class InterviewDelegateTransitionControllerTest {
 
         };
         InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).build();
-        EasyMock.expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(), stateComment.getType(),
-                        stateComment.getNextStatus())).andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
+                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
 
@@ -107,8 +105,8 @@ public class InterviewDelegateTransitionControllerTest {
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
         stateComment.setFastTrackApplication(false);
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
+                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -116,9 +114,8 @@ public class InterviewDelegateTransitionControllerTest {
 
         };
         StateChangeSuggestionComment comment = new StateChangeSuggestionCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).id(6).build();
-        EasyMock.expect(
-                commentFactoryMock.createStateChangeSuggestionComment(currentUser, applicationForm, stateComment.getComment(), stateComment.getNextStatus()))
-                .andReturn(comment);
+        EasyMock.expect(commentFactoryMock.createStateChangeSuggestionComment(currentUser, applicationForm, stateComment.getComment(),
+                        stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         interviewServiceMock.save(interview);
 
@@ -136,8 +133,8 @@ public class InterviewDelegateTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
 
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
+                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock, null) {
             public ApplicationForm getApplicationForm(String applicationId) {
                 return new ApplicationForm();
             }
@@ -167,8 +164,8 @@ public class InterviewDelegateTransitionControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         interviewServiceMock = EasyMock.createMock(InterviewService.class);
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock);
+                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock, null);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }
 

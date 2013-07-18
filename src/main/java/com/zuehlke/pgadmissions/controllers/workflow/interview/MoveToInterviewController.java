@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
@@ -32,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
@@ -59,16 +60,17 @@ public class MoveToInterviewController {
     private final InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
     private final ApplicationFormAccessService accessService;
     private final ActionsProvider actionsProvider;
+    private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     MoveToInterviewController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
-            InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
-            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService,
-            final ActionsProvider actionsProvider) {
+                    InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
+                    InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService,
+                    final ActionsProvider actionsProvider, final ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -78,6 +80,7 @@ public class MoveToInterviewController {
         this.interviewTimeslotsPropertyEditor = interviewTimeslotsPropertyEditor;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
+        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -122,10 +125,11 @@ public class MoveToInterviewController {
         return "/private/common/ajax_OK";
     }
 
-    @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
-        ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(getUser(), application);
+    @ModelAttribute("applicationDescriptor")
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("nominatedSupervisors")
@@ -154,7 +158,7 @@ public class MoveToInterviewController {
         List<RegisteredUser> reviewersWillingToInterview = applicationForm.getReviewersWillingToInterview();
         for (RegisteredUser registeredUser : reviewersWillingToInterview) {
             if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers())
-                    && !listContainsId(registeredUser, previousInterviewersOfProgram)) {
+                            && !listContainsId(registeredUser, previousInterviewersOfProgram)) {
                 previousInterviewersOfProgram.add(registeredUser);
             }
         }
@@ -229,7 +233,7 @@ public class MoveToInterviewController {
         RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
         if (possibleUser == null) {
             possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail, null,
-                    applicationForm, Authority.REVIEWER);
+                            applicationForm, Authority.REVIEWER);
         }
         return possibleUser;
     }

@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -41,6 +42,8 @@ public class ConfirmSupervisionControllerTest {
     private ApplicationFormAccessService accessServiceMock;
 
     private ActionsProvider actionsProviderMock;
+
+    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
 
     @Test
     public void testLoadConfirmSupervisionPage() {
@@ -116,8 +119,9 @@ public class ConfirmSupervisionControllerTest {
         confirmSupervisionDTOValidatorMock = EasyMock.createMock(ConfirmSupervisionDTOValidator.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
         controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock, datePropertyEditorMock,
-                confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock);
+                        confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock);
 
     }
 

@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -45,20 +45,21 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class InterviewDelegateTransitionController extends StateTransitionController {
 
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
-    
+
     private InterviewService interviewService;
 
     public InterviewDelegateTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewDelegateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, InterviewService interviewService) {
+                    CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+                    StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
+                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider, InterviewService interviewService,
+                    ApplicationDescriptorProvider applicationDescriptorProvider) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
+                        documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
         this.interviewService = interviewService;
     }
 
@@ -102,20 +103,20 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
 
         Comment comment;
         if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
-            // delegate should be able to restart interview 
+            // delegate should be able to restart interview
             comment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
-                    stateChangeComment.getType(), stateChangeComment.getNextStatus());
+                            stateChangeComment.getType(), stateChangeComment.getNextStatus());
         } else {
             // moving to other state than interview, simply make suggestion
             interview.setStage(InterviewStage.INACTIVE);
             interviewService.save(interview);
-            
+
             comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
-                    stateChangeComment.getNextStatus());
+                            stateChangeComment.getNextStatus());
             applicationForm.setApplicationAdministrator(null);
             applicationForm.setDueDate(new Date());
         }
-        
+
         if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }

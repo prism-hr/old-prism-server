@@ -23,7 +23,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -81,7 +81,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
-    private ActionsProvider actionsProviderMock;
+    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
 
     @Before
     public void setUp() {
@@ -98,11 +98,11 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
-        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock, refereeServiceMock,
-                refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, countryServiceMock, countryPropertyEditorMock,
-                messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock);
+                        refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, countryServiceMock, countryPropertyEditorMock,
+                        messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, applicationDescriptorProviderMock);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                .build();
+                        .build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
@@ -145,7 +145,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     public void shouldUpdateReference() throws ScoringDefinitionParseException {
         Program program = new ProgramBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                .build();
+                        .build();
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
@@ -168,7 +168,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     public void shouldReportUpdateReferenceFormErrors() throws ScoringDefinitionParseException {
         Program program = new ProgramBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                .build();
+                        .build();
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
@@ -193,7 +193,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     public void shouldSaveSendToPorticoReferencesWithoutAddingNewReference() throws ScoringDefinitionParseException {
         Program program = new ProgramBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                .build();
+                        .build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 
@@ -221,7 +221,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                .build();
+                        .build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 
@@ -261,7 +261,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                .build();
+                        .build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 

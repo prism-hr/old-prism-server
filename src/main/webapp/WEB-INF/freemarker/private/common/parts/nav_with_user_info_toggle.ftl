@@ -12,11 +12,11 @@
             <ul>
                 <li <#if activeTab=="account">class="current"</#if>><a href="<@spring.url '/myAccount'/>"><i class="icon-user"></i> My Account</a></li>           
                 <li <#if activeTab=="applications">class="current"</#if>><a href="<@spring.url '/applications'/>"><i class="icon-file"></i> My Applications </a></li>    
-                <#if user?? && (user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR') || user.isInRole('ADMITTER'))>
+                <#if user?? && (user.isInRole('SUPERADMINISTRATOR') || user.programsOfWhichAdministrator?has_content || user.isInRole('ADMITTER'))>
                   <li <#if activeTab=="users">class="current"</#if>><a href="<@spring.url '/manageUsers/edit'/>"><i class="icon-pencil"></i> Manage Users</a></li>
-                  <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
-                     <li <#if activeTab=="config">class="current"</#if>><a href="<@spring.url '/configuration'/>"><i class="icon-wrench"></i> Configuration</a></li>
-                  </#if>
+                </#if>
+                <#if user.isInRole('SUPERADMINISTRATOR') || user.programsOfWhichAdministrator?has_content>
+                   <li <#if activeTab=="config">class="current"</#if>><a href="<@spring.url '/configuration'/>"><i class="icon-wrench"></i> Configuration</a></li>
                 </#if>
                 <#if user.isCanManageProjects()>
                   <li <#if activeTab=="prospectus">class="current"</#if>><a href="<@spring.url '/prospectus'/>"><i class="icon-tasks"></i> Prospectus</a></li>

@@ -43,7 +43,7 @@
 					<div id="configManageUsersBox" class="tabbox">
 						
 				        <ul class="tabs">
-				            <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+				            <#if user.isInRole('SUPERADMINISTRATOR') || user.programsOfWhichAdministrator?has_content>
 				            	<li><a href="#manageUsers">Manage Users</a></li>
 				            </#if>
 				            <#if user.isInRole('SUPERADMINISTRATOR')>
@@ -54,7 +54,7 @@
 				            </#if>
 				        </ul>
 				        
-				        <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+				        <#if user.isInRole('SUPERADMINISTRATOR') || user.programsOfWhichAdministrator?has_content>
 					        <div id="manageUsers"  class="tab-page">
 						
 								<!-- Remove form. -->

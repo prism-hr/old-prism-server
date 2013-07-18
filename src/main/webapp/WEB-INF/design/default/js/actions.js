@@ -53,9 +53,6 @@ $(document).ready(function() {
             case 'restartApprovalAsAdministrator':
             	window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id;
                 break;
-            case 'progress':
-                window.location.href = "/pgadmissions/viewprogress?applicationId="+ id;
-                break;
             case 'confirmSupervision':
                 window.location.href = "/pgadmissions/confirmSupervision?applicationId="+ id;
                 break;

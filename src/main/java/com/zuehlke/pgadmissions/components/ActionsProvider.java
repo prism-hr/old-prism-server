@@ -24,9 +24,11 @@ public class ActionsProvider {
         return actions;
     }
 
-    public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
+    public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction... actions) {
         ActionsDefinitions actionDefinitions = new ActionsDefinitions();
-        action.applyAction(actionDefinitions, user, applicationForm, applicationForm.getNextStatus());
+        for (ApplicationFormAction action : actions) {
+            action.applyAction(actionDefinitions, user, applicationForm, applicationForm.getNextStatus());
+        }
 
         if (actionDefinitions.getActions().isEmpty()) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());

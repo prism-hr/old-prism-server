@@ -314,9 +314,12 @@ public class ApprovalControllerTest {
         InterviewComment interviewTwo = new InterviewCommentBuilder().id(2).user(userTwo).willingToSupervise(true).build();
         RegisteredUser userThree = new RegisteredUserBuilder().id(3).build();
         InterviewComment interviewThree = new InterviewCommentBuilder().id(3).user(userThree).willingToSupervise(true).build();
-        Supervisor interviewerOne = new SupervisorBuilder().id(1).user(userOne).build();
-        Supervisor interviewerTwo = new SupervisorBuilder().id(2).user(userTwo).build();
-
+        Supervisor supervisorOne = new SupervisorBuilder().id(1).user(userOne).build();
+        Supervisor supervisorTwo = new SupervisorBuilder().id(2).user(userTwo).build();
+        
+        RegisteredUser decliningUser = new RegisteredUserBuilder().id(4).build();
+        Supervisor decliningSupervisor = new SupervisorBuilder().declinedSupervisionReason("Because I can! Hahaha!").user(decliningUser).build();
+        
         Date startDate = new Date();
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
         ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
@@ -325,7 +328,7 @@ public class ApprovalControllerTest {
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).program(program)
                 .comments(interviewOne, interviewTwo, interviewThree)
-                .latestApprovalRound(new ApprovalRoundBuilder().supervisors(interviewerOne, interviewerTwo).build()).build();
+                .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, supervisorTwo, decliningSupervisor).build()).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
         
@@ -335,7 +338,7 @@ public class ApprovalControllerTest {
         
         assertNull(returnedApprovalRound.getId());
         assertEquals(3, returnedApprovalRound.getSupervisors().size());
-        assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(interviewerOne, interviewerTwo)));
+        assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, supervisorTwo)));
         assertNull(returnedApprovalRound.getSupervisors().get(2).getId());
         assertEquals(userThree, returnedApprovalRound.getSupervisors().get(2).getUser());
     }

@@ -97,7 +97,7 @@ public class ConfirmSupervisionControllerTest {
     }
 
     @Test
-    public void shouldReturnApplicationFormIfCurrentUserIsPrimarySupervisor() {
+    public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationForm();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);

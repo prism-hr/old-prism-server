@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_ELIGIBILITY;
+
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -7,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -22,12 +25,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -69,7 +70,7 @@ public class AdmitterCommentController  {
     
     @Autowired
     private EventFactory eventFactory;
-
+    
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -77,18 +78,11 @@ public class AdmitterCommentController  {
     
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = getUser();
-        if (currentUser.isNotInRole(Authority.ADMITTER) && currentUser.isNotInRole(Authority.SUPERADMINISTRATOR)) {
-            throw new InsufficientPrivilegesException();
+        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
         }
-        
-        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new ResourceNotFoundException();
-        }
-        
-        
-        return applicationForm;
+        return application;
     }
     
     @ModelAttribute("actionsDefinition")
@@ -119,40 +113,37 @@ public class AdmitterCommentController  {
     }
 
     @RequestMapping(value ="/confirmEligibility", method = RequestMethod.GET)
-    public String getGenericCommentPage() {
+    public String getConfirmEligibilityPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, CONFIRM_ELIGIBILITY);
         return GENERIC_COMMENT_PAGE;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/submitAdmitterComment")
-    public String defaultGet() {
-        return "redirect:/applications";
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/submitAdmitterComment")
-    public String submitAdmitterComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") AdmitterComment comment, BindingResult result) {
-        if (getUser().isNotInRole(Authority.ADMITTER) && getUser().isNotInRole(Authority.SUPERADMINISTRATOR)) {
-            throw new InsufficientPrivilegesException();
-        }
+    @RequestMapping(method = RequestMethod.POST, value = "/confirmEligibility")
+    public String confirmEligibility(ModelMap modelMap, @Valid @ModelAttribute("comment") AdmitterComment comment, BindingResult result) {
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(application, user, CONFIRM_ELIGIBILITY);
 
         if (result.hasErrors()) {
             return GENERIC_COMMENT_PAGE;
         }
 
-        ApplicationForm form = getApplicationForm(applicationId);
-        comment.setUser(getUser());
+        comment.setUser(user);
         comment.setDate(new Date());
-        comment.setApplication(form);
+        comment.setApplication(application);
         commentService.save(comment);
-        form.setAdminRequestedRegistry(null);
-        form.setRegistryUsersDueNotification(false);
-        form.getEvents().add(eventFactory.createEvent(comment));
-        form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
-        accessService.updateAccessTimestamp(form, getUser(), new Date());
-        applicationsService.save(form);
+        application.setAdminRequestedRegistry(null);
+        application.setRegistryUsersDueNotification(false);
+        application.getEvents().add(eventFactory.createEvent(comment));
+        application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.INTERNAL, new Date()));
+        accessService.updateAccessTimestamp(application, user, new Date());
+        applicationsService.save(application);
 
-        mailService.scheduleAdmitterProvidedCommentNotification(form);
+        mailService.scheduleAdmitterProvidedCommentNotification(application);
 
-        return "redirect:/applications?messageCode=validation.comment.success&application=" + form.getApplicationNumber();
+        return "redirect:/applications?messageCode=validation.comment.success&application=" + application.getApplicationNumber();
     }
 
     @ModelAttribute("validationQuestionOptions")

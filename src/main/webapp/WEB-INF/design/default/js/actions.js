@@ -59,9 +59,6 @@ $(document).ready(function() {
             case 'confirmSupervision':
                 window.location.href = "/pgadmissions/confirmSupervision?applicationId="+ id;
                 break;
-            case 'rejectApplication':
-            	window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
-                break;
             case 'confirmEligibility':
             	window.location.href = "/pgadmissions/admitter/confirmEligibility?applicationId=" + id;
             	break;

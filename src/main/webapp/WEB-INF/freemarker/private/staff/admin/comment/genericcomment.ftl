@@ -73,7 +73,7 @@
 											<h2 class="no-arrow">Comment</h2>
 										</#if>
 										<div>
-											<form method="POST" <#if isConfirmEligibilityComment??>action= "<@spring.url '/admitter/submitAdmitterComment'/> <#else>action= "<@spring.url '/comment'/> </#if>">
+											<form method="POST" <#if isConfirmEligibilityComment??>action= "<@spring.url '/admitter/confirmEligibility'/> <#else>action= "<@spring.url '/comment'/> </#if>">
 												<div class="row-group">
 													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 													<div class="row">

@@ -25,8 +25,7 @@ import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
-import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -74,13 +73,20 @@ public class RejectApplicationController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getRejectPage() {
+    public String getRejectPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMPLETE_REJECTION);
         return REJECT_VIEW_NAME;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,
-            @ModelAttribute("applicationForm") ApplicationForm application, ModelMap modelMap) {
+            ModelMap modelMap) {
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(application, user, ApplicationFormAction.COMPLETE_REJECTION);
+        
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;
         }
@@ -102,8 +108,6 @@ public class RejectApplicationController {
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        checkPermissionForApplication(application);
-        checkApplicationStatus(application);
         return application;
     }
 
@@ -111,19 +115,6 @@ public class RejectApplicationController {
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
         ApplicationForm application = getApplicationForm(applicationId);
         return actionsProvider.calculateActions(getUser(), application);
-    }
-
-    private void checkApplicationStatus(ApplicationForm application) {
-        if (!application.isSubmitted() || application.isDecided() || application.isWithdrawn()) {
-            throw new CannotTerminateApplicationException(application.getApplicationNumber());
-        }
-    }
-
-    private void checkPermissionForApplication(ApplicationForm application) {
-        RegisteredUser currentUser = getCurrentUser();
-        if (!(application.getProgram().isApprover(currentUser) || currentUser.hasAdminRightsOnApplication(application))) {
-            throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
-        }
     }
 
     protected RegisteredUser getCurrentUser() {

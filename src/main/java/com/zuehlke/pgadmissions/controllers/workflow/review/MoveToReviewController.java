@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -28,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
@@ -48,19 +49,21 @@ public class MoveToReviewController {
     protected final UserService userService;
     protected final ReviewService reviewService;
     protected final ActionsProvider actionsProvider;
-    
+
     private final ReviewRoundValidator reviewRoundValidator;
     private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
     private final ApplicationFormAccessService accessService;
+    private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     MoveToReviewController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
-            ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
-            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+                    ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
+                    final ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
+                    ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.reviewService = reviewService;
@@ -68,6 +71,7 @@ public class MoveToReviewController {
         this.reviewRoundValidator = reviewRoundValidator;
         this.reviewerPropertyEditor = reviewerPropertyEditor;
         this.accessService = accessService;
+        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
@@ -85,12 +89,12 @@ public class MoveToReviewController {
     @RequestMapping(value = "/move", method = RequestMethod.POST)
     public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        
+
         actionsProvider.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
             return REVIEWERS_SECTION_NAME;
         }
-        
+
         reviewService.moveApplicationToReview(applicationForm, reviewRound);
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
         return "/private/common/ajax_OK";
@@ -120,7 +124,7 @@ public class MoveToReviewController {
         binder.registerCustomEditor(Reviewer.class, reviewerPropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
     }
-    
+
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -129,16 +133,17 @@ public class MoveToReviewController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if(application == null){
+        if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }
         return application;
     }
 
-    @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
-        ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(getUser(), application);
+    @ModelAttribute("applicationDescriptor")
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("nominatedSupervisors")
@@ -181,7 +186,7 @@ public class MoveToReviewController {
         RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
         if (possibleUser == null) {
             possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail, null,
-                    applicationForm, Authority.REVIEWER);
+                            applicationForm, Authority.REVIEWER);
         }
         return possibleUser;
     }

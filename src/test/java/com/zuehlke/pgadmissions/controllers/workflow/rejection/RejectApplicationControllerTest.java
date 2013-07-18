@@ -73,7 +73,7 @@ public class RejectApplicationControllerTest {
         approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
         program = new ProgramBuilder().id(100).administrators(admin).approver(approver).build();
         application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc").program(program)//
-                .build();
+                        .build();
 
         rejectServiceMock = EasyMock.createMock(RejectService.class);
         applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -85,7 +85,7 @@ public class RejectApplicationControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock, rejectReasonPropertyEditorMock,
-                rejectionValidatorMock, actionsProviderMock, accessServiceMock);
+                        rejectionValidatorMock, actionsProviderMock, accessServiceMock, null);
 
         errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
@@ -193,7 +193,7 @@ public class RejectApplicationControllerTest {
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new DirectFieldBindingResult(rejection, "rejection");
         result.reject("error");
-        
+
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
         modelMap.put("user", admin);
@@ -201,7 +201,7 @@ public class RejectApplicationControllerTest {
         EasyMock.replay(rejectServiceMock);
         String nextView = controllerUT.moveApplicationToReject(rejection, result, modelMap);
         EasyMock.verify(rejectServiceMock);
-        
+
         Assert.assertEquals(VIEW_RESULT, nextView);
     }
 

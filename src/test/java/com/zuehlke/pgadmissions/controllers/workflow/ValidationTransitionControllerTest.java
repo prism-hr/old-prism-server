@@ -93,7 +93,7 @@ public class ValidationTransitionControllerTest {
         commentServiceMock.save(comment);
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock) {
+                        accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -120,7 +120,7 @@ public class ValidationTransitionControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock) {
+                        accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -156,7 +156,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock) {
+                        accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -192,7 +192,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock) {
+                        accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -228,7 +228,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock) {
+                        accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -264,7 +264,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock) {
+                        accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -299,7 +299,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock) {
+                        accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -334,7 +334,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock) {
+                        accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -373,7 +373,7 @@ public class ValidationTransitionControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                         documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
-                        accessServiceMock, actionsProviderMock);
+                        accessServiceMock, actionsProviderMock, null);
         currentUser = new RegisteredUser();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }

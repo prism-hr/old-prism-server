@@ -31,6 +31,7 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -124,6 +125,7 @@ public class ApprovalControllerTest {
     private ScoreFactory scoreFactoryMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
+    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
 
     @Test
     public void shouldGetApprovalPage() {
@@ -796,6 +798,7 @@ public class ApprovalControllerTest {
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.replay(userServiceMock);
@@ -808,7 +811,7 @@ public class ApprovalControllerTest {
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
                 countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
-                actionsProviderMock);
+                actionsProviderMock, applicationDescriptorProviderMock);
 
     }
 
@@ -831,7 +834,7 @@ public class ApprovalControllerTest {
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
                 countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
-                actionsProviderMock) {
+                actionsProviderMock,applicationDescriptorProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {

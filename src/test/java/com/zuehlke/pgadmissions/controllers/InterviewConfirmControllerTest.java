@@ -105,7 +105,7 @@ public class InterviewConfirmControllerTest {
         interviewConfirmDTOValidatorMock = EasyMock.createMock(InterviewConfirmDTOValidator.class);
 
         controller = new InterviewConfirmController(applicationsServiceMock, userServiceMock, interviewServiceMock, accessServiceMock, actionsProviderMock,
-                interviewConfirmDTOValidatorMock);
+                interviewConfirmDTOValidatorMock,null);
     }
 
 }

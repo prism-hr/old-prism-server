@@ -16,6 +16,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -61,6 +62,7 @@ public class ReviewCommentControllerTest {
     private ScoreFactory scoreFactoryMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
+    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -125,7 +127,8 @@ public class ReviewCommentControllerTest {
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock) {
+                        documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
+                        actionsProviderMock, null) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -158,7 +161,8 @@ public class ReviewCommentControllerTest {
         EasyMock.expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock) {
+                        documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
+                        actionsProviderMock, null) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -214,7 +218,7 @@ public class ReviewCommentControllerTest {
 
         EasyMock.replay(commentServiceMock);
         assertEquals("redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber(),
-                controller.addComment(comment, result, modelMap));
+                        controller.addComment(comment, result, modelMap));
         EasyMock.verify(commentServiceMock);
     }
 
@@ -230,8 +234,11 @@ public class ReviewCommentControllerTest {
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
+        
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock);
+                        documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
+                        actionsProviderMock, applicationDescriptorProviderMock);
 
     }
 }

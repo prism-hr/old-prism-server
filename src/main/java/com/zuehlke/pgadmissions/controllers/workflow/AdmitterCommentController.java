@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
@@ -27,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -40,42 +41,45 @@ import com.zuehlke.pgadmissions.validators.AdmitterCommentValidator;
 
 @Controller
 @RequestMapping("/admitter")
-public class AdmitterCommentController  {
-    
+public class AdmitterCommentController {
+
     private static final String GENERIC_COMMENT_PAGE = "private/staff/admin/comment/genericcomment";
-    
+
     @Autowired
-    private  ApplicationsService applicationsService;
-    
+    private ApplicationsService applicationsService;
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private AdmitterCommentValidator admitterCommentValidator;
-    
+
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private DocumentPropertyEditor documentPropertyEditor;
-    
+
     @Autowired
     private ActionsProvider actionsProvider;
 
     @Autowired
     private ApplicationFormAccessService accessService;
-    
+
     @Autowired
     private MailSendingService mailService;
-    
+
     @Autowired
     private EventFactory eventFactory;
-    
+
+    @Autowired
+    private ApplicationDescriptorProvider applicationDescriptorProvider;
+
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
     }
-    
+
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
@@ -84,13 +88,14 @@ public class AdmitterCommentController  {
         }
         return application;
     }
-    
-    @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
-        ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(getUser(), application);
+
+    @ModelAttribute("applicationDescriptor")
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
-    
+
     @ModelAttribute("comment")
     public AdmitterComment getComment(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
@@ -99,20 +104,20 @@ public class AdmitterCommentController  {
         comment.setUser(userService.getCurrentUser());
         return comment;
     }
-    
+
     @InitBinder(value = "comment")
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(admitterCommentValidator);
         binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
     }
-    
+
     @ModelAttribute("isConfirmEligibilityComment")
     public Boolean isConfirmElegibilityComment() {
         return true;
     }
 
-    @RequestMapping(value ="/confirmEligibility", method = RequestMethod.GET)
+    @RequestMapping(value = "/confirmEligibility", method = RequestMethod.GET)
     public String getConfirmEligibilityPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");

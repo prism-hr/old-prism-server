@@ -100,10 +100,10 @@ public class MoveToReviewControllerTest {
         Reviewer reviewerThree = new ReviewerBuilder().id(2).build();
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
-                .latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo, reviewerThree).build()).build();
+                        .latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo, reviewerThree).build()).build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -125,7 +125,7 @@ public class MoveToReviewControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -146,7 +146,7 @@ public class MoveToReviewControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return application;
@@ -168,7 +168,7 @@ public class MoveToReviewControllerTest {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -207,13 +207,13 @@ public class MoveToReviewControllerTest {
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
+                        .build();
 
         final Program program = new ProgramBuilder().reviewers(interUser1, interUser2).id(6).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -250,12 +250,12 @@ public class MoveToReviewControllerTest {
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
+                        .build();
 
         final Program program = new ProgramBuilder().reviewers(interUser1, interUser2, interUser3).id(6).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -316,13 +316,13 @@ public class MoveToReviewControllerTest {
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
+                        .build();
 
         final Program program = new ProgramBuilder().reviewers(defaultReviewer).id(6).build();
 
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -373,7 +373,7 @@ public class MoveToReviewControllerTest {
         reviewRoundValidatorMock = EasyMock.createMock(ReviewRoundValidator.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock);
+                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null);
 
     }
 

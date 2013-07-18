@@ -97,7 +97,7 @@ public class MoveToInterviewControllerTest {
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
+                        .build();
 
         final Program program = new ProgramBuilder().reviewers(interUser1, interUser2).id(6).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
@@ -127,7 +127,7 @@ public class MoveToInterviewControllerTest {
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
+                        .build();
 
         final Program program = new ProgramBuilder().interviewers(interUser1, interUser2, interUser3).id(6).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
@@ -153,7 +153,7 @@ public class MoveToInterviewControllerTest {
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
+                        .build();
 
         final RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(9).build();
         final RegisteredUser reviewerWillingToIntergviewOne = new RegisteredUserBuilder().id(8).build();
@@ -166,7 +166,7 @@ public class MoveToInterviewControllerTest {
         final Program program = new ProgramBuilder().id(6).interviewers(defaultInterviewer).build();
 
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).comments(reviewOne, reviewTwo, reviewThree)
-                .programmeDetails(programmeDetails).build();
+                        .programmeDetails(programmeDetails).build();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
 
         List<RegisteredUser> previousInterviewers = new ArrayList<RegisteredUser>();
@@ -190,7 +190,7 @@ public class MoveToInterviewControllerTest {
         Interviewer interviewerOne = new InterviewerBuilder().id(1).build();
         Interviewer interviewerTwo = new InterviewerBuilder().id(2).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
-                .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
+                        .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
         EasyMock.replay(applicationServiceMock);
@@ -226,13 +226,13 @@ public class MoveToInterviewControllerTest {
         ReviewComment reviewThree = new ReviewCommentBuilder().id(3).user(userThree).willingToInterview(true).build();
         Interviewer interviewerOne = new InterviewerBuilder().id(1).user(userOne).build();
         Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(userTwo).build();
-        
+
         RegisteredUser decliningUser = new RegisteredUserBuilder().id(4).build();
         InterviewComment interviewComment = new InterviewCommentBuilder().decline(true).build();
         Interviewer decliningInterviewer = new InterviewerBuilder().id(4).user(decliningUser).interviewComment(interviewComment).build();
-        
+
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(reviewOne, reviewTwo, reviewThree)
-                .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo, decliningInterviewer).build()).build();
+                        .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo, decliningInterviewer).build()).build();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
         EasyMock.replay(applicationServiceMock);
@@ -378,7 +378,8 @@ public class MoveToInterviewControllerTest {
         EasyMock.replay(bindingResultMock);
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock, actionsProviderMock);
+                        interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock, actionsProviderMock,
+                        null);
 
     }
 }

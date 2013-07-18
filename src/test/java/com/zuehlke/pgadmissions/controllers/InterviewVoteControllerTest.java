@@ -59,7 +59,7 @@ public class InterviewVoteControllerTest {
 
         assertEquals(returnedApplication, applicationForm);
     }
-    
+
     @Test
     public void shouldregisterParticipantValidatorAndPropertyEditors() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
@@ -111,7 +111,7 @@ public class InterviewVoteControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
         controller = new InterviewVoteController(applicationsServiceMock, userServiceMock, interviewParticipantValidatorMock, interviewServiceMock,
-                acceptedTimeslotsPropertyEditorMock, actionsProviderMock);
+                        acceptedTimeslotsPropertyEditorMock, actionsProviderMock, null);
 
     }
 

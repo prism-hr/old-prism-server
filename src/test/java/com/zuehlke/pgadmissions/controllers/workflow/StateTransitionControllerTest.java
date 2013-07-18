@@ -164,7 +164,7 @@ public class StateTransitionControllerTest {
                 .build();
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
+                actionsProviderMock,null) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -194,7 +194,7 @@ public class StateTransitionControllerTest {
 
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
+                actionsProviderMock,null) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -217,7 +217,7 @@ public class StateTransitionControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, new StateTransitionService(),
-                accessServiceMock, actionsProviderMock) {
+                accessServiceMock, actionsProviderMock,null) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -244,7 +244,7 @@ public class StateTransitionControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock);
+                actionsProviderMock,null);
     }
 
     @After

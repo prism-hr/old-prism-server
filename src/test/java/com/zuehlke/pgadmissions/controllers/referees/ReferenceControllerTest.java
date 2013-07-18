@@ -113,9 +113,9 @@ public class ReferenceControllerTest {
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", currentUser);
-        
+
         actionsProviderMock.validateAction(applicationForm, currentUser, ApplicationFormAction.ADD_REFERENCE);
-        
+
         EasyMock.replay(actionsProviderMock);
         assertEquals("private/referees/upload_references", controller.getUploadReferencesPage(modelMap));
         EasyMock.verify(actionsProviderMock);
@@ -179,7 +179,7 @@ public class ReferenceControllerTest {
         assertEquals(CommentType.REFERENCE, returnedReference.getType());
         assertEquals(generatedScores, returnedReference.getScores());
     }
-    
+
     @Test
     public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
@@ -241,13 +241,13 @@ public class ReferenceControllerTest {
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
         modelMap.put("user", currentUser);
-        
+
         commentServiceMock.save(reference);
         refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
         actionsProviderMock.validateAction(application, currentUser, ADD_REFERENCE);
-        
+
         EasyMock.replay(commentServiceMock, refereeServiceMock, actionsProviderMock);
         assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors, modelMap));
         EasyMock.verify(commentServiceMock, refereeServiceMock, actionsProviderMock);
@@ -269,7 +269,8 @@ public class ReferenceControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
         controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator,
-                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock);
+                        commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock,
+                        null);
 
     }
 

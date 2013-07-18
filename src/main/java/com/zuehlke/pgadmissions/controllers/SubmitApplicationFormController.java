@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -58,10 +58,10 @@ public class SubmitApplicationFormController {
     private final EventFactory eventFactory;
 
     private final UserService userService;
-    
+
     private final ApplicationFormAccessService accessService;
-    
-    private final ActionsProvider actionsProvider;
+
+    private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     public SubmitApplicationFormController() {
         this(null, null, null, null, null, null, null);
@@ -69,14 +69,15 @@ public class SubmitApplicationFormController {
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+                    StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService,
+                    ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
         this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
         this.accessService = accessService;
-        this.actionsProvider = actionsProvider;
+        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -86,7 +87,7 @@ public class SubmitApplicationFormController {
         }
 
         if (result.hasErrors()) {
-            if(result.getFieldError("program") != null) {
+            if (result.getFieldError("program") != null) {
                 throw new CannotApplyToProgramException(applicationForm.getProgram());
             }
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
@@ -115,11 +116,11 @@ public class SubmitApplicationFormController {
         Date dueDate = DateUtils.addWorkingDaysInMinutes(applicationForm.getSubmittedDate(), validationDuration.getDurationInMinutes());
         applicationForm.setDueDate(dueDate);
     }
+
     public void assignBatchDeadline(ApplicationForm applicationForm) {
-        if (applicationForm.getProject()!=null) {
+        if (applicationForm.getProject() != null) {
             applicationForm.setBatchDeadline(applicationForm.getProject().getClosingDate());
-        }
-        else {
+        } else {
             applicationForm.setBatchDeadline(applicationService.getBatchDeadlineForApplication(applicationForm));
         }
     }
@@ -163,11 +164,12 @@ public class SubmitApplicationFormController {
         }
         return applicationForm;
     }
-    
-    @ModelAttribute("actionsDefinition")
-    public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId){
-        ApplicationForm application = getApplicationForm(applicationId);
-        return actionsProvider.calculateActions(getUser(), application);
+
+    @ModelAttribute("applicationDescriptor")
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")

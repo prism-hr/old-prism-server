@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_INTERVIEWERS;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
@@ -76,8 +77,20 @@ public class MoveToInterviewController {
         this.actionsProvider = actionsProvider;
     }
 
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        return application;
+    }
+    
     @RequestMapping(method = RequestMethod.GET, value = "moveToInterview")
-    public String getInterviewDetailsPage() {
+    public String getInterviewDetailsPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ASSIGN_INTERVIEWERS);
         return INTERVIEW_PAGE;
     }
 
@@ -86,19 +99,28 @@ public class MoveToInterviewController {
         return INTERVIEWERS_SECTION;
 
     }
-
-    @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser currentUser = userService.getCurrentUser();
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
+    
+    @RequestMapping(value = "/move", method = RequestMethod.POST)
+    public String moveToInterview(@Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult,
+            ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ASSIGN_INTERVIEWERS);
+        
+        if (bindingResult.hasErrors()) {
+            return INTERVIEWERS_SECTION;
         }
-        if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isApplicationAdministrator(application)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        
+        interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
+        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+        if (interview.isParticipant(getUser())) {
+            modelMap.addAttribute("message", "redirectToVote");
+            return "/private/common/simpleResponse";
         }
-        return application;
+        return "/private/common/ajax_OK";
     }
+
+
 
     @ModelAttribute("actionsDefinition")
     public ActionsDefinitions getActionsDefinition(@RequestParam String applicationId) {
@@ -179,21 +201,7 @@ public class MoveToInterviewController {
         binder.registerCustomEditor(null, "duration", new CustomNumberEditor(Integer.class, true));
     }
 
-    @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult,
-            ModelMap model) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        if (bindingResult.hasErrors()) {
-            return INTERVIEWERS_SECTION;
-        }
-        interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
-        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        if (interview.isParticipant(getUser())) {
-            model.addAttribute("message", "redirectToVote");
-            return "/private/common/simpleResponse";
-        }
-        return "/private/common/ajax_OK";
-    }
+
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {

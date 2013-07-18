@@ -14,6 +14,7 @@ import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -46,10 +47,10 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
@@ -198,8 +199,11 @@ public class ApprovalController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
-	public String getMoveToApprovalPage(@RequestParam String applicationId, Model model) {
-		model.addAttribute("approvalRound", getApprovalRound(applicationId));
+	public String getMoveToApprovalPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.REVISE_APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
+		modelMap.addAttribute("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
 		return APPROVAL_PAGE;
 	}
 
@@ -210,13 +214,9 @@ public class ApprovalController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null) {
 			throw new MissingApplicationFormException(applicationId);
-		}
-		if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
-			throw new InsufficientApplicationFormPrivilegesException(applicationId);
 		}
 		return application;
 	}
@@ -351,8 +351,12 @@ public class ApprovalController {
 	}
 
 	@RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
-	public String assignSupervisors(@ModelAttribute ApplicationForm applicationForm, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
+	public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
 	                BindingResult bindingResult, SessionStatus sessionStatus) {
+	    ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.REVISE_APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        
 		if (bindingResult.hasErrors()) {
 			return SUPERVISORS_SECTION;
 		}

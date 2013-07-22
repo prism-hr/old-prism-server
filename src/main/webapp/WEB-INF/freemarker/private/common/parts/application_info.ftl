@@ -1,3 +1,6 @@
+
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application_list.css' />" />
+
 <div id="programme-details">
   <div class="rsbox">
     <div class="bs-status">
@@ -34,12 +37,12 @@
    
 	  <#assign requiresAttention=applicationDescriptor.actionsDefinition.requiresAttention>
 	  <#assign needsToSeeUpdate=applicationDescriptor.needsToSeeUpdate>
-	  <span <#if requiresAttention> data-desc="This application requires your attention" 
-	  <#elseif needsToSeeUpdate> data-desc="This application has been updated"
-	  <#else> data-desc="Application is progressing normally"</#if>>
-  		<#if requiresAttention> <i class="icon-bell-alt flagred"></i> 
+	  <span <#if requiresAttention> data-desc="This application requires your attention" class="flagred"
+	  <#elseif needsToSeeUpdate> data-desc="This application has been updated" class="flagyellow"
+	  <#else> data-desc="Application is progressing normally" class="flaggreen"</#if>>
+  		<#if requiresAttention> <i class="icon-bell-alt"></i> 
   		<#elseif needsToSeeUpdate> <i class="icon-refresh"></i>
-  		<#else> <i class="icon-coffee flaggreen"></i> </#if>
+  		<#else> <i class="icon-coffee"></i> </#if>
   	   </span>
   		
       ${applicationForm.applicationNumber} 

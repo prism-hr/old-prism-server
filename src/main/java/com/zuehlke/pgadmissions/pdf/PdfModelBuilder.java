@@ -47,6 +47,8 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
+    private static final String NOT_REQUIRED = "Not Required";
+
     private final Logger log = LoggerFactory.getLogger(PdfModelBuilder.class);
 
     private boolean includeCriminialConvictions = false;
@@ -228,7 +230,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
         table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
 
-        addProjectTitleToTable(table,form);
+        addProjectTitleToTable(table, form);
         addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Application Number", SMALL_BOLD_FONT));
@@ -264,7 +266,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         addProjectTitleToTable(table, form);
-        
+
         addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
@@ -1068,27 +1070,24 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.setPageSize(PageSize.A4);
         }
     }
-    
+
     private void addClosingDateToTable(PdfPTable table, final ApplicationForm form) {
         table.addCell(newTableCell("Closing date", SMALL_BOLD_FONT));
         Project project = form.getProject();
-        String closingDate = NOT_PROVIDED;
+        String closingDate = NOT_REQUIRED;
         if (project != null && project.getClosingDate() != null) {
             closingDate = dateFormat.format(project.getClosingDate());
-            table.addCell(newTableCell(closingDate, SMALL_FONT));
-        }else{
-            table.addCell(newTableCell(closingDate, SMALL_GREY_FONT));
         }
+        table.addCell(newTableCell(closingDate, SMALL_FONT));
     }
-    
+
     private void addProjectTitleToTable(PdfPTable table, final ApplicationForm form) {
         table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
         String projectTitle = form.getProjectTitle();
         if (StringUtils.isBlank(projectTitle)) {
-            table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
-        } else {
-            table.addCell(newTableCell(projectTitle, SMALL_FONT));
+            projectTitle = NOT_REQUIRED;
         }
+        table.addCell(newTableCell(projectTitle, SMALL_FONT));
     }
 
     class HeaderEvent extends PdfPageEventHelper {

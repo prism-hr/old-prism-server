@@ -126,6 +126,15 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
   color: #5BB75B;
 }
 
+.flagred i{
+  color: #F83929;
+}
+.flaggreen i{
+  color: #5BB75B;
+}
+.flagyellow i{
+  color: #FFBF00;
+}
 
 .applicationRow {
 	cursor:pointer;

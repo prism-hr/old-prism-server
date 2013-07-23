@@ -95,6 +95,7 @@ $(document).ready(function() {
 	// --------------------------------------------------------------------------------
 	// Add a SPAN tag to table headers for the arrows.
 	$('table.data thead th.sortable').prepend('<span />');
+	updateSortHeaders();
 
 	// --------------------------------------------------------------------------------
 	// SEARCH / FILTERING
@@ -229,6 +230,8 @@ $(document).ready(function() {
 	// Load active applications
 	$("#loadActiveApplication").live('click', function() {
 		clearCurrentFilters(false);
+		$('#sort-column').val('APPLICATION_DATE');
+		$('#sort-order').val('DESCENDING');
 		var activeApplications = getActiveApplicationFilters();
 		var firstFilter = $(".filter").first();
 
@@ -403,6 +406,7 @@ function populateApplicationList() {
 		url : "/pgadmissions/applications/section",
 		data : options,
 		success : function(data) {
+			updateSortHeaders();
 			if (getPageCount() === 1) {
 				$('#applicationListSection').empty();
 			}
@@ -480,6 +484,13 @@ function flipSortOrder() {
 	}
 }
 
+function updateSortHeaders() {
+	var sortCategory = $('#sort-column').val();
+	var sortOrder = $('#sort-order').val();
+	$('table th').removeClass('sorting asc desc');
+	$('table.data thead th#' + sortCategory).addClass('sorting').addClass(sortOrder == 'ASCENDING' ? 'asc' : 'desc');
+}
+
 function getFilters() {
 	var filters = new Array();
 
@@ -526,6 +537,8 @@ function getActiveApplicationFilters() {
 }
 
 function clearCurrentFilters(shouldApplyChanges){
+	$('#sort-column').val('APPLICATION_DATE');
+	$('#sort-order').val('DESCENDING');
 	var filters = $("#search-box").find("div.filter");
 	for ( var i = 1; i < filters.length; i++) {
 		$(filters[i]).remove();

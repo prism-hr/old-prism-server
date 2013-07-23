@@ -18,10 +18,10 @@ public class ApplicationsFilteringBuilder {
 
     private ApplicationsPreFilter preFilter = ApplicationsPreFilter.MY;
     
-    private SortCategory sortCategory;
+    private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
 
-    private SortOrder order;
-
+    private SortOrder order = SortOrder.DESCENDING;
+    
     private Integer blockCount;
 
     private Boolean useDisjunction;

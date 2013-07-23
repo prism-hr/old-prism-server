@@ -42,11 +42,13 @@ public class ApplicationsFiltering implements Serializable {
     @Column(name = "use_disjunction")
     private Boolean useDisjunction = false;
     
-    @Transient
+    @Column(name = "sort_category")
+    @Enumerated(EnumType.STRING)
     private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
 
-    @Transient
-    private SortOrder order = SortOrder.ASCENDING;
+    @Column(name = "sort_order")
+    @Enumerated(EnumType.STRING)
+    private SortOrder order = SortOrder.DESCENDING;
 
     @Transient
     private Integer blockCount = 1;

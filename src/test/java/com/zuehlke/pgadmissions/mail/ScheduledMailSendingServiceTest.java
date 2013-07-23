@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
+import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
@@ -80,6 +81,7 @@ import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -104,6 +106,10 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     private EncryptionUtils encryptionUtilsMock;
 
     private InterviewParticipantDAO interviewParticipantDAOMock;
+    
+    private ApplicationFormListDAO applicationFormListDAOMock;
+    
+    private ApplicationFormAccessService accessServiceMock;
 
     private static final String HOST = "http://localhost:8080";
 
@@ -120,10 +126,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         roleDAOMock = createMock(RoleDAO.class);
         encryptionUtilsMock = createMock(EncryptionUtils.class);
         interviewParticipantDAOMock = createMock(InterviewParticipantDAO.class);
+        applicationFormListDAOMock = createMock(ApplicationFormListDAO.class);
+        accessServiceMock = createMock(ApplicationFormAccessService.class);
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, commentDAOMock, supervisorDAOMock,
                 stageDurationDAOMock, configurationServiceMock,
                 refereeDAOMock, userServiceMock, userDAOMock, roleDAOMock, encryptionUtilsMock,
-                HOST, applicationContextMock, interviewParticipantDAOMock);
+                HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormListDAOMock, accessServiceMock);
     }
 
     @SuppressWarnings("unchecked")
@@ -1231,7 +1239,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, commentDAOMock, supervisorDAOMock,
                 stageDurationDAOMock, configurationServiceMock,
                 refereeDAOMock, userServiceMock, userDAOMock, roleDAOMock, encryptionUtilsMock,
-                HOST, applicationContextMock, interviewParticipantDAOMock) {
+                HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormListDAOMock, accessServiceMock) {
             @Override
             protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
                 return null;

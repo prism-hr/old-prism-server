@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -14,13 +13,11 @@ public class ExtendedASCIIConstraintValidatorTest {
 
     private ExtendedASCIIConstraintValidator validator;
     private ConstraintValidatorContext contextMock;
-    private ConstraintViolationBuilder constraintViolationBuilderMock;
 
     @Before
     public void setUp() {
         validator = new ExtendedASCIIConstraintValidator();
         contextMock = EasyMock.createMock(ConstraintValidatorContext.class);
-        constraintViolationBuilderMock = EasyMock.createMock(ConstraintViolationBuilder.class);
     }
 
     @Test
@@ -50,11 +47,12 @@ public class ExtendedASCIIConstraintValidatorTest {
     @Test
     public void shouldFailWithChineseCharacter() {
         String roastedDuck = "烤鸭";
-
-        EasyMock.expect(contextMock.buildConstraintViolationWithTemplate(ExtendedASCIIConstraintValidator.CONTAINS_NONE_ASCII_MESSAGE)).andReturn(
-                        constraintViolationBuilderMock);
-        EasyMock.replay(contextMock);
         assertFalse(validator.isValid(roastedDuck, contextMock));
-        EasyMock.verify(contextMock);
+    }
+
+    @Test
+    public void shouldFailWithOneChineseCharacter() {
+        String roastedDuck = "一";
+        assertFalse(validator.isValid(roastedDuck, contextMock));
     }
 }

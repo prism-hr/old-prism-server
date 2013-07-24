@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -26,7 +27,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import com.zuehlke.pgadmissions.validators.ExtendedASCIIConstraint;
 
 @Entity(name = "COMMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -47,7 +48,8 @@ public class Comment implements Comparable<Comment>, Serializable {
     @JoinColumn(name = "comment_id")
     private List<Document> documents = new ArrayList<Document>();
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ExtendedASCIIConstraint
+    @Lob
     private String comment;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -62,10 +64,10 @@ public class Comment implements Comparable<Comment>, Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_form_id")
     private ApplicationForm application = null;
-	
+
     @Transient
     private Boolean confirmNextStage;
-    
+
     public String getComment() {
         return comment;
     }
@@ -142,8 +144,8 @@ public class Comment implements Comparable<Comment>, Serializable {
     public void setConfirmNextStage(Boolean confirmNextStage) {
         this.confirmNextStage = confirmNextStage;
     }
-    
+
     public String getTooltipMessage(final String role) {
-        return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role)); 
+        return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role));
     }
 }

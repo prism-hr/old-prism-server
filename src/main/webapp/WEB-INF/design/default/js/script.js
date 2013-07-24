@@ -274,7 +274,11 @@ function addCounter() {
 		    $(this).data("maxlength", 500);
 		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'feedCode' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply') {
 			display = false;
-		} else {
+		} else if ($(this).attr('id')=='referenceComment'||$(this).attr('id')=='review-comment'||$(this).attr('id')=='interview-comment'){
+			//the extra long comments
+			display=false;
+		} 
+		else {
 			$(this).data("maxlength", 2000);
 		}
         // Create the span with all the content and characters left

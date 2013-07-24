@@ -1066,6 +1066,7 @@ public class ApplicationFormActionTest {
     @Test
     public void shouldAddReviseApprovalAction() {
         EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
+        EasyMock.expect(applicationMock.isInApprovalStage()).andReturn(true);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
 
         EasyMock.replay(userMock, applicationMock);
@@ -1078,7 +1079,32 @@ public class ApplicationFormActionTest {
     @Test
     public void shouldNotAddReviseApprovalActionIfNoAdminRights() {
         EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
+        EasyMock.expect(applicationMock.isInApprovalStage()).andReturn(true);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddReviseApprovalActionIfNextStatusSpecified() {
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
+        EasyMock.expect(applicationMock.isInApprovalStage()).andReturn(true);
+
+        EasyMock.replay(userMock, applicationMock);
+        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, ApplicationFormStatus.REJECTED);
+        EasyMock.verify(userMock, applicationMock);
+
+        assertActionsDefinitions(actionsDefinitions, false);
+    }
+
+    @Test
+    public void shouldNotAddReviseApprovalActionIfNotInApprovalStage() {
+        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
+        EasyMock.expect(applicationMock.isInApprovalStage()).andReturn(false);
 
         EasyMock.replay(userMock, applicationMock);
         REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
@@ -1198,7 +1224,7 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false);
     }
-    
+
     @Test
     public void shouldNotAddApproveActionIfNextStatusSpecified() {
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
@@ -1408,7 +1434,7 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false);
     }
-    
+
     @Test
     public void shouldAddCompleteRejectionAction() {
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
@@ -1419,7 +1445,7 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_REJECTION);
     }
-    
+
     @Test
     public void shouldNotAddCompleteRejectionActionIfNoRights() {
         EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
@@ -1439,7 +1465,7 @@ public class ApplicationFormActionTest {
 
         assertActionsDefinitions(actionsDefinitions, false);
     }
-    
+
     private void assertActionsDefinitions(ActionsDefinitions actionsDefinitions, boolean requiresAttention, ApplicationFormAction... actions) {
         assertEquals(requiresAttention, actionsDefinitions.isRequiresAttention());
         Assert.assertThat(actionsDefinitions.getActions(), CoreMatchers.hasItems(actions));

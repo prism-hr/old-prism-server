@@ -193,7 +193,7 @@ public enum ApplicationFormAction {
     REVISE_APPROVAL("restartApproval", "Assign Supervisors", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if (application.isPendingApprovalRestart() && user.hasAdminRightsOnApplication(application)) {
+            if (application.isPendingApprovalRestart() && application.isInApprovalStage() && nextStatus == null && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(REVISE_APPROVAL);
                 actions.setRequiresAttention(true);
             }

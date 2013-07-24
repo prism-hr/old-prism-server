@@ -20,16 +20,12 @@ public class ExtendedASCIIConstraintValidator implements ConstraintValidator<Ext
 
     @Override
     public boolean isValid(final String input, final ConstraintValidatorContext context) {
-        boolean returnValue = isOnlyContainExtendedASCIICharacters(input);
-        if (!returnValue) {
-            context.buildConstraintViolationWithTemplate(CONTAINS_NONE_ASCII_MESSAGE).addConstraintViolation();
-        }
-        return returnValue;
+        return isOnlyContainExtendedASCIICharacters(input);
     }
 
     private boolean isOnlyContainExtendedASCIICharacters(String input) {
         if (input != null) {
-            for (int i = 0; i < input.length() - 1; i++) {
+            for (int i = 0; i <= input.length()-1; i++) {
                 if (!isExtendedASCIICharacter(input.charAt(i))) {
                     return false;
                 }

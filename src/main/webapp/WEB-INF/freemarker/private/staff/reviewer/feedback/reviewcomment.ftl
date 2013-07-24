@@ -77,7 +77,7 @@
                     <label for="review-comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
                     <div class="field">
-                      <textarea name="comment" id="review-comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}</textarea>
+                      <textarea name="comment" id="review-comment" class="max" rows="6" cols="80">${(comment.comment?html)!}</textarea>
                       <@spring.bind "comment.comment" />
                       <#list spring.status.errorMessages as error>
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i>

@@ -37,9 +37,9 @@ function validateReference()
 	$('#documentUploadForm .extrafield').remove();
 	
 	
-	if ($('#comment').val() == '')
+	if ($('#referenceComment').val() == '')
 	{
-		$('#comment').parent().after('<div class="field extrafield"><div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make an entry.</div></div>');
+		$('#referenceComment').parent().after('<div class="field extrafield"><div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make an entry.</div></div>');
 		errors++;
 	}
 

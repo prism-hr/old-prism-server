@@ -42,12 +42,11 @@ public class GenericCommentValidatorTest {
 	}
 	
 	@Test
-    public void shouldRejectIfCommentIsLongerThan2000Characters() {
+    public void shouldNotRejectIfCommentIsLongerThan2000Characters() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "comment");
         comment.setComment(Strings.repeat("a", 2100));
         genericCommentValidator.validate(comment, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 2000 characters are allowed.", mappingResult.getFieldError("comment").getDefaultMessage());
+        Assert.assertEquals(0, mappingResult.getErrorCount());
     }
 	
 	@Test

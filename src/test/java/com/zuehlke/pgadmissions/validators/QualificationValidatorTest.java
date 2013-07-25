@@ -204,6 +204,15 @@ public class QualificationValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("qualificationAwardDate").getCode());
     }
+    
+    @Test
+    public void shouldRejectIfQualificationInstitutionCodeIsEmpty() {
+        qualification.setQualificationInstitutionCode(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+        qualificationValidator.validate(qualification, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("qualificationInstitutionCode").getCode());
+    }
 
     @Before
     public void setup() throws ParseException {
@@ -217,6 +226,7 @@ public class QualificationValidatorTest {
         qualification.setQualificationLanguage("Abkhazian");
         qualification.setQualificationSubject("CS");
         qualification.setQualificationTitle("MS");
+        qualification.setQualificationInstitutionCode("code");
         qualification.setCompleted(CheckedStatus.YES);
         qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
         qualification.setQualificationType(new QualificationTypeBuilder().name("degree").build());

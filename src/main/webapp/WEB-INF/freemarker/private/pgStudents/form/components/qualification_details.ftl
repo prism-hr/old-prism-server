@@ -115,7 +115,7 @@
           </#list> <option value="OTHER" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == "OTHER">selected="selected"</#if>>Other
           </option>
           </select>
-          <@spring.bind "qualification.qualificationInstitution" />
+          <@spring.bind "qualification.qualificationInstitutionCode" />
           <#list spring.status.errorMessages as error>
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}

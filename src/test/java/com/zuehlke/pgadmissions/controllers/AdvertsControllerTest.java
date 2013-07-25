@@ -16,11 +16,14 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.classextension.EasyMock;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.controllers.prospectus.AdvertsController;
@@ -202,21 +205,25 @@ public class AdvertsControllerTest {
     }
 
     @Test
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void shouldReturnAdvertsByUsername() {
-        Advert advert = new AdvertBuilder().id(new Integer(1)).description("Advert").funding("Funding").studyDuration(1).build();
-        Program program = new ProgramBuilder().code("code1").title("another title").adverts(advert).build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program).build();
-        EasyMock.expect(feedService.getDefaultOpportunitiesFeedByUsername("feeder", null)).andReturn(feed);
-        EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
+        Advert advert1 = new AdvertBuilder().id(new Integer(1)).description("Advert").funding("Funding").studyDuration(1).build();
+        Advert advert2 = new AdvertBuilder().id(new Integer(2)).description("Advert2").funding("Funding2").studyDuration(1).build();
+        Program program1 = new ProgramBuilder().code("code1").title("another title").adverts(advert1).build();
+        Program program2 = new ProgramBuilder().code("code1").title("another title").adverts(advert2).build();
+        ResearchOpportunitiesFeed feed1 = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program1).build();
+        ResearchOpportunitiesFeed feed2 = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program2).build();
+        EasyMock.expect(feedService.getDefaultOpportunitiesFeedsByUsername("feeder", null)).andReturn(Lists.newArrayList(feed1, feed2));
+        EasyMock.expect(advertService.getProgram(advert1)).andReturn(program1);
+        EasyMock.expect(advertService.getProgram(advert2)).andReturn(program2);
 
         EasyMock.replay(feedService, advertService);
         Map feedAdverts = controller.getFeedAdverts(null, "feeder", null);
         EasyMock.verify(feedService, advertService);
 
-        List<?> advertsList = (List<?>) feedAdverts.get("adverts");
-        AdvertDTO dto = (AdvertDTO) advertsList.get(0);
-        Assert.assertEquals("code1", dto.getProgramCode());
+        List<AdvertDTO> advertsList = (List<AdvertDTO>) feedAdverts.get("adverts");
+        Matcher<Iterable<AdvertDTO>> advertsListMatcher = Matchers.hasItems(Matchers.hasProperty("programCode", Matchers.equalTo("code1")));
+        assertThat(advertsList, advertsListMatcher);
     }
 
     @Test

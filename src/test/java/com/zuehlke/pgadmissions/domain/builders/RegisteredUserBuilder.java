@@ -51,6 +51,7 @@ public class RegisteredUserBuilder {
 
     private String originalApplicationQueryString;
 
+    private RegisteredUser primaryAccount;
     private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
     
     public RegisteredUserBuilder linkedAccounts(final RegisteredUser... user) {
@@ -220,6 +221,11 @@ public class RegisteredUserBuilder {
         return this;
     }
 
+    public RegisteredUserBuilder primaryAccount(RegisteredUser primaryAccount) {
+        this.primaryAccount = primaryAccount;
+        return this;
+    }
+
     public RegisteredUser build() {
         RegisteredUser user = new RegisteredUser();
         user.setId(id);
@@ -256,6 +262,7 @@ public class RegisteredUserBuilder {
         
         user.setUpi(upi);
         user.setLinkedAccounts(linkedAccounts);
+        user.setPrimaryAccount(primaryAccount);
         
         return user;
     }

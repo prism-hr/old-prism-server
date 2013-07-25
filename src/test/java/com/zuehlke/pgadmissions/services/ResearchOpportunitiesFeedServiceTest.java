@@ -1,10 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
+import static junit.framework.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -14,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ResearchOpportunitiesFeedDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -180,8 +184,28 @@ public class ResearchOpportunitiesFeedServiceTest {
 
         EasyMock.verify(programServiceMock, daoMock, userServiceMock);
 
-        Assert.assertEquals(saveNewFeed.getPrograms().get(0), program);
-        Assert.assertEquals(saveNewFeed.getTitle(), "hello1");
-        Assert.assertEquals(saveNewFeed.getFeedFormat(), FeedFormat.SMALL);
+        assertEquals(saveNewFeed.getPrograms().get(0), program);
+        assertEquals(saveNewFeed.getTitle(), "hello1");
+        assertEquals(saveNewFeed.getFeedFormat(), FeedFormat.SMALL);
+    }
+    
+    @Test
+    public void shouldGetDefaultOpportunitiesFeedsByUsername(){
+        RegisteredUser primaryUser = new RegisteredUserBuilder().build();
+        RegisteredUser secondaryUser = new RegisteredUserBuilder().primaryAccount(primaryUser).build();
+        RegisteredUser ternaryUser = new RegisteredUserBuilder().primaryAccount(primaryUser).build();
+        
+        primaryUser.getLinkedAccounts().addAll(Lists.newArrayList(primaryUser, secondaryUser, ternaryUser));
+        
+        EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(primaryUser)).andReturn(null);
+        EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(secondaryUser)).andReturn(null);
+        EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(ternaryUser)).andReturn(null);
+        EasyMock.expect(userServiceMock.getUserByUsername("pojebe")).andReturn(secondaryUser);
+
+        EasyMock.replay(userServiceMock, programServiceMock);
+        List<ResearchOpportunitiesFeed> feeds = service.getDefaultOpportunitiesFeedsByUsername("pojebe", null);
+        EasyMock.verify(userServiceMock, programServiceMock);
+        
+        assertEquals(3, feeds.size());
     }
 }

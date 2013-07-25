@@ -112,7 +112,8 @@ public class ResearchOpportunitiesFeedService {
 
         ResearchOpportunitiesFeed defaultFeedSmall = new ResearchOpportunitiesFeed();
         defaultFeedSmall.setId(format == FeedFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);
-        defaultFeedSmall.setTitle("My opportunities feed - " + format);
+        String title = format == FeedFormat.SMALL ? "My Opportunities Feed - Small" : "My Opportunities Feed - Large";
+        defaultFeedSmall.setTitle(title);
         defaultFeedSmall.setPrograms(defaultPrograms);
         defaultFeedSmall.setUser(user);
         defaultFeedSmall.setFeedFormat(format);

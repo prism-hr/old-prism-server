@@ -25,7 +25,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('#existing-feed-table').on('click', '.button-edit', function() {
+	$('#existing-feed-table').on('click', '.button-edit,.button-show', function() {
 		var feedId = $(this).closest('tr').data("feedid");
 		if (feedId !== undefined) {
 			editFeed(feedId);
@@ -55,8 +55,22 @@ function loadExistingFeeds() {
 		success: function(data) {
 			$.each(data, function(index, item) {
 				$("#existing-feed-table-row-group").show();
-				var newTr = '<tr data-feedid="' + item.id + '"><td>' + item.title + '</td><td><button class="button-edit" type="button" data-desc="Edit">Edit</button></td><td><button class="button-delete" type="button" data-desc="Remove">Remove</button></td></tr>';
-				$('#existing-feed-table tbody tbody').append(newTr);
+				var editable = item.id >= 0;
+				var viewButton;
+				var deleteButton;
+				if(editable){
+					viewButton = '<button class="button-edit" type="button" data-desc="Edit">Edit</button>'; 
+					deleteButton = '<button class="button-delete" type="button" data-desc="Remove">Remove</button>';
+				} else {
+					viewButton = '<button class="button-show" type="button" data-desc="Edit">Edit</button>'; 
+					deleteButton = '';
+				}
+				$('#existing-feed-table tbody tbody').append(
+					'<tr data-feedid="' + item.id + '">' 
+					+ '<td>' + item.title + '</td>'
+					+ '<td>' + viewButton + '</td>'
+					+ '<td>' + deleteButton + '</td>'
+					+ '</tr>');
 			});
 		}
 	});
@@ -184,6 +198,11 @@ function editFeed(feedId) {
 				$('#editingFeedId').val(item.id);
 				$("#feedCode").val(item.iframeCode);
 				$("#save-feed-go").text("Update");
+				if(item.id >= 0) { // editable
+					$("#save-feed-go").removeAttr("disabled");	
+				} else {
+					$("#save-feed-go").attr("disabled", "disabled");	
+				}
 			});
 		}
 	});

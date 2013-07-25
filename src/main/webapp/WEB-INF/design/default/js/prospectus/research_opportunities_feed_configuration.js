@@ -199,9 +199,9 @@ function editFeed(feedId) {
 				$("#feedCode").val(item.iframeCode);
 				$("#save-feed-go").text("Update");
 				if(item.id >= 0) { // editable
-					$("#save-feed-go").removeAttr("disabled");	
+					$("#save-feed-go").show();
 				} else {
-					$("#save-feed-go").attr("disabled", "disabled");	
+					$("#save-feed-go").hide();	
 				}
 			});
 		}

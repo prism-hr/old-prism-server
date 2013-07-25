@@ -92,7 +92,6 @@ public class RegisteredUserIrisProfileController {
         
         List<RegisteredUser> usersWithUpi = userService.getUsersWithUpi(upi);
         List<RegisteredUser> linkedAccounts = currentUser.getAllLinkedAccounts();
-        linkedAccounts.add(currentUser);
         List<RegisteredUser> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
         
         if (intersection.isEmpty()) {

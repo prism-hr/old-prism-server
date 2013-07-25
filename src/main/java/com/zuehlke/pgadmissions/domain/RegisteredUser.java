@@ -221,13 +221,12 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         List<RegisteredUser> linkedAccountsList = new ArrayList<RegisteredUser>();
 
         if (this.primaryAccount == null) {
+            linkedAccountsList.add(this);
             linkedAccountsList.addAll(getLinkedAccounts());
         } else {
             linkedAccountsList.add(getPrimaryAccount());
             for (RegisteredUser u : getPrimaryAccount().getLinkedAccounts()) {
-                if (!u.getId().equals(this.id)) {
                     linkedAccountsList.add(u);
-                }
             }
         }
         return linkedAccountsList;

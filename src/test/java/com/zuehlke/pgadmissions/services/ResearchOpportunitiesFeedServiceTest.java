@@ -159,12 +159,11 @@ public class ResearchOpportunitiesFeedServiceTest {
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
                 .user(user).build();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
         EasyMock.expect(daoMock.getById(1)).andReturn(feed).times(1);
-        EasyMock.replay(daoMock, userServiceMock);
+        EasyMock.replay(daoMock);
         service.getById(1);
-        EasyMock.verify(daoMock, userServiceMock);
+        EasyMock.verify(daoMock);
     }
 
     @Test
@@ -191,11 +190,11 @@ public class ResearchOpportunitiesFeedServiceTest {
     
     @Test
     public void shouldGetDefaultOpportunitiesFeedsByUsername(){
-        RegisteredUser primaryUser = new RegisteredUserBuilder().build();
-        RegisteredUser secondaryUser = new RegisteredUserBuilder().primaryAccount(primaryUser).build();
-        RegisteredUser ternaryUser = new RegisteredUserBuilder().primaryAccount(primaryUser).build();
+        RegisteredUser primaryUser = new RegisteredUserBuilder().id(1).build();
+        RegisteredUser secondaryUser = new RegisteredUserBuilder().id(2).primaryAccount(primaryUser).build();
+        RegisteredUser ternaryUser = new RegisteredUserBuilder().id(3).primaryAccount(primaryUser).build();
         
-        primaryUser.getLinkedAccounts().addAll(Lists.newArrayList(primaryUser, secondaryUser, ternaryUser));
+        primaryUser.getLinkedAccounts().addAll(Lists.newArrayList(secondaryUser, ternaryUser));
         
         EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(primaryUser)).andReturn(null);
         EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(secondaryUser)).andReturn(null);

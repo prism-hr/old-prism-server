@@ -1,71 +1,90 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ResearchOpportunitiesFeedDAO;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+
 @Service
 public class ResearchOpportunitiesFeedService {
 
+    private static final int DEFAULT_LARGE_FEED_ID = -2;
+
+    private static final int DEFAULT_SMALL_FEED_ID = -1;
+
+    public static final String LARGE_IFRAME = "/private/prospectus/large_feed_iframe.ftl";
+
+    public static final String SMALL_IFRAME = "/private/prospectus/small_feed_iframe.ftl";
+
     private final UserService userService;
-    
+
     private final ResearchOpportunitiesFeedDAO dao;
-    
-    private final ProgramDAO programDAO;
-    
-    private static final String LARGE_IFRAME = ""
-            + "<iframe src=\"${host}/pgadmissions/adverts/standaloneAdverts?feed=${id}\" " 
-            + "width=\"430\" " 
-            + "height=\"514\" " 
-            + "style=\"border:none;\"> ";
-    
-    private static final String SMALL_IFRAME = ""
-            + "<iframe src=\"${host}/pgadmissions/adverts/standaloneAdverts?feed=${id}\" " 
-            + "width=\"210\" " 
-            + "height=\"514\" " 
-            + "style=\"border:none;\"> ";
-    
+
+    private final ProgramsService programService;
+
+    private final FreeMarkerConfigurer freeMarkerConfigurer;
+
     private final String host;
-    
+
     public ResearchOpportunitiesFeedService() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
-    
+
     @Autowired
-    public ResearchOpportunitiesFeedService(final ResearchOpportunitiesFeedDAO dao, final ProgramDAO programDAO, final UserService userService, @Value("${application.host}") final String host) {
+    public ResearchOpportunitiesFeedService(final ResearchOpportunitiesFeedDAO dao, final ProgramsService programService, final UserService userService,
+            final FreeMarkerConfigurer freeMarkerConfigurer, @Value("${application.host}") final String host) {
         this.dao = dao;
-        this.programDAO = programDAO;
+        this.programService = programService;
         this.host = host;
         this.userService = userService;
+        this.freeMarkerConfigurer = freeMarkerConfigurer;
     }
-    
+
     public String getIframeHtmlCode(final ResearchOpportunitiesFeed feed) {
-        switch (feed.getFeedFormat()) {
-        case SMALL:
-            return StringUtils.replace(StringUtils.replace(SMALL_IFRAME, "${host}", host), "${id}", String.valueOf(feed.getId()));
-        default:
-        case LARGE:
-            return StringUtils.replace(StringUtils.replace(LARGE_IFRAME, "${host}", host), "${id}", String.valueOf(feed.getId()));
+        try {
+            String templateName = feed.getFeedFormat() == FeedFormat.SMALL ? SMALL_IFRAME : LARGE_IFRAME;
+            Template template = freeMarkerConfigurer.getConfiguration().getTemplate(templateName);
+            Map<String, Object> dataMap = new HashMap<String, Object>();
+            dataMap.put("host", host);
+            if (feed.getId() == DEFAULT_SMALL_FEED_ID || feed.getId() == DEFAULT_LARGE_FEED_ID) {
+                dataMap.put("user", userService.getCurrentUser().getUsername());
+            } else {
+                dataMap.put("feed", feed.getId());
+            }
+
+            StringWriter writer = new StringWriter();
+            template.process(dataMap, writer);
+            return writer.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Transactional
-    public ResearchOpportunitiesFeed saveNewFeed(final List<Integer> selectedProgramIds, final RegisteredUser user,
-            final FeedFormat format, final String title) {
+    public ResearchOpportunitiesFeed saveNewFeed(final List<Integer> selectedProgramIds, final RegisteredUser user, final FeedFormat format, final String title) {
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeed();
         for (Integer programId : selectedProgramIds) {
-            feed.getPrograms().add(programDAO.getProgramById(programId));
+            feed.getPrograms().add(programService.getProgramById(programId));
         }
         feed.setFeedFormat(format);
         feed.setTitle(title);
@@ -73,12 +92,39 @@ public class ResearchOpportunitiesFeedService {
         dao.save(feed);
         return feed;
     }
-    
+
     @Transactional(readOnly = true)
     public List<ResearchOpportunitiesFeed> getAllFeedsForUser(final RegisteredUser user) {
-        return dao.getAllFeedsForUser(user);
+        ResearchOpportunitiesFeed defaultFeedSmall = getDefaultOpportunitiesFeed(user, FeedFormat.SMALL);
+        ResearchOpportunitiesFeed defaultFeedLarge = getDefaultOpportunitiesFeed(user, FeedFormat.LARGE);
+        List<ResearchOpportunitiesFeed> savedFeeds = dao.getAllFeedsForUser(user);
+
+        List<ResearchOpportunitiesFeed> allFeeds = Lists.newArrayListWithCapacity(savedFeeds.size() + 2);
+        allFeeds.add(defaultFeedSmall);
+        allFeeds.add(defaultFeedLarge);
+        allFeeds.addAll(savedFeeds);
+
+        return allFeeds;
     }
-    
+
+    private ResearchOpportunitiesFeed getDefaultOpportunitiesFeed(final RegisteredUser user, FeedFormat format) {
+        List<Program> defaultPrograms = programService.getProgramsForWhichCanManageProjects(user);
+
+        ResearchOpportunitiesFeed defaultFeedSmall = new ResearchOpportunitiesFeed();
+        defaultFeedSmall.setId(format == FeedFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);
+        defaultFeedSmall.setTitle("My opportunities feed - " + format);
+        defaultFeedSmall.setPrograms(defaultPrograms);
+        defaultFeedSmall.setUser(user);
+        defaultFeedSmall.setFeedFormat(format);
+        return defaultFeedSmall;
+    }
+
+    public ResearchOpportunitiesFeed getDefaultOpportunitiesFeedByUsername(String username, FeedFormat format) {
+        RegisteredUser user = userService.getUserByUsername(username);
+        Assert.notNull(user);
+        return getDefaultOpportunitiesFeed(user, format);
+    }
+
     @Transactional(readOnly = true)
     public boolean isUniqueFeedTitleForUser(final String title, final RegisteredUser user) {
         return dao.isUniqueFeedTitleForUser(title, user);
@@ -86,30 +132,36 @@ public class ResearchOpportunitiesFeedService {
 
     @Transactional
     public void deleteById(final Integer feedId) {
-        Assert.isTrue(isOwner(feedId));
+        Assert.isTrue(isOwner(dao.getById(feedId)));
         dao.deleteById(feedId);
     }
-    
-    private boolean isOwner(final Integer feedId) {
+
+    private boolean isOwner(ResearchOpportunitiesFeed feed) {
         RegisteredUser currentUser = userService.getCurrentUser();
-        return dao.getById(feedId).getUser().getId().equals(currentUser.getId());
+        return feed.getUser().getId().equals(currentUser.getId());
     }
 
     @Transactional(readOnly = true)
     public ResearchOpportunitiesFeed getById(final Integer feedId) {
-        //Assert.isTrue(isOwner(feedId));
-        return dao.getById(feedId);
+        if (feedId == DEFAULT_SMALL_FEED_ID) {
+            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), FeedFormat.SMALL);
+        } else if (feedId == DEFAULT_LARGE_FEED_ID) {
+            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), FeedFormat.LARGE);
+        }
+        ResearchOpportunitiesFeed feed = dao.getById(feedId);
+        Assert.isTrue(isOwner(feed));
+        return feed;
     }
 
     @Transactional
-    public ResearchOpportunitiesFeed updateFeed(final Integer feedId, final List<Integer> selectedProgramIds,
-            final RegisteredUser currentUser, final FeedFormat format, final String title) {
-        Assert.isTrue(isOwner(feedId));
+    public ResearchOpportunitiesFeed updateFeed(final Integer feedId, final List<Integer> selectedProgramIds, final RegisteredUser currentUser,
+            final FeedFormat format, final String title) {
         ResearchOpportunitiesFeed feed = dao.getById(feedId);
+        Assert.isTrue(isOwner(feed));
         feed.setFeedFormat(format);
         feed.getPrograms().clear();
         for (Integer programId : selectedProgramIds) {
-            feed.getPrograms().add(programDAO.getProgramById(programId));
+            feed.getPrograms().add(programService.getProgramById(programId));
         }
         feed.setTitle(title);
         return feed;

@@ -41,7 +41,26 @@ function getAdverts(){
 		selectedAdvertId = decodeURIComponent(selectedAdvertId);
 	}
 	var feedId = $('#feedId').val();
-	if (feedId === undefined) {
+	var user = $('#user').val();
+	var upi = $('#upi').val();
+	if (feedId != undefined || user != undefined || upi != undefined) {
+		var data = {
+			feedId : feedId,
+			user : user,
+			upi : upi
+		};
+		// standalone adverts for feed
+		$.ajax({
+			type: 'GET',
+			data: data,
+			url: "/pgadmissions/adverts/feedAdverts",
+			success: function(data) {
+				processAdverts(data.adverts);
+				highlightSelectedAdvert();
+				bindAddThisShareOverFix();
+			}
+		});
+	} else {
 		$.ajax({
 			type: 'GET',
 			statusCode: {
@@ -64,20 +83,7 @@ function getAdverts(){
 			complete: function() {
 			}
 		});
-	} else {
-		// standalone adverts for feed
-		$.ajax({
-			type: 'GET',
-			data: {
-				feedId: feedId,
-	        }, 
-			url: "/pgadmissions/adverts/feedAdverts",
-			success: function(data) {
-				processAdverts(data.adverts);
-				highlightSelectedAdvert();
-				bindAddThisShareOverFix();
-			}
-		});
+		
 	}
 }
 

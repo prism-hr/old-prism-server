@@ -44,11 +44,11 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 public class AdvertsController {
 
     private final AdvertService advertService;
-    
+
     private static final AdvertDTO NULL_ADVERT = new AdvertDTO(Integer.MIN_VALUE);
 
     private final ResearchOpportunitiesFeedService feedService;
-    
+
     public AdvertsController() {
         this(null, null);
     }
@@ -58,30 +58,39 @@ public class AdvertsController {
         this.advertService = advertService;
         this.feedService = feedService;
     }
-    
+
     @ModelAttribute("advertId")
-    public Integer getSelectedAdvert(final Integer advert, final HttpServletRequest request){
-    	return advert == null ? getSelectedAdvertFromSession(request) : advert ;
+    public Integer getSelectedAdvert(final Integer advert, final HttpServletRequest request) {
+        return advert == null ? getSelectedAdvertFromSession(request) : advert;
     }
-    
+
     private Integer getSelectedAdvertFromSession(final HttpServletRequest request) {
-    	DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
-    	if(defaultSavedRequest!=null){
-			String[] values = defaultSavedRequest.getParameterValues("advert");
-		    if (!ArrayUtils.isEmpty(values) && !StringUtils.isBlank(values[0]) && StringUtils.isNumeric(values[0])) {
-		    	return Integer.valueOf(values[0]);
-		    }
-    	}
-    	return null;
+        DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+        if (defaultSavedRequest != null) {
+            String[] values = defaultSavedRequest.getParameterValues("advert");
+            if (!ArrayUtils.isEmpty(values) && !StringUtils.isBlank(values[0]) && StringUtils.isNumeric(values[0])) {
+                return Integer.valueOf(values[0]);
+            }
+        }
+        return null;
     }
-    
+
     @RequestMapping(value = "/standaloneAdverts", method = RequestMethod.GET)
-    public String standaloneAdverts(final HttpServletRequest request, ModelMap model) {
-        model.put("feedId", request.getParameter("feed"));
+    public String standaloneAdverts(@RequestParam(required = false) Integer feed, @RequestParam(required = false) String user,
+            @RequestParam(required = false) String upi, ModelMap model) {
+        if (feed != null) {
+            model.addAttribute("feedId", feed);
+        }
+        if (user != null) {
+            model.addAttribute("user", user);
+        }
+        if (upi != null) {
+            model.addAttribute("upi", upi);
+        }
         model.put("shouldOpenNewTab", "true");
-    	return "public/login/standalone";
+        return "public/login/standalone";
     }
-    
+
     @RequestMapping(value = "/activeAdverts", method = RequestMethod.GET)
     @ResponseBody
     public String activeAdverts(@ModelAttribute("advertId") Integer advert) {
@@ -97,18 +106,26 @@ public class AdvertsController {
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "/feedAdverts", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Map getFeedAdverts(@RequestParam Integer feedId) {
-        ResearchOpportunitiesFeed feed = feedService.getById(feedId);
+    public Map getFeedAdverts(@RequestParam(required = false) Integer feedId, @RequestParam(required = false) String user,
+            @RequestParam(required = false) String upi) {
+        ResearchOpportunitiesFeed feed = null;
+        if (feedId != null) {
+            feed = feedService.getById(feedId);
+        } else if (user != null) {
+            feed = feedService.getDefaultOpportunitiesFeedByUsername(user, null);
+        }
         List<Advert> advertList = new ArrayList<Advert>();
-        for (Program p : feed.getPrograms()) {
-            Advert advert = p.getAdvert();
-            if (advert != null) {
-                advertList.add(advert);
+        if (feed != null) {
+            for (Program p : feed.getPrograms()) {
+                Advert advert = p.getAdvert();
+                if (advert != null) {
+                    advertList.add(advert);
+                }
             }
         }
         return singletonMap("adverts", convertAdverts(advertList));
     }
-    
+
     private void setSelectedAndBringToFront(AdvertDTO selectedAdvert, List<AdvertDTO> activeAdverts) {
         selectedAdvert.setSelected(true);
         if (activeAdverts.remove(selectedAdvert)) {
@@ -139,32 +156,32 @@ public class AdvertsController {
     class AdvertConverter {
 
         public AdvertDTO convert(Advert input) {
-        	Program program = advertService.getProgram(input);
-        	AdvertDTO dto = null;
+            Program program = advertService.getProgram(input);
+            AdvertDTO dto = null;
             if (program != null) {
-            	dto = new AdvertDTO(input.getId());
+                dto = new AdvertDTO(input.getId());
                 dto.setProgramCode(program.getCode());
                 dto.setTitle(program.getTitle());
                 dto.setClosingDate(getFirstClosingDate(program));
                 Person primarySupervisor = getFirstValidAdministrator(program);
-				dto.setPrimarySupervisor(primarySupervisor);
-                if(primarySupervisor!=null){
-                	dto.setSupervisorEmail(primarySupervisor.getEmail());
+                dto.setPrimarySupervisor(primarySupervisor);
+                if (primarySupervisor != null) {
+                    dto.setSupervisorEmail(primarySupervisor.getEmail());
                 }
                 dto.setType("program");
                 dto.setStudyDuration(input.getStudyDuration());
             } else {
-            	Project project = advertService.getProject(input);
-            	ProjectAdvertDTO projectDto = new ProjectAdvertDTO(input.getId());
+                Project project = advertService.getProject(input);
+                ProjectAdvertDTO projectDto = new ProjectAdvertDTO(input.getId());
                 projectDto.setProjectId(project.getId());
                 program = project.getProgram();
-				projectDto.setProgramCode(program.getCode());
-				if(program.getAdvert()!=null){
-					projectDto.setStudyDuration(program.getAdvert().getStudyDuration());
-				}
+                projectDto.setProgramCode(program.getCode());
+                if (program.getAdvert() != null) {
+                    projectDto.setStudyDuration(program.getAdvert().getStudyDuration());
+                }
                 projectDto.setTitle(input.getTitle());
                 RegisteredUser supervisor = project.getPrimarySupervisor();
-				projectDto.setPrimarySupervisor(toPerson(supervisor));
+                projectDto.setPrimarySupervisor(toPerson(supervisor));
                 projectDto.setSupervisorEmail(supervisor.getEmail());
                 projectDto.setSecondarySupervisor(toPerson(project.getSecondarySupervisor()));
                 projectDto.setType("project");
@@ -180,12 +197,12 @@ public class AdvertsController {
                 return null;
             }
             Date now = DateUtils.truncateToDay(new Date());
-            for(ProgramClosingDate closingDate:program.getClosingDates()){
-            	if(now.compareTo(closingDate.getClosingDate())<=0){
-            		return closingDate.getClosingDate();
-            	}
+            for (ProgramClosingDate closingDate : program.getClosingDates()) {
+                if (now.compareTo(closingDate.getClosingDate()) <= 0) {
+                    return closingDate.getClosingDate();
+                }
             }
-			return null;
+            return null;
         }
 
         private Person getFirstValidAdministrator(Program program) {
@@ -199,17 +216,17 @@ public class AdvertsController {
         }
 
         private Person toPerson(RegisteredUser user) {
-        	if(user==null){
-        		return null;
-        	}
-			Person person = new Person();
-			person.setFirstname(user.getFirstName());
-			person.setLastname(user.getLastName());
-			person.setEmail(user.getEmail());
-			return person;
-		}
+            if (user == null) {
+                return null;
+            }
+            Person person = new Person();
+            person.setFirstname(user.getFirstName());
+            person.setLastname(user.getLastName());
+            person.setEmail(user.getEmail());
+            return person;
+        }
 
-		private boolean isValid(RegisteredUser admin) {
+        private boolean isValid(RegisteredUser admin) {
             return admin != null && admin.isAccountNonExpired() && admin.isAccountNonLocked() && admin.isCredentialsNonExpired() && admin.isEnabled();
         }
     }

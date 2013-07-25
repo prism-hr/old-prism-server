@@ -19,7 +19,6 @@ import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ModelMap;
 
 import com.google.gson.Gson;
@@ -129,8 +128,8 @@ public class AdvertsControllerTest {
         RegisteredUser validAdmin = new RegisteredUserBuilder().email("accountEmail").build();
         ;
         Program program = new ProgramBuilder().code("code1").title("another title")
-                        .closingDates(programClosingDateOld, programClosingDateSecond, programClosingDateFirst)
-                        .administrators(expiredAdmin, lockedAdmin, credentialsExpiredAdmin, notEnabledAdmin, validAdmin).build();
+                .closingDates(programClosingDateOld, programClosingDateSecond, programClosingDateFirst)
+                .administrators(expiredAdmin, lockedAdmin, credentialsExpiredAdmin, notEnabledAdmin, validAdmin).build();
         Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
         List<Advert> advertList = Arrays.asList(advert);
 
@@ -186,15 +185,35 @@ public class AdvertsControllerTest {
 
     @Test
     @SuppressWarnings("rawtypes")
-    public void shouldReturnAdvertsFromReasearchFeed() {
+    public void shouldReturnAdvertsByFeedId() {
         Advert advert = new AdvertBuilder().id(new Integer(1)).description("Advert").funding("Funding").studyDuration(1).build();
         Program program = new ProgramBuilder().code("code1").title("another title").adverts(advert).build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program).build();
         EasyMock.expect(feedService.getById(1)).andReturn(feed);
         EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
+
         EasyMock.replay(feedService, advertService);
-        Map feedAdverts = controller.getFeedAdverts(1);
-        EasyMock.verify(feedService);
+        Map feedAdverts = controller.getFeedAdverts(1, null, null);
+        EasyMock.verify(feedService, advertService);
+
+        List<?> advertsList = (List<?>) feedAdverts.get("adverts");
+        AdvertDTO dto = (AdvertDTO) advertsList.get(0);
+        Assert.assertEquals("code1", dto.getProgramCode());
+    }
+
+    @Test
+    @SuppressWarnings("rawtypes")
+    public void shouldReturnAdvertsByUsername() {
+        Advert advert = new AdvertBuilder().id(new Integer(1)).description("Advert").funding("Funding").studyDuration(1).build();
+        Program program = new ProgramBuilder().code("code1").title("another title").adverts(advert).build();
+        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program).build();
+        EasyMock.expect(feedService.getDefaultOpportunitiesFeedByUsername("feeder", null)).andReturn(feed);
+        EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
+
+        EasyMock.replay(feedService, advertService);
+        Map feedAdverts = controller.getFeedAdverts(null, "feeder", null);
+        EasyMock.verify(feedService, advertService);
+
         List<?> advertsList = (List<?>) feedAdverts.get("adverts");
         AdvertDTO dto = (AdvertDTO) advertsList.get(0);
         Assert.assertEquals("code1", dto.getProgramCode());
@@ -202,12 +221,13 @@ public class AdvertsControllerTest {
 
     @Test
     public void shouldOpenNewTabForStandaloneAdvert() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
         ModelMap modelMap = new ModelMap();
-        controller.standaloneAdverts(request, modelMap);
+        controller.standaloneAdverts(8, null, null, modelMap);
 
         assertEquals(2, modelMap.size());
         assertTrue(modelMap.containsAttribute("shouldOpenNewTab"));
+        assertEquals(8, modelMap.get("feedId"));
+
     }
 
     private String jsonProperty(String key, Date closingDate) {

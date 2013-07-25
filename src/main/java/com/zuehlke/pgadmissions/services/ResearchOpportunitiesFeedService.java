@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -120,10 +121,22 @@ public class ResearchOpportunitiesFeedService {
         return defaultFeedSmall;
     }
 
-    public ResearchOpportunitiesFeed getDefaultOpportunitiesFeedByUsername(String username, FeedFormat format) {
+    private List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeeds(List<RegisteredUser> users, FeedFormat format) {
+        LinkedList<ResearchOpportunitiesFeed> feeds = Lists.newLinkedList();
+        for (RegisteredUser linkedUser : users) {
+            feeds.add(getDefaultOpportunitiesFeed(linkedUser, format));
+        }
+        return feeds;
+    }
+
+    public List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeedsByUsername(String username, FeedFormat format) {
         RegisteredUser user = userService.getUserByUsername(username);
         Assert.notNull(user);
-        return getDefaultOpportunitiesFeed(user, format);
+        return getDefaultOpportunitiesFeeds(user.getPrimaryAccount().getLinkedAccounts(), format);
+    }
+
+    public List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeedsByUpi(String upi, FeedFormat format) {
+        return getDefaultOpportunitiesFeeds(userService.getUsersWithUpi(upi), format);
     }
 
     @Transactional(readOnly = true)
@@ -149,9 +162,7 @@ public class ResearchOpportunitiesFeedService {
         } else if (feedId == DEFAULT_LARGE_FEED_ID) {
             return getDefaultOpportunitiesFeed(userService.getCurrentUser(), FeedFormat.LARGE);
         }
-        ResearchOpportunitiesFeed feed = dao.getById(feedId);
-        Assert.isTrue(isOwner(feed));
-        return feed;
+        return dao.getById(feedId);
     }
 
     @Transactional
@@ -167,4 +178,5 @@ public class ResearchOpportunitiesFeedService {
         feed.setTitle(title);
         return feed;
     }
+
 }

@@ -5,9 +5,11 @@ import static java.util.Collections.singletonMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Advert;
@@ -108,14 +111,16 @@ public class AdvertsController {
     @ResponseBody
     public Map getFeedAdverts(@RequestParam(required = false) Integer feedId, @RequestParam(required = false) String user,
             @RequestParam(required = false) String upi) {
-        ResearchOpportunitiesFeed feed = null;
+        List<ResearchOpportunitiesFeed> feeds = null;
         if (feedId != null) {
-            feed = feedService.getById(feedId);
+            feeds = Collections.singletonList(feedService.getById(feedId));
+        } else if (upi != null) {
+            feeds = feedService.getDefaultOpportunitiesFeedsByUpi(upi, null);
         } else if (user != null) {
-            feed = feedService.getDefaultOpportunitiesFeedByUsername(user, null);
+            feeds = feedService.getDefaultOpportunitiesFeedsByUsername(user, null);
         }
-        List<Advert> advertList = new ArrayList<Advert>();
-        if (feed != null) {
+        Set<Advert> advertList = new HashSet<Advert>();
+        for (ResearchOpportunitiesFeed feed : feeds) {
             for (Program p : feed.getPrograms()) {
                 Advert advert = p.getAdvert();
                 if (advert != null) {
@@ -123,7 +128,7 @@ public class AdvertsController {
                 }
             }
         }
-        return singletonMap("adverts", convertAdverts(advertList));
+        return singletonMap("adverts", convertAdverts(Lists.newArrayList(advertList)));
     }
 
     private void setSelectedAndBringToFront(AdvertDTO selectedAdvert, List<AdvertDTO> activeAdverts) {

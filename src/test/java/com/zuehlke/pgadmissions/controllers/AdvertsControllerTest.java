@@ -196,10 +196,10 @@ public class AdvertsControllerTest {
         EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
 
         EasyMock.replay(feedService, advertService);
-        Map feedAdverts = controller.getFeedAdverts(1, null, null);
+        Map feeds = controller.getFeeds(1, null, null);
         EasyMock.verify(feedService, advertService);
 
-        List<?> advertsList = (List<?>) feedAdverts.get("adverts");
+        List<?> advertsList = (List<?>) feeds.get("adverts");
         AdvertDTO dto = (AdvertDTO) advertsList.get(0);
         Assert.assertEquals("code1", dto.getProgramCode());
     }
@@ -218,10 +218,10 @@ public class AdvertsControllerTest {
         EasyMock.expect(advertService.getProgram(advert2)).andReturn(program2);
 
         EasyMock.replay(feedService, advertService);
-        Map feedAdverts = controller.getFeedAdverts(null, "feeder", null);
+        Map feeds = controller.getFeeds(null, "feeder", null);
         EasyMock.verify(feedService, advertService);
 
-        List<AdvertDTO> advertsList = (List<AdvertDTO>) feedAdverts.get("adverts");
+        List<AdvertDTO> advertsList = (List<AdvertDTO>) feeds.get("adverts");
         Matcher<Iterable<AdvertDTO>> advertsListMatcher = Matchers.hasItems(Matchers.hasProperty("programCode", Matchers.equalTo("code1")));
         assertThat(advertsList, advertsListMatcher);
     }
@@ -229,7 +229,7 @@ public class AdvertsControllerTest {
     @Test
     public void shouldOpenNewTabForStandaloneAdvert() {
         ModelMap modelMap = new ModelMap();
-        controller.standaloneAdverts(8, null, null, modelMap);
+        controller.standaloneOpportunities(8, null, null, modelMap);
 
         assertEquals(2, modelMap.size());
         assertTrue(modelMap.containsAttribute("shouldOpenNewTab"));

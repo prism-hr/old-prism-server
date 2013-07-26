@@ -133,7 +133,7 @@ function renderAdvert(advert){
 	var funding = '';
 	var selectedClass = (advert.selected) ? "selected" : "";
 	if(advert.funding){
-		funding = '<div class="fdescription"><p>'+advert.funding+'</p></div>';
+		funding = '<div class="fdescription"><p><strong>Funding</strong>: '+advert.funding+'</p></div>';
 	}
 	if(advert.type == 'program') {
 		psupervisor = '';

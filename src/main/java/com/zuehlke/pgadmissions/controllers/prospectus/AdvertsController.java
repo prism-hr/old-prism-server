@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Controller
-@RequestMapping("/adverts")
+@RequestMapping("/opportunities")
 public class AdvertsController {
 
     private final AdvertService advertService;
@@ -78,8 +78,8 @@ public class AdvertsController {
         return null;
     }
 
-    @RequestMapping(value = "/standaloneAdverts", method = RequestMethod.GET)
-    public String standaloneAdverts(@RequestParam(required = false) Integer feed, @RequestParam(required = false) String user,
+    @RequestMapping(value = "/standaloneOpportunities", method = RequestMethod.GET)
+    public String standaloneOpportunities(@RequestParam(required = false) Integer feed, @RequestParam(required = false) String user,
             @RequestParam(required = false) String upi, ModelMap model) {
         if (feed != null) {
             model.addAttribute("feedId", feed);
@@ -94,7 +94,7 @@ public class AdvertsController {
         return "public/login/standalone";
     }
 
-    @RequestMapping(value = "/activeAdverts", method = RequestMethod.GET)
+    @RequestMapping(value = "/activeOpportunities", method = RequestMethod.GET)
     @ResponseBody
     public String activeAdverts(@ModelAttribute("advertId") Integer advert) {
         Map<String, Object> map = Maps.newHashMap();
@@ -107,9 +107,9 @@ public class AdvertsController {
     }
 
     @SuppressWarnings("rawtypes")
-    @RequestMapping(value = "/feedAdverts", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/feeds", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Map getFeedAdverts(@RequestParam(required = false) Integer feedId, @RequestParam(required = false) String user,
+    public Map getFeeds(@RequestParam(required = false) Integer feedId, @RequestParam(required = false) String user,
             @RequestParam(required = false) String upi) {
         List<ResearchOpportunitiesFeed> feeds = null;
         if (feedId != null) {

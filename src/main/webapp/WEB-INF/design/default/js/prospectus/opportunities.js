@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	var buttonText;
 	hideAdverts();
 	getAdverts();
 	setClass();
@@ -22,8 +23,10 @@ function setHsize() {
 function setClass() {
 	if ($('#pholder').width() < 390) {
 		$('#pholder').addClass('small');
+		buttonText = 'Read More';
 	} else {
 		$('#pholder').removeClass('small');
+		buttonText = 'Apply Now';
 	}
 	setHsize();
 }
@@ -53,7 +56,7 @@ function getAdverts(){
 		$.ajax({
 			type: 'GET',
 			data: data,
-			url: "/pgadmissions/adverts/feedAdverts",
+			url: "/pgadmissions/opportunities/feeds",
 			success: function(data) {
 				processAdverts(data.adverts);
 				highlightSelectedAdvert();
@@ -73,7 +76,7 @@ function getAdverts(){
 			data: {
 				advert: selectedAdvertId,
 	        }, 
-			url: "/pgadmissions/adverts/activeAdverts",
+			url: "/pgadmissions/opportunities/activeOpportunities",
 			success: function(data) {
 				var map = JSON.parse(data);
 				processAdverts(map.adverts);
@@ -170,8 +173,7 @@ function renderAdvert(advert){
 		'</div>'+
 		'<div class="applyBox">'+
 			'<a href="mailto:'+advert.email+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
-			'<button id="'+advert.programCode+'" class="btn btn-primary apply">Apply Now</button>'+
-			'<a href="'+getAdvertUrl(advert.id)+'" class="btn btn-primary readmore">Read More</a>'+
+			'<button id="'+advert.programCode+'" class="btn btn-primary apply">'+buttonText+'</button>'+
 		'</div>'+
 	'</div>'+
 '</li>';

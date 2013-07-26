@@ -30,11 +30,18 @@ $(document).ready(function() {
 		if (feedId !== undefined) {
 			editFeed(feedId);
 		}
+		if (feedId < 0) {
+			$('#feed-programmes').attr("readonly", "readonly").attr("disabled", "disabled");
+		} else {
+			$('#feed-programmes').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+		}
 	});
 	
 	$('#new-feed-go').on('click', function() {
 		clearForm();
 		$('#new-feed-go').hide();
+		$('#save-feed-go').show();
+		$('#feed-programmes').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
 	});
 });
 function shortTable () {
@@ -210,7 +217,7 @@ function editFeed(feedId) {
 				if(item.id >= 0) { // editable
 					$("#save-feed-go").show();
 				} else {
-					$("#save-feed-go").hide();	
+					$("#save-feed-go").hide();
 				}
 			});
 		}

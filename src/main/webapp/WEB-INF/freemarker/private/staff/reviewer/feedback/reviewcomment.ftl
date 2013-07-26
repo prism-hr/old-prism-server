@@ -60,9 +60,6 @@
               <h2 class="no-arrow"> Provide Review </h2>
               <div>
                 <form id ="reviewForm" method="POST" action= "<@spring.url '/reviewFeedback'/>"/>
-                
-                <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
-                
                 <@spring.bind "comment.confirmNextStage" />
                 <#if spring.status.errorMessages?size &gt; 0>
 		     		<div class="alert alert-error" >
@@ -71,6 +68,7 @@
 		            <div class="alert alert-info">
           			<i class="icon-info-sign"></i>
 	          	</#if>
+	          	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
  				 Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme. </div>
                 <div class="row-group">
                   <div class="row">

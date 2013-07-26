@@ -18,7 +18,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('#existing-feed-table').on('click', '.button-delete', function() {
+	$('#existing-feed-table').on('click', 'button.button-delete', function() {
 		var feedId = $(this).closest('tr').data("feedid");
 		if (feedId !== undefined) {
 			deleteFeed(feedId);
@@ -41,10 +41,11 @@ function shortTable () {
 	$existingtable = $('#existing-feed-table table');
 	$existingtable.find('tr:nth-child(1) td:first-child').css('font-weight', 'bold');
 	$existingtable.find('tr:nth-child(2) td:first-child').css('font-weight', 'bold');
-	$existingtable.find('tr:nth-child(1) td:nth-child(3)').html($existingtable.find('tr:nth-child(1) td:nth-child(2)').html());
-	$existingtable.find('tr:nth-child(2) td:nth-child(3)').html($existingtable.find('tr:nth-child(2) td:nth-child(2)').html());
-	$existingtable.find('tr:nth-child(1) td:nth-child(2)').html('').css('border-left', 'none');
-	$existingtable.find('tr:nth-child(2) td:nth-child(2)').html('').css('border-left', 'none');
+	$existingtable.find('tr:nth-child(1) td:nth-child(3)').html('<i class="button-delete grey disable">Remove</i>');
+	$existingtable.find('tr:nth-child(2) td:nth-child(3)').html('<i class="button-delete grey disable">Remove</i>');
+	$('.button-delete.disable').click(function(event) {
+     event.preventDefault(); 
+    });
 }
 function loadExistingFeeds() {
 	$('#existing-feed-table-row-group').hide();

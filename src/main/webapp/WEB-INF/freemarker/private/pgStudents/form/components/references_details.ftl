@@ -65,7 +65,6 @@
   </table>
   </#if>
   <form id="refereeForm">
-    <input type="hidden" id="refereeId" name="refereeId" value="<#if referee.id??>${encrypter.encrypt(referee.id)}</#if>" />
     <#if errorCode?? && errorCode=="true">
     <div class="alert alert-error"> <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
       <@spring.message 'referencesDetails.sectionInfo'/>
@@ -75,6 +74,7 @@
       <@spring.message 'referencesDetails.sectionInfo'/>
     </div>
     </#if>
+    <input type="hidden" id="refereeId" name="refereeId" value="<#if referee.id??>${encrypter.encrypt(referee.id)}</#if>" />
     <div class="row-group aSDisplay"> 
       <!-- First name -->
       <div class="row">

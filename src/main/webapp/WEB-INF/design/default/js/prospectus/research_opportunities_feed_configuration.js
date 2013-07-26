@@ -37,7 +37,15 @@ $(document).ready(function() {
 		$('#new-feed-go').hide();
 	});
 });
-
+function shortTable () {
+	$existingtable = $('#existing-feed-table table');
+	$existingtable.find('tr:nth-child(1) td:first-child').css('font-weight', 'bold');
+	$existingtable.find('tr:nth-child(2) td:first-child').css('font-weight', 'bold');
+	$existingtable.find('tr:nth-child(1) td:nth-child(3)').html($existingtable.find('tr:nth-child(1) td:nth-child(2)').html());
+	$existingtable.find('tr:nth-child(2) td:nth-child(3)').html($existingtable.find('tr:nth-child(2) td:nth-child(2)').html());
+	$existingtable.find('tr:nth-child(1) td:nth-child(2)').html('').css('border-left', 'none');
+	$existingtable.find('tr:nth-child(2) td:nth-child(2)').html('').css('border-left', 'none');
+}
 function loadExistingFeeds() {
 	$('#existing-feed-table-row-group').hide();
 	$('#existing-feed-table tbody tbody > tr').remove();
@@ -72,10 +80,10 @@ function loadExistingFeeds() {
 					+ '<td>' + deleteButton + '</td>'
 					+ '</tr>');
 			});
+			shortTable()
 		}
 	});
 }
-
 function loadProgrammes() {
 	$.ajax({
 		type: 'GET',

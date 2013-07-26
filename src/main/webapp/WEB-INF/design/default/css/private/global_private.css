@@ -373,7 +373,7 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 #programme-details .cdate {display: inline-block; font-weight: bold; position: relative; left: 155px;}
 #programme-details .cdate span{display: inline-block; font-weight: normal; margin-left: 40px;}
 #qualificationsSection .alert.alert-error i {
-	margin-left: 0px;
+	/*margin-left: 0px;*/
 }
 #programme-details div.project label { vertical-align: top; }
 #programme-details div.project span { max-width: 480px; display: inline-block; }
@@ -1188,6 +1188,9 @@ span.count {
     padding: 6px;
     padding-left: 26px !important;
 }
+#termscond {
+	padding-left: 10px !important;
+}
 .field .alert>i, .alert-info>i, form>.alert-error  i.icon-warning-sign {
   margin-left: -17px;
   font-size: 14px;
@@ -1465,7 +1468,7 @@ i {
 	overflow: visible !important;
 }
 
-#section-registryusers .table-bordered th, #section-registryusers .table-bordered td, #existing-feed-table td{
+#section-registryusers .table-bordered th, #section-registryusers .table-bordered td, #existing-feed-table td, .tableContainer td{
   vertical-align: middle !important;
 }
 form#removeForm {

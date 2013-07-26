@@ -210,6 +210,9 @@ li.project.selected {
   margin: 2px 0;
   font-size: 13px;
 }
+#pholder.small .item .pdetails {
+  padding: 4px 6px;
+}
 #pholder.small .social, #pholder.small .duration, #pholder.small .question, #pholder.small .fdescription, #pholder.small .pdescription {
   display: none;
 }
@@ -277,4 +280,36 @@ li.project.selected {
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] {
     background-color: #0044CC;
     color: #FFFFFF;
+}
+/*addthis customisation*/
+#at3win {
+  left: 2%;
+  top: 5% !important;
+}
+#at3win #at3winheader {
+  height: 30px;
+}
+#at3win #at3winheader h3 {
+  line-height: 36px;
+  height: 36px;
+}
+#at3win #at3winheader .at3winheadersvc {
+  top: 9px;
+}
+#at3winssi {
+  display: none !important;
+}
+#at3win #at3winheader #at3winheaderclose {
+  height: 30px;
+
+}
+#at3winshare-iframe #service-filter {
+  background-position: 361px 5px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  width: 350px !important;
+}
+#at3win #at3wincontent {
+    height: 410px;
+    position: relative;
 }

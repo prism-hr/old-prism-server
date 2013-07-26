@@ -15,6 +15,27 @@
       <h1>Research Study Opportunities</h1></header>
     <section id="plist">
     	<ul></ul>
+    	<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>
+    	<script type="text/javascript">
+            function eventHandler(evt) {
+                switch (evt.type) {
+                    case "addthis.menu.share":
+                        applyFilter();
+                        break;
+                    default:
+                    alert('received an unexpected event', evt);   
+                }
+            }
+            addthis.addEventListener('addthis.menu.share', eventHandler);
+            
+            function applyFilter() {
+                $('#at3winshare-iframe').ready(function(){
+                   alert ('iframe loaded');
+                   
+                });
+            }
+
+            </script>
     </section>
     <footer class="clearfix">
     	<div class="left"><a href="www.engineering.ucl.ac.uk" target="_blank"><img src="<@spring.url '/design/default/images/ucl-engineering.jpg'/>" alt="" /></a></div>

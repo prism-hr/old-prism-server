@@ -91,6 +91,10 @@ function getAdverts(){
 }
 
 function processAdverts(adverts){
+	// hide if no adverts in the feed
+	if (adverts.length == 0) {
+		$('#pholder').hide();
+	}
 	$('#plist > li').remove();
 	$.each(adverts, function(index, advert){
 		var advertElement = renderAdvert(advert);
@@ -133,7 +137,7 @@ function renderAdvert(advert){
 	var funding = '';
 	var selectedClass = (advert.selected) ? "selected" : "";
 	if(advert.funding){
-		funding = '<div class="fdescription"><p><strong>Funding</strong>: '+advert.funding+'</p></div>';
+		funding = '<div class="fdescription"><p><strong>Funding infromation</strong>: '+advert.funding+'</p></div>';
 	}
 	if(advert.type == 'program') {
 		psupervisor = '';
@@ -168,7 +172,6 @@ function renderAdvert(advert){
 			'<a class="addthis_button_expanded"></a>'+
 			'<a class="addthis_counter addthis_bubble_style"></a>'+
 			'</div>'+
-			'<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>'+
 			'<!-- AddThis Button END -->'+
 		'</div>'+
 		'<div class="applyBox">'+

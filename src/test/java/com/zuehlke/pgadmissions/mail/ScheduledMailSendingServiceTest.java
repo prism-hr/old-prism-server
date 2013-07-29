@@ -7,13 +7,19 @@ import static junit.framework.Assert.assertNotNull;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.easymock.Capture;
@@ -21,12 +27,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
@@ -39,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -71,6 +80,94 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         applicationFormListDAOMock = createMock(ApplicationFormListDAO.class);
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
                 encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormListDAOMock);
+    }
+
+    @Test
+    public void shouldSendDigestToUsers() {
+        List<Integer> potentialUsersForTaskReminder = Lists.newArrayList(1, 2);
+        List<Integer> potentialUsersForTaskNotification = Lists.newArrayList(3, 4);
+        List<Integer> usersForUpdateNotification = Lists.newArrayList(5, 6);
+
+        ScheduledMailSendingService thisServiceMock = createMock(ScheduledMailSendingService.class);
+
+        expect(userDAOMock.getPotentialUsersForTaskReminder()).andReturn(potentialUsersForTaskReminder);
+        expect(userDAOMock.getPotentialUsersForTaskNotification()).andReturn(potentialUsersForTaskNotification);
+        expect(userDAOMock.getUsersForUpdateNotification()).andReturn(usersForUpdateNotification);
+        
+        expect(applicationContextMock.getBean(ScheduledMailSendingService.class)).andReturn(thisServiceMock).times(6);
+        
+        expect(thisServiceMock.sendTaskEmailIfNecessary(1, DigestNotificationType.TASK_REMINDER)).andReturn(true);
+        expect(thisServiceMock.sendTaskEmailIfNecessary(2, DigestNotificationType.TASK_REMINDER)).andReturn(true);
+        expect(thisServiceMock.sendTaskEmailIfNecessary(3, DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendTaskEmailIfNecessary(4, DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendUpdateEmail(5)).andReturn(true);
+        expect(thisServiceMock.sendUpdateEmail(6)).andReturn(true);
+
+        replay(userDAOMock, applicationContextMock, thisServiceMock);
+        service.sendDigestsToUsers();
+        verify(userDAOMock, applicationContextMock, thisServiceMock);
+    }
+    
+    @Test
+    public void shouldSendTaskEmailIfNecessary(){
+        RegisteredUser user = new RegisteredUserBuilder().id(8).username("bebok").build();
+        List<ApplicationForm> applicationRequiringAttention = Lists.newArrayList(new ApplicationForm());
+        
+        expect(userDAOMock.get(8)).andReturn(user);
+        expect(applicationFormListDAOMock.getApplicationsWorthConsideringForAttentionFlag(eq(user), isA(ApplicationsFiltering.class), eq(-1))).andReturn(applicationRequiringAttention);
+        expect(mockMailSender.resolveSubject(EmailTemplateName.DIGEST_TASK_NOTIFICATION, (Object)null)).andReturn("Ahoj!");
+        
+        Capture<PrismEmailMessage> messageCapture = new Capture<PrismEmailMessage>();
+        mockMailSender.sendEmail(capture(messageCapture));
+        
+        replay(userDAOMock, applicationFormListDAOMock, mockMailSender);
+        boolean result = service.sendTaskEmailIfNecessary(8, DigestNotificationType.TASK_NOTIFICATION);
+        verify(userDAOMock, applicationFormListDAOMock, mockMailSender);
+        
+        assertTrue(result);
+        assertNotNull(user.getLatestTaskNotificationDate());
+        PrismEmailMessage message = messageCapture.getValue();
+        assertEquals(HOST, message.getModel().get("host"));
+        assertSame(user, message.getModel().get("user"));
+        assertEquals("Ahoj!", message.getSubjectCode());
+        assertEquals(EmailTemplateName.DIGEST_TASK_NOTIFICATION, message.getTemplateName());
+    }
+
+    @Test
+    public void shouldNotSendTaskEmailIfNotNecessary(){
+        RegisteredUser user = new RegisteredUserBuilder().id(8).username("bebok").build();
+        List<ApplicationForm> applicationRequiringAttention = Collections.emptyList();
+        
+        expect(userDAOMock.get(8)).andReturn(user);
+        expect(applicationFormListDAOMock.getApplicationsWorthConsideringForAttentionFlag(eq(user), isA(ApplicationsFiltering.class), eq(-1))).andReturn(applicationRequiringAttention);
+        
+        replay(userDAOMock, applicationFormListDAOMock);
+        boolean result = service.sendTaskEmailIfNecessary(8, DigestNotificationType.TASK_NOTIFICATION);
+        verify(userDAOMock, applicationFormListDAOMock);
+        
+        assertFalse(result);
+    }
+
+    @Test
+    public void shouldSendUpdateEmail(){
+        RegisteredUser user = new RegisteredUserBuilder().id(8).username("bebok").build();
+        
+        expect(userDAOMock.get(8)).andReturn(user);
+        expect(mockMailSender.resolveSubject(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION, (Object)null)).andReturn("Ahoj!");
+        
+        Capture<PrismEmailMessage> messageCapture = new Capture<PrismEmailMessage>();
+        mockMailSender.sendEmail(capture(messageCapture));
+        
+        replay(userDAOMock, applicationFormListDAOMock, mockMailSender);
+        boolean result = service.sendUpdateEmail(8);
+        verify(userDAOMock, applicationFormListDAOMock, mockMailSender);
+        
+        assertTrue(result);
+        PrismEmailMessage message = messageCapture.getValue();
+        assertEquals(HOST, message.getModel().get("host"));
+        assertSame(user, message.getModel().get("user"));
+        assertEquals("Ahoj!", message.getSubjectCode());
+        assertEquals(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION, message.getTemplateName());
     }
 
     @SuppressWarnings("unchecked")

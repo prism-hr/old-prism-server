@@ -72,6 +72,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
 
     public void sendDigestsToUsers() {
+        log.info("Sending email digest to users");
         List<Integer> users = getPotentialUsersForTaskReminder();
         for (Integer userId : users) {
             applicationContext.getBean(this.getClass()).sendTaskEmailIfNecessary(userId, DigestNotificationType.TASK_REMINDER);
@@ -86,6 +87,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (Integer userId : users) {
             applicationContext.getBean(this.getClass()).sendUpdateEmail(userId);
         }
+        log.info("Finished sending email digest to users");
     }
 
     @Transactional

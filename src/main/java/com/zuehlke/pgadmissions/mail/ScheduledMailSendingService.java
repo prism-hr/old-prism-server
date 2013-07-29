@@ -73,35 +73,36 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     public void sendDigestsToUsers() {
         log.info("Sending email digest to users");
-        List<Integer> users = getPotentialUsersForTaskReminder();
+        ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
+        List<Integer> users = thisProxy.getPotentialUsersForTaskReminder();
         for (Integer userId : users) {
-            applicationContext.getBean(this.getClass()).sendTaskEmailIfNecessary(userId, DigestNotificationType.TASK_REMINDER);
+            thisProxy.sendTaskEmailIfNecessary(userId, DigestNotificationType.TASK_REMINDER);
         }
 
-        users = getPotentialUsersForTaskNotification();
+        users = thisProxy.getPotentialUsersForTaskNotification();
         for (Integer userId : users) {
-            applicationContext.getBean(this.getClass()).sendTaskEmailIfNecessary(userId, DigestNotificationType.TASK_NOTIFICATION);
+            thisProxy.sendTaskEmailIfNecessary(userId, DigestNotificationType.TASK_NOTIFICATION);
         }
 
-        users = getUsersForUpdateNotification();
+        users = thisProxy.getUsersForUpdateNotification();
         for (Integer userId : users) {
-            applicationContext.getBean(this.getClass()).sendUpdateEmail(userId);
+            thisProxy.sendUpdateEmail(userId);
         }
         log.info("Finished sending email digest to users");
     }
 
     @Transactional
-    private List<Integer> getPotentialUsersForTaskNotification() {
+    public List<Integer> getPotentialUsersForTaskNotification() {
         return userDAO.getPotentialUsersForTaskNotification();
     }
 
     @Transactional
-    private List<Integer> getPotentialUsersForTaskReminder() {
+    public List<Integer> getPotentialUsersForTaskReminder() {
         return userDAO.getPotentialUsersForTaskReminder();
     }
 
     @Transactional
-    private List<Integer> getUsersForUpdateNotification() {
+    public List<Integer> getUsersForUpdateNotification() {
         return userDAO.getUsersForUpdateNotification();
     }
 

@@ -111,7 +111,7 @@
 											<textarea id="state_change_comment" name="comment" class="max" rows="6" cols="80">${(comment.comment?html)!}</textarea>
 											<@spring.bind "comment.comment" /> 
 											<#list spring.status.errorMessages as error> 
-                        <div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
+                        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
                       </#list>
 										</div>
 									</div>

@@ -6,9 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.lang.annotation.Annotation;
 
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
-import javax.validation.constraints.AssertFalse;
+import javax.validation.Payload;
 
 import org.easymock.EasyMock;
 import org.junit.Before;

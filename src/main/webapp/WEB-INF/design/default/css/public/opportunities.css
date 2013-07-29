@@ -30,6 +30,7 @@ body {
   padding-top: 4px;
   margin-top: 4px;
   padding-bottom: 4px;
+  height: 37px;
 }
 #pholder footer .left{
   float: left;
@@ -283,8 +284,8 @@ li.project.selected {
 }
 /*addthis customisation*/
 #at3win {
-  left: 2%;
   top: 5% !important;
+  left: 2%;
 }
 #at3win #at3winheader {
   height: 30px;

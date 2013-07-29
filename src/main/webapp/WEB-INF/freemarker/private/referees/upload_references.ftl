@@ -54,7 +54,6 @@
             <h2>Provide Reference</h2>
             <div>
               <form id="documentUploadForm" method="POST" action="<@spring.url '/referee/submitReference'/>">
-                <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
                 <@spring.bind "comment.confirmNextStage" />
 			    <#if spring.status.errorMessages?size &gt; 0>
 		     		<div class="alert alert-error" >
@@ -63,6 +62,7 @@
 		            <div class="alert alert-info">
           			<i class="icon-info-sign"></i>
 	          	</#if> Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme. </div>
+                <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
                 <div class="row-group">
                   <div class="row">
                     <label for="comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>

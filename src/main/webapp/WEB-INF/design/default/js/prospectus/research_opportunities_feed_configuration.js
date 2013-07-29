@@ -32,8 +32,12 @@ $(document).ready(function() {
 		}
 		if (feedId < 0) {
 			$('#feed-programmes').attr("readonly", "readonly").attr("disabled", "disabled");
+			$('#feed-title').attr("readonly", "readonly").attr("disabled", "disabled");
+			$('#feedformat').attr("readonly", "readonly").attr("disabled", "disabled");
 		} else {
 			$('#feed-programmes').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+			$('#feed-title').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+			$('#feedformat').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
 		}
 	});
 	
@@ -41,7 +45,7 @@ $(document).ready(function() {
 		clearForm();
 		$('#new-feed-go').hide();
 		$('#save-feed-go').show();
-		$('#feed-programmes').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+		//$('#feed-programmes', '#feed-title', '#feedformat').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
 	});
 });
 function shortTable () {

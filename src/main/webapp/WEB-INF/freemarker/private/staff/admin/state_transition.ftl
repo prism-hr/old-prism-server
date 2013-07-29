@@ -108,10 +108,10 @@
 										<label class="plain-label" for="comment">Comments<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'validateApp.comment'/>"></span>
 										<div class="field">		            				
-											<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='2000'>${(comment.comment?html)!}</textarea>
+											<textarea id="state_change_comment" name="comment" class="max" rows="6" cols="80">${(comment.comment?html)!}</textarea>
 											<@spring.bind "comment.comment" /> 
 											<#list spring.status.errorMessages as error> 
-                        <div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
+                        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
                       </#list>
 										</div>
 									</div>

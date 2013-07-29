@@ -171,10 +171,6 @@ public class ApplicationsService {
         applicationForm.setIsEditableByApplicant(false);
     }
 
-    public List<ApplicationForm> getApplicationsDueUpdateNotification() {
-        return applicationFormDAO.getApplicationsDueUpdateNotification();
-    }
-
     public List<ApplicationForm> getAllVisibleAndMatchedApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
         if (filtering.getPreFilter() == ApplicationsPreFilter.URGENT) {
             return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, APPLICATION_BLOCK_SIZE);
@@ -209,24 +205,8 @@ public class ApplicationsService {
         form.setBatchDeadline(null);
     }
 
-    public List<Integer> getApplicationsIdsDueRegistryNotification() {
-        return applicationFormDAO.getApplicationsIdsDueRegistryNotification();
-    }
-
     public void refresh(final ApplicationForm applicationForm) {
         applicationFormDAO.refresh(applicationForm);
-    }
-
-    public List<ApplicationForm> getApplicationsDueRegistryNotification() {
-        return applicationFormDAO.getApplicationsDueRegistryNotification();
-    }
-
-    public List<ApplicationForm> getApplicationsDueApprovalRestartRequestNotification() {
-        return applicationFormDAO.getApplicationsDueApprovalRequestNotification();
-    }
-
-    public List<ApplicationForm> getApplicationsDueApprovalRestartRequestReminder() {
-        return applicationFormDAO.getApplicationDueApprovalRestartRequestReminder();
     }
 
     public List<ApplicationForm> getAllApplicationsByStatus(final ApplicationFormStatus status) {

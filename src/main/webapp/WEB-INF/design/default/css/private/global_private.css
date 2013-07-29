@@ -1924,3 +1924,6 @@ form#removeForm {
 	margin-left: -6px;
 	margin-top: 2px;
 }
+select[disabled] > option {
+color: white;
+}

@@ -146,8 +146,6 @@ public class AdmitterCommentController {
         accessService.updateAccessTimestamp(application, user, new Date());
         applicationsService.save(application);
 
-        mailService.scheduleAdmitterProvidedCommentNotification(application);
-
         return "redirect:/applications?messageCode=validation.comment.success&application=" + application.getApplicationNumber();
     }
 

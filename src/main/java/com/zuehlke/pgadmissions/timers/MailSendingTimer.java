@@ -27,24 +27,24 @@ public class MailSendingTimer {
     @Scheduled(cron = "${email.digest.cron}")
     public void run() {
         log.info("Running ScheduledMailSendingService Task");
-        mailService.scheduleApprovalRequestAndReminder();
-        mailService.scheduleInterviewFeedbackEvaluationReminder();
-        mailService.scheduleReviewRequestAndReminder();
-        mailService.scheduleUpdateConfirmation();
-        mailService.scheduleValidationRequestAndReminder();
-        mailService.scheduleRestartApprovalRequestAndReminder();
-        mailService.scheduleApprovedConfirmation();
-        mailService.scheduleInterviewAdministrationRequestAndReminder();
-        mailService.scheduleRegistryRevalidationRequestAndReminder();
-        mailService.scheduleInterviewFeedbackConfirmation();
-        mailService.scheduleInterviewFeedbackRequestAndReminder();
-        mailService.scheduleApplicationUnderApprovalNotification();
-        mailService.scheduleRejectionConfirmationToAdministratorsAndSupervisor();
-        mailService.scheduleReviewSubmittedConfirmation();
-        mailService.scheduleReviewEvaluationReminder();
-        mailService.scheduleConfirmSupervisionRequestAndReminder();
-        mailService.scheduleApplicationUnderReviewNotification();
-        mailService.sendDigestsToUsers();
+//        mailService.scheduleApprovalRequestAndReminder();
+//        mailService.scheduleInterviewFeedbackEvaluationReminder();
+//        mailService.scheduleReviewRequestAndReminder();
+//        mailService.scheduleUpdateConfirmation();
+//        mailService.scheduleValidationRequestAndReminder();
+//        mailService.scheduleRestartApprovalRequestAndReminder();
+//        mailService.scheduleApprovedConfirmation();
+//        mailService.scheduleInterviewAdministrationRequestAndReminder();
+//        mailService.scheduleRegistryRevalidationRequestAndReminder();
+//        mailService.scheduleInterviewFeedbackConfirmation();
+//        mailService.scheduleInterviewFeedbackRequestAndReminder();
+//        mailService.scheduleApplicationUnderApprovalNotification();
+//        mailService.scheduleRejectionConfirmationToAdministratorsAndSupervisor();
+//        mailService.scheduleReviewSubmittedConfirmation();
+//        mailService.scheduleReviewEvaluationReminder();
+//        mailService.scheduleConfirmSupervisionRequestAndReminder();
+//        mailService.scheduleApplicationUnderReviewNotification();
+//        mailService.sendDigestsToUsers();
         log.info("Finished ScheduledMailSendingService Task");
     }
     

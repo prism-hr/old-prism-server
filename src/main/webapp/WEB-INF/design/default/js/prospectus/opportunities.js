@@ -137,7 +137,7 @@ function renderAdvert(advert){
 	var funding = '';
 	var selectedClass = (advert.selected) ? "selected" : "";
 	if(advert.funding){
-		funding = '<div class="fdescription"><p><strong>Funding infromation</strong>: '+advert.funding+'</p></div>';
+		funding = '<div class="fdescription"><p><strong>Funding Information</strong>: '+advert.funding+'</p></div>';
 	}
 	if(advert.type == 'program') {
 		psupervisor = '';
@@ -150,6 +150,17 @@ function renderAdvert(advert){
 			ssupervisor = '</p></div>';
 		}
 		
+	}
+	if ($('#pContainer').length > 0) {
+		popupbuttons = '<a class="addthis_button_facebook"></a>'+
+			'<a class="addthis_button_twitter"></a>'+
+			'<a class="addthis_button_google_plusone_share"></a>'+
+			'<a class="addthis_button_linkedin"></a>'+
+			'<a class="addthis_button_expanded"></a>'+
+			'<a class="addthis_counter addthis_bubble_style"></a>'+
+			'<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>'
+	} else {
+		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert.id)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>'
 	}
 	return '<li class="'+ advert.type+' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
 	'<div class="pdetails clearfix">'+
@@ -165,12 +176,7 @@ function renderAdvert(advert){
 		'<div class="social">'+
 			'<!-- AddThis Button BEGIN -->'+
 			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:description="'+advert.description+'" addthis:title="'+advert.title+'" addthis:url="'+getAdvertUrl(advert.id)+'">'+
-			'<a class="addthis_button_facebook"></a>'+
-			'<a class="addthis_button_twitter"></a>'+
-			'<a class="addthis_button_google_plusone_share"></a>'+
-			'<a class="addthis_button_linkedin"></a>'+
-			'<a class="addthis_button_expanded"></a>'+
-			'<a class="addthis_counter addthis_bubble_style"></a>'+
+			popupbuttons +
 			'</div>'+
 			'<!-- AddThis Button END -->'+
 		'</div>'+
@@ -214,7 +220,7 @@ function durationOfStudyString(studyDuration){
 }
 
 function getAdvertUrl(advertId){
-	return window.location.protocol +"//" +window.location.host + window.location.pathname + "?advert="+advertId;
+	return window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert="+advertId;
 }
 
 function getUrlParam(name){

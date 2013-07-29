@@ -24,4 +24,6 @@ public @interface ExtendedASCIIConstraint {
     Class<? extends Payload>[] payload() default {};
 
     String message() default "{text.field.nonextendedascii}";
+    
+    int maxLength() default 50000;
 }

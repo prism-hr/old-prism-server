@@ -390,3 +390,9 @@ div#ajaxloader {
 #pContainer #pholder {
   border: none;
 }
+#at3win {
+  left: 50% !important;
+}
+#service-filter {
+  background: black !important;
+}

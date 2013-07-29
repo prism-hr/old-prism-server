@@ -283,8 +283,8 @@ li.project.selected {
 }
 /*addthis customisation*/
 #at3win {
-  left: 2%;
   top: 5% !important;
+  left: 2%;
 }
 #at3win #at3winheader {
   height: 30px;

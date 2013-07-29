@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReferenceEvent;
@@ -44,7 +42,6 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class RefereeServiceTest {
@@ -58,7 +55,6 @@ public class RefereeServiceTest {
     private ApplicationFormDAO applicationFormDAOMock;
     private EncryptionUtils encryptionUtilsMock;
     private EncryptionHelper encryptionHelper;
-    private MailSendingService mailServiceMock;
 
     @Before
     public void setUp() {
@@ -70,64 +66,10 @@ public class RefereeServiceTest {
         applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
         encryptionHelper = createMock(EncryptionHelper.class);
-        mailServiceMock = createMock(MailSendingService.class);
         refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock,
-                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper, mailServiceMock);
+                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper);
     }
 
-    @Test
-    public void shouldSaveReferenceAndSendEmailsAdminsAndApplicant() throws UnsupportedEncodingException {
-
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
-        Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
-        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-        RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").build();
-        RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").build();
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
-        Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).build();
-
-        ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).build();
-        referee.setApplication(form);
-        ReferenceEvent event = new ReferenceEventBuilder().id(4).build();
-        EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
-        applicationFormDAOMock.save(form);
-        
-        mailServiceMock.scheduleReferenceSubmitConfirmation(form);
-        
-        EasyMock.replay(refereeDAOMock, eventFactoryMock, applicationFormDAOMock, mailServiceMock);
-        refereeService.saveReferenceAndSendMailNotifications(referee);
-        EasyMock.verify(refereeDAOMock, eventFactoryMock, applicationFormDAOMock, mailServiceMock);
-
-        assertEquals(1, form.getEvents().size());
-        assertEquals(event, form.getEvents().get(0));
-    }
-
-    @Test
-    public void shouldSaveAndSendEmailToReferee() throws UnsupportedEncodingException {
-
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
-        Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
-        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-        RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").build();
-        RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").build();
-        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
-        Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).build();
-
-        ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).build();
-        referee.setApplication(form);
-        ProgrammeDetails programmeDetails = new ProgrammeDetails();
-        programmeDetails.setId(1);
-        form.setProgrammeDetails(programmeDetails);
-        
-        mailServiceMock.sendReferenceRequest(asList(referee), form);
-
-        EasyMock.replay(mailServiceMock);
-
-        refereeService.sendRefereeMailNotification(referee);
-        EasyMock.verify(mailServiceMock);
-    }
-
-   
     @Test
     public void shouldEditReferenceComment() throws UnsupportedEncodingException {
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
@@ -392,7 +334,7 @@ public class RefereeServiceTest {
         Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com")
                 .application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
         refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock,
-                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper, mailServiceMock) {
+                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper) {
             @Override
             RegisteredUser newRegisteredUser() {
                 return user;
@@ -485,16 +427,14 @@ public class RefereeServiceTest {
         EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
         applicationFormDAOMock.save(form);
         
-        mailServiceMock.scheduleReferenceSubmitConfirmation(form);
-
-        EasyMock.replay(refereeDAOMock, eventFactoryMock, applicationFormDAOMock, mailServiceMock);
+        EasyMock.replay(refereeDAOMock, eventFactoryMock, applicationFormDAOMock);
 
         refereeService.declineToActAsRefereeAndSendNotification(referee);
 
         assertTrue(referee.isDeclined());
         assertEquals(1, form.getEvents().size());
         assertEquals(event, form.getEvents().get(0));
-        EasyMock.verify(refereeDAOMock, eventFactoryMock, applicationFormDAOMock, mailServiceMock);
+        EasyMock.verify(refereeDAOMock, eventFactoryMock, applicationFormDAOMock);
     }
 
    

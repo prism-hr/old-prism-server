@@ -11,8 +11,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 
+import org.easymock.classextension.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -40,10 +42,14 @@ import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 
 public class UserDAOTest extends AutomaticRollbackTestCase {
+    
     private UserDAO userDAO;
+    
+    private ReminderIntervalDAO reminderIntervalDAOMock;
+
+    private ApplicationContext applicationContextMock; 
 
     @Test
     public void shouldSaveAndLoadUser() throws Exception {
@@ -413,13 +419,13 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         save(user);
         flushAndClearSession();
 
-        List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
-        assertTrue(listContainsId(user, users));
+        List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
+        assertTrue(users.contains(user.getId()));
     }
 
     @Test
     public void shouldReturnUserWithPendingNotificationsOnlyOnce() {
-        List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+        List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
         int previousNumberOfUsers = users.size();
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
@@ -439,13 +445,13 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         save(user);
         flushAndClearSession();
 
-        users = userDAO.getUsersWithPendingRoleNotifications();
+        users = userDAO.getUsersIdsWithPendingRoleNotifications();
         assertEquals(previousNumberOfUsers + 1, users.size());
     }
 
     @Test
     public void shouldNotReturnUserWithPendingNotificationsIfDateIsNull() {
-        List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+        List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
@@ -466,8 +472,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         save(user);
         flushAndClearSession();
 
-        users = userDAO.getUsersWithPendingRoleNotifications();
-        assertFalse(users.contains(user));
+        users = userDAO.getUsersIdsWithPendingRoleNotifications();
+        assertFalse(users.contains(user.getId()));
     }
 
     @Test
@@ -490,8 +496,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         save(user);
         flushAndClearSession();
 
-        List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
-        assertFalse(users.contains(user));
+        List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
+        assertFalse(users.contains(user.getId()));
     }
 
     @Test
@@ -503,8 +509,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         save(user);
         flushAndClearSession();
 
-        List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
-        assertFalse(users.contains(user));
+        List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
+        assertFalse(users.contains(user.getId()));
     }
 
     @Test
@@ -689,65 +695,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         assertEquals(user.getId(), users.get(0).getId());
     }
     
-    @Test
-    public void shouldReturnAllUserIdsWhichHaveTheDigestTypeSet() {
-        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("somethingelse@test.com").username("somethingelse").password("password")
-                .digestNotificationType(DigestNotificationType.UPDATE_NOTIFICATION)
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        
-        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("Jane2").lastName("Doe2")
-                .email("somethingelse2@test.com").username("somethingelse2").password("password")
-                .digestNotificationType(DigestNotificationType.TASK_NOTIFICATION)
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        
-        save(applicant1, applicant2);
-        flushAndClearSession();
-        
-        List<Integer> userIds = userDAO.getAllUserIdsInNeedOfADigestNotification();
-        
-        boolean foundApplicant1 = false;
-        boolean foundApplicant2 = false;
-        
-        for (Integer id : userIds) {
-            if (id.equals(applicant1.getId())) {
-                foundApplicant1 = true;
-            }
-            
-            if (id.equals(applicant2.getId())) {
-                foundApplicant2 = true;
-            }
-        }
-        
-        assertTrue("The userDAO should have returned our applicant which needs to receive a DIGEST", foundApplicant1);
-        assertTrue("The userDAO should have returned our applicant which needs to receive a REMINDER_DIGEST", foundApplicant2);
-    }
-    
-    @Test
-    public void shouldResetAllDigestNotificationsForAllUsers() {
-        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("somethingelse@test.com").username("somethingelse").password("password")
-                .digestNotificationType(DigestNotificationType.UPDATE_NOTIFICATION)
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        
-        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("Jane2").lastName("Doe2")
-                .email("somethingelse2@test.com").username("somethingelse2").password("password")
-                .digestNotificationType(DigestNotificationType.TASK_NOTIFICATION)
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        
-        save(applicant1, applicant2);
-        flushAndClearSession();
-        
-        userDAO.resetDigestNotificationsForAllUsers();
-        
-        flushAndClearSession();
-        
-        assertEquals(0, userDAO.getAllUserIdsInNeedOfADigestNotification().size());
-    }
-
     @Before
     public void prepare() {
-        userDAO = new UserDAO(sessionFactory);
+        reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
+        applicationContextMock = EasyMock.createMock(ApplicationContext.class);
+        userDAO = new UserDAO(sessionFactory, reminderIntervalDAOMock, applicationContextMock);
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

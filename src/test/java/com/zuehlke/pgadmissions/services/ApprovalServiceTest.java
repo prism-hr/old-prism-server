@@ -371,11 +371,9 @@ public class ApprovalServiceTest {
         commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        mailSendingServiceMock.scheduleSupervisionConfirmedNotification(applicationForm);
-
-        EasyMock.replay(commentDAOMock, userServiceMock, mailSendingServiceMock);
+        EasyMock.replay(commentDAOMock, userServiceMock);
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-        EasyMock.verify(commentDAOMock, userServiceMock, mailSendingServiceMock);
+        EasyMock.verify(commentDAOMock, userServiceMock);
 
         assertTrue(primarySupervisor.getConfirmedSupervision());
         SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();

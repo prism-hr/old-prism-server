@@ -113,7 +113,6 @@ public class ApprovalService {
             approvalRound.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
             approvalRound.setProjectAcceptingApplications(confirmSupervisionDTO.getProjectAcceptingApplications());
             supervisor.setConfirmedSupervisionDate(new Date());
-            mailSendingService.scheduleSupervisionConfirmedNotification(form);
         }
 
         if (BooleanUtils.isFalse(confirmed)) {
@@ -136,15 +135,6 @@ public class ApprovalService {
         return restartComment;
     }
 
-    private RequestRestartComment createRequestRestartComment(ApplicationForm form, RegisteredUser user) {
-        RequestRestartComment restartComment = new RequestRestartComment();
-        restartComment.setApplication(form);
-        restartComment.setDate(new Date());
-        restartComment.setUser(user);
-        restartComment.setComment(String.format("%s %s requested the restart of the approval stage.", user.getFirstName(), user.getLastName()));
-        return restartComment;
-    }
-    
     private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm application, Supervisor supervisor) {
         SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
         supervisionConfirmationComment.setApplication(application);

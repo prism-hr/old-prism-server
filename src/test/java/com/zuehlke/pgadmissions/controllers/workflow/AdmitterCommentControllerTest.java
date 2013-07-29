@@ -174,7 +174,6 @@ public class AdmitterCommentControllerTest {
         accessServiceMock.updateAccessTimestamp(eq(application), eq(currentUser), EasyMock.isA(Date.class));
         applicationsServiceMock.save(application);
         commentServiceMock.save(comment);
-        mailServiceMock.scheduleAdmitterProvidedCommentNotification(application);
 
         replay();
         String result = controller.confirmEligibility(modelMap, comment, resultMock);

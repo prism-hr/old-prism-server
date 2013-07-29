@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,6 +19,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
@@ -37,7 +38,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
@@ -88,10 +88,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     @Column(name = "original_querystring")
     private String originalApplicationQueryString;
-
-    @Column(name = "digest_notification_type")
-    @Enumerated(EnumType.STRING)
-    private DigestNotificationType digestNotificationType = DigestNotificationType.NONE;
 
     @JoinColumn(name = "filtering_id")
     @OneToOne(fetch = FetchType.LAZY)
@@ -178,12 +174,16 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Column(name = "ucl_user_id")
     private String uclUserId;
 
+    @Column(name = "latest_task_notification_date")
+    @Temporal(TemporalType.DATE)
+    private Date latestTaskNotificationDate;
+
     @Transient
     private boolean canManageProjects;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
-    
+
     public boolean canSee(ApplicationForm applicationForm) {
         return canSeeApplication(applicationForm, this);
     }
@@ -226,7 +226,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         } else {
             linkedAccountsList.add(getPrimaryAccount());
             for (RegisteredUser u : getPrimaryAccount().getLinkedAccounts()) {
-                    linkedAccountsList.add(u);
+                linkedAccountsList.add(u);
             }
         }
         return linkedAccountsList;
@@ -735,14 +735,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         this.username = username;
     }
 
-    public DigestNotificationType getDigestNotificationType() {
-        return digestNotificationType;
-    }
-
-    public void setDigestNotificationType(final DigestNotificationType type) {
-        this.digestNotificationType = type;
-    }
-
     public ApplicationsFiltering getFiltering() {
         return filtering;
     }
@@ -788,4 +780,13 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public void setResearchOpportunitiesFeeds(List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds) {
         this.researchOpportunitiesFeeds = researchOpportunitiesFeeds;
     }
+
+    public Date getLatestTaskNotificationDate() {
+        return latestTaskNotificationDate;
+    }
+
+    public void setLatestTaskNotificationDate(Date latestTaskNotificationDate) {
+        this.latestTaskNotificationDate = latestTaskNotificationDate;
+    }
+
 }

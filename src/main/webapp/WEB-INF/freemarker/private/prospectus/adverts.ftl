@@ -15,8 +15,6 @@
       <h1>Research Study Opportunities</h1></header>
     <section id="plist">
     	<ul></ul>
-    	<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>
-    	
     </section>
     <footer class="clearfix">
     	<div class="left"><a href="www.engineering.ucl.ac.uk" target="_blank"><img src="<@spring.url '/design/default/images/ucl-engineering.jpg'/>" alt="" /></a></div>

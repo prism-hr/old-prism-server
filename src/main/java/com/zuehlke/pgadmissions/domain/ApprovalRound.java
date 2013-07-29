@@ -24,6 +24,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import com.zuehlke.pgadmissions.validators.ExtendedASCIIConstraint;
 
 @Entity(name = "APPROVAL_ROUND")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -50,7 +51,7 @@ public class ApprovalRound implements Serializable {
     @Column(name = "project_title")
     private String projectTitle;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ExtendedASCIIConstraint
     @Column(name = "project_abstract")
     private String projectAbstract;
 

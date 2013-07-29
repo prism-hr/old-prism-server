@@ -1,3 +1,5 @@
+<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+
 <div class="row-group">
     <h3 id="lbl_projectDescription">Project Description</h3>
     <div class="row">

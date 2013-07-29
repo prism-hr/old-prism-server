@@ -80,7 +80,7 @@
 														<label class="plain-label" for="comment">Comment<em>*</em></label>
 														<span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
 														<div class="field">
-														    <textarea id="comment" name="comment" class="max" rows="6" cols="80">${(comment.comment?html)!}</textarea>
+														    <textarea id="genericComment" name="comment" class="max" rows="6" cols="80">${(comment.comment?html)!}</textarea>
 															<@spring.bind "comment.comment" /> 
 															<#list spring.status.errorMessages as error> 
                                                             <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>

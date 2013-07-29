@@ -78,7 +78,7 @@ $(document).ready(function() {
 function saveComment() {
     $('#nextStatus').val($('#status').val());
 
-    $('#commentField').val($('#comment').val());
+    $('#commentField').val($('#state_change_comment').val());
 
     if ($('input:radio[name=fastTrackProcessing]:checked').length > 0) {
     	var fastTrack = $('input:radio[name=fastTrackProcessing]')[1].checked;

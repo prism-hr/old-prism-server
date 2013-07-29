@@ -31,7 +31,7 @@
 </h2>
 <div style="display:none;">    
     <form>              
-        <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
+        
         <#if errorCode?? && errorCode=="true">
         <div class="alert alert-error">
             <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i>
@@ -42,7 +42,7 @@
              <i class="icon-info-sign"></i> <@spring.message 'personalDetails.sectionInfo'/>
             </div>  
         </#if>
-        
+        <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
         <div class="row-group">
             <div class="row">
                 <label class="plain-label" for="title">Title<em>*</em></label>

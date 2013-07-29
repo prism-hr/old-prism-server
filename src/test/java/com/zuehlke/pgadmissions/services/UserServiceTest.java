@@ -810,7 +810,7 @@ public class UserServiceTest {
         private final Program expectedProgramme;
 
         public CheckProgrammeAndSimulateSaveDAO(Program programme) {
-            super(null);
+            super(null, null, null);
             this.expectedProgramme = programme;
         }
 

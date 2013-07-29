@@ -1,14 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import static java.util.Arrays.asList;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +23,12 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
 public class RefereeService {
 
-    private final Logger log = LoggerFactory.getLogger(RefereeService.class);
     private final RefereeDAO refereeDAO;
     private final UserService userService;
     private final RoleDAO roleDAO;
@@ -43,16 +37,14 @@ public class RefereeService {
     private final ApplicationFormDAO applicationFormDAO;
     private final EncryptionUtils encryptionUtils;
     private final EncryptionHelper encryptionHelper;
-    private final MailSendingService mailService;
 
     public RefereeService() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils,
-           UserService userService, RoleDAO roleDAO, CommentService commentService,
-            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper,            MailSendingService mailservice) {
+    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, UserService userService, RoleDAO roleDAO, CommentService commentService,
+            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper) {
         this.refereeDAO = refereeDAO;
         this.encryptionUtils = encryptionUtils;
         this.userService = userService;
@@ -61,7 +53,6 @@ public class RefereeService {
         this.eventFactory = eventFactory;
         this.applicationFormDAO = applicationFormDAO;
         this.encryptionHelper = encryptionHelper;
-		this.mailService = mailservice;
     }
 
     public Referee getRefereeById(Integer id) {
@@ -82,8 +73,6 @@ public class RefereeService {
 
     public void saveReferenceAndSendMailNotifications(Referee referee) {
         addReferenceEventToApplication(referee);
-        ApplicationForm form = referee.getApplication();
-        mailService.scheduleReferenceSubmitConfirmation(form);
     }
 
     public RegisteredUser getRefereeIfAlreadyRegistered(Referee referee) {
@@ -161,8 +150,6 @@ public class RefereeService {
         referee.setDeclined(true);
         refereeDAO.save(referee);
         addReferenceEventToApplication(referee);
-        ApplicationForm form = referee.getApplication();
-        mailService.scheduleReferenceSubmitConfirmation(form);
     }
 
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
@@ -176,12 +163,12 @@ public class RefereeService {
             referee.setSendToUCL(true);
         }
     }
-    
-    public ReferenceComment editReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO){
+
+    public ReferenceComment editReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO) {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
         Referee referee = getRefereeById(refereeId);
         ReferenceComment reference = referee.getReference();
-        
+
         reference.setComment(refereesAdminEditDTO.getComment());
         reference.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
         reference.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
@@ -190,7 +177,7 @@ public class RefereeService {
         if (document != null) {
             reference.setDocuments(Collections.singletonList(document));
         }
-        
+
         return reference;
     }
 
@@ -210,7 +197,7 @@ public class RefereeService {
         ReferenceComment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
 
         commentService.save(referenceComment);
-        
+
         if (applicationForm.getReferencesToSendToPortico().size() < 2) {
             referee.setSendToUCL(true);
         }
@@ -257,17 +244,4 @@ public class RefereeService {
         applicationFormDAO.save(application);
     }
 
-    //TODO: remove this method if not used
-    public void sendRefereeMailNotification(Referee referee) {
-        sendMailToReferee(referee);
-    }
-
-    private void sendMailToReferee(Referee referee) {
-        try {
-            ApplicationForm form = referee.getApplication();
-            mailService.sendReferenceRequest(asList(referee), form);
-        } catch (Exception e) {
-            log.warn("Error while sending reference request email", e);
-        }
-    }
 }

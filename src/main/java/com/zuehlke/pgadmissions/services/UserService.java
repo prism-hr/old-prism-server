@@ -147,7 +147,7 @@ public class UserService {
             selectedUser.removeRole(Authority.SUPERVISOR);
         }
         selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
-        
+
         userDAO.save(selectedUser);
     }
 
@@ -428,14 +428,6 @@ public class UserService {
         ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
         user.setFiltering(mergedFilter);
         userDAO.save(user);
-    }
-
-    public void resetDigestNotificationsForAllUsers() {
-        userDAO.resetDigestNotificationsForAllUsers();
-    }
-
-    public List<Integer> getAllUsersInNeedOfADigestNotification() {
-        return userDAO.getAllUserIdsInNeedOfADigestNotification();
     }
 
     public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {

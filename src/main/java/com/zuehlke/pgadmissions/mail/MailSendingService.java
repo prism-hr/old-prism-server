@@ -13,16 +13,11 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NO
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_NOTIFICATION;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +34,7 @@ import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -450,7 +443,7 @@ public class MailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message = null;
         String subject = resolveMessage(INTERVIEW_VOTE_CONFIRMATION, application);
         for (RegisteredUser administrator : administrators) {
-            if(administrator.getId() == participant.getUser().getId()){
+            if (administrator.getId() == participant.getUser().getId()) {
                 continue; // administrator has voted himself, no need to notify him
             }
             try {
@@ -507,152 +500,6 @@ public class MailSendingService extends AbstractMailSendingService {
                 log.error("Error while sending export error message: {}", e);
             }
         }
-    }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when references have been provided.<br/>
-     * Finds all applications in the system for which references have recently been provided, and;<br/>
-     * Schedules their Applicants and Administrators to be notified.
-     * <p/>
-     * <p>
-     * <b>Recipients</b><br/>
-     * Applicant<br/>
-     * Administrator
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * REFERENCE_SUBMIT_CONFIRMATION
-     * </p>
-     * <p>
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Referees can provide references, while:
-     * <ol>
-     * <li>Applications are not in the rejected, approved or withdrawn states.</li>
-     * </ol>
-     * </li>
-     * <li>Applicants and Administrators are scheduled to be notified, when:
-     * <ol>
-     * <li>References have been provided within the last 24 hours.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 1 (Update Notification)
-     * </p>
-     */
-    public void scheduleReferenceSubmitConfirmation(ApplicationForm form) {
-        List<RegisteredUser> admins = form.getProgram().getAdministrators();
-        List<RegisteredUser> users = new ArrayList<RegisteredUser>(admins.size() + 1);
-        users.add(form.getApplicant());
-        users.addAll(admins);
-        CollectionUtils.forAllDo(users, new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
-    }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when supervision has been confirmed.<br/>
-     * Finds all applications in the system for which supervision has recently been confirmed, and;<br/>
-     * Schedules their Administrators to be notified.
-     * <p/>
-     * <p>
-     * <b>Recipients</b><br/>
-     * Administrator<br/>
-     * </p>
-     * <p>
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Primary Supervisors can confirm supervision, while:
-     * <ol>
-     * <li>Applications are in the current approval state.</li>
-     * </ol>
-     * </li>
-     * <li>Administrators are scheduled to be notified, when:
-     * <ol>
-     * <li>Supervision has been confirmed within the last 24 hours.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 1 (Update Notification)
-     * </p>
-     */
-    public void scheduleSupervisionConfirmedNotification(final ApplicationForm form) {
-        CollectionUtils.forAllDo(form.getProgram().getAdministrators(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
-    }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when applications have been withdrawn.<br/>
-     * Finds all applications in the system that have recently been updated, and;<br/>
-     * Schedules their Administrators to be notified.
-     * <p/>
-     * <p>
-     * <b>Recipients</b><br/>
-     * Administrator<br/>
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Applicants can withdraw applications, while:
-     * <ol>
-     * <li>They are not in the rejected, approved or withdrawn states.</li>
-     * </ol>
-     * </li>
-     * <li>Administrators are scheduled to be notified of withdrawals, when:
-     * <ol>
-     * <li>Applications have been withdrawn within the last 24 hours.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Digest Priority 1 (Update Notification)
-     * </p>
-     */
-    public void scheduleWithdrawalConfirmation(List<Referee> referees, final ApplicationForm form) {
-        Map<Integer, RegisteredUser> usersToNotify = new HashMap<Integer, RegisteredUser>();
-        for (Referee referee : referees) {
-            if (referee.getUser() != null) {
-                usersToNotify.put(referee.getUser().getId(), referee.getUser());
-            }
-        }
-
-        for (RegisteredUser admin : form.getProgram().getAdministrators()) {
-            usersToNotify.put(admin.getId(), admin);
-        }
-
-        RegisteredUser applicationAdministrator = form.getApplicationAdministrator();
-        if (applicationAdministrator != null) {
-            usersToNotify.put(applicationAdministrator.getId(), applicationAdministrator);
-        }
-
-        for (RegisteredUser reviewers : getReviewersFromLatestReviewRound(form)) {
-            usersToNotify.put(reviewers.getId(), reviewers);
-        }
-
-        for (RegisteredUser interviewer : getInterviewersFromLatestInterviewRound(form)) {
-            usersToNotify.put(interviewer.getId(), interviewer);
-        }
-
-        for (RegisteredUser supervisor : getSupervisorsAsUsersFromLatestApprovalRound(form)) {
-            usersToNotify.put(supervisor.getId(), supervisor);
-        }
-
-        CollectionUtils.forAllDo(usersToNotify.values(), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
 
     /**
@@ -790,23 +637,6 @@ public class MailSendingService extends AbstractMailSendingService {
         } catch (Exception e) {
             log.error("Error while sending reset password email: {}", e);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Collection<RegisteredUser> getSupervisorsAsUsersFromLatestApprovalRound(final ApplicationForm form) {
-        if (form.getLatestApprovalRound() != null) {
-            return CollectionUtils.collect(form.getLatestApprovalRound().getSupervisors(), new Transformer() {
-                @Override
-                public Object transform(final Object input) {
-                    return ((Supervisor) input).getUser();
-                }
-            });
-        }
-        return Collections.emptyList();
-    }
-
-    public void scheduleAdmitterProvidedCommentNotification(ApplicationForm form) {
-        CollectionUtils.forAllDo(getProgramAdministrators(form), new UpdateDigestNotificationClosure(DigestNotificationType.UPDATE_NOTIFICATION));
     }
 
 }

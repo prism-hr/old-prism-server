@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
@@ -26,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
@@ -49,19 +47,6 @@ public abstract class AbstractMailSendingService {
     protected final String host;
 
     private MailSender mailSender;
-
-    protected class UpdateDigestNotificationClosure implements Closure {
-        private final DigestNotificationType type;
-
-        public UpdateDigestNotificationClosure(final DigestNotificationType type) {
-            this.type = type;
-        }
-
-        @Override
-        public void execute(final Object input) {
-            setDigestNotificationType((RegisteredUser) input, type);
-        }
-    }
 
     public AbstractMailSendingService(final MailSender mailSender, final ApplicationFormDAO formDAO, final ConfigurationService configurationService,
             final UserDAO userDAO, final RoleDAO roleDAO, final RefereeDAO refereeDAO, final EncryptionUtils encryptionUtils,
@@ -118,16 +103,6 @@ public abstract class AbstractMailSendingService {
 
     private boolean isUserReferee(final RegisteredUser user) {
         return user.isInRole(Authority.REFEREE);
-    }
-
-    protected void setDigestNotificationType(final RegisteredUser user, final DigestNotificationType type) {
-        DigestNotificationType currentType = user.getDigestNotificationType();
-        if (currentType == null || type == DigestNotificationType.NONE) {
-            user.setDigestNotificationType(type);
-        } else if (currentType.getPriority() < type.getPriority()) {
-            user.setDigestNotificationType(type);
-        }
-        userDAO.save(user);
     }
 
     protected String getAdminsEmailsCommaSeparatedAsString(final List<RegisteredUser> administrators) {

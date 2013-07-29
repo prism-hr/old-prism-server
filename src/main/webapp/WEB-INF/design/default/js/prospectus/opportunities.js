@@ -157,7 +157,8 @@ function renderAdvert(advert){
 			'<a class="addthis_button_google_plusone_share"></a>'+
 			'<a class="addthis_button_linkedin"></a>'+
 			'<a class="addthis_button_expanded"></a>'+
-			'<a class="addthis_counter addthis_bubble_style"></a>'
+			'<a class="addthis_counter addthis_bubble_style"></a>'+
+			'<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>'
 	} else {
 		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert.id)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>'
 	}

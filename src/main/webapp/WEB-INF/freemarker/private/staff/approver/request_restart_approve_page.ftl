@@ -85,7 +85,7 @@
 														<label class="plain-label" for="comment">Reason<em>*</em></label>
 														<span class="hint" data-desc="<@spring.message 'approval.restartReason'/>"></span>
 														<div class="field">		            				
-															<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+															<textarea id="comment" name="comment" class="max" rows="6" cols="80"></textarea>
 															<@spring.bind "comment.comment" /> 
 															<#list spring.status.errorMessages as error> <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div></#list>
 														</div>

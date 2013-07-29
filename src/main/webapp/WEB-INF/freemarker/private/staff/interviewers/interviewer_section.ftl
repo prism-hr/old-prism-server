@@ -223,7 +223,7 @@
     <label class="plain-label normal" for="instructionsForInterviewer">Interview Instructions (Interviewer)</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewerInstructions'/>"></span>
     <div class="field">
-      <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherInterviewerDetails!}</textarea>
+      <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80">${interview.furtherInterviewerDetails!}</textarea>
       <@spring.bind "interview.furtherInterviewerDetails" />
       <#list spring.status.errorMessages as error>
         <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -237,7 +237,7 @@
     <label class="plain-label normal" for="furtherDetails">Interview Instructions (Applicant)</label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.candidateInstructions'/>"></span>
     <div class="field"> 
-      <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interview.furtherDetails!}</textarea>
+      <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80">${interview.furtherDetails!}</textarea>
       <@spring.bind "interview.furtherDetails" />
       <#list spring.status.errorMessages as error>
         <div class="alert alert-error"> <i class="icon-warning-sign"></i>

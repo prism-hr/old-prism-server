@@ -133,7 +133,7 @@
               </label>
               <span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewerInstructions'/>"></span>
               <div class="field">
-                <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80" maxlength='2000'>${interviewConfirmDTO.furtherInterviewerDetails!}
+                <textarea id="furtherInterviewerDetails" name="furtherInterviewerDetails" class="max" rows="6" cols="80">${interviewConfirmDTO.furtherInterviewerDetails!}
 </textarea>
               </div>
             </div>
@@ -142,7 +142,7 @@
               </label>
               <span class="hint" data-desc="<@spring.message 'assignInterviewer.candidateInstructions'/>"></span>
               <div class="field">
-                <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='2000'>${interviewConfirmDTO.furtherDetails!}
+                <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80">${interviewConfirmDTO.furtherDetails!}
 </textarea>
               </div>
             </div>

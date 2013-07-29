@@ -13,7 +13,6 @@ import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -69,54 +68,6 @@ public class ApplicationsServiceTest {
     @Mock
     @InjectIntoByType
     private ProgrammeDetailsService programmeDetailsServiceMock;;
-
-    @Test
-    public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {
-        List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
-        EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(applicationsList);
-
-        replay();
-        List<ApplicationForm> appsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
-        verify();
-
-        assertSame(applicationsList, appsDueUpdateNotification);
-    }
-
-    @Test
-    public void shouldGetAllApplicationsDueRegistryNotification() {
-        List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
-        EasyMock.expect(applicationFormDAOMock.getApplicationsDueRegistryNotification()).andReturn(applicationsList);
-
-        replay();
-        List<ApplicationForm> appsDueRegistryNotification = applicationsService.getApplicationsDueRegistryNotification();
-        verify();
-
-        assertSame(applicationsList, appsDueRegistryNotification);
-    }
-
-    @Test
-    public void shouldGetAllApplicationsDueApprovalRestartRequestNotification() {
-        List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
-        EasyMock.expect(applicationFormDAOMock.getApplicationsDueApprovalRequestNotification()).andReturn(applicationsList);
-
-        replay();
-        List<ApplicationForm> appsDueNotification = applicationsService.getApplicationsDueApprovalRestartRequestNotification();
-        verify();
-
-        assertSame(applicationsList, appsDueNotification);
-    }
-
-    @Test
-    public void shouldGetAllApplicationsDueApprovalRestartRequestReminder() {
-        List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
-        EasyMock.expect(applicationFormDAOMock.getApplicationDueApprovalRestartRequestReminder()).andReturn(applicationsList);
-
-        replay();
-        List<ApplicationForm> appsDueNotification = applicationsService.getApplicationsDueApprovalRestartRequestReminder();
-        verify();
-
-        assertSame(applicationsList, appsDueNotification);
-    }
 
     @Test
     public void shouldSendSubmissionsConfirmationToApplicant() {

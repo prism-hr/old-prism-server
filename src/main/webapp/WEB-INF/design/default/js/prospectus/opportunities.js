@@ -152,9 +152,14 @@ function renderAdvert(advert){
 		
 	}
 	if ($('#pContainer').length > 0) {
-		popupbuttons = '<a class="addthis_button_expanded"></a> <a class="addthis_counter addthis_bubble_style"></a>'
+		popupbuttons = '<a class="addthis_button_facebook"></a>'+
+			'<a class="addthis_button_twitter"></a>'+
+			'<a class="addthis_button_google_plusone_share"></a>'+
+			'<a class="addthis_button_linkedin"></a>'+
+			'<a class="addthis_button_expanded"></a>'+
+			'<a class="addthis_counter addthis_bubble_style"></a>'
 	} else {
-		popupbuttons = '<a class="at300m" href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert.id)+'&title='+advert.title+'" target="_blank" title="View more services"><span class="at16nc at300bs at15nc at15t_expanded at16t_expanded"><span class="at_a11y">More Sharing Services</span></span></a>'
+		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert.id)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>'
 	}
 	return '<li class="'+ advert.type+' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
 	'<div class="pdetails clearfix">'+
@@ -170,10 +175,7 @@ function renderAdvert(advert){
 		'<div class="social">'+
 			'<!-- AddThis Button BEGIN -->'+
 			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:description="'+advert.description+'" addthis:title="'+advert.title+'" addthis:url="'+getAdvertUrl(advert.id)+'">'+
-			'<a class="addthis_button_facebook"></a>'+
-			'<a class="addthis_button_twitter"></a>'+
-			'<a class="addthis_button_google_plusone_share"></a>'+
-			'<a class="addthis_button_linkedin"></a>'+popupbuttons+
+			popupbuttons +
 			'</div>'+
 			'<!-- AddThis Button END -->'+
 		'</div>'+

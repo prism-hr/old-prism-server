@@ -90,11 +90,11 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
         ScheduledMailSendingService thisServiceMock = createMock(ScheduledMailSendingService.class);
 
-        expect(userDAOMock.getPotentialUsersForTaskReminder()).andReturn(potentialUsersForTaskReminder);
-        expect(userDAOMock.getPotentialUsersForTaskNotification()).andReturn(potentialUsersForTaskNotification);
-        expect(userDAOMock.getUsersForUpdateNotification()).andReturn(usersForUpdateNotification);
+        expect(thisServiceMock.getPotentialUsersForTaskReminder()).andReturn(potentialUsersForTaskReminder);
+        expect(thisServiceMock.getPotentialUsersForTaskNotification()).andReturn(potentialUsersForTaskNotification);
+        expect(thisServiceMock.getUsersForUpdateNotification()).andReturn(usersForUpdateNotification);
         
-        expect(applicationContextMock.getBean(ScheduledMailSendingService.class)).andReturn(thisServiceMock).times(6);
+        expect(applicationContextMock.getBean(ScheduledMailSendingService.class)).andReturn(thisServiceMock);
         
         expect(thisServiceMock.sendTaskEmailIfNecessary(1, DigestNotificationType.TASK_REMINDER)).andReturn(true);
         expect(thisServiceMock.sendTaskEmailIfNecessary(2, DigestNotificationType.TASK_REMINDER)).andReturn(true);

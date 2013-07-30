@@ -3,19 +3,21 @@ package com.zuehlke.pgadmissions.services;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -29,11 +31,14 @@ import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReminderIntervalBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.ReminderType;
+import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class ConfigurationServiceTest {
@@ -83,32 +88,23 @@ public class ConfigurationServiceTest {
         
         StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS).build();
         StageDuration oldValidationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(5).unit(DurationUnitEnum.WEEKS).build();
-        StageDuration interviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(3).unit(DurationUnitEnum.WEEKS).build();
+        
+        ReminderInterval reminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(8).unit(DurationUnitEnum.WEEKS).build();
+        ReminderInterval oldReminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(10).unit(DurationUnitEnum.MINUTES).build();
+    
+        ServiceLevelsDTO serviceLevelsDTO = new ServiceLevelsDTO();
+        serviceLevelsDTO.setStagesDuration(Lists.newArrayList(validationDuration));
+        serviceLevelsDTO.setReminderIntervals(Lists.newArrayList(reminderInterval));
         
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(oldValidationDuration);
-        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(null);
-        
-        stageDurationDAOMock.save(oldValidationDuration);
-        stageDurationDAOMock.save(interviewDuration);
-        
-        ReminderInterval reminderInterval = new ReminderInterval();
-        reminderInterval.setId(1);
-    
-        reminderIntervalDAOMock.save(reminderInterval);
-        
-        
-        
-        expect(roleDAOMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new Role()).anyTimes();
-        expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new Role()).anyTimes();
-        
+        EasyMock.expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.INTERVIEW_SCHEDULE)).andReturn(oldReminderInterval);
         
         EasyMock.replay(stageDurationDAOMock, reminderIntervalDAOMock);
-        
-        service.saveConfigurations(Arrays.asList(validationDuration, interviewDuration), reminderInterval);  
-        
+        service.saveConfigurations(serviceLevelsDTO);  
         EasyMock.verify(stageDurationDAOMock, reminderIntervalDAOMock);
-        assertEquals((Integer) 1, oldValidationDuration.getDuration());
+        
         assertEquals(DurationUnitEnum.HOURS, oldValidationDuration.getUnit());
+        assertEquals(DurationUnitEnum.WEEKS, oldReminderInterval.getUnit());
     }
     
     @Test
@@ -267,12 +263,11 @@ public class ConfigurationServiceTest {
     
     @Test
     public void shouldGetReminderInterval(){
-        ReminderInterval reminderInterval = new ReminderInterval();
-        reminderInterval.setId(1);
+        ArrayList<ReminderInterval> intervals = Lists.newArrayList();
         
-        EasyMock.expect(reminderIntervalDAOMock.getReminderInterval()).andReturn(reminderInterval);
+        EasyMock.expect(reminderIntervalDAOMock.getReminderIntervals()).andReturn(intervals);
         EasyMock.replay(reminderIntervalDAOMock);
-        assertEquals(reminderInterval, service.getReminderInterval());
+        assertSame(intervals, service.getReminderIntervals());
     }
     
     @Test

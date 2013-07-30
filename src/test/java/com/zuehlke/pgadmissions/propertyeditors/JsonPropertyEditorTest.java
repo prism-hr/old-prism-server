@@ -6,14 +6,16 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.JsonSyntaxException;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 
-public class StageDurationPropertyEditorTest {
-	private StageDurationPropertyEditor editor;
+public class JsonPropertyEditorTest {
+    
+	private JsonPropertyEditor editor;
 
 	@Test	
 	public void shouldParseAndSetAsValue(){
@@ -26,7 +28,7 @@ public class StageDurationPropertyEditorTest {
 		assertEquals(expected.getUnit(), stageDuration.getUnit());
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=JsonSyntaxException.class)
 	public void shouldThrowIllegalArgumentExceptionIfAStringNotInTheRightFormat(){			
 		editor.setAsText("{stage: 'stage' duration: 'string' unit: 'years'}");		
 	}
@@ -51,12 +53,12 @@ public class StageDurationPropertyEditorTest {
 	@Test	
 	public void shouldReturnCorrectjsonString(){			
 		editor.setValue(new StageDurationBuilder().duration(1).unit(DurationUnitEnum.MINUTES).stage(ApplicationFormStatus.VALIDATION).build());
-		assertEquals("{\"stage\": \"VALIDATION\",\"duration\": \"1\",\"unit\": \"MINUTES\"}", editor.getAsText());
+		assertEquals("{\"stage\":\"VALIDATION\",\"duration\":1,\"unit\":\"MINUTES\"}", editor.getAsText());
 	}
 	
 	@Before
 	public void setup(){
-		
-		editor = new StageDurationPropertyEditor();
+		editor = new JsonPropertyEditor();
+		editor.setTargetClass(StageDuration.class);
 	}
 }

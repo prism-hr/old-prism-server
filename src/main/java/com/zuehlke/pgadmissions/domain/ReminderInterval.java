@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 @Entity(name = "REMINDER_INTERVAL")
 public class ReminderInterval {
@@ -17,10 +19,22 @@ public class ReminderInterval {
     @GeneratedValue
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reminder_type", nullable = false)
+    private ReminderType reminderType;
+
     private Integer duration;
 
     @Enumerated(EnumType.STRING)
     private DurationUnitEnum unit;
+
+    public ReminderType getReminderType() {
+        return reminderType;
+    }
+
+    public void setReminderType(ReminderType reminderType) {
+        this.reminderType = reminderType;
+    }
 
     public Integer getDuration() {
         return duration;

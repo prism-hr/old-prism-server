@@ -27,14 +27,13 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
+import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
 
     private Program program;
 
     private RegisteredUser user;
-
-    private ReminderInterval reminderInterval;
 
     private InterviewParticipantDAO interviewParticipantDAO;
 
@@ -48,10 +47,10 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(eightDaysAgo).build();
         interview.getParticipants().add(participant);
-        
+
         application.getInterviews().add(interview);
         application.setLatestInterview(interview);
-        
+
         save(interview);
         flushAndClearSession();
 
@@ -59,7 +58,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         assertNotNull(participants);
         assertTrue(participants.contains(participant.getId()));
     }
-    
+
     @Test
     public void shouldNotRemindParticipantsIfDontBelongToLatestInterview() {
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
@@ -70,9 +69,9 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(eightDaysAgo).build();
         interview.getParticipants().add(participant);
-        
+
         application.getInterviews().add(interview);
-        
+
         save(interview);
         flushAndClearSession();
 
@@ -91,7 +90,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULING).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(eightDaysAgo).responded(true).build();
         interview.getParticipants().add(participant);
-        
+
         application.getInterviews().add(interview);
 
         save(interview);
@@ -112,7 +111,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(eightDaysAgo).build();
         interview.getParticipants().add(participant);
-        
+
         application.getInterviews().add(interview);
 
         save(interview);
@@ -133,7 +132,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         Interview interview = new InterviewBuilder().stage(InterviewStage.SCHEDULED).application(application).build();
         InterviewParticipant participant = new InterviewParticipantBuilder().lastNotified(threeDaysAgo).build();
         interview.getParticipants().add(participant);
-        
+
         application.getInterviews().add(interview);
 
         save(interview);
@@ -146,17 +145,16 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
+
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
-        reminderInterval = new ReminderInterval();
-        reminderInterval.setId(1);
+        ReminderIntervalDAO reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
+        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.INTERVIEW_SCHEDULE);
         reminderInterval.setDuration(1);
         reminderInterval.setUnit(DurationUnitEnum.WEEKS);
-
-        sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 
         save(user, program);
 

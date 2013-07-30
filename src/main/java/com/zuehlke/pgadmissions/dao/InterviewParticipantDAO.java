@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
+import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -33,7 +34,8 @@ public class InterviewParticipantDAO {
 
     public List<Integer> getInterviewParticipantsIdsDueAReminder() {
         Date today = Calendar.getInstance().getTime();
-        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
+        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class)
+                .add(Restrictions.eq("reminderType", ReminderType.INTERVIEW_SCHEDULE)).uniqueResult();
         Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
         List<Integer> participants = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(InterviewParticipant.class)
                 .createAlias("interview", "interview") //

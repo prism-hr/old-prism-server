@@ -76,5 +76,13 @@
     <mvc:view-controller path="/error" view-name="public/error/error" />
     <mvc:view-controller path="/404" view-name="public/error/404" />
     <mvc:view-controller path="/400" view-name="public/error/400" />
+    
+    <bean id="stageDurationPropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.JsonPropertyEditor">
+      <property name="targetClass" value="com.zuehlke.pgadmissions.domain.StageDuration" />
+    </bean>
+    
+    <bean id="reminderIntervalPropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.JsonPropertyEditor">
+      <property name="targetClass" value="com.zuehlke.pgadmissions.domain.ReminderInterval" />
+    </bean>
 
 </beans>

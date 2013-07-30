@@ -18,13 +18,13 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 
     private RegisteredUser user;
     private InterviewerDAO dao;
     private Program program;
-    private ReminderInterval reminderInterval;
 
     @Test
     public void shouldGetInterviewerById() {
@@ -62,8 +62,8 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
-        reminderInterval = new ReminderInterval();
-        reminderInterval.setId(1);
+        ReminderIntervalDAO reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
+        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.INTERVIEW_SCHEDULE);
         reminderInterval.setDuration(1);
         reminderInterval.setUnit(DurationUnitEnum.WEEKS);
 

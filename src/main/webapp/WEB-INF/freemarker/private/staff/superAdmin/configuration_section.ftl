@@ -35,12 +35,13 @@
                                 <option value="${unit}" <#if  stageDurations[stage]?? && stageDurations[stage].unit?? && stageDurations[stage].unit == unit> selected="selected"</#if>>${unit.displayValue()}</option>
 							</#list>
 						</select>
-                        <div class="alert alert-error" id="${stage}_invalidDuration"  style="display:none;">
-                               <i class="icon-warning-sign"></i> <span></span>	
-                        </div>
-                        <div class="alert alert-error" id="${stage}_invalidUnit"  style="display:none;">
-                               <i class="icon-warning-sign"></i> <span></span>	
-                        </div>
+						
+            <div class="alert alert-error" id="${stage}_invalidDuration"  style="display:none;">
+                   <i class="icon-warning-sign"></i> <span></span>	
+            </div>
+            <div class="alert alert-error" id="${stage}_invalidUnit"  style="display:none;">
+                   <i class="icon-warning-sign"></i> <span></span>	
+            </div>
 
 					</div>
 				</div>
@@ -52,30 +53,37 @@
 		<!-- Configure Reminder Interval -->
 			
 			<div class="row-group" id="section-reminders">
-				<h3>Task Notifications</h3>
+				<h3>Email Notifications</h3>
+				
+        <select id="availableReminderIntervals" style="display: none;">
+          <#list reminderIntervals as reminderInterval>
+          <option value="${reminderInterval.reminderType}"></option>
+          </#list>
+        </select>
 
-				<div class="row">
-					<label for="reminderIntervalDuration" id="reminder-lbl" class="plain-label">Reminder Frequency<em>*</em></label>
-					<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
-					<div class="field">	
-						<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
-						<input class="numeric input-small" type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(reminderInterval.duration?string("######"))!}" />
-						<select name="reminderUnit" id="reminderUnit" class="input-small">
-							<option value="">Select...</option>
-						<#list units as unit>
-							<option value="${unit}" <#if  reminderInterval?? && reminderInterval.unit?? && reminderInterval.unit == unit> selected="selected" </#if>> ${unit.displayValue()}</option>               
-						</#list>
-						</select>
-						<div class="alert alert-error" id="invalidDurationInterval"  style="display:none;">
-                               <i class="icon-warning-sign"></i> <span></span>	
-                        </div>
-                        <div class="alert alert-error" id="invalidUnitInterval"  style="display:none;">
-                               <i class="icon-warning-sign"></i> <span></span>	
-                        </div>	
-						<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
-						<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
-					</div>
-				</div><!-- .row -->
+        <#list reminderIntervals as reminderInterval>
+  				<div class="row">
+  					<label for="reminderIntervalDuration" id="reminder-lbl" class="plain-label">${reminderInterval.reminderType.displayValue()} Reminder Frequency<em>*</em></label>
+  					<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
+  					<div class="field">	
+  						<input class="numeric input-small" type="text" size="4" id="reminderIntervalDuration_${reminderInterval.reminderType}" name="reminderIntervalDuration" value="${(reminderInterval.duration?string("######"))!}" />
+  						<select name="reminderIntervalUnit" id="reminderIntervalUnit_${reminderInterval.reminderType}" class="input-small">
+  							<option value="">Select...</option>
+    						<#list units as unit>
+    							<option value="${unit}" <#if reminderInterval.unit == unit> selected="selected" </#if>> ${unit.displayValue()}</option>               
+    						</#list>
+  						</select>
+  						<div class="alert alert-error" id="invalidDurationInterval_${reminderInterval.reminderType}"  style="display:none;">
+                 <i class="icon-warning-sign"></i> <span></span>	
+              </div>
+              <div class="alert alert-error" id="invalidUnitInterval_${reminderInterval.reminderType}"  style="display:none;">
+                 <i class="icon-warning-sign"></i> <span></span>	
+              </div>	
+  					</div>
+  				</div><!-- .row -->
+				</#list>
+				
+				<input type="hidden" name="reminderIntervals" id= "reminderIntervals" />
 				
 			</div><!-- .row-group -->
 			

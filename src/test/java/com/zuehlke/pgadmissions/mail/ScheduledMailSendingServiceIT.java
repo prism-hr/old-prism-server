@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -66,6 +67,7 @@ public class ScheduledMailSendingServiceIT {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 ReminderInterval interval = new ReminderInterval();
+                interval.setReminderType(ReminderType.REFERENCE);
                 interval.setDuration(1);
                 interval.setUnit(DurationUnitEnum.MINUTES);
                 sessionFactory.getCurrentSession().save(interval);

@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -284,7 +285,7 @@ public class UserDAO {
     }
 
     public List<Integer> getPotentialUsersForTaskNotification() {
-        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval();
+        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
         int interval = reminderInterval.getDuration();
         DurationUnitEnum unit = reminderInterval.getUnit();
         String sqlQuery = StringUtils.replace(getPotentialUsersDueToTaskNotificationSql, "${TIME_UNIT}", unit.sqlValue());
@@ -292,7 +293,7 @@ public class UserDAO {
     }
 
     public List<Integer> getPotentialUsersForTaskReminder() {
-        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval();
+        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
         int interval = reminderInterval.getDuration();
         DurationUnitEnum unit = reminderInterval.getUnit();
         String sqlQuery = StringUtils.replace(getPotentialUsersDueToTaskReminderSql, "${TIME_UNIT}", unit.sqlValue());
@@ -300,11 +301,7 @@ public class UserDAO {
     }
 
     public List<Integer> getUsersForUpdateNotification() {
-        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval();
-        int interval = reminderInterval.getDuration();
-        DurationUnitEnum unit = reminderInterval.getUnit();
-        String sqlQuery = StringUtils.replace(getUsersDueToUpdateNotificationSql, "${TIME_UNIT}", unit.sqlValue());
-        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval).list();
+        return sessionFactory.getCurrentSession().createSQLQuery(getUsersDueToUpdateNotificationSql).list();
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 
 @Service
 public class ConfigurationService {
@@ -74,20 +75,22 @@ public class ConfigurationService {
     }
 
     @Transactional
-    public void saveConfigurations(List<StageDuration> stageDurations, ReminderInterval reminderInterval) {
-        
-        for (StageDuration stageDuration : stageDurations) {
+    public void saveConfigurations(ServiceLevelsDTO serviceLevelsDTO) {
+        for (StageDuration stageDuration : serviceLevelsDTO.getStagesDuration()) {
             StageDuration oldDuration = stageDurationDAO.getByStatus(stageDuration.getStage());
             if (oldDuration != null) {
                 oldDuration.setUnit(stageDuration.getUnit());
                 oldDuration.setDuration(stageDuration.getDuration());
-                stageDurationDAO.save(oldDuration);
-            } else {
-                stageDurationDAO.save(stageDuration);
             }
         }
-        
-        reminderIntervalDAO.save(reminderInterval);
+
+        for (ReminderInterval reminderInterval : serviceLevelsDTO.getReminderIntervals()) {
+            ReminderInterval oldReminderInterval = reminderIntervalDAO.getReminderInterval(reminderInterval.getReminderType());
+            if (oldReminderInterval != null) {
+                oldReminderInterval.setDuration(reminderInterval.getDuration());
+                oldReminderInterval.setUnit(reminderInterval.getUnit());
+            }
+        }
     }
     
     @Transactional
@@ -147,8 +150,8 @@ public class ConfigurationService {
     }
 
     @Transactional
-    public ReminderInterval getReminderInterval() {
-        return reminderIntervalDAO.getReminderInterval();
+    public List<ReminderInterval> getReminderIntervals() {
+        return reminderIntervalDAO.getReminderIntervals();
     }
 
     private boolean containsRegistryUser(Person person, List<Person> persons) {

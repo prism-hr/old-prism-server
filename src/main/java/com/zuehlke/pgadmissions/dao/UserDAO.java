@@ -19,18 +19,21 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.google.common.io.CharStreams;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -45,7 +48,7 @@ public class UserDAO {
     private String getPotentialUsersDueToTaskReminderSql;
 
     private String getPotentialUsersDueToTaskNotificationSql;
-    
+
     private String getUsersDueToUpdateNotificationSql;
 
     public UserDAO() {
@@ -281,17 +284,27 @@ public class UserDAO {
     }
 
     public List<Integer> getPotentialUsersForTaskNotification() {
-        int intervalDays = reminderIntervalDAO.getReminderInterval().getDurationInDays();
-        return sessionFactory.getCurrentSession().createSQLQuery(getPotentialUsersDueToTaskNotificationSql).setParameter("intervalDays", intervalDays).list();
+        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval();
+        int interval = reminderInterval.getDuration();
+        DurationUnitEnum unit = reminderInterval.getUnit();
+        String sqlQuery = StringUtils.replace(getPotentialUsersDueToTaskNotificationSql, "${TIME_UNIT}", unit.sqlValue());
+        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval).list();
     }
 
     public List<Integer> getPotentialUsersForTaskReminder() {
-        int intervalDays = reminderIntervalDAO.getReminderInterval().getDurationInDays();
-        return sessionFactory.getCurrentSession().createSQLQuery(getPotentialUsersDueToTaskReminderSql).setParameter("intervalDays", intervalDays).list();
+        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval();
+        int interval = reminderInterval.getDuration();
+        DurationUnitEnum unit = reminderInterval.getUnit();
+        String sqlQuery = StringUtils.replace(getPotentialUsersDueToTaskReminderSql, "${TIME_UNIT}", unit.sqlValue());
+        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval).list();
     }
-    
+
     public List<Integer> getUsersForUpdateNotification() {
-        return sessionFactory.getCurrentSession().createSQLQuery(getUsersDueToUpdateNotificationSql).list();
+        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval();
+        int interval = reminderInterval.getDuration();
+        DurationUnitEnum unit = reminderInterval.getUnit();
+        String sqlQuery = StringUtils.replace(getUsersDueToUpdateNotificationSql, "${TIME_UNIT}", unit.sqlValue());
+        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval).list();
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
@@ -301,6 +314,18 @@ public class UserDAO {
             }
         }
         return false;
+    }
+
+    /* package */void setGetPotentialUsersDueToTaskReminderSql(String getPotentialUsersDueToTaskReminderSql) {
+        this.getPotentialUsersDueToTaskReminderSql = getPotentialUsersDueToTaskReminderSql;
+    }
+
+    /* package */void setGetPotentialUsersDueToTaskNotificationSql(String getPotentialUsersDueToTaskNotificationSql) {
+        this.getPotentialUsersDueToTaskNotificationSql = getPotentialUsersDueToTaskNotificationSql;
+    }
+
+    /* package */void setGetUsersDueToUpdateNotificationSql(String getUsersDueToUpdateNotificationSql) {
+        this.getUsersDueToUpdateNotificationSql = getUsersDueToUpdateNotificationSql;
     }
 
 }

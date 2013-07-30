@@ -3,7 +3,7 @@ FROM APPLICATION_FORM INNER JOIN REGISTERED_USER
 ON APPLICATION_FORM.app_administrator_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status IN ("VALIDATION", "REVIEW", "INTERVIEW", "APPROVAL")
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
-AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :intervalDays DAY
+AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -15,7 +15,7 @@ INNER JOIN REGISTERED_USER
 ON PROGRAM_ADMINISTRATOR_LINK.administrator_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status IN ("VALIDATION", "REVIEW", "INTERVIEW", "APPROVAL")
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
-AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :intervalDays DAY
+AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -27,7 +27,7 @@ INNER JOIN REGISTERED_USER
 ON REVIEWER.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status = "REVIEW"
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
-AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :intervalDays DAY
+AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -42,7 +42,7 @@ ON INTERVIEWER.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status = "INTERVIEW"
 AND INTERVIEW.stage = "SCHEDULED"
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
-AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :intervalDays DAY
+AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -54,7 +54,7 @@ INNER JOIN REGISTERED_USER
 ON SUPERVISOR.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status = "APPROVAL"
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
-AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :intervalDays DAY
+AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -66,7 +66,7 @@ INNER JOIN REGISTERED_USER
 ON PROGRAM_APPROVER_LINK.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status = "APPROVAL"
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
-AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :intervalDays DAY
+AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -79,7 +79,7 @@ ON USER_ROLE_LINK.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status IN ("APPROVED", "REJECTED", "WITHDRAWN")
 AND APPLICATION_FORM.withdrawn_before_submit = 0
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
-AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :intervalDays DAY
+AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 AND USER_ROLE_LINK.application_role_id = 5
@@ -92,7 +92,7 @@ INNER JOIN REGISTERED_USER
 ON USER_ROLE_LINK.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status IN ("REVIEW", "INTERVIEW", "APPROVAL")
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
-AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :intervalDays DAY
+AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 AND USER_ROLE_LINK.application_role_id = 10

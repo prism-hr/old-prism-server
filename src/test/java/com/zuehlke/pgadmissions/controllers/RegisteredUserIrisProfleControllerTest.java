@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.easymock.classextension.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -109,5 +108,28 @@ public class RegisteredUserIrisProfleControllerTest {
         EasyMock.verify(irisServiceMock, userServiceMock, messageSourceMock);
         Assert.assertFalse((Boolean) resultMap.get("success")); 
         Assert.assertEquals("account.iris.upi.registered", resultMap.get("irisProfile"));
+    }
+    
+    @Test
+    public void shouldUnlinkIrisProfileForCurrentUser(){
+        
+        RegisteredUser primaryAccount = new RegisteredUserBuilder().upi("666").build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().upi("666").primaryAccount(primaryAccount).build();
+        RegisteredUser linkedSecondaryAccount = new RegisteredUserBuilder().upi("666").primaryAccount(primaryAccount).build();
+        primaryAccount.getLinkedAccounts().addAll(Arrays.asList(currentUser, linkedSecondaryAccount));
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        userServiceMock.save(currentUser);
+        userServiceMock.save(primaryAccount);
+        userServiceMock.save(linkedSecondaryAccount);
+        
+        EasyMock.replay(userServiceMock);
+        controller.unlinkIrisProfileForCurrentUser();
+        EasyMock.verify(userServiceMock);
+        
+        Assert.assertNull(primaryAccount.getUpi());
+        Assert.assertNull(currentUser.getUpi());
+        Assert.assertNull(linkedSecondaryAccount.getUpi());
+        
     }
 }

@@ -100,19 +100,5 @@
     </div>
     <!-- Wrapper Ends -->
 
-    <div id="iris-profile-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-            <h3 id="myModalLabel">Confirm Identity in IRIS</h3>
-        </div>
-        <div class="modal-body" id="iris-profile-modal-body">
-            <iframe id="iris-profile-modal-iframe"> </iframe>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">I made a mistake</button>
-            <button class="btn btn-primary" id="iris-profile-modal-confirm-btn">I confirm this is me</button>
-        </div>
-    </div>
-
 </body>
 </html>

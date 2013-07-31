@@ -5,28 +5,33 @@
     http://www.springframework.org/schema/security/spring-security-3.1.xsd
     http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
-    <http auto-config="true" use-expressions="true">
-        <form-login login-page="/login" login-processing-url="/j_spring_security_check" authentication-failure-url="/login?login_error=t" />
+    
+    <http pattern="/**/*.png" security="none"/>
+    <http pattern="/**/*.jpg" security="none"/>
+	<http pattern="/**/*.gif" security="none"/>
+	<http pattern="/**/*.css" security="none"/>
+	<http pattern="/**/*.js" security="none"/>
+    <http pattern="/login" security="none" />
+    <http pattern="/alreadyRegistered" security="none" />
+    <http pattern="/forgotPassword/**" security="none" />
+    <http pattern="/design/**" security="none" />
+    <http pattern="/programs" security="none" />
+    <http pattern="/register/**" security="none" />
+    <http pattern="/opportunities/**" security="none" />
+    <http pattern="/addReferences/**" security="none" />
+    <http pattern="/referee/register/**" security="none" />
+    <http pattern="/refereeRegistration/**" security="none" />
+    <http pattern="/decline/**" security="none" />
+    <http pattern="/references/**" security="none" />
+<!--    <http pattern="/j_spring_security_check" security="none" /> -->
+    <http pattern="/reportDocumentUploadFailure" security="none" />
+    <http pattern="/resendApplicationToPortico" security="none" />
+    <http pattern="/dwr/**" security="none" />
+
+    <http use-expressions="true">
+        <form-login login-page="/login" authentication-failure-url="/login?login_error=t" />
         <logout logout-url="/j_spring_security_logout" />
-        
-        <intercept-url pattern="/reportDocumentUploadFailure" access="permitAll" />
-        <intercept-url pattern="/resendApplicationToPortico" access="permitAll" />
-        
         <intercept-url pattern="/autosuggest/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER')" />
-        
-        <intercept-url pattern="/login" access="permitAll" />
-        <intercept-url pattern="/alreadyRegistered" access="permitAll" />
-        <intercept-url pattern="/forgotPassword/**" access="permitAll" />
-        <intercept-url pattern="/design/**" access="permitAll" />
-        <intercept-url pattern="/programs" access="permitAll" />
-        <intercept-url pattern="/register/**" access="permitAll" />
-        <intercept-url pattern="/opportunities/**" access="permitAll" />
-        <intercept-url pattern="/addReferences/**" access="permitAll" />
-        <intercept-url pattern="/referee/register/**" access="permitAll" />
-        <intercept-url pattern="/refereeRegistration/**" access="permitAll" />
-        <intercept-url pattern="/decline/**" access="permitAll" />
-        <intercept-url pattern="/references/**" access="permitAll" />
-        <intercept-url pattern="*/j_spring_security_check" access="permitAll" />
         <intercept-url pattern="/apply/**" access="hasRole('APPLICANT')" />
         <intercept-url pattern="/submit/**" access="hasRole('APPLICANT')" />
         <intercept-url pattern="/update/**" access="hasRole('APPLICANT')" />
@@ -34,10 +39,10 @@
         <intercept-url pattern="/rejectApplication/**" access="hasAnyRole('ADMINISTRATOR','SUPERADMINISTRATOR','APPROVER')" />
         <intercept-url pattern="/reviewer/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER','APPROVER', 'SUPERADMINISTRATOR')" />
         <intercept-url pattern="/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER')" />
-        <intercept-url pattern="/dwr/**" access="permitAll" />
         
         <session-management session-fixation-protection="migrateSession" />
     </http>
+
 
     <authentication-manager>
         <authentication-provider ref="authenticationProvider" />

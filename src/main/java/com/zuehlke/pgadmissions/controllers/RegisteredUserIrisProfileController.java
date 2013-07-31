@@ -108,4 +108,16 @@ public class RegisteredUserIrisProfileController {
             return result;
         }
     }
+    
+    @RequestMapping(value = "/IRIS/", method = RequestMethod.DELETE, produces = "application/json")
+    @ResponseBody
+    public void unlinkIrisProfileForCurrentUser() {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        List<RegisteredUser> linkedAccounts = currentUser.getAllLinkedAccounts();
+        for(RegisteredUser account : linkedAccounts){
+            account.setUpi(null);
+            userService.save(account);
+        }
+        
+    }
 }

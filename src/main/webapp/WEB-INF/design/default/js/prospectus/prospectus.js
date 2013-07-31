@@ -2,6 +2,7 @@ $(document).ready(function(){
 		getUpiForCurrentUser();
 		bindSaveUpiAction();
 		bindIrisProfileModalConfirmAction();
+		bindUnlinkUpiAction();
 		generalTabing();
 });
 
@@ -32,6 +33,30 @@ function bindIrisProfileModalConfirmAction(){
 					$("#iris-account-linked-message").show().find("span").html($('#upi').val());
 					$("#iris-account-not-linked-message").hide();
 				}
+			},
+			complete: function() {
+			}
+		});
+	});
+}
+
+function bindUnlinkUpiAction(){
+	$("#unlink-upi-go").bind('click', function() {
+		$.ajax({
+			type: 'DELETE',
+			dataType: "json",
+			statusCode: {
+				401: function() { window.location.reload(); },
+				500: function() { window.location.href = "/pgadmissions/error"; },
+				404: function() { window.location.href = "/pgadmissions/404"; },
+				400: function() { window.location.href = "/pgadmissions/400"; },                  
+				403: function() { window.location.href = "/pgadmissions/404"; }
+			},
+			url: "/pgadmissions/users/IRIS/",
+			success: function(data) {
+					$("#iris-account-linked-message").hide();
+					$("#upi").val('');
+					$("#iris-account-not-linked-message").show();
 			},
 			complete: function() {
 			}

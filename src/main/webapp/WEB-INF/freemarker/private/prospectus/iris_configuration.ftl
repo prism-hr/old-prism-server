@@ -7,7 +7,6 @@
           </div>
           <div class="alert alert-success" id="iris-account-linked-message" style="display:none">
               <i class="icon-ok-sign"></i> Your account is linked to UCL UPI: <span></span>
-              <button class="btn btn-primary" type="button" id="unlink-upi-go">Unlink</button>
           </div>
           <div class="row-group">
               <div class="row">
@@ -30,7 +29,8 @@
               </div>
           </div>
           <div class="buttons">
-              <button class="btn btn-primary" type="button" id="save-upi-go">Submit</button>
+              <button class="btn btn-primary" type="button" id="unlink-upi-go" style="display: none;">Unlink</button>
+              <button class="btn btn-primary" type="button" id="save-upi-go" style="display: none;">Submit</button>
           </div>
       </form>
   </div>

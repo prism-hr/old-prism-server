@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
 public enum ReminderType {
-    REFERENCE("Reference"), INTERVIEW_SCHEDULE("Interview Scheduling"), TASK("Task");
+    REFERENCE("Reference Request"), INTERVIEW_SCHEDULE("Interview Scheduling"), TASK("Task");
 
     private final String displayValue;
 

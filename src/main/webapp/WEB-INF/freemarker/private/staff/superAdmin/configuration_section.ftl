@@ -64,7 +64,8 @@
         <#list reminderIntervals as reminderInterval>
   				<div class="row">
   					<label for="reminderIntervalDuration" id="reminder-lbl" class="plain-label">${reminderInterval.reminderType.displayValue()} Reminder Frequency<em>*</em></label>
-  					<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
+  				  <#assign args = [reminderInterval.reminderType.displayValue()]>
+  					<span class="hint" data-desc="<@spring.messageArgs 'configuration.reminderFrequency' args />"></span>
   					<div class="field">	
   						<input class="numeric input-small" type="text" size="4" id="reminderIntervalDuration_${reminderInterval.reminderType}" name="reminderIntervalDuration" value="${(reminderInterval.duration?string("######"))!}" />
   						<select name="reminderIntervalUnit" id="reminderIntervalUnit_${reminderInterval.reminderType}" class="input-small">

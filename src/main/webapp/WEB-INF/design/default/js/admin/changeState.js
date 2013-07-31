@@ -242,7 +242,7 @@ function validateAndSaveUpdatedProjectDetails() {
             'recommendedStartDate' : $('#recommendedStartDate').val(),
             'recommendedConditionsAvailable' : ($('input:radio[name=recommendedConditionsAvailable]:checked').val() === "true" ? true : false),
             'projectDescriptionAvailable' : true,
-            'comment' : $('#comment').val(),
+            'comment' : $('#state_change_comment').val(),
             'confirmNextStage' : $('#confirmNextStage').is(':checked'),
             'projectStillAcceptsApplications': isProjectAcceptingApplications()
     };
@@ -262,7 +262,7 @@ function validateAndSaveUpdatedProjectDetails() {
         data : postData,
         success : function(data) {
             $("#approvedDetails").find("div.alert").remove();
-            $("#comment").parent().find("div.alert").remove();
+            $("#state_change_comment").parent().find("div.alert").remove();
             $("#confirmNextStageLabel").parent().parent().removeClass("alert-error");
             if (!data.success) {
                 if (data.projectTitle != null) {
@@ -282,7 +282,7 @@ function validateAndSaveUpdatedProjectDetails() {
                 }
                 
                 if (data.comment != null) {
-                    $('#comment').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.comment + '</div>');
+                    $('#state_change_comment').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.comment + '</div>');
                 }
                 
                 if (data.confirmNextStage != null) {

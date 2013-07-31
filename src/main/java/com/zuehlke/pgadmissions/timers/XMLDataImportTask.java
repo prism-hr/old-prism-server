@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
@@ -18,6 +19,7 @@ import com.zuehlke.pgadmissions.mail.PrismMailMessageException;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.Importer;
 
+@Service
 public class XMLDataImportTask {
 
     private final Logger log = LoggerFactory.getLogger(XMLDataImportTask.class);

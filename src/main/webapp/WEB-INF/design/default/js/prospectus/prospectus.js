@@ -30,8 +30,13 @@ function bindIrisProfileModalConfirmAction(){
 						$('#upi').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.irisProfile  + '</div>');
 					}
 				} else {
-					$("#iris-account-linked-message").show().find("span").html($('#upi').val());
 					$("#iris-account-not-linked-message").hide();
+					$("#save-upi-go").hide();
+
+					$("#iris-account-linked-message").show().find("span").html($('#upi').val());
+					$("#unlink-upi-go").show();
+					
+					$("#upi").attr("disabled", "disabled");
 				}
 			},
 			complete: function() {
@@ -55,8 +60,13 @@ function bindUnlinkUpiAction(){
 			url: "/pgadmissions/users/IRIS/",
 			success: function(data) {
 					$("#iris-account-linked-message").hide();
+					$("#unlink-upi-go").hide();
+					
 					$("#upi").val('');
 					$("#iris-account-not-linked-message").show();
+					$("#save-upi-go").show();
+					
+					$("#upi").removeAttr("disabled");
 			},
 			complete: function() {
 			}
@@ -91,10 +101,12 @@ function getUpiForCurrentUser() {
 			if (data.upi) {
 				$('#upi').val(data.upi);
 				$("#iris-account-linked-message").show().find("span").html($('#upi').val());
-				$("#iris-account-not-linked-message").hide();
+				$("#unlink-upi-go").show();
+				
+				$("#upi").attr("disabled", "disabled");
 			} else {
-				$("#iris-account-linked-message").hide();
 				$("#iris-account-not-linked-message").show();
+				$("#save-upi-go").show();
 			}
 		},
 		complete: function() {

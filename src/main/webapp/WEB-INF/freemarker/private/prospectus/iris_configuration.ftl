@@ -29,7 +29,7 @@
               </div>
           </div>
           <div class="buttons">
-              <button class="btn btn-primary" type="button" id="unlink-upi-go" style="display: none;">Unlink</button>
+              <button class="btn" type="button" id="unlink-upi-go" style="display: none;">Unlink</button>
               <button class="btn btn-primary" type="button" id="save-upi-go" style="display: none;">Submit</button>
           </div>
       </form>

@@ -344,7 +344,7 @@ function checktoDisableProjet() {
 		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo").attr("disabled", "disabled");
 		$("#addProjectAdvert").addClass("disabled");
 		clearAll();
-		$(".badge.count").text('1000 Characters left');
+		$("#projectAdvertDescriptionText").text('1000 Characters left');
 	}
 }
 function changeInfoBarNameProject(text,advertUpdated) {

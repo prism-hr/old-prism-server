@@ -16,13 +16,6 @@ public class ReminderIntervalTest {
 		Assert.assertEquals(1440, reminderInterval.getDurationInMinutes());
 	}
 	
-	@Test
-	public void shouldGet1HourInMinutes() {
-		ReminderInterval reminderInterval = new ReminderInterval();
-		reminderInterval.setDuration(1);
-		reminderInterval.setUnit(DurationUnitEnum.HOURS);
-		Assert.assertEquals(60, reminderInterval.getDurationInMinutes());
-	}
 	
 	@Test
 	public void shouldGet1WeekInMinutes() {
@@ -32,12 +25,4 @@ public class ReminderIntervalTest {
 		Assert.assertEquals(10080, reminderInterval.getDurationInMinutes());
 	}
 
-	@Test
-	public void shouldReturnMinutes() {
-		ReminderInterval reminderInterval = new ReminderInterval();
-		reminderInterval.setDuration(17);
-		reminderInterval.setUnit(DurationUnitEnum.MINUTES);
-		Assert.assertEquals(17, reminderInterval.getDurationInMinutes());
-		
-	}
 }

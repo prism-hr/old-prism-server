@@ -17,24 +17,9 @@ public class StageDurationTest {
 	}
 	
 	@Test
-	public void shouldGet1HourInMinutes() {
-		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.HOURS).duration(1).build();
-		Assert.assertEquals(60, stageDuration.getDurationInMinutes());
-		
-	}
-	
-	@Test
 	public void shouldGet1WeekInMinutes() {
 		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).duration(1).build();
 		Assert.assertEquals(7200, stageDuration.getDurationInMinutes());
 	}
 
-	
-	@Test
-	public void shouldReturnMinutes() {
-		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.MINUTES).duration(17).build();
-		Assert.assertEquals(17, stageDuration.getDurationInMinutes());
-		
-	}
-	
 }

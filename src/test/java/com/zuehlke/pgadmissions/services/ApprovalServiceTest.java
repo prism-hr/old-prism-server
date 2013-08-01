@@ -506,60 +506,6 @@ public class ApprovalServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenApplicationNotInApprovalWhenRequestRestartOfApprovalMail() {
-        RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-                .role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).build())//
-                .build();
-        Program program = new ProgramBuilder().id(321).title("lala").approver(approver).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
-                .program(program).id(1).applicationNumber("DUDU").build();
-        Comment comment = new CommentBuilder().id(1).build();
-
-        try {
-            approvalService.requestApprovalRestart(applicationForm, approver, comment);
-            Assert.fail("expected exception not thrown!");
-        } catch (CannotUpdateApplicationException iae) {
-            Assert.assertEquals("DUDU", iae.getApplicationNumber());
-        }
-    }
-
-    @Test
-    public void throwExceptionWhenUserIsNotApprover() {
-        Program program = new ProgramBuilder().id(321).title("lala").build();
-        RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-                .role(new RoleBuilder().id(2).authorityEnum(Authority.REVIEWER).build())//
-                .programsOfWhichApprover(program).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
-                .program(program).id(1).applicationNumber("DUDU").build();
-        Comment comment = new CommentBuilder().id(1).build();
-
-        try {
-            approvalService.requestApprovalRestart(applicationForm, approver, comment);
-            Assert.fail("expected exception not thrown!");
-        } catch (InsufficientApplicationFormPrivilegesException iae) {
-            Assert.assertEquals("DUDU", iae.getApplicationNumber());
-        }
-    }
-
-    @Test
-    public void throwExceptionWhenApproverIsNotInProgram() {
-        Program program = new ProgramBuilder().id(321).title("lala").build();
-        RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-                .role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).build())//
-                .build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
-                .program(program).id(1).applicationNumber("DUDU").build();
-        Comment comment = new CommentBuilder().id(1).build();
-
-        try {
-            approvalService.requestApprovalRestart(applicationForm, approver, comment);
-            Assert.fail("expected exception not thrown!");
-        } catch (InsufficientApplicationFormPrivilegesException iae) {
-            Assert.assertEquals("DUDU", iae.getApplicationNumber());
-        }
-    }
-
-    @Test
     public void shouldMoveApplicationToApprovedWithComment() {
         RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

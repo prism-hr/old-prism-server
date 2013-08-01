@@ -27,7 +27,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.validators.ExtendedASCIIConstraint;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "COMMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -48,7 +48,7 @@ public class Comment implements Comparable<Comment>, Serializable {
     @JoinColumn(name = "comment_id")
     private List<Document> documents = new ArrayList<Document>();
 
-    @ExtendedASCIIConstraint
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50000)
     @Lob
     private String comment;
 

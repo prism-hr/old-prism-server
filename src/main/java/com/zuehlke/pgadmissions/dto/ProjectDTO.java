@@ -16,7 +16,7 @@ public class ProjectDTO {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     private String title;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ESAPIConstraint(rule="ATAS", maxLength = 2000, message="{text.field.atas}")
     private String description;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)

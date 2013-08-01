@@ -14,7 +14,7 @@ public class ConfirmSupervisionDTO {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     private String projectTitle;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ESAPIConstraint(rule = "ATAS", maxLength = 2000, message = "{text.field.atas}")
     private String projectAbstract;
 
     private Date recommendedStartDate;

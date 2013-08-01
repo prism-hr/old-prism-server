@@ -24,7 +24,7 @@ public class ApprovalComment extends Comment {
     @Column(name = "project_title")
     private String projectTitle;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ESAPIConstraint(rule = "ATAS", maxLength = 2000, message = "{text.field.atas}")
     @Column(name = "project_abstract")
     private String projectAbstract;
 

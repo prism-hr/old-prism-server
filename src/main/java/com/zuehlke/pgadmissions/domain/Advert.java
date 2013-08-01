@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 @Entity(name = "ADVERT")
 public class Advert implements Serializable {
     private static final long serialVersionUID = 5963260213501162814L;
@@ -18,6 +20,7 @@ public class Advert implements Serializable {
     @Column(name = "title")
     private String title;
     
+    @ESAPIConstraint(rule="ATAS", maxLength = 2000, message="{text.field.atas}")
     @Column(name = "description")
     private String description;
 

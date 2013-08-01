@@ -19,7 +19,7 @@ public @interface ESAPIConstraint {
 
     boolean allowNull() default true;
     
-    int maxLength() default 50;
+    int maxLength();
     
     int minLength() default 0;
     

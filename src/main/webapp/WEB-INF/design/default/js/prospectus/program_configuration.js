@@ -26,7 +26,7 @@ function checktoDisable() {
 		$("#advertGroup input, #advertGroup textarea, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
 		$("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
 		$("#programAdvertClosingDates").css("display", "none");
-		$(".badge.count").text('2000 Characters left');
+		$(".badge.count").text('1000 Characters left');
 	}
 }
 function getProgramData(){

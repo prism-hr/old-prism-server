@@ -266,7 +266,7 @@ function addCounter() {
 		display = true;
         if ($(this).attr('id') == 'convictionsText') {
 			$(this).data("maxlength", 400);
-		} else if  ($(this).attr('id') == 'projectAbstract'||$(this).attr('id') == 'programmeDescription') {
+		} else if  ($(this).attr('id') == 'projectAbstract'||$(this).attr('id') == 'projectAdvertDescriptionText'||$(this).attr('id') == 'programAdvertDescriptionText') {
 			$(this).data("maxlength", 1000);
 		} else if  ($(this).attr('id') == 'position_remit') {
 			$(this).data("maxlength", 250);

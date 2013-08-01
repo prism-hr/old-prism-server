@@ -30,12 +30,9 @@ import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -225,18 +222,6 @@ public class ApprovalService {
     }
 
     public void requestApprovalRestart(ApplicationForm form, RegisteredUser user, Comment comment) {
-        if (user.isNotInRole(Authority.APPROVER) && user.isNotInRole(Authority.ADMINISTRATOR)) {
-            throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
-        }
-        
-        if (!user.isApproverInProgram(form.getProgram()) && !user.hasAdminRightsOnApplication(form)) {
-            throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
-        }
-        
-        if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
-            throw new CannotUpdateApplicationException(form.getApplicationNumber());
-        }
-        
         form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
         restartApprovalStage(form, user, comment);
     }

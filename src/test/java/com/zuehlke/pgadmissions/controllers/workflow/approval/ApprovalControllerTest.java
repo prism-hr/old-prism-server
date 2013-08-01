@@ -486,29 +486,40 @@ public class ApprovalControllerTest {
     @Test
     public void shouldRequestRestartOfApproval() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
+        
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", currentUserMock);
 
         RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
+        
+        actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
 
         approvalServiceMock.requestApprovalRestart(applicationForm, currentUserMock, comment);
-        EasyMock.replay(approvalServiceMock);
+        EasyMock.replay(approvalServiceMock, actionsProviderMock);
         assertEquals("redirect:/applications?messageCode=request.approval.restart&application=LALALA",
-                controller.requestRestart(applicationForm, comment, bindingResultMock));
-        EasyMock.verify(approvalServiceMock);
+                controller.requestRestart(comment, bindingResultMock, modelMap));
+        EasyMock.verify(approvalServiceMock, actionsProviderMock);
     }
 
     @Test
     public void shouldRequestRestartOfApprovalAndRedirectToADifferentPageForAdmin() {
         Program program = new ProgramBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").program(program).build();
+        
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", currentUserMock);
+        
         RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
+        
+        actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
         approvalServiceMock.requestApprovalRestart(applicationForm, currentUserMock, comment);
         EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
 
-        EasyMock.replay(approvalServiceMock, currentUserMock);
-
-        assertEquals("redirect:/approval/moveToApproval?applicationId=LALALA", controller.requestRestart(applicationForm, comment, bindingResultMock));
-
-        EasyMock.verify(approvalServiceMock, currentUserMock);
+        EasyMock.replay(approvalServiceMock, currentUserMock, actionsProviderMock);
+        assertEquals("redirect:/approval/moveToApproval?applicationId=LALALA", controller.requestRestart(comment, bindingResultMock, modelMap));
+        EasyMock.verify(approvalServiceMock, currentUserMock, actionsProviderMock);
     }
 
     @Test
@@ -518,11 +529,18 @@ public class ApprovalControllerTest {
         EasyMock.replay(bindingResultMock);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
+        
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", currentUserMock);
+        
         RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
+        
+        actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
 
-        EasyMock.replay(approvalServiceMock);
-        assertEquals("/private/staff/approver/request_restart_approve_page", controller.requestRestart(applicationForm, comment, bindingResultMock));
-        EasyMock.verify(approvalServiceMock);
+        EasyMock.replay(approvalServiceMock, actionsProviderMock);
+        assertEquals("/private/staff/approver/request_restart_approve_page", controller.requestRestart(comment, bindingResultMock, modelMap));
+        EasyMock.verify(approvalServiceMock, actionsProviderMock);
     }
 
     @Test

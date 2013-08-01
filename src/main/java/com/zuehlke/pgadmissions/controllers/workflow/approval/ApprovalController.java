@@ -140,14 +140,13 @@ public class ApprovalController {
 
     @Autowired
     public ApprovalController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-                    ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor,
-                    DocumentPropertyEditor documentPropertyEditor, GenericCommentValidator commentValidator,
-                    RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService, RefereeService refereeService,
-                    EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-                    SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
-                    CountryPropertyEditor countryPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
-                    ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider,
-                    final ApplicationDescriptorProvider applicationDescriptorProvider) {
+            ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
+            GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
+            RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
+            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
+            CountryPropertyEditor countryPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
+            ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider,
+            final ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
@@ -360,7 +359,7 @@ public class ApprovalController {
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
     public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult,
-                    SessionStatus sessionStatus) {
+            SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.REVISE_APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
@@ -382,7 +381,7 @@ public class ApprovalController {
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
     public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("approvalRound") ApprovalRound approvalRound,
-                    @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
+            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
         if (sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getRefereesSendToPortico() == null) {
             throw new ResourceNotFoundException();
         }
@@ -400,7 +399,7 @@ public class ApprovalController {
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
     public String submitQualificationsData(@ModelAttribute ApplicationForm applicationForm,
-                    @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
+            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
         if (sendToPorticoData.getQualificationsSendToPortico() == null) {
             throw new ResourceNotFoundException();
         }
@@ -412,9 +411,9 @@ public class ApprovalController {
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
     public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
-                    @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
-                    @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
-                    @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
+            @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
+            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
+            @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         model.addAttribute("editedRefereeId", editedRefereeId);
@@ -478,8 +477,12 @@ public class ApprovalController {
     }
 
     @RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)
-    public String requestRestart(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
-                    @Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result) {
+    public String requestRestart(@Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result, ModelMap modelMap) {
+        
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+        
         if (result.hasErrors()) {
             return REQUEST_RESTART_APPROVE_PAGE;
         }
@@ -521,7 +524,7 @@ public class ApprovalController {
         RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
         if (possibleUser == null) {
             possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
-                            DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm, Authority.SUPERVISOR);
+                    DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm, Authority.SUPERVISOR);
         }
         return possibleUser;
     }

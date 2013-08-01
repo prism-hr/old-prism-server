@@ -86,11 +86,11 @@ public class ConfigurationServiceTest {
     @Test
     public void shouldSaveConfigurationObjects(){
         
-        StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS).build();
+        StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.DAYS).build();
         StageDuration oldValidationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(5).unit(DurationUnitEnum.WEEKS).build();
         
         ReminderInterval reminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(8).unit(DurationUnitEnum.WEEKS).build();
-        ReminderInterval oldReminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(10).unit(DurationUnitEnum.MINUTES).build();
+        ReminderInterval oldReminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(10).unit(DurationUnitEnum.DAYS).build();
     
         ServiceLevelsDTO serviceLevelsDTO = new ServiceLevelsDTO();
         serviceLevelsDTO.setStagesDuration(Lists.newArrayList(validationDuration));
@@ -103,7 +103,7 @@ public class ConfigurationServiceTest {
         service.saveConfigurations(serviceLevelsDTO);  
         EasyMock.verify(stageDurationDAOMock, reminderIntervalDAOMock);
         
-        assertEquals(DurationUnitEnum.HOURS, oldValidationDuration.getUnit());
+        assertEquals(DurationUnitEnum.DAYS, oldValidationDuration.getUnit());
         assertEquals(DurationUnitEnum.WEEKS, oldReminderInterval.getUnit());
     }
     

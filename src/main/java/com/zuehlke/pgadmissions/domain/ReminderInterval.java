@@ -64,9 +64,6 @@ public class ReminderInterval {
         if (this.unit == DurationUnitEnum.DAYS) {
             return (int) TimeUnit.MINUTES.convert(duration, TimeUnit.DAYS);
         }
-        if (this.unit == DurationUnitEnum.HOURS) {
-            return (int) TimeUnit.MINUTES.convert(duration, TimeUnit.HOURS);
-        }
         if (this.unit == DurationUnitEnum.WEEKS) {
             int weekInDays = duration * 7;
             return (int) TimeUnit.MINUTES.convert(weekInDays, TimeUnit.DAYS);
@@ -75,12 +72,6 @@ public class ReminderInterval {
     }
 
     public int getDurationInDays() {
-        if (this.unit == DurationUnitEnum.MINUTES) {
-            return (int) TimeUnit.DAYS.convert(duration, TimeUnit.MINUTES);
-        }
-        if (this.unit == DurationUnitEnum.HOURS) {
-            return (int) TimeUnit.DAYS.convert(duration, TimeUnit.HOURS);
-        }
         if (this.unit == DurationUnitEnum.WEEKS) {
             int weekInDays = duration * 7;
             return (int) TimeUnit.DAYS.convert(weekInDays, TimeUnit.DAYS);

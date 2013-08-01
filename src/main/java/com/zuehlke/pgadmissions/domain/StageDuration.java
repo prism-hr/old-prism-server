@@ -50,13 +50,9 @@ public class StageDuration {
         switch (unit) {
         case DAYS:
             return (int) TimeUnit.MINUTES.convert(this.duration, TimeUnit.DAYS);
-        case HOURS:
-            return (int) TimeUnit.MINUTES.convert(this.duration, TimeUnit.HOURS);
         case WEEKS:
             int weekInDays = this.duration * 5;
             return (int) TimeUnit.MINUTES.convert(weekInDays, TimeUnit.DAYS);
-        case MINUTES:
-            return this.duration;
         default:
             throw new IllegalArgumentException();
         }

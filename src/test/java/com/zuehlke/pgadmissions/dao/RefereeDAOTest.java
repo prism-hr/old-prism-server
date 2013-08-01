@@ -239,15 +239,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldNotReturnRefereeReminded6MinutesAgoForOneMinuteReminderInterval() {
-        reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(6).unit(DurationUnitEnum.MINUTES).build();
+    public void shouldNotReturnRefereeReminded1DayAgoFor6DaysReminderInterval() {
+        reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(6).unit(DurationUnitEnum.DAYS).build();
 
         sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
-        Date oneMinuteAgo = DateUtils.addMinutes(now, -1);
+        Date oneMinuteAgo = DateUtils.addDays(now, -1);
         CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
         Referee referee = new RefereeBuilder().id(1).user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
                 .lastNotified(oneMinuteAgo).email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf")
@@ -262,15 +262,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldReturnRefereeReminded2MinutesAgoForOneMinuteReminderInterval() {
-        reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(1).unit(DurationUnitEnum.MINUTES).build();
+    public void shouldReturnRefereeReminded2DaysAgoForOneDayReminderInterval() {
+        reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(1).unit(DurationUnitEnum.DAYS).build();
 
         sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
-        Date twoMinutesAgo = DateUtils.addMinutes(now, -2);
+        Date twoMinutesAgo = DateUtils.addDays(now, -2);
         CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
         Referee referee = new RefereeBuilder().id(1).user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
                 .lastNotified(twoMinutesAgo).email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf")

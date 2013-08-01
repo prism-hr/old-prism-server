@@ -69,7 +69,7 @@ public class ScheduledMailSendingServiceIT {
                 ReminderInterval interval = new ReminderInterval();
                 interval.setReminderType(ReminderType.REFERENCE);
                 interval.setDuration(1);
-                interval.setUnit(DurationUnitEnum.MINUTES);
+                interval.setUnit(DurationUnitEnum.DAYS);
                 sessionFactory.getCurrentSession().save(interval);
 
                 EmailTemplate mailTemplate = new EmailTemplateBuilder().subject("whatever").name(EmailTemplateName.REFEREE_REMINDER)

@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
 public enum DurationUnitEnum {
-	MINUTES("Minutes", "MINUTE"), 
-	HOURS("Hours", "HOUR"), 
 	DAYS("Days", "DAY"), 
 	WEEKS("Weeks", "WEEK");
 	

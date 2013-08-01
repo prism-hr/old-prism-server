@@ -108,25 +108,6 @@ public class ApprovalRoundValidatorTest {
     }
     
     @Test
-    public void shouldValidateIfProjectAbstractHas200Words() {
-        approvalRound.setProjectAbstract(createdSampleText(200));
-        
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
-        approvalRoundValidator.validate(approvalRound, mappingResult);
-        Assert.assertEquals(0, mappingResult.getErrorCount());
-    }
-    
-    @Test
-    public void shouldRejectIfProjectAbstractHas201Words() {
-        approvalRound.setProjectAbstract(createdSampleText(201));
-        
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
-        approvalRoundValidator.validate(approvalRound, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.maxwords", mappingResult.getFieldError("projectAbstract").getCode());
-    }
-
-    @Test
     public void shouldRejectIfStartDateIsInThePast() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -227,11 +208,4 @@ public class ApprovalRoundValidatorTest {
         approvalRoundValidator.setValidator((javax.validation.Validator) validator);
     }
     
-    private static String createdSampleText(int numberOfWords){
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0 ; i < numberOfWords ; i++){
-            sb.append("word ");
-        }
-        return sb.toString();
-    }
 }

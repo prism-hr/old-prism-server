@@ -24,7 +24,6 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
-import com.zuehlke.pgadmissions.validators.ExtendedASCIIConstraint;
 
 @Entity(name = "APPROVAL_ROUND")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -51,7 +50,7 @@ public class ApprovalRound implements Serializable {
     @Column(name = "project_title")
     private String projectTitle;
 
-    @ExtendedASCIIConstraint
+    @ESAPIConstraint(rule = "ATAS", maxLength = 2000, message = "{text.field.atas}")
     @Column(name = "project_abstract")
     private String projectAbstract;
 
@@ -74,7 +73,7 @@ public class ApprovalRound implements Serializable {
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
-    
+
     @Column(name = "project_accepting_applications")
     private Boolean projectAcceptingApplications;
 
@@ -189,17 +188,17 @@ public class ApprovalRound implements Serializable {
         this.recommendedConditions = recommendedConditions;
     }
 
-    public boolean hasPrimarySupervisorResponded(){
+    public boolean hasPrimarySupervisorResponded() {
         Supervisor primarySupervisor = getPrimarySupervisor();
         return primarySupervisor != null && primarySupervisor.hasResponded();
     }
 
-	public Boolean getProjectAcceptingApplications() {
-		return projectAcceptingApplications;
-	}
+    public Boolean getProjectAcceptingApplications() {
+        return projectAcceptingApplications;
+    }
 
-	public void setProjectAcceptingApplications(Boolean projectAcceptingApplications) {
-		this.projectAcceptingApplications = projectAcceptingApplications;
-	}
-    
+    public void setProjectAcceptingApplications(Boolean projectAcceptingApplications) {
+        this.projectAcceptingApplications = projectAcceptingApplications;
+    }
+
 }

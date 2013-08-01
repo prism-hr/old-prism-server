@@ -175,7 +175,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     private String uclUserId;
 
     @Column(name = "latest_task_notification_date")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date latestTaskNotificationDate;
 
     @Transient

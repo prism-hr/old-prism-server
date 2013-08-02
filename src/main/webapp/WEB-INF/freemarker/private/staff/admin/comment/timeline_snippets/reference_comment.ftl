@@ -35,7 +35,7 @@
 							<span data-desc="<#if comment.suitableForProgramme?? && comment.suitableForProgramme>Yes<#else>No</#if>"></span>Is the applicant suitable for their chosen postgraduate study programme?
 						</h3>
 				</#if>  
-		</div>
         <#include "comment_scores.ftl"/>
+		</div>
 	</li>                
 </ul>

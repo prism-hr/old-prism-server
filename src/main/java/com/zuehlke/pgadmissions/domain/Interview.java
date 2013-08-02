@@ -92,6 +92,9 @@ public class Interview implements Serializable {
     @IndexColumn(name = "timeslot_position")
     private List<InterviewTimeslot> timeslots = new ArrayList<InterviewTimeslot>();
 
+    @Column(name = "avg_rating")
+    private Integer averageRating;
+
     @Transient
     private String timeHours;
 
@@ -247,6 +250,14 @@ public class Interview implements Serializable {
         this.takenPlace = takenPlace;
     }
 
+    public Integer getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Integer averageRating) {
+        this.averageRating = averageRating;
+    }
+
     public boolean isScheduled() {
         return getStage() == InterviewStage.SCHEDULED;
     }
@@ -276,10 +287,10 @@ public class Interview implements Serializable {
         }
         return true;
     }
-    
-    public boolean hasAllParticipantsProvidedAvailability(){
-        for(InterviewParticipant participant : getParticipants()){
-            if(!participant.getResponded()){
+
+    public boolean hasAllParticipantsProvidedAvailability() {
+        for (InterviewParticipant participant : getParticipants()) {
+            if (!participant.getResponded()) {
                 return false;
             }
         }

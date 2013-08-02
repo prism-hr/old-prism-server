@@ -140,14 +140,22 @@
                   <div class="row multi-line"> 
                     <label id="supervise-work-lbl" class="plain-label"><@spring.message 'feedbackComment.applicantRating'/><em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.applicantRating'/>"></span>
-                      <div class="field" id="field-wouldwork">
-                        <label><input type="radio" name="willingToWorkWithApplicant" value="true" id="willingWorkRB_true" <#if comment.willingToWorkWithApplicantSet && comment.willingToWorkWithApplicant> checked="checked"</#if> /> Yes</label>
-                        <label><input type="radio" name="willingToWorkWithApplicant" value="false" id="willingWorkRB_false" <#if comment.willingToWorkWithApplicantSet && !comment.willingToWorkWithApplicant> checked="checked"</#if> /> No</label>
-                        <@spring.bind "comment.willingToWorkWithApplicant" />
-                        <#list spring.status.errorMessages as error>
-                        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-                        </#list>
-                      </div>
+                    <div class="field" id="field-applicantRating">
+                      <ul class="rating-list clearfix">
+                        <li><i class="icon-thumbs-down"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                      </ul>
+                      <input id="applicantRating" name="applicantRating" class="rating-input" type="number" value="${comment.applicantRating!}" min="0" max="5" />
+                      
+                      <@spring.bind "comment.applicantRating" />
+                      <#list spring.status.errorMessages as error>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+                      </#list>
+                    </div>
                   </div>
                 </div>
 

@@ -108,7 +108,7 @@
             </ul>
 
       </div>
-      <img src="<@spring.url '/design/default/images/ajax-loader-file.gif'/>" style="display:none"/>
+      <img src="/design/default/images/ajax-loader-file.gif" style="display:none"/>
       <#include "/public/common/global_footer.ftl"/>
     
     </div>

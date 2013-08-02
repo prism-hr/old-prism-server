@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,8 +46,8 @@ public class ReviewRound implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
-    @Column(name = "avg_rating")
-    private Integer averageRating;
+    @Column(name = "avg_rating", precision = 3, scale = 2)
+    private BigDecimal averageRating;
 
     public void setId(Integer id) {
         this.id = id;
@@ -85,11 +86,11 @@ public class ReviewRound implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public Integer getAverageRating() {
+    public BigDecimal getAverageRating() {
         return averageRating;
     }
 
-    public void setAverageRating(Integer averageRating) {
+    public void setAverageRating(BigDecimal averageRating) {
         this.averageRating = averageRating;
     }
 

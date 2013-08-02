@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -92,8 +93,8 @@ public class Interview implements Serializable {
     @IndexColumn(name = "timeslot_position")
     private List<InterviewTimeslot> timeslots = new ArrayList<InterviewTimeslot>();
 
-    @Column(name = "avg_rating")
-    private Integer averageRating;
+    @Column(name = "avg_rating", precision = 3, scale = 2)
+    private BigDecimal averageRating;
 
     @Transient
     private String timeHours;
@@ -250,11 +251,11 @@ public class Interview implements Serializable {
         this.takenPlace = takenPlace;
     }
 
-    public Integer getAverageRating() {
+    public BigDecimal getAverageRating() {
         return averageRating;
     }
 
-    public void setAverageRating(Integer averageRating) {
+    public void setAverageRating(BigDecimal averageRating) {
         this.averageRating = averageRating;
     }
 

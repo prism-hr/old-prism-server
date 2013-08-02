@@ -1,0 +1,1 @@
+insert into STATE_CHANGE_EVENT(id, new_status) select id, new_status from EVENT;

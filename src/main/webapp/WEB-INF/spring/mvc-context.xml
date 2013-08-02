@@ -37,6 +37,7 @@
             <list>
                 <value>messages</value>
                 <value>tooltips</value>
+                <value>labels</value>
                 <value>email_subjects</value>
                 <value>timeline_messages</value>
                 <value>actionmessages</value>

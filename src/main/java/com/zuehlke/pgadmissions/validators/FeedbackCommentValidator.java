@@ -75,6 +75,8 @@ public class FeedbackCommentValidator extends AbstractValidator {
             }
         }
 
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicantRating", EMPTY_FIELD_ERROR_MESSAGE);
+        
         Comment comment = (Comment) target;
         List<Score> scores = comment.getScores();
         if (scores != null) {

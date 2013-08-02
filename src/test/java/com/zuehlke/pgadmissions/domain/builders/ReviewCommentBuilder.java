@@ -14,6 +14,7 @@ public class ReviewCommentBuilder {
 	private Boolean suitableCandidateForUcl;
 	private Boolean suitableCandidateForProgramme;
 	private Boolean willingToWorkWithApplicant;
+	private Integer applicantRating;
 	private boolean decline;
 	private boolean adminsNotified;
 	private ApplicationForm applicationForm;
@@ -53,6 +54,11 @@ public class ReviewCommentBuilder {
 		this.suitableCandidateForProgramme = suitableCandidateForProgramme;
 		return this;
 	}
+	
+	   public ReviewCommentBuilder suitableCandidateForProgramme(Integer applicantRating) {
+	        this.applicantRating = applicantRating;
+	        return this;
+	    }
 	
 	public ReviewCommentBuilder decline(boolean decline) {
 		this.decline = decline;
@@ -102,6 +108,7 @@ public class ReviewCommentBuilder {
 		reviewComment.setReviewer(reviewer);
 		reviewComment.setSuitableCandidateForProgramme(suitableCandidateForProgramme);
 		reviewComment.setWillingToWorkWithApplicant(willingToWorkWithApplicant);
+		reviewComment.setApplicantRating(applicantRating);
 		return reviewComment;
 	}
 }

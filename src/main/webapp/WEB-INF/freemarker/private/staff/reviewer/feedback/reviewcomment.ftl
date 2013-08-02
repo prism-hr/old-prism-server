@@ -87,7 +87,7 @@
                 <div class="row-group"> <#include "/private/staff/admin/comment/documents_snippet.ftl"/> </div>
                 <div class="row-group">
                   <h3>Applicant Suitability</h3>
-                  <div class="row">
+                  <div class="row multi-line">
                     <label id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPG'/>"></span>
                     <div class="field" id="field-issuitableucl">
@@ -95,10 +95,11 @@
                       <label><input type="radio" name="suitableCandidateForUcl" value="false" id="suitableRB_false" <#if comment.suitableCandidateForUcl?? && !comment.suitableCandidateForUcl> checked="checked"</#if> /> No</label>
                       <@spring.bind "comment.suitableCandidateForUcl" />
                       <#list spring.status.errorMessages as error>
-                      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-                        ${error}
-                      </div>
-                      </#list> </div>
+                        <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                          ${error}
+                        </div>
+                      </#list>
+                    </div>
                   </div>
                   <div class="row multi-line">
                     <label id="suitable-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></label>
@@ -109,29 +110,44 @@
                       <@spring.bind "comment.suitableCandidateForProgramme" />
                       <#list spring.status.errorMessages as error> 
                       <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-                      </#list> </div>
+                      </#list>
+                    </div>
                   </div>
                   <div class="row multi-line"> 
-                  <label id="supervise-lbl" class="plain-label">Would you like to interview the applicant?<em>*</em></label> 
-                  <span class="hint" data-desc="<@spring.message 'review.interview'/>"></span>
-                    <div class="field" id="field-wouldinterview">
-                      <label><input type="radio" name="willingToInterview" value="true" id="willingRB_true" <#if comment.willingToInterviewSet && comment.willingToInterview> checked="checked"</#if> /> Yes</label>
-                      <label><input type="radio" name="willingToInterview" value="false" id="willingRB_false" <#if comment.willingToInterviewSet && !comment.willingToInterview> checked="checked"</#if> /> No</label>
-                      <@spring.bind "comment.willingToInterview" />
-                      <#list spring.status.errorMessages as error>
-                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-                      </#list> </div>
+                    <label id="supervise-lbl" class="plain-label">Would you like to interview the applicant?<em>*</em></label> 
+                    <span class="hint" data-desc="<@spring.message 'review.interview'/>"></span>
+                      <div class="field" id="field-wouldinterview">
+                        <label><input type="radio" name="willingToInterview" value="true" id="willingRB_true" <#if comment.willingToInterviewSet && comment.willingToInterview> checked="checked"</#if> /> Yes</label>
+                        <label><input type="radio" name="willingToInterview" value="false" id="willingRB_false" <#if comment.willingToInterviewSet && !comment.willingToInterview> checked="checked"</#if> /> No</label>
+                        <@spring.bind "comment.willingToInterview" />
+                        <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+                        </#list>
+                      </div>
                   </div>
                   <div class="row multi-line"> 
-                  <label id="supervise-work-lbl" class="plain-label">Would you like to supervise this applicant?<em>*</em></label> 
-                  <span class="hint" data-desc="<@spring.message 'review.willingToWork'/>"></span>
-                    <div class="field" id="field-wouldwork">
-                      <label><input type="radio" name="willingToWorkWithApplicant" value="true" id="willingWorkRB_true" <#if comment.willingToWorkWithApplicantSet && comment.willingToWorkWithApplicant> checked="checked"</#if> /> Yes</label>
-                      <label><input type="radio" name="willingToWorkWithApplicant" value="false" id="willingWorkRB_false" <#if comment.willingToWorkWithApplicantSet && !comment.willingToWorkWithApplicant> checked="checked"</#if> /> No</label>
-                      <@spring.bind "comment.willingToWorkWithApplicant" />
-                      <#list spring.status.errorMessages as error>
-                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-                      </#list> </div>
+                    <label id="supervise-work-lbl" class="plain-label">Would you like to supervise this applicant?<em>*</em></label> 
+                    <span class="hint" data-desc="<@spring.message 'review.willingToWork'/>"></span>
+                      <div class="field" id="field-wouldwork">
+                        <label><input type="radio" name="willingToWorkWithApplicant" value="true" id="willingWorkRB_true" <#if comment.willingToWorkWithApplicantSet && comment.willingToWorkWithApplicant> checked="checked"</#if> /> Yes</label>
+                        <label><input type="radio" name="willingToWorkWithApplicant" value="false" id="willingWorkRB_false" <#if comment.willingToWorkWithApplicantSet && !comment.willingToWorkWithApplicant> checked="checked"</#if> /> No</label>
+                        <@spring.bind "comment.willingToWorkWithApplicant" />
+                        <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+                        </#list>
+                      </div>
+                  </div>
+                  <div class="row multi-line"> 
+                    <label id="supervise-work-lbl" class="plain-label"><@spring.message 'feedbackComment.applicantRating'/><em>*</em></label> 
+                    <span class="hint" data-desc="<@spring.message 'interviewOutcome.applicantRating'/>"></span>
+                      <div class="field" id="field-wouldwork">
+                        <label><input type="radio" name="willingToWorkWithApplicant" value="true" id="willingWorkRB_true" <#if comment.willingToWorkWithApplicantSet && comment.willingToWorkWithApplicant> checked="checked"</#if> /> Yes</label>
+                        <label><input type="radio" name="willingToWorkWithApplicant" value="false" id="willingWorkRB_false" <#if comment.willingToWorkWithApplicantSet && !comment.willingToWorkWithApplicant> checked="checked"</#if> /> No</label>
+                        <@spring.bind "comment.willingToWorkWithApplicant" />
+                        <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+                        </#list>
+                      </div>
                   </div>
                 </div>
 

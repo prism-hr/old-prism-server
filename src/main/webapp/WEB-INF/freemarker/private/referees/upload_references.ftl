@@ -118,6 +118,28 @@
                       </#list> 
                       </div>
                   </div>
+                  
+                  <div class="row multi-line"> 
+                    <label id="supervise-work-lbl" class="plain-label"><@spring.message 'feedbackComment.applicantRating'/><em>*</em></label> 
+                    <span class="hint" data-desc="<@spring.message 'interviewOutcome.applicantRating'/>"></span>
+                    <div class="field" id="field-applicantRating">
+                      <ul class="rating-list clearfix">
+                        <li><i class="icon-thumbs-down"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                      </ul>
+                      <input id="applicantRating" name="applicantRating" class="rating-input" type="number" value="${comment.applicantRating!}" min="0" max="5" />
+                      
+                      <@spring.bind "comment.applicantRating" />
+                      <#list spring.status.errorMessages as error>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+                      </#list>
+                    </div>
+                  </div>
+                  
                 </div>
                 
                 <#assign scores = comment.scores>

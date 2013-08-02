@@ -13,6 +13,7 @@ public class InterviewCommentBuilder {
 	private Boolean willingToSupervice;
 	private Boolean suitableCandidateForUCL;
 	private Boolean suitableCandidateForProgramme;
+	private Integer applicantRating;
 	private boolean decline;
 	private boolean adminsNotified;
 	private ApplicationForm applicationForm;
@@ -46,6 +47,11 @@ public class InterviewCommentBuilder {
 	public InterviewCommentBuilder suitableCandidateForProgramme(Boolean suitableCandidateForProgramme) {
 		this.suitableCandidateForProgramme = suitableCandidateForProgramme;
 		return this;
+	}
+
+	public InterviewCommentBuilder suitableCandidateForProgramme(Integer applicantRating) {
+	    this.applicantRating = applicantRating;
+	    return this;
 	}
 	
 	public InterviewCommentBuilder decline(boolean decline) {
@@ -95,6 +101,7 @@ public class InterviewCommentBuilder {
 		interviewComment.setAdminsNotified(adminsNotified);
 		interviewComment.setInterviewer(interviewer);
 		interviewComment.setSuitableCandidateForProgramme(suitableCandidateForProgramme);
+		interviewComment.setApplicantRating(applicantRating);
 		return interviewComment;
 	}
 }

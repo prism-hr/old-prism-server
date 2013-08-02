@@ -31,6 +31,9 @@ public class ReferenceComment extends Comment {
     @Column(name = "suitable_for_Programme")
     private Boolean suitableForProgramme;
 
+    @Column(name = "applicant_rating")
+    private Integer applicantRating;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "referee_id")
@@ -48,7 +51,7 @@ public class ReferenceComment extends Comment {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provided_by")
     private RegisteredUser providedBy;
-    
+
     @Transient
     private String alert;
 
@@ -96,6 +99,14 @@ public class ReferenceComment extends Comment {
         this.suitableForProgramme = suitableForProgramme;
     }
 
+    public Integer getApplicantRating() {
+        return applicantRating;
+    }
+
+    public void setApplicantRating(Integer applicantRating) {
+        this.applicantRating = applicantRating;
+    }
+
     public RegisteredUser getProvidedBy() {
         return providedBy;
     }
@@ -111,7 +122,7 @@ public class ReferenceComment extends Comment {
     public void setAlert(String alert) {
         this.alert = alert;
     }
-    
+
     @Override
     public String getTooltipMessage(final String role) {
         RegisteredUser providedBy = referee.getReference().getProvidedBy();

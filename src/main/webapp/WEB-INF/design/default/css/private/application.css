@@ -266,7 +266,7 @@ select.list-select-to option { padding: 5px; }
 .rating-list li { display: inline-block; float: left; font-size: 19px; color: grey; margin-right: 4px;} 
 .rating-list li i:hover, .rating-list li i.hover  { color:#FFC926; cursor: pointer; }
 .rating-list li i.icon-thumbs-down.hover, .rating-list li i.icon-thumbs-down:hover { color: #D93600; }
-.scoring-questions .rating-input {
+.rating-input {
 	display: none !important;
 }
 #confirmNextStage {

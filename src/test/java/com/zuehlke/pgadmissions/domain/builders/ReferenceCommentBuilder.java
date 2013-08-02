@@ -20,6 +20,7 @@ public class ReferenceCommentBuilder {
     private Referee referee;
     private boolean suitableForUcl;
     private boolean suitableForProgramme;
+    private Integer applicantRating;
     private String comment;
     private RegisteredUser user;
     private RegisteredUser providedBy;
@@ -73,14 +74,21 @@ public class ReferenceCommentBuilder {
         return this;
     }
 
+    public ReferenceCommentBuilder suitableCandidateForProgramme(Integer applicantRating) {
+        this.applicantRating = applicantRating;
+        return this;
+    }
+
     public ReferenceCommentBuilder providedBy(RegisteredUser providedBy) {
         this.providedBy = providedBy;
         return this;
     }
+
     public ReferenceCommentBuilder scores(Score... scores) {
         for (Score score : scores) {
             this.scores.add(score);
-        };
+        }
+        ;
         return this;
     }
 
@@ -90,6 +98,7 @@ public class ReferenceCommentBuilder {
         reference.setReferee(referee);
         reference.setSuitableForProgramme(suitableForProgramme);
         reference.setSuitableForUCL(suitableForUcl);
+        reference.setApplicantRating(applicantRating);
         reference.setComment(comment);
         reference.setUser(user);
         reference.setProvidedBy(providedBy);

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -255,8 +256,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name = "avg_rating")
-    private Integer averageRating;
+    @Column(name = "avg_rating", precision = 3, scale = 2)
+    private BigDecimal averageRating;
 
     public List<Qualification> getQualifications() {
         return qualifications;
@@ -881,11 +882,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.acceptedTerms = acceptedTerms;
     }
 
-    public Integer getAverageRating() {
+    public BigDecimal getAverageRating() {
         return averageRating;
     }
 
-    public void setAverageRating(Integer averageRating) {
+    public void setAverageRating(BigDecimal averageRating) {
         this.averageRating = averageRating;
     }
 

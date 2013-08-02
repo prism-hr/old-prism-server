@@ -108,7 +108,9 @@
             </ul>
 
       </div>
-      <img src="/design/default/images/ajax-loader-file.gif" style="display:none"/>
+      <div class="ajax-loader-preloader">
+      <!--<img src="/design/default/images/ajax-loader-file.gif" style="display:none"></img>-->
+      </div>
       <#include "/public/common/global_footer.ftl"/>
     
     </div>

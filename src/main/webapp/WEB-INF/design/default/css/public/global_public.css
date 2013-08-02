@@ -173,6 +173,7 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 #site-message.error .content h1 { color: #B60050; }
 
 /* AJAX loading/posting notification */
+
 div.ajax {
 	background: rgba(128,128,128,.4) url(../../images/ajax-loader.gif) no-repeat center !important;
 	border: none !important;
@@ -365,6 +366,14 @@ div#ajaxloader {
     margin-bottom: 10px;
     display: block;
 }
+
+.ajax-loader-preloader{
+	background: rgba(128,128,128,.4) url(../../images/ajax-loader-file.gif);
+	position: absolute;
+	top: -9999;
+	left: -9999;
+}
+
 .loading {
   background: #FFFFFF url(../../images/ajax-loader-file.gif) 96px 135px no-repeat !important;
 }

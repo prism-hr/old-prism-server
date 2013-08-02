@@ -25,70 +25,81 @@ import org.hibernate.annotations.GenerationTime;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ReviewRound implements Serializable {
 
-	private static final long serialVersionUID = 1068777060574638531L;
-	
-	@Id
+    private static final long serialVersionUID = 1068777060574638531L;
+
+    @Id
     @GeneratedValue
     private Integer id;
-    
-	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "review_round_id")
-	private List<Reviewer> reviewers = new ArrayList<Reviewer>();	
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_form_id")	
-	private ApplicationForm application;	
-	
-	@Column(name = "created_date", insertable = false)
-	@Generated(GenerationTime.INSERT)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
-	public Integer getId() {
-		return id;
-	}
+    @OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @JoinColumn(name = "review_round_id")
+    private List<Reviewer> reviewers = new ArrayList<Reviewer>();
 
-	public List<Reviewer> getReviewers() {
-		return reviewers;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_id")
+    private ApplicationForm application;
 
-	public void setReviewers(List<Reviewer> reviewers) {
-		this.reviewers.clear();
-		for (Reviewer reviewer : reviewers) {
-			if(reviewer != null){
-				this.reviewers.add(reviewer);
-			}
-		}
-	}
+    @Column(name = "created_date", insertable = false)
+    @Generated(GenerationTime.INSERT)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
 
-	public ApplicationForm getApplication() {
-		return application;
-	}
+    @Column(name = "avg_rating")
+    private Integer averageRating;
 
-	public void setApplication(ApplicationForm application) {
-		this.application = application;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-	
-	public boolean hasAllReviewersResponded(){
-	    for(Reviewer reviewer : getReviewers()){
-	        if(reviewer.getReview() == null){
-	            return false;
-	        }
-	    }
-	    return true;
-	}
+    public List<Reviewer> getReviewers() {
+        return reviewers;
+    }
+
+    public void setReviewers(List<Reviewer> reviewers) {
+        this.reviewers.clear();
+        for (Reviewer reviewer : reviewers) {
+            if (reviewer != null) {
+                this.reviewers.add(reviewer);
+            }
+        }
+    }
+
+    public ApplicationForm getApplication() {
+        return application;
+    }
+
+    public void setApplication(ApplicationForm application) {
+        this.application = application;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Integer getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Integer averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public boolean hasAllReviewersResponded() {
+        for (Reviewer reviewer : getReviewers()) {
+            if (reviewer.getReview() == null) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

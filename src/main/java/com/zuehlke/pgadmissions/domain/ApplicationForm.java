@@ -255,6 +255,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Column(name = "avg_rating")
+    private Integer averageRating;
+
     public List<Qualification> getQualifications() {
         return qualifications;
     }
@@ -876,6 +879,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setAcceptedTerms(boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
+    }
+
+    public Integer getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Integer averageRating) {
+        this.averageRating = averageRating;
     }
 
     @Override

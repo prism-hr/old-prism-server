@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
+import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -62,16 +63,17 @@ public class InterviewCommentController {
     private final ApplicationFormAccessService accessService;
     private final ActionsProvider actionsProvider;
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
+    private final ApplicantRatingService applicantRatingService;
 
     public InterviewCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null,null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-                    FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor,
-                    ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
-                    ActionsProvider actionsProvider, ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider) {
+            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
+            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ActionsProvider actionsProvider, ApplicationFormAccessService accessService,
+            ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -83,6 +85,7 @@ public class InterviewCommentController {
         this.actionsProvider = actionsProvider;
         this.accessService = accessService;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
+        this.applicantRatingService = applicantRatingService;
     }
 
     @ModelAttribute("applicationForm")
@@ -107,9 +110,9 @@ public class InterviewCommentController {
     }
 
     @ModelAttribute("comment")
-    public InterviewComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser currentUser = getUser();
+    public InterviewComment getComment(ModelMap modelMap) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser currentUser = (RegisteredUser) modelMap.get("user");
 
         InterviewComment interviewComment = new InterviewComment();
         interviewComment.setApplication(applicationForm);
@@ -151,7 +154,7 @@ public class InterviewCommentController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String addComment(@ModelAttribute("comment") InterviewComment comment, BindingResult result, ModelMap modelMap)
-                    throws ScoringDefinitionParseException {
+            throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ADD_INTERVIEW_FEEDBACK);
@@ -171,6 +174,10 @@ public class InterviewCommentController {
             return INTERVIEW_FEEDBACK_PAGE;
         }
         commentService.save(comment);
+        comment.getInterviewer().setInterviewComment(comment);
+        applicationForm.getApplicationComments().add(comment);
+        applicantRatingService.computeAverageRating(comment.getInterviewer().getInterview());
+        applicantRatingService.computeAverageRating(applicationForm);
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());

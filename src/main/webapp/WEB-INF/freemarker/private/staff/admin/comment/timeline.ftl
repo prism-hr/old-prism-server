@@ -29,7 +29,11 @@
 		              <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 		            </div>
                     
-		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p> <i class="icon-minus-sign"></i> 
+		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.
+		              <#if timelineObject.reviewRound?? && timelineObject.reviewRound.averageRating?? >
+		                ${timelineObject.reviewRound.averageRating}
+		              </#if>
+		            </p> <i class="icon-minus-sign"></i> 
 				   </div>
 		         <!-- Box end -->
                  <div class="excontainer">

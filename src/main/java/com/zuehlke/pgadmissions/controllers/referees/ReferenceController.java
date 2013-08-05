@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
+import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -67,17 +68,17 @@ public class ReferenceController {
     private final ApplicationFormAccessService accessService;
     private final ActionsProvider actionsProvider;
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
+    private final ApplicantRatingService applicantRatingService;
 
     ReferenceController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
-                    DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
-                    ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
-                    final ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
-                    ApplicationDescriptorProvider applicationDescriptorProvider) {
+            DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
+            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
+            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;
@@ -90,6 +91,7 @@ public class ReferenceController {
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
+        this.applicantRatingService = applicantRatingService;
     }
 
     @ModelAttribute("applicationForm")
@@ -167,7 +169,7 @@ public class ReferenceController {
 
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
     public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult, ModelMap modelMap)
-                    throws ScoringDefinitionParseException {
+            throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REFERENCE);
@@ -187,10 +189,10 @@ public class ReferenceController {
             return ADD_REFERENCES_VIEW_NAME;
         }
 
-        if (comment.getReferee().getReference() == null) { // check if the
-                                                           // reference isn't
-                                                           // already submitted
+        if (comment.getReferee().getReference() == null) { // check if the reference isn't already submitted
             commentService.save(comment);
+            applicationForm.getApplicationComments().add(comment);
+            applicantRatingService.computeAverageRating(applicationForm);
             refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
         }
 

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.easymock.EasyMock;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
@@ -19,10 +21,12 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -43,6 +47,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
+import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -63,6 +68,7 @@ public class ReviewCommentControllerTest {
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
     private ApplicationDescriptorProvider applicationDescriptorProviderMock;
+    private ApplicantRatingService applicantRatingService;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -113,6 +119,9 @@ public class ReviewCommentControllerTest {
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
         final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        final ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", currentUser);
         final Reviewer reviewer = new ReviewerBuilder().id(5).build();
 
         final Question question1 = new Question();
@@ -122,24 +131,13 @@ public class ReviewCommentControllerTest {
         customQuestions.getQuestion().add(question1);
         ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
-        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                        documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
-                        actionsProviderMock, null) {
 
-            @Override
-            public ApplicationForm getApplicationForm(String id) {
-                return applicationForm;
-            }
-
-        };
-
-        EasyMock.replay(userServiceMock, scoringDefinitionParserMock, currentUser, scoreFactoryMock);
-        ReviewComment comment = controller.getComment("5");
-        EasyMock.verify(userServiceMock, scoringDefinitionParserMock, currentUser, scoreFactoryMock);
+        EasyMock.replay(scoringDefinitionParserMock, currentUser, scoreFactoryMock);
+        ReviewComment comment = controller.getComment(modelMap);
+        EasyMock.verify(scoringDefinitionParserMock, currentUser, scoreFactoryMock);
 
         assertNull(comment.getId());
         assertEquals(applicationForm, comment.getApplication());
@@ -155,25 +153,17 @@ public class ReviewCommentControllerTest {
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
         final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        final ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", applicationForm);
+        modelMap.put("user", currentUser);
         final Reviewer reviewer = new ReviewerBuilder().id(5).build();
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
-        controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                        documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
-                        actionsProviderMock, null) {
 
-            @Override
-            public ApplicationForm getApplicationForm(String id) {
-                return applicationForm;
-            }
-
-        };
-
-        EasyMock.replay(userServiceMock, scoringDefinitionParserMock, currentUser, scoreFactoryMock);
-        ReviewComment comment = controller.getComment("5");
-        EasyMock.verify(userServiceMock, scoringDefinitionParserMock, currentUser, scoreFactoryMock);
+        EasyMock.replay(scoringDefinitionParserMock, currentUser, scoreFactoryMock);
+        ReviewComment comment = controller.getComment(modelMap);
+        EasyMock.verify(scoringDefinitionParserMock, currentUser, scoreFactoryMock);
 
         assertNull(comment.getId());
         assertEquals(applicationForm, comment.getApplication());
@@ -209,17 +199,24 @@ public class ReviewCommentControllerTest {
     public void shouldSaveCommentAndRedirectApplicationsPageIfNoErrors() throws ScoringDefinitionParseException {
         Program program = new Program();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).program(program).build();
-        ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).build();
+        ReviewRound reviewRound = new ReviewRound();
+        Reviewer reviewer = new ReviewerBuilder().reviewRound(reviewRound).build();
+        ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).reviewer(reviewer).build();
         BindingResult result = new BeanPropertyBindingResult(comment, "comment");
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
 
         commentServiceMock.save(comment);
+        applicantRatingService.computeAverageRating(reviewRound);
+        applicantRatingService.computeAverageRating(applicationForm);
 
-        EasyMock.replay(commentServiceMock);
+        EasyMock.replay(commentServiceMock, applicantRatingService);
         assertEquals("redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber(),
-                        controller.addComment(comment, result, modelMap));
-        EasyMock.verify(commentServiceMock);
+                controller.addComment(comment, result, modelMap));
+        EasyMock.verify(commentServiceMock, applicantRatingService);
+        
+        Assert.assertSame(comment, reviewer.getReview());
+        Assert.assertThat(applicationForm.getApplicationComments(), Matchers.<Comment> contains(comment));
     }
 
     @Before
@@ -235,10 +232,11 @@ public class ReviewCommentControllerTest {
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
-        
+        applicantRatingService = EasyMock.createMock(ApplicantRatingService.class);
+
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                        documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
-                        actionsProviderMock, applicationDescriptorProviderMock);
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock,
+                applicationDescriptorProviderMock, applicantRatingService);
 
     }
 }

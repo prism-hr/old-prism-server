@@ -74,7 +74,7 @@ public class ReferenceCommentBuilder {
         return this;
     }
 
-    public ReferenceCommentBuilder suitableCandidateForProgramme(Integer applicantRating) {
+    public ReferenceCommentBuilder applicantRating(Integer applicantRating) {
         this.applicantRating = applicantRating;
         return this;
     }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
@@ -28,6 +29,11 @@ public class ComputeAverageTestController {
         for (Interview interview : application.getInterviews()) {
             applicantRatingService.computeAverageRating(interview);
         }
+        
+        for(ReviewRound reviewRound : application.getReviewRounds()){
+            applicantRatingService.computeAverageRating(reviewRound);
+        }
+        applicantRatingService.computeAverageRating(application);
         return "Done!";
     }
 }

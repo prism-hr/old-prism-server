@@ -1200,6 +1200,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public Integer getAverageRatingPercent(){
         return MathUtils.convertRatingToPercent(getAverageRating());
     }
+    
+    public String getAverageRatingFormatted(){
+        return MathUtils.formatRating(getAverageRating());
+    }
 
     private ReviewEvaluationComment getEvaluationCommentForLatestRoundOfReview() {
         ReviewRound latestReviewRound = getLatestReviewRound();

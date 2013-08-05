@@ -310,5 +310,10 @@ public class Interview implements Serializable {
     public Integer getAverageRatingPercent(){
         return MathUtils.convertRatingToPercent(getAverageRating());
     }
+    
+    public String getAverageRatingFormatted(){
+        return MathUtils.formatRating(getAverageRating());
+    }
+
 
 }

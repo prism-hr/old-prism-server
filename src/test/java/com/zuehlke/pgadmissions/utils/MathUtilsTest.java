@@ -17,5 +17,14 @@ public class MathUtilsTest {
         assertEquals(new Integer(67), MathUtils.convertRatingToPercent(new BigDecimal(3.33)));
         assertEquals(new Integer(100), MathUtils.convertRatingToPercent(new BigDecimal(5)));
     }
+    
+    @Test
+    public void testFormattingRating() {
+        assertNull(MathUtils.formatRating(null));
+        assertEquals("0", MathUtils.formatRating(new BigDecimal(0)));
+        assertEquals("2", MathUtils.formatRating(new BigDecimal(2.00)));
+        assertEquals("2.5", MathUtils.formatRating(new BigDecimal(2.50)));
+        assertEquals("2.33", MathUtils.formatRating(new BigDecimal(2.33)));
+    }
 
 }

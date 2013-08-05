@@ -85,6 +85,29 @@
             <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
             </#list>
         </div>
+
+    </div>
+    
+    <div class="row multi-line"> 
+        <label id="supervise-work-lbl" class="plain-label"><@spring.message 'feedbackComment.applicantRating'/><em>*</em></label> 
+        <span class="hint" data-desc="<@spring.message 'interviewOutcome.applicantRating'/>"></span>
+        <div class="field" id="field-applicantRating">
+          <ul class="rating-list clearfix">
+            <li><i class="icon-thumbs-down"></i></li>
+            <li><i class="icon-star-empty"></i></li>
+            <li><i class="icon-star-empty"></i></li>
+            <li><i class="icon-star-empty"></i></li>
+            <li><i class="icon-star-empty"></i></li>
+            <li><i class="icon-star-empty"></i></li>
+          </ul>
+          <input id="applicantRating_${encRefereeId}" name="applicantRating_${encRefereeId}" class="rating-input" type="number" value="${refereesAdminEditDTO.applicantRating!}" min="0" max="5" />
+          
+          <@spring.bind "refereesAdminEditDTO.applicantRating" />
+          <#list spring.status.errorMessages as error>
+          <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+          </#list>
+        </div>
+      
         <#if scores!?size == 0>
         <!-- Add reference add button -->
         <div class="row">
@@ -92,12 +115,14 @@
                 <button id="addReferenceButton" type="button" class="btn btn-primary">Add Reference</button>
             </div>
         </div>
-        </#if>
+        </#if>      
     </div>
-    	<@spring.bind "refereesAdminEditDTO.*" />
-     
-    	<#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
-    	<input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
+
+    
+  	<@spring.bind "refereesAdminEditDTO.*" />
+   
+  	<#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
+  	<input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
     
 </div>
 

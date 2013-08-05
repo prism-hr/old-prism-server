@@ -190,6 +190,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         referenceDocument: $ref_doc_hidden.val(),
         suitableForUCL : suitableUCL,
         suitableForProgramme : suitableForProgramme, 
+        applicantRating : $('#applicantRating_' + refereeId).val(),
         editedRefereeId : $('#editedRefereeId').val(),
         cacheBreaker: new Date().getTime()
     };
@@ -282,7 +283,8 @@ function editReferenceData() {
         comment: $('#refereeComment_' + refereeId).val(),
         referenceDocument: $ref_doc_hidden.val(),
         suitableForUCL : suitableUCL,
-        suitableForProgramme : suitableForProgramme, 
+        suitableForProgramme : suitableForProgramme,
+        applicantRating : $('#applicantRating_' + refereeId).val()
     };
 
     $('#ajaxloader').show();

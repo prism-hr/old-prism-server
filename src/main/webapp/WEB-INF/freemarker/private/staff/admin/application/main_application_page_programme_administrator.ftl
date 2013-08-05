@@ -66,32 +66,6 @@
             <!-- Main content area. -->
             <article id="content" role="main">
 
-                <!-- "Tools" 
-                <div id="tools">
-                    <ul class="left">
-                        <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
-                        <li class="icon-feedback"><a title="Send Feedback" href="mailto:prism@ucl.ac.uk?subject=Feedback" target="_blank">Send Feedback</a></li>
-                    </ul>
-                </div>-->
-
-                <!-- FLOATING TOOLBAR
-                <ul id="view-toolbar" class="toolbar">
-                    <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-                    <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
-                    
-                    <li class="tool-separator"><a href="#"></a></li>
-        
-                    <li id="tool-programme" class="tool-button"><a href="#programmeDetailsSection" title="Back to Programme">Back to Programme</a></li>
-                    <li id="tool-personal" class="tool-button"><a href="#personalDetailsSection" title="Back to Personal Details">Back to Personal Details</a></li> 
-                    <li id="tool-address" class="tool-button"><a href="#addressSection" title="Back to Address">Back to Address</a></li>
-                    <li id="tool-qualification" class="tool-button"><a href="#qualificationsSection" title="Back to Qualifications">Back to Qualifications</a></li>
-                    <li id="tool-employment" class="tool-button"><a href="#positionSection" title="Back to Employment">Back to Employment</a></li> 
-                    <li id="tool-funding" class="tool-button"><a href="#fundingSection" title="Back to Funding">Back to Funding</a></li> 
-                    <li id="tool-references" class="tool-button"><a href="#referencesSection" title="Back to References">Back to References</a></li>
-                    <li id="tool-documents" class="tool-button"><a href="#documentSection" title="Back to Documents">Back to Documents</a></li> 
-                    <li id="tool-information" class="tool-button tool-information"><a href="#additionalInformationSection" title="Back to Additional Information">Back to Additional Information</a></li>
-                </ul>
- 				-->
                 <!-- content box -->
                 <div class="content-box">
                     <div class="content-box-inner">

@@ -55,6 +55,7 @@ public class RefereeServiceTest {
     private ApplicationFormDAO applicationFormDAOMock;
     private EncryptionUtils encryptionUtilsMock;
     private EncryptionHelper encryptionHelper;
+    private ApplicantRatingService applicantRatingServiceMock;
 
     @Before
     public void setUp() {
@@ -66,12 +67,14 @@ public class RefereeServiceTest {
         applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
         encryptionHelper = createMock(EncryptionHelper.class);
+        applicantRatingServiceMock = createMock(ApplicantRatingService.class);
         refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock,
-                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper);
+                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock);
     }
 
     @Test
     public void shouldEditReferenceComment() throws UnsupportedEncodingException {
+        ApplicationForm applicationForm = new ApplicationForm();
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().comment("old comment").suitableForProgramme(false).suitableForUcl(false).document(null)
                 .build();
@@ -87,10 +90,11 @@ public class RefereeServiceTest {
 
         EasyMock.expect(encryptionHelper.decryptToInteger("refereeId")).andReturn(8);
         EasyMock.expect(refereeDAOMock.getRefereeById(8)).andReturn(referee);
+        applicantRatingServiceMock.computeAverageRating(applicationForm);
 
-        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
-        refereeService.editReferenceComment(refereesAdminEditDTO);
-        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicantRatingServiceMock);
+        refereeService.editReferenceComment(applicationForm, refereesAdminEditDTO);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicantRatingServiceMock);
 
         
         assertEquals("comment text", referenceComment.getComment());
@@ -334,7 +338,7 @@ public class RefereeServiceTest {
         Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com")
                 .application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
         refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock,
-                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper) {
+                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock) {
             @Override
             RegisteredUser newRegisteredUser() {
                 return user;

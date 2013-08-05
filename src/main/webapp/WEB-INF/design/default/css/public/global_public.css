@@ -375,7 +375,7 @@ div#ajaxloader {
 }
 
 .loading {
-  background: #FFFFFF url(../../images/ajax-loader-file.gif) 96px 135px no-repeat !important;
+  background-position:96px 135px !important;
 }
 
 

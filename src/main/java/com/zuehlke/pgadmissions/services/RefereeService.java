@@ -37,14 +37,15 @@ public class RefereeService {
     private final ApplicationFormDAO applicationFormDAO;
     private final EncryptionUtils encryptionUtils;
     private final EncryptionHelper encryptionHelper;
+    private final ApplicantRatingService applicantRatingService;
 
     public RefereeService() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, UserService userService, RoleDAO roleDAO, CommentService commentService,
-            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper) {
+            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService) {
         this.refereeDAO = refereeDAO;
         this.encryptionUtils = encryptionUtils;
         this.userService = userService;
@@ -53,6 +54,7 @@ public class RefereeService {
         this.eventFactory = eventFactory;
         this.applicationFormDAO = applicationFormDAO;
         this.encryptionHelper = encryptionHelper;
+        this.applicantRatingService = applicantRatingService;
     }
 
     public Referee getRefereeById(Integer id) {
@@ -164,7 +166,7 @@ public class RefereeService {
         }
     }
 
-    public ReferenceComment editReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO) {
+    public ReferenceComment editReferenceComment(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
         Referee referee = getRefereeById(refereeId);
         ReferenceComment reference = referee.getReference();
@@ -172,11 +174,14 @@ public class RefereeService {
         reference.setComment(refereesAdminEditDTO.getComment());
         reference.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
         reference.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
+        reference.setApplicantRating(refereesAdminEditDTO.getApplicantRating());
 
         Document document = refereesAdminEditDTO.getReferenceDocument();
         if (document != null) {
             reference.setDocuments(Collections.singletonList(document));
         }
+        
+        applicantRatingService.computeAverageRating(applicationForm);
 
         return reference;
     }
@@ -195,8 +200,10 @@ public class RefereeService {
         }
 
         ReferenceComment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
+        applicationForm.getApplicationComments().add(referenceComment);
 
         commentService.save(referenceComment);
+        applicantRatingService.computeAverageRating(applicationForm);
 
         if (applicationForm.getReferencesToSendToPortico().size() < 2) {
             referee.setSendToUCL(true);
@@ -230,6 +237,7 @@ public class RefereeService {
         referenceComment.setComment(refereesAdminEditDTO.getComment());
         referenceComment.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
         referenceComment.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
+        referenceComment.setApplicantRating(refereesAdminEditDTO.getApplicantRating());
 
         Document document = refereesAdminEditDTO.getReferenceDocument();
         if (document != null) {

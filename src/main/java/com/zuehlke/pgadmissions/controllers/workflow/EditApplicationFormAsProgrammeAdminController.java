@@ -153,7 +153,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
         Map<String, Object> map = new HashMap<String, Object>();
         if (!result.hasErrors()) {
-            refereeService.editReferenceComment(refereesAdminEditDTO);
+            refereeService.editReferenceComment(applicationForm, refereesAdminEditDTO);
             map.put("success", "true");
         } else {
             map.put("success", "false");

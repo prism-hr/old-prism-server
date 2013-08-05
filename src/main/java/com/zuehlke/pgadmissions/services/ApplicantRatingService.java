@@ -67,12 +67,16 @@ public class ApplicantRatingService {
         List<Comment> comments = application.getApplicationComments();
         List<Integer> ratings = Lists.newArrayList();
         for (Comment comment : comments) {
+            Integer rating = null;
             if (comment instanceof InterviewComment) {
-                ratings.add(((InterviewComment) comment).getApplicantRating());
+                rating = ((InterviewComment) comment).getApplicantRating();
             } else if (comment instanceof ReviewComment) {
-                ratings.add(((ReviewComment) comment).getApplicantRating());
+                rating = ((ReviewComment) comment).getApplicantRating();
             } else if (comment instanceof ReferenceComment) {
-                ratings.add(((ReferenceComment) comment).getApplicantRating());
+                rating = ((ReferenceComment) comment).getApplicantRating();
+            }
+            if(rating != null){
+                ratings.add(rating);
             }
         }
         
@@ -83,6 +87,10 @@ public class ApplicantRatingService {
     }
 
     private BigDecimal computeAverage(List<Integer> ratings) {
+        if(ratings.isEmpty()){
+            return null;
+        }
+        
         int sum = 0;
         for (int rating : ratings) {
             sum += rating;

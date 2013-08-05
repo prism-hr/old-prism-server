@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Entity(name = "APPLICATION_FORM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -1194,6 +1195,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return stateChangeComment.getNextStatus();
         }
         return null;
+    }
+    
+    public Integer getAverageRatingPercent(){
+        return MathUtils.convertRatingToPercent(getAverageRating());
     }
 
     private ReviewEvaluationComment getEvaluationCommentForLatestRoundOfReview() {

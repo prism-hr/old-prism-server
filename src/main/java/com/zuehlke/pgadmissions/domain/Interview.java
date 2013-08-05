@@ -29,6 +29,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
+import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Entity(name = "INTERVIEW")
 public class Interview implements Serializable {
@@ -304,6 +305,10 @@ public class Interview implements Serializable {
         }
         Date today = DateUtils.truncate(new Date(), Calendar.DATE);
         return today.after(getInterviewDueDate());
+    }
+    
+    public Integer getAverageRatingPercent(){
+        return MathUtils.convertRatingToPercent(getAverageRating());
     }
 
 }

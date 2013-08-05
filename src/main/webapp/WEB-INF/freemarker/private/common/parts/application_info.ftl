@@ -68,10 +68,10 @@
      </span>
   </div>
   </#if>
-  <#if applicationForm.averageRating??>
+  <#if applicationForm.averageRatingPercent??>
     <div class="row">
       <label>Rating</label>
-      ${applicationForm.averageRating}
+      ${applicationForm.averageRatingPercent}
     </div>
   </#if>
 

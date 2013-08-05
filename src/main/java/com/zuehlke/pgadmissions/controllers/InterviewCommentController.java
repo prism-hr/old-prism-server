@@ -110,9 +110,9 @@ public class InterviewCommentController {
     }
 
     @ModelAttribute("comment")
-    public InterviewComment getComment(ModelMap modelMap) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser currentUser = (RegisteredUser) modelMap.get("user");
+    public InterviewComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser currentUser = getUser();
 
         InterviewComment interviewComment = new InterviewComment();
         interviewComment.setApplication(applicationForm);

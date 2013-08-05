@@ -39,6 +39,7 @@ public class RefereesAdminEditDTOValidator extends AbstractValidator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmpty(errors, "suitableForUCL", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmpty(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicantRating", EMPTY_FIELD_ERROR_MESSAGE);
 
 		// validate referee
 		if (BooleanUtils.isTrue(dto.getContainsRefereeData())) {

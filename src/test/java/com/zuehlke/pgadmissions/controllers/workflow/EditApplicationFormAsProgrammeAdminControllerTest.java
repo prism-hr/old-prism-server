@@ -152,7 +152,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         Model model = new ExtendedModelMap();
 
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
-        EasyMock.expect(refereeServiceMock.editReferenceComment(refereesAdminEditDTO)).andReturn(null);
+        EasyMock.expect(refereeServiceMock.editReferenceComment(applicationForm, refereesAdminEditDTO)).andReturn(null);
 
         EasyMock.replay(refereeServiceMock);
         String ret = controller.updateReference(applicationForm, refereesAdminEditDTO, result, model);

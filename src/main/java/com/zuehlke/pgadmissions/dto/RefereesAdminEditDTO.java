@@ -24,6 +24,8 @@ public class RefereesAdminEditDTO {
 
     private Boolean suitableForProgramme;
 
+    private Integer applicantRating;
+
     // referee data
 
     private Boolean containsRefereeData;
@@ -52,7 +54,7 @@ public class RefereesAdminEditDTO {
     private String messenger;
 
     private List<Score> scores = new ArrayList<Score>();
-    
+
     private String alert;
 
     public String getComment() {
@@ -85,6 +87,14 @@ public class RefereesAdminEditDTO {
 
     public void setSuitableForProgramme(Boolean suitableForProgramme) {
         this.suitableForProgramme = suitableForProgramme;
+    }
+
+    public Integer getApplicantRating() {
+        return applicantRating;
+    }
+
+    public void setApplicantRating(Integer applicantRating) {
+        this.applicantRating = applicantRating;
     }
 
     public String getEditedRefereeId() {
@@ -210,11 +220,11 @@ public class RefereesAdminEditDTO {
         return true;
     }
 
-	public String getAlert() {
-	    return alert;
+    public String getAlert() {
+        return alert;
     }
 
-	public void setAlert(String alert) {
-	    this.alert = alert;
+    public void setAlert(String alert) {
+        this.alert = alert;
     }
 }

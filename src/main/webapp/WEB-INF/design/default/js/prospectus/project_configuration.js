@@ -257,6 +257,9 @@ function removeProject(projectRow) {
         	projectRow.remove();
         },
         complete: function() {
+        	if ($('#projectAdvertsTable tbody tbody tr').length == 0) {
+				$('#projectAdvertsDiv').hide();
+			}
         }
     });
 }

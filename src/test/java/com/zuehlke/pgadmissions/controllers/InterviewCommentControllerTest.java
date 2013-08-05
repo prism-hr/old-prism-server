@@ -117,9 +117,6 @@ public class InterviewCommentControllerTest {
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.INTERVIEW, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
         final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        final ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", applicationForm);
-        modelMap.put("user", currentUser);
         final Interviewer interviewer = new InterviewerBuilder().id(5).build();
 
         final Question question1 = new Question();
@@ -129,13 +126,15 @@ public class InterviewCommentControllerTest {
         customQuestions.getQuestion().add(question1);
         ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app")).andReturn(applicationForm);
         EasyMock.expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
 
-        EasyMock.replay(currentUser, scoringDefinitionParserMock, scoreFactoryMock);
-        InterviewComment comment = controller.getComment(modelMap);
-        EasyMock.verify(currentUser, scoringDefinitionParserMock, scoreFactoryMock);
+        EasyMock.replay(userServiceMock, currentUser, scoringDefinitionParserMock, scoreFactoryMock, applicationsServiceMock);
+        InterviewComment comment = controller.getComment("app");
+        EasyMock.verify(userServiceMock, currentUser, scoringDefinitionParserMock, scoreFactoryMock, applicationsServiceMock);
 
         assertNull(comment.getId());
         assertEquals(applicationForm, comment.getApplication());
@@ -151,17 +150,16 @@ public class InterviewCommentControllerTest {
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.INTERVIEW, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
         final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        final ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", applicationForm);
-        modelMap.put("user", currentUser);
         final Interviewer interviewer = new InterviewerBuilder().id(5).build();
 
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app")).andReturn(applicationForm);
         EasyMock.expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 
-        EasyMock.replay(currentUser, scoringDefinitionParserMock);
-        InterviewComment comment = controller.getComment(modelMap);
-        EasyMock.verify(currentUser, scoringDefinitionParserMock);
+        EasyMock.replay(userServiceMock, currentUser, scoringDefinitionParserMock, applicationsServiceMock);
+        InterviewComment comment = controller.getComment("app");
+        EasyMock.verify(userServiceMock, currentUser, scoringDefinitionParserMock, applicationsServiceMock);
 
         assertNull(comment.getId());
         assertEquals(applicationForm, comment.getApplication());

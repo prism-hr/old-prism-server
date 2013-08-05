@@ -109,9 +109,9 @@ public class ReviewCommentController {
     }
 
     @ModelAttribute("comment")
-    public ReviewComment getComment(ModelMap modelMap) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+    public ReviewComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
         ReviewComment reviewComment = new ReviewComment();
         reviewComment.setApplication(applicationForm);
         reviewComment.setUser(user);

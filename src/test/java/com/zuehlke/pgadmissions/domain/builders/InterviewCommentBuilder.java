@@ -49,7 +49,7 @@ public class InterviewCommentBuilder {
 		return this;
 	}
 
-	public InterviewCommentBuilder suitableCandidateForProgramme(Integer applicantRating) {
+    public InterviewCommentBuilder applicantRating(Integer applicantRating) {
 	    this.applicantRating = applicantRating;
 	    return this;
 	}

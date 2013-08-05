@@ -68,6 +68,12 @@
      </span>
   </div>
   </#if>
+  <#if applicationForm.averageRating??>
+    <div class="row">
+      <label>Rating</label>
+      ${applicationForm.averageRating}
+    </div>
+  </#if>
 
 </div>
 

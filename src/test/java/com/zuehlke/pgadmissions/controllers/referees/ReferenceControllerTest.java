@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.easymock.EasyMock;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -21,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -47,6 +50,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
+import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -69,6 +73,7 @@ public class ReferenceControllerTest {
     private ScoreFactory scoreFactoryMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
+    private ApplicantRatingService applicantRatingService;
 
     @Test
     public void shouldReturnApplicationForm() {
@@ -244,13 +249,16 @@ public class ReferenceControllerTest {
 
         commentServiceMock.save(reference);
         refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
+        applicantRatingService.computeAverageRating(application);
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
         actionsProviderMock.validateAction(application, currentUser, ADD_REFERENCE);
 
-        EasyMock.replay(commentServiceMock, refereeServiceMock, actionsProviderMock);
+        EasyMock.replay(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingService);
         assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors, modelMap));
-        EasyMock.verify(commentServiceMock, refereeServiceMock, actionsProviderMock);
+        EasyMock.verify(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingService);
+        
+        Assert.assertThat(application.getApplicationComments(), Matchers.<Comment>contains(reference));
     }
 
     @Before
@@ -267,10 +275,11 @@ public class ReferenceControllerTest {
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        applicantRatingService = EasyMock.createMock(ApplicantRatingService.class);
 
         controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator,
                         commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock,
-                        null);
+                        null, applicantRatingService);
 
     }
 

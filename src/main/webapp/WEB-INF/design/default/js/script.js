@@ -263,7 +263,7 @@ function bindDatePickerEnabled(selector){
 function addCounter() {
 	var $textArea = $("textarea");
     $.each($textArea, function() {
-		display = true;
+		var display = true;
         if ($(this).attr('id') == 'convictionsText') {
 			$(this).data("maxlength", 400);
 		} else if  ($(this).attr('id') == 'projectAbstract'||$(this).attr('id') == 'projectAdvertDescriptionText'||$(this).attr('id') == 'programAdvertDescriptionText') {
@@ -280,10 +280,14 @@ function addCounter() {
 		else {
 			$(this).data("maxlength", 2000);
 		}
+        var counter = $(this).data("maxlength") - $(this).val().length;
+
         // Create the span with all the content and characters left
 		if ($(this).parent().find('.count').length == 0 && display == true) {
-			$(this).after('<span class="badge count">' + ( $(this).data("maxlength") - $(this).val().length) + ' Characters left</span>');
-		}
+			$(this).after('<span class="badge count">' + counter + ' Characters left</span>');
+		} else {
+            $(this).nextAll(".count").html(counter + ' Characters left');
+        }
 		if ($(this).val().length > ($(this).data("maxlength")-10)) {
 			$(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
 			if ($(this).val().length > $(this).data("maxlength")) {
@@ -292,8 +296,7 @@ function addCounter() {
 		}
         // Counting on keyup
         $(this).keyup(function count(){
-            
-            var counter = $(this).data("maxlength") - $(this).val().length;
+            counter = $(this).data("maxlength") - $(this).val().length;
             if  (counter <= 10) {
 
                 if (counter < 1) {

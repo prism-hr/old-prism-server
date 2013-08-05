@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/forgotPassword.css' />"/>
     <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
-    <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+    
     
     <!-- Styles for login List Page -->
     
@@ -108,7 +108,9 @@
             </ul>
 
       </div>
-      
+      <div class="ajax-loader-preloader">
+      <!--<img src="/design/default/images/ajax-loader-file.gif" style="display:none"></img>-->
+      </div>
       <#include "/public/common/global_footer.ftl"/>
     
     </div>

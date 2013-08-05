@@ -163,6 +163,7 @@ function clearAll(){
 	clearProjectAdvertErrors();
 	$('#projectsClear').hide();
 	$('html, body').animate({ scrollTop: $('body').offset().top}, 300);
+	addCounter();
 }
 
 function registerHasClosingDateProjectAdvertRadio(){
@@ -282,6 +283,7 @@ function loadProject(advertRow) {
         },
         complete: function() {
         	hideLoader();
+        	addCounter();
         }
     });
 }
@@ -403,6 +405,7 @@ function loadProjects(){
 		},
 		complete: function() {
 			hideLoader();
+			addCounter();
 		}
 	});
 }
@@ -494,7 +497,7 @@ function appendProjectRow(project){
 			'</td>' +
 		'</tr>'	
 	);
-}
+}	
 function projectAdvertHasClosingDate(){
 	return projectAdvertRadioHasValue('projectAdvertHasClosingDateRadio');
 }

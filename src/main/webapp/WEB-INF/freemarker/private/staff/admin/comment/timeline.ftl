@@ -30,9 +30,11 @@
 		            </div>
                     
 		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.
-		              <#if timelineObject.reviewRound?? && timelineObject.reviewRound.averageRating?? >
-		                ${timelineObject.reviewRound.averageRating}
-		              </#if>
+                <#if timelineObject.reviewRound?? && timelineObject.reviewRound.averageRatingPercent?? >
+                  ${timelineObject.reviewRound.averageRatingPercent}
+                <#elseif timelineObject.interview?? && timelineObject.interview.averageRatingPercent?? >
+                  ${timelineObject.interview.averageRatingPercent}
+                </#if>
 		            </p> <i class="icon-minus-sign"></i> 
 				   </div>
 		         <!-- Box end -->

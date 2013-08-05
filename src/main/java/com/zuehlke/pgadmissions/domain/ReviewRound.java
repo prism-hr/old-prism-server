@@ -22,6 +22,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.zuehlke.pgadmissions.utils.MathUtils;
+
 @Entity(name = "REVIEW_ROUND")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ReviewRound implements Serializable {
@@ -101,6 +103,10 @@ public class ReviewRound implements Serializable {
             }
         }
         return true;
+    }
+    
+    public Integer getAverageRatingPercent(){
+        return MathUtils.convertRatingToPercent(getAverageRating());
     }
 
 }

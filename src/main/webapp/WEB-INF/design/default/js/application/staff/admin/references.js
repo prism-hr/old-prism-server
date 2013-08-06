@@ -245,7 +245,6 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         data :  postData,
         success : function(data) {
         	$("#referencesSection").html(data);
-        	//$("#referee_" + $("#editedRefereeId").val()).show();
         	if($closeReferenceSectionAfterSaving && postSendToPorticoData && $('#anyReferenceErrors').val() == 'false'){
         		$('#referee-H2').trigger('click');
         	}

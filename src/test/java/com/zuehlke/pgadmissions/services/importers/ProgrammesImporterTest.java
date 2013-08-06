@@ -54,7 +54,11 @@ public class ProgrammesImporterTest {
         Date startDate = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
         currentData.add(new ProgramInstanceBuilder().id(1).academicYear("1").identifier("0001").program(p1).applicationDeadline(deadline).applicationStartDate(startDate).studyOption("1", "option").enabled(true).build());
         currentData.add(new ProgramInstanceBuilder().id(2).academicYear("1").identifier("0002").program(p2).applicationDeadline(deadline).applicationStartDate(startDate).studyOption("2", "option").enabled(true).build());
+        
+        ProgramInstance testProgramInstance = new ProgramInstance();
+        
         EasyMock.expect(programInstanceDAO.getAllProgramInstances()).andReturn(currentData);
+        EasyMock.expect(programInstanceDAO.getById(192)).andReturn(testProgramInstance);
         
         List<ProgramInstance> changes = currentData.subList(0, 1);
         EasyMock.expect(importService.merge(EasyMock.same(currentData), EasyMock.anyObject(List.class))).andReturn(changes);

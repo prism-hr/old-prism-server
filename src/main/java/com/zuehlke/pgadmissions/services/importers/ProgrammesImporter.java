@@ -87,6 +87,9 @@ public class ProgrammesImporter implements Importer {
 			}
 			
 			log.info("Import done. Wrote " + changes.size() + " change(s) to the database.");
+			log.warn("Enabling test programme:");
+			ProgramInstance programInstance = programInstanceDAO.getById(192);
+			programInstance.setEnabled(true);
 		} catch (Exception e) {
 			throw new XMLDataImportException("Error during the import of file: " + xmlFileLocation, e);
 		}

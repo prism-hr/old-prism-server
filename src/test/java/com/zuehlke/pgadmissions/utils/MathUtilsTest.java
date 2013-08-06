@@ -21,9 +21,9 @@ public class MathUtilsTest {
     @Test
     public void testFormattingRating() {
         assertNull(MathUtils.formatRating(null));
-        assertEquals("0", MathUtils.formatRating(new BigDecimal(0)));
-        assertEquals("2", MathUtils.formatRating(new BigDecimal(2.00)));
-        assertEquals("2.5", MathUtils.formatRating(new BigDecimal(2.50)));
+        assertEquals("0.00", MathUtils.formatRating(new BigDecimal(0)));
+        assertEquals("2.00", MathUtils.formatRating(new BigDecimal(2.00)));
+        assertEquals("2.50", MathUtils.formatRating(new BigDecimal(2.50)));
         assertEquals("2.33", MathUtils.formatRating(new BigDecimal(2.33)));
     }
 

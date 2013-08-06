@@ -280,6 +280,9 @@ public class ApplicationFormListCriteriaBuilder {
             criteria.addOrder(getOrderCriteria("p.title", ascending));
             break;
 
+        case RATING:
+            criteria.addOrder(getOrderCriteria("averageRating", ascending));
+            
         case APPLICATION_STATUS:
             criteria.addOrder(getOrderCriteria("status", ascending));
             break;

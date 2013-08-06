@@ -25,6 +25,9 @@
     </span>
   </#if>
   </td>
+  <td class="rating">
+    ${application.averageRatingFormatted!"N/R"}
+  </td>
   <td class="status">
     <span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
     <#if application.nextStatus??>

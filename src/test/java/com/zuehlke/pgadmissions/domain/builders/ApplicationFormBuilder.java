@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.math.BigDecimal;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,6 +78,7 @@ public class ApplicationFormBuilder {
     private Boolean withdrawnBeforeSubmit = false;
     private Boolean isEditableByApplicant = true;
     private Project project = null;
+    private BigDecimal averageRating;
 
     public ApplicationFormBuilder withdrawnBeforeSubmit(Boolean flag) {
         this.withdrawnBeforeSubmit = flag;
@@ -340,6 +342,11 @@ public class ApplicationFormBuilder {
         return this;
     }
 
+    public ApplicationFormBuilder averageRating(BigDecimal averageRating) {
+        this.averageRating = averageRating;
+        return this;
+    }
+
     public ApplicationForm build() {
         ApplicationForm application = new ApplicationForm();
         application.setId(id);
@@ -396,6 +403,7 @@ public class ApplicationFormBuilder {
         application.setWithdrawnBeforeSubmit(withdrawnBeforeSubmit);
         application.setIsEditableByApplicant(isEditableByApplicant);
         application.setProject(project);
+        application.setAverageRating(averageRating);
 
         try {
             application.setIpAddressAsString(ipAddress);

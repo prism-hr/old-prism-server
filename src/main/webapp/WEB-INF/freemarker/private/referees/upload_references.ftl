@@ -64,6 +64,7 @@
 	          	</#if> Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme. </div>
                 <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
                 <div class="row-group">
+                
                   <div class="row">
                     <label for="comment" id="comment-lbl" class="plain-label">Comment<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
@@ -77,6 +78,28 @@
                       </div>
                       </#list> </div>
                   </div>
+                  
+                  <div class="row multi-line"> 
+                    <label id="supervise-work-lbl" class="plain-label"><@spring.message 'feedbackComment.applicantRating'/><em>*</em></label> 
+                    <span class="hint" data-desc="<@spring.message 'interviewOutcome.applicantRating'/>"></span>
+                    <div class="field" id="field-applicantRating">
+                      <ul class="rating-list clearfix">
+                        <li><i class="icon-thumbs-down"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                        <li><i class="icon-star-empty"></i></li>
+                      </ul>
+                      <input id="applicantRating" name="applicantRating" class="rating-input" type="number" value="${comment.applicantRating!}" min="0" max="5" />
+                      
+                      <@spring.bind "comment.applicantRating" />
+                      <#list spring.status.errorMessages as error>
+                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+                      </#list>
+                    </div>
+                  </div>
+                  
                 </div>
                 <div class="row-group"> 
                 <#include "/private/staff/admin/comment/documents_snippet.ftl"/> 
@@ -117,27 +140,6 @@
                       </div>
                       </#list> 
                       </div>
-                  </div>
-                  
-                  <div class="row multi-line"> 
-                    <label id="supervise-work-lbl" class="plain-label"><@spring.message 'feedbackComment.applicantRating'/><em>*</em></label> 
-                    <span class="hint" data-desc="<@spring.message 'interviewOutcome.applicantRating'/>"></span>
-                    <div class="field" id="field-applicantRating">
-                      <ul class="rating-list clearfix">
-                        <li><i class="icon-thumbs-down"></i></li>
-                        <li><i class="icon-star-empty"></i></li>
-                        <li><i class="icon-star-empty"></i></li>
-                        <li><i class="icon-star-empty"></i></li>
-                        <li><i class="icon-star-empty"></i></li>
-                        <li><i class="icon-star-empty"></i></li>
-                      </ul>
-                      <input id="applicantRating" name="applicantRating" class="rating-input" type="number" value="${comment.applicantRating!}" min="0" max="5" />
-                      
-                      <@spring.bind "comment.applicantRating" />
-                      <#list spring.status.errorMessages as error>
-                      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-                      </#list>
-                    </div>
                   </div>
                   
                 </div>

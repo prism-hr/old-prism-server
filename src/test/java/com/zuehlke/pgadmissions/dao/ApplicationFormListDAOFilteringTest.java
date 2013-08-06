@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
@@ -77,17 +79,22 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         searchTermDateForSubmission = new GregorianCalendar(2011, 3, 9).getTime();
 
         app1InApproval = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).applicationNumber("app1")
-                .submittedDate(DateUtils.addDays(submissionDate, 0)).lastUpdated(DateUtils.addDays(lastEditedDate, 5)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 0)).lastUpdated(DateUtils.addDays(lastEditedDate, 5)).averageRating(BigDecimal.valueOf(2.33))
+                .build();
         app2InReview = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).applicationNumber("app2")
-                .submittedDate(DateUtils.addDays(submissionDate, 1)).lastUpdated(DateUtils.addDays(lastEditedDate, 4)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 1)).lastUpdated(DateUtils.addDays(lastEditedDate, 4)).averageRating(BigDecimal.valueOf(2.66))
+                .build();
         app3InValidation = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).applicationNumber("app3")
-                .submittedDate(DateUtils.addDays(submissionDate, 2)).lastUpdated(DateUtils.addDays(lastEditedDate, 3)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 2)).lastUpdated(DateUtils.addDays(lastEditedDate, 3)).averageRating(BigDecimal.valueOf(0))
+                .build();
         app4InApproved = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED).applicationNumber("app4")
-                .submittedDate(DateUtils.addDays(submissionDate, 3)).lastUpdated(DateUtils.addDays(lastEditedDate, 2)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 3)).lastUpdated(DateUtils.addDays(lastEditedDate, 2)).averageRating(null).build();
         app5InInterview = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).applicationNumber("app5")
-                .submittedDate(DateUtils.addDays(submissionDate, 4)).lastUpdated(DateUtils.addDays(lastEditedDate, 1)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 4)).lastUpdated(DateUtils.addDays(lastEditedDate, 1)).averageRating(BigDecimal.valueOf(0.1))
+                .build();
         app6InReview = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).applicationNumber("app6")
-                .submittedDate(DateUtils.addDays(submissionDate, 5)).lastUpdated(DateUtils.addDays(lastEditedDate, 0)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 5)).lastUpdated(DateUtils.addDays(lastEditedDate, 0)).averageRating(BigDecimal.valueOf(5))
+                .build();
 
         save(program, user, adminUser, app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
 
@@ -108,7 +115,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         assertContainsApplications(applications, app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
     }
-    
+
     @Test
     public void shouldReturnAppsFilteredByNotNumber() {
         ApplicationForm otherApplicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
@@ -135,15 +142,15 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         assertContainsApplications(applications, app6InReview, app2InReview);
     }
-    
+
     @Test
     public void shouldReturnAppsFilteredByDifferentStatus() {
         ApplicationsFilter statusfilter2 = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Validation").build();
         ApplicationsFilter statusFilter1 = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Review").build();
-        
+
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, true, statusfilter2, statusFilter1), 50);
-        
+
         assertContainsApplications(applications, app6InReview, app3InValidation, app2InReview);
     }
 
@@ -169,15 +176,15 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         assertContainsApplications(applications, app6InReview, app2InReview);
     }
-    
+
     @Test
     public void shouldReturnAppsFilteredByStatusOrNumber() {
         ApplicationsFilter statusFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Approval").build();
         ApplicationsFilter nameFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("app5").build();
-        
+
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, true, nameFilter, statusFilter), 50);
-        
+
         assertContainsApplications(applications, app5InInterview, app1InApproval);
     }
 
@@ -372,6 +379,22 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         assertContainsApplications(applications, app1InApproval);
     }
 
+    @Test
+    public void shouldReturnAppsSortedByRating() {
+
+        ApplicationsFilter programFilter = new ApplicationsFilterBuilder().searchCategory(null).searchTerm(null).searchPredicate(null).build();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser,
+                newFiltering(SortCategory.RATING, SortOrder.ASCENDING, 1, programFilter), 50);
+
+        List<ApplicationForm> expectedApplications = Lists.newArrayList(app4InApproved, app3InValidation, app5InInterview, app1InApproval, app2InReview,
+                app6InReview);
+
+        for (int i = 0; i < expectedApplications.size(); i++) {
+            assertEquals(expectedApplications.get(i).getId(), applications.get(i).getId());
+        }
+    }
+
     private String dateToString(Date date) {
         String formattedDate = ApplicationFormListDAO.USER_DATE_FORMAT.print(new DateTime(date));
         return formattedDate;
@@ -387,9 +410,11 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     private ApplicationsFiltering newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, ApplicationsFilter... filters) {
         return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount).filters(filters).build();
     }
-    
-    private ApplicationsFiltering newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, boolean useDisjunction, ApplicationsFilter... filters) {
-        return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount).useDisjunction(useDisjunction).filters(filters).build();
+
+    private ApplicationsFiltering newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, boolean useDisjunction,
+            ApplicationsFilter... filters) {
+        return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount).useDisjunction(useDisjunction)
+                .filters(filters).build();
     }
 
 }

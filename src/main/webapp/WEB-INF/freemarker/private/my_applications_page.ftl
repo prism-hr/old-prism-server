@@ -212,8 +212,9 @@
           <table class="data table table-striped table-condensed table-bordered table-hover" id="appliList" border="0">
             <colgroup>
             <col style="width: 46px" />
-            <col style="width: 20%" />
+            <col style="width: 17%" />
             <col />
+            <col style="width: 40px" />
             <col style="width: 80px;" />
             <col style="width: 130px;" />
             <col style="width: 80px" />
@@ -231,6 +232,7 @@
                 <th scope="col">Application #</th>
                 </#if>
                 <th class="sortable" scope="col" id="PROGRAMME_NAME" onclick="sortList(this)">Programme</th>
+                <th class="sortable" scope="col" id="RATING" onclick="sortList(this)">Rating</th>
                 <th class="sortable" scope="col" id="APPLICATION_STATUS" onclick="sortList(this)" class="header-text-center">Status</th>
                 <th scope="col">Actions</th>
                 <th class="sortable" scope="col" id="APPLICATION_DATE" onclick="sortList(this)">Submitted</th>

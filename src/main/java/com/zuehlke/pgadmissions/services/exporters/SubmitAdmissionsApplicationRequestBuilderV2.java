@@ -189,7 +189,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
 
         if (BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getEnglishFirstLanguage())
-                && BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
+                        && BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
             printLanguageQualificationAdmissionsNote = true;
         }
 
@@ -317,7 +317,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         addressTp.setAddressLine3(currentAddress.getAddress3());
         addressTp.setAddressLine4(currentAddress.getAddress4());
         addressTp.setPostCode(currentAddress.getAddress5());
-        addressTp.setCountry(currentAddress.getCountry().getCode());
+        addressTp.setCountry(currentAddress.getDomicile().getCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -346,7 +346,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         addressTp.setAddressLine3(contactAddress.getAddress3());
         addressTp.setAddressLine4(contactAddress.getAddress4());
         addressTp.setPostCode(contactAddress.getAddress5());
-        addressTp.setCountry(contactAddress.getCountry().getCode());
+        addressTp.setCountry(contactAddress.getDomicile().getCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -376,7 +376,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             applicationTp.setProposedSupervisorName(buildProposedSupervisorName(0));
         }
         applicationTp.setAgreedSupervisorName(buildAgreedSupervisorName());
-        
+
         applicationTp.setPersonalStatement(REFER_TO_ATTACHED_DOCUMENT);
 
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
@@ -460,7 +460,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             occurrenceTp.setStartDate(buildXmlDate(programmeDetails.getStartDate()));
             occurrenceTp.setEndDate(buildXmlDate(DateUtils.addYears(programmeDetails.getStartDate(), 1)));
             throw new NoActiveProgrameInstanceFoundException(occurrenceTp, String.format(
-                    "No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(), programmeDetails.getStudyOption()));
+                            "No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(),
+                            programmeDetails.getStudyOption()));
         }
 
         occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademic_year()));
@@ -471,7 +472,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         if (StringUtils.isBlank(activeInstance.getIdentifier())) {
             occurrenceTp.setIdentifier(NOT_PROVIDED_VALUE);
             throw new NoIdentifierForProgrameInstanceFoundException(occurrenceTp, String.format("No identifier for program instance found. Program[code=%s]",
-                    program.getCode()));
+                            program.getCode()));
         }
 
         return occurrenceTp;
@@ -499,7 +500,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             return null;
         }
     }
-    
+
     private NameTp buildAgreedSupervisorName() {
         if (applicationForm.getLatestApprovalRound() != null) {
             ApprovalRound approvalRound = applicationForm.getLatestApprovalRound();
@@ -536,7 +537,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
                 qualificationsTp.setStartDate(buildXmlDate(qualification.getQualificationStartDate()));
 
-                // TODO: This might be null because we've changed this to a mandatory field in mid flight.
+                // TODO: This might be null because we've changed this to a
+                // mandatory field in mid flight.
                 // Talk to Alastair about this when we go live!
                 // Sending a null value will be rejected by the web service.
                 qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
@@ -641,7 +643,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
             addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
             addressTp.setPostCode(referee.getAddressLocation().getAddress5());
-            addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
+            addressTp.setCountry(referee.getAddressLocation().getDomicile().getCode());
 
             // postCode is mandatory but but PRISM did not collect addresses
             // in this format before.
@@ -686,10 +688,11 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
             } else {
                 throw new IllegalArgumentException(String.format("QualificationType type [%s] could not be converted",
-                        languageQualifications.getQualificationType()));
+                                languageQualifications.getQualificationType()));
             }
 
-            // The web service does not allow scores in the format "6.0" it only accepts "6" and the like.
+            // The web service does not allow scores in the format "6.0" it only
+            // accepts "6" and the like.
             EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
             overallScoreTp.setScore(languageQualifications.getOverallScore().replace(".0", ""));
@@ -718,7 +721,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             listeningScoreTp.setScore(languageQualifications.getListeningScore().replace(".0", ""));
 
             englishLanguageTp.getLanguageScore()
-                    .addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));
+                            .addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));
             englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         }
         return englishLanguageQualificationDetailsTp;

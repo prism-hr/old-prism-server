@@ -37,7 +37,7 @@
     <!-- Country -->
     <div class="admin_row">
         <span class="admin_row_label">Country</span>
-        <div class="field" id="ref_address_country">${(referee.addressLocation.country.name?html)!"Not Provided"}</div>
+        <div class="field" id="ref_address_country">${(referee.addressLocation.domicile.name?html)!"Not Provided"}</div>
     </div>
 
     <!-- Email address -->

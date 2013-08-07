@@ -19,17 +19,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
-import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.AddressUtils;
 import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
@@ -41,30 +41,29 @@ public class AddressController {
     private static final String APPLICATION_ADDRESS_VIEW = "/private/pgStudents/form/components/address_details";
     private final ApplicationsService applicationService;
     private final AddressSectionDTOValidator addressSectionDTOValidator;
-    private final CountryService countryService;
-    private final CountryPropertyEditor countryPropertyEditor;
+    private final DomicileService domicileService;
     private final UserService userService;
     private final ApplicationFormAccessService accessService;
+    private final DomicilePropertyEditor domicilePropertyEditor;
 
     public AddressController() {
         this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public AddressController(ApplicationsService applicationService, UserService userService,
-            CountryService countryService, CountryPropertyEditor countryPropertyEditor,
-            AddressSectionDTOValidator addressSectionDTOValidator, final ApplicationFormAccessService accessService) {
+    public AddressController(ApplicationsService applicationService, UserService userService, DomicileService domicileService,
+                    DomicilePropertyEditor domicilePropertyEditor, AddressSectionDTOValidator addressSectionDTOValidator,
+                    ApplicationFormAccessService accessService) {
         this.applicationService = applicationService;
         this.userService = userService;
-        this.countryService = countryService;
-        this.countryPropertyEditor = countryPropertyEditor;
+        this.domicileService = domicileService;
+        this.domicilePropertyEditor = domicilePropertyEditor;
         this.addressSectionDTOValidator = addressSectionDTOValidator;
         this.accessService = accessService;
     }
 
     @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-    public String editAddresses(@Valid AddressSectionDTO addressSectionDTO, BindingResult result,
-            @ModelAttribute ApplicationForm applicationForm) {
+    public String editAddresses(@Valid AddressSectionDTO addressSectionDTO, BindingResult result, @ModelAttribute ApplicationForm applicationForm) {
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
             throw new ResourceNotFoundException();
         }
@@ -79,7 +78,7 @@ public class AddressController {
             contactAddress = new Address();
             applicationForm.setContactAddress(contactAddress);
         }
-        contactAddress.setCountry(addressSectionDTO.getContactAddressCountry());
+        contactAddress.setDomicile(addressSectionDTO.getContactAddressDomicile());
         contactAddress.setAddress1(addressSectionDTO.getContactAddress1());
         contactAddress.setAddress2(addressSectionDTO.getContactAddress2());
         contactAddress.setAddress3(addressSectionDTO.getContactAddress3());
@@ -91,13 +90,13 @@ public class AddressController {
             currentAddress = new Address();
             applicationForm.setCurrentAddress(currentAddress);
         }
-        currentAddress.setCountry(addressSectionDTO.getCurrentAddressCountry());
+        currentAddress.setDomicile(addressSectionDTO.getCurrentAddressDomicile());
         currentAddress.setAddress1(addressSectionDTO.getCurrentAddress1());
         currentAddress.setAddress2(addressSectionDTO.getCurrentAddress2());
         currentAddress.setAddress3(addressSectionDTO.getCurrentAddress3());
         currentAddress.setAddress4(addressSectionDTO.getCurrentAddress4());
         currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
-        
+
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationForm.setLastUpdated(new Date());
@@ -118,7 +117,7 @@ public class AddressController {
     @InitBinder(value = "addressSectionDTO")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(addressSectionDTOValidator);
-        binder.registerCustomEditor(Country.class, countryPropertyEditor);
+        binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
 
@@ -151,7 +150,7 @@ public class AddressController {
         sectionDTO.setApplication(applicationForm);
         Address contactAddress = applicationForm.getContactAddress();
         if (contactAddress != null) {
-            sectionDTO.setContactAddressCountry(contactAddress.getCountry());
+            sectionDTO.setContactAddressDomicile(contactAddress.getDomicile());
             sectionDTO.setContactAddress1(contactAddress.getAddress1());
             sectionDTO.setContactAddress2(contactAddress.getAddress2());
             sectionDTO.setContactAddress3(contactAddress.getAddress3());
@@ -161,7 +160,7 @@ public class AddressController {
 
         Address currentAddress = applicationForm.getCurrentAddress();
         if (currentAddress != null) {
-            sectionDTO.setCurrentAddressCountry(currentAddress.getCountry());
+            sectionDTO.setCurrentAddressDomicile(currentAddress.getDomicile());
             sectionDTO.setCurrentAddress1(currentAddress.getAddress1());
             sectionDTO.setCurrentAddress2(currentAddress.getAddress2());
             sectionDTO.setCurrentAddress3(currentAddress.getAddress3());
@@ -174,9 +173,9 @@ public class AddressController {
         return sectionDTO;
     }
 
-    @ModelAttribute("countries")
-    public List<Country> getAllEnabledCountries() {
-        return countryService.getAllEnabledCountries();
+    @ModelAttribute("domiciles")
+    public List<Domicile> getAllEnabledDomiciles() {
+        return domicileService.getAllEnabledDomiciles();
     }
 
 }

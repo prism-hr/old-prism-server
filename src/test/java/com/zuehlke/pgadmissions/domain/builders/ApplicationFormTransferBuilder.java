@@ -9,6 +9,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 public class ApplicationFormTransferBuilder {
     
     private Long id;
+    
+    private Date createdTimestamp;
 
     private ApplicationForm applicationForm;
 
@@ -21,9 +23,14 @@ public class ApplicationFormTransferBuilder {
     private String uclUserIdReceived;
 
     private String uclBookingReferenceReceived;
-
+    
     public ApplicationFormTransferBuilder id(final Long id) {
         this.id = id;
+        return this;
+    }
+
+    public ApplicationFormTransferBuilder createdTimestamp(final Date createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
         return this;
     }
 
@@ -59,8 +66,9 @@ public class ApplicationFormTransferBuilder {
     
     public ApplicationFormTransfer build() {
         ApplicationFormTransfer transfer = new ApplicationFormTransfer();
-        transfer.setApplicationForm(applicationForm);
         transfer.setId(id);
+        transfer.setCreatedTimestamp(createdTimestamp);
+        transfer.setApplicationForm(applicationForm);
         transfer.setStatus(status);
         transfer.setTransferFinishTimepoint(transferFinishTimepoint);
         transfer.setTransferStartTimepoint(transferStartTimepoint);

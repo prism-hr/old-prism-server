@@ -1,0 +1,7 @@
+ALTER TABLE APPLICATION_FORM_TRANSFER
+ADD COLUMN created_timestamp TIMESTAMP AFTER id 
+;
+
+UPDATE APPLICATION_FORM_TRANSFER
+SET created_timestamp = current_timestamp
+;

@@ -28,7 +28,7 @@ public class PorticoThrottleTaskTest {
 	public void shouldSendApplicationsToQueueService() {
 		expect(throttleServiceMock.isPorticoInterfaceEnabled()).andReturn(true);
 		expect(throttleServiceMock.getBatchSize()).andReturn(10);
-		porticoQueueServiceMock.sendQueuedWithdrawnOrRejectedApplicationsToPortico(10);
+		porticoQueueServiceMock.sendApplicationsToBeSentToPortico(10);
 		replay(throttleServiceMock, porticoQueueServiceMock);
 		
 		timer.porticoThrottleTask();

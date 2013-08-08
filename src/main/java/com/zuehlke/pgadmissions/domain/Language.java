@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,40 +10,40 @@ import javax.persistence.Id;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name="LANGUAGE")
+@Entity(name = "LANGUAGE")
 public class Language implements ImportedObject, Serializable {
-	
-	private static final long serialVersionUID = -4719304115154138995L;
 
-	@Id
-	@GeneratedValue
-	private Integer id;
-	
-	@Column(name = "enabled")
-	private Boolean enabled;
-	
-	@Column(name = "code")
+    private static final long serialVersionUID = -4719304115154138995L;
+
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    @Column(name = "enabled")
+    private Boolean enabled;
+
+    @Column(name = "code")
     private String code;
-	
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-	@Column(name = "name")
-	private String name;
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
-	public Integer getId() {
-		return id;
-	}
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+    @Column(name = "name")
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Boolean getEnabled() {
         return enabled;
@@ -60,9 +61,19 @@ public class Language implements ImportedObject, Serializable {
         this.code = code;
     }
 
-	@Override
-	public String getStringCode() {
-		return code;
-	}
+    @Override
+    public String getStringCode() {
+        return code;
+    }
+
+    @Override
+    public Date getDisabledDate() {
+        return null;
+    }
+
+    @Override
+    public void setDisabledDate(Date disabledDate) {
+        // ignore
+    }
 
 }

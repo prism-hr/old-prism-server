@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,14 +21,14 @@ public class QualificationType implements ImportedObject, Serializable {
 
     @Column(name = "enabled")
     private Boolean enabled;
-    
+
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     @Column(name = "name")
     private String name;
 
     @Column(name = "code")
     private String code;
-    
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -35,11 +36,11 @@ public class QualificationType implements ImportedObject, Serializable {
     public Integer getId() {
         return id;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -60,9 +61,19 @@ public class QualificationType implements ImportedObject, Serializable {
         this.code = code;
     }
 
-	@Override
-	public String getStringCode() {
-		return code;
-	}
-}
+    @Override
+    public String getStringCode() {
+        return code;
+    }
 
+    @Override
+    public Date getDisabledDate() {
+        return null;
+    }
+
+    @Override
+    public void setDisabledDate(Date disabledDate) {
+        // ignore
+    }
+
+}

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services.importers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -120,6 +121,7 @@ public class ImportService {
 	private <T extends ImportedObject> void disableElement(T currentElement, List<T> changes) {
 		if (currentElement.getEnabled()) {
 			currentElement.setEnabled(false);
+			currentElement.setDisabledDate(new Date());
 			changes.add(currentElement);
 		}
 	}

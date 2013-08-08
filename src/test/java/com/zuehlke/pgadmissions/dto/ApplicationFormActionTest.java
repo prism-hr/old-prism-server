@@ -28,6 +28,7 @@ import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.VIEW;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.VIEW_EDIT;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.WITHDRAW;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -222,6 +223,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, CONFIRM_ELIGIBILITY);
+        asssertActionsRequiringAttention(actionsDefinitions, CONFIRM_ELIGIBILITY);
     }
 
     @Test
@@ -305,6 +307,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true);
+        asssertActionsRequiringAttention(actionsDefinitions,CONFIRM_ELIGIBILITY );
     }
 
     @Test
@@ -320,6 +323,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, ADD_REFERENCE);
+        asssertActionsRequiringAttention(actionsDefinitions, ADD_REFERENCE);
     }
 
     @Test
@@ -383,6 +387,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_VALIDATION_STAGE);
+        asssertActionsRequiringAttention(actionsDefinitions, COMPLETE_VALIDATION_STAGE);
     }
 
     @Test
@@ -428,6 +433,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, ASSIGN_REVIEWERS);
+        asssertActionsRequiringAttention(actionsDefinitions, ASSIGN_REVIEWERS);
     }
 
     @Test
@@ -481,6 +487,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_REVIEW_STAGE);
+        asssertActionsRequiringAttention(actionsDefinitions,COMPLETE_REVIEW_STAGE );
     }
 
     @Test
@@ -498,6 +505,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_REVIEW_STAGE);
+        asssertActionsRequiringAttention(actionsDefinitions, COMPLETE_REVIEW_STAGE);
     }
 
     @Test
@@ -545,6 +553,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, ADD_REVIEW);
+        asssertActionsRequiringAttention(actionsDefinitions, ADD_REVIEW);
     }
 
     @Test
@@ -592,6 +601,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, ASSIGN_INTERVIEWERS);
+        asssertActionsRequiringAttention(actionsDefinitions, ASSIGN_INTERVIEWERS);
     }
 
     @Test
@@ -604,6 +614,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, ASSIGN_INTERVIEWERS);
+        asssertActionsRequiringAttention(actionsDefinitions, ASSIGN_INTERVIEWERS);
     }
 
     @Test
@@ -677,6 +688,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_INTERVIEW_STAGE);
+        asssertActionsRequiringAttention(actionsDefinitions, COMPLETE_INTERVIEW_STAGE);
     }
 
     @Test
@@ -694,6 +706,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_INTERVIEW_STAGE);
+        asssertActionsRequiringAttention(actionsDefinitions, COMPLETE_INTERVIEW_STAGE);
     }
 
     @Test
@@ -774,6 +787,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, CONFIRM_INTERVIEW_TIME);
+        asssertActionsRequiringAttention(actionsDefinitions, CONFIRM_INTERVIEW_TIME);
     }
 
     @Test
@@ -791,6 +805,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, CONFIRM_INTERVIEW_TIME);
+        asssertActionsRequiringAttention(actionsDefinitions,CONFIRM_INTERVIEW_TIME );
     }
 
     @Test
@@ -865,6 +880,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, PROVIDE_INTERVIEW_AVAILABILITY);
+        asssertActionsRequiringAttention(actionsDefinitions,PROVIDE_INTERVIEW_AVAILABILITY );
     }
 
     @Test
@@ -984,6 +1000,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, ADD_INTERVIEW_FEEDBACK);
+        asssertActionsRequiringAttention(actionsDefinitions, ADD_INTERVIEW_FEEDBACK);
     }
 
     @Test
@@ -1074,6 +1091,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, REVISE_APPROVAL);
+        asssertActionsRequiringAttention(actionsDefinitions, REVISE_APPROVAL);
     }
 
     @Test
@@ -1177,6 +1195,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_APPROVAL_STAGE);
+        asssertActionsRequiringAttention(actionsDefinitions, COMPLETE_APPROVAL_STAGE);
     }
 
     @Test
@@ -1196,6 +1215,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_APPROVAL_STAGE);
+        asssertActionsRequiringAttention(actionsDefinitions, COMPLETE_APPROVAL_STAGE);
     }
 
     @Test
@@ -1245,6 +1265,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, ASSIGN_SUPERVISORS);
+        asssertActionsRequiringAttention(actionsDefinitions, ASSIGN_SUPERVISORS);
     }
 
     @Test
@@ -1356,6 +1377,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, CONFIRM_SUPERVISION);
+        asssertActionsRequiringAttention(actionsDefinitions, CONFIRM_SUPERVISION);
     }
 
     @Test
@@ -1444,6 +1466,7 @@ public class ApplicationFormActionTest {
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, true, COMPLETE_REJECTION);
+        asssertActionsRequiringAttention(actionsDefinitions, COMPLETE_REJECTION);
     }
 
     @Test
@@ -1468,8 +1491,14 @@ public class ApplicationFormActionTest {
 
     private void assertActionsDefinitions(ActionsDefinitions actionsDefinitions, boolean requiresAttention, ApplicationFormAction... actions) {
         assertEquals(requiresAttention, actionsDefinitions.isRequiresAttention());
+        if (!requiresAttention) {
+            assertTrue(actionsDefinitions.getActionsRequiringAttention().isEmpty());
+        }
         Assert.assertThat(actionsDefinitions.getActions(), CoreMatchers.hasItems(actions));
-
     }
 
+    private void asssertActionsRequiringAttention(ActionsDefinitions actionsDefinitions, ApplicationFormAction... actionsRequiringAttention) {
+        assertEquals(true, actionsDefinitions.isRequiresAttention());
+        Assert.assertThat(actionsDefinitions.getActionsRequiringAttention(), CoreMatchers.hasItems(actionsRequiringAttention));
+    }
 }

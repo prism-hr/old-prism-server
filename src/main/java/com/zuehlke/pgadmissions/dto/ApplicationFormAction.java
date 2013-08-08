@@ -62,10 +62,12 @@ public enum ApplicationFormAction {
     CONFIRM_ELIGIBILITY("confirmEligibility", "Confirm Eligibility", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if ((user.isInRole(Authority.ADMITTER) || user.isInRole(Authority.SUPERADMINISTRATOR)) && !application.hasConfirmElegibilityComment() && application.isSubmitted() && !application.isTerminated()) {
+            if ((user.isInRole(Authority.ADMITTER) || user.isInRole(Authority.SUPERADMINISTRATOR)) && !application.hasConfirmElegibilityComment()
+                            && application.isSubmitted() && !application.isTerminated()) {
                 actions.addAction(CONFIRM_ELIGIBILITY);
                 if (application.getAdminRequestedRegistry() != null) {
-                    actions.setRequiresAttention(true);
+                    actions.addActionRequiringAttention(CONFIRM_ELIGIBILITY);
+
                 }
             }
         }
@@ -74,9 +76,10 @@ public enum ApplicationFormAction {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.isSubmitted() && !application.isTerminated() && user.isRefereeOfApplicationForm(application)
-                    && !user.getRefereeForApplicationForm(application).hasResponded()) {
+                            && !user.getRefereeForApplicationForm(application).hasResponded()) {
                 actions.addAction(ADD_REFERENCE);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(ADD_REFERENCE);
+
             }
         }
     }), //
@@ -88,7 +91,8 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == VALIDATION && nextStatus == null && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(COMPLETE_VALIDATION_STAGE);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(COMPLETE_VALIDATION_STAGE);
+
             }
         }
     }), //
@@ -100,7 +104,8 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (nextStatus == REVIEW && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(ASSIGN_REVIEWERS);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(ASSIGN_REVIEWERS);
+
             }
         }
     }), //
@@ -111,7 +116,8 @@ public enum ApplicationFormAction {
                 actions.addAction(COMPLETE_REVIEW_STAGE);
                 ReviewRound reviewRound = application.getLatestReviewRound();
                 if (reviewRound.hasAllReviewersResponded() || application.isDueDateExpired()) {
-                    actions.setRequiresAttention(true);
+                    actions.addActionRequiringAttention(COMPLETE_REVIEW_STAGE);
+
                 }
             }
         }
@@ -120,9 +126,10 @@ public enum ApplicationFormAction {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == REVIEW && user.isReviewerInLatestReviewRoundOfApplicationForm(application)
-                    && !user.hasRespondedToProvideReviewForApplicationLatestRound(application)) {
+                            && !user.hasRespondedToProvideReviewForApplicationLatestRound(application)) {
                 actions.addAction(ADD_REVIEW);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(ADD_REVIEW);
+
             }
         }
     }), //
@@ -134,7 +141,8 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (nextStatus == INTERVIEW && (user.hasAdminRightsOnApplication(application) || user.isApplicationAdministrator(application))) {
                 actions.addAction(ASSIGN_INTERVIEWERS);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(ASSIGN_INTERVIEWERS);
+
             }
         }
     }), //
@@ -142,10 +150,12 @@ public enum ApplicationFormAction {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
-            if (application.getStatus() == INTERVIEW && nextStatus == null && (user.hasAdminRightsOnApplication(application) || user.isApplicationAdministrator(application))) {
+            if (application.getStatus() == INTERVIEW && nextStatus == null
+                            && (user.hasAdminRightsOnApplication(application) || user.isApplicationAdministrator(application))) {
                 actions.addAction(COMPLETE_INTERVIEW_STAGE);
                 if (interview.hasAllInterviewersProvidedFeedback() || application.isDueDateExpired()) {
-                    actions.setRequiresAttention(true);
+                    actions.addActionRequiringAttention(COMPLETE_INTERVIEW_STAGE);
+
                 }
             }
         }
@@ -155,10 +165,11 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
             if (application.getStatus() == INTERVIEW && nextStatus == null && interview.isScheduling()
-                    && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application))) {
+                            && (user.isApplicationAdministrator(application) || user.hasAdminRightsOnApplication(application))) {
                 actions.addAction(CONFIRM_INTERVIEW_TIME);
                 if (interview.hasAllParticipantsProvidedAvailability() || application.isDueDateExpired()) {
-                    actions.setRequiresAttention(true);
+                    actions.addActionRequiringAttention(CONFIRM_INTERVIEW_TIME);
+
                 }
             }
         }
@@ -168,9 +179,10 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
             if (application.getStatus() == INTERVIEW && nextStatus == null && interview.isScheduling() && interview.isParticipant(user)
-                    && !interview.getParticipant(user).getResponded()) {
+                            && !interview.getParticipant(user).getResponded()) {
                 actions.addAction(PROVIDE_INTERVIEW_AVAILABILITY);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(PROVIDE_INTERVIEW_AVAILABILITY);
+
             }
         }
     }), //
@@ -179,10 +191,11 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             Interview interview = application.getLatestInterview();
             if (application.getStatus() == INTERVIEW && nextStatus == null && user.isInterviewerOfApplicationForm(application) && interview.isScheduled()
-                    && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
+                            && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)) {
                 actions.addAction(ADD_INTERVIEW_FEEDBACK);
                 if (interview.isDateExpired()) {
-                    actions.setRequiresAttention(true);
+                    actions.addActionRequiringAttention(ADD_INTERVIEW_FEEDBACK);
+
                 }
             }
         }
@@ -193,9 +206,11 @@ public enum ApplicationFormAction {
     REVISE_APPROVAL("restartApproval", "Assign Supervisors", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if (application.isPendingApprovalRestart() && application.isInApprovalStage() && nextStatus == null && user.hasAdminRightsOnApplication(application)) {
+            if (application.isPendingApprovalRestart() && application.isInApprovalStage() && nextStatus == null
+                            && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(REVISE_APPROVAL);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(REVISE_APPROVAL);
+
             }
         }
     }), //
@@ -208,7 +223,8 @@ public enum ApplicationFormAction {
 
                     ApprovalRound approvalRound = application.getLatestApprovalRound();
                     if (approvalRound.hasPrimarySupervisorResponded() || application.isDueDateExpired()) {
-                        actions.setRequiresAttention(true);
+                        actions.addActionRequiringAttention(COMPLETE_APPROVAL_STAGE);
+
                     }
                 }
             }
@@ -219,7 +235,8 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (nextStatus == APPROVAL && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(ASSIGN_SUPERVISORS);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(ASSIGN_SUPERVISORS);
+
             }
         }
     }), //
@@ -227,8 +244,8 @@ public enum ApplicationFormAction {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == APPROVAL && !application.isPendingApprovalRestart()
-                    && user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
-                    && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) && user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
+                            && user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
+                            && user.isNotInRoleInProgram(Authority.APPROVER, application.getProgram()) && user.isNotInRole(Authority.SUPERADMINISTRATOR)) {
                 actions.addAction(REVISE_APPROVAL_AS_ADMINISTRATOR);
             }
         }
@@ -239,9 +256,10 @@ public enum ApplicationFormAction {
             if (application.getStatus() == APPROVAL) {
                 Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
                 if (!application.isPendingApprovalRestart() && primarySupervisor != null && user == primarySupervisor.getUser()
-                        && !primarySupervisor.hasResponded()) {
+                                && !primarySupervisor.hasResponded()) {
                     actions.addAction(CONFIRM_SUPERVISION);
-                    actions.setRequiresAttention(true);
+                    actions.addActionRequiringAttention(CONFIRM_SUPERVISION);
+
                 }
             }
         }
@@ -251,11 +269,11 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (nextStatus == REJECTED && user.hasAdminRightsOnApplication(application)) {
                 actions.addAction(COMPLETE_REJECTION);
-                actions.setRequiresAttention(true);
+                actions.addActionRequiringAttention(COMPLETE_REJECTION);
+
             }
         }
-    })
-    ;
+    });
 
     private final String id;
 
@@ -278,7 +296,7 @@ public enum ApplicationFormAction {
     }
 
     public void applyAction(final ActionsDefinitions actions, final RegisteredUser user, final ApplicationForm application,
-            final ApplicationFormStatus nextStatus) {
+                    final ApplicationFormStatus nextStatus) {
         predicate.apply(actions, user, application, nextStatus);
     }
 

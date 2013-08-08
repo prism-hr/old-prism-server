@@ -46,6 +46,10 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
     @Column(name = "enabled")
     private Boolean enabled;
 
+    @Column(name = "disabled_date")
+    @Temporal(TemporalType.DATE)
+    private Date disabledDate;
+
     @Transient
     private int sequence;
 
@@ -137,6 +141,14 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         return this.enabled;
     }
 
+    public Date getDisabledDate() {
+        return disabledDate;
+    }
+
+    public void setDisabledDate(Date disabledDate) {
+        this.disabledDate = disabledDate;
+    }
+
     @Override
     public String getIdentifier() {
         return identifier;
@@ -151,7 +163,7 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         boolean beforeEndDate = date.before(getApplicationDeadline());
         return afterStartDate && beforeEndDate;
     }
-    
+
     @Override
     public Boolean isAtasRequired() {
         return program.getAtasRequired();

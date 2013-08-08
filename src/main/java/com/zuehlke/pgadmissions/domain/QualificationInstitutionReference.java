@@ -1,30 +1,31 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity(name="INSTITUTION_REFERENCE")
+@Entity(name = "INSTITUTION_REFERENCE")
 public class QualificationInstitutionReference implements ImportedObject, Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;
-    
+
     @Id
     @GeneratedValue
     private Integer id;
 
     @Column(name = "domicile_code")
     private String domicileCode;
-    
+
     @Column(name = "name")
     private String name;
 
     @Column(name = "enabled")
     private Boolean enabled;
-    
+
     @Column(name = "code")
     private String code;
 
@@ -39,7 +40,7 @@ public class QualificationInstitutionReference implements ImportedObject, Serial
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -70,8 +71,17 @@ public class QualificationInstitutionReference implements ImportedObject, Serial
     }
 
     @Override
+    public Date getDisabledDate() {
+        return null;
+    }
+
+    @Override
+    public void setDisabledDate(Date disabledDate) {
+        // ignore
+    }
+
+    @Override
     public String getStringCode() {
         return this.code;
     }
 }
-

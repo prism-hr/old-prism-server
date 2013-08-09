@@ -95,14 +95,15 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("adequateEnglish", ValueType.TEXT, "Adequate English?"));
         cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
         cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
-        cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
+        
         cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
+        cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
         cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.NUMBER, "Positive Review Endorsements"));
         cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.NUMBER, "Negative Review Endorsements"));
         cd.add(new ColumnDescription("averageReviewRating", ValueType.NUMBER, "Average Review Rating"));
 
-        cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
         cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
+        cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
         cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
         cd.add(new ColumnDescription("positiveInterviewEndorsements", ValueType.NUMBER, "Positive Interview Endorsements"));
         cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.NUMBER, "Negative Interview Endorsements"));
@@ -180,14 +181,14 @@ public class ApplicationsReportService {
                 row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : StringUtils.EMPTY);
                 row.addCell(new NumberValue(receivedAndDeclinedReferences[0]));
                 row.addCell(new NumberValue(receivedAndDeclinedReferences[1]));
-                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
                 row.addCell(new NumberValue(app.getReviewRounds().size()));
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
                 row.addCell(new NumberValue(reviewEndorsements[0]));
                 row.addCell(new NumberValue(reviewEndorsements[1]));
                 row.addCell(new NumberValue(getAverageRatingForAllReviewRounds(app)));
 
-                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
                 row.addCell(new NumberValue(app.getInterviews().size()));
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
                 row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
                 row.addCell(new NumberValue(interviewEndorsements[0]));
                 row.addCell(new NumberValue(interviewEndorsements[1]));

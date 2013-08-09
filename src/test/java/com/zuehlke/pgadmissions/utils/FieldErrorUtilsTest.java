@@ -20,6 +20,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import com.google.common.collect.Lists;
+
 public class FieldErrorUtilsTest {
 
 	
@@ -34,12 +36,12 @@ public class FieldErrorUtilsTest {
 	
 	@Test
 	public void shouldSetErrorMessagesForNonBlankErrorCodes() {
-		List<FieldError> fieldErrors = new ArrayList<FieldError>();
 		String [] codes = {"code"};
-		fieldErrors.add(new FieldError("object1", "field1", null, false, codes, null, "defaultMessage1"));
-		fieldErrors.add(new FieldError("object2", "field2", null, false, codes, null, "defaultMessage2"));
-		expect(mockBindingResult.getFieldErrors()).andReturn(fieldErrors);
-		expect(mockMessageSource.getMessage(eq("code"), (Object[]) eq(null), eq(Locale.getDefault()))).andReturn("error message").times(2);
+		FieldError fieldError1 = new FieldError("object1", "field1", null, false, codes, null, "defaultMessage1");
+		FieldError fieldError2 = new FieldError("object2", "field2", null, false, codes, null, "defaultMessage2");
+		expect(mockBindingResult.getFieldErrors()).andReturn(Lists.newArrayList(fieldError1, fieldError2));
+		expect(mockMessageSource.getMessage(fieldError1, Locale.getDefault())).andReturn("error message");
+		expect(mockMessageSource.getMessage(fieldError2, Locale.getDefault())).andReturn("error message");
 		
 		replay(mockBindingResult, mockMessageSource);
 		Map<String, Object> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
@@ -51,44 +53,5 @@ public class FieldErrorUtilsTest {
 		assertEquals(result.get("field1"), "error message");
 		assertEquals(result.get("field2"), "error message");
 	}
-	
-	@Test
-	public void shouldSetErrorMessagesForBlankErrorCodes() {
-		List<FieldError> fieldErrors = new ArrayList<FieldError>();
-		fieldErrors.add(new FieldError("object1", "field1", "defaultMessage1"));
-		fieldErrors.add(new FieldError("object2", "field2", "defaultMessage2"));
-		expect(mockBindingResult.getFieldErrors()).andReturn(fieldErrors);
-		
-		replay(mockBindingResult);
-		Map<String, Object> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
-		verify(mockBindingResult);
-		
-		assertNotNull(result);
-		assertFalse(result.isEmpty());
-		assertEquals(2, result.size());
-		assertEquals(result.get("field1"), "defaultMessage1");
-		assertEquals(result.get("field2"), "defaultMessage2");
-	}
-	
-	@Test
-	public void shouldSetErrorMessagesForBlankAndNonBlankErrorCodes() {
-		List<FieldError> fieldErrors = new ArrayList<FieldError>();
-		fieldErrors.add(new FieldError("object1", "field1", "defaultMessage1"));
-		String [] codes = {"code"};
-		fieldErrors.add(new FieldError("object2", "field2", null, false, codes, null, "defaultMessage2"));
-		expect(mockBindingResult.getFieldErrors()).andReturn(fieldErrors);
-		expect(mockMessageSource.getMessage(eq("code"), (Object[]) eq(null), eq(Locale.getDefault()))).andReturn("error message").times(1);
-		
-		replay(mockBindingResult, mockMessageSource);
-		Map<String, Object> result = FieldErrorUtils.populateMapWithErrors(mockBindingResult, mockMessageSource);
-		verify(mockBindingResult, mockMessageSource);
-		
-		assertNotNull(result);
-		assertFalse(result.isEmpty());
-		assertEquals(2, result.size());
-		assertEquals(result.get("field1"), "defaultMessage1");
-		assertEquals(result.get("field2"), "error message");
-	}
-	
 	
 }

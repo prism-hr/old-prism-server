@@ -41,15 +41,10 @@
       <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
         <option>Actions</option>
         <#list actions as action>
-        <#if actionsRequiringAttention?seq_contains(action)>
-	    	<#assign displayName="*"+action.displayName>
-	    <#else>
-	    	<#assign displayName=action.displayName>
-	    </#if>
           <#if action.id == "emailApplicant">
-            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">${displayName}</option>
+            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}" <#if actionsRequiringAttention?seq_contains(action)> class="bold"</#if>>${action.displayName}</option>
           <#else>
-            <option value="${action.id}">${displayName}</option>
+            <option value="${action.id}" <#if actionsRequiringAttention?seq_contains(action)> class="bold"</#if>>${action.displayName}</option>
           </#if>
         </#list>
     </select></td>
@@ -60,7 +55,7 @@
         <#else> <a class="btn btn-success" href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Proceed</a> </#if> </td>
 </tr>
     <tr class="application-details" data-application-id="${application.applicationNumber}" data-application-status="${application.status}" data-application-issubmitted="${application.submitted?string("true", "false")}">
-  <td colspan="6"><div class="application-lhs">
+     <td colspan="7"><div class="application-lhs">
       <div class="details row-fluid">
         <div class="span2">
           <div class="thumbnail"><img  data-field="gravatar" style="height: 110px;" src="http://0.gravatar.com/avatar/42ba66a9f4503f18fb2d13bfde6c69bf?s=64&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D64&amp;r=G"></div>

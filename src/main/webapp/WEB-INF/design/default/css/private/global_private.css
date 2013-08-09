@@ -25,7 +25,7 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 .row { overflow: visible; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
-#wrapper { background: url(../../images/bg_login.jpg) no-repeat 0 10px; margin: 0 auto; width: 950px; }
+#wrapper { background: url(../../images/background_intro_960.jpg) no-repeat 0 10px; margin: 0 auto; width: 950px; }
 #beta-badge {
 	background: url(../../images/beta-badge.png) no-repeat;
 	display: block;
@@ -38,7 +38,7 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 
 
 /* HEADER ------------------------------------------------------------------------------------------------- */
-#header { background: url(../../images/logo_ucl.png) no-repeat 100% 100%; color: #FFF; font-weight: bold; height: 108px; position: relative; text-transform: uppercase; }
+#header { color: #FFF; font-weight: bold; height: 10px; position: relative; text-transform: uppercase; }
 #header p { padding: 30px 0 0 30px; }
 
 /* MIDDLE ------------------------------------------------------------------------------------------------- */
@@ -79,11 +79,15 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
   -moz-transition: 0.6s ease-in-out left;
   -o-transition: 0.6s ease-in-out left;
   transition: 0.6s ease-in-out left;
+ 
 }
 .navlia ul li.current a {
   background: #DDDDDD;
   color: black;
   text-shadow: none;
+   -webkit-box-shadow: 0px -2px 2px rgba(50, 50, 50, 0.2);
+  -moz-box-shadow:    0px -2px 2px rgba(50, 50, 50, 0.2);
+  box-shadow:         0px -2px 2px rgba(50, 50, 50, 0.2);
 }
 .navlia ul li a {
   display: block;
@@ -116,12 +120,12 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 
 
 /* FOOTER ------------------------------------------------------------------------------------------------- */
-#footer { background: #6D6E71 url(../../images/logo_ucl_engineering.png) no-repeat 677px center; border-top: 14px solid #000; color: #BCBEC0; font-size: 9pt; padding: 20px 250px 20px 29px; }
-#footer ul { list-style: none; margin: 0 0 18px; overflow: hidden; }
+#footer { background: #909194;; color: #BCBEC0; font-size: 9pt; padding: 10px 29px; }
+#footer ul { list-style: none; margin: 0px; overflow: hidden; }
 #footer ul li { background: url(../../images/bg_footer_sep.png) no-repeat 100% center; float: left; margin: 0 8px 0 0; padding-right: 10px; }
 #footer ul li:last-child { background: none; }
 #footer ul li a { color: #FFF; display: block; font-weight: bold; }
-#footer p { font-size: 8pt; line-height: 1.2; }
+#footer p { font-size: 8pt; line-height: 1.2; margin-top: 18px; }
 
 
 /* BUTTONS / INDICATORS ----------------------------------------------------------------------------------- */
@@ -1128,6 +1132,7 @@ span.count {
   font-size: 18px;
   line-height: 30px;
   padding-right: 235px;
+  padding-top: 4px;
 }
 .ie9 .rsbox {
 	width: 220px;
@@ -1926,4 +1931,86 @@ form#removeForm {
 }
 select[disabled] > option {
 color: white;
+}
+/* White labeling classes*/
+
+#topBar {
+background: #909194;
+ position: relative;
+ padding: 16px 10px;
+ height: 13px;
+}
+#topBar .logoico{
+  background: url(../../images/ico.png) no-repeat;
+  float: left;
+  width: 16px;
+  height: 21px;
+  text-indent: -999em;
+  position: absolute;
+  overflow: hidden;
+  top: 11px;
+  left: 23px;
+}
+#topBar .logotext{
+  background: url(../../images/prism_text.png) no-repeat;
+  width: 74px;
+  height: 18px;
+  text-indent: -999em;
+  overflow: hidden;
+  display: block;
+  position: absolute;
+  top: 13px;
+  right: 23px;
+
+}
+#topBar h1{
+  float: left;
+  color: white;
+  padding: 0;
+  margin: 0;
+  font-weight: normal;
+  font-size: 11px;
+  line-height: 16px;
+  padding-left: 34px;
+}
+#topBar h1 strong{
+  font-size: 16px; 
+  padding-left: 6px;
+}
+/* Responsive queries*/
+
+@media (min-width:768px) and (max-width:979px) {
+
+}
+@media (min-width:1200px){
+	#wrapper {
+		width: 1170px;
+		background: #F2F2F2 url(../../images/background_intro.jpg) no-repeat 0 45px;
+	}
+
+	/* Forms*/
+	.row-group .plain-label, .field select {
+		width:245px;
+	}
+	.field .input-small {
+		width: 90px;
+	}
+	.modal .modal-body .field, section.form-rows .field {
+		margin-left: 290px !important;
+	}
+	.field .max {
+		width: 480px !important;
+	}
+	.field select.max {
+		width: 490px !important;
+	} 
+	section.form-rows .field .full {
+	    width: 356px !important;
+	}
+	section.form-rows .field select.full {
+	    width: 366px !important;
+	}
+	section.form-rows .field .full.date, section.form-rows .field input.hasDatepicker {
+		 width: 96px !important;
+	}
 }

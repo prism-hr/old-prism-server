@@ -20,15 +20,10 @@
         <select id="actionTypeSelect" class="actionType" name="app_[${applicationForm.applicationNumber}]" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">
             <option>Actions</option>
             <#list actions as action>
-            <#if actionsRequiringAttention?seq_contains(action)>
-		    	<#assign displayName="*"+action.displayName>
-		    <#else>
-		    	<#assign displayName=action.displayName>
-		    </#if>
               <#if action.id == "emailApplicant">
-                <option value="emailApplicant" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">${displayName}</option>
+                <option value="emailApplicant" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}" <#if actionsRequiringAttention?seq_contains(action)> class="bold"</#if>>${action.displayName}</option>
               <#else>
-                <option value="${action.id}">${displayName}</option>
+                <option value="${action.id}" <#if actionsRequiringAttention?seq_contains(action)> class="bold"</#if>>${action.displayName}</option>
               </#if>
             </#list>
         </select>
@@ -53,6 +48,9 @@
   		
       ${applicationForm.applicationNumber} 
       ${(applicationForm.personalDetails.title?capitalize)!} ${(applicationForm.applicant.firstName?html)!} ${(applicationForm.applicant.firstName2?html)!} ${(applicationForm.applicant.firstName3?html)!} ${(applicationForm.applicant.lastName?html)!}
+      <#if applicationForm.averageRatingFormatted??>
+        <span class="rating icon-star" data-desc="Rating"><span>${applicationForm.averageRatingFormatted} / 5.00</span></span>
+      </#if>
     </div>
   </div>
   <div class="row">
@@ -73,12 +71,6 @@
         ${(applicationForm.projectTitle?html)}
      </span>
   </div>
-  </#if>
-  <#if applicationForm.averageRatingPercent??>
-    <div class="row">
-      <label>Rating</label>
-      ${applicationForm.averageRatingPercent}
-    </div>
   </#if>
 
 </div>

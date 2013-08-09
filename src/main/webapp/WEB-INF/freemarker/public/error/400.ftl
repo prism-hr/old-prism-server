@@ -31,10 +31,13 @@
 	<!--<![endif]-->
 		
 		<div id="wrapper">
-		
+		<div id="topBar">
+            <h1><span class="logoico">Prism</span> <span id="version"><@spring.message 'prism.version'/></span> <strong>Research Student Recruitment</strong></h1>
+            <div class="logotext">Prism</div>
+        </div>
 		  <!-- Header. -->
 		  <div id="header">
-		    <p>LONDON'S GLOBAL UNIVERSITY</p>
+		   
 		  </div>
 		  
 		  <!-- Middle. -->

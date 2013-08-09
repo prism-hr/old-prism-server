@@ -151,6 +151,9 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 #applicationListSection .application-details, #applicationListSection .placeholder {
 	display:none;
 }
+#appliList td.rating {
+    text-align:center;
+}
 .application-lhs.loading {
   background: #FFFFFF url(../../images/ajax-loader-file.gif) 854px 4px no-repeat;
 }
@@ -278,4 +281,7 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 }
 .applist .alert {
   margin-bottom: 0px;
+}
+#actionTypeSelect option.bold {
+    font-weight: bold;
 }

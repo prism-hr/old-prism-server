@@ -30,10 +30,10 @@
 		            </div>
                     
 		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.
-                <#if timelineObject.reviewRound?? && timelineObject.reviewRound.averageRatingPercent?? >
-                  ${timelineObject.reviewRound.averageRatingPercent}
-                <#elseif timelineObject.interview?? && timelineObject.interview.averageRatingPercent?? >
-                  ${timelineObject.interview.averageRatingPercent}
+                <#if timelineObject.reviewRound?? && timelineObject.reviewRound.averageRatingFormatted?? >
+                <span class="rating icon-star"><span>${timelineObject.reviewRound.averageRatingFormatted} / 5.00</span></span>
+                <#elseif timelineObject.interview?? && timelineObject.interview.averageRatingFormatted?? >
+                  <span class="rating icon-star"><span>${timelineObject.interview.averageRatingFormatted} / 5.00</span></span>
                 </#if>
 		            </p> <i class="icon-minus-sign"></i> 
 				   </div>
@@ -121,10 +121,7 @@
 											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
 											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
 										</div>
-										<p class="rejection">
-											<i class="icon-puzzle-piece"></i>
-											<em>${applicationForm.rejection.rejectionReason.text?html}</em>
-										</p>
+										<p class="rejection"><i class="icon-puzzle-piece"></i><em>${applicationForm.rejection.rejectionReason.text?html}</em></p>
 									</div>
 								</li>
 							</ul>

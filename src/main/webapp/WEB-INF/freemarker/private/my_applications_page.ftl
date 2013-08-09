@@ -212,9 +212,9 @@
           <table class="data table table-striped table-condensed table-bordered table-hover" id="appliList" border="0">
             <colgroup>
             <col style="width: 46px" />
-            <col style="width: 17%" />
+            <col style="width: 25%" />
             <col />
-            <col style="width: 40px" />
+            <col style="width: 64px" />
             <col style="width: 80px;" />
             <col style="width: 130px;" />
             <col style="width: 80px" />

@@ -27,8 +27,8 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -50,8 +50,8 @@ import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -60,7 +60,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
@@ -76,13 +76,13 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private RefereeService refereeServiceMock;
     private RefereesAdminEditDTOValidator refereesAdminEditDTOValidatorMock;
     private SendToPorticoDataDTOEditor sendToPorticoDataDTOEditorMock;
-    private CountryService countryServiceMock;
-    private CountryPropertyEditor countryPropertyEditorMock;
     private MessageSource messageSourceMock;
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
     private ApplicationDescriptorProvider applicationDescriptorProviderMock;
+    private DomicileService domicileServiceMock;
+    private DomicilePropertyEditor domicilePropertyEditorMock;
 
     @Before
     public void setUp() {
@@ -93,17 +93,18 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
         refereesAdminEditDTOValidatorMock = EasyMock.createMock(RefereesAdminEditDTOValidator.class);
         sendToPorticoDataDTOEditorMock = EasyMock.createMock(SendToPorticoDataDTOEditor.class);
-        countryServiceMock = EasyMock.createMock(CountryService.class);
-        countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
         messageSourceMock = EasyMock.createMock(MessageSource.class);
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
         applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
+        domicileServiceMock = EasyMock.createMock(DomicileService.class);
+        domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock, refereeServiceMock,
-                        refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, countryServiceMock, countryPropertyEditorMock,
-                        messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, applicationDescriptorProviderMock);
+                        refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, messageSourceMock,
+                        scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, applicationDescriptorProviderMock, domicileServiceMock,
+                        domicilePropertyEditorMock);
     }
 
     @Test
@@ -355,7 +356,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         binderMock.setValidator(refereesAdminEditDTOValidatorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-        binderMock.registerCustomEditor(Country.class, countryPropertyEditorMock);
+        binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditorMock);
         binderMock.registerCustomEditor((Class<?>) EasyMock.isNull(), EasyMock.eq("comment"), EasyMock.isA(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(EasyMock.eq(String[].class), EasyMock.anyObject(StringArrayPropertyEditor.class));

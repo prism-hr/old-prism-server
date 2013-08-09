@@ -25,7 +25,7 @@
       <!-- Country -->
       <div class="admin_row">
         <span class="admin_row_label">Country</span>
-        <div class="field">${(applicationForm.currentAddress.country.name?html)!}</div>
+        <div class="field">${(applicationForm.currentAddress.domicile.name?html)!}</div>
       </div>
       
       </div>
@@ -40,7 +40,7 @@
       <!-- Country -->
       <div class="admin_row">
         <span class="admin_row_label">Country</span>
-        <div class="field">${(applicationForm.contactAddress.country.name?html)!}</div>
+        <div class="field">${(applicationForm.contactAddress.domicile.name?html)!}</div>
       </div>
     
     </div>

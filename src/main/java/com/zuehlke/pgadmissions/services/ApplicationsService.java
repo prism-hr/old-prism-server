@@ -67,9 +67,6 @@ public class ApplicationsService {
 
     public Date getBatchDeadlineForApplication(ApplicationForm form) {
         Date closingDate = programDAO.getNextClosingDateForProgram(form.getProgram(), new Date());
-        if (closingDate == null) {
-            return new Date();
-        }
         return closingDate;
     }
 

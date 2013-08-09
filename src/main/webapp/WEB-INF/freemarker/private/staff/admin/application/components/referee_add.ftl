@@ -126,14 +126,14 @@
     <div class="field">
       <select class="full" name="ref_address_country" id="address_country_${encRefereeId}">
         <option value="">Select...</option>
-        <#list countries as country> <option value="${encrypter.encrypt(country.id)}" 
-            <#if refereesAdminEditDTO.addressLocation.country?? && refereesAdminEditDTO.addressLocation.country.id == country.id> 
+        <#list domiciles as domicile> <option value="${encrypter.encrypt(domicile.id)}" 
+            <#if refereesAdminEditDTO.addressLocation.domicile?? && refereesAdminEditDTO.addressLocation.domicile.id == domicile.id> 
               selected="selected"</#if>>
-        ${country.name?html}
+        ${domicile.name?html}
         </option>
         </#list>
       </select>
-      <@spring.bind "refereesAdminEditDTO.addressLocation.country" />
+      <@spring.bind "refereesAdminEditDTO.addressLocation.domicile" />
       <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
         ${error}

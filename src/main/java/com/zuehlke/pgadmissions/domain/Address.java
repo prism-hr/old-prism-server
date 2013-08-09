@@ -22,11 +22,15 @@ public class Address implements Serializable {
 	@GeneratedValue
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "country_id")
-	private Country country;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "country_id")
+//	private Country country;
 
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "domicile_id")
+	private Domicile domicile;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
 	private String address1;
 	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
@@ -48,14 +52,14 @@ public class Address implements Serializable {
 	public void setId(Integer id) {
         this.id = id;
     }
-    
-	public Country getCountry() {
-		return country;
-	}
 
-	public void setCountry(Country country) {
-		this.country = country;
-	}
+    public Domicile getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(Domicile domicile) {
+        this.domicile = domicile;
+    }
 
 	public String getAddress1() {
 		return address1;
@@ -119,7 +123,7 @@ public class Address implements Serializable {
 	
 	@Override
 	public String toString() {
-		return getLocationString() + "\n" + (country != null ? country.getName() : "");
+		return getLocationString() + "\n" + (domicile != null ? domicile.getName() : "");
 	}
 }
 

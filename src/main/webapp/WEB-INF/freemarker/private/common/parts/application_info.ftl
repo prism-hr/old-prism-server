@@ -16,13 +16,19 @@
         </#if>
       </div>
         <#assign actions = applicationDescriptor.actionsDefinition.actions>
+        <#assign actionsRequiringAttention = applicationDescriptor.actionsDefinition.actionsRequiringAttention>
         <select id="actionTypeSelect" class="actionType" name="app_[${applicationForm.applicationNumber}]" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">
             <option>Actions</option>
             <#list actions as action>
+            <#if actionsRequiringAttention?seq_contains(action)>
+		    	<#assign displayName="*"+action.displayName>
+		    <#else>
+		    	<#assign displayName=action.displayName>
+		    </#if>
               <#if action.id == "emailApplicant">
-                <option value="emailApplicant" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">${action.displayName}</option>
+                <option value="emailApplicant" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">${displayName}</option>
               <#else>
-                <option value="${action.id}">${action.displayName}</option>
+                <option value="${action.id}">${displayName}</option>
               </#if>
             </#list>
         </select>

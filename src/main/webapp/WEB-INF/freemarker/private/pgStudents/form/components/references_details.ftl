@@ -301,10 +301,10 @@
         <div class="field"> <#if referee.editable && (applicationForm.referees?size &lt; 4 || referee.id??) >
           <select class="full" name="ref_address_country" id="ref_address_country">
             <option value="">Select...</option>
-            <#list countries as country> <option value="${encrypter.encrypt(country.id)}" 
-            <#if referee.addressLocation.country?? && referee.addressLocation.country.id == country.id> 
+            <#list domiciles as domicile> <option value="${encrypter.encrypt(domicile.id)}" 
+            <#if referee.addressLocation.domicile?? && referee.addressLocation.domicile.id == domicile.id> 
               selected="selected"</#if>>
-            ${country.name?html}
+            ${domicile.name?html}
             </option>
             </#list>
           </select>
@@ -312,7 +312,7 @@
           <select class="full" name="ref_address_country" id="ref_address_country" disabled="disabled">
           </select>
           </#if>
-          <@spring.bind "referee.addressLocation.country" />
+          <@spring.bind "referee.addressLocation.domicile" />
           <#list spring.status.errorMessages as error>
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}

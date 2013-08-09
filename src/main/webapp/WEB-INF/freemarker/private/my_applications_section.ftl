@@ -2,6 +2,7 @@
 <#setting locale = "en_US">
 <#list applications as application>
     <#assign actionsDefinition = actionDefinitions[application.applicationNumber]>
+        <#assign actionsRequiringAttention = actionsDefinition.actionsRequiringAttention>
     <#assign actions = actionsDefinition.actions>
     <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow" >
   <td class="centre"><input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" /></td>
@@ -40,10 +41,15 @@
       <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
         <option>Actions</option>
         <#list actions as action>
+        <#if actionsRequiringAttention?seq_contains(action)>
+	    	<#assign displayName="*"+action.displayName>
+	    <#else>
+	    	<#assign displayName=action.displayName>
+	    </#if>
           <#if action.id == "emailApplicant">
-            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">${action.displayName}</option>
+            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">${displayName}</option>
           <#else>
-            <option value="${action.id}">${action.displayName}</option>
+            <option value="${action.id}">${displayName}</option>
           </#if>
         </#list>
     </select></td>

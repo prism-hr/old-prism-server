@@ -326,7 +326,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setAddressLine3(currentAddress.getAddress3());
         addressTp.setAddressLine4(currentAddress.getAddress4());
         addressTp.setPostCode(currentAddress.getAddress5());
-        addressTp.setCountry(currentAddress.getCountry().getCode());
+        addressTp.setCountry(currentAddress.getDomicile().getCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -355,7 +355,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setAddressLine3(contactAddress.getAddress3());
         addressTp.setAddressLine4(contactAddress.getAddress4());
         addressTp.setPostCode(contactAddress.getAddress5());
-        addressTp.setCountry(contactAddress.getCountry().getCode());
+        addressTp.setCountry(contactAddress.getDomicile().getCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -634,7 +634,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
             addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
             addressTp.setPostCode(referee.getAddressLocation().getAddress5());
-            addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
+            addressTp.setCountry(referee.getAddressLocation().getDomicile().getCode());
 
             // postCode is mandatory but but PRISM did not collect addresses
             // in this format before.

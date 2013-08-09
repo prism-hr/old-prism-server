@@ -11,7 +11,7 @@ public final class AddressUtils {
 
     public static boolean addressesEqual(Address contactAddress, Address currentAddress) {
         return contactAddress != null && currentAddress != null
-                && contactAddress.getCountry().getId().equals(currentAddress.getCountry().getId())
+                && contactAddress.getDomicile().getId().equals(currentAddress.getDomicile().getId())
                 && StringUtils.equals(contactAddress.getAddress1(), currentAddress.getAddress1())
                 && StringUtils.equals(contactAddress.getAddress2(), currentAddress.getAddress2())
                 && StringUtils.equals(contactAddress.getAddress3(), currentAddress.getAddress3())

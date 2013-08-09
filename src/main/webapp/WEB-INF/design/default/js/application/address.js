@@ -40,9 +40,9 @@ $(document).ready(function(){
 		}
 	});
 
-	$('#currentAddressCountry').change(function(){
+	$('#currentAddressDomicile').change(function(){
 		if(isSame()){
-			$('#contactAddressCountry').val($('#currentAddressCountry').val());
+			$('#contactAddressDomicile').val($('#currentAddressDomicile').val());
 		}
 	});
 	
@@ -149,13 +149,13 @@ function postAddressData(message)
 			currentAddress3: $("#currentAddress3").val(),
 			currentAddress4: $("#currentAddress4").val(),
 			currentAddress5: $("#currentAddress5").val(),
-			currentAddressCountry: $("#currentAddressCountry").val(),
+			currentAddressDomicile: $("#currentAddressDomicile").val(),
 			contactAddress1: $("#contactAddress1").val(),
 			contactAddress2: $("#contactAddress2").val(),
 			contactAddress3: $("#contactAddress3").val(),
 			contactAddress4: $("#contactAddress4").val(),
 			contactAddress5: $("#contactAddress5").val(),
-			contactAddressCountry: $("#contactAddressCountry").val(),
+			contactAddressDomicile: $("#contactAddressDomicile").val(),
 			applicationId:  $('#applicationId').val(),
 			message:message,
 			acceptedTerms: acceptedTheTerms
@@ -195,13 +195,13 @@ function disableContactAddress() {
 	$("#contactAddress3").val($("#currentAddress3").val());
 	$("#contactAddress4").val($("#currentAddress4").val());
 	$("#contactAddress5").val($("#currentAddress5").val());
-	$("#contactAddressCountry").val($("#currentAddressCountry").val());
+	$("#contactAddressDomicile").val($("#currentAddressDomicile").val());
 	$("#contactAddress1").attr('disabled','disabled');
 	$("#contactAddress2").attr('disabled','disabled');
 	$("#contactAddress3").attr('disabled','disabled');
 	$("#contactAddress4").attr('disabled','disabled');
 	$("#contactAddress5").attr('disabled','disabled');
-	$("#contactAddressCountry").attr('disabled','disabled');
+	$("#contactAddressDomicile").attr('disabled','disabled');
 	
 	$("#add-two-lb-1").addClass("grey-label").parent().find('.hint').addClass("grey");
 	$("#add-two-lb-2").addClass("grey-label").parent().find('.hint').addClass("grey");
@@ -218,7 +218,7 @@ function enableContactAddress(clear) {
 	//$("#contactAddressCountry").val("");
 
 	if (clear === true) {
-		$("#contactAddressCountry").val("");
+		$("#contactAddressDomicile").val("");
 	    $("#contactAddress1").val("");
 	    $("#contactAddress2").val("");
 	    $("#contactAddress3").val("");
@@ -227,7 +227,7 @@ function enableContactAddress(clear) {
 	}
     
 	$("#contactAddressLocation").removeAttr('disabled');
-	$("#contactAddressCountry").removeAttr('disabled');
+	$("#contactAddressDomicile").removeAttr('disabled');
 	$("#add-two-lb-1").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	$("#add-two-lb-2").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	$("#add-two-lb-3").removeClass("grey-label").parent().find('.hint').removeClass("grey");
@@ -241,5 +241,5 @@ function enableContactAddress(clear) {
 	$("#contactAddress3").removeAttr('disabled','disabled');
 	$("#contactAddress4").removeAttr('disabled','disabled');
 	$("#contactAddress5").removeAttr('disabled','disabled');
-	$("#contactAddressCountry").removeAttr('disabled','disabled');
+	$("#contactAddressDomicile").removeAttr('disabled','disabled');
 }

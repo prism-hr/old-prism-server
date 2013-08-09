@@ -42,11 +42,11 @@ import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplic
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
-import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -56,43 +56,43 @@ import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "/testPorticoIntegrationContext.xml"})
+@ContextConfiguration({ "/testPorticoIntegrationContext.xml" })
 @TransactionConfiguration(defaultRollback = true)
 @Ignore
 public class PorticoWebServiceIT {
 
     @Autowired
     private WebServiceTemplate webServiceTemplate;
-    
+
     @Autowired
     private ApplicationsService applicationsService;
-    
+
     @Autowired
     private PorticoExportService uclExportService;
 
     @Autowired
     private SessionFactory sessionFactory;
-    
+
     private static final String TEST_REPORT_FILENAME = "PorticoWebServiceIT.csv";
 
     private SecureRandom random = new SecureRandom();
-    
+
     private List<String> csvEntries;
-    
+
     private CSVWriter writer;
-    
+
     private String randomLastname;
-    
+
     private String randomFirstname;
-    
+
     private String randomEmail;
-    
+
     private String receivedApplicantId;
-    
+
     private ApplicationForm randomApplicationForm;
-    
+
     private static Set<String> USED_APPLICATION_NUMBERS = new HashSet<String>();
-    
+
     @Before
     public void prepare() throws IOException {
         writer = new CSVWriter(new FileWriter(TEST_REPORT_FILENAME, true), ',');
@@ -101,18 +101,20 @@ public class PorticoWebServiceIT {
         randomFirstname = getRandomString();
         randomEmail = getRandomEmailString();
     }
-    
+
     @After
     public void finish() throws IOException {
         if (!csvEntries.isEmpty()) {
-            writer.writeNext(csvEntries.toArray(new String[]{}));
+            writer.writeNext(csvEntries.toArray(new String[] {}));
             writer.close();
         }
     }
 
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with no match at 'tran' - replace the real name and email with some ridiculous fictitious values. 
-    // * Withdrawn application with no match at 'tran' resent - resend the one above with the user identity returned by the web service.
+    // * Withdrawn application with no match at 'tran' - replace the real name
+    // and email with some ridiculous fictitious values.
+    // * Withdrawn application with no match at 'tran' resent - resend the one
+    // above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -120,6 +122,7 @@ public class PorticoWebServiceIT {
         withdrawnApplicationWithNoMatchAtTRAN();
         withdrawnApplicationWithNoMatchAtTRANResent();
     }
+
     private void withdrawnApplicationWithNoMatchAtTRAN() throws PorticoExportServiceException {
         csvEntries.add("Withdrawn application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
@@ -137,6 +140,7 @@ public class PorticoWebServiceIT {
             }
         });
     }
+
     private void withdrawnApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
         csvEntries.add("Withdrawn application with no match at 'tran' resent");
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -156,8 +160,9 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with match at 'tran' and no active user identity (MUA) - 
-    //   replace corresponding fields (except IPR code) with G in spreadsheet.
+    // * Withdrawn application with match at 'tran' and no active user identity
+    // (MUA) -
+    // replace corresponding fields (except IPR code) with G in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -169,7 +174,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 super.webServiceCallStarted(request, form);
-//                request.getApplication().getApplicant().setApplicantID("SL609837");
+                // request.getApplication().getApplicant().setApplicantID("SL609837");
                 request.getApplication().getApplicant().getFullName().setSurname("AIYEGBUSI");
                 request.getApplication().getApplicant().getFullName().setForename1("ISRAEL ADEYEMI");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
@@ -182,10 +187,11 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with match at 'tran' and active user identity (MUA) - replace corresponding 
-    //   fields (except IPR code) with D in spreadsheet.
+    // * Withdrawn application with match at 'tran' and active user identity
+    // (MUA) - replace corresponding
+    // fields (except IPR code) with D in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -197,7 +203,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 super.webServiceCallStarted(request, form);
-//                request.getApplication().getApplicant().setApplicantID("12023085");
+                // request.getApplication().getApplicant().setApplicantID("12023085");
                 request.getApplication().getApplicant().getFullName().setSurname("EDWARDS");
                 request.getApplication().getApplicant().getFullName().setForename1("DAVID ALLEN");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
@@ -217,8 +223,9 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with active user identity (MUA) known to UCL Prism - replace corresponding 
-    //   fields (INCLUDING IPR code) with K in spreadsheet.
+    // * Withdrawn application with active user identity (MUA) known to UCL
+    // Prism - replace corresponding
+    // fields (INCLUDING IPR code) with K in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -247,10 +254,12 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    // * Withdrawn UCL Prism application by applicant with a corresponding first application in progress in 
-    //   the UCL Portico system - replace corresponding fields with A in spreadsheet.
+    // * Withdrawn UCL Prism application by applicant with a corresponding first
+    // application in progress in
+    // the UCL Portico system - replace corresponding fields with A in
+    // spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -280,10 +289,12 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    // * Rejected application with no match at 'tran' - replace the real name and email with some ridiculous fictitious values.
-    // * Rejected application with no match at 'tran' resent - resend the one above with the user identity returned by the web service.
+    // * Rejected application with no match at 'tran' - replace the real name
+    // and email with some ridiculous fictitious values.
+    // * Rejected application with no match at 'tran' resent - resend the one
+    // above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -291,6 +302,7 @@ public class PorticoWebServiceIT {
         rejectedApplicationWithNoMatchAtTRAN();
         rejectedApplicationWithNoMatchAtTRANResent();
     }
+
     private void rejectedApplicationWithNoMatchAtTRAN() throws PorticoExportServiceException {
         csvEntries.add("Rejected application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
@@ -309,6 +321,7 @@ public class PorticoWebServiceIT {
             }
         });
     }
+
     private void rejectedApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
         csvEntries.add("Rejected application with no match at 'tran' resent");
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -327,10 +340,11 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    // * Rejected application with match at 'tran' and no active user identity (MUA) - 
-    //   replace corresponding fields (except IPR code) with H in spreadsheet.
+    // * Rejected application with match at 'tran' and no active user identity
+    // (MUA) -
+    // replace corresponding fields (except IPR code) with H in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -342,7 +356,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 super.webServiceCallStarted(request, form);
-//                request.getApplication().getApplicant().setApplicantID("SL639411");
+                // request.getApplication().getApplicant().setApplicantID("SL639411");
                 request.getApplication().getApplicant().getFullName().setSurname("RAOOFI");
                 request.getApplication().getApplicant().getFullName().setForename1("AZAM");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
@@ -361,8 +375,9 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Rejected application with match at 'tran' and active user identity (MUA) - 
-    //   replace corresponding fields (except IPR code) with E in spreadsheet.
+    // * Rejected application with match at 'tran' and active user identity
+    // (MUA) -
+    // replace corresponding fields (except IPR code) with E in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -374,7 +389,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 super.webServiceCallStarted(request, form);
-//                request.getApplication().getApplicant().setApplicantID("13063189");
+                // request.getApplication().getApplicant().setApplicantID("13063189");
                 request.getApplication().getApplicant().getFullName().setSurname("SHARMA");
                 request.getApplication().getApplicant().getFullName().setForename1("DEEPSHIKHA");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
@@ -393,10 +408,11 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    // * Rejected application with active user identity (MUA) known to UCL Prism - 
-    //   replace corresponding fields (INCLUDING IPR code) with L in spreadsheet.
+    // * Rejected application with active user identity (MUA) known to UCL Prism
+    // -
+    // replace corresponding fields (INCLUDING IPR code) with L in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -426,10 +442,11 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    // * Rejected UCL Prism application by applicant with a corresponding first application in progress in the 
-    //   UCL Portico system - replace corresponding fields with B in spreadsheet.
+    // * Rejected UCL Prism application by applicant with a corresponding first
+    // application in progress in the
+    // UCL Portico system - replace corresponding fields with B in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -460,10 +477,12 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    // * Approved application with no match at 'tran' - replace the real name and email with some ridiculous fictitious values.
-    // * Approved application with no match at 'tran' resent - resend the one above with the user identity returned by the web service.
+    // * Approved application with no match at 'tran' - replace the real name
+    // and email with some ridiculous fictitious values.
+    // * Approved application with no match at 'tran' resent - resend the one
+    // above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -471,7 +490,7 @@ public class PorticoWebServiceIT {
         approvedApplicationWithNoMatchAtTRAN();
         approvedApplicationWithNoMatchAtTRANResent();
     }
-    
+
     private void approvedApplicationWithNoMatchAtTRAN() throws PorticoExportServiceException {
         csvEntries.add("Approved application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
@@ -490,7 +509,7 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     private void approvedApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
         csvEntries.add("Approved application with no match at 'tran' resent");
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -511,8 +530,9 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    //  * Approved application with match at 'tran' and no active user identity (MUA) -  
-    //    replace corresponding fields (except IPR code) with I in spreadsheet.
+    // * Approved application with match at 'tran' and no active user identity
+    // (MUA) -
+    // replace corresponding fields (except IPR code) with I in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -524,7 +544,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 super.webServiceCallStarted(request, form);
-//                request.getApplication().getApplicant().setApplicantID("SL676328");
+                // request.getApplication().getApplicant().setApplicantID("SL676328");
                 request.getApplication().getApplicant().getFullName().setSurname("ABIRHIRE");
                 request.getApplication().getApplicant().getFullName().setForename1("OGHENEMINE");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
@@ -539,10 +559,11 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    // * Approved application with match at 'tran' and active user identity (MUA) - 
-    //   replace corresponding fields (except IPR code) with F in spreadsheet.
+    // * Approved application with match at 'tran' and active user identity
+    // (MUA) -
+    // replace corresponding fields (except IPR code) with F in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -554,7 +575,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 super.webServiceCallStarted(request, form);
-//                request.getApplication().getApplicant().setApplicantID("13050747");
+                // request.getApplication().getApplicant().setApplicantID("13050747");
                 request.getApplication().getApplicant().getFullName().setSurname("KYRIAZIS");
                 request.getApplication().getApplicant().getFullName().setForename1("GEORGIOS");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
@@ -575,8 +596,9 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    //  * Approved application with active user identity (MUA) known to UCL Prism - 
-    //    replace corresponding fields (INCLUDING IPR code) with M in spreadsheet.
+    // * Approved application with active user identity (MUA) known to UCL Prism
+    // -
+    // replace corresponding fields (INCLUDING IPR code) with M in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -606,10 +628,12 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    //  * Approved UCL Prism application by applicant with a corresponding first application in progress 
-    //    in the UCL Portico system - replace corresponding fields with C in spreadsheet.
+    // * Approved UCL Prism application by applicant with a corresponding first
+    // application in progress
+    // in the UCL Portico system - replace corresponding fields with C in
+    // spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -640,43 +664,41 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     // ----------------------------------------------------------------------------------
-    //  * Approved UCL Prism application by applicant with a duplicate application 
-    //    in the UCL Portico system - use RRDCIVSGEO01-2012-000032.
+    // * Approved UCL Prism application by applicant with a duplicate
+    // application
+    // in the UCL Portico system - use RRDCIVSGEO01-2012-000032.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void approvedUCLPrismApplicationByApplicantWithADuplicateApplicationInTheUCLPorticoSystem() throws PorticoExportServiceException {
         csvEntries.add("Approved UCL Prism application by applicant with a duplicate application in the UCL Portico system");
         randomApplicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000032");
-        
+
         for (Referee referee : randomApplicationForm.getReferees()) {
             if (referee.getReference() != null) {
                 referee.setSendToUCL(true);
             }
         }
-        
+
         // we need to append another referee for this to work
         Referee referee = randomApplicationForm.getReferees().get(0);
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
-        Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true)
-                .build();
-        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").referee(referee)
-                .providedBy(referee.getUser()).suitableForProgramme(true).suitableForUcl(true).user(referee.getUser())
-                .build();
-        Referee refereeOne = new RefereeBuilder().user(referee.getUser()).email("ked1@zuhlke.com").firstname("Bob")
-                .lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0])
-                .address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
-                .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4])
-                .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress")
-                .phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).build();
+        Domicile domicile = new DomicileBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").referee(referee).providedBy(referee.getUser())
+                        .suitableForProgramme(true).suitableForUcl(true).user(referee.getUser()).build();
+        Referee refereeOne = new RefereeBuilder().user(referee.getUser()).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressDomicile(domicile)
+                        .address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
+                        .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.")
+                        .jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true)
+                        .reference(referenceComment1).build();
         referenceComment1.setReferee(refereeOne);
         refereeOne.setReference(referenceComment1);
         randomApplicationForm.getReferees().add(refereeOne);
-        
+
         applicationsService.save(randomApplicationForm);
-        
+
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
@@ -686,15 +708,15 @@ public class PorticoWebServiceIT {
             }
         });
     }
-    
+
     private String getRandomString() {
         return new BigInteger(128, random).toString(32);
     }
-    
+
     private String getRandomEmailString() {
         return new BigInteger(54, random).toString(32) + "@" + new BigInteger(54, random).toString(32) + ".com";
     }
-    
+
     private XMLGregorianCalendar buildXmlDate(Date date) {
         if (date != null) {
             try {
@@ -707,21 +729,21 @@ public class PorticoWebServiceIT {
         }
         return null;
     }
-        
-    private ApplicationForm randomlyPickApplicationForm() {        
+
+    private ApplicationForm randomlyPickApplicationForm() {
         List<ApplicationForm> allApplicationsByStatus = applicationsService.getAllApplicationsByStatus(ApplicationFormStatus.REVIEW);
         ApplicationForm applicationForm = null;
         boolean foundEnoughDataForQualifications = false;
         boolean foundEnoughDataForReferees = false;
-        
+
         do {
             int numberOfQualifications = 0;
             int numberOfReferees = 0;
             foundEnoughDataForQualifications = false;
             foundEnoughDataForReferees = false;
-           
+
             applicationForm = allApplicationsByStatus.get(random.nextInt(allApplicationsByStatus.size()));
-            
+
             for (Qualification qualification : applicationForm.getQualifications()) {
                 if (qualification.getProofOfAward() != null) {
                     qualification.setSendToUCL(true);
@@ -731,7 +753,7 @@ public class PorticoWebServiceIT {
                     }
                 }
             }
-            
+
             for (Referee referee : applicationForm.getReferees()) {
                 if (referee.getReference() != null) {
                     referee.setSendToUCL(true);
@@ -741,47 +763,47 @@ public class PorticoWebServiceIT {
                     }
                 }
             }
-            
+
             if (numberOfQualifications >= 2) {
                 foundEnoughDataForQualifications = true;
             }
-            
+
             if (numberOfReferees == 2) {
                 foundEnoughDataForReferees = true;
             }
         } while (!(foundEnoughDataForQualifications && foundEnoughDataForReferees && !USED_APPLICATION_NUMBERS.contains(applicationForm.getApplicationNumber())));
-        
+
         USED_APPLICATION_NUMBERS.add(applicationForm.getApplicationNumber());
-        
+
         applicationsService.save(applicationForm);
-        
+
         return applicationForm;
     }
-    
+
     private abstract class AbstractPorticoITTransferListener implements TransferListener {
-        
+
         @Override
         public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
-         for (QualificationsTp detailsTp : request.getApplication().getApplicant().getQualificationList().getQualificationDetail()) {
+            for (QualificationsTp detailsTp : request.getApplication().getApplicant().getQualificationList().getQualificationDetail()) {
                 detailsTp.getInstitution().setCode("UK0275");
             }
         }
-        
+
         @Override
         public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
             receivedApplicantId = response.getReference().getApplicantID();
             addReceivedPorticoIdsToCsvFile(response);
         }
-        
+
         protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request) {
             saveRequest(applicationForm, request, StringUtils.EMPTY);
         }
-        
+
         protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {
-//            request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
-//            request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
-//            request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
-//            request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
+            // request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+            // request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+            // request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
+            // request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
 
             String prismId = request.getApplication().getCourseApplication().getExternalApplicationID();
             prismId = prismId.replace("2011", "2014");
@@ -789,10 +811,10 @@ public class PorticoWebServiceIT {
             prismId = prismId.replace("2013", "2014");
             prismId = prismId + "-2";
             request.getApplication().getCourseApplication().setExternalApplicationID(prismId);
-            
+
             addFirstAndLastnameToCsvFile(request);
-            
-            String pPostFix = StringUtils.isNotBlank(postFix) ? "_" + postFix : postFix; 
+
+            String pPostFix = StringUtils.isNotBlank(postFix) ? "_" + postFix : postFix;
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
                 marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + pPostFix + ".txt")));
@@ -806,14 +828,14 @@ public class PorticoWebServiceIT {
             csvEntries.add(response.getReference().getApplicationID());
             csvEntries.add("null"); // error field
         }
-        
+
         private void addFirstAndLastnameToCsvFile(SubmitAdmissionsApplicationRequest request) {
             csvEntries.add(request.getApplication().getCourseApplication().getExternalApplicationID());
             csvEntries.add(request.getApplication().getApplicant().getFullName().getSurname());
             csvEntries.add(request.getApplication().getApplicant().getFullName().getForename1());
             csvEntries.add(request.getApplication().getApplicant().getDateOfBirth().toString());
         }
-        
+
         @Override
         public void webServiceCallFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
             csvEntries.add("null"); // applicantId
@@ -821,26 +843,26 @@ public class PorticoWebServiceIT {
             csvEntries.add(error.getDiagnosticInfo());
             Assert.fail(String.format("Received error from web service [reason=%s]", error.getDiagnosticInfo()));
         }
-        
+
         @Override
         public void sftpTransferStarted(ApplicationForm form) {
             // we do nothing here
         }
-        
+
         @Override
         public void sftpTransferCompleted(String zipFileName, ApplicationFormTransfer transfer) {
             csvEntries.add(zipFileName);
             csvEntries.add("null");
-            
-            writer.writeNext(csvEntries.toArray(new String[]{}));
+
+            writer.writeNext(csvEntries.toArray(new String[] {}));
             try {
                 writer.close();
             } catch (Exception e) {
-                //do nothing
+                // do nothing
             }
             csvEntries.clear();
         }
-        
+
         @Override
         public void sftpTransferFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
             csvEntries.add("null"); // zipFileName

@@ -29,7 +29,7 @@
     <input type="hidden" id="${encRefereeId}_jobTitle" value="${(referee.jobTitle?html)!}"/>
     <input type="hidden" id="${encRefereeId}_addressLocation" value="${(referee.addressLocation.locationString?html)!}"/>
     
-    <input type="hidden" id="${encRefereeId}_addressCountry" <#if referee.addressLocation.country??> value="${(referee.addressLocation.country.name?html)!}" </#if>/>
+    <input type="hidden" id="${encRefereeId}_addressCountry" <#if referee.addressLocation.domicile??> value="${(referee.addressLocation.domicile.name?html)!}" </#if>/>
     <input type="hidden" id="${encRefereeId}_lastUpdated" value="<#if referee.hasProvidedReference() > 
     Provided ${(referee.reference.lastUpdated?string('dd MMM yyyy'))!}
     <#else>
@@ -87,7 +87,7 @@
       <!-- Country -->
       <div class="admin_row">
         <span class="admin_row_label">Country</span>
-        <div class="field" id="ref_address_country">${(referee.addressLocation.country.name?html)!"Not Provided"}</div>
+        <div class="field" id="ref_address_country">${(referee.addressLocation.domicile.name?html)!"Not Provided"}</div>
       </div>
     
       <!-- Email address -->

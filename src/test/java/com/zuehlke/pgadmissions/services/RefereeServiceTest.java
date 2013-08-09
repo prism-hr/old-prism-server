@@ -29,8 +29,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
@@ -68,16 +68,16 @@ public class RefereeServiceTest {
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
         encryptionHelper = createMock(EncryptionHelper.class);
         applicantRatingServiceMock = createMock(ApplicantRatingService.class);
-        refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock,
-                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock);
+        refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock, roleDAOMock, commentServiceMock, eventFactoryMock,
+                        applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock);
     }
 
     @Test
     public void shouldEditReferenceComment() throws UnsupportedEncodingException {
         ApplicationForm applicationForm = new ApplicationForm();
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
-        ReferenceComment referenceComment = new ReferenceCommentBuilder().comment("old comment").suitableForProgramme(false).suitableForUcl(false).document(null)
-                .build();
+        ReferenceComment referenceComment = new ReferenceCommentBuilder().comment("old comment").suitableForProgramme(false).suitableForUcl(false)
+                        .document(null).build();
         Referee referee = new RefereeBuilder().user(refereeUser).id(8).reference(referenceComment).build();
 
         Document document = new DocumentBuilder().build();
@@ -96,7 +96,6 @@ public class RefereeServiceTest {
         refereeService.editReferenceComment(applicationForm, refereesAdminEditDTO);
         EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicantRatingServiceMock);
 
-        
         assertEquals("comment text", referenceComment.getComment());
         assertEquals(document, referenceComment.getDocuments().get(0));
         assertEquals(true, referenceComment.getSuitableForProgramme());
@@ -224,7 +223,7 @@ public class RefereeServiceTest {
         refereesAdminEditDTO.setJobEmployer("Employer");
         refereesAdminEditDTO.setJobTitle("Job");
         Address address = new AddressBuilder().address1("1").address2("2").address3("3").address4("4").address5("5")
-                .country(new CountryBuilder().code("aa").build()).build();
+                        .domicile(new DomicileBuilder().code("aa").build()).build();
         refereesAdminEditDTO.setAddressLocation(address);
         refereesAdminEditDTO.setEmail("aaa@.fff.ccc");
         refereesAdminEditDTO.setPhoneNumber("+44 111111111");
@@ -306,7 +305,7 @@ public class RefereeServiceTest {
         Role adminRole = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).build();
         Role approverRole = new RoleBuilder().id(3).authorityEnum(Authority.APPROVER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole, adminRole, approverRole).firstName("bob").lastName("bobson")
-                .email("email@test.com").build();
+                        .email("email@test.com").build();
         userServiceMock.save(user);
         Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
@@ -334,11 +333,11 @@ public class RefereeServiceTest {
     @Test
     public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
         final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
-                .enabled(true).build();
+                        .enabled(true).build();
         Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com")
-                .application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
-        refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock,
-                roleDAOMock, commentServiceMock, eventFactoryMock, applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock) {
+                        .application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
+        refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock, roleDAOMock, commentServiceMock, eventFactoryMock,
+                        applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock) {
             @Override
             RegisteredUser newRegisteredUser() {
                 return user;
@@ -421,16 +420,16 @@ public class RefereeServiceTest {
         RegisteredUser admin2 = new RegisteredUserBuilder().id(2).firstName("anna").lastName("allen").email("email@test.com").build();
         Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
         ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant)
-                .program(new ProgramBuilder().title("klala").administrators(admin1, admin2).build()).build();
+                        .program(new ProgramBuilder().title("klala").administrators(admin1, admin2).build()).build();
         referee.setApplication(form);
 
         refereeDAOMock.save(referee);
 
         ReferenceEvent event = new ReferenceEventBuilder().id(4).build();
-        
+
         EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
         applicationFormDAOMock.save(form);
-        
+
         EasyMock.replay(refereeDAOMock, eventFactoryMock, applicationFormDAOMock);
 
         refereeService.declineToActAsRefereeAndSendNotification(referee);
@@ -441,7 +440,6 @@ public class RefereeServiceTest {
         EasyMock.verify(refereeDAOMock, eventFactoryMock, applicationFormDAOMock);
     }
 
-   
     @Test
     public void shouldNotSendDeclineNotificationIfSaveFails() {
 

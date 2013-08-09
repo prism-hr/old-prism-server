@@ -84,10 +84,10 @@
         <span id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></span>
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPG'/>"></span>
         <div class="field" id="field-issuitableucl">
-            <label><input type="radio" name="suitableForUCL_${encRefereeId}" value="true" id="suitableRB_true"
+            <label><input type="radio" name="suitableForUCL_${encRefereeId}" value="true" id="suitableUCL_true"
             <#if refereesAdminEditDTO.isSuitableForUCLSet() && refereesAdminEditDTO.suitableForUCL> checked="checked"</#if>
             /> Yes</label> 
-            <label><input type="radio" name="suitableForUCL_${encRefereeId}" value="false" id="suitableRB_false"
+            <label><input type="radio" name="suitableForUCL_${encRefereeId}" value="false" id="suitableUCL_false"
             <#if refereesAdminEditDTO.isSuitableForUCLSet() && !refereesAdminEditDTO.suitableForUCL> checked="checked"</#if>
             /> No</label>
             <@spring.bind "refereesAdminEditDTO.suitableForUCL" /> 
@@ -98,10 +98,10 @@
         <span id="supervise-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPGP'/>"></span>
         <div class="field">
-            <label><input type="radio" name="suitableForProgramme_${encRefereeId}" value="true" id="willingRB_true"
+            <label><input type="radio" name="suitableForProgramme_${encRefereeId}" id="suitableProgramme_true" value="true"
             <#if refereesAdminEditDTO.isSuitableForProgrammeSet() && refereesAdminEditDTO.suitableForProgramme> checked="checked"</#if> 
             /> Yes</label> 
-            <label><input type="radio" name="suitableForProgramme_${encRefereeId}" value="false" id="willingRB_false"
+            <label><input type="radio" name="suitableForProgramme_${encRefereeId}" id="suitableProgramme_false" value="false"
             <#if refereesAdminEditDTO.isSuitableForProgrammeSet() && !refereesAdminEditDTO.suitableForProgramme> checked="checked"</#if>
             /> No</label> 
             <@spring.bind "refereesAdminEditDTO.suitableForProgramme" /> 

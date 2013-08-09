@@ -1,8 +1,16 @@
-package com.zuehlke.pgadmissions.controllers.workflow;
+package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
 
+import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.EasyMockUnitils;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -17,59 +25,73 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.StateTransitionViewResolver;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class StateTransitionViewResolverTest {
+    
+    @TestedObject
+    private StateTransitionViewResolver resolver;
+    
+    @Mock
+    @InjectIntoByType
+    private ProgramInstanceService programInstanceServiceMock;
+
+    private ApplicationForm applicationForm;
 
     @Test
     public void shouldReturnRedirectToRejectViewIfProgrammeIsNotAvailableAnyMore() {
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
+        applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
                 .applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
                 .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.REVIEW).build()).build();
         applicationForm.getProgram().getInstances().get(0).setEnabled(false);
-        assertEquals("redirect:/rejectApplication?applicationId=ABC&rejectionId=7&rejectionIdForced=true", new StateTransitionViewResolver().resolveView(applicationForm));
+        
+        EasyMockUnitils.reset();
+        EasyMock.expect(programInstanceServiceMock.isProgrammeStillAvailable(applicationForm)).andReturn(false);
+        EasyMockUnitils.replay();
+        
+        assertEquals("redirect:/rejectApplication?applicationId=ABC&rejectionId=7&rejectionIdForced=true", resolver.resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnRedirectToReviewIfValidationAndReviewNextStatus() {
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
+        applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
                 .applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
                 .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.REVIEW).build()).build();
-        assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/review/moveToReview?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
     public void shouldReturnRedirectToIntervewIfValidationAndInterviewNextStatus() {
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
+        applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
         .applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
                 .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).build()).build();
-        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
     public void shouldReturnRedirectToApprovalIfValidationAndAppovalNextStatus() {
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
+        applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
                 .applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
                 .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVAL).build()).build();
-        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
     public void shouldReturnRedirectToRejectionIfValidationAndRejectedNextStatus() {
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
+        applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
                 .applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
                 .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).build()).build();
-        assertEquals("redirect:/rejectApplication?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/rejectApplication?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -78,7 +100,7 @@ public class StateTransitionViewResolverTest {
         ReviewRound latestReviewRound = new ReviewRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -88,7 +110,7 @@ public class StateTransitionViewResolverTest {
                         new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REVIEW)
                                 .reviewRound(latestReviewRound).build()).status(ApplicationFormStatus.REVIEW)
                 .reviewRounds(previousReviewRound, latestReviewRound).latestReviewRound(latestReviewRound).build();
-        assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/review/moveToReview?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -97,7 +119,7 @@ public class StateTransitionViewResolverTest {
         ReviewRound latestReviewRound = new ReviewRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -107,7 +129,7 @@ public class StateTransitionViewResolverTest {
                         new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW)
                                 .reviewRound(latestReviewRound).build()).status(ApplicationFormStatus.REVIEW)
                 .reviewRounds(previousReviewRound, latestReviewRound).latestReviewRound(latestReviewRound).build();
-        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -116,7 +138,7 @@ public class StateTransitionViewResolverTest {
         ReviewRound latestReviewRound = new ReviewRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -126,7 +148,7 @@ public class StateTransitionViewResolverTest {
                         new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVAL)
                                 .reviewRound(latestReviewRound).build()).status(ApplicationFormStatus.REVIEW)
                 .reviewRounds(previousReviewRound, latestReviewRound).latestReviewRound(latestReviewRound).build();
-        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -135,7 +157,7 @@ public class StateTransitionViewResolverTest {
         ReviewRound latestReviewRound = new ReviewRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -145,7 +167,7 @@ public class StateTransitionViewResolverTest {
                         new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED)
                                 .reviewRound(latestReviewRound).build()).status(ApplicationFormStatus.REVIEW)
                 .reviewRounds(previousReviewRound, latestReviewRound).latestReviewRound(latestReviewRound).build();
-        assertEquals("redirect:/rejectApplication?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/rejectApplication?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -154,7 +176,7 @@ public class StateTransitionViewResolverTest {
         Interview latestInterview = new InterviewBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -164,7 +186,7 @@ public class StateTransitionViewResolverTest {
                         new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW)
                                 .interview(latestInterview).build()).status(ApplicationFormStatus.INTERVIEW)
                 .interviews(previousInterview, latestInterview).latestInterview(latestInterview).build();
-        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -173,7 +195,7 @@ public class StateTransitionViewResolverTest {
         Interview latestInterview = new InterviewBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -183,7 +205,7 @@ public class StateTransitionViewResolverTest {
                         new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVAL)
                                 .interview(latestInterview).build()).status(ApplicationFormStatus.INTERVIEW)
                 .interviews(previousInterview, latestInterview).latestInterview(latestInterview).build();
-        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -192,7 +214,7 @@ public class StateTransitionViewResolverTest {
         Interview latestInterview = new InterviewBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -202,7 +224,7 @@ public class StateTransitionViewResolverTest {
                         new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED)
                                 .interview(latestInterview).build()).status(ApplicationFormStatus.INTERVIEW)
                 .interviews(previousInterview, latestInterview).latestInterview(latestInterview).build();
-        assertEquals("redirect:/rejectApplication?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/rejectApplication?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -211,7 +233,7 @@ public class StateTransitionViewResolverTest {
         ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -221,7 +243,7 @@ public class StateTransitionViewResolverTest {
                         new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED)
                                 .approvalRound(latestApprovalRound).build()).status(ApplicationFormStatus.APPROVAL)
                 .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
-        assertEquals("redirect:/rejectApplication?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/rejectApplication?applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -230,7 +252,7 @@ public class StateTransitionViewResolverTest {
         ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -241,7 +263,7 @@ public class StateTransitionViewResolverTest {
                         new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVED)
                                 .approvalRound(latestApprovalRound).build())
                 .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
-        assertEquals("redirect:/applications", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/applications", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -250,7 +272,7 @@ public class StateTransitionViewResolverTest {
         ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -261,7 +283,7 @@ public class StateTransitionViewResolverTest {
                         new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVED)
                                 .approvalRound(latestApprovalRound).build())
                 .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
-        assertEquals("private/staff/admin/state_transition", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("private/staff/admin/state_transition", resolver.resolveView(applicationForm));
     }
     
     @Test
@@ -270,7 +292,7 @@ public class StateTransitionViewResolverTest {
         ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -281,7 +303,7 @@ public class StateTransitionViewResolverTest {
                         new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REVIEW)
                                 .approvalRound(latestApprovalRound).build())
                 .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
-        assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/review/moveToReview?applicationId=ABC", resolver.resolveView(applicationForm));
     }
     
     @Test
@@ -290,7 +312,7 @@ public class StateTransitionViewResolverTest {
         ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .id(1)
@@ -301,7 +323,7 @@ public class StateTransitionViewResolverTest {
                         new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW)
                                 .approvalRound(latestApprovalRound).build())
                 .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
-        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", resolver.resolveView(applicationForm));
     }
     
     @Test
@@ -310,7 +332,7 @@ public class StateTransitionViewResolverTest {
         Interview latestInterview = new InterviewBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
         validApplicationFormBuilder.build();
-        ApplicationForm applicationForm = validApplicationFormBuilder
+        applicationForm = validApplicationFormBuilder
                 .getApplicationFormBuilder()
                 .applicationNumber("ABC")
                 .status(ApplicationFormStatus.INTERVIEW)
@@ -322,6 +344,12 @@ public class StateTransitionViewResolverTest {
                                 .interview(latestInterview).build()).status(ApplicationFormStatus.REVIEW)
                 .interviews(previousInterview, latestInterview).latestInterview(latestInterview).build();
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
-        assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
+        assertEquals("redirect:/review/moveToReview?applicationId=ABC", resolver.resolveView(applicationForm));
+    }
+    
+    @Before
+    public void setUp(){
+        EasyMock.expect(programInstanceServiceMock.isProgrammeStillAvailable(applicationForm)).andReturn(true);
+        EasyMockUnitils.replay();
     }
 }

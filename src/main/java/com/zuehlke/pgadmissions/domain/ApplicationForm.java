@@ -50,8 +50,6 @@ import com.zuehlke.pgadmissions.utils.MathUtils;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationForm implements Comparable<ApplicationForm>, FormSectionObject, Serializable {
 
-    private static final int CONSIDERATION_PERIOD_MONTHS = 1;
-
     private static final long serialVersionUID = -7671357234815343496L;
 
     @Id
@@ -1005,72 +1003,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
 
         return ApplicationFormStatus.VALIDATION;
-    }
-
-    public boolean isProgrammeStillAvailable() {
-        Date maxProgrammeEndDate = null;
-        Date today = new Date();
-
-        ProgrammeDetails details = getProgrammeDetails();
-
-        for (ProgramInstance instance : getProgram().getInstances()) {
-            boolean isProgrammeEnabled = getProgram().isEnabled();
-            boolean isInstanceEnabled = instance.isActive();
-            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-
-            if (isProgrammeEnabled && isInstanceEnabled && sameStudyOption && sameStudyOptionCode) {
-                Date programmeEndDate = instance.getApplicationDeadline();
-                if (maxProgrammeEndDate == null) {
-                    maxProgrammeEndDate = programmeEndDate;
-                } else if (programmeEndDate.after(maxProgrammeEndDate)) {
-                    maxProgrammeEndDate = programmeEndDate;
-                }
-            }
-        }
-
-        if (maxProgrammeEndDate == null || maxProgrammeEndDate.before(today)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public Date getEarliestPossibleStartDate() {
-        Date result = null;
-        ProgrammeDetails details = getProgrammeDetails();
-        Date today = new Date();
-        Date todayPlusConsiderationPeriod = DateUtils.addMonths(today, CONSIDERATION_PERIOD_MONTHS);
-        for (ProgramInstance instance : getProgram().getInstances()) {
-            Date applicationStartDate = instance.getApplicationStartDate();
-            boolean startDateInFuture = today.before(applicationStartDate);
-            boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
-            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (program.isEnabled() && instance.isActive() && (startDateInFuture || beforeEndDate) && sameStudyOption && sameStudyOptionCode) {
-                if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
-                    result = applicationStartDate;
-                } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
-                    result = todayPlusConsiderationPeriod;
-                }
-            }
-        }
-        return result;
-    }
-
-    public boolean isPrefferedStartDateWithinBounds() {
-        ProgrammeDetails details = getProgrammeDetails();
-        Date startDate = details.getStartDate();
-        for (ProgramInstance instance : getProgram().getInstances()) {
-            boolean afterStartDate = !startDate.before(instance.getApplicationStartDate());
-            boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
-            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (program.isEnabled() && instance.isActive() && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public List<Document> getQualificationsToSendToPortico() {

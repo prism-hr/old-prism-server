@@ -33,8 +33,6 @@
         <property name="transactionManager" ref="transactionManager" />
     </bean>
     
-    <bean id="stateTransitionViewResolver" class="com.zuehlke.pgadmissions.services.StateTransitionViewResolver" />
-    
     <bean id="applicationFormAccessService" class="com.zuehlke.pgadmissions.services.ApplicationFormAccessService" />    
 
 </beans>

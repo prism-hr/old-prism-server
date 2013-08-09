@@ -52,7 +52,5 @@
     
     <bean id="actionsProvider" class="com.zuehlke.pgadmissions.components.ActionsProvider" />
     
-    <bean id="stateTransitionViewResolver" class="com.zuehlke.pgadmissions.services.StateTransitionViewResolver" />
-    
     <context:component-scan base-package="com.zuehlke.pgadmissions.dao" />
 </beans>

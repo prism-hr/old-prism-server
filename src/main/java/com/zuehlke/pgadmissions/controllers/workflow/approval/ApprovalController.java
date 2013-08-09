@@ -68,6 +68,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -132,10 +133,12 @@ public class ApprovalController {
 
     private final ActionsProvider actionsProvider;
 
-    private ApplicationDescriptorProvider applicationDescriptorProvider;
+    private final ApplicationDescriptorProvider applicationDescriptorProvider;
+
+    private final ProgramInstanceService programInstanceService;
 
     public ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -146,7 +149,7 @@ public class ApprovalController {
             SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
             CountryPropertyEditor countryPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
             ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider,
-            final ApplicationDescriptorProvider applicationDescriptorProvider) {
+            final ApplicationDescriptorProvider applicationDescriptorProvider, ProgramInstanceService programInstanceService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
@@ -169,6 +172,7 @@ public class ApprovalController {
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
+        this.programInstanceService = programInstanceService;
     }
 
     @InitBinder(value = "refereesAdminEditDTO")
@@ -300,8 +304,8 @@ public class ApprovalController {
         }
 
         Date startDate = applicationForm.getProgrammeDetails().getStartDate();
-        if (!applicationForm.isPrefferedStartDateWithinBounds()) {
-            startDate = applicationForm.getEarliestPossibleStartDate();
+        if (!programInstanceService.isPrefferedStartDateWithinBounds(applicationForm)) {
+            startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
         }
         approvalRound.setRecommendedStartDate(startDate);
         return approvalRound;
@@ -478,11 +482,11 @@ public class ApprovalController {
 
     @RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)
     public String requestRestart(@Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result, ModelMap modelMap) {
-        
+
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
-        
+
         if (result.hasErrors()) {
             return REQUEST_RESTART_APPROVE_PAGE;
         }

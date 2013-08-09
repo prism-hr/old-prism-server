@@ -161,20 +161,6 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         this.identifier = identifier;
     }
     
-    public boolean isActive(){
-        if(getEnabled()){
-            return true;
-        }
-        if(getDisabledDate() != null){
-            LocalDate disableLocalDate = new LocalDate(getDisabledDate().getTime());
-            LocalDate today = new LocalDate();
-            if(today.isBefore(disableLocalDate.plusDays(30))){
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean isDateWithinBounds(Date date) {
         boolean afterStartDate = !date.before(getApplicationStartDate());
         boolean beforeEndDate = date.before(getApplicationDeadline());

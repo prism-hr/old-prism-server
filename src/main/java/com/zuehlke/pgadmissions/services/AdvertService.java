@@ -42,4 +42,8 @@ public class AdvertService {
 		advertDAO.save(advert);
 	}
 
+	public Advert getAdvertById(int advertId) {
+		return advertDAO.getAdvertById(advertId);
+	}
+
 }

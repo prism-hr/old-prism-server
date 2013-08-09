@@ -5,6 +5,15 @@
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="prism.version" content="<@spring.message 'prism.version'/>" >
+		
+		<meta property="og:type" content="website">
+        <meta property="og:site_name" content="UCL Postgraduate Admissions">
+        <meta property="og:title" content="<#if title??>${title}</#if>">
+        <meta property="og:description" content="<#if description??>${description}</#if>">
+        <meta property="og:url" content="http://www.prism.ucl.ac.uk/pgadmissions/register<#if advertId??>?advert=${advertId}</#if>">
+        <meta property="og:image" content="http://www.prism.ucl.ac.uk/pgadmissions/design/default/images/fbimg.jpg">
+        <meta property="fb:app_id" content="172294119620634">
+		
 		<title>UCL Postgraduate Admissions</title>
 		
 		<!-- Styles for Login List Page -->

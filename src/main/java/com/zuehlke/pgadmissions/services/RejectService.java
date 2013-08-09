@@ -98,7 +98,6 @@ public class RejectService {
 	}
 	
 	public void sendToPortico(ApplicationForm form) {
-	    // TODO: Enable when ready for production
 	    porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);	    
 	}
 }

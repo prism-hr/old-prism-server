@@ -20,9 +20,9 @@ public class AddressSectionDTOValidator extends FormSectionObjectValidator imple
 		super.addExtraValidation(target, errors);		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress1", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress3", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressDomicile", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress1", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress3", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressDomicile", EMPTY_DROPDOWN_ERROR_MESSAGE);
 	}
 }

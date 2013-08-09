@@ -60,8 +60,8 @@ public class RefereesAdminEditDTOValidator extends AbstractValidator {
 			if (dto.getAddressLocation() != null && StringUtils.isBlank(dto.getAddressLocation().getAddress3())) {
 				errors.rejectValue("addressLocation.address3", EMPTY_FIELD_ERROR_MESSAGE);
 			}
-			if (dto.getAddressLocation() != null && dto.getAddressLocation().getCountry() == null) {
-				errors.rejectValue("addressLocation.country", EMPTY_FIELD_ERROR_MESSAGE);
+			if (dto.getAddressLocation() != null && dto.getAddressLocation().getDomicile() == null) {
+				errors.rejectValue("addressLocation.domicile", EMPTY_FIELD_ERROR_MESSAGE);
 			}
 		}
 

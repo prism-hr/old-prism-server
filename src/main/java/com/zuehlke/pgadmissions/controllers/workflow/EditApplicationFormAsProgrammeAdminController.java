@@ -26,8 +26,8 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -40,8 +40,8 @@ import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
@@ -79,9 +79,9 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     private final EncryptionHelper encryptionHelper;
 
-    private final CountryService countryService;
+    private final DomicileService domicileService;
 
-    private final CountryPropertyEditor countryPropertyEditor;
+    private final DomicilePropertyEditor domicilePropertyEditor;
 
     private final MessageSource messageSource;
 
@@ -99,11 +99,11 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @Autowired
     public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationService,
-            final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
-            final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            final EncryptionHelper encryptionHelper, final CountryService countryService, final CountryPropertyEditor countryPropertyEditor,
-            final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
-            ScoreFactory scoreFactory, final ApplicationDescriptorProvider applicationDescriptorProvider) {
+                    final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
+                    final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
+                    final EncryptionHelper encryptionHelper, final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
+                    ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationDescriptorProvider applicationDescriptorProvider,
+                    DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor) {
         this.userService = userService;
         this.applicationService = applicationService;
         this.documentPropertyEditor = documentPropertyEditor;
@@ -111,13 +111,13 @@ public class EditApplicationFormAsProgrammeAdminController {
         this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
         this.encryptionHelper = encryptionHelper;
         this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
-        this.countryService = countryService;
-        this.countryPropertyEditor = countryPropertyEditor;
         this.messageSource = messageSource;
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
+        this.domicileService = domicileService;
+        this.domicilePropertyEditor = domicilePropertyEditor;
     }
 
     @InitBinder(value = "sendToPorticoData")
@@ -129,7 +129,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(refereesAdminEditDTOValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(Country.class, countryPropertyEditor);
+        binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
         binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
@@ -144,7 +144,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
-            BindingResult result, Model model) throws ScoringDefinitionParseException {
+                    BindingResult result, Model model) throws ScoringDefinitionParseException {
 
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 
@@ -166,13 +166,11 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
     public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
-            BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
-            @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
+                    BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
+                    @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         model.addAttribute("editedRefereeId", editedRefereeId);
-        createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
-
         // save "send to UCL" data first
         if (sendToPorticoData.getRefereesSendToPortico() != null) {
             refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
@@ -234,9 +232,9 @@ public class EditApplicationFormAsProgrammeAdminController {
         return refereesAdminEditDTO;
     }
 
-    @ModelAttribute("countries")
-    public List<Country> getAllCountries() {
-        return countryService.getAllCountries();
+    @ModelAttribute("domiciles")
+    public List<Domicile> getAllDomiciles() {
+        return domicileService.getAllEnabledDomiciles();
     }
 
     private RegisteredUser getCurrentUser() {
@@ -259,9 +257,9 @@ public class EditApplicationFormAsProgrammeAdminController {
 
         return applicationForm;
     }
-    
+
     @ModelAttribute("applicationDescriptor")
-    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId){
+    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
         return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);

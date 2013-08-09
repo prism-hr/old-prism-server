@@ -212,7 +212,7 @@ function postRefereeData(message){
 			'addressLocation.address4': $("#ref_address_location4").val(),
 			'addressLocation.address5': $("#ref_address_location5").val(),
 			messenger: $("#ref_messenger").val(), 
-			'addressLocation.country': $("#ref_address_country").val(), 
+			'addressLocation.domicile': $("#ref_address_country").val(), 
 			email: $("#ref_email").val(),			
 			applicationId:  $('#applicationId').val(),
 			application:  $('#applicationId').val(),	

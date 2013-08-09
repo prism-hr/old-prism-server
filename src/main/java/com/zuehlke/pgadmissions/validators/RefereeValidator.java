@@ -54,8 +54,8 @@ public class RefereeValidator extends FormSectionObjectValidator implements Vali
 			errors.rejectValue("addressLocation.address3", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		
-		if (referee.getAddressLocation() != null && referee.getAddressLocation().getCountry()==null) {
-			errors.rejectValue("addressLocation.country", EMPTY_FIELD_ERROR_MESSAGE);
+		if (referee.getAddressLocation() != null && referee.getAddressLocation().getDomicile()==null) {
+			errors.rejectValue("addressLocation.domicile", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		
 		for (Referee existingReferee : referee.getApplication().getReferees()) {

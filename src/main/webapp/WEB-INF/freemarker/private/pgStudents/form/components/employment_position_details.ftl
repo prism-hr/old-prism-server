@@ -144,12 +144,12 @@
         <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerCountry'/>"></span>
         <div class="field"> <select class="full" id="position_country" name="position_country"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
           <option value="">Select...</option>
-          <#list countries as country> <option value="${encrypter.encrypt(country.id)}"<#if employmentPosition.employerAddress.country?? && employmentPosition.employerAddress.country.id == country.id> selected="selected"</#if>>
-          ${country.name?html}
+          <#list domiciles as domicile> <option value="${encrypter.encrypt(domicile.id)}"<#if employmentPosition.employerAddress.domicile?? && employmentPosition.employerAddress.domicile.id == domicile.id> selected="selected"</#if>>
+          ${domicile.name?html}
           </option>
           </#list>
           </select>
-          <@spring.bind "employmentPosition.employerAddress.country" />
+          <@spring.bind "employmentPosition.employerAddress.domicile" />
           <#list spring.status.errorMessages as error>
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}

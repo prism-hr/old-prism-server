@@ -101,7 +101,7 @@ function addNewRefButt() {
 			$('#referee_newReferee').show();
 			$('#referee_newReferee input').val('');
 			$('#refereeComment_newReferee').attr('value', '');
-			$('#suitableRB_true, #suitableRB_false, #willingRB_true, #willingRB_false').prop('checked', false);
+			$('#suitableUCL_true, #suitableUCL_false, #suitableProgramme_true, #suitableProgramme_false').prop('checked', false);
 		});
 }
 function clearRefereeFormErrors() {
@@ -170,14 +170,12 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
     var refereeId = $('#editedRefereeId').val();
     
     var suitableUCL = "";
-    if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
-        suitableUCL = $('input:radio[name=suitableForUCL_' + refereeId + ']:checked').val();
-    }
-
+    if($('input[id=suitableUCL_true]:checked').length>0){suitableUCL="true";}
+    else if($('input[id=suitableUCL_false]:checked').length>0){suitableUCL="false";}
+    
     var suitableForProgramme = "";
-    if ($('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').length > 0) {
-        suitableForProgramme = $('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').val();
-    }
+    if($('input[id=suitableProgramme_true]:checked').length>0){suitableForProgramme="true";}
+    else if($('input[id=suitableProgramme_false]:checked').length>0){suitableForProgramme="false";}
     
     var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
     var $ref_doc_container  = $ref_doc_upload_field.closest('div.field');
@@ -215,7 +213,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
 		postData['addressLocation.address3'] = $("#address_location3_" + refereeId).val();
 		postData['addressLocation.address4'] = $("#address_location4_" + refereeId).val();
 		postData['addressLocation.address5'] = $("#address_location5_" + refereeId).val();
-		postData['addressLocation.country'] = $("#address_country_" + refereeId).val();
+		postData['addressLocation.domicile'] = $("#address_country_" + refereeId).val();
 		postData['email'] = $("#email_" + refereeId).val();
 		postData['phoneNumber'] = $("#phoneNumber_" + refereeId).val();
 		postData['messenger'] = $("#messenger_" + refereeId).val();

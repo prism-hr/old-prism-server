@@ -284,7 +284,7 @@ function postEmploymentData(message)
 			endDate: $("#position_endDate").val(), 
 			remit: $("#position_remit").val(), 
 			language: $("#position_language").val(), 
-			'employerAddress.country': $("#position_country").val(),
+			'employerAddress.domicile': $("#position_country").val(),
 			employerName: $("#position_employer_name").val(),
 			'employerAddress.address1': $("#position_employer_address1").val(),
 			'employerAddress.address2': $("#position_employer_address2").val(),

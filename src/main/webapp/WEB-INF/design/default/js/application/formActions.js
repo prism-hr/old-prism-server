@@ -382,11 +382,11 @@ function loadAddresSection(clear){
 				checkLoadedSections();
 				if(clear){
 					$('#currentAddressLocation').empty();
-					$('#currentAddressCountry').val('');
+					$('#currentAddressDomicile').val('');
 					$('#contactAddressLocation').empty();
 					$('#contactAddressLocation').removeAttr('disabled');
-					$('#contactAddressCountry').val('');
-					$('#contactAddressCountry').removeAttr('disabled');
+					$('#contactAddressDomicile').val('');
+					$('#contactAddressDomicile').removeAttr('disabled');
 					$('#currentAddress1, #currentAddress2, #currentAddress3, #currentAddress4, #currentAddress5').val('');
 					$('#contactAddress1, #contactAddress2, #contactAddress3, #contactAddress4, #contactAddress5').val('');
 					$('#contactAddress1, #contactAddress2, #contactAddress3, #contactAddress4, #contactAddress5').removeAttr('disabled');

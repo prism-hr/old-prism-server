@@ -132,8 +132,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().save(application);
         flushAndClearSession();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).firstNationality(nationality1)
-                .dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).title(Title.MR).gender(Gender.MALE).residenceDomicile(country3)
-                .requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).build();
+                        .dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).title(Title.MR).gender(Gender.MALE).residenceDomicile(country3)
+                        .requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).build();
 
         sessionFactory.getCurrentSession().save(personalDetails);
         flushAndClearSession();
@@ -150,7 +150,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().save(application);
         flushAndClearSession();
         Interview interview = new InterviewBuilder().application(application).lastNotified(new Date()).furtherDetails("tba").locationURL("pgadmissions")
-                .build();
+                        .build();
 
         sessionFactory.getCurrentSession().save(interview);
         flushAndClearSession();
@@ -165,11 +165,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setProgram(program);
         application.setApplicant(user);
 
-        Country build = new CountryBuilder().name("AA").code("AA").enabled(true).build();
-        save(build);
+        Domicile domicile = new DomicileBuilder().name("AA").code("AA").enabled(true).build();
+        save(domicile);
 
-        Address addressOne = new AddressBuilder().country(build).address1("london").build();
-        Address addressTwo = new AddressBuilder().country(build).address1("london").build();
+        Address addressOne = new AddressBuilder().domicile(domicile).address1("london").build();
+        Address addressTwo = new AddressBuilder().domicile(domicile).address1("london").build();
 
         application.setCurrentAddress(addressOne);
         application.setContactAddress(addressTwo);
@@ -240,13 +240,13 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
         Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
-                .title("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
-                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
-                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
+                        .title("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                        .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                        .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
         Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").title("")
-                .isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("").institutionCode("AS008Z")
-                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
-                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
+                        .isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("").institutionCode("AS008Z")
+                        .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                        .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
 
         application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
 
@@ -262,9 +262,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     public void shouldSaveAndLoadNotificationRecordsWithApplication() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
         NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26"))
-                .notificationType(NotificationType.UPDATED_NOTIFICATION).build();
+                        .notificationType(NotificationType.UPDATED_NOTIFICATION).build();
         NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26"))
-                .notificationType(NotificationType.VALIDATION_REMINDER).build();
+                        .notificationType(NotificationType.VALIDATION_REMINDER).build();
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).notificationRecords(recordOne, recordTwo).build();
 
         save(application);
@@ -295,9 +295,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     public void shouldSaveAndLoadEventsWithApplication() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
         StateChangeEvent eventOne = new StateChangeEventBuilder().date(simpleDateFormat.parse("01 12 2011 14:09:26")).newStatus(ApplicationFormStatus.REJECTED)
-                .build();
+                        .build();
         StateChangeEvent eventTwo = new StateChangeEventBuilder().date(simpleDateFormat.parse("03 12 2011 14:09:26"))
-                .newStatus(ApplicationFormStatus.UNSUBMITTED).build();
+                        .newStatus(ApplicationFormStatus.UNSUBMITTED).build();
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).events(eventOne, eventTwo).build();
 
         save(application);
@@ -442,7 +442,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
         assertEquals(approver.getId(), reloadedApplication.getApproverRequestedRestart().getId());
     }
-    
+
     @Test
     public void shouldLoadApplicationFormWithADisabledProject() throws ParseException {
 
@@ -492,30 +492,25 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                        .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        reviewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com")
-                .username("hoopla").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
+        reviewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("hoopla").password("password")
+                        .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com")
-                .username("brady").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
+        interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com").username("brady").password("password")
+                        .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        applicationAdmin = new RegisteredUserBuilder().firstName("joan").lastName("arc").email("act@test.com")
-                .username("arc").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
+        applicationAdmin = new RegisteredUserBuilder().firstName("joan").lastName("arc").email("act@test.com").username("arc").password("password")
+                        .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        approver = new RegisteredUserBuilder().firstName("het").lastName("get").email("het@test.com").username("hed")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
-                .enabled(false).build();
+        approver = new RegisteredUserBuilder().firstName("het").lastName("get").email("het@test.com").username("hed").password("password")
+                        .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
-        
+
         Advert advert = new AdvertBuilder().title("title").description("description").funding("funding").studyDuration(6).build();
-		project = new ProjectBuilder().advert(advert).author(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
+        project = new ProjectBuilder().advert(advert).author(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
 
         save(user, reviewerUser, program, interviewerUser, applicationAdmin, approver, project);
 

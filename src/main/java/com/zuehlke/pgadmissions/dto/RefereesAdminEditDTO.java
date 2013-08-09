@@ -198,7 +198,7 @@ public class RefereesAdminEditDTO {
         boolean startedTypingRefereeData = addressLocation != null
                 && (!allBlank(firstname, lastname, addressLocation.getAddress1(), addressLocation.getAddress2(), addressLocation.getAddress3(),
                         addressLocation.getAddress4(), addressLocation.getAddress5(), jobEmployer, jobTitle, email, phoneNumber, messenger) || addressLocation
-                        .getCountry() != null);
+                        .getDomicile() != null);
         return startedTypingReference || startedTypingRefereeData;
     }
 

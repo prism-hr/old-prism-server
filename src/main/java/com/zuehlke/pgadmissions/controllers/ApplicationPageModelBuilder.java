@@ -79,7 +79,7 @@ public class ApplicationPageModelBuilder {
 
 		com.zuehlke.pgadmissions.domain.Address currentAddress = applicationForm.getCurrentAddress();
 		if (currentAddress != null) {
-			address.setCurrentAddressCountry(currentAddress.getCountry());
+			address.setCurrentAddressDomicile(currentAddress.getDomicile());
 
 			address.setCurrentAddress1(currentAddress.getAddress1());
 			address.setCurrentAddress2(currentAddress.getAddress2());
@@ -89,7 +89,7 @@ public class ApplicationPageModelBuilder {
 		}
 		com.zuehlke.pgadmissions.domain.Address contactAddress = applicationForm.getContactAddress();
 		if(contactAddress != null){
-		address.setContactAddressCountry(contactAddress.getCountry());
+		address.setContactAddressDomicile(contactAddress.getDomicile());
 
 		address.setContactAddress1(contactAddress.getAddress1());
 		address.setContactAddress2(contactAddress.getAddress2());

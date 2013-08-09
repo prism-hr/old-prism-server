@@ -18,6 +18,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -172,21 +173,22 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
-        result.rejectValue("comment", "text.field.empty");
+        FieldError fieldError = new FieldError("refereesAdminEditDTO", "comment", null);
+        result.addError(fieldError);
         Model model = new ExtendedModelMap();
 
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
 
-        EasyMock.expect(messageSourceMock.getMessage("text.field.empty", null, Locale.getDefault())).andReturn("empty field");
+        EasyMock.expect(messageSourceMock.getMessage(fieldError, Locale.getDefault())).andReturn("empty field");
 
         EasyMock.replay(refereeServiceMock, messageSourceMock);
         String ret = controller.updateReference(applicationForm, refereesAdminEditDTO, result, model);
+        EasyMock.verify(refereeServiceMock, messageSourceMock);
+        
         Map<String, String> retMap = new Gson().fromJson(ret, Map.class);
         assertEquals(2, retMap.size());
         assertEquals("false", retMap.get("success"));
         assertEquals("empty field", retMap.get("comment"));
-
-        EasyMock.verify(refereeServiceMock, messageSourceMock);
     }
 
     @Test

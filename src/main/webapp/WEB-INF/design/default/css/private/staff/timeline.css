@@ -38,6 +38,10 @@
 #timeline-statuses .box h3.answer.overseas span { background-position: -57px 0; }
 #timeline-statuses .box h3.answer.yes span { background-position: -76px 0; }
 #timeline-statuses .box h3:last-child { margin-bottom: 0px !important;}
+#timeline-statuses .box h3.rating i{display: inline-block;}
+#timeline-statuses .box h3.rating i:before {color: #FFC926; margin-left: -25px; font-size: 15px;}
+#timeline-statuses .box h3.rating { line-height: 1; margin-top: 0; padding: 6px 10px 0 36px; }
+
 
 #timeline-statuses ul .box { padding-bottom: 10px; }
 #timeline-statuses ul .box .title { background: #AAA; }
@@ -341,4 +345,11 @@ margin-left: 4px;
   top: 38px;
   font-size: 30px;
   cursor: pointer;
+}
+#timeline-statuses ul .box p.rejection {
+  padding-left:38px; 
+}
+#timeline-statuses ul .box p.rejection i{
+  margin-left: -25px;
+  font-size: 14px;
 }

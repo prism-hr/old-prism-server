@@ -272,6 +272,11 @@ select.list-select-to option { padding: 5px; }
 #confirmNextStage {
 	margin-top: -4px;
 }
+/* Raging score*/
+span.rating { 	float: right; margin-right: 8px; margin-top: 4px; }
+span.rating:before{ color: #FFC926; font-size:18px; }
+span.rating>span { color:#333; margin-left: 4px; font-size: 18px; border-radius: 10px; font-family: Arial;}
+.highlight span.rating { margin-top: -2px; margin-right: 20px; }
 /* Scrools*/
 .existing  table { margin-bottom: 0; width: 100% }
 .existing  table tr td:first-child {border-left:none;}

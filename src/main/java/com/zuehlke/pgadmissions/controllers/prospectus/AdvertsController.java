@@ -102,8 +102,15 @@ public class AdvertsController {
         Collections.shuffle(activeAdverts, new Random(System.currentTimeMillis()));
         AdvertDTO selectedAdvert = getSelectedAdvert(advert, activeAdverts);
         setSelectedAndBringToFront(selectedAdvert, activeAdverts);
+        for (AdvertDTO advertDTO : activeAdverts) {
+            advertDTO.setDescription(replaceLineChangeWithHTMLLineChange(advertDTO.getDescription()));
+        }
         map.put("adverts", activeAdverts);
         return new Gson().toJson(map);
+    }
+    
+    private String replaceLineChangeWithHTMLLineChange(String originalDescription){
+        return originalDescription.replaceAll("\n", "<br>");
     }
 
     @SuppressWarnings("rawtypes")

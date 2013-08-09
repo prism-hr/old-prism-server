@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -15,9 +16,13 @@ public class StateTransitionViewResolver {
     private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
+    @Autowired
+    private ProgramInstanceService programInstanceService;
+    
+
     public String resolveView(ApplicationForm applicationForm) {
 
-        if (!applicationForm.isProgrammeStillAvailable()) {
+        if (!programInstanceService.isProgrammeStillAvailable(applicationForm)) {
             return REJECTION_VIEW + applicationForm.getApplicationNumber() + "&rejectionId=7&rejectionIdForced=true";
         }
 

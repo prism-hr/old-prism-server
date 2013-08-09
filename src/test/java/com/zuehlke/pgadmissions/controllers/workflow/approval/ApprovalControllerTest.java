@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -58,7 +56,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -91,6 +88,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -126,19 +124,14 @@ public class ApprovalControllerTest {
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
     private ApplicationDescriptorProvider applicationDescriptorProviderMock;
+    private ProgramInstanceService programInstanceServiceMock;
 
     @Test
     public void shouldGetApprovalPage() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
         Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
 
-        Date startDate = new Date();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
-        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
-                .enabled(true).studyOption("1", "full").build();
-        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
-
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).program(program)
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
                 .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, suprvisorTwo).build()).build();
 
         ModelMap modelMap = new ModelMap();
@@ -146,10 +139,11 @@ public class ApprovalControllerTest {
         modelMap.put("user", currentUserMock);
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
 
-        EasyMock.replay(applicationServiceMock);
+        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap));
-        EasyMock.verify(applicationServiceMock);
+        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
 
         ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
         assertNull(approvalRound.getId());
@@ -289,19 +283,17 @@ public class ApprovalControllerTest {
 
         Date startDate = new Date();
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
-        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
-                .enabled(true).studyOption("1", "full").build();
-        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
 
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).programmeDetails(programmeDetails)
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails)
                 .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, suprvisorTwo).build()).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        
-        EasyMock.replay(applicationServiceMock);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+
+        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-        EasyMock.verify(applicationServiceMock);
-        
+        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
+
         assertNull(returnedApprovalRound.getId());
         assertEquals(2, returnedApprovalRound.getSupervisors().size());
         assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, suprvisorTwo)));
@@ -318,26 +310,20 @@ public class ApprovalControllerTest {
         InterviewComment interviewThree = new InterviewCommentBuilder().id(3).user(userThree).willingToSupervise(true).build();
         Supervisor supervisorOne = new SupervisorBuilder().id(1).user(userOne).build();
         Supervisor supervisorTwo = new SupervisorBuilder().id(2).user(userTwo).build();
-        
+
         RegisteredUser decliningUser = new RegisteredUserBuilder().id(4).build();
         Supervisor decliningSupervisor = new SupervisorBuilder().declinedSupervisionReason("Because I can! Hahaha!").user(decliningUser).build();
-        
-        Date startDate = new Date();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
-        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
-                .enabled(true).studyOption("1", "full").build();
-        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
 
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).program(program)
-                .comments(interviewOne, interviewTwo, interviewThree)
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(interviewOne, interviewTwo, interviewThree)
                 .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, supervisorTwo, decliningSupervisor).build()).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        
-        EasyMock.replay(applicationServiceMock);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+
+        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-        EasyMock.verify(applicationServiceMock);
-        
+        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
+
         assertNull(returnedApprovalRound.getId());
         assertEquals(3, returnedApprovalRound.getSupervisors().size());
         assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, supervisorTwo)));
@@ -351,19 +337,16 @@ public class ApprovalControllerTest {
         Date startDate = new Date();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
-        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
-                .enabled(true).studyOption("1", "full").build();
-        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
 
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).program(program)
-                .build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        
-        EasyMock.replay(applicationServiceMock);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+
+        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-        EasyMock.verify(applicationServiceMock);
-        
+        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
+
         assertNull(returnedApprovalRound.getId());
         assertTrue(returnedApprovalRound.getSupervisors().isEmpty());
         assertEquals(startDate, returnedApprovalRound.getRecommendedStartDate());
@@ -375,7 +358,7 @@ public class ApprovalControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        
+
         EasyMock.replay(applicationServiceMock);
         ApplicationForm returnedForm = controller.getApplicationForm("5");
         EasyMock.verify(applicationServiceMock);
@@ -400,7 +383,7 @@ public class ApprovalControllerTest {
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
         modelMap.put("user", currentUserMock);
-        
+
         actionsProviderMock.validateAction(application, currentUserMock, ApplicationFormAction.REVISE_APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
         approvalServiceMock.moveApplicationToApproval(application, approvalRound);
 
@@ -422,10 +405,10 @@ public class ApprovalControllerTest {
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", currentUserMock);
-        
+
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
         actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.REVISE_APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
-        
+
         EasyMock.replay(errorsMock, actionsProviderMock);
         assertEquals("/private/staff/supervisors/supervisors_section", controller.assignSupervisors(modelMap, approvalRound, errorsMock, sessionStatus));
         EasyMock.verify(errorsMock, actionsProviderMock);
@@ -451,11 +434,11 @@ public class ApprovalControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        
+
         EasyMock.replay(applicationServiceMock);
         RequestRestartComment comment = controller.getRequestRestartComment("5");
         EasyMock.verify(applicationServiceMock);
-        
+
         assertEquals(applicationForm, comment.getApplication());
         assertEquals(currentUserMock, comment.getUser());
     }
@@ -486,13 +469,13 @@ public class ApprovalControllerTest {
     @Test
     public void shouldRequestRestartOfApproval() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
-        
+
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", currentUserMock);
 
         RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
-        
+
         actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
 
         approvalServiceMock.requestApprovalRestart(applicationForm, currentUserMock, comment);
@@ -506,13 +489,13 @@ public class ApprovalControllerTest {
     public void shouldRequestRestartOfApprovalAndRedirectToADifferentPageForAdmin() {
         Program program = new ProgramBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").program(program).build();
-        
+
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", currentUserMock);
-        
+
         RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
-        
+
         actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
         approvalServiceMock.requestApprovalRestart(applicationForm, currentUserMock, comment);
         EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
@@ -529,13 +512,13 @@ public class ApprovalControllerTest {
         EasyMock.replay(bindingResultMock);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
-        
+
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", currentUserMock);
-        
+
         RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
-        
+
         actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
 
         EasyMock.replay(approvalServiceMock, actionsProviderMock);
@@ -792,6 +775,34 @@ public class ApprovalControllerTest {
         EasyMock.verify(binderMock);
     }
 
+    @Test
+    public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfApplicationHasProject() {
+        Program program = new ProgramBuilder().id(1).enabled(true).build();
+        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).email("primary.supervisor@email.test").build();
+        RegisteredUser secondarySupervisor = new RegisteredUserBuilder().id(2).email("secondary.supervisor@email.test").build();
+        Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();
+        Project project = new ProjectBuilder().program(program).advert(advert).primarySupervisor(primarySupervisor).secondarySupervisor(secondarySupervisor)
+                .build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project).build();
+
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+
+        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
+        ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
+        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
+
+        assertNull(returnedApprovalRound.getId());
+        List<Supervisor> supervisors = returnedApprovalRound.getSupervisors();
+        assertEquals(2, supervisors.size());
+        Supervisor supervisorOne = supervisors.get(0);
+        assertEquals(supervisorOne.getUser(), primarySupervisor);
+        assertTrue(supervisorOne.getIsPrimary());
+        Supervisor supervisorTwo = supervisors.get(1);
+        assertEquals(supervisorTwo.getUser(), secondarySupervisor);
+        assertFalse(supervisorTwo.getIsPrimary());
+    }
+
     @Before
     public void setUp() {
         applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -817,6 +828,7 @@ public class ApprovalControllerTest {
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
+        programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.replay(userServiceMock);
@@ -829,48 +841,8 @@ public class ApprovalControllerTest {
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
                 countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
-                actionsProviderMock, applicationDescriptorProviderMock);
+                actionsProviderMock, applicationDescriptorProviderMock, programInstanceServiceMock);
 
-    }
-
-    @Test
-    public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfApplicationHasProject() {
-        Date startDate = new Date();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
-        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
-                .enabled(true).studyOption("1", "full").build();
-        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
-        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).email("primary.supervisor@email.test").build();
-        RegisteredUser secondarySupervisor = new RegisteredUserBuilder().id(2).email("secondary.supervisor@email.test").build();
-        Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();
-        Project project = new ProjectBuilder().program(program).advert(advert).primarySupervisor(primarySupervisor).secondarySupervisor(secondarySupervisor)
-                .build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).programmeDetails(programmeDetails)
-                .project(project).build();
-
-        controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
-                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
-                countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
-                actionsProviderMock,applicationDescriptorProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                if (applicationId.equals("bob")) {
-                    return application;
-                }
-                return null;
-            }
-        };
-        ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-        assertNull(returnedApprovalRound.getId());
-        List<Supervisor> supervisors = returnedApprovalRound.getSupervisors();
-        assertEquals(2, supervisors.size());
-        Supervisor supervisorOne = supervisors.get(0);
-        assertEquals(supervisorOne.getUser(), primarySupervisor);
-        assertTrue(supervisorOne.getIsPrimary());
-        Supervisor supervisorTwo = supervisors.get(1);
-        assertEquals(supervisorTwo.getUser(), secondarySupervisor);
-        assertFalse(supervisorTwo.getIsPrimary());
     }
 
 }

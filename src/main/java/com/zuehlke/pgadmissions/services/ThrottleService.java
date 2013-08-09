@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ThrottleDAO;
 import com.zuehlke.pgadmissions.domain.Throttle;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional
@@ -61,5 +62,10 @@ public class ThrottleService {
 	public Throttle getThrottle() {
 		return repository.get();
 	}
-
+	
+	public int getProcessingDelayInDays(){
+	    Throttle throttle = getThrottle();
+	    return DateUtils.getIntervalInDays((int)throttle.getProcessingDelay(), throttle.getProcessingDelayUnit());
+	}
+	
 }

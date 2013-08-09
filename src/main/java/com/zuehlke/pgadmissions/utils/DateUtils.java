@@ -2,10 +2,13 @@ package com.zuehlke.pgadmissions.utils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
+
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 public final class DateUtils {
     
@@ -104,5 +107,13 @@ public final class DateUtils {
         businessDays -= fullWeekCount + fullWeekCount;
 
         return businessDays;
+    }
+    
+    public static int getIntervalInDays(Integer duration, DurationUnitEnum unit) {
+        if (unit == DurationUnitEnum.WEEKS) {
+            int weekInDays = duration * 7;
+            return (int) TimeUnit.DAYS.convert(weekInDays, TimeUnit.DAYS);
+        }
+        return (int) duration;
     }
 }

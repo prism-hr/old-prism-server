@@ -12,7 +12,7 @@ $(document).ready(function()
 	if ($('#programs').val()!="" && $('#userIsAdmin').val()=="true") {
 		loadUsersForProgram();
 	}
-	
+	loadUsersForProgram();
 	$('#programs').change(function()
 	{
 		$('#editRoles .alert-error').remove();

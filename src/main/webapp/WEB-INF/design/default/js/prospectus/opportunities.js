@@ -152,10 +152,10 @@ function renderAdvert(advert){
 		
 	}
 	if ($('#pContainer').length > 0) {
-		popupbuttons = '<a class="addthis_button_facebook"></a>'+
-			'<a class="addthis_button_twitter"></a>'+
+		popupbuttons = '<a class="addthis_button_facebook" addthis:url="'+getAdvertUrl(advert.id)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
+			'<a class="addthis_button_twitter" addthis:url="'+getAdvertUrl(advert.id)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
 			'<a class="addthis_button_google_plusone_share"></a>'+
-			'<a class="addthis_button_linkedin"></a>'+
+			'<a class="addthis_button_linkedin" addthis:url="'+getAdvertUrl(advert.id)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
 			'<a class="addthis_button_expanded"></a>'+
 			'<a class="addthis_counter addthis_bubble_style"></a>'+
 			'<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>'
@@ -175,7 +175,7 @@ function renderAdvert(advert){
 	'<div class="pactions clearfix">'+
 		'<div class="social">'+
 			'<!-- AddThis Button BEGIN -->'+
-			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:description="'+advert.description+'" addthis:title="'+advert.title+'" addthis:url="'+getAdvertUrl(advert.id)+'">'+
+			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert.id)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'">'+
 			popupbuttons +
 			'</div>'+
 			'<!-- AddThis Button END -->'+

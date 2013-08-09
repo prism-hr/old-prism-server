@@ -17,6 +17,7 @@ public class ProgramInstanceBuilder {
 	private Program program;
 	private Boolean enabled;
 	private String identifier;
+	private Date disabledDate;
 
 	public ProgramInstanceBuilder studyOptionCode(String id) {
         this.studyOptionCode = id;
@@ -74,6 +75,11 @@ public class ProgramInstanceBuilder {
 		return this;
 	}
 	
+	public ProgramInstanceBuilder disabledDate(Date disabledDate){
+	    this.disabledDate = disabledDate;
+	    return this;
+	}
+	
 	public ProgramInstance build() {
 		ProgramInstance programInstance = new ProgramInstance();
 		programInstance.setApplicationDeadline(applicationDeadline);
@@ -86,6 +92,7 @@ public class ProgramInstanceBuilder {
 		programInstance.setAcademicYear(academicYear);
 		programInstance.setApplicationStartDate(applicationStartDate);
 		programInstance.setEnabled(enabled);
+		programInstance.setDisabledDate(disabledDate);
 		return programInstance;
 		
 	}

@@ -3,15 +3,19 @@ package com.zuehlke.pgadmissions.services;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.jms.Queue;
 
 import org.easymock.EasyMock;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormTransferBuilder;
@@ -106,10 +110,11 @@ public class PorticoQueueServiceTest {
     
     @Test
     public void shouldSendRejectedOrWithdrawnApplicationsToTheQueueWhichPreviouslyHaveNotBeenSent() {
+        final List<ApplicationForm> applications = Lists.newArrayList();
         porticoQueueService = new PorticoQueueService() {
             @Override
             public void sendToPortico(final ApplicationForm form) {
-                assertEquals(ApplicationFormStatus.REJECTED, form.getStatus());
+                applications.add(form);
             }
         };
         porticoQueueService.setExportService(exportServiceMock);
@@ -132,9 +137,11 @@ public class PorticoQueueServiceTest {
         
         EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);
         
-        porticoQueueService.sendQueuedWithdrawnOrRejectedApplicationsToPortico(50);
+        porticoQueueService.sendApplicationsToBeSentToPortico(50);
         
         EasyMock.verify(formTransferServiceMock, throttleServiceMock, templateMock);
+        
+        Assert.assertThat(applications, Matchers.contains(approved, rejected));
     }
     
     @Test
@@ -173,7 +180,7 @@ public class PorticoQueueServiceTest {
         
         EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);
         
-        porticoQueueService.sendQueuedWithdrawnOrRejectedApplicationsToPortico(2);
+        porticoQueueService.sendApplicationsToBeSentToPortico(2);
         
         EasyMock.verify(formTransferServiceMock, throttleServiceMock, templateMock);
         
@@ -216,7 +223,7 @@ public class PorticoQueueServiceTest {
     	
     	EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);
     	
-    	porticoQueueService.sendQueuedWithdrawnOrRejectedApplicationsToPortico(0);
+    	porticoQueueService.sendApplicationsToBeSentToPortico(0);
     	
     	EasyMock.verify(formTransferServiceMock, throttleServiceMock, templateMock);
     	

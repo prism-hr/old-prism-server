@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,13 +19,13 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
 
     @Column(name = "enabled")
     private Boolean enabled;
-    
+
     @Column(name = "code")
     private String code;
-    
+
     @Column(name = "name")
     private String name;
-    
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -56,14 +57,23 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     public boolean isFreeText() {
-        return code.equalsIgnoreCase("OTHER") || code.equalsIgnoreCase("NEWS_AD") || code.equalsIgnoreCase("OTH_ACAD ")
-                || code.equalsIgnoreCase("OTH_WEB");
+        return code.equalsIgnoreCase("OTHER") || code.equalsIgnoreCase("NEWS_AD") || code.equalsIgnoreCase("OTH_ACAD ") || code.equalsIgnoreCase("OTH_WEB");
     }
 
-	@Override
-	public String getStringCode() {
-		return code;
-	}
+    @Override
+    public Date getDisabledDate() {
+        return null;
+    }
+
+    @Override
+    public void setDisabledDate(Date disabledDate) {
+        // ignore
+    }
+
+    @Override
+    public String getStringCode() {
+        return code;
+    }
 }

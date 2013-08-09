@@ -12,27 +12,36 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
 /**
- * I represent a single transfer of application form.
- * Applications forms are transfered from PRISM system to UCL-PORTICO system.
- * I represent the whole lifecycle of the transfer - from scheduling up to finishing (successfully or unsuccessfully).<p/>
- *
- * Remark: the actual data transfer is supposed to happen via a mixture of webservice published by UCL-PORTICO and SFTP transfer.
- * For any given application form several transfers may happen during the history of the system.
- * Business logic is deciding that at some point given application form should be transferred to UCL by creating
- * an ApplicationFormTransfer instance with status set to QUEUED_FOR_WEBSERVICE_CALL.
+ * I represent a single transfer of application form. Applications forms are transfered from PRISM system to UCL-PORTICO system. I represent the whole lifecycle
+ * of the transfer - from scheduling up to finishing (successfully or unsuccessfully).
+ * <p/>
+ * 
+ * Remark: the actual data transfer is supposed to happen via a mixture of webservice published by UCL-PORTICO and SFTP transfer. For any given application form
+ * several transfers may happen during the history of the system. Business logic is deciding that at some point given application form should be transferred to
+ * UCL by creating an ApplicationFormTransfer instance with status set to QUEUED_FOR_WEBSERVICE_CALL.
  */
 @Entity(name = "APPLICATION_FORM_TRANSFER")
 public class ApplicationFormTransfer implements Serializable {
 
     private static final long serialVersionUID = 9133196638104217546L;
-    
+
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(name = "created_timestamp", insertable = false)
+    @Generated(GenerationTime.INSERT)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdTimestamp;
 
     /** The application form that constitutes my payload (a payload of the transfer I am representing). */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,8 +56,8 @@ public class ApplicationFormTransfer implements Serializable {
     @Column(name = "transfer_end_timepoint")
     private Date transferFinishTimepoint;
 
-	@Column(name = "status")
-	@Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private ApplicationTransferStatus status;
 
     @Column(name = "ucl_user_id_received")
@@ -65,6 +74,14 @@ public class ApplicationFormTransfer implements Serializable {
         this.id = id;
     }
 
+    public Date getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(Date createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+    
     public ApplicationForm getApplicationForm() {
         return applicationForm;
     }
@@ -112,4 +129,5 @@ public class ApplicationFormTransfer implements Serializable {
     public void setUclUserIdReceived(String uclUserIdReceived) {
         this.uclUserIdReceived = uclUserIdReceived;
     }
+
 }

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +10,7 @@ import javax.persistence.Id;
 
 @Entity(name = "ETHNICITY")
 public class Ethnicity implements ImportedObject, Serializable {
-    
+
     private static final long serialVersionUID = -3605895863492842105L;
 
     @Id
@@ -18,14 +19,13 @@ public class Ethnicity implements ImportedObject, Serializable {
 
     @Column(name = "enabled")
     private Boolean enabled;
-    
+
     @Column(name = "code")
     private Integer code;
-    
+
     @Column(name = "name")
     private String name;
 
-    
     public void setId(Integer id) {
         this.id = id;
     }
@@ -58,8 +58,19 @@ public class Ethnicity implements ImportedObject, Serializable {
         this.code = code;
     }
 
-	@Override
-	public String getStringCode() {
-		return code.toString();
-	}
+    @Override
+    public String getStringCode() {
+        return code.toString();
+    }
+
+    @Override
+    public Date getDisabledDate() {
+        return null;
+    }
+
+    @Override
+    public void setDisabledDate(Date disabledDate) {
+        // ignore
+    }
+
 }

@@ -14,6 +14,7 @@ import static org.junit.Assert.assertSame;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +23,11 @@ import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
@@ -73,6 +78,7 @@ public class ConfigurationControllerTest {
     private PorticoQueueService queueServiceMock;
     private ProgramsService programsServiceMock;
     private ScoringDefinitionParser scoringDefinitionParserMock;
+    private ApplicationContext applicationContext;
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
@@ -121,7 +127,7 @@ public class ConfigurationControllerTest {
         WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
         dataBinderMock.registerCustomEditor(StageDuration.class, stageDurationPropertyEditorMock);
         dataBinderMock.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditorMock);
-        
+
         EasyMock.replay(dataBinderMock);
         controller.registerValidatorsAndPropertyEditors(dataBinderMock);
         EasyMock.verify(dataBinderMock);
@@ -321,17 +327,19 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldGetThrottleAndSetProperties() {
-        Throttle throttle = new ThrottleBuilder().id(12).enabled(true).batchSize(40).build();
+        Throttle throttle = new ThrottleBuilder().id(12).enabled(true).batchSize(40).processingDelay((short) 3).processingDelayUnit(DurationUnitEnum.DAYS)
+                .build();
         expect(throttleserviceMock.getThrottle()).andReturn(throttle);
         replay(throttleserviceMock);
 
         Map<String, Object> result = controller.getThrottle();
 
         assertNotNull(result);
-        assertEquals(3, result.size());
-        assertEquals(12, result.get("throttleId"));
+        assertEquals(4, result.size());
         assertEquals(true, result.get("enabled"));
         assertEquals(40, result.get("batchSize"));
+        assertEquals((short)3, result.get("processingDelay"));
+        assertEquals(DurationUnitEnum.DAYS, result.get("processingDelayUnit"));
         verify(throttleserviceMock);
     }
 
@@ -349,11 +357,16 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldUpdateThrottle() {
-        throttleserviceMock.updateThrottleWithNewValues(false, "15");
-        EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(false)).andReturn(false);
-        replay(throttleserviceMock);
+        Throttle throttle = new ThrottleBuilder().enabled(false).batchSize(15).processingDelay((short) 4).processingDelayUnit(DurationUnitEnum.WEEKS).build();
+        throttleserviceMock.updateThrottleWithNewValues(throttle);
 
-        Map<String, String> result = controller.updateThrottle(15, false, "15");
+        EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(false)).andReturn(false);
+
+        BindingResult errors = new DirectFieldBindingResult(throttle, "throttle");
+
+        replay(throttleserviceMock);
+        Map<String, Object> result = controller.updateThrottle(throttle, errors);
+        verify(throttleserviceMock);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -361,29 +374,33 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldNotUpdateThrottleAndReturnErrorMessage() {
-        String errorMessage = "The throttling batch size must be a valid positive number";
-        throttleserviceMock.updateThrottleWithNewValues(false, "15khg");
-        EasyMock.expectLastCall().andThrow(new NumberFormatException());
-        EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(false)).andReturn(false);
-        replay(throttleserviceMock);
+        Throttle throttle = new Throttle();
 
-        Map<String, String> result = controller.updateThrottle(15, false, "15khg");
+        BindingResult errors = new DirectFieldBindingResult(throttle, "throttle");
+        errors.rejectValue("enabled", "code");
+
+        EasyMock.expect(applicationContext.getMessage(EasyMock.isA(FieldError.class), EasyMock.eq(Locale.getDefault()))).andReturn("message");
+
+        replay(applicationContext);
+        Map<String, Object> result = controller.updateThrottle(throttle, errors);
+        verify(applicationContext);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(errorMessage, result.get("error"));
+        assertEquals("message", result.get("enabled"));
     }
 
     @Test
     public void shouldTriggerSendingApplicationsToPorticoIfTheSwitchHasBeenSetToTrue() {
-        throttleserviceMock.updateThrottleWithNewValues(true, "15");
+        Throttle throttle = new ThrottleBuilder().enabled(true).batchSize(15).processingDelay((short) 4).processingDelayUnit(DurationUnitEnum.WEEKS).build();
+        throttleserviceMock.updateThrottleWithNewValues(throttle);
         EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(true)).andReturn(true);
         queueServiceMock.sendQueuedApprovedApplicationsToPortico();
 
+        BindingResult errors = new DirectFieldBindingResult(throttle, "throttle");
+
         replay(throttleserviceMock, queueServiceMock);
-
-        controller.updateThrottle(15, true, "15");
-
+        controller.updateThrottle(throttle, errors);
         verify(throttleserviceMock, queueServiceMock);
     }
 
@@ -491,9 +508,11 @@ public class ConfigurationControllerTest {
 
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
 
+        applicationContext = EasyMock.createMock(ApplicationContext.class);
+
         controller = new ConfigurationController(stageDurationPropertyEditorMock, reminderIntervalPropertyEditorMock, userServiceMock,
                 configurationServiceMock, emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock, scoringDefinitionParserMock,
-                null, null, null);
+                null, null, null, applicationContext);
 
         superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
                 .role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();

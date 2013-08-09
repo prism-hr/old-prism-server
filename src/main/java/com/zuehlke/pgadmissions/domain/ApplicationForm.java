@@ -1015,7 +1015,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
         for (ProgramInstance instance : getProgram().getInstances()) {
             boolean isProgrammeEnabled = getProgram().isEnabled();
-            boolean isInstanceEnabled = instance.getEnabled();
+            boolean isInstanceEnabled = instance.isActive();
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
 
@@ -1047,7 +1047,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (program.isEnabled() && instance.getEnabled() && (startDateInFuture || beforeEndDate) && sameStudyOption && sameStudyOptionCode) {
+            if (program.isEnabled() && instance.isActive() && (startDateInFuture || beforeEndDate) && sameStudyOption && sameStudyOptionCode) {
                 if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
                     result = applicationStartDate;
                 } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
@@ -1066,7 +1066,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (program.isEnabled() && instance.getEnabled() && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
+            if (program.isEnabled() && instance.isActive() && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
                 return true;
             }
         }

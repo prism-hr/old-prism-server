@@ -11,9 +11,10 @@ $(document).ready(function() {
     $('#apply-throttle-go').click(function() {
     	var options =
     			{
-    				id : $('#throttleId').val(),
     				enabled : $('input:radio[name=switch]')[0].checked,
-    				batchSize : $('#batchSizeId').val()
+    				batchSize : $('#batchSizeId').val(),
+    				processingDelay : $('#processingDelay').val(),
+    				processingDelayUnit : $('#processingDelayUnit').val()
     			};
 		 $('#ajaxloader').show();
 		 
@@ -23,13 +24,23 @@ $(document).ready(function() {
     	        url : "/pgadmissions/configuration/updateThrottle/",
     	        data: options,
     	        success : function(data) {
-							$("#batchSizeId").parent().find('.alert-error').remove();
-    	        				if (data.error!=null) {
-    	        					
-									$("#batchSizeId").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> The throttling batch size must a number greater than 0.</div>');
-    	        					$('#batchSizeId').val('');
-    	        				}
-    	               		},
+					$("form.portico-configuration-form").find('.alert-error').remove();
+					
+					if (data.enabled) {
+						$("#throttoleSwitchOnId").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i>' + data.enabled + '</div>');
+					}
+					
+					if(data.batchSize) {
+						$("#batchSizeId").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i>' + data.batchSize + '</div>');
+					}
+					
+					if(data.processingDelay) {
+						$("#processingDelay").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i>' + data.processingDelay + '</div>');
+					} else if(data.processingDelayUnit) {
+						$("#processingDelayUnit").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i>' + data.processingDelayUnit + '</div>');
+					}
+					
+	       		},
     	        complete : function() {
     	        				$('#ajaxloader').fadeOut('fast');
 								
@@ -51,6 +62,8 @@ $(document).ready(function() {
 		 	}
 			 $('#batchSizeId').val(data.batchSize);
 			 $('#throttleId').val(data.throttleId);
+			 $('#processingDelay').val(data.processingDelay);
+			 $('#processingDelayUnit').val(data.processingDelayUnit);
 		 },
 		 complete : function() {}
 	 });

@@ -13,8 +13,11 @@ import java.util.Map;
 
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,6 +60,7 @@ import com.zuehlke.pgadmissions.services.PorticoQueueService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 @Controller
@@ -90,8 +94,10 @@ public class ConfigurationController {
 
     private final FeedbackCommentValidator dummyCommentValidator;
 
+    private final ApplicationContext applicationContext;
+
     public ConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -99,7 +105,7 @@ public class ConfigurationController {
             @Named(value = "reminderIntervalPropertyEditor") JsonPropertyEditor reminderIntervalPropertyEditor, UserService userService,
             ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService, PorticoQueueService queueService,
             ProgramsService programsService, ScoringDefinitionParser scoringDefinitionParser, ScoreFactory scoreFactory,
-            ScoresPropertyEditor scoresPropertyEditor, FeedbackCommentValidator dummyCommentValidator) {
+            ScoresPropertyEditor scoresPropertyEditor, FeedbackCommentValidator dummyCommentValidator, ApplicationContext applicationContext) {
         this.stageDurationPropertyEditor = stageDurationPropertyEditor;
         this.reminderIntervalPropertyEditor = reminderIntervalPropertyEditor;
         this.userService = userService;
@@ -112,6 +118,7 @@ public class ConfigurationController {
         this.scoreFactory = scoreFactory;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.dummyCommentValidator = dummyCommentValidator;
+        this.applicationContext = applicationContext;
     }
 
     @InitBinder(value = "serviceLevelsDTO")
@@ -164,24 +171,25 @@ public class ConfigurationController {
             return Collections.emptyMap();
         }
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("throttleId", throttle.getId());
         result.put("enabled", throttle.getEnabled());
         result.put("batchSize", throttle.getBatchSize());
+        result.put("processingDelay", throttle.getProcessingDelay());
+        result.put("processingDelayUnit", throttle.getProcessingDelayUnit());
         return result;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
     @ResponseBody
-    public Map<String, String> updateThrottle(@RequestParam Integer id, @RequestParam Boolean enabled, @RequestParam String batchSize) {
-        boolean hasSwitchedFromFalseToTrue = throttleService.userTurnedOnThrottle(enabled);
+    public Map<String, Object> updateThrottle(@Valid Throttle throttle, BindingResult throttleErrors) {
 
-        try {
-            throttleService.updateThrottleWithNewValues(enabled, batchSize);
-        } catch (NumberFormatException e) {
-            return Collections.singletonMap("error", "The throttling batch size must be a valid positive number");
+        Map<String, Object> errorsMap = FieldErrorUtils.populateMapWithErrors(throttleErrors, applicationContext);
+        if (!errorsMap.isEmpty()) {
+            return errorsMap;
         }
 
-        if (hasSwitchedFromFalseToTrue) {
+        throttleService.updateThrottleWithNewValues(throttle);
+
+        if (throttleService.userTurnedOnThrottle(throttle.getEnabled())) {
             queueService.sendQueuedApprovedApplicationsToPortico();
         }
 

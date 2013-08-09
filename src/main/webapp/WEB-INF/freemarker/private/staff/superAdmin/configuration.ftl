@@ -147,7 +147,7 @@
               <h2>Manage Portico Interface</h2>
               <div>
                 <div class="alert alert-info"> <i class="icon-info-sign"></i> Configure how many rejected and withdrawn applications should be sent to Portico every night. </div>
-                <form>
+                <form class="portico-configuration-form">
                   <div class="row-group">
                     <div class="row">
                       <label class="plain-label" for="throttoleSwitchOnId">Portico Interface <em>*</em></label>
@@ -162,13 +162,27 @@
                       </div>
                     </div>
                     <div class="row">
-                      <label class="plain-label" for="batchSizeId">Throttling batch size <em>*</em></label>
+                      <label class="plain-label" for="batchSizeId">Throttling Batch Size <em>*</em></label>
                       <span data-desc="Maximum number of rejected and withdrawn applications to send to Portico every night (0 = no limit)" class="hint"></span>
                       <div class="field">
                         <input type="text" id="batchSizeId" class="input-small" />
-                        <input type="hidden" id="throttleId" />
                       </div>
                     </div>
+
+                    <div class="row">
+                      <label class="plain-label" for="processingDelay">Processing Delay <em>*</em></label>
+                      <span data-desc="<@spring.message 'configuration.processingDelay'/>" class="hint"></span>
+                      <div class="field">
+                        <input type="text" id="processingDelay" class="input-small" />
+                        <select id="processingDelayUnit" class="input-small">
+                          <option value="">Select...</option>
+                          <#list units as unit>
+                            <option value="${unit}">${unit.displayValue()}</option>               
+                          </#list>
+                        </select>
+                      </div>
+                    </div>
+                    
                   </div>
                   <div class="buttons">
                     <button class="btn btn-primary" type="button" id="apply-throttle-go">Apply Changes</button>

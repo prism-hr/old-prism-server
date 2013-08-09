@@ -14,6 +14,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 @Entity(name = "PROGRAM_INSTANCE")
 public class ProgramInstance implements ProgramInstanceInterface, ImportedObject, Serializable {
 
@@ -156,6 +159,20 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+    
+    public boolean isActive(){
+        if(getEnabled()){
+            return true;
+        }
+        if(getDisabledDate() != null){
+            LocalDate disableLocalDate = new LocalDate(getDisabledDate().getTime());
+            LocalDate today = new LocalDate();
+            if(today.isBefore(disableLocalDate.plusDays(30))){
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isDateWithinBounds(Date date) {

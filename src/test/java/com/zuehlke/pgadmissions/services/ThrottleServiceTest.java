@@ -14,6 +14,7 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.ThrottleDAO;
 import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.builders.ThrottleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 public class ThrottleServiceTest {
 	
@@ -69,38 +70,17 @@ public class ThrottleServiceTest {
 	
 	@Test
 	public void shouldUpdateExistingThrottle() {
-		Throttle throttle = new ThrottleBuilder().batchSize(12).enabled(false).id(1).build();
+		Throttle newThrottle = new ThrottleBuilder().batchSize(15).enabled(true).processingDelay((short) 8).processingDelayUnit(DurationUnitEnum.WEEKS).build();
+		Throttle throttle = new Throttle();
 		expect(mockRepo.get()).andReturn(throttle);
 		replay(mockRepo);
 		
-		service.updateThrottleWithNewValues(true, "15");
+		service.updateThrottleWithNewValues(newThrottle);
 		
 		assertEquals((Boolean) true, throttle.getEnabled());
 		assertEquals((Integer) 15, throttle.getBatchSize());
-		verify(mockRepo);
-	}
-	
-	@Test(expected = NumberFormatException.class)
-	public void shouldNotUpdateExistingThrottleBecauseOfNumberFormat() {
-		Throttle throttle = new ThrottleBuilder().batchSize(12).enabled(false).id(1).build();
-		expect(mockRepo.get()).andReturn(throttle);
-		replay(mockRepo);
-		
-		service.updateThrottleWithNewValues(true, "1liv5");
-		
-		assertEquals((Boolean) false, throttle.getEnabled());
-		assertEquals((Integer) 12, throttle.getBatchSize());
-		verify(mockRepo);
-	}
-	
-	@Test(expected = NumberFormatException.class)
-	public void shouldNotUpdateExistingThrottleWithNegativeBatchSize() {
-		Throttle throttle = new ThrottleBuilder().batchSize(12).enabled(false).id(1).build();
-		expect(mockRepo.get()).andReturn(throttle);
-		replay(mockRepo);
-		
-		service.updateThrottleWithNewValues(true, "-15");
-		
+		assertEquals((Short)(short)8, throttle.getProcessingDelay());
+		assertEquals(DurationUnitEnum.WEEKS, throttle.getProcessingDelayUnit());
 		verify(mockRepo);
 	}
 	

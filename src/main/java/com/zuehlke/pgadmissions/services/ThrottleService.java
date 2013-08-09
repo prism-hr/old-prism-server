@@ -33,14 +33,12 @@ public class ThrottleService {
 	    return isFalse(getThrottle().getEnabled()) && isTrue(newValueSetByTheUser);
 	}
 	
-	public void updateThrottleWithNewValues(boolean enabled, String batchSize) throws NumberFormatException {
+	public void updateThrottleWithNewValues(Throttle newThrottle) throws NumberFormatException {
 	    Throttle throttle = getThrottle();
-        throttle.setEnabled(enabled);
-        Integer size = Integer.parseInt(batchSize);
-        if (size < 0) {
-        	throw new NumberFormatException("Batch size cannot be negative");
-        }
-        throttle.setBatchSize(size);
+        throttle.setEnabled(newThrottle.getEnabled());
+        throttle.setBatchSize(newThrottle.getBatchSize());
+        throttle.setProcessingDelay(newThrottle.getProcessingDelay());
+        throttle.setProcessingDelayUnit(newThrottle.getProcessingDelayUnit());
 	}
 	
 	public void disablePorticoInterface() {
@@ -63,4 +61,5 @@ public class ThrottleService {
 	public Throttle getThrottle() {
 		return repository.get();
 	}
+
 }

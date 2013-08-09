@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -40,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -85,19 +87,27 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
         cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
         cd.add(new ColumnDescription("lastEditedDate", ValueType.DATE, "Last Edited"));
+        cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
         cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
         cd.add(new ColumnDescription("validationTime", ValueType.NUMBER, "Validation Time (hours)"));
         cd.add(new ColumnDescription("feeStatus", ValueType.TEXT, "Fee status"));
         cd.add(new ColumnDescription("academicallyQualified", ValueType.TEXT, "Academically Qualified?"));
         cd.add(new ColumnDescription("adequateEnglish", ValueType.TEXT, "Adequate English?"));
         cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
+        cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
+        cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
+        cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
         cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.NUMBER, "Positive Review Endorsements"));
         cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.NUMBER, "Negative Review Endorsements"));
-        cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
+        cd.add(new ColumnDescription("averageReviewRating", ValueType.NUMBER, "Average Review Rating"));
+
         cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
+        cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
         cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
         cd.add(new ColumnDescription("positiveInterviewEndorsements", ValueType.NUMBER, "Positive Interview Endorsements"));
         cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.NUMBER, "Negative Interview Endorsements"));
+        cd.add(new ColumnDescription("averageInterviewRating", ValueType.NUMBER, "Average Interview Rating"));
+
         cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time (hours)"));
         cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER, "Approval Stages"));
         cd.add(new ColumnDescription("primarySupervisor", ValueType.TEXT, "Primary Supervisor"));
@@ -115,19 +125,20 @@ public class ApplicationsReportService {
 
             // Fill the data table.
             for (ApplicationForm app : applications) {
-                
+
                 if (app.getStatus() == ApplicationFormStatus.UNSUBMITTED) {
                     continue;
                 }
-                
+
                 if (app.isPersonalDetailsNull()) {
                     // Quick fix for PRISM-425
-                    // Some users managed to submit their applications without 
-                    // providing their personal details. Namely RRDCOMSING01-2013-000144
+                    // Some users managed to submit their applications without
+                    // providing their personal details. Namely
+                    // RRDCOMSING01-2013-000144
                     // and TMRCOMSVEI01-2013-000158.
                     continue;
                 }
-                
+
                 RegisteredUser applicant = app.getApplicant();
                 PersonalDetails personalDetails = app.getPersonalDetails();
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
@@ -154,25 +165,34 @@ public class ApplicationsReportService {
                 row.addCell(program.getTitle());
                 row.addCell(getProjectTitle(app));
                 row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : StringUtils.EMPTY);
-                row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterest().getName()) : StringUtils.EMPTY);
+                row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterest().getName())
+                                : StringUtils.EMPTY);
                 row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterestText()));
                 row.addCell(getSuggestedSupervisors(programmeDetails));
                 row.addCell(getAcademicYear(app));
                 row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
                 row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
+                row.addCell(getAverageRatingForDisplay(app));
                 row.addCell(app.getStatus().displayValue());
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
                 row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
                 row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
                 row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : StringUtils.EMPTY);
                 row.addCell(new NumberValue(receivedAndDeclinedReferences[0]));
+                row.addCell(new NumberValue(receivedAndDeclinedReferences[1]));
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
+                row.addCell(new NumberValue(app.getReviewRounds().size()));
                 row.addCell(new NumberValue(reviewEndorsements[0]));
                 row.addCell(new NumberValue(reviewEndorsements[1]));
-                row.addCell(new NumberValue(receivedAndDeclinedReferences[1]));
+                row.addCell(new NumberValue(getAverageRatingForAllReviewRounds(app)));
+
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
+                row.addCell(new NumberValue(app.getInterviews().size()));
                 row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
                 row.addCell(new NumberValue(interviewEndorsements[0]));
                 row.addCell(new NumberValue(interviewEndorsements[1]));
+                row.addCell(new NumberValue(getAverageRatingForAllInterviewRounds(app)));
+
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
                 row.addCell(new NumberValue(app.getApprovalRounds().size()));
                 row.addCell(getPrintablePrimarySupervisor(app));
@@ -398,4 +418,38 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
+    private double getAverageRatingForAllInterviewRounds(ApplicationForm app) {
+        List<Interview> interviews = app.getInterviews();
+        if (interviews.isEmpty()) {
+            return 0;
+        }
+        BigDecimal ratingTotal = new BigDecimal(0);
+        for (Interview interview : interviews) {
+            BigDecimal averageRating = interview.getAverageRating();
+            if (averageRating != null) {
+                ratingTotal.add(interview.getAverageRating());
+            }
+        }
+        return (ratingTotal.doubleValue() / interviews.size());
+    }
+
+    private double getAverageRatingForAllReviewRounds(ApplicationForm app) {
+        List<ReviewRound> reviewRounds = app.getReviewRounds();
+        if (reviewRounds.isEmpty()) {
+            return 0;
+        }
+        BigDecimal ratingTotal = new BigDecimal(0);
+        for (ReviewRound reviewRound : reviewRounds) {
+            BigDecimal averageRating = reviewRound.getAverageRating();
+            if (averageRating != null) {
+                ratingTotal.add(averageRating);
+            }
+        }
+        return (ratingTotal.doubleValue() / reviewRounds.size());
+    }
+
+    private String getAverageRatingForDisplay(ApplicationForm app) {
+        String averageRatingFormatted = app.getAverageRatingFormatted();
+        return averageRatingFormatted == null ? "0" : averageRatingFormatted;
+    }
 }

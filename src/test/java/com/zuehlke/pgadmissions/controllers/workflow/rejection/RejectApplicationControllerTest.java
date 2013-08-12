@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.COMPLETE_REJECTION;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -73,7 +72,7 @@ public class RejectApplicationControllerTest {
         approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
         program = new ProgramBuilder().id(100).administrators(admin).approver(approver).build();
         application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc").program(program)//
-                        .build();
+                .build();
 
         rejectServiceMock = EasyMock.createMock(RejectService.class);
         applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -85,7 +84,7 @@ public class RejectApplicationControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock, rejectReasonPropertyEditorMock,
-                        rejectionValidatorMock, actionsProviderMock, accessServiceMock, null);
+                rejectionValidatorMock, actionsProviderMock, accessServiceMock, null);
 
         errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
@@ -103,11 +102,21 @@ public class RejectApplicationControllerTest {
         modelMap.put("applicationForm", application);
         modelMap.put("user", admin);
 
-        actionsProviderMock.validateAction(application, admin, ApplicationFormAction.COMPLETE_REJECTION);
-
-        EasyMock.replay(actionsProviderMock);
         Assert.assertEquals(VIEW_RESULT, controllerUT.getRejectPage(modelMap));
-        EasyMock.verify(actionsProviderMock);
+    }
+
+    @Test(expected = ActionNoLongerRequiredException.class)
+    public void shouldThrowExceptionIfNoProviledgesForRejectionPage() {
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("applicationForm", application);
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        modelMap.put("user", userMock);
+
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(application)).andReturn(false);
+
+        EasyMock.replay(userMock);
+        Assert.assertEquals(VIEW_RESULT, controllerUT.getRejectPage(modelMap));
+        EasyMock.verify(userMock);
     }
 
     @Test
@@ -175,15 +184,14 @@ public class RejectApplicationControllerTest {
         rejectServiceMock.moveApplicationToReject(application, admin, rejection);
         EasyMock.expectLastCall();
         rejectServiceMock.sendToPortico(application);
-        actionsProviderMock.validateAction(application, admin, COMPLETE_REJECTION);
 
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
         modelMap.put("user", admin);
 
-        EasyMock.replay(rejectServiceMock, actionsProviderMock);
+        EasyMock.replay(rejectServiceMock);
         String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, modelMap);
-        EasyMock.verify(rejectServiceMock, actionsProviderMock);
+        EasyMock.verify(rejectServiceMock);
 
         Assert.assertEquals(AFTER_REJECT_VIEW + "?messageCode=application.rejected&application=abc", nextView);
     }

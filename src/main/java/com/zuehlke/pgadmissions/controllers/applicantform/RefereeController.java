@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -27,6 +28,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
@@ -73,21 +76,38 @@ public class RefereeController {
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
-    public String editReferee(@Valid Referee referee, BindingResult result) {
+    public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap) {
 
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
+            throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
         }
 
-        ApplicationForm application = referee.getApplication();
         if (application.isDecided()) {
             throw new CannotUpdateApplicationException(application.getApplicationNumber());
         }
 
+        Referee referee = getReferee(refereeId);
         if (result.hasErrors()) {
+            newReferee.setId(referee.getId());
+            modelMap.addAttribute("referee", newReferee);
             return STUDENTS_FORM_REFEREES_VIEW;
         }
-
+        
+        if(referee == null){
+            referee = newReferee;
+        } else {
+            referee.setFirstname(newReferee.getFirstname());
+            referee.setLastname(newReferee.getLastname());
+            referee.setEmail(newReferee.getEmail());
+            referee.setJobEmployer(newReferee.getJobEmployer());
+            referee.setJobTitle(newReferee.getJobTitle());
+            referee.setAddressLocation(newReferee.getAddressLocation());
+            referee.setPhoneNumber(newReferee.getPhoneNumber());
+            referee.setMessenger(newReferee.getMessenger());
+        }
+        
         if (!application.isSubmitted()) {
             refereeService.save(referee);
         } else if (application.isModifiable()) {
@@ -110,8 +130,8 @@ public class RefereeController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null || !getCurrentUser().canSee(application)) {
-            throw new ResourceNotFoundException();
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
         }
         return application;
     }
@@ -133,8 +153,7 @@ public class RefereeController {
         return new StringTrimmerEditor(false);
     }
 
-    @ModelAttribute
-    public Referee getReferee(@RequestParam(required = false) String refereeId) {
+    public Referee getReferee(String refereeId) {
         if (StringUtils.isBlank(refereeId)) {
             return new Referee();
         }
@@ -147,11 +166,15 @@ public class RefereeController {
     }
 
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
-    public String getRefereeView() {
-
+    public String getRefereeView(@RequestParam(required = false) String refereeId, ModelMap modelMap) {
+        
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
+            throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
         }
+        Referee referee = getReferee(refereeId);
+        modelMap.put("referee", referee);
         return STUDENTS_FORM_REFEREES_VIEW;
     }
 

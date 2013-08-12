@@ -11,6 +11,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -26,6 +27,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
@@ -52,29 +55,50 @@ public class RefereeControllerTest {
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-        Referee referee = new RefereeBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build()).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build();
+        Referee referee = new RefereeBuilder().id(1).application(application).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("applicationForm", application);
         BindingResult errors = EasyMock.createMock(BindingResult.class);
         EasyMock.replay(refereeServiceMock, errors);
-        controller.editReferee(referee, errors);
+        controller.editReferee(null, referee, errors, modelMap);
         EasyMock.verify(refereeServiceMock);
 
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
+    public void shouldThrowExceptionOnSubmitIfCurrentUserNotApplicant() {
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("applicationForm", application);
+
         currentUser.getRoles().clear();
-        controller.editReferee(null, null);
+        controller.editReferee(null, null, null, modelMap);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
+    public void shouldThrowExceptionOnGetIfCurrentUserNotApplicant() {
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("applicationForm", application);
+
         currentUser.getRoles().clear();
-        controller.getRefereeView();
+        controller.getRefereeView(null, modelMap);
     }
 
     @Test
     public void shouldReturnRefereeView() {
-        assertEquals("/private/pgStudents/form/components/references_details", controller.getRefereeView());
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("applicationForm", application);
+
+        Referee referee = new Referee();
+
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
+        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.replay(refereeServiceMock, encryptionHelperMock);
+        assertEquals("/private/pgStudents/form/components/references_details", controller.getRefereeView("enc", modelMap));
+        EasyMock.verify(refereeServiceMock, encryptionHelperMock);
     }
 
     @Test
@@ -91,23 +115,10 @@ public class RefereeControllerTest {
         assertEquals(applicationForm, returnedApplicationForm);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
-        controller.getApplicationForm("1");
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.replay(userServiceMock);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-        EasyMock.replay(applicationsServiceMock, currentUser);
         controller.getApplicationForm("1");
     }
 
@@ -160,14 +171,21 @@ public class RefereeControllerTest {
     @Test
     public void shouldSaveRefereeAndRedirectIfNoErrors() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(5).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("applicationForm", applicationForm);
         Referee referee = new RefereeBuilder().id(1).application(applicationForm).build();
         BindingResult errors = EasyMock.createMock(BindingResult.class);
+
         EasyMock.expect(errors.hasErrors()).andReturn(false);
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
+        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
         refereeServiceMock.save(referee);
         applicationsServiceMock.save(applicationForm);
-        EasyMock.replay(refereeServiceMock, applicationsServiceMock, errors);
-        String view = controller.editReferee(referee, errors);
-        EasyMock.verify(refereeServiceMock, applicationsServiceMock);
+
+        EasyMock.replay(refereeServiceMock, applicationsServiceMock, errors, encryptionHelperMock);
+        String view = controller.editReferee("enc", referee, errors, modelMap);
+        EasyMock.verify(refereeServiceMock, applicationsServiceMock, errors, encryptionHelperMock);
+
         assertEquals("redirect:/update/getReferee?applicationId=ABC", view);
         assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
     }
@@ -175,83 +193,39 @@ public class RefereeControllerTest {
     @Test
     public void shouldSaveRefereeAndSendEmailIfApplicationInApprovalStageAndIfNoErrors() {
         ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.APPROVAL).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("applicationForm", application);
         Referee referee = new RefereeBuilder().id(1).application(application).build();
         application.setReferees(Arrays.asList(referee));
         BindingResult errors = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(errors.hasErrors()).andReturn(false);
-        refereeServiceMock.processRefereesRoles(application.getReferees());
-        EasyMock.replay(refereeServiceMock, errors);
-        String view = controller.editReferee(referee, errors);
-        EasyMock.verify(refereeServiceMock);
-        assertEquals("redirect:/update/getReferee?applicationId=ABC", view);
-    }
 
-    @Test
-    public void shouldNotSendEmailIfApplicationInValidationStageAndIfNoErrors() {
-        ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.VALIDATION).build();
-        Referee referee = new RefereeBuilder().id(1).application(application).build();
-        application.setReferees(Arrays.asList(referee));
-        BindingResult errors = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errors.hasErrors()).andReturn(false);
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
+        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
         refereeServiceMock.processRefereesRoles(application.getReferees());
-        EasyMock.replay(refereeServiceMock, errors);
-        String view = controller.editReferee(referee, errors);
-        EasyMock.verify(refereeServiceMock);
-        assertEquals("redirect:/update/getReferee?applicationId=ABC", view);
-    }
 
-    @Test
-    public void shouldSaveRefereeAndSendEmailIfApplicationInReviewStageAndIfNoErrors() {
-        ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.REVIEW).build();
-        Referee referee = new RefereeBuilder().id(1).application(application).build();
-        application.setReferees(Arrays.asList(referee));
-        BindingResult errors = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(errors.hasErrors()).andReturn(false);
-        refereeServiceMock.processRefereesRoles(application.getReferees());
-        EasyMock.replay(refereeServiceMock, errors);
-        String view = controller.editReferee(referee, errors);
-        EasyMock.verify(refereeServiceMock);
-        assertEquals("redirect:/update/getReferee?applicationId=ABC", view);
-    }
+        EasyMock.replay(refereeServiceMock, errors, encryptionHelperMock);
+        String view = controller.editReferee("enc", referee, errors, modelMap);
+        EasyMock.verify(refereeServiceMock, errors, encryptionHelperMock);
 
-    @Test
-    public void shouldSaveRefereeAndSendEmailIfApplicationInInterviewStageAndIfNoErrors() {
-        ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.INTERVIEW).build();
-        Referee referee = new RefereeBuilder().id(1).application(application).build();
-        application.setReferees(Arrays.asList(referee));
-        BindingResult errors = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(errors.hasErrors()).andReturn(false);
-        refereeServiceMock.processRefereesRoles(application.getReferees());
-        EasyMock.replay(refereeServiceMock, errors);
-        String view = controller.editReferee(referee, errors);
-        EasyMock.verify(refereeServiceMock);
-        assertEquals("redirect:/update/getReferee?applicationId=ABC", view);
-    }
-
-    @Test
-    public void shouldNotSendEmailIfApplicationIsInValidationdAndIfNoErrors() {
-        ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.VALIDATION).build();
-        Referee referee = new RefereeBuilder().id(1).application(application).build();
-        application.setReferees(Arrays.asList(referee));
-        BindingResult errors = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(errors.hasErrors()).andReturn(false);
-        refereeServiceMock.processRefereesRoles(application.getReferees());
-        applicationsServiceMock.save(application);
-        EasyMock.replay(applicationsServiceMock, refereeServiceMock);
-        String view = controller.editReferee(referee, errors);
-        EasyMock.verify(applicationsServiceMock, refereeServiceMock);
         assertEquals("redirect:/update/getReferee?applicationId=ABC", view);
     }
 
     @Test
     public void shouldNotSaveAndReturnToViewIfErrors() {
+        ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.APPROVAL).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("applicationForm", application);
         Referee referee = new RefereeBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).build();
         BindingResult errors = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(errors.hasErrors()).andReturn(true);
 
-        EasyMock.replay(refereeServiceMock, errors);
-        String view = controller.editReferee(referee, errors);
-        EasyMock.verify(refereeServiceMock);
+        EasyMock.expect(errors.hasErrors()).andReturn(true);
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
+        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+
+        EasyMock.replay(refereeServiceMock, errors, encryptionHelperMock);
+        String view = controller.editReferee("enc", referee, errors, modelMap);
+        EasyMock.verify(refereeServiceMock, errors, encryptionHelperMock);
         assertEquals("/private/pgStudents/form/components/references_details", view);
     }
 
@@ -269,7 +243,7 @@ public class RefereeControllerTest {
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
 
         controller = new RefereeController(refereeServiceMock, userServiceMock, applicationsServiceMock, domicilePropertyEditor,
-                        applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock, accessServiceMock, domicileServiceMock);
+                applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock, accessServiceMock, domicileServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 

@@ -26,9 +26,15 @@
     </span>
   </#if>
   </td>
+  
   <td class="rating">
-    ${application.averageRatingFormatted!"N/R"}
+    <#if application.averageRatingFormatted?? && user != application.applicant>
+      ${application.averageRatingFormatted}
+    <#else>
+      N/R
+    </#if>
   </td>
+  
   <td class="status">
     <span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
     <#if application.nextStatus??>

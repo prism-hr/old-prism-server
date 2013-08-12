@@ -30,10 +30,14 @@
 		            </div>
                     
 		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.
-                <#if timelineObject.reviewRound?? && timelineObject.reviewRound.averageRatingFormatted?? >
-                <span class="rating icon-star"><span>${timelineObject.reviewRound.averageRatingFormatted} / 5.00</span></span>
-                <#elseif timelineObject.interview?? && timelineObject.interview.averageRatingFormatted?? >
-                  <span class="rating icon-star"><span>${timelineObject.interview.averageRatingFormatted} / 5.00</span></span>
+		            <#if user != applicationForm.applicant>
+                  <#if timelineObject.reviewRound?? && timelineObject.reviewRound.averageRatingFormatted?? >
+                    <span class="rating icon-star"><span>${timelineObject.reviewRound.averageRatingFormatted} / 5.00</span></span>
+                  <#elseif timelineObject.interview?? && timelineObject.interview.averageRatingFormatted?? >
+                    <span class="rating icon-star"><span>${timelineObject.interview.averageRatingFormatted} / 5.00</span></span>
+                  <#elseif timelineObject.referee?? && timelineObject.referee.reference?? && timelineObject.referee.reference.applicantRating?? >
+                    <span class="rating icon-star"><span>${timelineObject.referee.reference.applicantRating}.00 / 5.00</span></span>
+                  </#if>
                 </#if>
 		            </p> <i class="icon-minus-sign"></i> 
 				   </div>

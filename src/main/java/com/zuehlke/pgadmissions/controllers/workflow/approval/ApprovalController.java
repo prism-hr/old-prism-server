@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -67,7 +68,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
-import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -119,7 +120,7 @@ public class ApprovalController {
 
     private final DatePropertyEditor datePropertyEditor;
 
-    private final CountryService countryService;
+    private final DomicileService domicileService;
 
     private final CountryPropertyEditor countryPropertyEditor;
 
@@ -146,7 +147,7 @@ public class ApprovalController {
             ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
             GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
+            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
             CountryPropertyEditor countryPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
             ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider,
             final ApplicationDescriptorProvider applicationDescriptorProvider, ProgramInstanceService programInstanceService) {
@@ -164,7 +165,7 @@ public class ApprovalController {
         this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
         this.sendToPorticoDataDTOValidator = sendToPorticoDataDTOValidator;
         this.datePropertyEditor = datePropertyEditor;
-        this.countryService = countryService;
+        this.domicileService = domicileService;
         this.countryPropertyEditor = countryPropertyEditor;
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
@@ -475,9 +476,9 @@ public class ApprovalController {
         return comment;
     }
 
-    @ModelAttribute("countries")
-    public List<Country> getAllCountries() {
-        return countryService.getAllCountries();
+    @ModelAttribute("domiciles")
+    public List<Domicile> getAllDomiciles() {
+        return domicileService.getAllEnabledDomiciles();
     }
 
     @RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)

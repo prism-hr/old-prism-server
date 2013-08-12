@@ -87,7 +87,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
-import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -116,7 +116,7 @@ public class ApprovalControllerTest {
     private SendToPorticoDataDTOEditor sendToPorticoDataDTOEditorMock;
     private SendToPorticoDataDTOValidator sendToPorticoDataDTOValidatorMock;
     private DatePropertyEditor datePropertyEditorMock;
-    private CountryService countryServiceMock;
+    private DomicileService domicileServiceMock;
     private CountryPropertyEditor countryPropertyEditorMock;
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
@@ -820,7 +820,7 @@ public class ApprovalControllerTest {
         sendToPorticoDataDTOEditorMock = EasyMock.createMock(SendToPorticoDataDTOEditor.class);
         sendToPorticoDataDTOValidatorMock = EasyMock.createMock(SendToPorticoDataDTOValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-        countryServiceMock = EasyMock.createMock(CountryService.class);
+        domicileServiceMock = EasyMock.createMock(DomicileService.class);
         countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
@@ -840,7 +840,7 @@ public class ApprovalControllerTest {
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
-                countryServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
+                domicileServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
                 actionsProviderMock, applicationDescriptorProviderMock, programInstanceServiceMock);
 
     }

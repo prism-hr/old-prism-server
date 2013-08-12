@@ -4,6 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
+import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
+import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Service
@@ -23,6 +28,7 @@ public class StateTransitionViewResolver {
     public String resolveView(ApplicationForm applicationForm) {
 
         if (!programInstanceService.isProgrammeStillAvailable(applicationForm)) {
+//            StateChangeComment comment = createRejectionComment(applicationForm);
             return REJECTION_VIEW + applicationForm.getApplicationNumber() + "&rejectionId=7&rejectionIdForced=true";
         }
 
@@ -48,5 +54,25 @@ public class StateTransitionViewResolver {
         return STATE_TRANSITION_VIEW;
 
     }
+
+
+//    private StateChangeComment createRejectionComment(ApplicationForm applicationForm) {
+//        StateChangeComment stateChangeComment = null;
+//        switch (applicationForm.getStatus()) {
+//        case APPROVAL:
+//            stateChangeComment = new ApprovalEvaluationComment();
+//            break;
+//        case REVIEW:
+//            stateChangeComment = new ReviewEvaluationComment();
+//            break;
+//        case VALIDATION:
+//            stateChangeComment = new ValidationComment();
+//            break;
+//        case INTERVIEW:
+//            stateChangeComment = new InterviewEvaluationComment();
+//            break;
+//        }
+//        
+//    }
 
 }

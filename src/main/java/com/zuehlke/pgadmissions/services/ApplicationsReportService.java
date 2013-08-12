@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Service("applicationsReportService")
 @Transactional
@@ -100,14 +101,14 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
         cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.NUMBER, "Positive Review Endorsements"));
         cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.NUMBER, "Negative Review Endorsements"));
-        cd.add(new ColumnDescription("averageReviewRating", ValueType.NUMBER, "Average Review Rating"));
+        cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
 
         cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
         cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
         cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
         cd.add(new ColumnDescription("positiveInterviewEndorsements", ValueType.NUMBER, "Positive Interview Endorsements"));
         cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.NUMBER, "Negative Interview Endorsements"));
-        cd.add(new ColumnDescription("averageInterviewRating", ValueType.NUMBER, "Average Interview Rating"));
+        cd.add(new ColumnDescription("averageInterviewRating", ValueType.TEXT, "Average Interview Rating"));
 
         cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time (hours)"));
         cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER, "Approval Stages"));
@@ -118,7 +119,6 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
         cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
         data.addColumns(cd);
-
         List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
         do {
             applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
@@ -151,6 +151,7 @@ public class ApplicationsReportService {
                 int[] interviewEndorsements = getNumberOfPositiveAndNegativeInterviewEndorsements(app);
 
                 Date approveDate = getApproveDate(app);
+                boolean canSeeRating = user.getId() != applicant.getId();
 
                 TableRow row = new TableRow();
 
@@ -173,7 +174,7 @@ public class ApplicationsReportService {
                 row.addCell(getAcademicYear(app));
                 row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
                 row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
-                row.addCell(getAverageRatingForDisplay(app));
+                row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : "N/R");
                 row.addCell(app.getStatus().displayValue());
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
                 row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
@@ -185,14 +186,14 @@ public class ApplicationsReportService {
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
                 row.addCell(new NumberValue(reviewEndorsements[0]));
                 row.addCell(new NumberValue(reviewEndorsements[1]));
-                row.addCell(new NumberValue(getAverageRatingForAllReviewRounds(app)));
+                row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : "N/R");
 
                 row.addCell(new NumberValue(app.getInterviews().size()));
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
                 row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
                 row.addCell(new NumberValue(interviewEndorsements[0]));
                 row.addCell(new NumberValue(interviewEndorsements[1]));
-                row.addCell(new NumberValue(getAverageRatingForAllInterviewRounds(app)));
+                row.addCell(canSeeRating ? printRating(getAverageRatingForAllInterviewRounds(app)) : "N/R");
 
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
                 row.addCell(new NumberValue(app.getApprovalRounds().size()));
@@ -419,38 +420,37 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
-    private double getAverageRatingForAllInterviewRounds(ApplicationForm app) {
+    private String getAverageRatingForAllInterviewRounds(ApplicationForm app) {
         List<Interview> interviews = app.getInterviews();
         if (interviews.isEmpty()) {
-            return 0;
+            return null;
         }
         BigDecimal ratingTotal = new BigDecimal(0);
         for (Interview interview : interviews) {
             BigDecimal averageRating = interview.getAverageRating();
             if (averageRating != null) {
-                ratingTotal.add(interview.getAverageRating());
+                ratingTotal = ratingTotal.add(interview.getAverageRating());
             }
         }
-        return (ratingTotal.doubleValue() / interviews.size());
+        return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / interviews.size()));
     }
 
-    private double getAverageRatingForAllReviewRounds(ApplicationForm app) {
+    private String getAverageRatingForAllReviewRounds(ApplicationForm app) {
         List<ReviewRound> reviewRounds = app.getReviewRounds();
         if (reviewRounds.isEmpty()) {
-            return 0;
+            return null;
         }
         BigDecimal ratingTotal = new BigDecimal(0);
         for (ReviewRound reviewRound : reviewRounds) {
             BigDecimal averageRating = reviewRound.getAverageRating();
             if (averageRating != null) {
-                ratingTotal.add(averageRating);
+                ratingTotal = ratingTotal.add(averageRating);
             }
         }
-        return (ratingTotal.doubleValue() / reviewRounds.size());
+        return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / reviewRounds.size()));
     }
 
-    private String getAverageRatingForDisplay(ApplicationForm app) {
-        String averageRatingFormatted = app.getAverageRatingFormatted();
-        return averageRatingFormatted == null ? "0" : averageRatingFormatted;
+    private String printRating(String rating) {
+        return rating == null ? "0" : rating;
     }
 }

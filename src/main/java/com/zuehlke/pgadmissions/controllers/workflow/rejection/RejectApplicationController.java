@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -78,9 +78,11 @@ public class RejectApplicationController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getRejectPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMPLETE_REJECTION);
+        if(!user.hasAdminRightsOnApplication(application)){
+            throw new ActionNoLongerRequiredException(application.getApplicationNumber());
+        }
         return REJECT_VIEW_NAME;
     }
 
@@ -88,7 +90,9 @@ public class RejectApplicationController {
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors, ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, ApplicationFormAction.COMPLETE_REJECTION);
+        if(!user.hasAdminRightsOnApplication(application)){
+            throw new ActionNoLongerRequiredException(application.getApplicationNumber());
+        }
 
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;

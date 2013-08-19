@@ -51,6 +51,7 @@
     
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">
+        <button id="newReferenceButton" class="btn btn-success right" type="button">New Reference</button>
         <button name="refereeClearButton" type="button" id="refereeClearButton" class="btn">Clear</button>
         <button type="button" id="refereeCloseButton" class="btn">Close</button>
         <button type="button" id="refereeSaveButton" class="btn btn-primary">Save</button>

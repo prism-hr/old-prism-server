@@ -42,6 +42,7 @@
 
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">
+        <button id="newReferenceButton" class="btn btn-success right" type="button">New Reference</button>
         <button name="refereeClearButton" type="button" class="btn" id="refereeClearButton">Clear</button>
         <button type="button" id="refereeCloseButton" class="btn">Close</button>
         <button type="button" id="refereeSaveButton" class="btn btn-primary">Save selection</button>
@@ -56,4 +57,3 @@
     var $postRefereeAndReferenceUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereeAndReference";
 </script>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/references.js' />"></script>

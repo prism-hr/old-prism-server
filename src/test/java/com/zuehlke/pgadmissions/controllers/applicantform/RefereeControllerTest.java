@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -96,9 +98,23 @@ public class RefereeControllerTest {
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
         EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        
         EasyMock.replay(refereeServiceMock, encryptionHelperMock);
         assertEquals("/private/pgStudents/form/components/references_details", controller.getRefereeView("enc", modelMap));
         EasyMock.verify(refereeServiceMock, encryptionHelperMock);
+        
+        assertSame(referee, modelMap.get("referee"));
+    }
+    
+    @Test
+    public void shouldReturnRefereeViewWithNewReferee() {
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build();
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute("applicationForm", application);
+
+        assertEquals("/private/pgStudents/form/components/references_details", controller.getRefereeView("", modelMap));
+        
+        assertNotNull(modelMap.get("referee"));
     }
 
     @Test
@@ -149,9 +165,8 @@ public class RefereeControllerTest {
     }
 
     @Test
-    public void shouldReturnNewRefereeIfIdIsBlank() {
-        Referee returnedReferee = controller.getReferee("");
-        assertNull(returnedReferee.getId());
+    public void shouldReturnNullIfIdIsBlank() {
+        assertNull(controller.getReferee(""));
     }
 
     @Test(expected = ResourceNotFoundException.class)

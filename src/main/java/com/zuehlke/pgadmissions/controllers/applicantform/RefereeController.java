@@ -155,7 +155,7 @@ public class RefereeController {
 
     public Referee getReferee(String refereeId) {
         if (StringUtils.isBlank(refereeId)) {
-            return new Referee();
+            return null;
         }
         Integer id = encryptionHelper.decryptToInteger(refereeId);
         Referee referee = refereeService.getRefereeById(id);
@@ -174,6 +174,9 @@ public class RefereeController {
             throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
         }
         Referee referee = getReferee(refereeId);
+        if(referee == null){
+            referee = new Referee();
+        }
         modelMap.put("referee", referee);
         return STUDENTS_FORM_REFEREES_VIEW;
     }

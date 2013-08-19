@@ -1,7 +1,23 @@
 $(document).ready(function() {
     
     addToolTips();
-    showProperRefereeEntry();
+    
+    // if editedRefereeId is empty assume that new referee is the current one
+	if($('#editedRefereeId').val() == "") {
+		$('#editedRefereeId').val("newReferee");
+	}
+    
+    // --------------------------------------------------------------------------------
+    // New reference button.
+    // --------------------------------------------------------------------------------
+    $('#newReferenceButton').live("click", function () {
+		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
+		$('#referee_newReferee').show();
+		$('#referee_newReferee input').val('');
+		$('#refereeComment_newReferee').attr('value', '');
+		$('#suitableUCL_true, #suitableUCL_false, #suitableProgramme_true, #suitableProgramme_false').prop('checked', false);
+		clearRefereeFormErrors();
+	});
     
     // --------------------------------------------------------------------------------
     // Close button.
@@ -84,26 +100,8 @@ $(document).ready(function() {
     $(".file").each(function() {
     	watchUpload($(this));
     });
-	addNewRefButt();
 });
-function addNewRefButt() {
-		// Check if loading from other site apart from application form 
-		if ($("#referee_newReferee").find('div.alert-error').length == 0){
-			$('#referee_newReferee').hide();
-		} else {
-			$('#referee_newReferee').show();
-		}
-		if ($('#newReference').length == 0){
-			$('#referencesSection .buttons').prepend('<button id="newReference" class="btn btn-success right" type="button">New Reference</button>');
-		}
-		$('#newReference').click(function () {
-			$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
-			$('#referee_newReferee').show();
-			$('#referee_newReferee input').val('');
-			$('#refereeComment_newReferee').attr('value', '');
-			$('#suitableUCL_true, #suitableUCL_false, #suitableProgramme_true, #suitableProgramme_false').prop('checked', false);
-		});
-}
+
 function clearRefereeFormErrors() {
     $("#referencesSection").find('div.alert-error').remove(); // remove all previous form errors
 }
@@ -148,16 +146,20 @@ function clearRefereeForm(form) {
 
     });
     
+    form.find(".rating-input").each(function() {
+    	$(this).val("");
+    });
+    
 }
 
 function showProperRefereeEntry() {
 	var $refereeId = $('#editedRefereeId').val(); 
-	if($refereeId == "") {
-		// display new one
+	
+	if($refereeId == "newReferee") {
+		// show new referee form
 		$("#referee_newReferee").show();
-		$('#editedRefereeId').val("newReferee");
 	} else {
-		// referee ID already set, display this one
+		// show existing referee form
 		$('a[name="showRefereeLink"]').each(function() {
 			if($refereeId == $(this).attr("toggles").replace("referee_", "")){
 				$("#" + $(this).attr("toggles")).show();
@@ -170,12 +172,14 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
     var refereeId = $('#editedRefereeId').val();
     
     var suitableUCL = "";
-    if($('input[id=suitableUCL_true]:checked').length>0){suitableUCL="true";}
-    else if($('input[id=suitableUCL_false]:checked').length>0){suitableUCL="false";}
-    
+    if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
+        suitableUCL = $('input:radio[name=suitableForUCL_' + refereeId + ']:checked').val();
+    }
+
     var suitableForProgramme = "";
-    if($('input[id=suitableProgramme_true]:checked').length>0){suitableForProgramme="true";}
-    else if($('input[id=suitableProgramme_false]:checked').length>0){suitableForProgramme="false";}
+    if ($('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').length > 0) {
+        suitableForProgramme = $('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').val();
+    }
     
     var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
     var $ref_doc_container  = $ref_doc_upload_field.closest('div.field');
@@ -248,7 +252,8 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         	}
             addCounter();
             refreshRefereesTable(checkedReferees, editedReferee, uncheckedReferees);
-			addNewRefButt();
+			showProperRefereeEntry();
+			addToolTips();
         },
         complete : function() {
            $('#ajaxloader').fadeOut('fast');
@@ -342,7 +347,10 @@ function refreshRefereesTable(selectedValues, newRefereeValue, unchekedValues) {
 		return;
 	}
 	
-	$("input[value=" + newRefereeValue +"]").attr("checked", true); 
+	if($('#anyReferenceErrors').val() == 'false') {
+		$("input[value=" + newRefereeValue +"]").attr("checked", true); 
+	}
+	
 	for (var i = 0; i<unchekedValues.length; i++) {
 		$("input[value=" + unchekedValues[i] +"]").attr("checked", false); 
 	}

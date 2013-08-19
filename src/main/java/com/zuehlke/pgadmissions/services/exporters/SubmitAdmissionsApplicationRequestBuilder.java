@@ -64,6 +64,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
@@ -379,11 +380,14 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
-        if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
+
+        NameTp supervisorName = buildAgreedSupervisorName();
+        if (supervisorName == null && !programmeDetails.getSuggestedSupervisors().isEmpty()) {
             // Which supervisor to pick if there are multiple
             // Just send the first one. Confirmed by Alastair Knowles
-            applicationTp.setSupervisorName(buildSupervisorName(0));
+            supervisorName = buildSuggestedSupervisorName(0);
         }
+        applicationTp.setSupervisorName(supervisorName);
         applicationTp.setPersonalStatement(REFER_TO_ATTACHED_DOCUMENT);
 
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
@@ -427,17 +431,18 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         }
 
         ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+
         if (latestApprovalRound != null) {
             if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired())) {
                 applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
             }
-        }
 
-        if (latestApprovalRound != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
-            if (BooleanUtils.isTrue(latestApprovalRound.getRecommendedConditionsAvailable())) {
-                applicationTp.setDepartmentalOfferConditions("Conditional Offer: " + latestApprovalRound.getRecommendedConditions());
-            } else {
-                applicationTp.setDepartmentalOfferConditions("Unconditional Offer");
+            if (applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+                if (BooleanUtils.isTrue(latestApprovalRound.getRecommendedConditionsAvailable())) {
+                    applicationTp.setDepartmentalOfferConditions("Conditional Offer: " + latestApprovalRound.getRecommendedConditions());
+                } else {
+                    applicationTp.setDepartmentalOfferConditions("Unconditional Offer");
+                }
             }
         }
 
@@ -492,7 +497,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         return modeofattendanceTp;
     }
 
-    private NameTp buildSupervisorName(int idx) {
+    private NameTp buildSuggestedSupervisorName(int idx) {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         NameTp nameTp = xmlFactory.createNameTp();
         List<SuggestedSupervisor> suggestedSupervisors = programmeDetails.getSuggestedSupervisors();
@@ -726,6 +731,20 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private String cleanPhoneNumber(String number) {
         return number.replaceAll("[^0-9()+ ]", "");
+    }
+    
+    private NameTp buildAgreedSupervisorName() {
+        if (applicationForm.getLatestApprovalRound() != null) {
+            ApprovalRound approvalRound = applicationForm.getLatestApprovalRound();
+            Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
+            if (primarySupervisor != null) {
+                NameTp nameTp = xmlFactory.createNameTp();
+                nameTp.setForename1(primarySupervisor.getUser().getFirstName());
+                nameTp.setSurname(primarySupervisor.getUser().getLastName());
+                return nameTp;
+            }
+        }
+        return null;
     }
 
     protected XMLGregorianCalendar buildXmlDate(Date date) {

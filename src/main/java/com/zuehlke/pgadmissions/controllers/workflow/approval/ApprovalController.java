@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgra
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -55,9 +54,9 @@ import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
@@ -122,7 +121,7 @@ public class ApprovalController {
 
     private final DomicileService domicileService;
 
-    private final CountryPropertyEditor countryPropertyEditor;
+    private final DomicilePropertyEditor domicilePropertyEditor;
 
     private final ScoringDefinitionParser scoringDefinitionParser;
 
@@ -148,7 +147,7 @@ public class ApprovalController {
             GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
-            CountryPropertyEditor countryPropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
+            DomicilePropertyEditor domicilePropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
             ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider,
             final ApplicationDescriptorProvider applicationDescriptorProvider, ProgramInstanceService programInstanceService) {
         this.applicationsService = applicationsService;
@@ -166,7 +165,7 @@ public class ApprovalController {
         this.sendToPorticoDataDTOValidator = sendToPorticoDataDTOValidator;
         this.datePropertyEditor = datePropertyEditor;
         this.domicileService = domicileService;
-        this.countryPropertyEditor = countryPropertyEditor;
+        this.domicilePropertyEditor = domicilePropertyEditor;
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
@@ -180,7 +179,7 @@ public class ApprovalController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(refereesAdminEditDTOValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(Country.class, countryPropertyEditor);
+        binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
         binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());

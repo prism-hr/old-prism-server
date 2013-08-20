@@ -22,10 +22,6 @@ public class Address implements Serializable {
 	@GeneratedValue
 	private Integer id;
 
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "country_id")
-//	private Country country;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "domicile_id")
 	private Domicile domicile;

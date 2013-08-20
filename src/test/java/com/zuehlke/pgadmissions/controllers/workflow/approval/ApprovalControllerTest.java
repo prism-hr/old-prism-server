@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -73,9 +74,9 @@ import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
@@ -117,7 +118,7 @@ public class ApprovalControllerTest {
     private SendToPorticoDataDTOValidator sendToPorticoDataDTOValidatorMock;
     private DatePropertyEditor datePropertyEditorMock;
     private DomicileService domicileServiceMock;
-    private CountryPropertyEditor countryPropertyEditorMock;
+    private DomicilePropertyEditor domicilePropertyEditorMock;
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
@@ -763,7 +764,7 @@ public class ApprovalControllerTest {
 
         binderMock.setValidator(refereesAdminEditDTOValidatorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-        binderMock.registerCustomEditor(Country.class, countryPropertyEditorMock);
+        binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditorMock);
         binderMock.registerCustomEditor((Class<?>) EasyMock.isNull(), EasyMock.eq("comment"), EasyMock.isA(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(EasyMock.eq(String[].class), EasyMock.anyObject(StringArrayPropertyEditor.class));
@@ -821,7 +822,7 @@ public class ApprovalControllerTest {
         sendToPorticoDataDTOValidatorMock = EasyMock.createMock(SendToPorticoDataDTOValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
-        countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
+        domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
@@ -840,7 +841,7 @@ public class ApprovalControllerTest {
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
-                domicileServiceMock, countryPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
+                domicileServiceMock, domicilePropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock,
                 actionsProviderMock, applicationDescriptorProviderMock, programInstanceServiceMock);
 
     }

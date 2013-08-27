@@ -152,15 +152,15 @@ function renderAdvert(advert){
 		
 	}
 	if ($('#pContainer').length > 0) {
-		popupbuttons = '<a class="addthis_button_facebook" addthis:url="'+getAdvertUrl(advert.id)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
-			'<a class="addthis_button_twitter" addthis:url="'+getAdvertUrl(advert.id)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
+		popupbuttons = '<a class="addthis_button_facebook" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
+			'<a class="addthis_button_twitter" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
 			'<a class="addthis_button_google_plusone_share"></a>'+
-			'<a class="addthis_button_linkedin" addthis:url="'+getAdvertUrl(advert.id)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
+			'<a class="addthis_button_linkedin" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
 			'<a class="addthis_button_expanded"></a>'+
 			'<a class="addthis_counter addthis_bubble_style"></a>'+
 			'<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>'
 	} else {
-		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert.id)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>'
+		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>'
 	}
 	return '<li class="'+ advert.type+' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
 	'<div class="pdetails clearfix">'+
@@ -175,7 +175,7 @@ function renderAdvert(advert){
 	'<div class="pactions clearfix">'+
 		'<div class="social">'+
 			'<!-- AddThis Button BEGIN -->'+
-			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert.id)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'">'+
+			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'">'+
 			popupbuttons +
 			'</div>'+
 			'<!-- AddThis Button END -->'+
@@ -219,8 +219,12 @@ function durationOfStudyString(studyDuration){
 	return normalizedDuration+" "+ normalizedUnit+ pluralSuffix;
 }
 
-function getAdvertUrl(advertId){
-	return window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert="+advertId;
+function getAdvertUrl(advert){
+	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/apply/new' + "?advert=" + advert.id + "&program=" + advert.programCode;
+	if(advert.type == 'project') {
+		url = url + '&project=' + advert.projectId; 
+	}
+	return url;
 }
 
 function getUrlParam(name){

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;

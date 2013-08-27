@@ -10,8 +10,8 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.ReferenceTp;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;

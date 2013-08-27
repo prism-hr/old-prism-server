@@ -19,9 +19,9 @@ import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -136,7 +136,7 @@ public class PorticoExportService {
         
         AdmissionsApplicationResponse response = null;
         try {
-            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(
+            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(
                     new ObjectFactory()).applicationForm(form).isOverseasStudent(isOverseasStudent).build();
             
             listener.webServiceCallStarted(request, form);

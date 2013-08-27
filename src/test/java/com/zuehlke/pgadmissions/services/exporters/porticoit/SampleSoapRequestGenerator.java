@@ -22,14 +22,14 @@ import org.springframework.ws.client.WebServiceIOException;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.v1.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilder;
+import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,7 +42,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     
     private ApplicationFormDAO applicationFormDAO;
     
-    private SubmitAdmissionsApplicationRequestBuilder requestBuilder;
+    private SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder;
     
     /**
      * This test collects all the completed application forms (except test applications) from the database 
@@ -125,6 +125,6 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     @Before
     public void initialise() {
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-        requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory());
+        requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
     }
 }

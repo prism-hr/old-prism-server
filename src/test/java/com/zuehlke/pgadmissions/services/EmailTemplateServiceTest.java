@@ -98,8 +98,8 @@ public class EmailTemplateServiceTest {
 		verify();
 		
 		assertEquals("original template", result.get(1L));
-		assertEquals("2013/4/25 - 00:00:00", result.get(2L));
-		assertEquals("2013/10/27 - 00:00:00", result.get(3L));
+		assertEquals("25 Apr 2013 - 00:00:00", result.get(2L));
+		assertEquals("27 Oct 2013 - 00:00:00", result.get(3L));
 	}
 	
 	@Test

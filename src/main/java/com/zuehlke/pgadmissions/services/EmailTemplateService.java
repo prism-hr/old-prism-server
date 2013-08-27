@@ -77,7 +77,7 @@ public class EmailTemplateService {
 		Map<Long, Date> versions = emailTemplateDAO.getVersionsByName(name);
 		
 		Map<Long, String> result = new HashMap<Long, String>();
-		DateFormat formatter = new SimpleDateFormat("yyyy/M/d - HH:mm:ss");
+		DateFormat formatter = new SimpleDateFormat("dd MMM yyyy - HH:mm:ss");
 		for (Map.Entry<Long, Date> idDate : versions.entrySet()) {
 			if (idDate.getValue() == null) {
 				result.put(idDate.getKey(), "original template");

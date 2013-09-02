@@ -90,55 +90,64 @@
 				            	  			</thead>
 				            	  			<tbody>
 				            	  				<#list interview.participants as participant>
-				        	  						<#if user == participant.user>
-				        	  							<tr class="info">
-				        	  								<td class="participant">
-				        	  									<div><span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
-  				        	  									${participant.user.firstName!} ${participant.user.lastName!} 
-  				        	  									<#assign allSelected = RequestParameters.selectAll?? && RequestParameters.selectAll == 'true'> 
-  				        	  									<input type="checkbox" <#if allSelected>checked</#if> class="check-all sign-tooltip" data-desc="Select/Deselect all">
-                                      </div>
-			        	  									</td>
-					        	  							
-					        	  							<#assign acceptedTimeslots = participant.acceptedTimeslots>
-					            	  						<#list interview.timeslots as timeslot>
-					            	  							<td class="timeslot">
-					            	  							  <div>
-  					            	  								
-  					            	  								<input type="checkbox" name="acceptedTimeslots" class="timeslot-to-accept" value="${timeslot.id}" 
-  					            	  								  <#if allSelected || acceptedTimeslots?seq_contains(timeslot)>checked="checked"</#if> /> 
-						            	  							</div>
-					            	  							</td>
-					            	  						</#list>
-				        	  							</tr>
-				        	  						<#else>
-				        	  							<tr>
-				        	  								<td class="participant">
-				        	  									<div><span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
-				        	  									${participant.user.firstName!} ${participant.user.lastName!} </div>
-			        	  									</td>
-			        	  									
-					            	  						
-					            	  						<#if participant.responded>
-						            	  						<#assign acceptedTimeslots = participant.acceptedTimeslots>
-						            	  						<#list interview.timeslots as timeslot>
-						            	  							<td class="timeslot"> <div>
-						            	  								<#if acceptedTimeslots?seq_contains(timeslot)>
-							            	  								<i class="icon-ok-sign sign-tooltip"></i>
-							            	  							<#else>
-							            	  								<i class="icon-remove-sign sign-tooltip"></i>
-							            	  							</#if> </div>
-						            	  							</td>
-						            	  						</#list>
-						            	  					<#else>
-						            	  						<#list interview.timeslots as timeslot>
-						            	  							<td class="timeslot"><div>
-				            	  										<i class="icon-time sign-tooltip" data-desc="<@spring.message 'interviewVote.notvotedyet'/>"></i> </div>
-						            	  							</td>
-						            	  						</#list>
-						            	  					</#if>
-				        	  							</tr>
-				        	  						</#if>
+			            	  				   <#if participant.user == applicationForm.applicant>
+                                    <#assign userTypeClass = "applicant"> 
+                                    <#assign userTypeName = "Applicant"> 
+                                  <#else>
+                                    <#assign userTypeClass = "interviewer"> 
+                                    <#assign userTypeName = "Interviewer"> 
+                                  </#if>
+  				        	  						<#if user == participant.user>
+  				        	  							<tr class="info">
+  				        	  								<td class="participant">
+  				        	  									<div><span data-desc="${userTypeName}" class="icon-role ${userTypeClass}"></span>
+    				        	  									${participant.user.firstName!} ${participant.user.lastName!} 
+    				        	  									<#assign allSelected = RequestParameters.selectAll?? && RequestParameters.selectAll == 'true'> 
+    				        	  									<input type="checkbox" <#if allSelected>checked</#if> class="check-all sign-tooltip" data-desc="Select/Deselect all">
+                                        </div>
+  			        	  									</td>
+  					        	  							
+  					        	  							<#assign acceptedTimeslots = participant.acceptedTimeslots>
+  					            	  						<#list interview.timeslots as timeslot>
+  					            	  							<td class="timeslot">
+  					            	  							  <div>
+    					            	  								
+    					            	  								<input type="checkbox" name="acceptedTimeslots" class="timeslot-to-accept" value="${timeslot.id}" 
+    					            	  								  <#if allSelected || acceptedTimeslots?seq_contains(timeslot)>checked="checked"</#if> /> 
+  						            	  							</div>
+  					            	  							</td>
+  					            	  						</#list>
+  				        	  							</tr>
+  				        	  						<#else>
+  				        	  							<tr>
+  				        	  								<td class="participant">
+  				        	  									<div>
+  				        	  									  <span data-desc="${userTypeName}" class="icon-role ${userTypeClass}"></span>
+  				        	  									  ${participant.user.firstName!} ${participant.user.lastName!}
+  				        	  									</div>
+  			        	  									</td>
+  			        	  									
+  					            	  						
+  					            	  						<#if participant.responded>
+  						            	  						<#assign acceptedTimeslots = participant.acceptedTimeslots>
+  						            	  						<#list interview.timeslots as timeslot>
+  						            	  							<td class="timeslot"> <div>
+  						            	  								<#if acceptedTimeslots?seq_contains(timeslot)>
+  							            	  								<i class="icon-ok-sign sign-tooltip"></i>
+  							            	  							<#else>
+  							            	  								<i class="icon-remove-sign sign-tooltip"></i>
+  							            	  							</#if> </div>
+  						            	  							</td>
+  						            	  						</#list>
+  						            	  					<#else>
+  						            	  						<#list interview.timeslots as timeslot>
+  						            	  							<td class="timeslot"><div>
+  				            	  										<i class="icon-time sign-tooltip" data-desc="<@spring.message 'interviewVote.notvotedyet'/>"></i> </div>
+  						            	  							</td>
+  						            	  						</#list>
+  						            	  					</#if>
+  				        	  							</tr>
+  				        	  						</#if>
 				            	  				</#list>
 				            	  			</tbody>
 				            	  		</table>

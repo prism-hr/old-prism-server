@@ -15,12 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.ui.ModelMap;
 
 import com.google.common.collect.Lists;
@@ -30,36 +33,41 @@ import com.zuehlke.pgadmissions.controllers.prospectus.AdvertsController;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
 
 public class AdvertsControllerTest {
 
     private AdvertsController controller;
-    private AdvertService advertService;
-    private ResearchOpportunitiesFeedService feedService;
+    private AdvertService advertServiceMock;
+    private ResearchOpportunitiesFeedService feedServiceMock;
+    private ProgramsService programsServiceMock;
     private final static Integer NO_SELECTED_ADVERT = Integer.MIN_VALUE;
 
     @Before
     public void setUp() {
-        advertService = EasyMock.createMock(AdvertService.class);
-        feedService = EasyMock.createMock(ResearchOpportunitiesFeedService.class);
-        controller = new AdvertsController(advertService, feedService);
+        advertServiceMock = EasyMock.createMock(AdvertService.class);
+        feedServiceMock = EasyMock.createMock(ResearchOpportunitiesFeedService.class);
+        programsServiceMock = EasyMock.createMock(ProgramsService.class);
+        controller = new AdvertsController(advertServiceMock, feedServiceMock, programsServiceMock);
     }
 
     @Test
     public void shouldReturnNoAdvertsInJson() {
-        EasyMock.expect(advertService.getActiveAdverts()).andReturn(Collections.<Advert> emptyList());
-        EasyMock.replay(advertService);
+        EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(Collections.<Advert> emptyList());
+        EasyMock.replay(advertServiceMock);
         int expectedAdvertsSize = 0;
         assertAdvertsElementPresentWithExpectedLenght(expectedAdvertsSize, controller.activeAdverts(null));
     }
@@ -70,9 +78,9 @@ public class AdvertsControllerTest {
         Advert advert = new AdvertBuilder().id(1).title("Title").description("Advert").funding("Funding").studyDuration(1).build();
         List<Advert> advertList = Arrays.asList(advert);
 
-        EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
-        EasyMock.expect(advertService.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertService);
+        EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
+        EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
+        EasyMock.replay(advertServiceMock);
         int expectedAdvertsSize = 1;
         String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
         assertAdvertsElementPresentWithExpectedLenght(expectedAdvertsSize, activeAdvertsJson);
@@ -87,10 +95,10 @@ public class AdvertsControllerTest {
         Advert advertTwo = new AdvertBuilder().id(1).title("Title2").description("Advert2").funding("Funding2").studyDuration(1).build();
         List<Advert> advertList = Arrays.asList(advertOne, advertTwo);
 
-        EasyMock.expect(advertService.getProgram(advertOne)).andReturn(programOne);
-        EasyMock.expect(advertService.getProgram(advertTwo)).andReturn(programTwo);
-        EasyMock.expect(advertService.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertService);
+        EasyMock.expect(advertServiceMock.getProgram(advertOne)).andReturn(programOne);
+        EasyMock.expect(advertServiceMock.getProgram(advertTwo)).andReturn(programTwo);
+        EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
+        EasyMock.replay(advertServiceMock);
         int expectedAdvertsSize = 2;
         String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
         assertAdvertsElementPresentWithExpectedLenght(expectedAdvertsSize, activeAdvertsJson);
@@ -104,9 +112,9 @@ public class AdvertsControllerTest {
         Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
         List<Advert> advertList = Arrays.asList(advert);
 
-        EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
-        EasyMock.expect(advertService.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertService);
+        EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
+        EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
+        EasyMock.replay(advertServiceMock);
         String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
         assertThat(activeAdvertsJson, containsString(jsonProperty("id", advert.getId())));
         assertThat(activeAdvertsJson, containsString(jsonProperty("title", program.getTitle())));
@@ -136,9 +144,9 @@ public class AdvertsControllerTest {
         Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
         List<Advert> advertList = Arrays.asList(advert);
 
-        EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
-        EasyMock.expect(advertService.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertService);
+        EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
+        EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
+        EasyMock.replay(advertServiceMock);
         String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
         assertThat(activeAdvertsJson, not(containsString(jsonProperty("selected", true))));
         assertThat(activeAdvertsJson, containsString(jsonProperty("id", advert.getId())));
@@ -156,9 +164,9 @@ public class AdvertsControllerTest {
         Advert advert = new AdvertBuilder().id(1).description("Advert").funding("Funding").studyDuration(1).build();
         List<Advert> advertList = Arrays.asList(advert);
 
-        EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
-        EasyMock.expect(advertService.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertService);
+        EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
+        EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
+        EasyMock.replay(advertServiceMock);
         String activeAdvertsJson = controller.activeAdverts(advert.getId());
         assertThat(activeAdvertsJson, containsString(jsonProperty("id", advert.getId())));
         assertThat(activeAdvertsJson, containsString(jsonProperty("selected", true)));
@@ -171,10 +179,10 @@ public class AdvertsControllerTest {
         Advert notSelectedAdvert = new AdvertBuilder().id(new Integer(2)).description("Advert").funding("Funding").studyDuration(1).build();
         List<Advert> advertList = Arrays.asList(notSelectedAdvert, selectedAdvert);
 
-        EasyMock.expect(advertService.getProgram(selectedAdvert)).andReturn(program);
-        EasyMock.expect(advertService.getProgram(notSelectedAdvert)).andReturn(program);
-        EasyMock.expect(advertService.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertService);
+        EasyMock.expect(advertServiceMock.getProgram(selectedAdvert)).andReturn(program);
+        EasyMock.expect(advertServiceMock.getProgram(notSelectedAdvert)).andReturn(program);
+        EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
+        EasyMock.replay(advertServiceMock);
 
         String resultJson = controller.activeAdverts(new Integer(1));
 
@@ -190,14 +198,14 @@ public class AdvertsControllerTest {
     @SuppressWarnings("rawtypes")
     public void shouldReturnAdvertsByFeedId() {
         Advert advert = new AdvertBuilder().id(new Integer(1)).description("Advert").funding("Funding").studyDuration(1).build();
-        Program program = new ProgramBuilder().code("code1").title("another title").adverts(advert).build();
+        Program program = new ProgramBuilder().code("code1").title("another title").advert(advert).build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program).build();
-        EasyMock.expect(feedService.getById(1)).andReturn(feed);
-        EasyMock.expect(advertService.getProgram(advert)).andReturn(program);
+        EasyMock.expect(feedServiceMock.getById(1)).andReturn(feed);
+        EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
 
-        EasyMock.replay(feedService, advertService);
+        EasyMock.replay(feedServiceMock, advertServiceMock);
         Map feeds = controller.getFeeds(1, null, null);
-        EasyMock.verify(feedService, advertService);
+        EasyMock.verify(feedServiceMock, advertServiceMock);
 
         List<?> advertsList = (List<?>) feeds.get("adverts");
         AdvertDTO dto = (AdvertDTO) advertsList.get(0);
@@ -209,21 +217,81 @@ public class AdvertsControllerTest {
     public void shouldReturnAdvertsByUsername() {
         Advert advert1 = new AdvertBuilder().id(new Integer(1)).description("Advert").funding("Funding").studyDuration(1).build();
         Advert advert2 = new AdvertBuilder().id(new Integer(2)).description("Advert2").funding("Funding2").studyDuration(1).build();
-        Program program1 = new ProgramBuilder().code("code1").title("another title").adverts(advert1).build();
-        Program program2 = new ProgramBuilder().code("code1").title("another title").adverts(advert2).build();
+        Program program1 = new ProgramBuilder().code("code1").title("another title").advert(advert1).build();
+        Program program2 = new ProgramBuilder().code("code1").title("another title").advert(advert2).build();
         ResearchOpportunitiesFeed feed1 = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program1).build();
         ResearchOpportunitiesFeed feed2 = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program2).build();
-        EasyMock.expect(feedService.getDefaultOpportunitiesFeedsByUsername("feeder", null)).andReturn(Lists.newArrayList(feed1, feed2));
-        EasyMock.expect(advertService.getProgram(advert1)).andReturn(program1);
-        EasyMock.expect(advertService.getProgram(advert2)).andReturn(program2);
+        EasyMock.expect(feedServiceMock.getDefaultOpportunitiesFeedsByUsername("feeder", null)).andReturn(Lists.newArrayList(feed1, feed2));
+        EasyMock.expect(advertServiceMock.getProgram(advert1)).andReturn(program1);
+        EasyMock.expect(advertServiceMock.getProgram(advert2)).andReturn(program2);
 
-        EasyMock.replay(feedService, advertService);
+        EasyMock.replay(feedServiceMock, advertServiceMock);
         Map feeds = controller.getFeeds(null, "feeder", null);
-        EasyMock.verify(feedService, advertService);
+        EasyMock.verify(feedServiceMock, advertServiceMock);
 
         List<AdvertDTO> advertsList = (List<AdvertDTO>) feeds.get("adverts");
         Matcher<Iterable<AdvertDTO>> advertsListMatcher = Matchers.hasItems(Matchers.hasProperty("programCode", Matchers.equalTo("code1")));
         assertThat(advertsList, advertsListMatcher);
+    }
+    
+    @Test
+    public void shouldGetSelectedAvertFromSessionIfSpecified(){
+        DefaultSavedRequest savedRequest = EasyMock.createMock(DefaultSavedRequest.class);
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("SPRING_SECURITY_SAVED_REQUEST", savedRequest);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(session);
+        
+        EasyMock.expect(savedRequest.getParameterValues("advert")).andReturn(new String[]{"88"});
+        
+        EasyMock.replay(savedRequest);
+        int advertId = controller.getSelectedAdvert(null, request);
+        EasyMock.verify(savedRequest);
+        
+        assertEquals(88, advertId);
+    }
+
+    @Test
+    public void shouldGetSelectedAvertFromSessionIfOnlyProjectSpecified(){
+        DefaultSavedRequest savedRequest = EasyMock.createMock(DefaultSavedRequest.class);
+        MockHttpSession session = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Project project = new ProjectBuilder().advert(new AdvertBuilder().id(11).build()).build();
+
+        session.setAttribute("SPRING_SECURITY_SAVED_REQUEST", savedRequest);
+        request.setSession(session);
+        
+        EasyMock.expect(savedRequest.getParameterValues("advert")).andReturn(new String[]{});
+        EasyMock.expect(savedRequest.getParameterValues("project")).andReturn(new String[]{"33"});
+        EasyMock.expect(programsServiceMock.getProject(33)).andReturn(project);
+        
+        EasyMock.replay(savedRequest, programsServiceMock);
+        int advertId = controller.getSelectedAdvert(null, request);
+        EasyMock.verify(savedRequest, programsServiceMock);
+        
+        assertEquals(11, advertId);
+    }
+    
+    @Test
+    public void shouldGetSelectedAvertFromSessionIfOnlyProgramSpecified(){
+        DefaultSavedRequest savedRequest = EasyMock.createMock(DefaultSavedRequest.class);
+        MockHttpSession session = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Program program = new ProgramBuilder().advert(new AdvertBuilder().id(99).build()).build();
+
+        session.setAttribute("SPRING_SECURITY_SAVED_REQUEST", savedRequest);
+        request.setSession(session);
+        
+        EasyMock.expect(savedRequest.getParameterValues("advert")).andReturn(new String[]{});
+        EasyMock.expect(savedRequest.getParameterValues("project")).andReturn(new String[]{});
+        EasyMock.expect(savedRequest.getParameterValues("program")).andReturn(new String[]{"p1"});
+        EasyMock.expect(programsServiceMock.getProgramByCode("p1")).andReturn(program);
+        
+        EasyMock.replay(savedRequest, programsServiceMock);
+        int advertId = controller.getSelectedAdvert(null, request);
+        EasyMock.verify(savedRequest, programsServiceMock);
+        
+        assertEquals(99, advertId);
     }
 
     @Test

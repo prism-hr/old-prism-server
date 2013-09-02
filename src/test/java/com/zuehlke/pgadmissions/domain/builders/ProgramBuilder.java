@@ -118,7 +118,7 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder adverts(Advert advert) {
+    public ProgramBuilder advert(Advert advert) {
         this.advert = advert;
         return this;
     }

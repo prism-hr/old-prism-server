@@ -112,7 +112,7 @@ public class ApplicationsReportServiceTest {
     @Test
     public void testGetMinimalisticApplicationReport() {
         // GIVEN
-        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
+        RegisteredUser applicant1 = new RegisteredUserBuilder().id(6).firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
         Program program1 = new ProgramBuilder().code("ABC").title("BBC").build();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
         ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).build();
@@ -150,15 +150,15 @@ public class ApplicationsReportServiceTest {
         assertEquals(StringUtils.EMPTY, getTextValue(table, row, "academicallyQualified"));
         assertEquals(StringUtils.EMPTY, getTextValue(table, row, "adequateEnglish"));
         assertEquals(0, getNumberValue(table, row, "receivedReferences"), 0);
-        assertEquals(0, getNumberValue(table, row, "positiveReferenceEndorsements"), 0);
-        assertEquals(0, getNumberValue(table, row, "negativeReferenceEndorsements"),0);
+        assertEquals("0", getTextValue(table, row, "positiveReferenceEndorsements"));
+        assertEquals("0", getTextValue(table, row, "negativeReferenceEndorsements"));
         assertEquals(0, getNumberValue(table, row, "declinedReferences"),0);
-        assertEquals(0, getNumberValue(table, row, "positiveReviewEndorsements"), 0);
-        assertEquals(0, getNumberValue(table, row, "negativeReviewEndorsements"),0);
+        assertEquals("0", getTextValue(table, row, "positiveReviewEndorsements"));
+        assertEquals("0", getTextValue(table, row, "negativeReviewEndorsements"));
         assertEquals(0, getNumberValue(table, row, "interviewTime"),0);
         assertEquals(0, getNumberValue(table, row, "interviewReports"),0);
-        assertEquals(0, getNumberValue(table, row, "positiveInterviewEndorsements"),0);
-        assertEquals(0, getNumberValue(table, row, "negativeInterviewEndorsements"),0);
+        assertEquals("0", getTextValue(table, row, "positiveInterviewEndorsements"));
+        assertEquals("0", getTextValue(table, row, "negativeInterviewEndorsements"));
         assertEquals(0, getNumberValue(table, row, "approvalTime"),0);
         assertEquals(0, getNumberValue(table, row, "approvalStages"),0);
         assertEquals(StringUtils.EMPTY, getTextValue(table, row, "primarySupervisor"));
@@ -242,7 +242,7 @@ public class ApplicationsReportServiceTest {
         assertEquals("1939-08-31", getDateValue(table, row, "submittedDate"));
         assertEquals("1939-09-01", getDateValue(table, row, "lastEditedDate"));
         assertEquals("1.56", getTextValue(table, row, "averageOverallRating"));
-        assertEquals(13, getNumberValue(table, row, "overallPositiveEndorsements"), 0);
+        assertEquals("13", getTextValue(table, row, "overallPositiveEndorsements"));
         assertEquals("Offer Recommended", getTextValue(table, row, "status"));
         assertEquals(24, getNumberValue(table, row, "validationTime"), 0);
         assertEquals("Overseas", getTextValue(table, row, "feeStatus"));
@@ -250,16 +250,16 @@ public class ApplicationsReportServiceTest {
         assertEquals("Unsure", getTextValue(table, row, "adequateEnglish"));
         assertEquals(2, getNumberValue(table, row, "receivedReferences"), 0);
         assertEquals(1, getNumberValue(table, row, "declinedReferences"), 0);
-        assertEquals(3, getNumberValue(table, row, "positiveReferenceEndorsements"), 0);
-        assertEquals(1, getNumberValue(table, row, "negativeReferenceEndorsements"),0);
+        assertEquals("3", getTextValue(table, row, "positiveReferenceEndorsements"));
+        assertEquals("1", getTextValue(table, row, "negativeReferenceEndorsements"));
         assertEquals("3.33", getTextValue(table, row, "averageReferenceRating"));
-        assertEquals(7, getNumberValue(table, row, "positiveReviewEndorsements"), 0);
-        assertEquals(1, getNumberValue(table, row, "negativeReviewEndorsements"),0);
+        assertEquals("7", getTextValue(table, row, "positiveReviewEndorsements"));
+        assertEquals("1", getTextValue(table, row, "negativeReviewEndorsements"));
         assertEquals(1, getNumberValue(table, row, "declinedReferences"),0);
         assertEquals(192, getNumberValue(table, row, "interviewTime"),0);
         assertEquals(2, getNumberValue(table, row, "interviewReports"),0);
-        assertEquals(3, getNumberValue(table, row, "positiveInterviewEndorsements"),0);
-        assertEquals(1, getNumberValue(table, row, "negativeInterviewEndorsements"),0);
+        assertEquals("3", getTextValue(table, row, "positiveInterviewEndorsements"));
+        assertEquals("1", getTextValue(table, row, "negativeInterviewEndorsements"));
         assertEquals(0, getNumberValue(table, row, "approvalTime"),0);
         assertEquals(1, getNumberValue(table, row, "approvalStages"),0);
         assertEquals("Primary Supervisor", getTextValue(table, row, "primarySupervisor"));
@@ -330,7 +330,7 @@ public class ApplicationsReportServiceTest {
     @Test
     public void shouldNotThrowExceptionIfSourcesOfInterestIsNull() {
         // GIVEN
-        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
+        RegisteredUser applicant1 = new RegisteredUserBuilder().id(4324).firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
         Program program1 = new ProgramBuilder().code("ABC").title("BBC").build();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
         ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(null).build();
@@ -368,13 +368,13 @@ public class ApplicationsReportServiceTest {
         assertEquals(StringUtils.EMPTY, getTextValue(table, row, "academicallyQualified"));
         assertEquals(StringUtils.EMPTY, getTextValue(table, row, "adequateEnglish"));
         assertEquals(0, getNumberValue(table, row, "receivedReferences"), 0);
-        assertEquals(0, getNumberValue(table, row, "positiveReviewEndorsements"), 0);
-        assertEquals(0, getNumberValue(table, row, "negativeReviewEndorsements"),0);
+        assertEquals("0", getTextValue(table, row, "positiveReviewEndorsements"));
+        assertEquals("0", getTextValue(table, row, "negativeReviewEndorsements"));
         assertEquals(0, getNumberValue(table, row, "declinedReferences"),0);
         assertEquals(0, getNumberValue(table, row, "interviewTime"),0);
         assertEquals(0, getNumberValue(table, row, "interviewReports"),0);
-        assertEquals(0, getNumberValue(table, row, "positiveInterviewEndorsements"),0);
-        assertEquals(0, getNumberValue(table, row, "negativeInterviewEndorsements"),0);
+        assertEquals("0", getTextValue(table, row, "positiveInterviewEndorsements"));
+        assertEquals("0", getTextValue(table, row, "negativeInterviewEndorsements"));
         assertEquals(0, getNumberValue(table, row, "approvalTime"),0);
         assertEquals(0, getNumberValue(table, row, "approvalStages"),0);
         assertEquals(StringUtils.EMPTY, getTextValue(table, row, "primarySupervisor"));

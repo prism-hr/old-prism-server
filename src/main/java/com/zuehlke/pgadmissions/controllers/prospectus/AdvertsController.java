@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -52,14 +53,17 @@ public class AdvertsController {
 
     private final ResearchOpportunitiesFeedService feedService;
 
+    private final ProgramsService programsService;
+
     public AdvertsController() {
-        this(null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService) {
+    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService, final ProgramsService programsService) {
         this.advertService = advertService;
         this.feedService = feedService;
+        this.programsService = programsService;
     }
 
     @ModelAttribute("advertId")
@@ -68,12 +72,44 @@ public class AdvertsController {
     }
 
     private Integer getSelectedAdvertFromSession(final HttpServletRequest request) {
+        Integer advertId = null;
         DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
         if (defaultSavedRequest != null) {
-            String[] values = defaultSavedRequest.getParameterValues("advert");
-            if (!ArrayUtils.isEmpty(values) && !StringUtils.isBlank(values[0]) && StringUtils.isNumeric(values[0])) {
-                return Integer.valueOf(values[0]);
+            advertId = getSavedRequestNumericParam(defaultSavedRequest, "advert");
+            if (advertId == null) {
+                Integer projectId = getSavedRequestNumericParam(defaultSavedRequest, "project");
+                if (projectId != null) {
+                    Project project = programsService.getProject(projectId);
+                    if (project != null) {
+                        advertId = project.getAdvert().getId();
+                    }
+                }
             }
+            if (advertId == null) {
+                String programCode = getSavedRequestTextParam(defaultSavedRequest, "program");
+                if (programCode != null) {
+                    Program program = programsService.getProgramByCode(programCode);
+                    if (program != null) {
+                        advertId = program.getAdvert().getId();
+                    }
+                }
+            }
+        }
+        return advertId;
+    }
+
+    private Integer getSavedRequestNumericParam(DefaultSavedRequest request, String paramName) {
+        String[] values = request.getParameterValues(paramName);
+        if (!ArrayUtils.isEmpty(values) && !StringUtils.isBlank(values[0]) && StringUtils.isNumeric(values[0])) {
+            return Integer.valueOf(values[0]);
+        }
+        return null;
+    }
+
+    private String getSavedRequestTextParam(DefaultSavedRequest request, String paramName) {
+        String[] values = request.getParameterValues(paramName);
+        if (!ArrayUtils.isEmpty(values) && !StringUtils.isBlank(values[0])) {
+            return values[0];
         }
         return null;
     }
@@ -108,16 +144,15 @@ public class AdvertsController {
         map.put("adverts", activeAdverts);
         return new Gson().toJson(map);
     }
-    
-    private String replaceLineChangeWithHTMLLineChange(String originalDescription){
+
+    private String replaceLineChangeWithHTMLLineChange(String originalDescription) {
         return originalDescription.replaceAll("\n", "<br>");
     }
 
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "/feeds", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Map getFeeds(@RequestParam(required = false) Integer feedId, @RequestParam(required = false) String user,
-            @RequestParam(required = false) String upi) {
+    public Map getFeeds(@RequestParam(required = false) Integer feedId, @RequestParam(required = false) String user, @RequestParam(required = false) String upi) {
         List<ResearchOpportunitiesFeed> feeds = null;
         if (feedId != null) {
             feeds = Collections.singletonList(feedService.getById(feedId));

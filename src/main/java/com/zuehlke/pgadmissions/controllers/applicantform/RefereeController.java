@@ -61,9 +61,8 @@ public class RefereeController {
 
     @Autowired
     public RefereeController(RefereeService refereeService, UserService userService, ApplicationsService applicationsService,
-                    DomicilePropertyEditor domicilePropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor,
-                    RefereeValidator refereeValidator, EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService,
-                    DomicileService domicileService) {
+            DomicilePropertyEditor domicilePropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
+            EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService, DomicileService domicileService) {
         this.refereeService = refereeService;
         this.userService = userService;
         this.applicationsService = applicationsService;
@@ -79,7 +78,7 @@ public class RefereeController {
     public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap) {
 
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        
+
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
             throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
         }
@@ -88,14 +87,20 @@ public class RefereeController {
             throw new CannotUpdateApplicationException(application.getApplicationNumber());
         }
 
-        Referee referee = getReferee(refereeId);
+        Referee referee = null;
+        if (StringUtils.isNotBlank(refereeId)) {
+            referee = getReferee(refereeId);
+        }
+
         if (result.hasErrors()) {
-            newReferee.setId(referee.getId());
+            if (referee != null) {
+                newReferee.setId(referee.getId());
+            }
             modelMap.addAttribute("referee", newReferee);
             return STUDENTS_FORM_REFEREES_VIEW;
         }
-        
-        if(referee == null){
+
+        if (referee == null) {
             referee = newReferee;
         } else {
             referee.setFirstname(newReferee.getFirstname());
@@ -107,7 +112,7 @@ public class RefereeController {
             referee.setPhoneNumber(newReferee.getPhoneNumber());
             referee.setMessenger(newReferee.getMessenger());
         }
-        
+
         if (!application.isSubmitted()) {
             refereeService.save(referee);
         } else if (application.isModifiable()) {
@@ -167,14 +172,14 @@ public class RefereeController {
 
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
     public String getRefereeView(@RequestParam(required = false) String refereeId, ModelMap modelMap) {
-        
+
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        
+
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
             throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
         }
         Referee referee = getReferee(refereeId);
-        if(referee == null){
+        if (referee == null) {
             referee = new Referee();
         }
         modelMap.put("referee", referee);

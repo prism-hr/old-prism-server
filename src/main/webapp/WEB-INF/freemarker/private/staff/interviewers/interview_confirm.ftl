@@ -90,21 +90,29 @@
                       </thead>
                     <tbody>
                     <#list interview.participants as participant>
-                    <tr>
-                      <td class="participant"><div><span class="icon-role <#if participant.user == applicationForm.applicant>applicant<#else>interviewer</#if>"></span>
-                          ${participant.user.firstName!}
-                          ${participant.user.lastName!}
-                        </div></td>
-                      <#if participant.responded>
-                      <#assign acceptedTimeslots = participant.acceptedTimeslots>
-                      <#list interview.timeslots as timeslot>
-                      <td class="timeslot"><div> <#if acceptedTimeslots?seq_contains(timeslot)> <i class="icon-ok-sign sign-tooltip" data-desc="Available"></i> <#else> <i class="icon-remove-sign sign-tooltip" data-desc="Not Available"></i> </#if> </div></td>
-                      </#list>
+                      <#if participant.user == applicationForm.applicant>
+                        <#assign userTypeClass = "applicant"> 
+                        <#assign userTypeName = "Applicant"> 
                       <#else>
-                      <#list interview.timeslots as timeslot>
-                      <td class="timeslot"><div> <i class="icon-time sign-tooltip" data-desc="<@spring.message 'interviewVote.notvotedyet'/>"></i> </div></td>
-                      </#list>
-                      </#if> </tr>
+                        <#assign userTypeClass = "interviewer"> 
+                        <#assign userTypeName = "Interviewer"> 
+                      </#if>                    
+                      <tr>
+                        <td class="participant"><div><span data-desc="${userTypeName}" class="icon-role ${userTypeClass}"></span>
+                            ${participant.user.firstName!}
+                            ${participant.user.lastName!}
+                          </div></td>
+                        <#if participant.responded>
+                        <#assign acceptedTimeslots = participant.acceptedTimeslots>
+                        <#list interview.timeslots as timeslot>
+                        <td class="timeslot"><div> <#if acceptedTimeslots?seq_contains(timeslot)> <i class="icon-ok-sign sign-tooltip" data-desc="Available"></i> <#else> <i class="icon-remove-sign sign-tooltip" data-desc="Not Available"></i> </#if> </div></td>
+                        </#list>
+                        <#else>
+                        <#list interview.timeslots as timeslot>
+                        <td class="timeslot"><div> <i class="icon-time sign-tooltip" data-desc="<@spring.message 'interviewVote.notvotedyet'/>"></i> </div></td>
+                        </#list>
+                        </#if>
+                      </tr>
                     </#list>
                     </tbody>
                     

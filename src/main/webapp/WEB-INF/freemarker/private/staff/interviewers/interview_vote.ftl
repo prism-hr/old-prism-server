@@ -90,7 +90,7 @@
 				            	  			</thead>
 				            	  			<tbody>
 				            	  				<#list interview.participants as participant>
-			            	  				   <#if participant.user == applicationForm.applicant>
+			            	  				    <#if participant.user == applicationForm.applicant>
                                     <#assign userTypeClass = "applicant"> 
                                     <#assign userTypeName = "Applicant"> 
                                   <#else>

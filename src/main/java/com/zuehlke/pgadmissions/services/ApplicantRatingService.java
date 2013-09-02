@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -84,6 +85,20 @@ public class ApplicantRatingService {
 
         application.setAverageRating(avgDecimal);
         applicationFormDAO.save(application);
+    }
+    
+    public BigDecimal getAverageReferenceRating(ApplicationForm application) {
+        List<Referee> referees = application.getReferees();
+        List<Integer> ratings = Lists.newArrayList();
+        for (Referee referee : referees) {
+            ReferenceComment reference = referee.getReference();
+            if(reference != null && reference.getApplicantRating() != null){
+                ratings.add(reference.getApplicantRating());
+            }
+        }
+        
+        BigDecimal avgDecimal = computeAverage(ratings);
+        return avgDecimal;
     }
 
     private BigDecimal computeAverage(List<Integer> ratings) {

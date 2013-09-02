@@ -41,7 +41,9 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -54,14 +56,17 @@ import com.zuehlke.pgadmissions.utils.MathUtils;
 public class ApplicationsReportService {
 
     private final ApplicationsService applicationsService;
+    
+    private final ApplicantRatingService applicantRatingService;
 
     public ApplicationsReportService() {
-        this(null);
+        this(null, null);
     }
 
     @Autowired
-    public ApplicationsReportService(ApplicationsService applicationsService) {
+    public ApplicationsReportService(ApplicationsService applicationsService, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
+        this.applicantRatingService = applicantRatingService; 
     }
 
     public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering) {
@@ -88,21 +93,32 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
         cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
         cd.add(new ColumnDescription("lastEditedDate", ValueType.DATE, "Last Edited"));
+
+        // overall rating
         cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
+        cd.add(new ColumnDescription("overallPositiveEndorsements", ValueType.NUMBER, "Overall Positive Endorsements"));
+
         cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
         cd.add(new ColumnDescription("validationTime", ValueType.NUMBER, "Validation Time (hours)"));
         cd.add(new ColumnDescription("feeStatus", ValueType.TEXT, "Fee status"));
         cd.add(new ColumnDescription("academicallyQualified", ValueType.TEXT, "Academically Qualified?"));
         cd.add(new ColumnDescription("adequateEnglish", ValueType.TEXT, "Adequate English?"));
+
+        // reference report
         cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
         cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
-        
+        cd.add(new ColumnDescription("positiveReferenceEndorsements", ValueType.NUMBER, "Positive Reference Endorsements"));
+        cd.add(new ColumnDescription("negativeReferenceEndorsements", ValueType.NUMBER, "Negative Reference Endorsements"));
+        cd.add(new ColumnDescription("averageReferenceRating", ValueType.TEXT, "Average Reference Rating"));
+
+        // review report
         cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
         cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
         cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.NUMBER, "Positive Review Endorsements"));
         cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.NUMBER, "Negative Review Endorsements"));
         cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
 
+        //interview report
         cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
         cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
         cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
@@ -110,6 +126,7 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.NUMBER, "Negative Interview Endorsements"));
         cd.add(new ColumnDescription("averageInterviewRating", ValueType.TEXT, "Average Interview Rating"));
 
+        // approval report
         cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time (hours)"));
         cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER, "Approval Stages"));
         cd.add(new ColumnDescription("primarySupervisor", ValueType.TEXT, "Primary Supervisor"));
@@ -118,6 +135,7 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("outcomedate", ValueType.DATE, "Outcome Date"));
         cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
         cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
+        
         data.addColumns(cd);
         List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
         do {
@@ -147,8 +165,11 @@ public class ApplicationsReportService {
                 ProgrammeDetails programmeDetails = app.getProgrammeDetails();
                 ValidationComment validationComment = getLatestvalidationComment(app);
                 int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
+                int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);
                 int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);
                 int[] interviewEndorsements = getNumberOfPositiveAndNegativeInterviewEndorsements(app);
+
+                int overallPositiveEndorsements = referenceEndorsements[0] + reviewEndorsements[0] + interviewEndorsements[0];
 
                 Date approveDate = getApproveDate(app);
                 boolean canSeeRating = user.getId() != applicant.getId();
@@ -168,26 +189,38 @@ public class ApplicationsReportService {
                 row.addCell(getProjectTitle(app));
                 row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : StringUtils.EMPTY);
                 row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterest().getName())
-                                : StringUtils.EMPTY);
+                        : StringUtils.EMPTY);
                 row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterestText()));
                 row.addCell(getSuggestedSupervisors(programmeDetails));
                 row.addCell(getAcademicYear(app));
                 row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
                 row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
+
+                // overall rating
                 row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : "N/R");
+                row.addCell(overallPositiveEndorsements);
+
                 row.addCell(app.getStatus().displayValue());
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
                 row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
                 row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
                 row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : StringUtils.EMPTY);
+
+                // reference report
                 row.addCell(new NumberValue(receivedAndDeclinedReferences[0]));
                 row.addCell(new NumberValue(receivedAndDeclinedReferences[1]));
+                row.addCell(new NumberValue(referenceEndorsements[0]));
+                row.addCell(new NumberValue(referenceEndorsements[1]));
+                row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app)) : "N/R");
+
+                // review report
                 row.addCell(new NumberValue(app.getReviewRounds().size()));
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
                 row.addCell(new NumberValue(reviewEndorsements[0]));
                 row.addCell(new NumberValue(reviewEndorsements[1]));
                 row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : "N/R");
 
+                // interview report
                 row.addCell(new NumberValue(app.getInterviews().size()));
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
                 row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
@@ -195,6 +228,7 @@ public class ApplicationsReportService {
                 row.addCell(new NumberValue(interviewEndorsements[1]));
                 row.addCell(canSeeRating ? printRating(getAverageRatingForAllInterviewRounds(app)) : "N/R");
 
+                // approval report
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
                 row.addCell(new NumberValue(app.getApprovalRounds().size()));
                 row.addCell(getPrintablePrimarySupervisor(app));
@@ -281,7 +315,7 @@ public class ApplicationsReportService {
         return reicevedAndDeclinedCount;
     }
 
-    private int[] getNumberOfPositiveAndNegativeReviewEndorsements(ApplicationForm app) {
+    private int[] getNumberOfPositiveAndNegativeReferenceEndorsements(ApplicationForm app) {
         int[] endorsements = new int[2];
         for (Referee referee : app.getReferees()) {
             if (referee.hasResponded() && referee.getReference() != null) {
@@ -296,6 +330,33 @@ public class ApplicationsReportService {
                     endorsements[0]++;
                 } else if (BooleanUtils.isFalse(reference.getSuitableForUCL())) {
                     endorsements[1]++;
+                }
+            }
+        }
+        return endorsements;
+    }
+
+    private int[] getNumberOfPositiveAndNegativeReviewEndorsements(ApplicationForm app) {
+        int[] endorsements = new int[2];
+        ReviewRound review = app.getLatestReviewRound();
+        if (review == null) {
+            return endorsements;
+        }
+        for (Reviewer reviewer : review.getReviewers()) {
+            if (reviewer.getReview() != null) {
+                ReviewComment comment = reviewer.getReview();
+                Boolean[] answers = new Boolean[4];
+                answers[0] = comment.getSuitableCandidateForProgramme();
+                answers[1] = comment.getSuitableCandidateForUcl();
+                answers[2] = comment.getWillingToInterview();
+                answers[3] = comment.getWillingToWorkWithApplicant();
+
+                for (Boolean answer : answers) {
+                    if (BooleanUtils.isTrue(answer)) {
+                        endorsements[0]++;
+                    } else if (BooleanUtils.isFalse(answer)) {
+                        endorsements[1]++;
+                    }
                 }
             }
         }
@@ -419,7 +480,7 @@ public class ApplicationsReportService {
         }
         return StringUtils.EMPTY;
     }
-
+    
     private String getAverageRatingForAllInterviewRounds(ApplicationForm app) {
         List<Interview> interviews = app.getInterviews();
         if (interviews.isEmpty()) {
@@ -435,6 +496,11 @@ public class ApplicationsReportService {
         return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / interviews.size()));
     }
 
+    private String getAverageReferenceRating(ApplicationForm app) {
+        BigDecimal referenceRating = applicantRatingService.getAverageReferenceRating(app);
+        return MathUtils.formatRating(referenceRating);
+    }
+    
     private String getAverageRatingForAllReviewRounds(ApplicationForm app) {
         List<ReviewRound> reviewRounds = app.getReviewRounds();
         if (reviewRounds.isEmpty()) {
@@ -451,6 +517,6 @@ public class ApplicationsReportService {
     }
 
     private String printRating(String rating) {
-        return rating == null ? "0" : rating;
+        return rating == null ? "N/R" : rating;
     }
 }

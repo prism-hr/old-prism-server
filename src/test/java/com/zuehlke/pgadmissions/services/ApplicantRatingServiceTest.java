@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -29,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
@@ -51,6 +53,20 @@ public class ApplicantRatingServiceTest {
     @Mock
     @InjectIntoByType
     private ApplicationFormDAO applicationFormDAO;
+
+    @Test
+    public void shouldGetAverageReferenceRating() {
+        
+        Referee referee1 = new RefereeBuilder().declined(true).build();
+        Referee referee2 = new RefereeBuilder().reference(new ReferenceCommentBuilder().applicantRating(1).build()).build();
+        Referee referee3 = new RefereeBuilder().reference(new ReferenceCommentBuilder().applicantRating(3).build()).build();
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee1, referee2, referee3).build();
+        
+        BigDecimal avgRating = applicantRatingService.getAverageReferenceRating(applicationForm);
+        
+        assertEquals(new BigDecimal(2), avgRating);
+    }
 
     @Test
     public void shouldComputeAverageApplicationFormRating() {

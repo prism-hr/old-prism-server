@@ -29,6 +29,7 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -76,7 +77,7 @@ public class Program extends Authorisable implements Serializable {
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "program")
-    @Sort(type=SortType.COMPARATOR, comparator = ProgramClosingDate.class)
+    @Sort(type = SortType.COMPARATOR, comparator = ProgramClosingDate.class)
     private SortedSet<ProgramClosingDate> closingDates = new TreeSet<ProgramClosingDate>();
 
     @MapKey(name = "stage")
@@ -239,57 +240,46 @@ public class Program extends Authorisable implements Serializable {
     public ProgramClosingDate getClosingDate(final Date date) {
         checkNotNull(date);
         Predicate<ProgramClosingDate> findByDate = new Predicate<ProgramClosingDate>() {
-        	@Override
-        	public boolean apply(ProgramClosingDate closingDate){
-        		return DateUtils.truncateToDay(date).equals(closingDate.getClosingDate());
-        	}
-		};
-        return getClosingDateByPredicate(findByDate);
+            @Override
+            public boolean apply(ProgramClosingDate closingDate) {
+                return DateUtils.truncateToDay(date).equals(closingDate.getClosingDate());
+            }
+        };
+        return Iterables.find(getClosingDates(), findByDate, null);
     }
-    
-	public void removeClosingDate(Integer closingDateId) {
+
+    public void removeClosingDate(Integer closingDateId) {
         checkNotNull(closingDateId);
         closingDates.remove(getClosingDate(closingDateId));
     }
-	
-	public boolean containsClosingDate(Date date) {
+
+    public boolean containsClosingDate(Date date) {
         return getClosingDate(date) != null;
     }
-	
+
     public boolean updateClosingDate(ProgramClosingDate closingDate) {
         checkNotNull(closingDate);
         ProgramClosingDate storedDate = getClosingDate(closingDate.getId());
-        if(closingDate.compareTo(storedDate)!=0 && containsClosingDate(closingDate.getClosingDate())){
-        	throw new IllegalArgumentException("Already Exists");
+        if (closingDate.compareTo(storedDate) != 0 && containsClosingDate(closingDate.getClosingDate())) {
+            throw new IllegalArgumentException("Already Exists");
         }
-        if(storedDate!=null){
-	        storedDate.setClosingDate(closingDate.getClosingDate());
-	        storedDate.setStudyPlaces(closingDate.getStudyPlaces());
-	        return true;
+        if (storedDate != null) {
+            storedDate.setClosingDate(closingDate.getClosingDate());
+            storedDate.setStudyPlaces(closingDate.getStudyPlaces());
+            return true;
         }
         return false;
     }
-    
-    private ProgramClosingDate getClosingDate(final Integer id) {
-   	 checkNotNull(id);
-   	 Predicate<ProgramClosingDate> findById = new Predicate<ProgramClosingDate>() {
-        	@Override
-        	public boolean apply(ProgramClosingDate closingDate){
-        		return id.equals(closingDate.getId());
-        	}
-		};
-		return getClosingDateByPredicate(findById);
-	}
-    
-    private ProgramClosingDate getClosingDateByPredicate(Predicate<ProgramClosingDate> matchClosingDate) {
-    	for (ProgramClosingDate closingDate:closingDates) {
-            if(matchClosingDate.apply(closingDate)){
-            	return closingDate;
-            }
-        }
-    	return null;
-	}
 
-	
+    private ProgramClosingDate getClosingDate(final Integer id) {
+        checkNotNull(id);
+        Predicate<ProgramClosingDate> findById = new Predicate<ProgramClosingDate>() {
+            @Override
+            public boolean apply(ProgramClosingDate closingDate) {
+                return id.equals(closingDate.getId());
+            }
+        };
+        return Iterables.find(getClosingDates(), findById, null);
+    }
 
 }

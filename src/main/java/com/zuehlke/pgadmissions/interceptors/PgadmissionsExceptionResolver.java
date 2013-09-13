@@ -15,11 +15,9 @@ import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 
 public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResolver {
@@ -85,23 +83,10 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
                 return new AlertDefinition(AlertType.INFO, "You cannot perform this action", "Check that the action has not been performed already or superseded.");
             }
         });
-        addHandler(PrimarySupervisorNotDefinedException.class, new PgadmissionExceptionHandler<PrimarySupervisorNotDefinedException>() {
-            @Override
-            public AlertDefinition handlePgadmissionsException(PrimarySupervisorNotDefinedException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "No primary supervisor", "No primary supervisor has been defined for application: "
-                        + ex.getApplicationNumber());
-            }
-        });
         addHandler(CannotUpdateApplicationException.class, new PgadmissionExceptionHandler<CannotUpdateApplicationException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotUpdateApplicationException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, "Cannot update application", "Application cannot be updated: " + ex.getApplicationNumber());
-            }
-        });
-        addHandler(CannotTerminateApplicationException.class, new PgadmissionExceptionHandler<CannotTerminateApplicationException>() {
-            @Override
-            public AlertDefinition handlePgadmissionsException(CannotTerminateApplicationException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Application cannot be withdrawn/rejected: " + ex.getApplicationNumber());
             }
         });
         addHandler(CannotApplyToProgramException.class, new PgadmissionExceptionHandler<CannotApplyToProgramException>() {

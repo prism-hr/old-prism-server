@@ -15,11 +15,6 @@ public class ActionsDefinitions {
     public ActionsDefinitions() {
     }
 
-    public ActionsDefinitions(final Set<ApplicationFormAction> actions, final Set<ApplicationFormAction> actionsRequireAttention) {
-        this.actions = actions;
-        this.actionsRequiringAttention = actionsRequireAttention;
-    }
-
     public boolean isRequiresAttention() {
         return !actionsRequiringAttention.isEmpty();
     }

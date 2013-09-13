@@ -44,10 +44,6 @@ public class AdvertDAO {
         return (Advert) sessionFactory.getCurrentSession().get(Advert.class, advertId);
     }
 
-    public void merge(Advert advert) {
-        sessionFactory.getCurrentSession().merge(advert);
-    }
-
     @SuppressWarnings("unchecked")
     public List<Advert> getActiveProgramAdverts() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("active", true));

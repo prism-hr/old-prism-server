@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.utils;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -23,7 +22,7 @@ public class EncryptionUtils {
     
 	private static final int PASSWORD_LENGTH = 8;
 	
-    public static final char[] DEFAULT_CHARACTER_SET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n',
+    private static final char[] DEFAULT_CHARACTER_SET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n',
             'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K',
             'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9' };
@@ -38,12 +37,7 @@ public class EncryptionUtils {
 	    }
 	}
 	
-    public String getSalt(final int saltLengthInBytes) {
-        byte[] salt = new BigInteger(saltLengthInBytes, secureRandom).toByteArray();
-        return Hex.encodeHexString(salt);
-    }
-
-    public String calculateHash(final String string, final String salt) {
+    private String calculateHash(final String string, final String salt) {
         try {
             MessageDigest digest = MessageDigest.getInstance(DEFAULT_HASH_ALGORITHM);
             
@@ -81,7 +75,7 @@ public class EncryptionUtils {
 	    return getRandomString(PASSWORD_LENGTH, DEFAULT_CHARACTER_SET);
 	}
 	
-	public String getRandomString(int length, char[] characterSet) {
+	private String getRandomString(int length, char[] characterSet) {
 	    StringBuilder sb = new StringBuilder();
 	    for (int loop = 0; loop < length; loop++) {
 	        int index = secureRandom.nextInt(characterSet.length);

@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -18,10 +16,8 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -113,32 +109,6 @@ public abstract class AbstractMailSendingService {
         return StringUtils.join(administratorMails.toArray(new String[] {}), ", ");
     }
 
-    @SuppressWarnings("unchecked")
-    protected Collection<RegisteredUser> getInterviewersFromLatestInterviewRound(final ApplicationForm form) {
-        if (form.getLatestInterview() != null) {
-            return CollectionUtils.collect(form.getLatestInterview().getInterviewers(), new Transformer() {
-                @Override
-                public Object transform(final Object input) {
-                    return ((Interviewer) input).getUser();
-                }
-            });
-        }
-        return Collections.emptyList();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected Collection<RegisteredUser> getReviewersFromLatestReviewRound(final ApplicationForm form) {
-        if (form.getLatestReviewRound() != null) {
-            return CollectionUtils.collect(form.getLatestReviewRound().getReviewers(), new Transformer() {
-                @Override
-                public Object transform(final Object input) {
-                    return ((Reviewer) input).getUser();
-                }
-            });
-        }
-        return Collections.emptyList();
-    }
-
     protected Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm application) {
         return application.getProgram().getAdministrators();
     }
@@ -157,11 +127,6 @@ public abstract class AbstractMailSendingService {
     protected PrismEmailMessage buildMessage(RegisteredUser recipient, List<RegisteredUser> ccRecipients, String subject, Map<String, Object> model,
             EmailTemplateName templateName) {
         return new PrismEmailMessageBuilder().to(recipient).cc(ccRecipients).subject(subject).model(model).emailTemplate(templateName).build();
-    }
-
-    protected PrismEmailMessage buildMessage(List<RegisteredUser> recipients, List<RegisteredUser> ccRecipients, String subject, Map<String, Object> model,
-            EmailTemplateName templateName) {
-        return new PrismEmailMessageBuilder().to(recipients).cc(ccRecipients).subject(subject).model(model).emailTemplate(templateName).build();
     }
 
     protected EmailModelBuilder getModelBuilder(final String[] keys, final Object[] values) {

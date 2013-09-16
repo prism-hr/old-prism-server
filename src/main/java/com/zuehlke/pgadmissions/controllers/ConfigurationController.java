@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
@@ -73,6 +74,8 @@ public class ConfigurationController {
 
     private final JsonPropertyEditor reminderIntervalPropertyEditor;
 
+    private final JsonPropertyEditor notificationsDurationPropertyEditor;
+
     private final UserService userService;
 
     private final ConfigurationService configurationService;
@@ -96,17 +99,19 @@ public class ConfigurationController {
     private final ApplicationContext applicationContext;
 
     public ConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ConfigurationController(@Named(value = "stageDurationPropertyEditor") JsonPropertyEditor stageDurationPropertyEditor,
-            @Named(value = "reminderIntervalPropertyEditor") JsonPropertyEditor reminderIntervalPropertyEditor, UserService userService,
+            @Named(value = "reminderIntervalPropertyEditor") JsonPropertyEditor reminderIntervalPropertyEditor,
+            @Named(value = "notificationsDurationPropertyEditor") JsonPropertyEditor notificationsDurationPropertyEditor, UserService userService,
             ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService, PorticoQueueService queueService,
             ProgramsService programsService, ScoringDefinitionParser scoringDefinitionParser, ScoreFactory scoreFactory,
             ScoresPropertyEditor scoresPropertyEditor, FeedbackCommentValidator dummyCommentValidator, ApplicationContext applicationContext) {
         this.stageDurationPropertyEditor = stageDurationPropertyEditor;
         this.reminderIntervalPropertyEditor = reminderIntervalPropertyEditor;
+        this.notificationsDurationPropertyEditor = notificationsDurationPropertyEditor;
         this.userService = userService;
         this.configurationService = configurationService;
         this.templateService = templateService;
@@ -124,6 +129,7 @@ public class ConfigurationController {
     public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
         binder.registerCustomEditor(StageDuration.class, stageDurationPropertyEditor);
         binder.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditor);
+        binder.registerCustomEditor(NotificationsDuration.class, notificationsDurationPropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -334,6 +340,12 @@ public class ConfigurationController {
     public List<ReminderInterval> getReminderIntervals() {
         return configurationService.getReminderIntervals();
     }
+    
+    @ModelAttribute("notificationsDuration")
+    public NotificationsDuration getNotificationsDuration() {
+        return configurationService.getNotificationsDuration();
+    }
+    
 
     @ModelAttribute("units")
     public DurationUnitEnum[] getUnits() {

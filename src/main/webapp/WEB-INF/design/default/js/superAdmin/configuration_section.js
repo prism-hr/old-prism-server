@@ -15,7 +15,11 @@ $(document).ready(function()
 		var reminderValidationErrors	= appendReminderIntervalsJSON();
 		var reminderIntervalsInput		= $('[input[name="reminderIntervals"]');
 		
-		if (!stageValidationErrors && !reminderValidationErrors)
+		$('#notificationsDuration').html('');
+		var notificationsDurationErrors = appendNotificationsDurationJSON();
+		var notificationsDurationInput		= $('[input[name="notificationsDuration"]');
+		
+		if (!stageValidationErrors && !reminderValidationErrors && !notificationsDurationErrors)
 		{
 			// Post the data.
 			$('#ajaxloader').show();
@@ -40,7 +44,7 @@ $(document).ready(function()
 						  }
 					},
 					url:  "/pgadmissions/configuration/", 
-					data:  stagesInput.serialize() + "&" + reminderIntervalsInput.serialize(),
+					data:  stagesInput.serialize() + "&" + reminderIntervalsInput.serialize() + "&" + notificationsDurationInput.serialize(),
 					success: function(data)
 					{
 						$('#configsection').html(data);
@@ -154,5 +158,36 @@ function appendReminderIntervalsJSON()
 		
 		$("#reminderIntervals").append('<input type="hidden" name="reminderIntervals" id= "reminderIntervals"  value=' +"'" + '{"reminderType":"' +  reminderType+ '","duration":"' + duration + '","unit":"' + intervalUnit + '"} ' + "'" + "/>");
 	});
+	return validationErrors;
+}
+
+function appendNotificationsDurationJSON()
+{
+	var validationErrors = false;
+	
+	var isDurationError = false;
+	var duration = $('#notificationsDurationInput').val();
+	var intervalUnit = $('#notificationsDurationUnit').val();
+	if (isNaN(duration) || duration == "" || duration <= 0) {
+		$("#invalidNotificationsDuration span").html('You must enter a whole number greater that 0.');
+		$("#invalidNotificationsDuration").show();
+		isDurationError = true;
+		validationErrors = true;
+	} else {
+		$("#invalidNotificationsDuration span").html('');
+		$("#invalidNotificationsDuration").hide();
+	}
+	
+	if (intervalUnit == "" &&  !isDurationError) {
+		$("#invalidNotificationsDurationUnit  span").html('You must make a selection.');
+		$("#invalidNotificationsDurationUnit").show();
+		validationErrors = true;
+	} else {
+		$("#invalidNotificationsDurationUnit span").html('');
+		$("#invalidNotificationsDurationUnit").hide();
+	}
+	
+	$("#notificationsDuration").val('{"duration":"' + duration + '","unit":"' + intervalUnit + '"}');
+	
 	return validationErrors;
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 
@@ -14,12 +15,18 @@ public class ServiceLevelsDTO {
 
     private List<ReminderInterval> reminderIntervals = Lists.newArrayList();
 
+    private NotificationsDuration notificationsDuration;
+
     public List<StageDuration> getStagesDuration() {
         return stagesDuration;
     }
 
     public List<ReminderInterval> getReminderIntervals() {
         return reminderIntervals;
+    }
+
+    public NotificationsDuration getNotificationsDuration() {
+        return notificationsDuration;
     }
 
     public void setReminderIntervals(List<ReminderInterval> reminderIntervals) {
@@ -30,6 +37,10 @@ public class ServiceLevelsDTO {
     public void setStagesDuration(List<StageDuration> stagesDuration) {
         this.stagesDuration.clear();
         this.stagesDuration.addAll(Collections2.filter(stagesDuration, Predicates.notNull()));
+    }
+
+    public void setNotificationsDuration(NotificationsDuration notificationsDuration) {
+        this.notificationsDuration = notificationsDuration;
     }
 
 }

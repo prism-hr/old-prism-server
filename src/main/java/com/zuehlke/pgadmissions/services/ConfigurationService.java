@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.NotificationsDurationDAO;
 import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -30,6 +32,8 @@ public class ConfigurationService {
     private final StageDurationDAO stageDurationDAO;
     
     private final ReminderIntervalDAO reminderIntervalDAO;
+
+    private final NotificationsDurationDAO notificationsDurationDAO;
     
     private final PersonDAO personDAO;
     
@@ -41,16 +45,17 @@ public class ConfigurationService {
     
 
     public ConfigurationService() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ConfigurationService(final StageDurationDAO stageDurationDAO,
-            final ReminderIntervalDAO reminderIntervalDAO,
+            final ReminderIntervalDAO reminderIntervalDAO, final NotificationsDurationDAO notificationsDurationDAO,
             final PersonDAO personDAO, final UserDAO userDAO,
             final UserFactory userFactory, final RoleDAO roleDAO) {
         this.stageDurationDAO = stageDurationDAO;
         this.reminderIntervalDAO = reminderIntervalDAO;
+        this.notificationsDurationDAO = notificationsDurationDAO;
         this.personDAO = personDAO;
         this.userDAO  = userDAO;
         this.userFactory = userFactory;
@@ -91,6 +96,11 @@ public class ConfigurationService {
                 oldReminderInterval.setUnit(reminderInterval.getUnit());
             }
         }
+        
+        NotificationsDuration notificationsDuration = serviceLevelsDTO.getNotificationsDuration();
+        NotificationsDuration oldNotificationsDuration = notificationsDurationDAO.getNotificationsDuration();
+        oldNotificationsDuration.setDuration(notificationsDuration.getDuration());
+        oldNotificationsDuration.setUnit(notificationsDuration.getUnit());
     }
     
     @Transactional
@@ -153,6 +163,11 @@ public class ConfigurationService {
     public List<ReminderInterval> getReminderIntervals() {
         return reminderIntervalDAO.getReminderIntervals();
     }
+    
+    @Transactional
+    public NotificationsDuration getNotificationsDuration() {
+        return notificationsDurationDAO.getNotificationsDuration();
+    }
 
     private boolean containsRegistryUser(Person person, List<Person> persons) {
         for (Person entry : persons) {
@@ -170,4 +185,6 @@ public class ConfigurationService {
                 ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
                 ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL };
     }
+
+
 }

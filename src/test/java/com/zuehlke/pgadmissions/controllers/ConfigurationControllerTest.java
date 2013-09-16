@@ -32,6 +32,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
@@ -70,6 +71,7 @@ public class ConfigurationControllerTest {
     private RegisteredUser superAdmin;
     private JsonPropertyEditor stageDurationPropertyEditorMock;
     private JsonPropertyEditor reminderIntervalPropertyEditorMock;
+    private JsonPropertyEditor notificationsDurationPropertyEditorMock;
     private UserService userServiceMock;
     private EmailTemplateService emailTemplateServiceMock;
     private ThrottleService throttleserviceMock;
@@ -127,6 +129,7 @@ public class ConfigurationControllerTest {
         WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
         dataBinderMock.registerCustomEditor(StageDuration.class, stageDurationPropertyEditorMock);
         dataBinderMock.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditorMock);
+        dataBinderMock.registerCustomEditor(NotificationsDuration.class, notificationsDurationPropertyEditorMock);
 
         EasyMock.replay(dataBinderMock);
         controller.registerValidatorsAndPropertyEditors(dataBinderMock);
@@ -338,7 +341,7 @@ public class ConfigurationControllerTest {
         assertEquals(4, result.size());
         assertEquals(true, result.get("enabled"));
         assertEquals(40, result.get("batchSize"));
-        assertEquals((short)3, result.get("processingDelay"));
+        assertEquals((short) 3, result.get("processingDelay"));
         assertEquals(DurationUnitEnum.DAYS, result.get("processingDelayUnit"));
         verify(throttleserviceMock);
     }
@@ -494,6 +497,8 @@ public class ConfigurationControllerTest {
 
         reminderIntervalPropertyEditorMock = EasyMock.createMock(JsonPropertyEditor.class);
 
+        notificationsDurationPropertyEditorMock = EasyMock.createMock(JsonPropertyEditor.class);
+
         userServiceMock = EasyMock.createMock(UserService.class);
 
         emailTemplateServiceMock = EasyMock.createMock(EmailTemplateService.class);
@@ -510,9 +515,9 @@ public class ConfigurationControllerTest {
 
         applicationContext = EasyMock.createMock(ApplicationContext.class);
 
-        controller = new ConfigurationController(stageDurationPropertyEditorMock, reminderIntervalPropertyEditorMock, userServiceMock,
-                configurationServiceMock, emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock, scoringDefinitionParserMock,
-                null, null, null, applicationContext);
+        controller = new ConfigurationController(stageDurationPropertyEditorMock, reminderIntervalPropertyEditorMock, notificationsDurationPropertyEditorMock,
+                userServiceMock, configurationServiceMock, emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock,
+                scoringDefinitionParserMock, null, null, null, applicationContext);
 
         superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
                 .role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();

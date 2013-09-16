@@ -86,4 +86,8 @@
       <property name="targetClass" value="com.zuehlke.pgadmissions.domain.ReminderInterval" />
     </bean>
 
+    <bean id="notificationsDurationPropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.JsonPropertyEditor">
+      <property name="targetClass" value="com.zuehlke.pgadmissions.domain.NotificationsDuration" />
+    </bean>
+
 </beans>

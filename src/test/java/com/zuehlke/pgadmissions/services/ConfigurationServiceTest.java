@@ -18,17 +18,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.dao.NotificationsDurationDAO;
 import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.builders.NotificationsDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReminderIntervalBuilder;
@@ -44,23 +47,25 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class ConfigurationServiceTest {
 
     private StageDurationDAO stageDurationDAOMock;
-    
+
     private ReminderIntervalDAO reminderIntervalDAOMock;
-    
+
+    private NotificationsDurationDAO notificationsDurationDAOMock;
+
     private PersonDAO personDAOMock;
-    
+
     private ConfigurationService service;
-    
+
     private UserFactory userFactoryMock;
-    
+
     private UserFactory userFactory;
-    
+
     private UserDAO userDAOMock;
 
     private RoleService roleServiceMock;
-    
+
     private RoleDAO roleDAOMock;
-    
+
     @Test
     public void voidShouldGetRegistryUserWithIdFromDAO() {
         Person registryUser = new Person();
@@ -82,161 +87,175 @@ public class ConfigurationServiceTest {
         assertEquals(1, service.getAllRegistryUsers().size());
         Assert.assertEquals(registryUser, service.getAllRegistryUsers().get(0));
     }
-    
+
     @Test
-    public void shouldSaveConfigurationObjects(){
-        
+    public void shouldSaveConfigurationObjects() {
+
         StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.DAYS).build();
-        StageDuration oldValidationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(5).unit(DurationUnitEnum.WEEKS).build();
-        
-        ReminderInterval reminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(8).unit(DurationUnitEnum.WEEKS).build();
-        ReminderInterval oldReminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(10).unit(DurationUnitEnum.DAYS).build();
-    
+        StageDuration oldValidationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(5).unit(DurationUnitEnum.WEEKS)
+                .build();
+
+        ReminderInterval reminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(8)
+                .unit(DurationUnitEnum.WEEKS).build();
+        ReminderInterval oldReminderInterval = new ReminderIntervalBuilder().reminderType(ReminderType.INTERVIEW_SCHEDULE).duration(10)
+                .unit(DurationUnitEnum.DAYS).build();
+
+        NotificationsDuration notificationsDuration = new NotificationsDurationBuilder().duration(8).unit(DurationUnitEnum.WEEKS).build();
+        NotificationsDuration oldNotificationsDuration = new NotificationsDurationBuilder().id(1).duration(1).unit(DurationUnitEnum.DAYS).build();
+
         ServiceLevelsDTO serviceLevelsDTO = new ServiceLevelsDTO();
         serviceLevelsDTO.setStagesDuration(Lists.newArrayList(validationDuration));
         serviceLevelsDTO.setReminderIntervals(Lists.newArrayList(reminderInterval));
-        
+        serviceLevelsDTO.setNotificationsDuration(notificationsDuration);
+
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(oldValidationDuration);
         EasyMock.expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.INTERVIEW_SCHEDULE)).andReturn(oldReminderInterval);
-        
-        EasyMock.replay(stageDurationDAOMock, reminderIntervalDAOMock);
-        service.saveConfigurations(serviceLevelsDTO);  
-        EasyMock.verify(stageDurationDAOMock, reminderIntervalDAOMock);
-        
+        EasyMock.expect(notificationsDurationDAOMock.getNotificationsDuration()).andReturn(oldNotificationsDuration);
+
+        EasyMock.replay(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock);
+        service.saveConfigurations(serviceLevelsDTO);
+        EasyMock.verify(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock);
+
         assertEquals(DurationUnitEnum.DAYS, oldValidationDuration.getUnit());
         assertEquals(DurationUnitEnum.WEEKS, oldReminderInterval.getUnit());
+        assertEquals(DurationUnitEnum.WEEKS, oldNotificationsDuration.getUnit());
     }
-    
+
     @Test
-    public void shouldSaveRegistryUsers(){
+    public void shouldSaveRegistryUsers() {
         final Person registryUserOne = new PersonBuilder().id(1).email("registryUserOne@registryUserOne.com").build();
         final Person registryUserTwo = new PersonBuilder().id(2).email("registryUserTwo@registryUserTwo.com").build();
-        final Person registryUserThree  = new PersonBuilder().id(3).email("registryUserThree@registryUserThree.com").build();
+        final Person registryUserThree = new PersonBuilder().id(3).email("registryUserThree@registryUserThree.com").build();
         final RegisteredUser registryUserThree_ = new RegisteredUserBuilder().id(33).email("registryUserThree@registryUserThree.com").build();
-        
-        service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, personDAOMock, userDAOMock, userFactoryMock, roleDAOMock) {
+
+        service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
+                userFactoryMock, roleDAOMock) {
             @Override
             public List<Person> getAllRegistryUsers() {
                 return Arrays.asList(registryUserOne, registryUserThree);
             }
         };
-        
+
         personDAOMock.save(registryUserOne);
         personDAOMock.save(registryUserTwo);
         personDAOMock.delete(registryUserThree);
-        
+
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserThree.getEmail())).andReturn(registryUserThree_);
         userDAOMock.save(registryUserThree_);
-        
+
         expect(roleDAOMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new Role()).anyTimes();
         expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new Role()).anyTimes();
-        
-        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserOne.getEmail())).andReturn(new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMITTER).build()).build());
-        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserTwo.getEmail())).andReturn(new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMITTER).build()).build());
-        
+
+        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserOne.getEmail())).andReturn(
+                new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMITTER).build()).build());
+        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserTwo.getEmail())).andReturn(
+                new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMITTER).build()).build());
+
         EasyMock.replay(roleDAOMock, personDAOMock, userDAOMock);
-        
-        service.saveRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo), new RegisteredUser());  
-        
+
+        service.saveRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo), new RegisteredUser());
+
         EasyMock.verify(roleDAOMock, personDAOMock, userDAOMock);
     }
-    
+
     @Test
     public void shouldCreateNewRegisteredUsersForAdmissionContactsThatDoNotExistYet() {
         final Person registryUserOne = new PersonBuilder().id(1).email("registryUserOne@registryUserOne.com").build();
         final Person registryUserTwo = new PersonBuilder().id(2).email("registryUserTwo@registryUserTwo.com").build();
-        final Person registryUserThree  = new PersonBuilder().id(3).email("registryUserThree@registryUserThree.com").build();
+        final Person registryUserThree = new PersonBuilder().id(3).email("registryUserThree@registryUserThree.com").build();
         final RegisteredUser registryUserThree_ = new RegisteredUserBuilder().id(33).email("registryUserThree@registryUserThree.com").build();
 
-        service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, personDAOMock, userDAOMock, userFactory, roleDAOMock) {
+        service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
+                userFactory, roleDAOMock) {
             @Override
             public List<Person> getAllRegistryUsers() {
                 return Arrays.asList(registryUserOne, registryUserThree);
             }
         };
-        
+
         personDAOMock.save(registryUserOne);
         personDAOMock.save(registryUserTwo);
         personDAOMock.delete(registryUserThree);
-        
+
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserThree.getEmail())).andReturn(registryUserThree_);
         userDAOMock.save(registryUserThree_);
-        
+
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserOne.getEmail())).andReturn(null);
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserTwo.getEmail())).andReturn(null);
-        
+
         Capture<RegisteredUser> captureRegistryUserOne = new Capture<RegisteredUser>();
         Capture<RegisteredUser> captureRegistryUserTwo = new Capture<RegisteredUser>();
-        
+
         EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).times(2);
         EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new RoleBuilder().id(Authority.ADMITTER).build()).times(2);
-        
+
         expect(roleDAOMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new Role()).anyTimes();
         expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new Role()).anyTimes();
-        
+
         userDAOMock.save(EasyMock.capture(captureRegistryUserOne));
         userDAOMock.save(EasyMock.capture(captureRegistryUserTwo));
-        
-        EasyMock.replay(roleDAOMock,  personDAOMock, userDAOMock, roleServiceMock);
-        
-        service.saveRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo), new RegisteredUser());    
-        
-        EasyMock.verify(roleDAOMock,  personDAOMock, userDAOMock, roleServiceMock);
-        
+
+        EasyMock.replay(roleDAOMock, personDAOMock, userDAOMock, roleServiceMock);
+
+        service.saveRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo), new RegisteredUser());
+
+        EasyMock.verify(roleDAOMock, personDAOMock, userDAOMock, roleServiceMock);
+
         assertEquals(registryUserOne.getFirstname(), captureRegistryUserOne.getValue().getFirstName());
         assertEquals(registryUserOne.getLastname(), captureRegistryUserOne.getValue().getLastName());
         assertEquals(registryUserOne.getEmail(), captureRegistryUserOne.getValue().getEmail());
-        
+
         assertEquals(registryUserTwo.getFirstname(), captureRegistryUserTwo.getValue().getFirstName());
         assertEquals(registryUserTwo.getLastname(), captureRegistryUserTwo.getValue().getLastName());
         assertEquals(registryUserTwo.getEmail(), captureRegistryUserTwo.getValue().getEmail());
     }
-    
-   @Test
+
+    @Test
     public void shouldAddTheAdmitterRoleToAnAdmissionContactsThatAlreadyExists() {
         final Person registryUserOne = new PersonBuilder().id(1).email("registryUserOne@registryUserOne.com").build();
         final Person registryUserTwo = new PersonBuilder().id(2).email("registryUserTwo@registryUserTwo.com").build();
-        final Person registryUserThree  = new PersonBuilder().id(3).email("registryUserThree@registryUserThree.com").build();
+        final Person registryUserThree = new PersonBuilder().id(3).email("registryUserThree@registryUserThree.com").build();
         final RegisteredUser registryUserThree_ = new RegisteredUserBuilder().id(33).email("registryUserThree@registryUserThree.com").build();
 
-        service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, personDAOMock, userDAOMock, userFactory, roleDAOMock) {
+        service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
+                userFactory, roleDAOMock) {
             @Override
             public List<Person> getAllRegistryUsers() {
                 return Arrays.asList(registryUserOne, registryUserThree);
             }
         };
-        
+
         personDAOMock.save(registryUserOne);
         personDAOMock.save(registryUserTwo);
         personDAOMock.delete(registryUserThree);
         ReminderInterval reminderInterval = new ReminderInterval();
         reminderInterval.setId(1);
-    
+
         reminderIntervalDAOMock.save(reminderInterval);
-        
-        
-        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserOne.getEmail())).andReturn(new RegisteredUserBuilder().id(11).role(new RoleBuilder().id(Authority.VIEWER).build()).build());
-        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserTwo.getEmail())).andReturn(new RegisteredUserBuilder().id(22).role(new RoleBuilder().id(Authority.VIEWER).build()).build());
-        
+
+        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserOne.getEmail())).andReturn(
+                new RegisteredUserBuilder().id(11).role(new RoleBuilder().id(Authority.VIEWER).build()).build());
+        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserTwo.getEmail())).andReturn(
+                new RegisteredUserBuilder().id(22).role(new RoleBuilder().id(Authority.VIEWER).build()).build());
+
         Capture<RegisteredUser> captureRegistryUserOne = new Capture<RegisteredUser>();
         Capture<RegisteredUser> captureRegistryUserTwo = new Capture<RegisteredUser>();
-        
-        
+
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserThree.getEmail())).andReturn(registryUserThree_);
         userDAOMock.save(EasyMock.eq(registryUserThree_));
-        
+
         userDAOMock.save(EasyMock.capture(captureRegistryUserOne));
         userDAOMock.save(EasyMock.capture(captureRegistryUserTwo));
-        
+
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new RoleBuilder().id(Authority.ADMITTER).build()).anyTimes();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
-        
-        EasyMock.replay(personDAOMock, userDAOMock, roleServiceMock,roleDAOMock);
-        
-        service.saveRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo), new RegisteredUser());    
-        
+
+        EasyMock.replay(personDAOMock, userDAOMock, roleServiceMock, roleDAOMock);
+
+        service.saveRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo), new RegisteredUser());
+
         EasyMock.verify(personDAOMock, userDAOMock, roleServiceMock, roleDAOMock);
-        
+
         assertTrue(captureRegistryUserOne.getValue().isInRole(Authority.ADMITTER));
         assertTrue(captureRegistryUserOne.getValue().isInRole(Authority.VIEWER));
         assertTrue(captureRegistryUserTwo.getValue().isInRole(Authority.ADMITTER));
@@ -244,7 +263,7 @@ public class ConfigurationServiceTest {
     }
 
     @Test
-    public void shouldReturnMapOfStageDurations(){
+    public void shouldReturnMapOfStageDurations() {
         StageDuration stageDurationOne = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).build();
         StageDuration stageDurationTwo = new StageDurationBuilder().stage(ApplicationFormStatus.REVIEW).build();
         StageDuration stageDurationThree = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).build();
@@ -260,32 +279,35 @@ public class ConfigurationServiceTest {
         assertEquals(stageDurationThree, durations.get(ApplicationFormStatus.INTERVIEW));
         assertEquals(stageDurationFour, durations.get(ApplicationFormStatus.APPROVAL));
     }
-    
+
     @Test
-    public void shouldGetReminderInterval(){
+    public void shouldGetReminderInterval() {
         ArrayList<ReminderInterval> intervals = Lists.newArrayList();
-        
+
         EasyMock.expect(reminderIntervalDAOMock.getReminderIntervals()).andReturn(intervals);
         EasyMock.replay(reminderIntervalDAOMock);
         assertSame(intervals, service.getReminderIntervals());
     }
-    
+
     @Test
     public void shouldGetConfigurableStages() {
         ApplicationFormStatus[] configurableStages = service.getConfigurableStages();
-        assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,ApplicationFormStatus.INTERVIEW,  ApplicationFormStatus.APPROVAL, },configurableStages);
+        assertArrayEquals(new ApplicationFormStatus[] { ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW,
+                ApplicationFormStatus.APPROVAL, }, configurableStages);
     }
-    
+
     @Before
-    public void setUp(){
-        stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);     
+    public void setUp() {
+        stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
         reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
+        notificationsDurationDAOMock = EasyMock.createMock(NotificationsDurationDAO.class);
         personDAOMock = EasyMock.createMock(PersonDAO.class);
         userFactoryMock = EasyMock.createMock(UserFactory.class);
         roleServiceMock = EasyMock.createMock(RoleService.class);
         userFactory = new UserFactory(roleServiceMock, new EncryptionUtils());
         userDAOMock = EasyMock.createMock(UserDAO.class);
         roleDAOMock = EasyMock.createMock(RoleDAO.class);
-        service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, personDAOMock, userDAOMock, userFactoryMock, roleDAOMock);
+        service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
+                userFactoryMock, roleDAOMock);
     }
 }

@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
@@ -37,7 +38,5 @@ public class ReminderIntervalDAO {
     public List<ReminderInterval> getReminderIntervals() {
         return (List<ReminderInterval>) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).list();
     }
-    
-    
 
 }

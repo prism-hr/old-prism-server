@@ -280,10 +280,6 @@ public class UserDAO {
         return users;
     }
 
-    public void delete(final RegisteredUser user) {
-        sessionFactory.getCurrentSession().delete(user);
-    }
-
     public List<Integer> getPotentialUsersForTaskNotification() {
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
         int interval = reminderInterval.getDuration();

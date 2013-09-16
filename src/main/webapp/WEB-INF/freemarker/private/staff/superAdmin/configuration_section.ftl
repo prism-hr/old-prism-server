@@ -85,6 +85,29 @@
 				</#list>
 				
 				<input type="hidden" name="reminderIntervals" id= "reminderIntervals" />
+
+        <!-- Notifications duration; currently hidden -->
+        <div class="row" style="display:none;">
+          <label for="notificationsDurationInput" id="notificationsDuration-lbl" class="plain-label">Expiry of Notifications<em>*</em></label>
+          <span class="hint" data-desc="<@spring.message 'configuration.notificationsDuration' />"></span>
+          <div class="field"> 
+            <input class="numeric input-small" type="text" size="4" id="notificationsDurationInput" name="notificationsDurationInput" value="${notificationsDuration.duration}" />
+            <select name="notificationsDurationUnit" id="notificationsDurationUnit" class="input-small">
+              <option value="">Select...</option>
+              <#list units as unit>
+                <option value="${unit}" <#if notificationsDuration.unit == unit> selected="selected" </#if>> ${unit.displayValue()}</option>               
+              </#list>
+            </select>
+            <div class="alert alert-error" id="invalidNotificationsDuration"  style="display:none;">
+               <i class="icon-warning-sign"></i> <span></span>  
+            </div>
+            <div class="alert alert-error" id="invalidNotificationsDurationUnit"  style="display:none;">
+               <i class="icon-warning-sign"></i> <span></span>  
+            </div>  
+          </div>
+        </div><!-- .row -->
+				
+				<input type="hidden" name="notificationsDuration" id= "notificationsDuration" />
 				
 			</div><!-- .row-group -->
 			

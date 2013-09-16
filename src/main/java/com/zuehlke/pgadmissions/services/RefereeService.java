@@ -69,16 +69,8 @@ public class RefereeService {
         refereeDAO.refresh(referee);
     }
 
-    public List<Referee> getRefereesWhoHaveNotProvidedReference(ApplicationForm form) {
-        return refereeDAO.getRefereesWhoDidntProvideReferenceYet(form);
-    }
-
     public void saveReferenceAndSendMailNotifications(Referee referee) {
         addReferenceEventToApplication(referee);
-    }
-
-    public RegisteredUser getRefereeIfAlreadyRegistered(Referee referee) {
-        return userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
     }
 
     public void processRefereesRoles(List<Referee> referees) {

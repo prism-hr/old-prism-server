@@ -29,9 +29,9 @@ public class UserFactoryTest {
 		String email = "bob.smith@test.com";
 		Authority[] authorities = new Authority[]{Authority.REFEREE, Authority.APPLICANT};
 		
-		Role refereeRole = new RoleBuilder().id(1).build();
+		Role refereeRole = new RoleBuilder().build();
 		EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.REFEREE)).andReturn(refereeRole);
-		Role applicantRole = new RoleBuilder().id(2).build();
+		Role applicantRole = new RoleBuilder().build();
 		EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(applicantRole);
 		
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("activationCode");

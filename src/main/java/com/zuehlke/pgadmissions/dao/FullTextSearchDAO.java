@@ -57,7 +57,7 @@ public class FullTextSearchDAO {
     }
     
     private List<RegisteredUser> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<RegisteredUser> comparator) {
-        Criterion notAnApplicantCriterion = Restrictions.in("r.authorityEnum", new Authority[] {
+        Criterion notAnApplicantCriterion = Restrictions.in("r.id", new Authority[] {
                 Authority.ADMINISTRATOR, Authority.APPROVER, Authority.INTERVIEWER,
                 Authority.REFEREE, Authority.REVIEWER, Authority.SUPERADMINISTRATOR, Authority.SUPERVISOR });
         

@@ -680,7 +680,7 @@ public class ApprovalControllerTest {
 
     @Test
     public void shouldAddNewReferenceWithoutSavingSendToPorticoReferences() throws ScoringDefinitionParseException {
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)

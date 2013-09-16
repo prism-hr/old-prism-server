@@ -137,8 +137,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 
-		Role roleOne = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
-		Role roleTwo = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+		Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
+		Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
 		save(roleOne, roleTwo);
 		flushAndClearSession();
 
@@ -163,9 +163,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
-		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+		Role role = new RoleBuilder().id(Authority.APPLICANT).build();
 		save(role);
-		Integer roleId = role.getId();
 		flushAndClearSession();
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
@@ -178,12 +177,12 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
 		assertEquals(BigInteger.valueOf(1),
-				sessionFactory.getCurrentSession().createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = " + roleId).uniqueResult());
+				sessionFactory.getCurrentSession().createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = '" + Authority.APPLICANT + "'").uniqueResult());
 		sessionFactory.getCurrentSession().delete(reloadedUser);
 		flushAndClearSession();
 
 		assertEquals(BigInteger.valueOf(0),
-				sessionFactory.getCurrentSession().createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = " + roleId).uniqueResult());
+				sessionFactory.getCurrentSession().createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = '" + Authority.APPLICANT + "'").uniqueResult());
 	}
 	
 	@Test

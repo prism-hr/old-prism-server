@@ -116,7 +116,7 @@ public class UserDAO {
         final Map<Integer, RegisteredUser> users = new HashMap<Integer, RegisteredUser>();
 
         Criteria superAdminRoleCriteria = sessionFactory.getCurrentSession().createCriteria(Role.class)
-                .add(Restrictions.eq("authorityEnum", Authority.SUPERADMINISTRATOR));
+                .add(Restrictions.eq("id", Authority.SUPERADMINISTRATOR));
 
         Criteria programsOfWhichAdministratorCriteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
                 .createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId()));
@@ -215,8 +215,8 @@ public class UserDAO {
                 .createCriteria(RegisteredUser.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .createAlias("roles", "role")
-                .add(Restrictions.and(Restrictions.not(Restrictions.eq("role.authorityEnum", Authority.APPLICANT)),
-                        Restrictions.not(Restrictions.eq("role.authorityEnum", Authority.REFEREE)))).addOrder(Order.asc("firstName"))
+                .add(Restrictions.and(Restrictions.not(Restrictions.eq("role.id", Authority.APPLICANT)),
+                        Restrictions.not(Restrictions.eq("role.id", Authority.REFEREE)))).addOrder(Order.asc("firstName"))
                 .addOrder(Order.asc("lastName")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 

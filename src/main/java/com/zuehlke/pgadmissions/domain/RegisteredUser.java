@@ -768,7 +768,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         CollectionUtils.filter(roles, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
-                return ((Role) object).getAuthorityEnum() != authority;
+                return ((Role) object).getId() != authority;
             }
         });
     }

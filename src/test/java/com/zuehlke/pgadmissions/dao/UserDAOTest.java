@@ -143,8 +143,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 
-        Role roleOne = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
-        Role roleTwo = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
+        Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         save(roleOne, roleTwo);
         flushAndClearSession();
 

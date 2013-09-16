@@ -149,6 +149,6 @@ public class AccountControllerTest {
         bindingResultMock = EasyMock.createMock(BindingResult.class);
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").password("password").firstName("mark").firstName2("bob")
-                .firstName3("jane").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+                .firstName3("jane").lastName("ham").role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
     }
 }

@@ -63,8 +63,8 @@ public class RejectServiceTest {
 		porticoQueueService = createMock(PorticoQueueService.class);
 		mailServiceMock = createMock(MailSendingService.class);
 
-		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
-		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
+		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().id(Authority.APPROVER).build()).build();
 		Program program = new ProgramBuilder().id(10023).administrators(admin).approver(approver).build();
 		application = new ApplicationFormBuilder().id(200).program(program).status(ApplicationFormStatus.VALIDATION).build();
 
@@ -87,7 +87,7 @@ public class RejectServiceTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowIAEIfWrongApprover() {
-		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(3423).username("wrong approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(3423).username("wrong approver").role(new RoleBuilder().id(Authority.APPROVER).build()).build();
 		rejectService.moveApplicationToReject(application, wrongApprover, new Rejection());
 	}
 

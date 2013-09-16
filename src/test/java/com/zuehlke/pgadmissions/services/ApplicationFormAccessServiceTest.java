@@ -58,7 +58,7 @@ public class ApplicationFormAccessServiceTest {
     public void administratorShouldNeedToSeeApplicationBecuaseItHasBeenUpdated() {
         Date lastUpdatedTimestamp = new DateTime(2013, 5, 4, 0, 0).toDate();
         Program program = new ProgramBuilder().id(34).build();
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1)
             .programsOfWhichAdministrator(program)
             .role(adminRole)
@@ -86,7 +86,7 @@ public class ApplicationFormAccessServiceTest {
     public void applicantShouldNotNeedToSeeApplicationBecuaseTheUpdateIsForInternalGroup() {
         Date lastUpdatedTimestamp = new DateTime(2013, 5, 4, 0, 0).toDate();
         Program program = new ProgramBuilder().id(34).build();
-        Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+        Role applicantRole = new RoleBuilder().id(Authority.APPLICANT).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1)
                 .role(applicantRole)
                 .build();
@@ -113,7 +113,7 @@ public class ApplicationFormAccessServiceTest {
     public void applicantShouldNeedToSeeApplicationBecuaseTheUpdateIsForAllUsers() {
         Date lastUpdatedTimestamp = new DateTime(2013, 5, 4, 0, 0).toDate();
         Program program = new ProgramBuilder().id(34).build();
-        Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+        Role applicantRole = new RoleBuilder().id(Authority.APPLICANT).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1)
                 .role(applicantRole)
                 .build();
@@ -140,7 +140,7 @@ public class ApplicationFormAccessServiceTest {
     public void reviewerShouldNeedToSeeApplicationBecuaseTheUpdateIsForAllUsers() {
         Date lastUpdatedTimestamp = new DateTime(2013, 5, 4, 0, 0).toDate();
         Program program = new ProgramBuilder().id(34).build();
-        Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
+        Role reviewerRole = new RoleBuilder().id(Authority.REVIEWER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1)
                 .programsOfWhichReviewer(program)
                 .role(reviewerRole)
@@ -168,7 +168,7 @@ public class ApplicationFormAccessServiceTest {
     public void applicantShouldNeedToSeeApplicationBecuaseOneOfTheUpdatesIsForAllUsers() {
         Date lastUpdatedTimestamp = new DateTime(2013, 5, 4, 0, 0).toDate();
         Program program = new ProgramBuilder().id(34).build();
-        Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+        Role applicantRole = new RoleBuilder().id(Authority.APPLICANT).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1)
                 .role(applicantRole)
                 .build();

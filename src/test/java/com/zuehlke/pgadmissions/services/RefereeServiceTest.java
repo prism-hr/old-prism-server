@@ -104,7 +104,7 @@ public class RefereeServiceTest {
 
     @Test
     public void shouldPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
@@ -152,7 +152,7 @@ public class RefereeServiceTest {
 
     @Test
     public void shouldCreateRefereeRegisteredUserAndPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
@@ -204,7 +204,7 @@ public class RefereeServiceTest {
 
     @Test
     public void shouldCreateNewRefereeAndPostReferenceOnBehalfOfHim() throws UnsupportedEncodingException {
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
@@ -262,32 +262,8 @@ public class RefereeServiceTest {
     }
 
     @Test
-    public void shouldReturnUserIfRefereeAlreadyExists() {
-        Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
-        RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-        userServiceMock.save(reviewer);
-        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(reviewer);
-        EasyMock.replay(userServiceMock);
-        RegisteredUser existedReferee = refereeService.getRefereeIfAlreadyRegistered(referee);
-        Assert.assertNotNull(existedReferee);
-    }
-
-    @Test
-    public void shouldReturnNullIfRefereeNotExists() {
-        Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
-        RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-        userServiceMock.save(reviewer);
-        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("otherrefemail@test.com").build();
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("otherrefemail@test.com")).andReturn(null);
-        EasyMock.replay(userServiceMock);
-        RegisteredUser existedReferee = refereeService.getRefereeIfAlreadyRegistered(referee);
-        Assert.assertNull(existedReferee);
-    }
-
-    @Test
     public void shouldAddRefereeRoleIfUserExistsAndIsNotAReferee() {
-        Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
+        Role reviewerRole = new RoleBuilder().id(Authority.REVIEWER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userServiceMock.save(user);
         Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
@@ -301,9 +277,9 @@ public class RefereeServiceTest {
 
     @Test
     public void shouldAddRefereeRoleIfUserExistsAndIsApproverReviewerAdmin() {
-        Role reviewerRole = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).build();
-        Role adminRole = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).build();
-        Role approverRole = new RoleBuilder().id(3).authorityEnum(Authority.APPROVER).build();
+        Role reviewerRole = new RoleBuilder().id(Authority.REVIEWER).build();
+        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
+        Role approverRole = new RoleBuilder().id(Authority.APPROVER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole, adminRole, approverRole).firstName("bob").lastName("bobson")
                         .email("email@test.com").build();
         userServiceMock.save(user);
@@ -318,7 +294,7 @@ public class RefereeServiceTest {
 
     @Test
     public void shouldNotAddRefereeRoleIfUserExistsAndIsAlreadyAReferee() {
-        Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).build();
+        Role refereeRole = new RoleBuilder().id(Authority.REFEREE).build();
         RegisteredUser user = new RegisteredUserBuilder().id(3).role(refereeRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userServiceMock.save(user);
         Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
@@ -343,7 +319,7 @@ public class RefereeServiceTest {
                 return user;
             }
         };
-        Role role = new RoleBuilder().id(1).build();
+        Role role = new RoleBuilder().build();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REFEREE)).andReturn(role);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("emailemail@test.com")).andReturn(null);
         userServiceMock.save(user);

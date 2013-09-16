@@ -96,7 +96,7 @@ public class CreateNewApprovalCommentControllerTest {
 
     @Test
     public void shouldReturnEmptyMapIfNoApprovalRound() {
-        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
         ApplicationForm form = new ApplicationFormBuilder().applicationNumber("ABCD-XXX").status(ApplicationFormStatus.REVIEW)
                 .approvalRounds(new ApprovalRoundBuilder().build()).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -112,7 +112,7 @@ public class CreateNewApprovalCommentControllerTest {
     @Test
     public void shouldReturnLatestApprovalRoundAsJson() {
         DateTime now = new DateTime();
-        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
         ApplicationForm form = new ApplicationFormBuilder()
                 .applicationNumber("ABCD-XXX")
                 .status(ApplicationFormStatus.REVIEW)
@@ -155,7 +155,7 @@ public class CreateNewApprovalCommentControllerTest {
     public void shouldNotValidateIfCommentOrNextStageIsEmpty() {
         DateTime now = new DateTime();
 
-        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
 
         ApplicationForm form = new ApplicationFormBuilder()
                 .applicationNumber("ABCD-XXX")
@@ -192,7 +192,7 @@ public class CreateNewApprovalCommentControllerTest {
         Capture<ApprovalRound> approvalRoundCapture = new Capture<ApprovalRound>();
         Capture<ApprovalComment> approvalCommentCapture = new Capture<ApprovalComment>();
 
-        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
 
         ApplicationForm form = new ApplicationFormBuilder()
                 .applicationNumber("ABCD-XXX")
@@ -239,7 +239,7 @@ public class CreateNewApprovalCommentControllerTest {
     public void shouldNotValidateIfProjectExistsAndAcceptingApplicationsIsEmpty() {
         DateTime now = new DateTime();
 
-        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
         ApplicationForm form = new ApplicationFormBuilder()
                 .applicationNumber("ABCD-XXX")
                 .status(ApplicationFormStatus.REVIEW)
@@ -274,7 +274,7 @@ public class CreateNewApprovalCommentControllerTest {
         Capture<ApprovalComment> approvalCommentCapture = new Capture<ApprovalComment>();
         Capture<Project> projectCapture = new Capture<Project>();
 
-        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
 
         ApplicationForm form = new ApplicationFormBuilder()
                 .applicationNumber("ABCD-XXX")

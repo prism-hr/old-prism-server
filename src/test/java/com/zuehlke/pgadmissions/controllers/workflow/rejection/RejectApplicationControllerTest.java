@@ -65,11 +65,11 @@ public class RejectApplicationControllerTest {
 
     @Before
     public void setUp() {
-        admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
+        admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
 
         reason1 = new RejectReasonBuilder().id(10).text("idk").build();
         reason2 = new RejectReasonBuilder().id(20).text("idc").build();
-        approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+        approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().id(Authority.APPROVER).build()).build();
         program = new ProgramBuilder().id(100).administrators(admin).approver(approver).build();
         application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc").program(program)//
                 .build();

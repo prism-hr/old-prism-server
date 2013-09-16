@@ -323,7 +323,7 @@ public class RegisterControllerTest {
 			throws ParseException {
 		String activationCode = "ul5oaij68186jbcg";
 		RegisteredUser user = new RegisteredUserBuilder()
-				.role(new RoleBuilder().authorityEnum(
+				.role(new RoleBuilder().id(
 						Authority.SUPERADMINISTRATOR).build()).id(1)
 				.activationCode(activationCode).enabled(false)
 				.username("email@email.com").email("email@email.com")
@@ -346,7 +346,7 @@ public class RegisterControllerTest {
 		String activationCode = "ul5oaij68186jbcg";
 		RegisteredUser user = new RegisteredUserBuilder()
 				.directURL("/directLink")
-				.role(new RoleBuilder().authorityEnum(
+				.role(new RoleBuilder().id(
 						Authority.SUPERADMINISTRATOR).build()).id(1)
 				.activationCode(activationCode).enabled(false)
 				.username("email@email.com").email("email@email.com")
@@ -370,7 +370,7 @@ public class RegisterControllerTest {
 
 		RegisteredUser user = new RegisteredUserBuilder()
 				.directURL(null)
-				.role(new RoleBuilder().authorityEnum(
+				.role(new RoleBuilder().id(
 						Authority.SUPERADMINISTRATOR).build()).id(1)
 				.activationCode(activationCode).enabled(false)
 				.username("email@email.com").email("email@email.com")

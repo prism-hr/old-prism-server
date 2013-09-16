@@ -94,7 +94,7 @@ public class AdmitterCommentControllerTest {
     @Test
     public void shouldGetComment() {
         ApplicationForm form = new ApplicationFormBuilder().applicationNumber("app_id").id(12).build();
-        RegisteredUser currentUser = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMITTER).build()).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.ADMITTER).build()).build();
 
         expect(applicationsServiceMock.getApplicationByApplicationNumber("app_id")).andReturn(form);
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
@@ -151,7 +151,7 @@ public class AdmitterCommentControllerTest {
 
     @Test
     public void shouldReturnDefaultViewIfCommentContainsErrors() {
-        RegisteredUser currentUser = new RegisteredUserBuilder().id(123).roles(new RoleBuilder().authorityEnum(Authority.ADMITTER).build()).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(123).roles(new RoleBuilder().id(Authority.ADMITTER).build()).build();
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         expect(resultMock.hasErrors()).andReturn(false);

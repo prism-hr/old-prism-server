@@ -1,38 +1,38 @@
-ALTER TABLE pending_role_notification DROP FOREIGN KEY role_pending_not_fk
+ALTER TABLE PENDING_ROLE_NOTIFICATION DROP FOREIGN KEY role_pending_not_fk
 ;
 
-ALTER TABLE user_role_link DROP FOREIGN KEY user_role_role_fk
+ALTER TABLE USER_ROLE_LINK DROP FOREIGN KEY user_role_role_fk
 ;
 
-ALTER TABLE pending_role_notification MODIFY role_id VARCHAR(50) NOT NULL
+ALTER TABLE PENDING_ROLE_NOTIFICATION MODIFY role_id VARCHAR(50) NOT NULL
 ;
 
-ALTER TABLE user_role_link MODIFY application_role_id VARCHAR(50) NOT NULL
+ALTER TABLE USER_ROLE_LINK MODIFY application_role_id VARCHAR(50) NOT NULL
 ;
 
-UPDATE pending_role_notification INNER JOIN application_role
-	ON pending_role_notification.role_id = application_role.id
-	SET pending_role_notification.role_id = application_role.authority
+UPDATE PENDING_ROLE_NOTIFICATION INNER JOIN APPLICATION_ROLE
+	ON PENDING_ROLE_NOTIFICATION.role_id = APPLICATION_ROLE.id
+	SET PENDING_ROLE_NOTIFICATION.role_id = APPLICATION_ROLE.authority
 ;
 
-UPDATE user_role_link INNER JOIN application_role
-	ON user_role_link.application_role_id = application_role.id
-SET user_role_link.application_role_id = application_role.authority
+UPDATE USER_ROLE_LINK INNER JOIN APPLICATION_ROLE
+	ON USER_ROLE_LINK.application_role_id = APPLICATION_ROLE.id
+SET USER_ROLE_LINK.application_role_id = APPLICATION_ROLE.authority
 ;
 
-ALTER TABLE application_role MODIFY id VARCHAR(50) NOT NULL
+ALTER TABLE APPLICATION_ROLE MODIFY id VARCHAR(50) NOT NULL
 ;
 
-UPDATE application_role
-SET application_role.id = application_role.authority
+UPDATE APPLICATION_ROLE
+SET APPLICATION_ROLE.id = APPLICATION_ROLE.authority
 ;
 
-ALTER TABLE application_role DROP COLUMN authority
+ALTER TABLE APPLICATION_ROLE DROP COLUMN authority
 ;
 
-ALTER TABLE pending_role_notification ADD FOREIGN KEY (role_id) REFERENCES application_role (id)
+ALTER TABLE PENDING_ROLE_NOTIFICATION ADD FOREIGN KEY (role_id) REFERENCES APPLICATION_ROLE (id)
 ;
 
-ALTER TABLE user_role_link ADD FOREIGN KEY (application_role_id) REFERENCES application_role (id)
+ALTER TABLE USER_ROLE_LINK ADD FOREIGN KEY (application_role_id) REFERENCES APPLICATION_ROLE (id)
 ;
 

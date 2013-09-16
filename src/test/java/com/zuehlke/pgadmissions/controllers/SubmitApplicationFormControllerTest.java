@@ -310,7 +310,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Test(expected = InsufficientApplicationFormPrivilegesException.class)
     public void shouldThrowExceptionIfOtherApplicant() {
-        RegisteredUser otherApplicant = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+        RegisteredUser otherApplicant = new RegisteredUserBuilder().id(6).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(otherApplicant).anyTimes();
         EasyMock.replay(userServiceMock);
@@ -391,9 +391,9 @@ public class SubmitApplicationFormControllerTest {
         httpServletRequestMock = new MockHttpServletRequest();
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-                        .role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+                        .role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         admin = new RegisteredUserBuilder().id(2).username("Francishek").email("franek@gmail.com").firstName("Franek").lastName("Pieczka")
-                        .role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
+                        .role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
         EasyMock.replay(userServiceMock);

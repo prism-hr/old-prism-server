@@ -322,7 +322,7 @@ public class AddressControllerTest {
         controller = new AddressController(applicationsServiceMock, userServiceMock, domicileServiceMock, domicilePropertyEditor, addressSectionValidatorMock,
                         accessServiceMock);
 
-        currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+        currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
 

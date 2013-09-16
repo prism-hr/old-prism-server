@@ -85,7 +85,7 @@ public abstract class AbstractAuthorisationAPI {
 
     public boolean isInRole(final RegisteredUser user, final Authority authority) {
         for (Role role : user.getRoles()) {
-            if (role.getAuthorityEnum() == authority) {
+            if (role.getId() == authority) {
                 return true;
             }
         }

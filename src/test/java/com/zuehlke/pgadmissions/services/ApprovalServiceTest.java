@@ -491,7 +491,7 @@ public class ApprovalServiceTest {
     @Test
     public void shouldSaveRequestRestardComment() {
         RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-                .role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).build())//
+                .role(new RoleBuilder().id(Authority.APPROVER).build())//
                 .build();
         Program program = new ProgramBuilder().id(321).title("lala").approver(approver).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.APPROVAL).id(1).build();
@@ -614,8 +614,8 @@ public class ApprovalServiceTest {
     }
 
     private void applyValidSendToPorticoData(ApplicationForm applicationForm) {
-        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
 
         Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
         Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();

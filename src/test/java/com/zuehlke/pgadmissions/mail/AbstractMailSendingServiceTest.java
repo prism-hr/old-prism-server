@@ -76,7 +76,7 @@ public class AbstractMailSendingServiceTest {
 
     @Test
     public void shouldAddRefereeRoleIfUserExistsAndIsNotAReferee() {
-        Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
+        Role reviewerRole = new RoleBuilder().id(Authority.REVIEWER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userDAOMock.save(user);
         Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
@@ -90,9 +90,9 @@ public class AbstractMailSendingServiceTest {
 
     @Test
     public void shouldAddRefereeRoleIfUserExistsAndIsApproverReviewerAdmin() {
-        Role reviewerRole = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).build();
-        Role adminRole = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).build();
-        Role approverRole = new RoleBuilder().id(3).authorityEnum(Authority.APPROVER).build();
+        Role reviewerRole = new RoleBuilder().id(Authority.REVIEWER).build();
+        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
+        Role approverRole = new RoleBuilder().id(Authority.APPROVER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole, adminRole, approverRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userDAOMock.save(user);
         Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
@@ -106,7 +106,7 @@ public class AbstractMailSendingServiceTest {
 
     @Test
     public void shouldNotAddRefereeRoleIfUserExistsAndIsAlreadyAReferee() {
-        Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).build();
+        Role refereeRole = new RoleBuilder().id(Authority.REFEREE).build();
         RegisteredUser user = new RegisteredUserBuilder().id(3).role(refereeRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         userDAOMock.save(user);
         Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
@@ -122,7 +122,7 @@ public class AbstractMailSendingServiceTest {
     public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
         final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
         Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
-        Role role = new RoleBuilder().id(1).build();
+        Role role = new RoleBuilder().build();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REFEREE)).andReturn(role);
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("emailemail@test.com")).andReturn(null);
         

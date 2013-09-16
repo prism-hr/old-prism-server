@@ -275,7 +275,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     @Test
     public void shouldSendNewUserInvitation() {
         ApplicationForm form = getSampleApplicationForm();
-        PendingRoleNotification roleNotification = new PendingRoleNotificationBuilder().role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build())
+        PendingRoleNotification roleNotification = new PendingRoleNotificationBuilder().role(new RoleBuilder().id(Authority.ADMINISTRATOR).build())
                 .addedByUser(form.getProgram().getAdministrators().get(0)).program(form.getProgram()).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).pendingRoleNotifications(roleNotification).build();
 

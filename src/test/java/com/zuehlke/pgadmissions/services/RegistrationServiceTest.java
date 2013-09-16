@@ -66,7 +66,7 @@ public class RegistrationServiceTest {
 	@Test
 	public void shouldHashPasswordsAndSetAccountDataAndAndQueryString() {
 		String queryString = "queryString";
-		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(1).build();
+		Role role = new RoleBuilder().id(Authority.APPLICANT).build();
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
 		EasyMock.replay(roleDAOMock);
 
@@ -220,7 +220,7 @@ public class RegistrationServiceTest {
 	public void shouldSavePendingSuggestedUserAndSendEmail() throws UnsupportedEncodingException {
 		final RegisteredUser expectedRecord = new RegisteredUserBuilder().id(1).activationCode("ABCD").build();
         final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).activationCode("ABCD").email("email@test.com").firstName("bob")
-                .lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+                .lastName("bobson").roles(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         
         registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
                 interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock, HOST) {
@@ -322,7 +322,7 @@ public class RegistrationServiceTest {
 		assertEquals("view the application", registrationService.getRegistrationConfirmationAction(user));
 		user = new RegisteredUserBuilder().id(1).build();
 		assertEquals("continue", registrationService.getRegistrationConfirmationAction(user));
-		user = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+		user = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.APPLICANT).build()).build();
 		assertEquals("complete your application", registrationService.getRegistrationConfirmationAction(user));
 	}
 	

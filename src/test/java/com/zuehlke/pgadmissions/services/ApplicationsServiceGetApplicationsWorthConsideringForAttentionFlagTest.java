@@ -80,15 +80,15 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
                 sessionFactory.getCurrentSession()
                                 .createSQLQuery("" 
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (1,'ADMINISTRATOR');"
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (2,'APPLICANT');"
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (4,'APPROVER');"
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (7,'INTERVIEWER');"
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (6,'REFEREE');"
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (3,'REVIEWER');"
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (5,'SUPERADMINISTRATOR');"
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (8,'SUPERVISOR');"
-                                                + "INSERT INTO APPLICATION_ROLE (id,authority) VALUES (9,'VIEWER');").executeUpdate();
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('ADMINISTRATOR');"
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('APPLICANT');"
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('APPROVER');"
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('INTERVIEWER');"
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('REFEREE');"
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('REVIEWER');"
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERADMINISTRATOR');"
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERVISOR');"
+                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('VIEWER');").executeUpdate();
 
                 applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null);
                 stateTransitionViewResolverMock = EasyMock.createMock(StateTransitionViewResolver.class);

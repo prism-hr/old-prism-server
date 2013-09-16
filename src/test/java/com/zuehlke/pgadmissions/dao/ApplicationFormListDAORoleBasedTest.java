@@ -71,7 +71,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
                         .submittedDate(new Date()).build();
         save(applicationFormOne, applicationFormTwo);
         flushAndClearSession();
-        RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         filtering.setPreFilter(ApplicationsPreFilter.ALL);
@@ -654,7 +654,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
                         .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                         .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
-        RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.WITHDRAWN)
                         .withdrawnBeforeSubmit(true).build();

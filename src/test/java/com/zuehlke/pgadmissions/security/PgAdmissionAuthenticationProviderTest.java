@@ -38,8 +38,8 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test
 	public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
-		Role roleOne = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).build();
-		Role roleTwo = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).build();
+		Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
+		Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
 		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").roles(roleOne, roleTwo).id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");

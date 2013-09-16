@@ -90,7 +90,7 @@ public class NewUserByAdminValidatorTest {
 		user.setEmail("applicant@test.com");
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("applicant@test.com"))
-				.andReturn(new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).build()).build()).anyTimes();
+				.andReturn(new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.APPLICANT).build()).build()).anyTimes();
 		EasyMock.replay(userServiceMock);
 		newUserByAdminValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());

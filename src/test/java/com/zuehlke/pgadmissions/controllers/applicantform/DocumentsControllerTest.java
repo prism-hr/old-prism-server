@@ -52,7 +52,7 @@ public class DocumentsControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         controller = new DocumentsController(applicationsServiceMock, userServiceMock, documentSectionValidatorMock, documentPropertyEditorMock, accessServiceMock);   
-        currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+        currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
     }

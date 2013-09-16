@@ -137,7 +137,7 @@ public class ApplicationFormTest {
 
     @Test
     public void shouldSeeOnlyOwnInterviewVoteCommentsAndInterviewScheduleCommentsIfApplicant() {
-        RegisteredUser user = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(6).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         RegisteredUser interviewer = new RegisteredUserBuilder().id(8).build();
 
         Comment genericComment = new CommentBuilder().id(4).build();
@@ -160,7 +160,7 @@ public class ApplicationFormTest {
     @Test
     public void shouldSeeOwnCommentOnlyfRefereeOnly() {
         Comment comment = new CommentBuilder().id(4).build();
-        RegisteredUser user = new RegisteredUserBuilder().id(6).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(6).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
         Referee referee = new RefereeBuilder().user(user).build();
         user.getReferees().add(referee);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(comment).referees(referee).build();
@@ -177,7 +177,7 @@ public class ApplicationFormTest {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
         RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().referees()
-                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build()).id(7).build();
+                .roles(new RoleBuilder().id(Authority.REVIEWER).build(), new RoleBuilder().id(Authority.REFEREE).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -199,8 +199,8 @@ public class ApplicationFormTest {
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
         RegisteredUser reviewerUserTwo = new RegisteredUserBuilder()
                 .referees()
-                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build(),
-                        new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
+                .roles(new RoleBuilder().id(Authority.REVIEWER).build(), new RoleBuilder().id(Authority.REFEREE).build(),
+                        new RoleBuilder().id(Authority.APPLICANT).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -219,8 +219,8 @@ public class ApplicationFormTest {
     @Test
     public void shouldDisplayInterviewCommentsSubmittedByApplicantToApplicantAndInterviewer() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        RegisteredUser interviewerUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).build()).id(6).build();
-        RegisteredUser applicant = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
+        RegisteredUser interviewerUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.INTERVIEWER).build()).id(6).build();
+        RegisteredUser applicant = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.APPLICANT).build()).id(7).build();
         Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).id(1).build();
         Interview interview = new InterviewBuilder().interviewers(interviewer).id(1).build();
 
@@ -240,8 +240,8 @@ public class ApplicationFormTest {
     @Test
     public void shouldDisplayInterviewCommentsSubmittedByInterviewerToInterviewerOnly() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        RegisteredUser interviewerUser = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).build()).id(6).build();
-        RegisteredUser applicant = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
+        RegisteredUser interviewerUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.INTERVIEWER).build()).id(6).build();
+        RegisteredUser applicant = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.APPLICANT).build()).id(7).build();
         Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).id(1).build();
         Interview interview = new InterviewBuilder().interviewers(interviewer).id(1).build();
 
@@ -266,8 +266,8 @@ public class ApplicationFormTest {
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
         RegisteredUser reviewerUserTwo = new RegisteredUserBuilder()
                 .referees()
-                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build(),
-                        new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
+                .roles(new RoleBuilder().id(Authority.REVIEWER).build(), new RoleBuilder().id(Authority.REFEREE).build(),
+                        new RoleBuilder().id(Authority.APPLICANT).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -309,7 +309,7 @@ public class ApplicationFormTest {
     public void shouldReturnUsersWilingToSupervise() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -330,7 +330,7 @@ public class ApplicationFormTest {
     public void shouldReturnEmptyListIfNoUsersWillingToSupervise() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -350,7 +350,7 @@ public class ApplicationFormTest {
     public void shouldReturnUsersWilingToInterview() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -371,7 +371,7 @@ public class ApplicationFormTest {
     public void shouldReturnUsersWilingToWorkWithApplicant() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -392,7 +392,7 @@ public class ApplicationFormTest {
     public void shouldReturnEmptyListIfNoUsersWillingToInterview() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -408,7 +408,7 @@ public class ApplicationFormTest {
     public void shouldReturnEmptyListIfNoUsersWillingToWorkWithApplicant() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
 
         Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
         Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
@@ -524,8 +524,8 @@ public class ApplicationFormTest {
 
     @Test
     public void shouldBeCompleteForSendingToPorticoWithTwoReferencesAndTwoQualifications() {
-        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
 
         Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
         Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
@@ -552,8 +552,8 @@ public class ApplicationFormTest {
 
     @Test
     public void shouldBeCompleteForSendingToPorticoWithTwoReferencesAndExplanation() {
-        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
 
         Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
         Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
@@ -576,8 +576,8 @@ public class ApplicationFormTest {
 
     @Test
     public void shouldNotBeCompleteForSendingToPorticoWithOnlyOneReference() {
-        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
 
         Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
         Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(false).build();
@@ -603,8 +603,8 @@ public class ApplicationFormTest {
 
     @Test
     public void shouldNotBeCompleteForSendingToPorticoWithNoQualificationsAndNoExplanation() {
-        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
 
         Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
         Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();
@@ -626,8 +626,8 @@ public class ApplicationFormTest {
 
     @Test
     public void shouldNotBeCompleteForSendingToPorticoWithMoreThanTwoQualifications() {
-        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
 
         Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).build();
         Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).build();

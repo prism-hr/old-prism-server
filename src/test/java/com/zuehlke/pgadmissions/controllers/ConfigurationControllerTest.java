@@ -83,7 +83,7 @@ public class ConfigurationControllerTest {
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
         RegisteredUser applicant = new RegisteredUserBuilder().id(1).username("aa").email("aa@gmail.com").firstName("mark").lastName("ham")
-                .role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+                .role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
         EasyMock.replay(userServiceMock);
@@ -515,9 +515,9 @@ public class ConfigurationControllerTest {
                 null, null, null, applicationContext);
 
         superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-                .role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+                .role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
 
         admin = new RegisteredUserBuilder().id(3).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-                .role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
+                .role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
     }
 }

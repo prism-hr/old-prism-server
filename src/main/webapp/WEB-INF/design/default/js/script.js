@@ -590,9 +590,11 @@ function doUploadComment($upload_field, $uploadedDocuments) {
         },
         success : function(data) {
             $container.removeClass('posting');
-            if ($(data).find('div.alert-error').length > 0) {
+            if (data.contains('alert-error')) {
                 // There was an uploading error.
                 $container.append(data);
+                $upload_field.val('');
+				$uploadedDocuments.find('li').last().remove();
             } else if ($(data).find('.file').length == 0) {
                 // There was (probably) a server error.
                 $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');

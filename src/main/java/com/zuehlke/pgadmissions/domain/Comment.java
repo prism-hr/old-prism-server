@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Max;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Generated;
@@ -27,7 +28,6 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "COMMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -48,7 +48,7 @@ public class Comment implements Comparable<Comment>, Serializable {
     @JoinColumn(name = "comment_id")
     private List<Document> documents = new ArrayList<Document>();
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50000)
+    @Max(value = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob
     private String comment;
 

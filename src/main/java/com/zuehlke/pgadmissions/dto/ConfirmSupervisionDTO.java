@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class ConfirmSupervisionDTO {
@@ -14,7 +15,8 @@ public class ConfirmSupervisionDTO {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     private String projectTitle;
 
-    @ESAPIConstraint(rule = "ATAS", maxLength = 2000, message = "{text.field.atas}")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ATASConstraint
     private String projectAbstract;
 
     private Date recommendedStartDate;

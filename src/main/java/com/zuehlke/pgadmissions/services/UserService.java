@@ -323,7 +323,7 @@ public class UserService {
     }
 
     public void resetPassword(String email) {
-        RegisteredUser storedUser = userDAO.getUserByEmail(email);
+        RegisteredUser storedUser = userDAO.getUserByEmailIncludingDisabledAccounts(email);
         if (storedUser == null) { // user-mail not found -> ignore
             log.info("reset password request failed, e-mail not found: " + email);
             return;

@@ -5,6 +5,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.utils.DateUtils;
+import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class ProjectDTO {
@@ -16,7 +17,8 @@ public class ProjectDTO {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     private String title;
 
-    @ESAPIConstraint(rule="ATAS", maxLength = 2000, message="{text.field.atas}")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ATASConstraint
     private String description;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)

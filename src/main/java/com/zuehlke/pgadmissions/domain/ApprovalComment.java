@@ -10,6 +10,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPROVAL_COMMENT")
@@ -24,7 +25,8 @@ public class ApprovalComment extends Comment {
     @Column(name = "project_title")
     private String projectTitle;
 
-    @ESAPIConstraint(rule = "ATAS", maxLength = 2000, message = "{text.field.atas}")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ATASConstraint
     @Column(name = "project_abstract")
     private String projectAbstract;
 

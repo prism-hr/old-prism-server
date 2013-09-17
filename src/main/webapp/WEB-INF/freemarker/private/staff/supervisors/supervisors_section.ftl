@@ -199,13 +199,16 @@
     <label id="lbl_offerConditions" class="plain-label">Recommended Conditions <em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
     </#if> 
-    <div class="field"> <textarea class="max" cols="80" rows="6" name="offerConditions" id="offerConditions"             <#if  !approvalRound.recommendedConditionsAvailable?? || !approvalRound.recommendedConditionsAvailable > disabled="disabled"  </#if>
+    <div class="field">
+      <textarea class="max" cols="80" rows="6" name="offerConditions" id="offerConditions"
+      <#if  !approvalRound.recommendedConditionsAvailable?? || !approvalRound.recommendedConditionsAvailable > disabled="disabled"  </#if>
       >${(approvalRound.recommendedConditions?html)!}</textarea>
+      <@spring.bind "approvalRound.recommendedConditions" />
+      <#list spring.status.errorMessages as error >
+      <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+      </#list> 
+      </div>
     </div>
-    <@spring.bind "approvalRound.recommendedConditions" />
-    <#list spring.status.errorMessages as error >
-    <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
-    </#list> </div>
 </div>
 		<div class="buttons">
 		  <button class="btn btn-primary" type="button" id="assignSupervisorsBtn">Submit</button>

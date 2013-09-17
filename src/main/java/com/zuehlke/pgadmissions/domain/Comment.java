@@ -21,6 +21,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Generated;
@@ -48,7 +49,7 @@ public class Comment implements Comparable<Comment>, Serializable {
     @JoinColumn(name = "comment_id")
     private List<Document> documents = new ArrayList<Document>();
 
-    @Max(value = 50000, message = "A maximum of 50000 characters are allowed.")
+    @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob
     private String comment;
 

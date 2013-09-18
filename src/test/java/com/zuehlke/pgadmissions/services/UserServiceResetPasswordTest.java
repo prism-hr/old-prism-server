@@ -53,7 +53,7 @@ public class UserServiceResetPasswordTest {
 
     @Test
     public void ignoreInvalidEmails() {
-        EasyMock.expect(userDAOMock.getUserByEmail("aaaa")).andReturn(null);
+        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("aaaa")).andReturn(null);
         replayAllMocks();
 
         serviceUT.resetPassword("aaaa");
@@ -66,7 +66,7 @@ public class UserServiceResetPasswordTest {
         String oldPassword = "i forget this every time";
         RegisteredUser storedUser = new RegisteredUserBuilder().id(23).firstName("first").lastName("last").email("first@last.com").password(oldPassword)
                 .build();
-        EasyMock.expect(userDAOMock.getUserByEmail("aaaa")).andReturn(storedUser);
+        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("aaaa")).andReturn(storedUser);
 
         String newPassword = "this is better";
         String hashedNewPassword = "some ol' celtic bollocks";
@@ -90,7 +90,7 @@ public class UserServiceResetPasswordTest {
         String oldPassword = "i forget this every time";
         RegisteredUser storedUser = new RegisteredUserBuilder().id(23).firstName("first").lastName("last")//
                 .username("firstlast").email("first@last.com").password(oldPassword).build();
-        EasyMock.expect(userDAOMock.getUserByEmail("aaaa")).andReturn(storedUser);
+        EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("aaaa")).andReturn(storedUser);
 
         String newPassword = "this is better";
         EasyMock.expect(encryptionUtilsMock.generateUserPassword()).andReturn(newPassword);

@@ -120,7 +120,12 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 
 	@Test
 	public void shouldRejectIf_Description_HasMoreThan_2000_Characters(){
-		projectDTO.setDescription(_2001_CHARACTERS_TEXT);
+	    StringBuilder sb2001Characters = new StringBuilder();
+	    for(int i = 0 ; i < 2001 ; i++) {
+	        sb2001Characters.append("a");
+	    }
+	    
+		projectDTO.setDescription(sb2001Characters.toString());
 		assertThatObjectFieldHasErrorMessage(projectDTO, "description", "A maximum of 2000 characters are allowed.");
 	}
 

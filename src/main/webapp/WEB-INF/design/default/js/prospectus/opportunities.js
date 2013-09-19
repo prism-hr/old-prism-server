@@ -220,7 +220,7 @@ function durationOfStudyString(studyDuration){
 }
 
 function getAdvertUrl(advert){
-	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/apply/new' + "?advert=" + advert.id + "&program=" + advert.programCode;
+	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert=" + advert.id + "&program=" + advert.programCode;
 	if(advert.type == 'project') {
 		url = url + '&project=' + advert.projectId; 
 	}

@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    $('.selectpicker').selectpicker();
     $(document).on('change', 'select.actionType', function() {
     	
         var name = this.name;
@@ -87,7 +88,7 @@ $(document).ready(function() {
                     });    
                 };
                 var onCancel = function() {
-                	$('#actionTypeSelect').val('Actions');
+                	$('.actionType').val('Actions');
 					$('#ajaxloader').fadeOut('fast');
                 };
                 modalPrompt(message, onOk, onCancel);

@@ -44,13 +44,13 @@
     </#if>
   </td>
   <td class="centre">
-      <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
-        <option>Actions</option>
+      <select class="actionType selectpicker" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
+        <option class="title">Actions</option>
         <#list actions as action>
           <#if action.id == "emailApplicant">
-            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}" <#if actionsRequiringAttention?seq_contains(action)> class="bold"</#if>>${action.displayName}</option>
+            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}" <#if actionsRequiringAttention?seq_contains(action)> class="bold" data-icon="icon-bell-alt"</#if>> ${action.displayName}</option>
           <#else>
-            <option value="${action.id}" <#if actionsRequiringAttention?seq_contains(action)> class="bold"</#if>>${action.displayName}</option>
+            <option value="${action.id}" <#if actionsRequiringAttention?seq_contains(action)> class="bold" data-icon="icon-bell-alt"</#if>>${action.displayName}</option>
           </#if>
         </#list>
     </select></td>
@@ -106,7 +106,6 @@
   <td colspan="6">***PLACEHOLDER***</td>
 </tr>
 </#list>
-
 <script>
     latestConsideredFlagIndex = ${latestConsideredFlagIndex};
 </script> 

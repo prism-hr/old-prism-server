@@ -280,8 +280,6 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 	float:right;
 }
 .applist .alert {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
-#actionTypeSelect option.bold {
-    font-weight: bold;
-}
+

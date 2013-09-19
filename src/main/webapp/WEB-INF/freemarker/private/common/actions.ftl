@@ -6,7 +6,7 @@
 <#assign actionsDefinition = actionDefinitions[application.applicationNumber]>
  
 <#assign actions = actionsDefinition.actions>
-<select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber?html}]">
+<select class="actionType" name="app_[${application.applicationNumber?html}]">
     <option>Actions</option>
     <#list actions as action>
       <#if action.id == "emailApplicant">

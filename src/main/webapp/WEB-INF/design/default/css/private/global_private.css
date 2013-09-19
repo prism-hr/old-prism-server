@@ -367,7 +367,7 @@ table.data thead th.headerSortUp span.arrow { background-position: 100% -2px; }
 table.data thead th.headerSortDown span.arrow { background-position: 100% -19px; }*/
 
 
-#programme-details { margin-bottom: 10px; overflow: hidden; min-height: 125px; position: relative; } 
+#programme-details { margin-bottom: 10px; overflow: visible; min-height: 125px; position: relative; } 
 #programme-details .row { line-height: 14px; padding: 3px 0; margin-bottom: 4px; }
 #programme-details .row input { padding: 2px; }
 #programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; line-height: 14px; margin-bottom: 0px; }
@@ -1977,6 +1977,32 @@ background: #909194;
   font-size: 16px; 
   padding-left: 6px;
 }
+.actionType a.bold {
+    font-weight: bold;
+}
+.bootstrap-select.actionType {
+    margin-bottom: 0;
+    width: 113px;
+}
+#programme-details .bootstrap-select.actionType {
+    margin-bottom: 10px;
+    margin-top: 6px;
+    width: 198px;
+}
+#programme-details .bootstrap-select.actionType i.icon-bell-alt{
+ color: #F83929;
+}
+.bootstrap-select.btn-group .dropdown-menu li > a {  
+    text-align: left;
+}
+.bootstrap-select.btn-group .dropdown-menu li > a.title {  
+    height: 0;
+    overflow: hidden;
+}
+.bootstrap-select.btn-group .dropdown-menu li > a.title:hover {
+  background: none;
+}  
+
 /* Responsive queries*/
 
 @media (min-width:768px) and (max-width:979px) {

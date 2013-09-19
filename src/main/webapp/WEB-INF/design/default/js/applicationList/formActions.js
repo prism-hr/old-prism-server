@@ -15,9 +15,12 @@ $(document).ready(function() {
         var element = this;
 
 		$(element).find('.application-details:odd').addClass('odd').addClass('loading');
-        $(element).find('.applicationRow').click(function() {
-			var applicationDetails = $(this).next();
+		
+        $(element).find('.applicationRow').not('.applicationRow.binded').bind('click',function(event) {
+            
+            var applicationDetails = $(this).next();
 			
+			//alert ($(event.target).attr('class'));
 			if (applicationDetails.attr('data-application-status') == 'UNSUBMITTED' || applicationDetails.attr('data-application-status') == 'WITHDRAWN') {
 				return;
 			} 
@@ -81,10 +84,15 @@ $(document).ready(function() {
 					}
 				});
 			}
+			if ($(event.target).attr('class') == 'btn btn-default dropdown-toggle' || $(event.target).attr('class') == 'text') {
+                // do nothing
+            } else {
+                $(element).find('.application-details').not(applicationDetails).hide();
+                applicationDetails.toggle();
+            }
 			
-			$(element).find('.application-details').not(applicationDetails).hide();
-			applicationDetails.toggle();
         });
+        $(element).find('.applicationRow').addClass('binded');
     };    
 	
 	populateApplicationList();
@@ -413,11 +421,15 @@ function populateApplicationList() {
 
 			$('#applicationListSection').append(data);
 			
-			$('#appliList').jExpand();
-			
-			$('#appliList .btn, input, .actionType').click(function (e) {
-				e.stopPropagation();
+			// Select converted to bootstrap dropdown//
+			$('select.selectpicker').each(function() {
+			    if ($(this).is(':visible')) {
+			        $(this).selectpicker();
+			    };
 			});
+
+            $('#appliList').jExpand();
+
 		},
 		complete : function() {
 			 $('#ajaxloader').fadeOut('fast');

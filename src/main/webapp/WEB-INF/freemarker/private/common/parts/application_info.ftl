@@ -1,4 +1,4 @@
-
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/bootstrap-select.min.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application_list.css' />" />
 
 <div id="programme-details">
@@ -17,17 +17,17 @@
       </div>
         <#assign actions = applicationDescriptor.actionsDefinition.actions>
         <#assign actionsRequiringAttention = applicationDescriptor.actionsDefinition.actionsRequiringAttention>
-        <select id="actionTypeSelect" class="actionType" name="app_[${applicationForm.applicationNumber}]" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">
-            <option>Actions</option>
+        <select class="actionType selectpicker" name="app_[${applicationForm.applicationNumber}]" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">
+            <option class="title">Actions</option>
             <#list actions as action>
               <#if action.id == "emailApplicant">
-                <option value="emailApplicant" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}" <#if actionsRequiringAttention?seq_contains(action)> class="bold"</#if>>${action.displayName}</option>
+                <option value="emailApplicant" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}" <#if actionsRequiringAttention?seq_contains(action)> class="bold" data-icon="icon-bell-alt"</#if>>${action.displayName}</option>
               <#else>
-                <option value="${action.id}" <#if actionsRequiringAttention?seq_contains(action)> class="bold"</#if>>${action.displayName}</option>
+                <option value="${action.id}" <#if actionsRequiringAttention?seq_contains(action)> class="bold" data-icon="icon-bell-alt"</#if>>${action.displayName}</option>
               </#if>
             </#list>
         </select>
-    
+        <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap-select.js' />"></script>
    </div>
   <div id="tools">
       <a class="btn btn-small" target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>"><i class="icon-download-alt"></i> Download as PDF</a>

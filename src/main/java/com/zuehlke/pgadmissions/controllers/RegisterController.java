@@ -273,9 +273,15 @@ public class RegisterController {
 	}
 
 	private boolean isAnApplyNewRequest(final HttpServletRequest request) {
+		StringBuffer requestUrl = request.getRequestURL();
+		String requestQuery = request.getQueryString();
 		DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
-		return defaultSavedRequest != null
-				&& StringUtils.contains(defaultSavedRequest.getRequestURL(),
-						"/apply/new");
+		if (defaultSavedRequest != null
+				&& StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new")
+				|| (StringUtils.contains(requestUrl.toString(), "register"))
+					&& StringUtils.contains(requestQuery, "advert")) {
+			return true;
+		}
+	return false;
 	}
 }

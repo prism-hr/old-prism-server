@@ -627,7 +627,7 @@
             <id>sit</id>
             <properties>
                 <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions_prod</sql.db>
+                <sql.db>pgadmissions</sql.db>
             </properties>
             <build>
                 <plugins>

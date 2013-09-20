@@ -1,4 +1,11 @@
 <table class="existing  table table-condensed table-bordered">
+    <colgroup>
+        <col style="width: 30px" />
+        <col />
+        <col style="width: 90px" />
+        <col style="width: 33px" />
+        <col />
+    </colgroup>
     <thead>
         <tr>
             <th >&nbsp;</th>

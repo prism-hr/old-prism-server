@@ -114,7 +114,7 @@
         <!-- Add reference add button -->
         <div class="row">
             <div class="field">
-                <button id="addReferenceButton" type="button" class="btn btn-primary">Add Reference</button>
+                <button id="addReferenceButton_${encRefereeId}" type="button" class="btn btn-primary addReferenceButton">Add Reference</button>
             </div>
         </div>
         </#if>      

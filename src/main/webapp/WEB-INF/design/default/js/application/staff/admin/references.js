@@ -15,6 +15,7 @@ $(document).ready(function() {
 		$('#referee_newReferee').show();
 		$('#referee_newReferee input').val('');
 		$('#refereeComment_newReferee').attr('value', '');
+		$('#editedRefereeId').val('newReferee');
 		$('#suitableUCL_true, #suitableUCL_false, #suitableProgramme_true, #suitableProgramme_false').prop('checked', false);
 		clearRefereeFormErrors();
 	});
@@ -84,14 +85,14 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // POST ADD REFERENCE DATA
     // --------------------------------------------------------------------------------
-	$("#addReferenceButton").live("click", function() {
+	$(".addReferenceButton").live("click", function() {
 		postRefereesData(false, true);
     });
     
     // --------------------------------------------------------------------------------
     // EDIT REFERENCE DATA
     // --------------------------------------------------------------------------------
-    $('button[id="editReferenceButton"]').each(function() {
+    $('.editReferenceButton').each(function() {
     	$(this).live("click", function() {
     		editReferenceData(false, true);
         });

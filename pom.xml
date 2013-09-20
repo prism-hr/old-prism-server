@@ -626,7 +626,7 @@
         <profile>
             <id>sit</id>
             <properties>
-                <sql.host>192.168.11.115</sql.host>
+                <sql.host>localhost</sql.host>
                 <sql.db>pgadmissions_prod</sql.db>
             </properties>
             <build>
@@ -713,7 +713,7 @@
         <profile>
             <id>ci</id>
             <properties>
-                <sql.host>192.168.11.115</sql.host>
+                <sql.host>localhost</sql.host>
                 <sql.db>pgadmissions_ci</sql.db>
             </properties>
             <build>

@@ -1,9 +1,4 @@
 <table class="existing  table table-condensed table-bordered">
-    <colgroup>
-        <col style="width: 32px" />
-        <col style="width: 680px" />
-        <col style="width: 134px" />
-    </colgroup>
     <thead>
         <tr>
             <th >&nbsp;</th>
@@ -18,7 +13,7 @@
                     <table class="table-striped table-hover">
                         <colgroup>
                             <col style="width: 30px" />
-                            <col style="width: 650px" />
+                            <col />
                             <col style="width: 90px" />
                             <col style="width: 33px" />
                             <col />

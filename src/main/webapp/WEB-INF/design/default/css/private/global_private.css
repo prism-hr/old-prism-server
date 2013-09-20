@@ -10,7 +10,7 @@ a:hover { text-decoration: underline;}
 a img { border: none; }
 body { font: 10pt/1 Arial, Helvetica, sans-serif; 
 background-color: #F0F0F0;
- 
+overflow-y: scroll;
 }
 label input { vertical-align: middle; }
 label.normal { font-weight: normal !important; }
@@ -1227,6 +1227,10 @@ section.form-rows .hint{
   width: 25px;
   -webkit-font-smoothing: antialiased;
   cursor:default;
+}
+.hint:before {
+	z-index: 500;
+	position: relative;
 }
 .remove-date:before {
 	width: 26px;

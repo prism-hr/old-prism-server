@@ -32,7 +32,7 @@ public abstract class AutomaticRollbackTestCase {
 	}
 
 	@Before
-	public final void setup() {
+	public void setup() {
 		transaction = sessionFactory.getCurrentSession().beginTransaction();		
 	}
 

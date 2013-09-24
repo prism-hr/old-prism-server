@@ -7,10 +7,10 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th id="primary-header" colspan="2">Qualification</th>
+                	<th>&nbsp;</th>
+                    <th>Qualification</th>
                     <th>Date</th>
                     <th>&nbsp;</th>
-
                 </tr>
             </thead>
             <tbody>

@@ -8,9 +8,10 @@
     </colgroup>
     <thead>
         <tr>
-            <th >&nbsp;</th>
+            <th>&nbsp;</th>
             <th id="primary-header">References</th>
-            <th colspan="2" id="last-col">Responded</th>
+            <th>Responded</th>
+            <th>&nbsp;</th>
         </tr>
     </thead>
     <tbody>

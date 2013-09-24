@@ -17,7 +17,8 @@
     <thead>
       <tr>
         <th>Referees</th>
-        <th colspan="2">&nbsp;</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
       </tr>
     </thead>
     <tbody>

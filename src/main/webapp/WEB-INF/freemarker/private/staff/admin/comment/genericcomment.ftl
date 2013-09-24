@@ -68,7 +68,7 @@
 				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) || user.isViewerOfProgramme(applicationForm) || user.isInRole('ADMITTER')>
 									<section class="form-rows">
 										<#if isConfirmEligibilityComment??>
-											<h2 class="no-arrow">Confirm the applicant eligibility</h2>
+											<h2 class="no-arrow">Confirm Applicant Eligibility</h2>
 										<#else>
 											<h2 class="no-arrow">Comment</h2>
 										</#if>

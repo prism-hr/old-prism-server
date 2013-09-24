@@ -15,10 +15,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Domicile;
@@ -36,6 +39,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
@@ -54,15 +58,17 @@ public class RefereeController {
     private final EncryptionHelper encryptionHelper;
     private final UserService userService;
     private final ApplicationFormAccessService accessService;
+    private final FullTextSearchService searchService;
 
     public RefereeController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public RefereeController(RefereeService refereeService, UserService userService, ApplicationsService applicationsService,
             DomicilePropertyEditor domicilePropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
-            EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService, DomicileService domicileService) {
+            EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService, DomicileService domicileService, 
+            final FullTextSearchService searchService) {
         this.refereeService = refereeService;
         this.userService = userService;
         this.applicationsService = applicationsService;
@@ -72,6 +78,7 @@ public class RefereeController {
         this.encryptionHelper = encryptionHelper;
         this.accessService = accessService;
         this.domicileService = domicileService;
+        this.searchService = searchService;
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
@@ -125,6 +132,20 @@ public class RefereeController {
         accessService.updateAccessTimestamp(application, userService.getCurrentUser(), new Date());
         applicationsService.save(application);
         return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
+    }
+    
+    @RequestMapping(value="/referee/employer/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String provideSuggestionsForRefereeJobEmployer(@PathVariable final String searchTerm) {
+    	Gson gson = new Gson();
+    	return gson.toJson(searchService.getMatchingRefereesWithJobEmployersLike(searchTerm));
+    }
+    
+    @RequestMapping(value="/referee/position/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String provideSuggestionsForRefereeJobTitle(@PathVariable final String searchTerm) {
+    	Gson gson = new Gson();
+    	return gson.toJson(searchService.getMatchingRefereesWithJobTitlesLike(searchTerm));
     }
 
     @ModelAttribute("domiciles")

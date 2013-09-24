@@ -7,7 +7,6 @@ import static junit.framework.Assert.assertNull;
 import java.util.Date;
 
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -26,22 +25,23 @@ public class ApplicationFormLastAccessDAOTest extends AutomaticRollbackTestCase 
     
     private ApplicationForm form;
     
-    @Before
-    public void prepare() {
-        dao = new ApplicationFormLastAccessDAO(sessionFactory);
-        user = new RegisteredUserBuilder()
-            .firstName("Ozio")
-            .lastName("Primitivo")
-            .email("ozio@mail.com")
-            .username("ozio@mail.com")
-            .build();
-        form = new ApplicationFormBuilder()
-            .applicant(user)
-            .build();
-        save(user, form);
-        flushAndClearSession();
+    @Override
+    public void setup() {
+        super.setup();
+        dao = new ApplicationFormLastAccessDAO(sessionFactory);  
+        user = new RegisteredUserBuilder()                       
+            .firstName("Ozio")                                   
+            .lastName("Primitivo")                               
+            .email("ozio@mail.com")                              
+            .username("ozio@mail.com")                           
+            .build();                                            
+        form = new ApplicationFormBuilder()                      
+            .applicant(user)                                     
+            .build();                                            
+        save(user, form);                                        
+        flushAndClearSession();                                  
     }
-    
+
     @Test
     public void shouldSaveNewAccess() {
         ApplicationFormLastAccess access = new ApplicationFormLastAccessBuilder()

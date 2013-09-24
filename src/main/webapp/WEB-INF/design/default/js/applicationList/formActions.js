@@ -84,7 +84,7 @@ $(document).ready(function() {
 					}
 				});
 			}
-			if ($(event.target).attr('class') == 'btn btn-default dropdown-toggle' || $(event.target).attr('class') == 'text') {
+			if ($(event.target).attr('class') == 'btn btn-default dropdown-toggle' || $(event.target).attr('class') == 'text' || $(event.target).attr('class') == '') {
                 // do nothing
             } else {
                 $(element).find('.application-details').not(applicationDetails).hide();

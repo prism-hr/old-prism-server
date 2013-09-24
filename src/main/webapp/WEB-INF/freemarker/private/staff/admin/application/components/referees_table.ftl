@@ -1,8 +1,10 @@
 <table class="existing  table table-condensed table-bordered">
     <colgroup>
-        <col style="width: 32px" />
-        <col style="width: 680px" />
-        <col style="width: 134px" />
+        <col style="width: 30px" />
+        <col />
+        <col style="width: 90px" />
+        <col style="width: 33px" />
+        <col />
     </colgroup>
     <thead>
         <tr>
@@ -18,7 +20,7 @@
                     <table class="table-striped table-hover">
                         <colgroup>
                             <col style="width: 30px" />
-                            <col style="width: 650px" />
+                            <col />
                             <col style="width: 90px" />
                             <col style="width: 33px" />
                             <col />

@@ -5,7 +5,7 @@
     <groupId>com.zuehlke</groupId>
     <artifactId>pgadmissions</artifactId>
     <packaging>war</packaging>
-    <version>2.13.0-SNAPSHOT</version>
+    <version>2.14.0-SNAPSHOT</version>
 
     <properties>
         <spring.version>3.1.0.RELEASE</spring.version>
@@ -15,13 +15,13 @@
 
     <distributionManagement>
         <repository>
-            <id>C12545-2</id>
-            <url>scp://C12545-2/home/pgadmin/pgadmissions-releases/</url>
+            <id>prism-dev.alumeni.co.uk</id>
+            <url>scp://prism-dev.alumeni.co.uk/home/bitnami/pgadmissions-releases/</url>
         </repository>
     </distributionManagement>
 
     <scm>
-        <connection>scm:hg:https://repo.zuehlke.com/hg/pgadmissions</connection>
+        <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>
     </scm>
 
     <dependencies>
@@ -626,8 +626,8 @@
         <profile>
             <id>sit</id>
             <properties>
-                <sql.host>192.168.11.115</sql.host>
-                <sql.db>pgadmissions_prod</sql.db>
+                <sql.host>localhost</sql.host>
+                <sql.db>pgadmissions</sql.db>
             </properties>
             <build>
                 <plugins>
@@ -713,7 +713,7 @@
         <profile>
             <id>ci</id>
             <properties>
-                <sql.host>192.168.11.115</sql.host>
+                <sql.host>localhost</sql.host>
                 <sql.db>pgadmissions_ci</sql.db>
             </properties>
             <build>

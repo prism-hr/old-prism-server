@@ -15,10 +15,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
@@ -43,6 +46,7 @@ import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -68,9 +72,10 @@ public class QualificationController {
     private final QualificationTypePropertyEditor qualificationTypePropertyEditor;
     private final QualificationInstitutionDAO qualificationInstitutionDAO;
     private final ApplicationFormAccessService accessService;
+    private final FullTextSearchService searchService;
     
 	public QualificationController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
     @Autowired
@@ -82,7 +87,8 @@ public class QualificationController {
             UserService userService, EncryptionHelper encryptionHelper, QualificationTypeDAO qualificationTypeDAO,
             QualificationTypePropertyEditor qualificationTypePropertyEditor, 
             QualificationInstitutionDAO qualificationInstitutionDAO,
-            final ApplicationFormAccessService accessService) {
+            final ApplicationFormAccessService accessService,
+            final FullTextSearchService searchService) {
 		this.applicationService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
@@ -99,6 +105,7 @@ public class QualificationController {
         this.qualificationTypePropertyEditor = qualificationTypePropertyEditor;
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
         this.accessService = accessService;
+        this.searchService = searchService;
 	}
 	
 	@InitBinder(value="qualification")
@@ -152,6 +159,27 @@ public class QualificationController {
 
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 	}
+	
+    @RequestMapping(value="/qualification/title/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String provideSuggestionsForQualificationTitle(@PathVariable final String searchTerm) {
+    	Gson gson = new Gson();
+    	return gson.toJson(searchService.getMatchingQualificationsWithTitlesLike(searchTerm));
+    }
+    
+    @RequestMapping(value="/qualification/subject/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String provideSuggestionsForQualificationSubject(@PathVariable final String searchTerm) {
+    	Gson gson = new Gson();
+    	return gson.toJson(searchService.getMatchingQualificationsWithSubjectsLike(searchTerm));
+    }
+    
+    @RequestMapping(value="/qualification/grade/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String provideSuggestionsForQualificationGrade(@PathVariable final String searchTerm) {
+    	Gson gson = new Gson();
+    	return gson.toJson(searchService.getMatchingQualificationsWithGradesLike(searchTerm));
+    }
 
 	@ModelAttribute
 	public Qualification getQualification(@RequestParam(value="qualificationId", required=false) String encryptedQualificationId, Model model) {
@@ -201,4 +229,5 @@ public class QualificationController {
 	public String getMessage(@RequestParam(required=false)String message) {		
 		return message;
 	}
+	
 }

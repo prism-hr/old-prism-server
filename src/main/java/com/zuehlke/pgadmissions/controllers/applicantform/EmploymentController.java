@@ -13,10 +13,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Domicile;
@@ -35,6 +38,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
@@ -56,9 +60,10 @@ public class EmploymentController {
     private final ApplicationFormAccessService accessService;
     private final DomicileService domicileService;
     private DomicilePropertyEditor domicilePropertyEditor;
+    private final FullTextSearchService searchService;
 
     EmploymentController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -66,7 +71,7 @@ public class EmploymentController {
                     LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor,
                     ApplicationFormPropertyEditor applicationFormPropertyEditor, EmploymentPositionValidator employmentPositionValidator,
                     UserService userService, EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService,
-                    DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor) {
+                    DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, final FullTextSearchService searchService) {
         this.employmentPositionService = employmentPositionService;
         this.languageService = languageService;
         this.applicationService = applicationsService;
@@ -79,6 +84,7 @@ public class EmploymentController {
         this.accessService = accessService;
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
+        this.searchService = searchService;
     }
 
     @InitBinder("employmentPosition")
@@ -121,6 +127,20 @@ public class EmploymentController {
         applicationForm.setLastUpdated(new Date());
         applicationService.save(employment.getApplication());
         return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
+    }
+    
+    @RequestMapping(value="/employment/employer/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String provideSuggestionsForEmploymentPositionEmployerName(@PathVariable final String searchTerm) {
+    	Gson gson = new Gson();
+    	return gson.toJson(searchService.getMatchingEmploymentPositionsWithEmployerNamesLike(searchTerm));
+    }
+    
+    @RequestMapping(value="/employment/position/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String provideSuggestionsForEmploymentPositionPosition(@PathVariable final String searchTerm) {
+    	Gson gson = new Gson();
+    	return gson.toJson(searchService.getMatchingEmploymentPositionsWithPositionsLike(searchTerm));
     }
 
     @ModelAttribute("languages")

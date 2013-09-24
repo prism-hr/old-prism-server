@@ -10,8 +10,10 @@
     </colgroup>
     <thead>
       <tr>
-        <th id="primary-header">Qualification</th>
-        <th  colspan="3">Date</th>
+        <th>Qualification</th>
+        <th>Date</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
       </tr>
     </thead>
     <tbody>

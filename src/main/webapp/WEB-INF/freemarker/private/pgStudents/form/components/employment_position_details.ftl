@@ -3,15 +3,17 @@
 <div style="display:none;"> <#if hasEmploymentPositions>
   <table class="existing table table-condensed table-bordered">
     <colgroup>
-    <col>
+    <col />
     <col style="width: 220px">
     <col style="width: 36px">
     <col style="width: 36px">
     </colgroup>
     <thead>
       <tr>
-        <th id="primary-header">Position</th>
-        <th colspan="3">Dates</th>
+        <th>Position</th>
+        <th>Dates</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
       </tr>
     </thead>
     <tbody>

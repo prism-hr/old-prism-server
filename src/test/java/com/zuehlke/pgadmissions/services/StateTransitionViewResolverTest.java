@@ -247,27 +247,7 @@ public class StateTransitionViewResolverTest {
     }
 
     @Test
-    public void shouldReturnToApplicationsListIfApprovedNextStatus() {
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(3).build();
-        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
-        ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
-        validApplicationFormBuilder.build();
-        applicationForm = validApplicationFormBuilder
-                .getApplicationFormBuilder()
-                .applicationNumber("ABC")
-                .id(1)
-                .status(ApplicationFormStatus.APPROVED)
-                .comments(
-                        new ApprovalEvaluationCommentBuilder().id(1).approvalRound(latestApprovalRound)
-                                .nextStatus(ApplicationFormStatus.APPROVED).build(),
-                        new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVED)
-                                .approvalRound(latestApprovalRound).build())
-                .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
-        assertEquals("redirect:/applications", resolver.resolveView(applicationForm));
-    }
-
-    @Test
-    public void shouldReturnToStateTransitionViewIfApprovalAndApprovedNextStatus() {
+    public void shouldMoveToConfirmRecommendationViewIfApprovalAndApprovedNextStatus() {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(3).build();
         ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
         ValidApplicationFormBuilder validApplicationFormBuilder = new ValidApplicationFormBuilder();
@@ -283,7 +263,7 @@ public class StateTransitionViewResolverTest {
                         new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVED)
                                 .approvalRound(latestApprovalRound).build())
                 .approvalRounds(approvalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).build();
-        assertEquals("private/staff/admin/state_transition", resolver.resolveView(applicationForm));
+        assertEquals("redirect:/offerRecommendation?applicationId=ABC", resolver.resolveView(applicationForm));
     }
     
     @Test

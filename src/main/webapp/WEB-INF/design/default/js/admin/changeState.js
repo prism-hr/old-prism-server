@@ -4,8 +4,6 @@ $(document).ready(function() {
     originalPostUrl = $('#stateChangeForm').attr('action');
 
     refreshControls();
-    bindDatePicker('#recommendedStartDate');
-
 
     // ------------------------------------------------------------------------------
     // Submit button to change the status of the application.
@@ -59,17 +57,6 @@ $(document).ready(function() {
         refreshControls();
     });
     
-    // -------------------------------------------------------------------------------
-    // Recommended offer type
-    // -------------------------------------------------------------------------------
-    $("input[name='recommendedConditionsAvailable']").bind('change', function() {
-        var selected_radio = $("input[name='recommendedConditionsAvailable']:checked").val();
-        if (selected_radio == 'true')   {
-            enableConditions();
-        } else {
-            disableConditions();
-        }
-    });
 });
 
 // ------------------------------------------------------------------------------
@@ -131,25 +118,14 @@ function getCreateInterviewersSection() {
 }
 
 function changeState() {
-    if ($('#status').val() == 'APPROVED') {
-    	validateAndSaveUpdatedProjectDetails();
-        return;
-    }
-    
     if ($('#status').val() == 'INTERVIEW') {
-        if ($('input:radio[name=switch]:checked').val() != 'yes') {
-            saveComment();
-            return;
-        } else {
+        if ($('input:radio[name=switch]:checked').val() == 'yes') {
         	saveInterviewDelegate();
         	return;
-        }
-    }
-    
-    if ($('#status').val() != 'INTERVIEW') {
-        saveComment();
-        return;
-    }
+        } 
+    } 
+
+    saveComment();
 }
 
 function refreshControls() {
@@ -175,11 +151,8 @@ function refreshControls() {
             $('#delegateEmailLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
         }
     } else if ($('#status').val() == 'APPROVED') {
-        $("#approvedDetails").show();
         $("#interviewDelegation").hide();
         $("#fastTrackApplicationSection").hide();
-        $("#approvedDetails").find("div.alert").remove();
-        getProjectDetailsFromLatestApprovalRound();
     } else if ($('#status').val() == 'REVIEW') {
         $("#fastTrackApplicationSection").show();
         $("#interviewDelegation").hide();
@@ -195,108 +168,6 @@ function refreshControls() {
         $("#approvedDetails").hide();
         $('input:radio[name=switch]')[0].checked = true;
     }
-}
-
-function getProjectDetailsFromLatestApprovalRound() {
-    $('#ajaxloader').show();
-    $.ajax({
-        type : 'GET',
-        dataType : "json",
-        statusCode : {
-            401 : function() { window.location.reload(); },
-            500 : function() { window.location.href = "/pgadmissions/error"; },
-            404 : function() { window.location.href = "/pgadmissions/404"; },
-            400 : function() { window.location.href = "/pgadmissions/400"; },
-            403 : function() { window.location.href = "/pgadmissions/404"; }
-        },
-        url : "/pgadmissions/applications/" + $('#applicationId').val() + "/approvalRound/latest/comment",
-        success : function(data) {
-            $('#projectTitle').val(data.projectTitle);
-            $('#projectAbstract').val(data.projectAbstract);
-            $('#recommendedConditions').val(data.recommendedConditions);
-            $("#recommendedStartDate").val(data.recommendedStartDate);
-            if (data.recommendedConditionsAvailable === "true") {
-                $("#recommendedConditionsAvailable").prop('checked', true);
-                enableConditions();
-            } else {
-                $("#recommendedConditionsUnavailable").prop('checked', true);
-                disableConditions();
-            }
-            if (data.projectAcceptingApplications === "true") {
-            	$("#acceptingApplicationsRadioYes").prop('checked', true);
-            } else {
-            	$("#acceptingApplicationsRadioNo").prop('checked', true);
-            }
-        },
-        complete : function() {
-            $('#ajaxloader').fadeOut('fast');
-        }
-    });
-}
-
-function validateAndSaveUpdatedProjectDetails() {
-    var postData = {
-            'projectTitle' : $('#projectTitle').val(),
-            'projectAbstract' : $('#projectAbstract').val(),
-            'recommendedConditions' : $('#recommendedConditions').val(),
-            'recommendedStartDate' : $('#recommendedStartDate').val(),
-            'recommendedConditionsAvailable' : ($('input:radio[name=recommendedConditionsAvailable]:checked').val() === "true" ? true : false),
-            'projectDescriptionAvailable' : true,
-            'comment' : $('#state_change_comment').val(),
-            'confirmNextStage' : $('#confirmNextStage').is(':checked'),
-            'projectStillAcceptsApplications': isProjectAcceptingApplications()
-    };
-    
-    $('#ajaxloader').show();
-    $.ajax({
-        type : 'POST',
-        dataType : "json",
-        statusCode : {
-            401 : function() { window.location.reload(); },
-            500 : function() { window.location.href = "/pgadmissions/error"; },
-            404 : function() { window.location.href = "/pgadmissions/404"; },
-            400 : function() { window.location.href = "/pgadmissions/400"; },
-            403 : function() { window.location.href = "/pgadmissions/404"; }
-        },
-        url : "/pgadmissions/applications/" + $('#applicationId').val() + "/approvalRound/latest/comment/validate",
-        data : postData,
-        success : function(data) {
-            $("#approvedDetails").find("div.alert").remove();
-            $("#state_change_comment").parent().find("div.alert").remove();
-            $("#confirmNextStageLabel").parent().parent().removeClass("alert-error");
-            if (!data.success) {
-                if (data.projectTitle != null) {
-                    $('#projectTitle').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.projectTitle + '</div>');
-                }
-
-                if (data.projectAbstract != null) {
-                    $('#projectAbstract').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.projectAbstract + '</div>');
-                }
-                   
-                if (data.recommendedConditions != null) {
-                    $('#recommendedConditions').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.recommendedConditions + '</div>');
-                }
-                
-                if (data.recommendedStartDate != null) {
-                    $('#recommendedStartDate').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.recommendedStartDate + '</div>');
-                }
-                
-                if (data.comment != null) {
-                    $('#state_change_comment').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.comment + '</div>');
-                }
-                
-                if (data.confirmNextStage != null) {
-                    $('#confirmNextStageLabel').parent().parent().addClass("alert-error");
-                }
-                
-            } else {
-            	saveUpdatedProjectDetails();
-            }
-        },
-        complete : function() {
-            $('#ajaxloader').fadeOut('fast');
-        }
-    });
 }
 
 function saveUpdatedProjectDetails() {
@@ -395,17 +266,5 @@ function saveInterviewDelegate() {
              }
          }
      });
-}
-
-function disableConditions() {
-    $("#recommendedConditions").attr("disabled", "disabled");
-    $("#lbl_recommendedConditions").addClass("grey-label").parent().find('.hint').addClass("grey");
-    $("#lbl_recommendedConditions").html("Recommended Conditions");
-}
-
-function enableConditions() {
-    $("#recommendedConditions").removeAttr("disabled", "disabled");
-    $("#lbl_recommendedConditions").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-    $("#lbl_recommendedConditions").html("Recommended Conditions<em>*</em>");
 }
 

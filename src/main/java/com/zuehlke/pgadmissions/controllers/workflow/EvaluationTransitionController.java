@@ -110,26 +110,6 @@ public class EvaluationTransitionController extends StateTransitionController {
         Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
                         stateChangeComment.getType(), nextStatus);
 
-        if (newComment instanceof ApprovalEvaluationComment) {
-
-            ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
-
-            if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
-                applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-                accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
-                if (approvalService.moveToApproved(applicationForm)) {
-                    approvalService.sendToPortico(applicationForm);
-                    modelMap.put("messageCode", "move.approved");
-                    modelMap.put("application", applicationForm.getApplicationNumber());
-                } else {
-                    Comment genericComment = commentFactory.createComment(applicationForm, user, newComment.getComment(), newComment.getDocuments(),
-                                    CommentType.GENERIC, null);
-                    commentService.save(genericComment);
-                    return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7";
-                }
-            }
-        }
-
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationsService.save(applicationForm);

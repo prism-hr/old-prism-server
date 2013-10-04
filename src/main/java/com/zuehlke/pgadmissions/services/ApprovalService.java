@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.StageDuration;
@@ -260,7 +261,7 @@ public class ApprovalService {
         approvalRoundDAO.save(approvalRound);
     }
 
-    public boolean moveToApproved(ApplicationForm form) {
+    public boolean moveToApproved(ApplicationForm form, OfferRecommendedComment offerRecommendedComment) {
         if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
             throw new IllegalStateException();
         }
@@ -281,6 +282,12 @@ public class ApprovalService {
         sendNotificationToApplicant(form);
         form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER);
         applicationDAO.save(form);
+        
+        offerRecommendedComment.setApplication(form);
+        offerRecommendedComment.setComment("");
+        offerRecommendedComment.setType(CommentType.OFFER_RECOMMENDED_COMMENT);
+        offerRecommendedComment.setUser(userService.getCurrentUser());
+        commentDAO.save(offerRecommendedComment);
         return true;
     }
 

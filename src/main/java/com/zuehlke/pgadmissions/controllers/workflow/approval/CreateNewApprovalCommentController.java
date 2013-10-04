@@ -44,42 +44,35 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
-import com.zuehlke.pgadmissions.validators.ApprovalCommentValidator;
+import com.zuehlke.pgadmissions.validators.OfferRecommendedCommentValidator;
 
 @Controller
 public class CreateNewApprovalCommentController {
 
     private final ApplicationsService applicationsService;
-    
+
     private final UserService userService;
-    
+
     private final ApprovalService approvalService;
-    
+
     private final CommentService commentService;
-    
-    private final ApprovalCommentValidator validator;
-    
+
+    private final OfferRecommendedCommentValidator validator;
+
     private final MessageSource messageSource;
-    
+
     private final ApplicationFormAccessService accessService;
 
-	private ProgramsService programService;
+    private ProgramsService programService;
 
-    
     public CreateNewApprovalCommentController() {
-        this(null, null, null, null, null, null, null,null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public CreateNewApprovalCommentController(
-            final ApplicationsService applicationsService,
-            final UserService userService,
-            final ApprovalService approvalService,
-            final CommentService commentService,
-            final ApprovalCommentValidator validator,
-            final MessageSource messageSource,
-            final ApplicationFormAccessService accessService,
-            final ProgramsService programService) {
+    public CreateNewApprovalCommentController(final ApplicationsService applicationsService, final UserService userService,
+            final ApprovalService approvalService, final CommentService commentService, final OfferRecommendedCommentValidator validator,
+            final MessageSource messageSource, final ApplicationFormAccessService accessService, final ProgramsService programService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.validator = validator;
@@ -87,9 +80,9 @@ public class CreateNewApprovalCommentController {
         this.commentService = commentService;
         this.messageSource = messageSource;
         this.accessService = accessService;
-		this.programService = programService;
+        this.programService = programService;
     }
-    
+
     @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String get(final @PathVariable("applicationNumber") String applicationNumber) {
@@ -100,15 +93,18 @@ public class CreateNewApprovalCommentController {
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("projectTitle", src.getProjectTitle());
                 jsonObject.addProperty("projectAbstract", src.getProjectAbstract());
-                jsonObject.addProperty("projectDescriptionAvailable", BooleanUtils.toString(src.getProjectDescriptionAvailable(), "true", "false", StringUtils.EMPTY));
-                jsonObject.addProperty("recommendedConditionsAvailable", BooleanUtils.toString(src.getRecommendedConditionsAvailable(), "true", "false", StringUtils.EMPTY));
+                jsonObject.addProperty("projectDescriptionAvailable",
+                        BooleanUtils.toString(src.getProjectDescriptionAvailable(), "true", "false", StringUtils.EMPTY));
+                jsonObject.addProperty("recommendedConditionsAvailable",
+                        BooleanUtils.toString(src.getRecommendedConditionsAvailable(), "true", "false", StringUtils.EMPTY));
                 jsonObject.addProperty("recommendedConditions", src.getRecommendedConditions());
                 jsonObject.addProperty("recommendedStartDate", new DateTime(src.getRecommendedStartDate()).toString("dd MMM yyyy"));
-                jsonObject.addProperty("projectAcceptingApplications", BooleanUtils.toString(src.getProjectAcceptingApplications(), "true", "false", StringUtils.EMPTY));
+                jsonObject.addProperty("projectAcceptingApplications",
+                        BooleanUtils.toString(src.getProjectAcceptingApplications(), "true", "false", StringUtils.EMPTY));
                 return jsonObject;
             }
         }).create();
-        
+
         RegisteredUser currentUser = getCurrentUser();
         ApplicationForm form = applicationsService.getApplicationByApplicationNumber(applicationNumber);
         ApprovalRound latestApprovalRound = form.getLatestApprovalRound();
@@ -116,19 +112,19 @@ public class CreateNewApprovalCommentController {
         if (!currentUser.hasAdminRightsOnApplication(form) && !currentUser.isInRoleInProgram(Authority.APPROVER, form.getProgram())) {
             throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
         }
-        
+
         if (latestApprovalRound != null) {
             return gson.toJson(latestApprovalRound, ApprovalRound.class);
         }
-        
+
         return gson.toJson(Collections.singletonMap("success", true));
     }
-    
+
     @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment/validate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String validate(final @PathVariable("applicationNumber") String applicationNumber,
-            @Valid final ApprovalComment approvalComment, final BindingResult bindingResult, @RequestParam final String comment,
-            @RequestParam final String confirmNextStage, @RequestParam(required=false) Boolean projectStillAcceptsApplications) {
+    public String validate(final @PathVariable("applicationNumber") String applicationNumber, @Valid final ApprovalComment approvalComment,
+            final BindingResult bindingResult, @RequestParam final String comment, @RequestParam final String confirmNextStage,
+            @RequestParam(required = false) Boolean projectStillAcceptsApplications) {
         Gson gson = new Gson();
         Map<String, Object> fieldErrorMap = new HashMap<String, Object>();
         RegisteredUser currentUser = getCurrentUser();
@@ -137,43 +133,44 @@ public class CreateNewApprovalCommentController {
         if (!currentUser.hasAdminRightsOnApplication(form) && !currentUser.isInRoleInProgram(Authority.APPROVER, form.getProgram())) {
             throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
         }
-        
+
         approvalComment.setType(CommentType.APPROVAL);
         approvalComment.setApplication(form);
         approvalComment.setComment(StringUtils.EMPTY);
         approvalComment.setConfirmNextStage(true);
         approvalComment.setDate(new Date());
         approvalComment.setUser(currentUser);
-        
+
         validator.validate(approvalComment, bindingResult);
         if (bindingResult.hasErrors()) {
             fieldErrorMap = FieldErrorUtils.populateMapWithErrors(bindingResult, messageSource);
         }
-        
+
         if (StringUtils.isEmpty(comment)) {
             fieldErrorMap.put("comment", FieldErrorUtils.resolveMessage("text.field.empty", messageSource));
         }
-        
-        if(form.getProject()!=null && projectStillAcceptsApplications==null){
-        	fieldErrorMap.put("acceptingApplications", FieldErrorUtils.resolveMessage("dropdown.radio.select.none", messageSource));
+
+        if (form.getProject() != null && projectStillAcceptsApplications == null) {
+            fieldErrorMap.put("acceptingApplications", FieldErrorUtils.resolveMessage("dropdown.radio.select.none", messageSource));
         }
-        
+
         if (StringUtils.equalsIgnoreCase("false", confirmNextStage)) {
             fieldErrorMap.put("confirmNextStage", FieldErrorUtils.resolveMessage("checkbox.mandatory", messageSource));
         }
-        
+
         if (!fieldErrorMap.isEmpty()) {
             fieldErrorMap.put("success", false);
             return gson.toJson(fieldErrorMap);
         }
-        
+
         return gson.toJson(Collections.singletonMap("success", true));
     }
-    
+
     @RequestMapping(value = "/applications/{applicationNumber}/approvalRound/latest/comment", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String save(final @PathVariable("applicationNumber") String applicationNumber, @Valid final ApprovalComment approvalComment, final BindingResult bindingResult, @RequestParam(required=false) Boolean projectStillAcceptsApplications) {
-        
+    public String save(final @PathVariable("applicationNumber") String applicationNumber, @Valid final ApprovalComment approvalComment,
+            final BindingResult bindingResult, @RequestParam(required = false) Boolean projectStillAcceptsApplications) {
+
         Gson gson = new Gson();
         RegisteredUser currentUser = getCurrentUser();
         ApplicationForm form = applicationsService.getApplicationByApplicationNumber(applicationNumber);
@@ -182,19 +179,19 @@ public class CreateNewApprovalCommentController {
         if (!currentUser.hasAdminRightsOnApplication(form) && !currentUser.isInRoleInProgram(Authority.APPROVER, form.getProgram())) {
             throw new InsufficientApplicationFormPrivilegesException(form.getApplicationNumber());
         }
-        if(form.getProject()!=null && projectStillAcceptsApplications!=null){
-        	Project project = form.getProject(); 
-        	project.getAdvert().setActive(projectStillAcceptsApplications);
-        	programService.saveProject(project);
+        if (form.getProject() != null && projectStillAcceptsApplications != null) {
+            Project project = form.getProject();
+            project.getAdvert().setActive(projectStillAcceptsApplications);
+            programService.saveProject(project);
         }
-        
+
         approvalComment.setType(CommentType.APPROVAL);
         approvalComment.setApplication(form);
         approvalComment.setComment(StringUtils.EMPTY);
         approvalComment.setConfirmNextStage(true);
         approvalComment.setDate(new Date());
         approvalComment.setUser(currentUser);
-        
+
         latestApprovalRound.setProjectAbstract(approvalComment.getProjectAbstract());
         latestApprovalRound.setProjectDescriptionAvailable(approvalComment.getProjectDescriptionAvailable());
         latestApprovalRound.setProjectTitle(approvalComment.getProjectTitle());
@@ -202,16 +199,16 @@ public class CreateNewApprovalCommentController {
         latestApprovalRound.setRecommendedConditionsAvailable(approvalComment.getRecommendedConditionsAvailable());
         latestApprovalRound.setRecommendedStartDate(approvalComment.getRecommendedStartDate());
         latestApprovalRound.setProjectDescriptionAvailable(approvalComment.getProjectDescriptionAvailable());
-        
+
         approvalService.save(latestApprovalRound);
         commentService.save(approvalComment);
         form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(form, getCurrentUser(), new Date());
         applicationsService.save(form);
-        
+
         return gson.toJson(Collections.singletonMap("success", true));
     }
-    
+
     private RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }

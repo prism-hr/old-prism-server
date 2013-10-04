@@ -179,7 +179,7 @@
 			            	<#assign role = "interviewer"/>    
 			            <#elseif comment.type == 'APPROVAL'>
 			            	<#assign role = "administrator"/>                
-			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
+			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART' || comment.type == 'OFFER_RECOMMENDED_COMMENT'>
 			            	<#assign role = "approver"/>
 		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
                     <#assign role = "supervisor"/>                                
@@ -189,8 +189,8 @@
 			            
 			            <#if comment.type == 'SUPERVISION_CONFIRMATION'>
 		                <#include "timeline_snippets/supervision_confirmation_comment.ftl"/>
-			            <#elseif comment.type == 'APPROVAL'>
-		                <#include "timeline_snippets/approval_comment.ftl"/>
+			            <#elseif comment.type == 'APPROVAL' || comment.type == 'OFFER_RECOMMENDED_COMMENT'>
+		                <#include "timeline_snippets/project_description_comments.ftl"/>
                   <#elseif comment.type == 'INTERVIEW_SCHEDULE'>
                     <#include "timeline_snippets/interview_schedule_comment.ftl"/>
 	                <#else>

@@ -15,11 +15,11 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 public class StateTransitionViewResolver {
 
     private static final String REJECTION_VIEW = "redirect:/rejectApplication?applicationId=";
+    private static final String OFFER_RECOMMENDATION_VIEW = "redirect:/offerRecommendation?applicationId=";
     private static final String APPROVAL_VIEW = "redirect:/approval/moveToApproval?applicationId=";
     private static final String INTERVIEW_VIEW = "redirect:/interview/moveToInterview?applicationId=";
     private static final String REVIEW_VIEW = "redirect:/review/moveToReview?applicationId=";
     private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
-    private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
     @Autowired
     private ProgramInstanceService programInstanceService;
@@ -28,12 +28,7 @@ public class StateTransitionViewResolver {
     public String resolveView(ApplicationForm applicationForm) {
 
         if (!programInstanceService.isProgrammeStillAvailable(applicationForm)) {
-//            StateChangeComment comment = createRejectionComment(applicationForm);
             return REJECTION_VIEW + applicationForm.getApplicationNumber() + "&rejectionId=7&rejectionIdForced=true";
-        }
-
-        if (applicationForm.isInState(ApplicationFormStatus.APPROVED)) {
-            return MY_APPLICATIONS_VIEW;
         }
 
         ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
@@ -47,6 +42,8 @@ public class StateTransitionViewResolver {
                 return APPROVAL_VIEW + applicationForm.getApplicationNumber();
             case REJECTED:
                 return REJECTION_VIEW + applicationForm.getApplicationNumber();
+            case APPROVED:
+                return OFFER_RECOMMENDATION_VIEW + applicationForm.getApplicationNumber();
             default:
             }
         }
@@ -54,25 +51,5 @@ public class StateTransitionViewResolver {
         return STATE_TRANSITION_VIEW;
 
     }
-
-
-//    private StateChangeComment createRejectionComment(ApplicationForm applicationForm) {
-//        StateChangeComment stateChangeComment = null;
-//        switch (applicationForm.getStatus()) {
-//        case APPROVAL:
-//            stateChangeComment = new ApprovalEvaluationComment();
-//            break;
-//        case REVIEW:
-//            stateChangeComment = new ReviewEvaluationComment();
-//            break;
-//        case VALIDATION:
-//            stateChangeComment = new ValidationComment();
-//            break;
-//        case INTERVIEW:
-//            stateChangeComment = new InterviewEvaluationComment();
-//            break;
-//        }
-//        
-//    }
 
 }

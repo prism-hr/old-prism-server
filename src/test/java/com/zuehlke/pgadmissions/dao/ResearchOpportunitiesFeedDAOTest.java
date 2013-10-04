@@ -24,8 +24,9 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
     
     private ResearchOpportunitiesFeedDAO dao;
     
-    @Before
-    public void prepare() {
+    @Override
+    public void setup() {
+        super.setup();
         dao = new ResearchOpportunitiesFeedDAO(sessionFactory);
     }
     

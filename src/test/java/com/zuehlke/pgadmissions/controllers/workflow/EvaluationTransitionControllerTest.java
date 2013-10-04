@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
@@ -99,44 +98,6 @@ public class EvaluationTransitionControllerTest {
         String view = controller.addComment(applicationForm, stateComment, bindingResultMock, new ModelMap(), null, null);
 
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
-        assertEquals("bob", view);
-    }
-
-    @Test
-    public void shouldCreateApprovalEvaluationCommentWithLatestReviewRoundAndMoveToApprovedIdNextStageIsApproved() {
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).applicationNumber("abc").build();
-        List<Document> documents = Collections.emptyList();
-        StateChangeComment stateComment = new StateChangeComment();
-        stateComment.setComment("comment");
-        stateComment.setDocuments(documents);
-        stateComment.setNextStatus(ApplicationFormStatus.APPROVED);
-        stateComment.setType(CommentType.APPROVAL_EVALUATION);
-        stateComment.setFastTrackApplication(false);
-        ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVED).id(6).build();
-        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                        documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionViewServiceMock,
-                        accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-
-        };
-        EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
-                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
-        commentServiceMock.save(comment);
-        EasyMock.expect(approvalServiceMock.moveToApproved(applicationForm)).andReturn(true);
-        EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
-        approvalServiceMock.sendToPortico(applicationForm);
-        EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
-
-        ModelMap modelMap = new ModelMap();
-        String view = controller.addComment(applicationForm, stateComment, bindingResultMock, modelMap, null, null);
-
-        EasyMock.verify(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewServiceMock, userServiceMock);
-        assertEquals("move.approved", modelMap.get("messageCode"));
-        assertEquals("abc", modelMap.get("application"));
         assertEquals("bob", view);
     }
 
@@ -333,35 +294,6 @@ public class EvaluationTransitionControllerTest {
 
         EasyMock.verify(commentServiceMock, applicationServiceMock);
         assertEquals("private/staff/admin/state_transition", view);
-    }
-
-    @Test
-    public void shouldCreateGenericCommentIfPreferredStartDateIsNotInBoundsForApproval() {
-        StateChangeComment stateChangeComment = new StateChangeComment();
-        stateChangeComment.setComment("comment");
-        stateChangeComment.setNextStatus(ApplicationFormStatus.APPROVED);
-        stateChangeComment.setType(CommentType.APPROVAL_EVALUATION);
-        stateChangeComment.setFastTrackApplication(false);
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABCD-EFG").build();
-
-        controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, new CommentFactory(),
-                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-        };
-        EasyMock.expect(approvalServiceMock.moveToApproved(applicationForm)).andReturn(false);
-
-        commentServiceMock.save(EasyMock.isA(Comment.class));
-
-        EasyMock.replay(approvalServiceMock, commentServiceMock, userServiceMock);
-
-        String resultView = controller.addComment(applicationForm, stateChangeComment, bindingResultMock, new ModelMap(), null, null);
-
-        assertEquals("redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7", resultView);
-        EasyMock.verify(approvalServiceMock, commentServiceMock, userServiceMock);
     }
 
     @Before

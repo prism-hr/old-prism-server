@@ -273,6 +273,16 @@ public enum ApplicationFormAction {
 
             }
         }
+    }),
+    CONFIRM_OFFER_RECOMMENDATION("confirmOfferRecommendation", "Confirm Offer Recommendation", new ActionPredicate() {
+        @Override
+        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
+            if (nextStatus == ApplicationFormStatus.APPROVED && user.hasAdminRightsOnApplication(application)) {
+                actions.addAction(CONFIRM_OFFER_RECOMMENDATION);
+                actions.addActionRequiringAttention(CONFIRM_OFFER_RECOMMENDATION);
+
+            }
+        }
     });
 
     private final String id;

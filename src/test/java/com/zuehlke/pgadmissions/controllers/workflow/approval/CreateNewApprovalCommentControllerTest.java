@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ApprovalCommentValidator;
+import com.zuehlke.pgadmissions.validators.OfferRecommendedCommentValidator;
 
 public class CreateNewApprovalCommentControllerTest {
 
@@ -48,7 +48,7 @@ public class CreateNewApprovalCommentControllerTest {
 
     private CommentService commentServiceMock;
 
-    private ApprovalCommentValidator validatorMock;
+    private OfferRecommendedCommentValidator validatorMock;
 
     private MessageSource messageSourceMock;
 
@@ -66,7 +66,7 @@ public class CreateNewApprovalCommentControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         approvalServiceMock = EasyMock.createMock(ApprovalService.class);
         commentServiceMock = EasyMock.createMock(CommentService.class);
-        validatorMock = EasyMock.createMock(ApprovalCommentValidator.class);
+        validatorMock = EasyMock.createMock(OfferRecommendedCommentValidator.class);
         messageSourceMock = EasyMock.createMock(MessageSource.class);
         bindingResultMock = EasyMock.createMock(BindingResult.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);

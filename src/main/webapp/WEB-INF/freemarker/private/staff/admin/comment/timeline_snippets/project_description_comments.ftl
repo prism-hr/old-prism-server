@@ -1,5 +1,5 @@
 
-<#if comment.projectDescriptionAvailable>
+<#if comment.projectTitle??>
     <li>                          
       <div class="box">
         <div class="title">

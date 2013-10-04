@@ -12,7 +12,6 @@ import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
@@ -23,8 +22,9 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 
 	private Program program;
 
-	@Before
-	public void setUp(){
+	@Override
+	public void setup(){
+	    super.setup();
 		program = storeAndLoadProgram("123CD", "titleCD");
 	}
 	

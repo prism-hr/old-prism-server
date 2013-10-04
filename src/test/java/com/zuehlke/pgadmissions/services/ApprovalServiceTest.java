@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -519,15 +520,17 @@ public class ApprovalServiceTest {
         Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
                 .programmeDetails(programmeDetails).build();
+        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
 
         applicationFormDAOMock.save(application);
+        commentDAOMock.save(offerRecommendedComment);
 
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
         
         EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
-        approvalService.moveToApproved(application);
+        approvalService.moveToApproved(application, offerRecommendedComment);
         EasyMock.verify(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
         
         assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
@@ -535,6 +538,11 @@ public class ApprovalServiceTest {
 
         assertEquals(1, application.getEvents().size());
         assertEquals(event, application.getEvents().get(0));
+        
+        assertSame(application, offerRecommendedComment.getApplication());
+        assertEquals("", offerRecommendedComment.getComment());
+        assertEquals(CommentType.OFFER_RECOMMENDED_COMMENT, offerRecommendedComment.getType());
+        assertSame(currentUser, offerRecommendedComment.getUser());
     }
     
     @Test
@@ -550,15 +558,17 @@ public class ApprovalServiceTest {
         Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
                 .programmeDetails(programmeDetails).pendingApprovalRestart(true).build();
+        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
 
         applicationFormDAOMock.save(application);
+        commentDAOMock.save(offerRecommendedComment);
 
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
         
         EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
-        approvalService.moveToApproved(application);
+        approvalService.moveToApproved(application, offerRecommendedComment);
         EasyMock.verify(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
         
         assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
@@ -584,9 +594,12 @@ public class ApprovalServiceTest {
         Program program = new ProgramBuilder().id(1).enabled(true).instances(instanceDisabled, instanceEnabled).build();
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
                 .programmeDetails(programmeDetails).build();
+        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
 
         programmeDetailDAOMock.save(EasyMock.same(programmeDetails));
         applicationFormDAOMock.save(application);
+        commentDAOMock.save(offerRecommendedComment);
+        
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
@@ -594,7 +607,7 @@ public class ApprovalServiceTest {
         EasyMock.expect(programInstanceServiceMock.getEarliestPossibleStartDate(application)).andReturn(DateUtils.addDays(startDate, 3));
 
         EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programmeDetailDAOMock, programInstanceServiceMock);
-        approvalService.moveToApproved(application);
+        approvalService.moveToApproved(application, offerRecommendedComment);
         EasyMock.verify(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programmeDetailDAOMock, programInstanceServiceMock);
         
         assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
@@ -609,7 +622,7 @@ public class ApprovalServiceTest {
     public void shouldFailOmMoveToApprovedIfApplicationNotInApproval() {
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(2).build();
         EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock);
-        approvalService.moveToApproved(application);
+        approvalService.moveToApproved(application, null);
         EasyMock.verify(applicationFormDAOMock, commentDAOMock);
     }
 

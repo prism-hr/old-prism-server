@@ -5,8 +5,9 @@ CREATE TABLE OFFER_RECOMMENDED_COMMENT (
 	recommended_start_date DATE NULL DEFAULT NULL,
 	recommended_conditions_available TINYINT(1) NULL DEFAULT NULL,
 	recommended_conditions VARCHAR(1000) NULL DEFAULT NULL,
-	comment_type VARCHAR(50) NULL DEFAULT NULL
-)
+	comment_type VARCHAR(50) NULL DEFAULT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (id) REFERENCES COMMENT (id))
 ENGINE=InnoDB;
 
 INSERT INTO OFFER_RECOMMENDED_COMMENT (id, project_title, project_abstract, recommended_start_date,

@@ -18,7 +18,7 @@
         
         <#if spring.status.errorCodes?seq_contains("portico.submit.explanation.required")>
             <div class="alert alert-error">
-                <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
+                <i class="icon-warning-sign" data-desc="Please complete all of the mandatory fields in this section."></i> 
                     <#if anyQualificationEnabled>
                         You have not selected any transcripts to submit for offer processing. <b>You must explain why.</b>
                     <#else>
@@ -28,7 +28,7 @@
             </div>
         <#elseif spring.status.errorCodes?seq_contains("portico.submit.qualifications.exceed")>
             <div class="alert alert-error">
-                 <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
+                 <i class="icon-warning-sign" data-desc="Please complete all of the mandatory fields in this section."></i> 
                     Select the proof award documents that you wish to send to UCL Admissions. <b>You may select a maximum of 2.</b>
                 
             </div>

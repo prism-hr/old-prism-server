@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
@@ -54,6 +55,7 @@ public class RefereeControllerTest {
     private UserService userServiceMock;
     private ApplicationFormAccessService accessServiceMock;
     private DomicileService domicileServiceMock;
+    private FullTextSearchService fullTextSearchServiceMock;
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -256,9 +258,11 @@ public class RefereeControllerTest {
         refereeValidatorMock = EasyMock.createMock(RefereeValidator.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
+        fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
 
         controller = new RefereeController(refereeServiceMock, userServiceMock, applicationsServiceMock, domicilePropertyEditor,
-                applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock, accessServiceMock, domicileServiceMock);
+                applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock, accessServiceMock, domicileServiceMock,
+                fullTextSearchServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
 

@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
@@ -63,6 +64,7 @@ public class EmploymentControllerTest {
     private ApplicationFormAccessService accessServiceMock;
     private DomicileService domicileServiceMock;
     private DomicilePropertyEditor domicilePropertyEditorMock;
+    private FullTextSearchService fullTextSearchServiceMock;
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -232,9 +234,11 @@ public class EmploymentControllerTest {
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
+        fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
+        
         controller = new EmploymentController(employmentServiceMock, languageServiceMock, applicationsServiceMock, languagePropertyEditorMock,
                         datePropertyEditorMock, applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock,
-                        accessServiceMock, domicileServiceMock, domicilePropertyEditorMock);
+                        accessServiceMock, domicileServiceMock, domicilePropertyEditorMock, fullTextSearchServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

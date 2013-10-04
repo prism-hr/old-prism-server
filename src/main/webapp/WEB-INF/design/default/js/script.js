@@ -667,7 +667,7 @@ function markSectionError(section_id) {
     var $infobar = $('.section-info-bar', $section);
     if ($infobar) {
         $infobar.removeClass('section-info-bar').addClass('section-error-bar');
-        $infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+        $infobar.prepend('<span class=\"error-hint\" data-desc=\"Please complete all of the mandatory fields in this section.\"></span>');
         addToolTips();
     }
 }

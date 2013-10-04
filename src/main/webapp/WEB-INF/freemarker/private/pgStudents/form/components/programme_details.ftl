@@ -16,7 +16,7 @@
   <form>
     <#if (errorCode?? && errorCode=="true")>
 	    <div class="alert alert-error">
-            <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i>
+            <i class="icon-warning-sign" data-desc="Please complete all of the mandatory fields in this section."></i>
 				<@spring.message 'programmeDetails.project'/>
 	    </div>
     <#else>
@@ -219,7 +219,7 @@
             </div>
         
             <div class="row">
-              <label class="plain-label">Is this supervisor aware of your application?<em>*</em></label>
+              <label class="plain-label">Has this supervisor agreed to support your application?<em>*</em></label>
               <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
               <div class="field">
                 <label for="awareYes"><input id="awareYes" type="radio" name="awareSupervisor" value="YES" /> Yes</label>

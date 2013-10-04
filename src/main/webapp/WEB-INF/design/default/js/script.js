@@ -479,7 +479,7 @@ function doUpload($upload_field) {
         },
         success : function(data) {
             $container.removeClass('posting');
-            if ($(data).find('div.alert-error').length > 0) {
+            if (data.indexOf('alert-error') != -1) {
                 // There was an uploading error.
                 $container.append(data);
             } else if ($(data).find('input').length == 0) {
@@ -590,7 +590,7 @@ function doUploadComment($upload_field, $uploadedDocuments) {
         },
         success : function(data) {
             $container.removeClass('posting');
-            if (data.contains('alert-error')) {
+            if (data.indexOf('alert-error') != -1) {
                 // There was an uploading error.
                 $container.append(data);
                 $upload_field.val('');

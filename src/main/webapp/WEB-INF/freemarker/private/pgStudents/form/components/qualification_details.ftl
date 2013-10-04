@@ -73,18 +73,13 @@
   <form>
     <#if errorCode?? && errorCode=="true">
     <div class="alert alert-error">
-        <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i>
+        <i class="icon-warning-sign" data-desc="Please complete all of the mandatory fields in this section."></i>
         <@spring.message 'education.qualifications.sectionInfo'/>
-        <b>
-        <@spring.message 'education.qualifications.sectionInfoBold'/>
-       </b> 
 	</div>
     <#else>
     <div class="alert alert-info"> <i class="icon-info-sign"></i>
       <@spring.message 'education.qualifications.sectionInfo'/>
-      <b>
-      <@spring.message 'education.qualifications.sectionInfoBold'/>
-      </b> </div>
+    </div>
     </#if>
     <div class="row-group">
       <div class="row">

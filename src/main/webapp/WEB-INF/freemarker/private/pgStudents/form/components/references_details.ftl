@@ -67,7 +67,7 @@
   </#if>
   <form id="refereeForm">
     <#if errorCode?? && errorCode=="true">
-    <div class="alert alert-error"> <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
+    <div class="alert alert-error"> <i class="icon-warning-sign" data-desc="Please complete all of the mandatory fields in this section."></i> 
       <@spring.message 'referencesDetails.sectionInfo'/>
     </div>
     <#else>

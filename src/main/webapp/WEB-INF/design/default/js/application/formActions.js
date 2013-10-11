@@ -67,7 +67,7 @@ $(document).ready(function()
 	
 	
 	/*
-	 * Submit commnet on click of comment submit button.
+	 * Submit comment on click of comment submit button.
 	 */ 
 	$('#commentSubmitButton').click(function()
 	{
@@ -119,7 +119,7 @@ $(document).ready(function()
 	
 	/*
 	 * 1. Depending on the which view user has requested, the comment form will
-	 * be displayed. Temparary. commentForm
+	 * be displayed. Temporary. commentForm
 	 */
 	
 	var viewType = $('input#view-type-personal-form').val();

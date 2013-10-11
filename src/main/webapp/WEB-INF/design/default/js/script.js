@@ -263,7 +263,10 @@ function bindDatePickerEnabled(selector){
 function addCounter() {
 	var $textArea = $("textarea");
     $.each($textArea, function() {
-		var display = true;
+    	// Temporary block counter on scores forms
+    	if ($(this).attr('id').indexOf("question_") != 0) {
+    		var display = true;
+    	}
         if ($(this).attr('id') == 'convictionsText') {
 			$(this).data("maxlength", 400);
 		} else if  ($(this).attr('id') == 'projectAbstract'||$(this).attr('id') == 'projectAdvertDescriptionText'||$(this).attr('id') == 'programAdvertDescriptionText') {
@@ -276,7 +279,7 @@ function addCounter() {
 			display = false;
 		} else if ($(this).attr('id')=='referenceComment'||$(this).attr('id')=='review-comment'||$(this).attr('id')=='interview-comment'||$(this).attr('id')=='genericComment'||$(this).attr('id')=='state_change_comment'){
 			$(this).data("maxlength", 50000);
-		} 
+		}
 		else {
 			$(this).data("maxlength", 2000);
 		}

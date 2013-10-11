@@ -3,7 +3,6 @@ $(document).ready(function(){
 	 //Add Counter
     addCounter();
 	
-	var addImgCount = 0;
 	$("#acceptTermsAIDValue").val("NO");
 	
 	//limitTextArea();

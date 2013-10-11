@@ -15,7 +15,6 @@
 	}
 $(document).ready(function(){
 	
-	var empImgCount = 0;
 	var numberOfSavedPositions = 0;
 	
 	$("#acceptTermsEPValue").val("NO");

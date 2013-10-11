@@ -10,7 +10,7 @@
           </div>
           <div class="row-group">
               <div class="row">
-                  <label for="upi" class="plain-label">UCL Staff Indentifier (UPI)</label> 
+                  <label for="upi" class="plain-label">UCL Staff Identifier (UPI)</label> 
                   <span class="hint" data-desc="<@spring.message 'prospectus.iris.upi'/>"></span>
                   <div class="field">
                       <input id="upi" name="upi" class="input-small" type="text" />

@@ -74,8 +74,6 @@ $(document).ready(function()
 	$("#addSupervisorButton").show();
 	var unsavedSupervisors = 0;
 	
-	var progImgCount = 0;
-	
 	var currentRel = 0; // currently edited supervisor row
 	
 	$('#supervisors').toggle($("#supervisors tbody").children().length > 0);
@@ -197,13 +195,6 @@ $(document).ready(function()
 			$("#supervisors").show();
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
 			var awareState = (isAware == "YES" ? "aware" : "unaware");
-
-			var jsonString = JSON.stringify({
-			    id: $('#supervisorId').val(),
-			    firstname: $('#supervisorFirstname').val(),
-			    email: $('#supervisorEmail').val(),
-			    awareSupervisor: isAware
-			  });
 			
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(

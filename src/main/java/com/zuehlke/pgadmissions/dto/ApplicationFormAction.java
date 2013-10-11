@@ -98,7 +98,16 @@ public enum ApplicationFormAction {
     }), //
 
     // REVIEW STAGE ACTIONS
-
+    ABORT_REVIEW_STAGE("abort", "Complete Review Stage", new ActionPredicate() {
+        @Override
+        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
+            if (application.getNextStatus() == REVIEW && 
+            	user.hasAdminRightsOnApplication(application)
+            	&& 1 == 2) {
+                actions.addAction(ABORT_REVIEW_STAGE);
+            }
+        }
+    }), //
     ASSIGN_REVIEWERS("validate", "Assign Reviewers", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -135,7 +144,17 @@ public enum ApplicationFormAction {
     }), //
 
     // INTERVIEW STAGE ACTIONS
-
+    ABORT_INTERVIEW_STAGE("abort", "Complete Interview Stage", new ActionPredicate() {
+        @Override
+        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
+            if (application.getNextStatus() == INTERVIEW && 
+            	(user.hasAdminRightsOnApplication(application) ||
+            	user.isApplicationAdministrator(application)) && 
+            	1 == 2) {
+                actions.addAction(ABORT_INTERVIEW_STAGE);
+            }
+        }
+    }), //
     ASSIGN_INTERVIEWERS("validate", "Assign Interviewers", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -202,7 +221,16 @@ public enum ApplicationFormAction {
     }), //
 
     // APPROVAL STAGE ACTIONS
-
+    ABORT_APPROVAL_STAGE("abort", "Complete Interview Stage", new ActionPredicate() {
+        @Override
+        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
+            if (application.getNextStatus() == APPROVAL && 
+            	user.hasAdminRightsOnApplication(application)
+            	&& 1 == 2) {
+                actions.addAction(ABORT_INTERVIEW_STAGE);
+            }
+        }
+    }), //
     REVISE_APPROVAL("restartApproval", "Assign Supervisors", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {

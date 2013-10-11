@@ -1,8 +1,6 @@
 $(document).ready(function(){
 	
     addCounter();
-	
-	var fundImgCount = 0;
 
 	// -------------------------------------------------------------------------------
 	// Prevent non-numerical input for funding value field.
@@ -318,6 +316,6 @@ function fundingDocumentUpload()
 				
 			}
 		}
-	)
+	);
 
 }

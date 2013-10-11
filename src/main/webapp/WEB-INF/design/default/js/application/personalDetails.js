@@ -592,7 +592,7 @@ function postPersonalDetailsData(message) {
 	if ( $('#document_LANGUAGE_QUALIFICATION').length == 0) {
 		documentLanguageQualification = '';	
 	}  else {
-		documentLanguageQualification = $('#document_LANGUAGE_QUALIFICATION').val()
+		documentLanguageQualification = $('#document_LANGUAGE_QUALIFICATION').val();
 	}
 	var postData = {
 		title : $("#title").val(),

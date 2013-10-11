@@ -1,7 +1,5 @@
 $(document).ready(function(){
 	
-	var addrImgCount = 0; 
-	
 	$("#acceptTermsADValue").val("NO");
 	//limitTextArea();
 

@@ -4,16 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
-import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
-import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
-import com.zuehlke.pgadmissions.domain.StateChangeComment;
-import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Service
 public class StateTransitionViewResolver {
-
+	
+	private static final Integer REJECTION_REASON_WHEN_PROGAMME_EXPIRED = 7;
     private static final String REJECTION_VIEW = "redirect:/rejectApplication?applicationId=";
     private static final String OFFER_RECOMMENDATION_VIEW = "redirect:/offerRecommendation?applicationId=";
     private static final String APPROVAL_VIEW = "redirect:/approval/moveToApproval?applicationId=";
@@ -28,7 +24,8 @@ public class StateTransitionViewResolver {
     public String resolveView(ApplicationForm applicationForm) {
 
         if (!programInstanceService.isProgrammeStillAvailable(applicationForm)) {
-            return REJECTION_VIEW + applicationForm.getApplicationNumber() + "&rejectionId=7&rejectionIdForced=true";
+            return REJECTION_VIEW + applicationForm.getApplicationNumber() + 
+            		"&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString() + "&rejectionIdForced=true";
         }
 
         ApplicationFormStatus nextStatus = applicationForm.getNextStatus();

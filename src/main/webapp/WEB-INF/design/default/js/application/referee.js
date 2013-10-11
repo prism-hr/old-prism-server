@@ -1,8 +1,6 @@
 $(document).ready(function()
 {
 	
-	var refImgCount = 0;
-	
 	$("#acceptTermsRDValue").val("NO");
 	
 	//limitTextArea();
@@ -220,7 +218,7 @@ function postRefereeData(message){
 			phoneNumber: $("#refPhoneNumber").val(),
 			message:message,
 			acceptedTerms: acceptedTheTerms
-	}
+	};
 
 	$('#ajaxloader').show();
 

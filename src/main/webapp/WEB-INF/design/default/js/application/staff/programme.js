@@ -43,7 +43,7 @@ $(document).ready(function(){
 			referrer: $("#referrer").val(),
 			application: $("#appId1").val(),			
 			supervisors: ""
-		}
+		};
 		
 		$.ajax({
 			type: 'POST',
@@ -81,11 +81,11 @@ $(document).ready(function(){
 					$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Is supervisor aware of your application:" + $('#awareSupervisor').val() +'<a class="button-delete">delete</a>'+
 					'<input type="hidden" name="supervisors" value=' +"'" + '{"firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
 					+'<br/></span>');
-			$('#supervisorFirstname').val('')
-			$('#supervisorLastname').val('')
-			$('#supervisorEmail').val('')
+			$('#supervisorFirstname').val('');
+			$('#supervisorLastname').val('');
+			$('#supervisorEmail').val('');
 		}
-	})
+	});
 	
 	$('#programmeCloseButton').click(function(){
 		$('#programme-H2').trigger('click');

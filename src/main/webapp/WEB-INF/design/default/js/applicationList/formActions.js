@@ -20,7 +20,7 @@ $(document).ready(function() {
             
             var applicationDetails = $(this).next();
 			
-            //alert ($(event.target).attr('class'));
+            // alert ($(event.target).attr('class'));
 			if (applicationDetails.attr('data-application-status') == 'UNSUBMITTED' 
 				|| applicationDetails.attr('data-application-status') == 'WITHDRAWN') {
 				return;
@@ -87,7 +87,8 @@ $(document).ready(function() {
 			}
 			if ($(event.target).attr('class') == 'btn btn-default dropdown-toggle'
 				|| $(event.target).attr('class') == 'filter-option pull-left'
-				|| $(event.target).attr('class') == 'text' 
+				|| $(event.target).attr('class') == 'text'
+				|| $(event.target).attr('class') == 'caret'
 				|| $(event.target).attr('class') == '') {
                 // do nothing
             } else {

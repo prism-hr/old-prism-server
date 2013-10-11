@@ -487,7 +487,7 @@ public class ConfigurationControllerTest {
         EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(program);
 
         EasyMock.replay(programsServiceMock);
-        assertNull(controller.getScoringDefinition("any_code", ScoringStage.REVIEW));
+        assertEquals("", controller.getScoringDefinition("any_code", ScoringStage.REVIEW));
         EasyMock.verify(programsServiceMock);
     }
 

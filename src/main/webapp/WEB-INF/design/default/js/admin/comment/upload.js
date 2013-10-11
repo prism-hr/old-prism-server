@@ -11,7 +11,9 @@ $(document).ready(function() {
 		var onOk    = function()
 		{
 			var scores = getScores($('#scoring-questions'));
-			$('#documentUploadForm').append("<input type='hidden' name='scores' value=\'" + scores + "\'/>");
+			var scoresInputDef = "<input type='hidden' name='scores' />";
+			var scoresInput = $(scoresInputDef).val(scores);
+			$('#documentUploadForm').append(scoresInput);
 			$('#documentUploadForm').submit();
 		};
 		

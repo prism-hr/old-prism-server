@@ -13,7 +13,9 @@ $(document).ready(function(){
 				$('#reviewForm').append("<input type='hidden' name='decline' value='true'/>");
 			}
 			var scores = getScores($('#scoring-questions'));
-			$('#reviewForm').append("<input type='hidden' name='scores' value=\'" + scores + "\'/>");
+			var scoresInputDef = "<input type='hidden' name='scores' />";
+			var scoresInput = $(scoresInputDef).val(scores);
+			$('#reviewForm').append(scoresInput);
 			$('#reviewForm').submit();
 		};
 		

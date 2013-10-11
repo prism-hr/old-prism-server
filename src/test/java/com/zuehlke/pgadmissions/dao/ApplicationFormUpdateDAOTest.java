@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -30,8 +29,9 @@ public class ApplicationFormUpdateDAOTest extends AutomaticRollbackTestCase {
     
     private ApplicationForm form;
     
-    @Before
-    public void prepare() {
+    @Override
+    public void setup() {
+        super.setup();
         dao = new ApplicationFormUpdateDAO(sessionFactory);
         user = new RegisteredUserBuilder()
             .firstName("Ozio")

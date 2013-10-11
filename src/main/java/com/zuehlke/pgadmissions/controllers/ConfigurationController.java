@@ -224,7 +224,7 @@ public class ConfigurationController {
         if (scoringDefinition != null) {
             return scoringDefinition.getContent();
         } else {
-            return null;
+            return "";
         }
     }
 

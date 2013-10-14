@@ -208,7 +208,7 @@
 		    <div class="field"><#if (applicationForm.personalDetails.messenger)?has_content>${(applicationForm.personalDetails.messenger?html)}<#else>Not Provided</#if></div>
       </div>
       
-      <#if user.canSeeRestrictedInformation(applicationForm) >
+      <#if user == applicationForm.applicant >
       
         <div class="admin_row">
           <span class="admin_row_label">Ethnicity</span>

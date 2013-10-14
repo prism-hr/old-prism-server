@@ -107,11 +107,8 @@
         <span class="admin_row_label">Skype</span>
         <div class="field" id="ref_messenger">${(referee.messenger?html)!"Not Provided"}</div>
       </div>
-    
-                
 
     </div>
-    
     </#list>
     </#if>
   </form>           

@@ -105,6 +105,8 @@ public class FullTextSearchDAO {
         Criteria wildcardCriteria = sessionFactory
                 .getCurrentSession()
                 .createCriteria(RegisteredUser.class)
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.isNull("primaryAccount"))
                 .add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START))
                 .createAlias("roles", "r")
                 .add(notAnApplicantCriterion)
@@ -123,6 +125,8 @@ public class FullTextSearchDAO {
 
             Criteria notApplicantCriteria = fullTextSession
                     .createCriteria(RegisteredUser.class)
+                    .add(Restrictions.eq("enabled", true))
+                    .add(Restrictions.isNull("primaryAccount"))
                     .createAlias("roles", "r")
                     .add(notAnApplicantCriterion);
             

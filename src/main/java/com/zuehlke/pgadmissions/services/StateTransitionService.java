@@ -24,7 +24,11 @@ public class StateTransitionService {
     }
     
     public String resolveView(final ApplicationForm form) {
-        return viewResolver.resolveView(form);
+    	return viewResolver.resolveView(form);
+    }
+    
+    public String resolveView(final ApplicationForm form, final String action) {
+        return viewResolver.resolveView(form, action);
     }
     
     public List<ApplicationFormStatus> getAvailableNextStati(final ApplicationFormStatus status) {

@@ -95,7 +95,7 @@
 
                                 <section id="documentSection" class="folding form-rows blue"><#include "/private/staff/application/components/documents.ftl"/></section>
 
-                                <#if user.canSeeRestrictedInformation(applicationForm) >
+                                <#if user == applicationForm.applicant >
                                   <section id="additionalInformationSection" class="folding form-rows lightblue"><#include "/private/staff/application/components/additional_information.ftl"/></section>
                                 </#if>
                                 

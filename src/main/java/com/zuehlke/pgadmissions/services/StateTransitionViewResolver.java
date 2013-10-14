@@ -20,33 +20,43 @@ public class StateTransitionViewResolver {
     @Autowired
     private ProgramInstanceService programInstanceService;
     
-
     public String resolveView(ApplicationForm applicationForm) {
+    	return resolveView(applicationForm, null);
+    }
+
+    public String resolveView(ApplicationForm applicationForm, String action) {
 
         if (!programInstanceService.isProgrammeStillAvailable(applicationForm)) {
             return REJECTION_VIEW + applicationForm.getApplicationNumber() + 
             		"&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString() + "&rejectionIdForced=true";
         }
 
-        ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
-        if (nextStatus != null) {
-            switch (nextStatus) {
-            case REVIEW:
-                return REVIEW_VIEW + applicationForm.getApplicationNumber();
-            case INTERVIEW:
-                return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
-            case APPROVAL:
-                return APPROVAL_VIEW + applicationForm.getApplicationNumber();
-            case REJECTED:
-                return REJECTION_VIEW + applicationForm.getApplicationNumber();
-            case APPROVED:
-                return OFFER_RECOMMENDATION_VIEW + applicationForm.getApplicationNumber();
-            default:
-            }
-        }
-
-        return STATE_TRANSITION_VIEW;
-
+        else if (action != null && 
+        		action.equals("abort")) {
+        	return STATE_TRANSITION_VIEW;
+        } 
+        
+        else {
+	        ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
+	        if (nextStatus != null) {
+	            switch (nextStatus) {
+	            case REVIEW:
+	                return REVIEW_VIEW + applicationForm.getApplicationNumber();
+	            case INTERVIEW:
+	                return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
+	            case APPROVAL:
+	                return APPROVAL_VIEW + applicationForm.getApplicationNumber();
+	            case REJECTED:
+	                return REJECTION_VIEW + applicationForm.getApplicationNumber();
+	            case APPROVED:
+	                return OFFER_RECOMMENDATION_VIEW + applicationForm.getApplicationNumber();
+	            default:
+	            }
+	        }
+	
+	        return STATE_TRANSITION_VIEW;
+	
+	    }
     }
-
+    
 }

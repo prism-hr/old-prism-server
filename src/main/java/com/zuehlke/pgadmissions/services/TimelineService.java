@@ -112,7 +112,7 @@ public class TimelineService {
 		phases.add(createUnsubmittedPhase(applicationForm));
 
 		List<Event> events = applicationForm.getEvents();
-		Set<Comment> confirmEligibilityComments =new HashSet<Comment>();
+		Set<Comment> confirmEligibilityComments = new HashSet<Comment>();
 		
 		for (Event event : events) {
 			if (event instanceof StateChangeEvent) {

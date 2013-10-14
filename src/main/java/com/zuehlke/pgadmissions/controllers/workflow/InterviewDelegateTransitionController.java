@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -43,7 +44,7 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 @Controller
 @RequestMapping("/progress")
 public class InterviewDelegateTransitionController extends StateTransitionController {
-
+	
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
     private InterviewService interviewService;
@@ -91,31 +92,53 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
-    public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result) {
+    public String addComment(@RequestParam String applicationId, 
+    		@RequestParam String action,
+    		@Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, 
+    		BindingResult result) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
+        
+        // validate validation action is still available
+        
+        ApplicationFormAction invokedAction;
+        
+        if (action.equals("abort")) {
+        	invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
+        }
+        
+        else {
+        	invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+        }
+        
+        actionsProvider.validateAction(applicationForm, getCurrentUser(), invokedAction);
 
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
-
+        
         RegisteredUser user = getCurrentUser();
-        Interview interview = applicationForm.getLatestInterview();
 
-        Comment comment;
-        if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
-            // delegate should be able to restart interview
-            comment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
-                            stateChangeComment.getType(), stateChangeComment.getNextStatus());
-        } else {
-            // moving to other state than interview, simply make suggestion
-            interview.setStage(InterviewStage.INACTIVE);
-            interviewService.save(interview);
-
-            comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
-                            stateChangeComment.getNextStatus());
-            applicationForm.setApplicationAdministrator(null);
-            applicationForm.setDueDate(new Date());
-        }
+    	Comment comment = null;
+    	if (applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW &&
+    		stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
+			// delegate should be able to restart interview
+			comment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
+							stateChangeComment.getType(), stateChangeComment.getNextStatus());
+    							
+    		Interview interview = applicationForm.getLatestInterview();
+    		interview.setStage(InterviewStage.INACTIVE);
+    		interviewService.save(interview);
+    	}
+    		
+    	else if (applicationForm.getStatus() != ApplicationFormStatus.INTERVIEW ||
+    		stateChangeComment.getNextStatus() != ApplicationFormStatus.INTERVIEW) {
+    		// in other scenarios just post a suggestion
+    		comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
+    				stateChangeComment.getNextStatus());
+    				
+    		applicationForm.setApplicationAdministrator(null);
+    		applicationForm.setDueDate(new Date());
+    	}
 
         if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());

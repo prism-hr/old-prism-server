@@ -143,6 +143,9 @@ function refreshControls() {
             $('#delegateLastNameLabel').removeClass('grey-label').parent().find('.hint').removeClass("grey");
             $('#delegateEmailLabel').removeClass('grey-label').parent().find('.hint').removeClass("grey");
         } else {
+            $('#delegateFirstName').val("");
+            $('#delegateLastName').val("");
+            $('#delegateEmail').val("");
             $('#delegateFirstName').attr('disabled', 'disabled');
             $('#delegateLastName').attr('disabled', 'disabled');
             $('#delegateEmail').attr('disabled', 'disabled');

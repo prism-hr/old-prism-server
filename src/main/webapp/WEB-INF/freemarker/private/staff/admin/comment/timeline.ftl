@@ -12,7 +12,7 @@
         
         <#assign shownTargetForCompletingStage = false>
         <#list timelineObjects as timelineObject>  
-	        <#if (timelineObject.type != 'reference' && timelineObject.type != 'confirmEligibility') || user.isInRole('ADMITTER') || user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
+	        <#if (timelineObject.type != 'reference' && timelineObject.type != 'confirmEligibility') || user.isInRole('ADMITTER') || user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
 		        <li class="${timelineObject.type}">
                 <!-- Box start -->
 		          <div class="box">
@@ -43,7 +43,7 @@
 				   </div>
 		         <!-- Box end -->
                  <div class="excontainer">
-							<#if timelineObject.reviewRound?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isInRole('ADMITTER'))>
+							<#if timelineObject.reviewRound?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) || user.isInRole('ADMITTER'))>
 							<#if timelineObject.reviewRound.reviewers?? && timelineObject.reviewRound.reviewers?size &gt; 0>
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
@@ -206,10 +206,10 @@
   			                <#if comment.type == 'REQUEST_RESTART'>
                                 <div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
                                 <p class="restart"><span/><b>Restart of approval stage requested.</b></p>
-            <#elseif comment.comment?starts_with("Referred to")>
+							<#elseif comment.comment?starts_with("Referred to")>
                                 <p class="referral"><span data-desc="Referral"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
-            <#elseif comment.comment?starts_with("Delegated Application")>
-                                <p class="delegate"><span></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em>.</p>
+							<#elseif comment.comment?starts_with("Delegating interview")>
+                                <p class="delegate"><span data-desc="delegate"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em>.</p>
                             <!-- General comment box-->	
           				    <#elseif comment.comment?trim?length &gt; 0>
                                 <div class="textContainer">
@@ -243,8 +243,9 @@
                                         </#if>
 		                		   </#if>
 	                		  <#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
-	                		    <h3><span class="icon-hand-right"></span>Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
-                		      </h3>
+	                		    <h3 class="recommend">
+								  <span class="icon-hand-right"></span>Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
+                		        </h3>
   			                </#if>
   			              </div>
   			            </li>
@@ -253,9 +254,9 @@
 			            </#if>
 		            </#list>                       
 		          </ul>
-		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)> 
+		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) || timelineObject.referee.user == user)> 
 		            	<#include "timeline_snippets/reference_comment.ftl"/>
-		          <#elseif timelineObject.type == 'confirmEligibility' && (user.hasStaffRightsOnApplicationForm(applicationForm) ||  user.isInRole('ADMITTER'))>
+		          <#elseif timelineObject.type == 'confirmEligibility' && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) ||  user.isInRole('ADMITTER'))>
 		            	<#include "timeline_snippets/eligibility_comment.ftl"/>
 		          </#if> 
                   </div>

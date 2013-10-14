@@ -87,7 +87,7 @@ public class InterviewDelegateTransitionControllerTest {
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock);
+        String view = controller.addComment(applicationForm.getApplicationNumber(), null, stateComment, bindingResultMock);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
         assertEquals("bob", view);
@@ -120,7 +120,7 @@ public class InterviewDelegateTransitionControllerTest {
         interviewServiceMock.save(interview);
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, interviewServiceMock);
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock);
+        String view = controller.addComment(applicationForm.getApplicationNumber(), null, stateComment, bindingResultMock);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, interviewServiceMock);
 
         assertEquals("redirect:/applications?messageCode=state.change.suggestion&application=app1", view);
@@ -141,7 +141,7 @@ public class InterviewDelegateTransitionControllerTest {
         };
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock);
-        String view = controller.addComment(null, null, bindingResultMock);
+        String view = controller.addComment(null, null, null, bindingResultMock);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock);
 
         assertEquals("private/staff/admin/state_transition", view);

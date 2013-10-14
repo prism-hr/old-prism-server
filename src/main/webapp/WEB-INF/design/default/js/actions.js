@@ -37,7 +37,7 @@ $(document).ready(function() {
                 window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id;
                 break;
             case 'abort':
-                window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id + "&action=" + $(this).val();
+                window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id + "&action=abort";
                 break;
             case 'review':
                 window.location.href = "/pgadmissions/reviewFeedback?applicationId="+ id;

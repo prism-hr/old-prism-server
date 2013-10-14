@@ -32,6 +32,7 @@
 
 #timeline-statuses .box h3.answer { line-height: 1; margin-top: 0; padding: 6px 10px 0 38px; }
 #timeline-statuses .box h3.answer span { background: url(../../../images/icon_answers.png) no-repeat; display: inline-block; height: 17px; margin: 0 9px 0 -30px; vertical-align: text-top; width: 19px; }
+#timeline-statuses .box h3.recommend span {height: 17px; margin: 0 9px 0 0; vertical-align: text-top; width: 19px; }
 #timeline-statuses .box h3.answer.unsure span { background-position: 0 0; }
 #timeline-statuses .box h3.answer.no span { background-position: -19px 0; }
 #timeline-statuses .box h3.answer.home span { background-position: -38px 0; }
@@ -352,4 +353,4 @@ margin-left: 4px;
 #timeline-statuses ul .box p.rejection i{
   margin-left: -25px;
   font-size: 14px;
-}
+}#timeline-statuses .box h3.answer span {

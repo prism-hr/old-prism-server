@@ -26,7 +26,7 @@ public enum ApplicationFormAction {
                 actions.addAction(VIEW_EDIT);
             }
         }
-    }), //
+    }),
     VIEW("view", "View", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -34,7 +34,7 @@ public enum ApplicationFormAction {
                 actions.addAction(VIEW);
             }
         }
-    }), //
+    }),
     EMAIL_APPLICANT("emailApplicant", "Email Applicant", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -42,7 +42,7 @@ public enum ApplicationFormAction {
                 actions.addAction(EMAIL_APPLICANT);
             }
         }
-    }), //
+    }),
     COMMENT("comment", "Comment", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -50,7 +50,7 @@ public enum ApplicationFormAction {
                 actions.addAction(COMMENT);
             }
         }
-    }), //
+    }),
     WITHDRAW("withdraw", "Withdraw", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -58,7 +58,7 @@ public enum ApplicationFormAction {
                 actions.addAction(WITHDRAW);
             }
         }
-    }), //
+    }),
     CONFIRM_ELIGIBILITY("confirmEligibility", "Confirm Eligibility", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -71,7 +71,7 @@ public enum ApplicationFormAction {
                 }
             }
         }
-    }), //
+    }),
     ADD_REFERENCE("reference", "Provide Reference", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -82,7 +82,17 @@ public enum ApplicationFormAction {
 
             }
         }
-    }), //
+    }),
+    ABORT_STAGE_TRANSITION("abort", "Move to Different Stage", new ActionPredicate() {
+        @Override
+        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
+            if (application.getNextStatus() != null && 
+            	(user.hasAdminRightsOnApplication(application) ||
+            	user.isApplicationAdministrator(application))) {
+                actions.addAction(ABORT_STAGE_TRANSITION);
+            }
+        }
+    }),
 
     // VALIDATION STAGE ACTIONS
 
@@ -95,19 +105,9 @@ public enum ApplicationFormAction {
 
             }
         }
-    }), //
+    }),
 
     // REVIEW STAGE ACTIONS
-    ABORT_REVIEW_STAGE("abort", "Complete Review Stage", new ActionPredicate() {
-        @Override
-        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if (application.getNextStatus() == REVIEW && 
-            	user.hasAdminRightsOnApplication(application)
-            	&& 1 == 2) {
-                actions.addAction(ABORT_REVIEW_STAGE);
-            }
-        }
-    }), //
     ASSIGN_REVIEWERS("validate", "Assign Reviewers", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -117,7 +117,7 @@ public enum ApplicationFormAction {
 
             }
         }
-    }), //
+    }),
     COMPLETE_REVIEW_STAGE("validate", "Complete Review Stage", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -130,7 +130,7 @@ public enum ApplicationFormAction {
                 }
             }
         }
-    }), //
+    }),
     ADD_REVIEW("review", "Provide Review", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -141,20 +141,9 @@ public enum ApplicationFormAction {
 
             }
         }
-    }), //
+    }),
 
     // INTERVIEW STAGE ACTIONS
-    ABORT_INTERVIEW_STAGE("abort", "Complete Interview Stage", new ActionPredicate() {
-        @Override
-        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if (application.getNextStatus() == INTERVIEW && 
-            	(user.hasAdminRightsOnApplication(application) ||
-            	user.isApplicationAdministrator(application)) && 
-            	1 == 2) {
-                actions.addAction(ABORT_INTERVIEW_STAGE);
-            }
-        }
-    }), //
     ASSIGN_INTERVIEWERS("validate", "Assign Interviewers", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -164,21 +153,7 @@ public enum ApplicationFormAction {
 
             }
         }
-    }), //
-    COMPLETE_INTERVIEW_STAGE("validate", "Complete Interview Stage", new ActionPredicate() {
-        @Override
-        public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            Interview interview = application.getLatestInterview();
-            if (application.getStatus() == INTERVIEW && nextStatus == null
-                            && (user.hasAdminRightsOnApplication(application) || user.isApplicationAdministrator(application))) {
-                actions.addAction(COMPLETE_INTERVIEW_STAGE);
-                if (interview.hasAllInterviewersProvidedFeedback() || application.isDueDateExpired()) {
-                    actions.addActionRequiringAttention(COMPLETE_INTERVIEW_STAGE);
-
-                }
-            }
-        }
-    }), //
+    }),
     CONFIRM_INTERVIEW_TIME("interviewConfirm", "Confirm Interview Arrangements", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -192,7 +167,7 @@ public enum ApplicationFormAction {
                 }
             }
         }
-    }), //
+    }),
     PROVIDE_INTERVIEW_AVAILABILITY("interviewVote", "Provide Interview Availability", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -204,7 +179,7 @@ public enum ApplicationFormAction {
 
             }
         }
-    }), //
+    }),
     ADD_INTERVIEW_FEEDBACK("interviewFeedback", "Provide Interview Feedback", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -218,19 +193,23 @@ public enum ApplicationFormAction {
                 }
             }
         }
-    }), //
-
-    // APPROVAL STAGE ACTIONS
-    ABORT_APPROVAL_STAGE("abort", "Complete Interview Stage", new ActionPredicate() {
+    }),
+    COMPLETE_INTERVIEW_STAGE("validate", "Complete Interview Stage", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
-            if (application.getNextStatus() == APPROVAL && 
-            	user.hasAdminRightsOnApplication(application)
-            	&& 1 == 2) {
-                actions.addAction(ABORT_INTERVIEW_STAGE);
+            Interview interview = application.getLatestInterview();
+            if (application.getStatus() == INTERVIEW && nextStatus == null
+                            && (user.hasAdminRightsOnApplication(application) || user.isApplicationAdministrator(application))) {
+                actions.addAction(COMPLETE_INTERVIEW_STAGE);
+                if (interview.hasAllInterviewersProvidedFeedback() || application.isDueDateExpired()) {
+                    actions.addActionRequiringAttention(COMPLETE_INTERVIEW_STAGE);
+
+                }
             }
         }
-    }), //
+    }),
+
+    // APPROVAL STAGE ACTIONS
     REVISE_APPROVAL("restartApproval", "Assign Supervisors", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -241,7 +220,7 @@ public enum ApplicationFormAction {
 
             }
         }
-    }), //
+    }),
     COMPLETE_APPROVAL_STAGE("validate", "Complete Approval Stage", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -257,7 +236,7 @@ public enum ApplicationFormAction {
                 }
             }
         }
-    }), //
+    }),
     ASSIGN_SUPERVISORS("validate", "Assign Supervisors", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -267,7 +246,7 @@ public enum ApplicationFormAction {
 
             }
         }
-    }), //
+    }),
     REVISE_APPROVAL_AS_ADMINISTRATOR("restartApprovalAsAdministrator", "Complete Approval Stage", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -277,7 +256,7 @@ public enum ApplicationFormAction {
                 actions.addAction(REVISE_APPROVAL_AS_ADMINISTRATOR);
             }
         }
-    }), //
+    }),
     CONFIRM_SUPERVISION("confirmSupervision", "Confirm Supervision", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
@@ -291,7 +270,7 @@ public enum ApplicationFormAction {
                 }
             }
         }
-    }), //
+    }),
     COMPLETE_REJECTION("completeRejection", "Complete Rejection", new ActionPredicate() {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {

@@ -39,6 +39,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -500,7 +501,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return returnList;
         }
 
-        if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user) || user.isInRole(Authority.ADMITTER)) {
+        if (user.hasStaffRightsOnApplicationForm(this) ||
+        	user.isApplicationAdministrator(this) ||
+        	user.isViewerOfProgramme(this, user) || 
+        	user.isInRole(Authority.ADMITTER)) {
             returnList.addAll(applicationComments);
             Collections.sort(returnList);
             return returnList;
@@ -1106,8 +1110,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return getProgram().getTitle();
     }
 
-    public ApplicationFormStatus getNextStatus() {
-        StateChangeComment stateChangeComment = null;
+    public StateChangeComment getLatestStateChangeComment() {
+    	StateChangeComment stateChangeComment = null;
         switch (getStatus()) {
         case APPROVAL:
             stateChangeComment = getEvaluationCommentForLatestApprovalRound();
@@ -1124,24 +1128,37 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         default:
         }
         if (stateChangeComment != null) {
-            return stateChangeComment.getNextStatus();
+            return stateChangeComment;
         }
         return null;
     }
     
-    public Integer getAverageRatingPercent(){
+    public ApplicationFormStatus getNextStatus() {
+    	StateChangeComment latestStateChangeComment = getLatestStateChangeComment();
+        if (latestStateChangeComment != null) {
+            return latestStateChangeComment.getNextStatus();
+        }
+        return null;
+    }
+    
+    public Integer getAverageRatingPercent() {
         return MathUtils.convertRatingToPercent(getAverageRating());
     }
     
-    public String getAverageRatingFormatted(){
+    public String getAverageRatingFormatted() {
         return MathUtils.formatRating(getAverageRating());
     }
+    
+    private List<Comment> getApplicationCommentsReversed() {
+        return Lists.reverse(getApplicationComments());
+    }
+    
 
     private ReviewEvaluationComment getEvaluationCommentForLatestRoundOfReview() {
         ReviewRound latestReviewRound = getLatestReviewRound();
         if (latestReviewRound != null) {
             Integer latestReviewRoundId = latestReviewRound.getId();
-            for (Comment comment : getApplicationComments()) {
+            for (Comment comment : getApplicationCommentsReversed()) {
                 if (comment instanceof ReviewEvaluationComment) {
                     ReviewEvaluationComment reviewEvaluationComment = (ReviewEvaluationComment) comment;
                     Integer reviewEvaluationCommentId = reviewEvaluationComment.getReviewRound().getId();
@@ -1158,7 +1175,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         ApprovalRound latestApprovalRound = getLatestApprovalRound();
         if (latestApprovalRound != null) {
             Integer latestApprovalRoundId = latestApprovalRound.getId();
-            for (Comment comment : getApplicationComments()) {
+            for (Comment comment : getApplicationCommentsReversed()) {
                 if (comment instanceof ApprovalEvaluationComment) {
                     ApprovalEvaluationComment approvalEvaluationComment = (ApprovalEvaluationComment) comment;
                     Integer approvalEvaluationCommentId = approvalEvaluationComment.getApprovalRound().getId();
@@ -1175,7 +1192,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         Interview latestInterview = getLatestInterview();
         if (latestInterview != null) {
             Integer latestInterviewId = latestInterview.getId();
-            for (Comment comment : getApplicationComments()) {
+            for (Comment comment : getApplicationCommentsReversed()) {
                 if (comment instanceof InterviewEvaluationComment) {
                     InterviewEvaluationComment interviewEvaluationComment = (InterviewEvaluationComment) comment;
                     Integer interviewEvaluationCommentId = interviewEvaluationComment.getInterview().getId();
@@ -1189,7 +1206,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     private ValidationComment getValidationComment() {
-        List<Comment> applicationComments = getApplicationComments();
+        List<Comment> applicationComments = getApplicationCommentsReversed();
         for (Comment comment : applicationComments) {
             if (comment instanceof ValidationComment && comment.getType() != CommentType.ADMITTER_COMMENT) {
                 return (ValidationComment) comment;

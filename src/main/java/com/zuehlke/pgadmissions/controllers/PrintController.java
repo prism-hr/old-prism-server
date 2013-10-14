@@ -71,7 +71,7 @@ public class PrintController {
 		    pdfModelBuilder.includeCriminialConvictions(true);
 		    pdfModelBuilder.includeDisability(true);
 		    pdfModelBuilder.includeEthnicity(true);
-		} else if (currentUser.hasAdminRightsOnApplication(form)) {
+		} else if (!currentUser.isRefereeOfApplicationForm(form)) {
 		    pdfModelBuilder.includeReferences(true);
 		}
 		
@@ -101,7 +101,7 @@ public class PrintController {
 			    pdfModelBuilder.includeCriminialConvictions(true);
 			    pdfModelBuilder.includeDisability(true);
 			    pdfModelBuilder.includeEthnicity(true);
-			} else if (currentUser.hasAdminRightsOnApplication(form)) {
+			} else if (!currentUser.isRefereeOfApplicationForm(form)) {
 	            pdfModelBuilder.includeReferences(true);
 	        }
 			

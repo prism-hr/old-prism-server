@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 @Controller
 @RequestMapping("/progress")
 public class EvaluationTransitionController extends StateTransitionController {
-
+	
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
     public EvaluationTransitionController() {
@@ -70,25 +70,40 @@ public class EvaluationTransitionController extends StateTransitionController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
     public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
-                    @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap,
-                    @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+                    @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, 
+                    BindingResult result, 
+                    ModelMap modelMap,
+                    @RequestParam String action,
+                    @RequestParam(required = false) Boolean delegate, 
+                    @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
 
         modelMap.put("delegate", delegate);
 
         // validate validation action is still available
-        switch (stateChangeComment.getType()) {
-        case APPROVAL_EVALUATION:
-            actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
-            break;
-        case REVIEW_EVALUATION:
-            actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_REVIEW_STAGE);
-            break;
-        case INTERVIEW_EVALUATION:
-            actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMPLETE_INTERVIEW_STAGE);
-            break;
-        default:
-            throw new IllegalStateException("illegal StateChangeComment type passed to evaluation controller");
+        
+        ApplicationFormAction invokedAction;
+        
+        if (action.equals("abort")) {
+        	invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
         }
+        
+        else {
+	        switch (stateChangeComment.getType()) {
+	        case APPROVAL_EVALUATION:
+	        	invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
+	            break;
+	        case REVIEW_EVALUATION:
+	        	invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
+	            break;
+	        case INTERVIEW_EVALUATION:
+	        	invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+	            break;
+	        default:
+	            throw new IllegalStateException("illegal StateChangeComment type passed to evaluation controller");
+	        }
+        }
+        
+        actionsProvider.validateAction(applicationForm, getCurrentUser(), invokedAction);
 
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;

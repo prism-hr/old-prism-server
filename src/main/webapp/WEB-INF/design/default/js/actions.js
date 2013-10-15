@@ -51,12 +51,6 @@ $(document).ready(function() {
             case 'interviewConfirm':
             	window.location.href = "/pgadmissions/interviewConfirm?applicationId="+ id;
             	break;
-            case 'restartApproval':
-                window.location.href = "/pgadmissions/approval/moveToApproval?applicationId="+ id;
-                break;
-            case 'restartApprovalAsAdministrator':
-            	window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id;
-                break;
             case 'confirmSupervision':
                 window.location.href = "/pgadmissions/confirmSupervision?applicationId="+ id;
                 break;

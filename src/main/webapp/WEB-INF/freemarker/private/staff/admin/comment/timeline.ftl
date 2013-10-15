@@ -153,8 +153,8 @@
 			         <li>                          
   			           <div class="box">
 						 <p class="project_title"><span data-desc="Project title and description" aria-describedby="ui-tooltip-2"></span>
-                		   <b>${timelineObject.projectTitle}</b><br>
-            			   <i>${timelineObject.projectDescription}</i>
+							   	<b>${timelineObject.projectTitle}</b><br>
+							   	<i>${timelineObject.projectDescription}</i>
             			 </p>
 		              </div>
   			         </li>

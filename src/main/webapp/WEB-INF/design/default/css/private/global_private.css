@@ -377,7 +377,7 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 #programme-details .cdate {display: inline-block; font-weight: bold; position: relative; left: 155px;}
 #programme-details .cdate span{display: inline-block; font-weight: normal; margin-left: 40px;}
 #qualificationsSection .alert.alert-error i {
-	/*margin-left: 0px;*/
+	/* margin-left: 0px; */
 }
 #programme-details div.project label { vertical-align: top; }
 #programme-details div.project span { max-width: 480px; display: inline-block; }

@@ -1,5 +1,4 @@
-
-<#if comment.projectTitle??>
+<#if comment.projectTitle?has_content>
     <li>                          
       <div class="box">
         <div class="title">

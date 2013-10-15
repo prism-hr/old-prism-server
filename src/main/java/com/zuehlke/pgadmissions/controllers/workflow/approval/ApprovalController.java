@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -84,7 +83,6 @@ public class ApprovalController {
 
     private static final Logger log = LoggerFactory.getLogger(EditApplicationFormAsProgrammeAdminController.class);
 
-    private static final String REQUEST_RESTART_APPROVE_PAGE = "/private/staff/approver/request_restart_approve_page";
     private static final String SUPERVISORS_SECTION = "/private/staff/supervisors/supervisors_section";
     private static final String PORTICO_VALIDATION_SECTION = "/private/staff/supervisors/portico_validation_section";
     private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
@@ -208,8 +206,36 @@ public class ApprovalController {
     public String getMoveToApprovalPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.REVISE_APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
         modelMap.addAttribute("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
+        
+        if (!applicationForm.isCompleteForSendingToPortico(false)
+        	&& applicationForm.getLatestApprovalRound() != null) { 
+        	
+        	SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
+        	
+        	List<Integer> qualificationsToSend = new ArrayList<Integer>();
+        	List<Integer> referencesToSend = new ArrayList<Integer>();
+        	
+        	List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
+        	List<Referee> references = applicationForm.getRefereessToSendToPortico();
+        	
+        	for (int i = 0; i < qualifications.size(); i++) {
+        		qualificationsToSend.add(qualifications.get(i).getId());
+        	}
+        	
+        	for (int i = 0; i < references.size(); i++) {
+        		referencesToSend.add(references.get(i).getId());
+        	}
+        	
+        	porticoData.setQualificationsSendToPortico(qualificationsToSend);
+        	porticoData.setRefereesSendToPortico(referencesToSend);
+        	porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
+        	
+        	modelMap.put("sendToPorticoData", porticoData);
+        	
+        }
+        
         return APPROVAL_PAGE;
     }
 
@@ -362,11 +388,13 @@ public class ApprovalController {
     }
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
-    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult,
+    public String assignSupervisors(ModelMap modelMap, 
+    		@Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, 
+    		BindingResult bindingResult,
             SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.REVISE_APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         if (bindingResult.hasErrors()) {
             return SUPERVISORS_SECTION;
@@ -467,40 +495,9 @@ public class ApprovalController {
         return REFERENCE_SECTION;
     }
 
-    @ModelAttribute("comment")
-    public RequestRestartComment getRequestRestartComment(@RequestParam String applicationId) {
-        RequestRestartComment comment = new RequestRestartComment();
-        comment.setApplication(getApplicationForm(applicationId));
-        comment.setUser(getUser());
-        return comment;
-    }
-
     @ModelAttribute("domiciles")
     public List<Domicile> getAllDomiciles() {
         return domicileService.getAllEnabledDomiciles();
-    }
-
-    @RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)
-    public String requestRestart(@Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result, ModelMap modelMap) {
-
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
-
-        if (result.hasErrors()) {
-            return REQUEST_RESTART_APPROVE_PAGE;
-        }
-
-        RegisteredUser currentUser = getUser();
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
-        approvalService.requestApprovalRestart(applicationForm, currentUser, comment);
-        accessService.updateAccessTimestamp(applicationForm, currentUser, new Date());
-
-        if (currentUser.isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram())) {
-            return "redirect:/approval/moveToApproval?applicationId=" + applicationForm.getApplicationNumber();
-        }
-
-        return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

@@ -108,6 +108,13 @@ public class InterviewConfirmController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, CONFIRM_INTERVIEW_TIME);
+        
+        InterviewConfirmDTO interviewConfirmDTO = new InterviewConfirmDTO();
+        interviewConfirmDTO.setFurtherDetails(applicationForm.getLatestInterview().getFurtherDetails());
+        interviewConfirmDTO.setFurtherInterviewerDetails(applicationForm.getLatestInterview().getFurtherInterviewerDetails());
+        interviewConfirmDTO.setLocationUrl(applicationForm.getLatestInterview().getLocationURL());
+        modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
+        
         return INTERVIEW_CONFIRM_PAGE;
     }
 

@@ -37,7 +37,7 @@ public class StateTransitionServiceTest {
     @Test
     public void shouldReturnRejectedApprovedForApprovalState(){
         ApplicationFormStatus[] avaialbleStati = service.getAvailableNextStati(ApplicationFormStatus.APPROVAL).toArray(new ApplicationFormStatus[]{});
-        assertArrayEquals(new ApplicationFormStatus[]{ ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.REQUEST_RESTART_APPROVAL},avaialbleStati);
+        assertArrayEquals(new ApplicationFormStatus[]{ ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED},avaialbleStati);
     }
     
     @Test

@@ -18,9 +18,7 @@ public enum ApplicationFormStatus {
 	
 	WITHDRAWN("Withdrawn"),
 	
-	REJECTED("Rejected"),
-	
-	REQUEST_RESTART_APPROVAL("Approval");
+	REJECTED("Rejected");
 
 	private final String displayValue;
 
@@ -56,9 +54,6 @@ public enum ApplicationFormStatus {
 	    }
 	    if (StringUtils.containsIgnoreCase(ApplicationFormStatus.REJECTED.displayValue, searchStr)) {
 	        return REJECTED;
-	    }
-	    if (StringUtils.containsIgnoreCase(ApplicationFormStatus.REQUEST_RESTART_APPROVAL.displayValue, searchStr)) {
-	        return REQUEST_RESTART_APPROVAL;
 	    }
 	    return null;
 	}

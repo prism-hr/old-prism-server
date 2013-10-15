@@ -77,7 +77,7 @@ public class TimelineService {
 		if(((StateChangeEvent) event).getNewStatus().equals(ApplicationFormStatus.APPROVAL)){
 		    Event firstApprovalEvent = getFirstApprovalEvent(applicationForm);
 			if(firstApprovalEvent != null && !event.getId().equals(firstApprovalEvent.getId())) {
-				phase.setMessageCode("timeline.phase.approval.restart");
+				phase.setMessageCode("timeline.phase.approval");
 			}
 		}
 		return phase;

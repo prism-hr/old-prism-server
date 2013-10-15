@@ -139,11 +139,12 @@ public class ApprovalControllerTest {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
 
+        ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");        
+        
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap));
         EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
 
-        ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
         assertNull(approvalRound.getId());
         assertEquals(2, approvalRound.getSupervisors().size());
         assertTrue(approvalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, suprvisorTwo)));

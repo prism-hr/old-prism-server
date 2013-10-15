@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ConfirmSupervisionDTOValidator;
 
@@ -44,6 +45,8 @@ public class ConfirmSupervisionControllerTest {
     private ActionsProvider actionsProviderMock;
 
     private ApplicationDescriptorProvider applicationDescriptorProviderMock;
+    
+    private ProgramInstanceService programInstanceServiceMock;
 
     @Test
     public void testLoadConfirmSupervisionPage() {
@@ -120,9 +123,9 @@ public class ConfirmSupervisionControllerTest {
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
+        programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock, datePropertyEditorMock,
-                        confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock);
-
+                        confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock,
+                        programInstanceServiceMock);
     }
-
 }

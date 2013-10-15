@@ -2,7 +2,6 @@ $(document).ready(function() {
     
     addToolTips();
     addCounter();
-    showFirstQualificationEntryOrExplanationArea();
     
     // --------------------------------------------------------------------------------
     // Close button.
@@ -10,6 +9,7 @@ $(document).ready(function() {
 	$('#qualificationCloseButton').click(function(){
 		$('#qualificationsSection').find('*[id*=qualification_]:visible').hide();
 		$('html,body').animate({ scrollTop: $('#qualifications-H2').offset().top }, 'fast');
+		$('#explanationArea').show();
 	});
 	
     // -------------------------------------------------------------------------------
@@ -26,7 +26,6 @@ $(document).ready(function() {
     // SHOW SELECTED QUALIFICATION
     // --------------------------------------------------------------------------------
     $('a[name="showQualificationLink"]').on("click", function() {
-    	$("#explanationText").val("");
     	$('#explanationArea').hide();
         $('a[name="showQualificationLink"]').each(function() {
             $("#" + $(this).attr("toggles")).hide();
@@ -35,13 +34,22 @@ $(document).ready(function() {
     });
     
     // --------------------------------------------------------------------------------
-    // ONLY ALLOW A MAXIMUM OF 2 QUALIFICATIONS TO BE SELECTED AT THE SAME TIME
+    // TOGGLE CONTROLS BASED UPON NUMBER OF QUALIFICATIONS SELECTED
     // --------------------------------------------------------------------------------
     $('input[name="qualificationSendToUcl"]:checkbox').on("change", function() {
         var maxAllowed = 2;
         var checked = $('input[name="qualificationSendToUcl"]:checked').size();
-        if (checked > maxAllowed) {
-            $(this).attr("checked", false);
+        if (checked == 0) {
+            $('#explanationTextLabel').removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        	$('#explanationText').prop('disabled', false);
+        }
+        else {
+            $('#explanationTextLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+        	$('#explanationText').val("");
+        	$('#explanationText').prop('disabled', 'disabled');
+            if (checked > maxAllowed) {
+                $(this).attr("checked", false);
+            }
         }
     });
 
@@ -54,27 +62,6 @@ $(document).ready(function() {
     
 });
 
-function showFirstQualificationEntryOrExplanationArea() {
-	
-	if($('#showExplanationText').val() == 'yes' || $("#explanationText").val() != '') {
-		$('#explanationArea').show();
-		return false;
-	}
-	
-	qualifications = $('input[name="qualificationSendToUcl"]:checkbox');
-	for(var i = 0 ; i < qualifications.length ; i++){
-		qualificationCheckbox = qualifications[i];
-		
-		if(!$(qualificationCheckbox).attr("disabled")){
-			var qualificationId = $(qualificationCheckbox).attr("value");
-			//$('#qualification_' + qualificationId).show();
-			return false;
-		}
-	}
-    
-	$('#explanationArea').show();
-}
-
 function postQualificationsData() {
     $('#ajaxloader').show();
     var qualificationsSendToPortico = collectQualificationsSendToPortico();
@@ -84,7 +71,7 @@ function postQualificationsData() {
         cacheBreaker: new Date().getTime()
     };
     
-    if($('#explanationArea').is(':visible')){
+    if($.trim($("#explanationText").val()).length > 0){
     	data.emptyQualificationsExplanation = $("#explanationText").val();
     }
     $.ajax({
@@ -109,7 +96,6 @@ function postQualificationsData() {
 
 function collectQualificationsSendToPortico(){
     qualifications = new Array();
-    
     $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {

@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OfferRecommendedCommentValidator;
 
@@ -51,6 +52,8 @@ public class OfferRecommendationControllerTest {
     private OfferRecommendedCommentValidator offerRecommendedCommentValidatorMock;
 
     private DatePropertyEditor datePropertyEditorMock;
+
+	private ProgramInstanceService programInstanceServiceMock;
 
     @Test
     public void shouldGetOfferRecommendationPage() {
@@ -165,9 +168,9 @@ public class OfferRecommendationControllerTest {
         approvalServiceMock = EasyMock.createMock(ApprovalService.class);
         offerRecommendedCommentValidatorMock = EasyMock.createMock(OfferRecommendedCommentValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-
+        programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         controller = new OfferRecommendationController(applicationsServiceMock, userServiceMock, actionsProviderMock, accessServiceMock,
-                applicationDescriptorProviderMock, approvalServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock);
+                applicationDescriptorProviderMock, approvalServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock,
+                programInstanceServiceMock);
     }
-
 }

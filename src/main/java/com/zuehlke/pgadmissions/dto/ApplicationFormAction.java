@@ -285,7 +285,8 @@ public enum ApplicationFormAction {
         @Override
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (nextStatus == ApplicationFormStatus.APPROVED && 
-            	user.hasAdminRightsOnApplication(application)) {
+            	user.isInRole("SUPERADMINISTRATOR") ||
+            	user.isApproverInProgram(application.getProgram())) {
                 actions.addAction(CONFIRM_OFFER_RECOMMENDATION);
                 actions.addActionRequiringAttention(CONFIRM_OFFER_RECOMMENDATION);
             }

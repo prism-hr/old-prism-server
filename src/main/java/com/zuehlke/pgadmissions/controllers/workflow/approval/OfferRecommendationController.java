@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OfferRecommendedCommentValidator;
 
@@ -56,15 +57,18 @@ public class OfferRecommendationController {
     private final OfferRecommendedCommentValidator offerRecommendedCommentValidator;
 
     private final DatePropertyEditor datePropertyEditor;
+    
+    private final ProgramInstanceService programInstanceService;
 
     public OfferRecommendationController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
             ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider, ApprovalService approvalService,
-            OfferRecommendedCommentValidator offerRecommendedCommentValidator, DatePropertyEditor datePropertyEditor) {
+            OfferRecommendedCommentValidator offerRecommendedCommentValidator, DatePropertyEditor datePropertyEditor,
+            ProgramInstanceService programInstanceService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.accessService = accessService;
@@ -73,6 +77,7 @@ public class OfferRecommendationController {
         this.approvalService = approvalService;
         this.offerRecommendedCommentValidator = offerRecommendedCommentValidator;
         this.datePropertyEditor = datePropertyEditor;
+        this.programInstanceService = programInstanceService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -86,6 +91,14 @@ public class OfferRecommendationController {
         if (approvalRound != null) {
             offerRecommendedComment.setProjectTitle(approvalRound.getProjectTitle());
             offerRecommendedComment.setProjectAbstract(approvalRound.getProjectAbstract());
+            
+            Date startDate = approvalRound.getRecommendedStartDate();
+            
+            if (startDate.before(programInstanceService.getEarliestPossibleStartDate(application))) {
+            	startDate = programInstanceService.getEarliestPossibleStartDate(application);
+            }
+            
+            offerRecommendedComment.setRecommendedStartDate(startDate);
             offerRecommendedComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
             offerRecommendedComment.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
             offerRecommendedComment.setRecommendedConditions(approvalRound.getRecommendedConditions());

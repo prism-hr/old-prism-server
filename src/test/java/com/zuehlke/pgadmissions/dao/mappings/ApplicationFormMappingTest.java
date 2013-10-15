@@ -88,7 +88,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
-        application.setPendingApprovalRestart(true);
         assertNotNull(application.getPersonalDetails());
         assertNull(application.getId());
 
@@ -116,7 +115,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertNull(application.getPersonalDetails().getId());
         assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
-        assertTrue(application.isPendingApprovalRestart());
     }
 
     @Test
@@ -455,7 +453,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
-        application.setPendingApprovalRestart(true);
         assertNotNull(application.getPersonalDetails());
         assertNull(application.getId());
 
@@ -487,7 +484,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertNull(application.getPersonalDetails().getId());
         assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
-        assertTrue(application.isPendingApprovalRestart());
     }
 
     @Before

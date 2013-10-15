@@ -393,7 +393,6 @@ public class ApplicationFormBuilder {
 
         application.setRegistryUsersDueNotification(registryUsersNotified);
         application.setAdminRequestedRegistry(adminRequestedRegistry);
-        application.setPendingApprovalRestart(pendingApprovalRestart);
         application.setApproverRequestedRestart(approverRequestedRestart);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
 

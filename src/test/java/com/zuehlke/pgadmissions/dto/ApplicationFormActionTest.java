@@ -1230,7 +1230,6 @@ public class ApplicationFormActionTest {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
 
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
         EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
 
         EasyMock.replay(userMock, applicationMock);
@@ -1247,7 +1246,6 @@ public class ApplicationFormActionTest {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
 
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
         EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
 
         EasyMock.replay(userMock, applicationMock);
@@ -1263,7 +1261,6 @@ public class ApplicationFormActionTest {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
 
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
         EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
 
         EasyMock.replay(userMock, applicationMock);
@@ -1281,7 +1278,6 @@ public class ApplicationFormActionTest {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
 
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
         EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
 
         EasyMock.replay(userMock, applicationMock);
@@ -1297,7 +1293,6 @@ public class ApplicationFormActionTest {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
 
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
         EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
 
         EasyMock.replay(userMock, applicationMock);

@@ -533,7 +533,7 @@ public class ApplicationFormTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
                 .qualification(qualification1, qualification2).build();
 
-        assertTrue(applicationForm.isCompleteForSendingToPortico(false));
+        assertTrue(applicationForm.isCompleteForSendingToPortico());
     }
 
     @Test
@@ -557,7 +557,7 @@ public class ApplicationFormTest {
                 .build();
 
         assertTrue("Two reference comments have been selected for sending to Portico but function returned false.",
-                applicationForm.isCompleteForSendingToPortico(true));
+                applicationForm.isCompleteForSendingToPortico());
     }
 
     @Test
@@ -584,7 +584,7 @@ public class ApplicationFormTest {
                 .qualification(qualification1).build();
 
         assertFalse("Less than two reference comments have been selected for sending to Portico but function returned true.",
-                applicationForm.isCompleteForSendingToPortico(false));
+                applicationForm.isCompleteForSendingToPortico());
     }
 
     @Test
@@ -607,7 +607,7 @@ public class ApplicationFormTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
                 .build();
 
-        assertFalse(applicationForm.isCompleteForSendingToPortico(false));
+        assertFalse(applicationForm.isCompleteForSendingToPortico());
     }
 
     @Test
@@ -636,7 +636,7 @@ public class ApplicationFormTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
                 .qualification(qualification1, qualification2, qualification3).build();
 
-        assertFalse(applicationForm.isCompleteForSendingToPortico(false));
+        assertFalse(applicationForm.isCompleteForSendingToPortico());
     }
 
     @Test

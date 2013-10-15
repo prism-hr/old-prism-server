@@ -207,35 +207,18 @@ public class ApprovalController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
-        modelMap.addAttribute("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
+        modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
         
-        if (!applicationForm.isCompleteForSendingToPortico(false)
-        	&& applicationForm.getLatestApprovalRound() != null) { 
-        	
-        	SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
-        	
-        	List<Integer> qualificationsToSend = new ArrayList<Integer>();
-        	List<Integer> referencesToSend = new ArrayList<Integer>();
-        	
-        	List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
-        	List<Referee> references = applicationForm.getRefereessToSendToPortico();
-        	
-        	for (int i = 0; i < qualifications.size(); i++) {
-        		qualificationsToSend.add(qualifications.get(i).getId());
-        	}
-        	
-        	for (int i = 0; i < references.size(); i++) {
-        		referencesToSend.add(references.get(i).getId());
-        	}
-        	
-        	porticoData.setQualificationsSendToPortico(qualificationsToSend);
-        	porticoData.setRefereesSendToPortico(referencesToSend);
-        	porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
-        	
-        	modelMap.put("sendToPorticoData", porticoData);
-        	
+        if (applicationForm.getLatestApprovalRound() != null) {
+	        if (!applicationForm.isCompleteForSendingToPortico()) {
+		        	SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();	
+		        	porticoData.setQualificationsSendToPortico(applicationForm.getQualicationsToSendToPorticoIds());
+		        	porticoData.setRefereesSendToPortico(applicationForm.getRefereesToSendToPorticoIds());
+		        	porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
+		        	modelMap.put("sendToPorticoData", porticoData);
+	        }
+
         }
-        
         return APPROVAL_PAGE;
     }
 
@@ -304,36 +287,55 @@ public class ApprovalController {
         ApprovalRound approvalRound = new ApprovalRound();
         ApplicationForm applicationForm = getApplicationForm((String) applicationId);
         ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+        
         Project project = applicationForm.getProject();
         boolean applicationHasProject = project != null;
-        if (applicationHasProject) {
-            approvalRound.setProjectTitle(project.getAdvert().getTitle());
-            approvalRound.setProjectAbstract(project.getAdvert().getDescription());
-            approvalRound.setProjectDescriptionAvailable(true);
-            approvalRound.setProjectAcceptingApplications(project.getAdvert().getActive());
-
+        
+        Date startDate = applicationForm.getProgrammeDetails().getStartDate();
+        
+        if (latestApprovalRound != null) {	
+    	   
+        	for (Supervisor supervisor : latestApprovalRound.getSupervisors()) {
+        		if (!supervisor.hasDeclinedSupervision()) {
+        			approvalRound.getSupervisors().add(supervisor);
+        		}
+        	}
+        	
+        	if (latestApprovalRound.getProjectDescriptionAvailable()) {
+        		approvalRound.setProjectDescriptionAvailable(true);
+	            approvalRound.setProjectTitle(latestApprovalRound.getProjectTitle());
+	            approvalRound.setProjectAbstract(latestApprovalRound.getProjectAbstract());
+	            approvalRound.setRecommendedConditionsAvailable(latestApprovalRound.getRecommendedConditionsAvailable());
+	            approvalRound.setRecommendedConditions(latestApprovalRound.getRecommendedConditions());
+        	}
+        	
+        	startDate = latestApprovalRound.getRecommendedStartDate();
+        	
         }
-        if (latestApprovalRound != null) {
-            // add supervisors who have not declined supervision
-            for (Supervisor supervisor : latestApprovalRound.getSupervisors()) {
-                if (!supervisor.hasDeclinedSupervision()) {
-                    approvalRound.getSupervisors().add(supervisor);
-                }
-            }
-        } else if (applicationHasProject) {
+        
+        else if (applicationHasProject) {
+        	
             addUserAsSupervisorInApprovalRound(project.getPrimarySupervisor(), approvalRound, true);
             addUserAsSupervisorInApprovalRound(project.getSecondarySupervisor(), approvalRound, false);
+        	
+        	approvalRound.setProjectDescriptionAvailable(true);
+	        approvalRound.setProjectTitle(project.getAdvert().getTitle());
+	        approvalRound.setProjectAbstract(project.getAdvert().getDescription());
+	        approvalRound.setProjectAcceptingApplications(project.getAdvert().getActive());
+
+	    }
+        
+        if (startDate.before(programInstanceService.getEarliestPossibleStartDate(applicationForm))) {
+        	startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
         }
+        
+        approvalRound.setRecommendedStartDate(startDate);
+        
         List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
         for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
             addUserAsSupervisorInApprovalRound(registeredUser, approvalRound, false);
         }
 
-        Date startDate = applicationForm.getProgrammeDetails().getStartDate();
-        if (!programInstanceService.isPrefferedStartDateWithinBounds(applicationForm)) {
-            startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
-        }
-        approvalRound.setRecommendedStartDate(startDate);
         return approvalRound;
     }
 
@@ -400,11 +402,7 @@ public class ApprovalController {
             return SUPERVISORS_SECTION;
         }
 
-        if (applicationForm.isPendingApprovalRestart()) {
-            applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
-        } else {
-            applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        }
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));        
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
         sessionStatus.setComplete();

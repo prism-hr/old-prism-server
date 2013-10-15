@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -155,7 +154,6 @@ public class ApprovalService {
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
-        form.setPendingApprovalRestart(false);
         form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
 
         approvalRound.setApplication(form);
@@ -170,7 +168,6 @@ public class ApprovalService {
         boolean sendReferenceRequest = form.getStatus() == ApplicationFormStatus.VALIDATION;
 
         form.setStatus(ApplicationFormStatus.APPROVAL);
-        form.setPendingApprovalRestart(false);
         resetNotificationRecords(form);
 
         applicationDAO.save(form);
@@ -213,18 +210,6 @@ public class ApprovalService {
                 NotificationType.APPROVAL_NOTIFICATION);
     }
 
-    public void requestApprovalRestart(ApplicationForm form, RegisteredUser user, Comment comment) {
-        form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER, NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
-        restartApprovalStage(form, user, comment);
-    }
-
-    private void restartApprovalStage(ApplicationForm application, RegisteredUser approver, Comment comment) {
-        commentDAO.save(comment);
-        application.setPendingApprovalRestart(true);
-        application.setApproverRequestedRestart(approver);
-        applicationDAO.save(application);
-    }
-
     private void checkApplicationStatus(ApplicationForm form) {
         ApplicationFormStatus status = form.getStatus();
         switch (status) {
@@ -239,8 +224,7 @@ public class ApprovalService {
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form, ApprovalRound approvalRound) {
-        boolean explanationProvided = StringUtils.isNotBlank(approvalRound.getMissingQualificationExplanation());
-        if (!form.isCompleteForSendingToPortico(explanationProvided)) {
+        if (!form.isCompleteForSendingToPortico()) {
             throw new IllegalStateException("Send to portico data is not valid");
         }
     }
@@ -264,7 +248,6 @@ public class ApprovalService {
         }
 
         form.setStatus(ApplicationFormStatus.APPROVED);
-        form.setPendingApprovalRestart(false);
         form.setApprover(userService.getCurrentUser());
         form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         sendNotificationToApplicant(form);

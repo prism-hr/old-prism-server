@@ -898,14 +898,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return this;
     }
 
-    public boolean isPendingApprovalRestart() {
-        return pendingApprovalRestart;
-    }
-
-    public void setPendingApprovalRestart(boolean pendingApprovalRestart) {
-        this.pendingApprovalRestart = pendingApprovalRestart;
-    }
-
     public RegisteredUser getApproverRequestedRestart() {
         return approverRequestedRestart;
     }
@@ -1018,6 +1010,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
+    
+    public List<Integer> getQualicationsToSendToPorticoIds() {
+    	List<Integer> qualificationIdsToSend = new ArrayList<Integer>();
+    	for (int i = 0; i < getQualifications().size(); i++) {
+    		qualificationIdsToSend.add(getQualifications().get(i).getId());
+    	}
+    	return qualificationIdsToSend;
+    }
 
     public List<ReferenceComment> getReferencesToSendToPortico() {
         List<ReferenceComment> result = new ArrayList<ReferenceComment>(2);
@@ -1038,24 +1038,27 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
+    
+    public List<Integer> getRefereesToSendToPorticoIds() {
+    	List<Integer> refereeIdsToSend = new ArrayList<Integer>();
+    	for (int i = 0; i < getReferees().size(); i++) {
+    		refereeIdsToSend.add(getReferees().get(i).getId());
+    	}
+        return refereeIdsToSend;
+    }
 
-    public boolean isCompleteForSendingToPortico(boolean withMissingQualificationExplanation) {
+    public boolean isCompleteForSendingToPortico() {
         int exactNumberOfReferences = 2;
         int maxNumberOfQualifications = 2;
 
-        if (getReferencesToSendToPortico().size() != exactNumberOfReferences) {
-            return false;
+        if (getReferencesToSendToPortico().size() == exactNumberOfReferences &&
+        	((getQualificationsToSendToPortico().size() > 0 &&
+        	getQualificationsToSendToPortico().size() <= maxNumberOfQualifications) ||
+        	getLatestApprovalRound().getMissingQualificationExplanation().length() > 0)) {
+            return true;
         }
-
-        if (getQualificationsToSendToPortico().size() > maxNumberOfQualifications) {
-            return false;
-        }
-
-        if (getQualificationsToSendToPortico().isEmpty() && !withMissingQualificationExplanation) {
-            return false;
-        }
-
-        return true;
+        
+        return false;
     }
 
     public Boolean getWithdrawnBeforeSubmit() {

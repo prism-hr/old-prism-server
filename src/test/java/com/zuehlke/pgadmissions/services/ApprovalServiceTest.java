@@ -193,7 +193,6 @@ public class ApprovalServiceTest {
         assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getStatus());
         assertEquals(1, applicationForm.getEvents().size());
         assertEquals(event, applicationForm.getEvents().get(0));
-        assertFalse(applicationForm.isPendingApprovalRestart());
         EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
         assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION));
         assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER));
@@ -466,7 +465,6 @@ public class ApprovalServiceTest {
 
         assertFalse(primarySupervisor.getConfirmedSupervision());
         assertEquals("reason", primarySupervisor.getDeclinedSupervisionReason());
-        assertTrue(applicationForm.isPendingApprovalRestart());
         assertEquals(user1, applicationForm.getApproverRequestedRestart());
 
         SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();
@@ -487,24 +485,6 @@ public class ApprovalServiceTest {
         EasyMock.replay(approvalRoundDAOMock);
         approvalService.save(approvalRound);
         EasyMock.verify(approvalRoundDAOMock);
-    }
-
-    @Test
-    public void shouldSaveRequestRestardComment() {
-        RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-                .role(new RoleBuilder().id(Authority.APPROVER).build())//
-                .build();
-        Program program = new ProgramBuilder().id(321).title("lala").approver(approver).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.APPROVAL).id(1).build();
-
-        Comment comment = new CommentBuilder().id(1).build();
-        commentDAOMock.save(comment);
-        applicationFormDAOMock.save(applicationForm);
-        EasyMock.replay(commentDAOMock, applicationFormDAOMock);
-        approvalService.requestApprovalRestart(applicationForm, approver, comment);
-        EasyMock.verify(commentDAOMock, applicationFormDAOMock);
-        assertTrue(applicationForm.isPendingApprovalRestart());
-        assertEquals(approver, applicationForm.getApproverRequestedRestart());
     }
 
     @Test
@@ -543,40 +523,6 @@ public class ApprovalServiceTest {
         assertEquals("", offerRecommendedComment.getComment());
         assertEquals(CommentType.OFFER_RECOMMENDED_COMMENT, offerRecommendedComment.getType());
         assertSame(currentUser, offerRecommendedComment.getUser());
-    }
-    
-    @Test
-    public void shouldResetIsPendingApprovalRestartFlagWhenApproved(){
-        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.replay(userServiceMock);
-
-        Date startDate = new Date();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
-        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
-                .enabled(true).studyOption("1", "full").build();
-        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
-                .programmeDetails(programmeDetails).pendingApprovalRestart(true).build();
-        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
-
-        applicationFormDAOMock.save(application);
-        commentDAOMock.save(offerRecommendedComment);
-
-        StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
-        EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
-        
-        EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
-        approvalService.moveToApproved(application, offerRecommendedComment);
-        EasyMock.verify(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
-        
-        assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
-        assertEquals(false, application.isPendingApprovalRestart());
-        assertEquals(currentUser, application.getApprover());
-
-        assertEquals(1, application.getEvents().size());
-        assertEquals(event, application.getEvents().get(0));
     }
 
     @Test

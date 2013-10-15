@@ -76,7 +76,7 @@ public class ProgramInstanceService {
         ProgrammeDetails details = applicationForm.getProgrammeDetails();
         Date startDate = details.getStartDate();
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
-            boolean afterStartDate = !startDate.before(instance.getApplicationStartDate());
+            boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());

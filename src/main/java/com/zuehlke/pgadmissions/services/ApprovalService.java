@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -118,22 +117,11 @@ public class ApprovalService {
 
         if (BooleanUtils.isFalse(confirmed)) {
             supervisor.setDeclinedSupervisionReason(confirmSupervisionDTO.getDeclinedSupervisionReason());
-            RequestRestartComment restartComment = createRequestRestartComment(form, supervisor);
-            restartApprovalStage(form, supervisor.getUser(), restartComment);
+            form.setDueDate(new Date());
         }
 
         SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, form, supervisor);
         commentDAO.save(supervisionConfirmationComment);
-    }
-
-    private RequestRestartComment createRequestRestartComment(ApplicationForm form, Supervisor supervisor) {
-        RequestRestartComment restartComment = new RequestRestartComment();
-        restartComment.setApplication(form);
-        restartComment.setDate(new Date());
-        restartComment.setUser(supervisor.getUser());
-        restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser()
-                .getFirstName(), supervisor.getUser().getLastName()));
-        return restartComment;
     }
 
     private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm application,

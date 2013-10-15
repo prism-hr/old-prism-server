@@ -37,9 +37,9 @@ public class StateTransitionService {
         case APPROVAL:
             nextStatuses.add(ApplicationFormStatus.REVIEW);
             nextStatuses.add(ApplicationFormStatus.INTERVIEW);
+            nextStatuses.add(ApplicationFormStatus.APPROVAL);
             nextStatuses.add(ApplicationFormStatus.APPROVED);
             nextStatuses.add(ApplicationFormStatus.REJECTED);
-            nextStatuses.add(ApplicationFormStatus.REQUEST_RESTART_APPROVAL);
             break;
         case APPROVED:
             break;
@@ -50,8 +50,6 @@ public class StateTransitionService {
             nextStatuses.add(ApplicationFormStatus.REJECTED);
             break;
         case REJECTED:
-            break;
-        case REQUEST_RESTART_APPROVAL:
             break;
         case REVIEW:
             nextStatuses.add(ApplicationFormStatus.REVIEW);

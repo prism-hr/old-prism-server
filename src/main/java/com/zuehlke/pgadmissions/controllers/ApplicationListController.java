@@ -208,7 +208,7 @@ public class ApplicationListController {
     public List<ApplicationFormStatus> getApplicationStatusValues() {
         List<ApplicationFormStatus> statuses = Lists.newArrayListWithCapacity(ApplicationFormStatus.values().length);
         for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
-            if (status != ApplicationFormStatus.UNSUBMITTED && status != ApplicationFormStatus.REQUEST_RESTART_APPROVAL) {
+            if (status != ApplicationFormStatus.UNSUBMITTED) {
                 statuses.add(status);
             }
         }

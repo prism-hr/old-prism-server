@@ -100,14 +100,6 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfApplicationIsInRequestRestartApprovalState() {
-        applicationForm.setStatus(ApplicationFormStatus.REQUEST_RESTART_APPROVAL);
-        exception.expect(IllegalArgumentException.class);
-        exception.expectMessage(CoreMatchers.equalTo("Application is in wrong state " + ApplicationFormStatus.REQUEST_RESTART_APPROVAL.displayValue()));
-        requestBuilder.applicationForm(applicationForm).build();
-    }
-
-    @Test
     public void shouldThrowExceptionIfApplicationIsInRequestRestartInterviewState() {
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         exception.expect(IllegalArgumentException.class);

@@ -13,8 +13,6 @@
         <#include "/private/staff/supervisors/components/qualifications_table.ftl"/>
         
         <@spring.bind "sendToPorticoData.qualificationsSendToPortico" />
-
-        <input type="hidden" name="showExplanationText" id="showExplanationText" value="${spring.status.errorCodes?seq_contains("portico.submit.explanation.required")?string("yes", "no")}" />
         
         <#if spring.status.errorCodes?seq_contains("portico.submit.explanation.required")>
             <div class="alert alert-error">
@@ -73,7 +71,7 @@
 
         <#if hasQualifications> 
 
-        <#include "/private/staff/supervisors/components/qualifications_edit_view_stack.ftl"/>
+        	<#include "/private/staff/supervisors/components/qualifications_edit_view_stack.ftl"/>
         
         <#else>
             <div class="row-group">
@@ -87,7 +85,10 @@
             <button name="qualificationClearButton" type="button" id="qualificationClearButton" class="btn">Clear</button>
             <button type="button" id="qualificationCloseButton" class="btn">Close</button>
             <button type="button" id="qualificationSaveButton" class="btn btn-primary">Save</button>
-        </div> 
+        </div>
+        
+       	<input type="hidden" name="showExplanationText" id="showExplanationText" value="${spring.status.errorCodes?seq_contains("portico.submit.explanation.required")?string("yes", "no")}" />
+  
   </form>
 </div>
 

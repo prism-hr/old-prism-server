@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RequestRestartCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
@@ -44,19 +43,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class ApplicationFormTest {
-
-    @Test
-    public void shouldReturnLatestCommentOfTypeRequestRestart() {
-        Date now = new Date();
-        Date yesterDay = DateUtils.addDays(now, -1);
-        Date twoDaysAgo = DateUtils.addDays(now, -2);
-
-        RequestRestartComment commentOne = new RequestRestartCommentBuilder().id(1).date(twoDaysAgo).build();
-        RequestRestartComment commentTwo = new RequestRestartCommentBuilder().id(3).date(yesterDay).build();
-        Comment commentThree = new CommentBuilder().date(now).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().comments(commentOne, commentTwo, commentThree).build();
-        assertEquals(commentTwo, applicationForm.getLatestsRequestRestartComment());
-    }
 
     @Test
     public void shouldReturnReviewableFalseIfApplicationFormRejected() {

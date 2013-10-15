@@ -22,8 +22,6 @@ import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_INTERVI
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_SUPERVISION;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.EMAIL_APPLICANT;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.REVISE_APPROVAL;
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.REVISE_APPROVAL_AS_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.VIEW;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.VIEW_EDIT;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.WITHDRAW;
@@ -1081,68 +1079,6 @@ public class ApplicationFormActionTest {
     }
 
     @Test
-    public void shouldAddReviseApprovalAction() {
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
-        EasyMock.expect(applicationMock.isInApprovalStage()).andReturn(true);
-        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, true, REVISE_APPROVAL);
-        asssertActionsRequiringAttention(actionsDefinitions, REVISE_APPROVAL);
-    }
-
-    @Test
-    public void shouldNotAddReviseApprovalActionIfNoAdminRights() {
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
-        EasyMock.expect(applicationMock.isInApprovalStage()).andReturn(true);
-        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false);
-    }
-
-    @Test
-    public void shouldNotAddReviseApprovalActionIfNextStatusSpecified() {
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
-        EasyMock.expect(applicationMock.isInApprovalStage()).andReturn(true);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, ApplicationFormStatus.REJECTED);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false);
-    }
-
-    @Test
-    public void shouldNotAddReviseApprovalActionIfNotInApprovalStage() {
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
-        EasyMock.expect(applicationMock.isInApprovalStage()).andReturn(false);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false);
-    }
-
-    @Test
-    public void shouldNotAddReviseApprovalActionIfNoApprovalRestartNoPending() {
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false);
-    }
-
-    @Test
     public void shouldAddApproveActionIfApprover() {
         Program program = new Program();
         ApprovalRound approvalRound = new ApprovalRound();
@@ -1283,81 +1219,6 @@ public class ApplicationFormActionTest {
     public void shouldNotAddAssignSupervisorsActionIfNextStatusNotApproval() {
         EasyMock.replay(userMock, applicationMock);
         ASSIGN_SUPERVISORS.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false);
-    }
-
-    @Test
-    public void shouldAddReviseApprovalAsAdministratorAction() {
-        Program program = new Program();
-
-        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
-        EasyMock.expect(applicationMock.getProgram()).andReturn(program).anyTimes();
-        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
-        EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
-        EasyMock.expect(userMock.isNotInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false, REVISE_APPROVAL_AS_ADMINISTRATOR);
-    }
-
-    @Test
-    public void shouldNotAddReviseApprovalAsAdministratorActionIfSuperadministrator() {
-        Program program = new Program();
-
-        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
-        EasyMock.expect(applicationMock.getProgram()).andReturn(program).anyTimes();
-        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
-        EasyMock.expect(userMock.isNotInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
-        EasyMock.expect(userMock.isNotInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false);
-    }
-
-    @Test
-    public void shouldNotAddReviseApprovalAsAdministratorActionIfNotProgramAdministrator() {
-        Program program = new Program();
-
-        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(false);
-        EasyMock.expect(applicationMock.getProgram()).andReturn(program).anyTimes();
-        EasyMock.expect(userMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false);
-    }
-
-    @Test
-    public void shouldNotAddReviseApprovalAsAdministratorActionIfPendingApprovalRestart() {
-        EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
-        EasyMock.expect(applicationMock.isPendingApprovalRestart()).andReturn(true);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
-        EasyMock.verify(userMock, applicationMock);
-
-        assertActionsDefinitions(actionsDefinitions, false);
-    }
-
-    @Test
-    public void shouldNotAddReviseApprovalAsAdministratorActionIfStatusNotApproval() {
-        EasyMock.expect(applicationMock.getStatus()).andReturn(VALIDATION);
-
-        EasyMock.replay(userMock, applicationMock);
-        REVISE_APPROVAL_AS_ADMINISTRATOR.applyAction(actionsDefinitions, userMock, applicationMock, null);
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, false);

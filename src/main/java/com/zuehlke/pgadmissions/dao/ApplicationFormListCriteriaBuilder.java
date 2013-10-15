@@ -220,10 +220,9 @@ public class ApplicationFormListCriteriaBuilder {
                 case APPLICATION_STATUS:
                     ApplicationFormStatus status = ApplicationFormStatus.convert(term);
                     if (status != null) {
-                        if (status == ApplicationFormStatus.APPROVAL || status == ApplicationFormStatus.REQUEST_RESTART_APPROVAL) {
+                        if (status == ApplicationFormStatus.APPROVAL) {
                             newCriterion = Restrictions.disjunction()
-                                    .add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
-                                    .add(Restrictions.eq("status", ApplicationFormStatus.REQUEST_RESTART_APPROVAL));
+                                    .add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL));
                         } else {
                             newCriterion = Restrictions.eq("status", status);
                         }

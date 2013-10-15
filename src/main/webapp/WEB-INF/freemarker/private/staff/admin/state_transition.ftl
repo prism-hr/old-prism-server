@@ -186,22 +186,32 @@
 													<select class="max" name="status" id="status">
 														<option value="">Select...</option>
 														<#list stati as status>
-															<#if applicationForm.nextStatus??>
-																<#if applicationForm.nextStatus != status ||
-																	user.hasAdminRightsOnApplication(applicationForm) &&
-																	status == 'INTERVIEW'>
+															<#if status == "APPROVED" && 
+																user.isInRole("SUPERADMINISTRATOR") ||
+																user.isApproverInProgram(applicationForm.program)>
+																<option value="${status}" 
+																<#if comment.nextStatus?? && comment.nextStatus == status> 
+																	selected="selected" 
+																</#if>
+																>${status.displayValue()}</option>
+															<#else>
+																<#if applicationForm.nextStatus??>
+																	<#if applicationForm.nextStatus != status ||
+																		user.hasAdminRightsOnApplication(applicationForm) &&
+																		status == 'INTERVIEW'>
+																		<option value="${status}" 
+																		<#if comment.nextStatus?? && comment.nextStatus == status> 
+																			selected="selected" 
+																		</#if>
+																		>${status.displayValue()}</option>
+																	</#if>
+																<#else>
 																	<option value="${status}" 
 																	<#if comment.nextStatus?? && comment.nextStatus == status> 
 																		selected="selected" 
 																	</#if>
 																	>${status.displayValue()}</option>
 																</#if>
-															<#else>
-																<option value="${status}" 
-																	<#if comment.nextStatus?? && comment.nextStatus == status> 
-																		selected="selected" 
-																	</#if>
-																	>${status.displayValue()}</option>
 															</#if>
 														</#list>
 													</select>	

@@ -44,13 +44,7 @@ $(document).ready(function() {
     // ------------------------------------------------------------------------------
     $('#status').change(function() {
         refreshControls();
-
-        if ($('#status').val() == 'REQUEST_RESTART_APPROVAL') {
-            $('#stateChangeForm').attr('action', '/pgadmissions/approval/submitRequestRestart');
-        } else {
-            $('#stateChangeForm').attr('action', originalPostUrl);
-        }
-
+        $('#stateChangeForm').attr('action', originalPostUrl);
     });
 
     $('input:radio[name=switch]').change(function() {

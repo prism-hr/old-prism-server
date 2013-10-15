@@ -1021,9 +1021,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public List<ReferenceComment> getReferencesToSendToPortico() {
         List<ReferenceComment> result = new ArrayList<ReferenceComment>(2);
-        for (Referee refree : getReferees()) {
-            if (BooleanUtils.isTrue(refree.getSendToUCL())) {
-                result.add(refree.getReference());
+        for (Referee referee : getReferees()) {
+            if (BooleanUtils.isTrue(referee.getSendToUCL())) {
+                result.add(referee.getReference());
             }
         }
         return result;
@@ -1031,9 +1031,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public List<Referee> getRefereessToSendToPortico() {
         List<Referee> result = new ArrayList<Referee>(2);
-        for (Referee refree : getReferees()) {
-            if (BooleanUtils.isTrue(refree.getSendToUCL())) {
-                result.add(refree);
+        for (Referee referee : getReferees()) {
+            if (BooleanUtils.isTrue(referee.getSendToUCL())) {
+                result.add(referee);
             }
         }
         return result;

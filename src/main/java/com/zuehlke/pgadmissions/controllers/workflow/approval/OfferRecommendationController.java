@@ -94,7 +94,7 @@ public class OfferRecommendationController {
             
             Date startDate = approvalRound.getRecommendedStartDate();
             
-            if (startDate.before(programInstanceService.getEarliestPossibleStartDate(application))) {
+            if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
             	startDate = programInstanceService.getEarliestPossibleStartDate(application);
             }
             

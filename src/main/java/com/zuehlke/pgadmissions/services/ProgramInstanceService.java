@@ -73,13 +73,19 @@ public class ProgramInstanceService {
     }
 
     public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm) {
-        ProgrammeDetails details = applicationForm.getProgrammeDetails();
-        Date startDate = details.getStartDate();
+        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgrammeDetails(), applicationForm.getProgrammeDetails().getStartDate());
+    }
+    
+    public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm, Date startDate) {
+    	return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgrammeDetails(), startDate);
+    }
+    
+    private boolean isPreferredStartDateWithinBounds(ApplicationForm applicationForm, ProgrammeDetails programDetails, Date startDate) {
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
-            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
+            boolean sameStudyOption = programDetails.getStudyOption().equals(instance.getStudyOption());
+            boolean sameStudyOptionCode = programDetails.getStudyOptionCode().equals(instance.getStudyOptionCode());
             if (applicationForm.getProgram().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
                 return true;
             }

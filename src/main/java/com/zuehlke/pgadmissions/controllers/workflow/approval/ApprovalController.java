@@ -325,7 +325,7 @@ public class ApprovalController {
 
 	    }
         
-        if (startDate.before(programInstanceService.getEarliestPossibleStartDate(applicationForm))) {
+        if (!programInstanceService.isPrefferedStartDateWithinBounds(applicationForm, startDate)) {
         	startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
         }
         

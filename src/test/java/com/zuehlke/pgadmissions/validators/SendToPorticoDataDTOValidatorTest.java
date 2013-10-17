@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
@@ -40,6 +41,8 @@ public class SendToPorticoDataDTOValidatorTest {
     private SendToPorticoDataDTO sendToPorticoDataDTO;
 
     private DirectFieldBindingResult mappingResult;
+    
+    private ApplicationsService applicationsServiceMock;
 
     private QualificationService qualificationServiceMock;
 
@@ -77,7 +80,7 @@ public class SendToPorticoDataDTOValidatorTest {
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
         assertEquals(1, mappingResult.getErrorCount());
-        assertEquals("portico.submit.explanation.required", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
+        assertEquals("portico.submit.no.qualification.or.explanation", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
     }
     
     @Test
@@ -88,7 +91,7 @@ public class SendToPorticoDataDTOValidatorTest {
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
         assertEquals(1, mappingResult.getErrorCount());
-        assertEquals("portico.submit.explanation.required", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
+        assertEquals("portico.submit.no.qualification.or.explanation", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
     }
     
     @Test
@@ -107,16 +110,6 @@ public class SendToPorticoDataDTOValidatorTest {
     }
     
     @Test
-    public void shouldRejectIfQualificationHasNoProofOfAward() {
-        qualification1.setProofOfAward(null);
-
-        EasyMock.replay(qualificationServiceMock, refereeServiceMock);
-        sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
-        assertEquals(1, mappingResult.getErrorCount());
-        assertEquals("portico.submit.qualifications.noProofOfAward", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
-    }
-    
-    @Test
     public void shouldRejectIfNumberOfRefereesIsInvalid() {
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 11 }));
 
@@ -124,16 +117,6 @@ public class SendToPorticoDataDTOValidatorTest {
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
         assertEquals(1, mappingResult.getErrorCount());
         assertEquals("portico.submit.referees.invalid", mappingResult.getFieldError("refereesSendToPortico").getCode());
-    }
-    
-    @Test
-    public void shouldRejectIfRefereesHasNotResponded() {
-        referee1.setReference(null);
-
-        EasyMock.replay(qualificationServiceMock, refereeServiceMock);
-        sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
-        assertEquals(1, mappingResult.getErrorCount());
-        assertEquals("portico.submit.referees.hasNotResponded", mappingResult.getFieldError("refereesSendToPortico").getCode());
     }
     
     @Before
@@ -151,6 +134,7 @@ public class SendToPorticoDataDTOValidatorTest {
 
         mappingResult = new DirectFieldBindingResult(sendToPorticoDataDTO, "sendToPorticoData");
 
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         qualificationServiceMock = EasyMock.createMock(QualificationService.class);
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
 
@@ -159,7 +143,7 @@ public class SendToPorticoDataDTOValidatorTest {
         EasyMock.expect(refereeServiceMock.getRefereeById(11)).andReturn(referee1).anyTimes();
         EasyMock.expect(refereeServiceMock.getRefereeById(12)).andReturn(referee2).anyTimes();
 
-        sendToPorticoDataValidator = new SendToPorticoDataDTOValidator(qualificationServiceMock, refereeServiceMock);
+        sendToPorticoDataValidator = new SendToPorticoDataDTOValidator(applicationsServiceMock, qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.setValidator((javax.validation.Validator) validator);
     }
 

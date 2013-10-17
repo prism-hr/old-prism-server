@@ -6,12 +6,22 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class SendToPorticoDataDTO {
 
+	private String applicationNumber;
+	
     private List<Integer> refereesSendToPortico;
     
     private List<Integer> qualificationsSendToPortico;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
     private String emptyQualificationsExplanation;
+    
+    public String getApplicationNumber() {
+    	return applicationNumber;
+    }
+    
+    public void setApplicationNumber(String applicationNumber) {
+    	this.applicationNumber = applicationNumber;
+    }
     
     public List<Integer> getRefereesSendToPortico() {
         return refereesSendToPortico;

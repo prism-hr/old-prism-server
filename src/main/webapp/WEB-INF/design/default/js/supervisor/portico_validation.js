@@ -36,6 +36,7 @@ $(document).ready(function()
 			url: "/pgadmissions/approval/applyPorticoData",
 			data :  {
 			    applicationId : $('#applicationId').val(),
+			    applicationNumber : $('#applicationId').val(),
 			    qualificationsSendToPortico : JSON.stringify(qualificationsSendToPortico),
 				refereesSendToPortico : JSON.stringify(refereesSendToPorticoData),
 			    emptyQualificationsExplanation: explanation,

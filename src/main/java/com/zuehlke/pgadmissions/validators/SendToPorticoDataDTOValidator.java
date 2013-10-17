@@ -6,22 +6,27 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
 @Component
 public class SendToPorticoDataDTOValidator extends AbstractValidator {
 
+	private final ApplicationsService applicationFormService;
+	
     private final QualificationService qualificationService;
 
     private final RefereeService refereeService;
 
     @Autowired
-    public SendToPorticoDataDTOValidator(QualificationService qualificationService, RefereeService refereeService) {
+    public SendToPorticoDataDTOValidator(ApplicationsService applicationFormService, QualificationService qualificationService, 
+    		RefereeService refereeService) {
+    	this.applicationFormService = applicationFormService;
         this.qualificationService = qualificationService;
         this.refereeService = refereeService;
     }
@@ -37,41 +42,57 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
         SendToPorticoDataDTO dto = (SendToPorticoDataDTO) target;
 
         List<Integer> qualifications = dto.getQualificationsSendToPortico();
+        
         List<Integer> referees = dto.getRefereesSendToPortico();
+        
         String explanation = dto.getEmptyQualificationsExplanation();
 
         if (qualifications != null) {
-            if (qualifications.isEmpty()) {
-                if (StringUtils.isBlank(explanation)) {
-                    errors.rejectValue("qualificationsSendToPortico", "portico.submit.explanation.required");                    
-                }
+        	
+        	ApplicationForm applicationForm = applicationFormService.getApplicationByApplicationNumber(dto.getApplicationNumber()); 
+        	
+            for (int i = 0; i < qualifications.size(); i++) {
+            	if (qualificationService.getQualificationById(qualifications.get(i)).getProofOfAward() == null) {
+            		qualifications.remove(i);
+            	}
             }
-
-            if (qualifications.size() > 2) {
-                errors.rejectValue("qualificationsSendToPortico", "portico.submit.qualifications.exceed");
+            
+            // It was possible to select a qualification and neither a selection nor a justification for not making one was entered
+            // Form level error
+            if (applicationForm.hasQualificationsWithTranscripts() &&
+            	qualifications.isEmpty() && 
+                StringUtils.isBlank(explanation)) {
+            	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
             }
-
-            for (Integer qualificationId : qualifications) {
-                Qualification qualification = qualificationService.getQualificationById(qualificationId);
-                if (qualification.getProofOfAward() == null) {
-                    errors.rejectValue("qualificationsSendToPortico", "portico.submit.qualifications.noProofOfAward");
-                }
+            
+            // It was not possible to select a qualification and a justification for not selecting one was not made
+            // Form and field level errors
+            if (!applicationForm.hasQualificationsWithTranscripts() &&
+            	StringUtils.isBlank(explanation)) {
+            	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
+            	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "EmptyQualificationsExplanation", EMPTY_FIELD_ERROR_MESSAGE);
+            }
+  
+            // In either of the above scenarios an out of range text explanation was provided
+            // Field level error
+            if (!StringUtils.isBlank(explanation) &&
+            	explanation.trim().length() > 500) {
+            	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
+            	errors.rejectValue("EmptyQualificationsExplanation", MAXIMUM_500_CHARACTERS);
             }
         }
 
         if (referees != null) {
+        	
+            for (int i = 0; i < referees.size(); i++) {
+            	if (!refereeService.getRefereeById(referees.get(i)).hasProvidedReference()) {
+            		referees.remove(i);
+            	}
+            }
+        	
             if (referees.size() != 2) {
                 errors.rejectValue("refereesSendToPortico", "portico.submit.referees.invalid");
             }
-
-            for (Integer refereeId : referees) {
-                Referee referee = refereeService.getRefereeById(refereeId);
-                if (!referee.hasResponded()) {
-                    errors.rejectValue("refereesSendToPortico", "portico.submit.referees.hasNotResponded");
-                }
-            }
         }
-
     }
-
 }

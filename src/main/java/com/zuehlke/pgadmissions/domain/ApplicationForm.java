@@ -1014,9 +1014,23 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public List<Integer> getQualicationsToSendToPorticoIds() {
     	List<Integer> qualificationIdsToSend = new ArrayList<Integer>();
     	for (int i = 0; i < getQualifications().size(); i++) {
-    		qualificationIdsToSend.add(getQualifications().get(i).getId());
+    		if (getQualifications().get(i).getSendToUCL()) {
+    			qualificationIdsToSend.add(getQualifications().get(i).getId());
+    		}
+    	}
+    	if (qualificationIdsToSend.isEmpty()) {
+    		return null;
     	}
     	return qualificationIdsToSend;
+    }
+    
+    public boolean hasQualificationsWithTranscripts() {
+    	for (Qualification qualification : getQualifications()) {
+    		if (qualification.getProofOfAward() != null) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     public List<ReferenceComment> getReferencesToSendToPortico() {
@@ -1029,7 +1043,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return result;
     }
 
-    public List<Referee> getRefereessToSendToPortico() {
+    public List<Referee> getRefereesToSendToPortico() {
         List<Referee> result = new ArrayList<Referee>(2);
         for (Referee referee : getReferees()) {
             if (BooleanUtils.isTrue(referee.getSendToUCL())) {
@@ -1042,9 +1056,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public List<Integer> getRefereesToSendToPorticoIds() {
     	List<Integer> refereeIdsToSend = new ArrayList<Integer>();
     	for (int i = 0; i < getReferees().size(); i++) {
-    		refereeIdsToSend.add(getReferees().get(i).getId());
+    		if (getReferees().get(i).getSendToUCL()) {
+    			refereeIdsToSend.add(getReferees().get(i).getId());
+    		}
     	}
-        return refereeIdsToSend;
+    	if (refereeIdsToSend.isEmpty()) {
+    		return null;
+    	}
+    	return refereeIdsToSend;
     }
 
     public boolean isCompleteForSendingToPortico() {
@@ -1052,9 +1071,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         int maxNumberOfQualifications = 2;
 
         if (getReferencesToSendToPortico().size() == exactNumberOfReferences &&
-        	((getQualificationsToSendToPortico().size() > 0 &&
+        	(getQualificationsToSendToPortico().size() > 0 &&
         	getQualificationsToSendToPortico().size() <= maxNumberOfQualifications) ||
-        	getLatestApprovalRound().getMissingQualificationExplanation().length() > 0)) {
+        	(this.getApprovalRounds().size() > 0 &&
+        	getLatestApprovalRound().getMissingQualificationExplanation() != null)) {
             return true;
         }
         

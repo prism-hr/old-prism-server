@@ -1,7 +1,14 @@
 $(document).ready(function() {
     
     addToolTips();
-    addCounter();
+    
+    var checked = $('input[name="qualificationSendToUcl"]:checked').size();
+    if (checked > 0) {
+    	disableExplanation();
+    }
+    else {
+        addCounter();
+    }
     
     // --------------------------------------------------------------------------------
     // Close button.
@@ -39,14 +46,13 @@ $(document).ready(function() {
     $('input[name="qualificationSendToUcl"]:checkbox').on("change", function() {
         var maxAllowed = 2;
         var checked = $('input[name="qualificationSendToUcl"]:checked').size();
+        addCounter();       
         if (checked == 0) {
             $('#explanationTextLabel').removeClass("grey-label").parent().find('.hint').removeClass("grey");
         	$('#explanationText').prop('disabled', false);
         }
         else {
-            $('#explanationTextLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
-        	$('#explanationText').val("");
-        	$('#explanationText').prop('disabled', 'disabled');
+        	disableExplanation();
             if (checked > maxAllowed) {
                 $(this).attr("checked", false);
             }
@@ -67,6 +73,7 @@ function postQualificationsData() {
     var qualificationsSendToPortico = collectQualificationsSendToPortico();
     data = {
         applicationId : $('#applicationId').val(),
+        applicationNumber: $('#applicationId').val(),
         qualificationsSendToPortico: JSON.stringify(qualificationsSendToPortico),
         cacheBreaker: new Date().getTime()
     };
@@ -103,4 +110,12 @@ function collectQualificationsSendToPortico(){
         }
     });
     return qualifications;
+}
+
+function disableExplanation(){
+	$('#explanationTextLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+ 	$('#explanationText').val("");
+ 	$('#explanationText').prop('disabled', 'disabled');
+ 	$('.counter badge').remove();
+ 	addCounter();
 }

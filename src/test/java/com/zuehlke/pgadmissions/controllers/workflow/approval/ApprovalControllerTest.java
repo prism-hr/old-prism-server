@@ -142,7 +142,7 @@ public class ApprovalControllerTest {
         ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");        
         
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
-        Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap));
+        Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap, null));
         EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
 
         assertNull(approvalRound.getId());

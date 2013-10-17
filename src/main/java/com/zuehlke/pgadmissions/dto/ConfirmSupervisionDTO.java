@@ -125,7 +125,5 @@ public class ConfirmSupervisionDTO {
 	public void setSecondarySupervisorEmail(String secondarySupervisorEmail) {
 		this.secondarySupervisorEmail = secondarySupervisorEmail;
 	}
-	
-	
 
 }

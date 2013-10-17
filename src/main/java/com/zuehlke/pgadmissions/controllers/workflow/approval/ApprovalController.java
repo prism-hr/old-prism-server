@@ -203,20 +203,20 @@ public class ApprovalController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
-    public String getMoveToApprovalPage(ModelMap modelMap) {
+    public String getMoveToApprovalPage(ModelMap modelMap,
+    		@RequestParam String action) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
         modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
         
         if (applicationForm.getLatestApprovalRound() != null) {
-	        if (!applicationForm.isCompleteForSendingToPortico()) {
-		        	SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();	
-		        	porticoData.setQualificationsSendToPortico(applicationForm.getQualicationsToSendToPorticoIds());
-		        	porticoData.setRefereesSendToPortico(applicationForm.getRefereesToSendToPorticoIds());
-		        	porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
-		        	modelMap.put("sendToPorticoData", porticoData);
-	        }
+	        	SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
+	        	porticoData.setApplicationNumber(applicationForm.getApplicationNumber());
+	        	porticoData.setQualificationsSendToPortico(applicationForm.getQualicationsToSendToPorticoIds());
+	        	porticoData.setRefereesSendToPortico(applicationForm.getRefereesToSendToPorticoIds());
+	        	porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
+	        	modelMap.put("sendToPorticoData", porticoData);
 
         }
         return APPROVAL_PAGE;
@@ -301,15 +301,18 @@ public class ApprovalController {
         		}
         	}
         	
-        	if (latestApprovalRound.getProjectDescriptionAvailable()) {
-        		approvalRound.setProjectDescriptionAvailable(true);
+        	if (latestApprovalRound.getProjectDescriptionAvailable() != null) {
+        		approvalRound.setProjectDescriptionAvailable(latestApprovalRound.getProjectDescriptionAvailable());
 	            approvalRound.setProjectTitle(latestApprovalRound.getProjectTitle());
 	            approvalRound.setProjectAbstract(latestApprovalRound.getProjectAbstract());
-	            approvalRound.setRecommendedConditionsAvailable(latestApprovalRound.getRecommendedConditionsAvailable());
-	            approvalRound.setRecommendedConditions(latestApprovalRound.getRecommendedConditions());
         	}
         	
         	startDate = latestApprovalRound.getRecommendedStartDate();
+        	
+        	if (latestApprovalRound.getRecommendedConditionsAvailable() != null) {
+	            approvalRound.setRecommendedConditionsAvailable(latestApprovalRound.getRecommendedConditionsAvailable());
+	            approvalRound.setRecommendedConditions(latestApprovalRound.getRecommendedConditions());
+        	}
         	
         }
         
@@ -317,7 +320,7 @@ public class ApprovalController {
         	
             addUserAsSupervisorInApprovalRound(project.getPrimarySupervisor(), approvalRound, true);
             addUserAsSupervisorInApprovalRound(project.getSecondarySupervisor(), approvalRound, false);
-        	
+            
         	approvalRound.setProjectDescriptionAvailable(true);
 	        approvalRound.setProjectTitle(project.getAdvert().getTitle());
 	        approvalRound.setProjectAbstract(project.getAdvert().getDescription());

@@ -12,7 +12,7 @@ public class StateTransitionViewResolver {
 	private static final Integer REJECTION_REASON_WHEN_PROGAMME_EXPIRED = 7;
     private static final String REJECTION_VIEW = "redirect:/rejectApplication?applicationId=";
     private static final String OFFER_RECOMMENDATION_VIEW = "redirect:/offerRecommendation?applicationId=";
-    private static final String APPROVAL_VIEW = "redirect:/approval/moveToApproval?applicationId=";
+    private static final String APPROVAL_VIEW = "redirect:/approval/moveToApproval?action=firstLoad&applicationId=";
     private static final String INTERVIEW_VIEW = "redirect:/interview/moveToInterview?applicationId=";
     private static final String REVIEW_VIEW = "redirect:/review/moveToReview?applicationId=";
     private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";

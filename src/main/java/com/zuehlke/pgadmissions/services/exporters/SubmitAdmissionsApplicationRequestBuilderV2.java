@@ -617,7 +617,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private RefereeListTp buildReferee() {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
-        for (Referee referee : applicationForm.getRefereessToSendToPortico()) {
+        for (Referee referee : applicationForm.getRefereesToSendToPortico()) {
             RefereeTp refereeTp = xmlFactory.createRefereeTp();
 
             refereeTp.setPosition(referee.getJobTitle());

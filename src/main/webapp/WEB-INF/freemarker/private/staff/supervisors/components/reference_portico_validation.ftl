@@ -22,7 +22,7 @@
         </div>
     <#else>
         <div class="alert alert-info">
-          			<i class="icon-info-sign"></i> Select two completed references to submit for offer processing. You can also create and update references and provide them on behalf of the Applicant's referees.
+        	<i class="icon-info-sign"></i> Select two completed references to submit for offer processing. You can also create and update references and provide them on behalf of the Applicant's referees.
         </div>
     </#if>
     
@@ -64,4 +64,3 @@
     var $postRefereesDataUrl = "/pgadmissions/approval/postRefereesData";
     var $postReferenceUrl = "/pgadmissions/approval/postReference";
 </script>
-

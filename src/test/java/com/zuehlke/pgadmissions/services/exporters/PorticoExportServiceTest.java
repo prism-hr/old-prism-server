@@ -997,7 +997,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         exportService.sendToPortico(applicationForm, null);
         
         EasyMock.verify(applicationFormDAOMock);
-        assertEquals(2, applicationForm.getRefereessToSendToPortico().size());
+        assertEquals(2, applicationForm.getRefereesToSendToPortico().size());
     }
     
     @Test
@@ -1029,7 +1029,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         exportService.sendToPortico(applicationForm, null);
         
         EasyMock.verify(applicationFormDAOMock);
-        assertEquals(2, applicationForm.getRefereessToSendToPortico().size());
+        assertEquals(2, applicationForm.getRefereesToSendToPortico().size());
     }
     
     @Test
@@ -1062,7 +1062,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         exportService.sendToPortico(applicationForm, null);
         
         EasyMock.verify(applicationFormDAOMock);
-        assertEquals(2, applicationForm.getRefereessToSendToPortico().size());        
+        assertEquals(2, applicationForm.getRefereesToSendToPortico().size());        
     }
 
     @Before

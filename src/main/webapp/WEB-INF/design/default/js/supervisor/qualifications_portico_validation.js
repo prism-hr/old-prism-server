@@ -1,14 +1,12 @@
 $(document).ready(function() {
-    
-    addToolTips();
-    
+   
     var checked = $('input[name="qualificationSendToUcl"]:checked').size();
     if (checked > 0) {
     	disableExplanation();
     }
-    else {
-        addCounter();
-    }
+    
+    addCounter();
+    addToolTips();
     
     // --------------------------------------------------------------------------------
     // Close button.

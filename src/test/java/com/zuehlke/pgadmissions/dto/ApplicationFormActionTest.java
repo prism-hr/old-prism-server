@@ -1085,9 +1085,9 @@ public class ApplicationFormActionTest {
 
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
         EasyMock.expect(applicationMock.getProgram()).andReturn(program);
+        EasyMock.expect(userMock.isApproverInProgram(program)).andReturn(true);
         EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
         EasyMock.expect(applicationMock.isDueDateExpired()).andReturn(false);
-        EasyMock.expect(userMock.isApproverInProgram(program)).andReturn(true);
 
         EasyMock.replay(userMock, applicationMock);
         COMPLETE_APPROVAL_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);
@@ -1106,10 +1106,11 @@ public class ApplicationFormActionTest {
         EasyMock.expect(applicationMock.getLatestApprovalRound()).andReturn(approvalRound);
         EasyMock.expect(applicationMock.isDueDateExpired()).andReturn(false);
         EasyMock.expect(userMock.isApproverInProgram(program)).andReturn(false);
-        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(true);
 
         EasyMock.replay(userMock, applicationMock);
         COMPLETE_APPROVAL_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);
+        
         EasyMock.verify(userMock, applicationMock);
 
         assertActionsDefinitions(actionsDefinitions, false, COMPLETE_APPROVAL_STAGE);
@@ -1161,7 +1162,7 @@ public class ApplicationFormActionTest {
         EasyMock.expect(applicationMock.getStatus()).andReturn(APPROVAL);
         EasyMock.expect(applicationMock.getProgram()).andReturn(program);
         EasyMock.expect(userMock.isApproverInProgram(program)).andReturn(false);
-        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(applicationMock)).andReturn(false);
 
         EasyMock.replay(userMock, applicationMock);
         COMPLETE_APPROVAL_STAGE.applyAction(actionsDefinitions, userMock, applicationMock, null);

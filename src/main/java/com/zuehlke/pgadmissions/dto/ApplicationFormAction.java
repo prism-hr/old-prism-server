@@ -257,7 +257,8 @@ public enum ApplicationFormAction {
         public void apply(ActionsDefinitions actions, RegisteredUser user, ApplicationForm application, ApplicationFormStatus nextStatus) {
             if (application.getStatus() == APPROVAL && 
             	nextStatus == null && 
-            	user.hasAdminRightsOnApplication(application)) {
+            	(user.isApproverInProgram(application.getProgram()) ||
+            	user.hasAdminRightsOnApplication(application))) {
                 actions.addAction(COMPLETE_APPROVAL_STAGE);
                 ApprovalRound approvalRound = application.getLatestApprovalRound();
                 if (approvalRound.hasPrimarySupervisorResponded() || 

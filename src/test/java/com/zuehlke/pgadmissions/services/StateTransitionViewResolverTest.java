@@ -81,7 +81,7 @@ public class StateTransitionViewResolverTest {
         applicationForm = validApplicationFormBuilder.getApplicationFormBuilder()
                 .applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
                 .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVAL).build()).build();
-        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", resolver.resolveView(applicationForm));
+        assertEquals("redirect:/approval/moveToApproval?action=firstLoad&applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -148,7 +148,7 @@ public class StateTransitionViewResolverTest {
                         new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVAL)
                                 .reviewRound(latestReviewRound).build()).status(ApplicationFormStatus.REVIEW)
                 .reviewRounds(previousReviewRound, latestReviewRound).latestReviewRound(latestReviewRound).build();
-        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", resolver.resolveView(applicationForm));
+        assertEquals("redirect:/approval/moveToApproval?action=firstLoad&applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test
@@ -205,7 +205,7 @@ public class StateTransitionViewResolverTest {
                         new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVAL)
                                 .interview(latestInterview).build()).status(ApplicationFormStatus.INTERVIEW)
                 .interviews(previousInterview, latestInterview).latestInterview(latestInterview).build();
-        assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", resolver.resolveView(applicationForm));
+        assertEquals("redirect:/approval/moveToApproval?action=firstLoad&applicationId=ABC", resolver.resolveView(applicationForm));
     }
 
     @Test

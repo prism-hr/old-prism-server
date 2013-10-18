@@ -124,21 +124,21 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
 			// delegate should be able to restart interview
 			comment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
 							stateChangeComment.getType(), stateChangeComment.getNextStatus());
-    							
-    		Interview interview = applicationForm.getLatestInterview();
-    		interview.setStage(InterviewStage.INACTIVE);
-    		interviewService.save(interview);
+
     	}
     		
-    	else if (applicationForm.getStatus() != ApplicationFormStatus.INTERVIEW ||
-    		stateChangeComment.getNextStatus() != ApplicationFormStatus.INTERVIEW) {
+    	else {
     		// in other scenarios just post a suggestion
     		comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
     				stateChangeComment.getNextStatus());
+    		Interview interview = applicationForm.getLatestInterview();
+            interview.setStage(InterviewStage.INACTIVE);
+            interviewService.save(interview);
     				
     		applicationForm.setApplicationAdministrator(null);
     		applicationForm.setDueDate(new Date());
     	}
+    	
 
         if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());

@@ -1065,19 +1065,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     	}
     	return refereeIdsToSend;
     }
+    
+    public boolean hasEnoughReferencesToSendToPortico() {
+       if (getReferencesToSendToPortico().size() == 2) {
+           return true;
+       }
+       return false;
+    }
 
-    public boolean isCompleteForSendingToPortico() {
-        int exactNumberOfReferences = 2;
-        int maxNumberOfQualifications = 2;
-
-        if (getReferencesToSendToPortico().size() == exactNumberOfReferences &&
-        	(getQualificationsToSendToPortico().size() > 0 &&
-        	getQualificationsToSendToPortico().size() <= maxNumberOfQualifications) ||
-        	(this.getApprovalRounds().size() > 0 &&
-        	getLatestApprovalRound().getMissingQualificationExplanation() != null)) {
+    public boolean hasEnoughQualificationsToSendToPortico() {
+        if (getQualificationsToSendToPortico().size() > 0 &&
+                getQualificationsToSendToPortico().size() <= 2) {
             return true;
         }
-        
         return false;
     }
 

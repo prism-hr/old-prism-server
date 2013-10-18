@@ -70,7 +70,7 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
             if (!applicationForm.hasQualificationsWithTranscripts() &&
             	StringUtils.isBlank(explanation)) {
             	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
-            	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "EmptyQualificationsExplanation", EMPTY_FIELD_ERROR_MESSAGE);
+            	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emptyQualificationsExplanation", EMPTY_FIELD_ERROR_MESSAGE);
             }
   
             // In either of the above scenarios an out of range text explanation was provided
@@ -78,8 +78,8 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
             if (!StringUtils.isBlank(explanation) &&
             	explanation.trim().length() > 500) {
             	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
-            	errors.rejectValue("EmptyQualificationsExplanation", MAXIMUM_500_CHARACTERS);
             }
+            
         }
 
         if (referees != null) {

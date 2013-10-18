@@ -45,7 +45,7 @@
 	            <span class="hint" data-desc="Explain why you wish to submit this application for offer processing without any accompanying transcript."></span>
 	            <div class="field">
 	                <textarea cols="80" rows="5" class="max" id="explanationText" name="explanationText">${(sendToPorticoData.emptyQualificationsExplanation?html)!""}</textarea>
-	                <@spring.bind "sendToPorticoData.EmptyQualificationsExplanation"/>
+	                <@spring.bind "sendToPorticoData.emptyQualificationsExplanation"/>
 	                <#list spring.status.errorMessages as error>
 	                  <div class="alert alert-error"> 
 	                    <i class="icon-warning-sign"></i>

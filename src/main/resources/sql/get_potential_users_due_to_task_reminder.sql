@@ -4,6 +4,7 @@ ON APPLICATION_FORM.app_administrator_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status IN ("VALIDATION", "REVIEW", "INTERVIEW", "APPROVAL")
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
 AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+AND CURRENT_DATE() < APPLICATION_FORM.due_date + INTERVAL :notificationsDuration DAY
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -16,6 +17,7 @@ ON PROGRAM_ADMINISTRATOR_LINK.administrator_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status IN ("VALIDATION", "REVIEW", "INTERVIEW", "APPROVAL")
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
 AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+AND CURRENT_DATE() < APPLICATION_FORM.due_date + INTERVAL :notificationsDuration DAY
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -28,6 +30,7 @@ ON REVIEWER.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status = "REVIEW"
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
 AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+AND CURRENT_DATE() < APPLICATION_FORM.due_date + INTERVAL :notificationsDuration DAY
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -43,6 +46,7 @@ WHERE APPLICATION_FORM.status = "INTERVIEW"
 AND INTERVIEW.stage = "SCHEDULED"
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
 AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+AND CURRENT_DATE() < APPLICATION_FORM.due_date + INTERVAL :notificationsDuration DAY
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -55,6 +59,7 @@ ON SUPERVISOR.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status = "APPROVAL"
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
 AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+AND CURRENT_DATE() < APPLICATION_FORM.due_date + INTERVAL :notificationsDuration DAY
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -67,6 +72,7 @@ ON PROGRAM_APPROVER_LINK.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status = "APPROVAL"
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
 AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+AND CURRENT_DATE() < APPLICATION_FORM.due_date + INTERVAL :notificationsDuration DAY
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 GROUP BY REGISTERED_USER.id
@@ -80,6 +86,7 @@ WHERE APPLICATION_FORM.status IN ("APPROVED", "REJECTED", "WITHDRAWN")
 AND APPLICATION_FORM.withdrawn_before_submit = 0
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
 AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+AND CURRENT_DATE() < APPLICATION_FORM.due_date + INTERVAL :notificationsDuration DAY
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 AND USER_ROLE_LINK.application_role_id = 5
@@ -93,6 +100,7 @@ ON USER_ROLE_LINK.registered_user_id = REGISTERED_USER.id
 WHERE APPLICATION_FORM.status IN ("REVIEW", "INTERVIEW", "APPROVAL")
 AND REGISTERED_USER.latest_task_notification_date IS NOT NULL
 AND DATE(REGISTERED_USER.latest_task_notification_date) = CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+AND CURRENT_DATE() < APPLICATION_FORM.due_date + INTERVAL :notificationsDuration DAY
 AND REGISTERED_USER.accountNonExpired = 1
 AND REGISTERED_USER.accountNonLocked = 1
 AND USER_ROLE_LINK.application_role_id = 10

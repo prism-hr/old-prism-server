@@ -86,8 +86,7 @@
 				
 				<input type="hidden" name="reminderIntervals" id= "reminderIntervals" />
 
-        <!-- Notifications duration; currently hidden -->
-        <div class="row" style="display:none;">
+        <div class="row">
           <label for="notificationsDurationInput" id="notificationsDuration-lbl" class="plain-label">Expiry of Notifications<em>*</em></label>
           <span class="hint" data-desc="<@spring.message 'configuration.notificationsDuration' />"></span>
           <div class="field"> 

@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 import com.google.common.io.CharStreams;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
@@ -43,6 +44,8 @@ public class UserDAO {
     private final SessionFactory sessionFactory;
 
     private final ReminderIntervalDAO reminderIntervalDAO;
+    
+    private final NotificationsDurationDAO notificationsDurationDAO;
 
     private final ApplicationContext applicationContext;
 
@@ -53,13 +56,14 @@ public class UserDAO {
     private String getUsersDueToUpdateNotificationSql;
 
     public UserDAO() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, ApplicationContext applicationContext) {
+    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO, ApplicationContext applicationContext) {
         this.sessionFactory = sessionFactory;
         this.reminderIntervalDAO = reminderIntervalDAO;
+        this.notificationsDurationDAO = notificationsDurationDAO;
         this.applicationContext = applicationContext;
     }
 
@@ -290,10 +294,13 @@ public class UserDAO {
 
     public List<Integer> getPotentialUsersForTaskReminder() {
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
+        NotificationsDuration notificationsDurationObj = notificationsDurationDAO.getNotificationsDuration();
+        int notificationsDuration = notificationsDurationObj.getDurationInDays();
         int interval = reminderInterval.getDuration();
         DurationUnitEnum unit = reminderInterval.getUnit();
         String sqlQuery = StringUtils.replace(getPotentialUsersDueToTaskReminderSql, "${TIME_UNIT}", unit.sqlValue());
-        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval).list();
+        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval).
+                setParameter("notificationsDuration", notificationsDuration).list();
     }
 
     public List<Integer> getUsersForUpdateNotification() {

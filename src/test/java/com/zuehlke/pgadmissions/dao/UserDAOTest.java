@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -14,7 +15,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -56,6 +58,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     private UserDAO userDAO;
 
     private ReminderIntervalDAO reminderIntervalDAOMock;
+
+    private NotificationsDurationDAO notificationsDurationDAOMock;
 
     private ApplicationContext applicationContextMock;
 
@@ -676,21 +680,26 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         ReminderInterval reminderInterval = new ReminderInterval();
         reminderInterval.setDuration(8);
         reminderInterval.setUnit(DurationUnitEnum.DAYS);
-        EasyMock.expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.TASK)).andReturn(reminderInterval);
+        NotificationsDuration notificationsDuration = new NotificationsDuration();
+        notificationsDuration.setDuration(16);
+        notificationsDuration.setUnit(DurationUnitEnum.DAYS);
+        expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.TASK)).andReturn(reminderInterval);
+        expect(notificationsDurationDAOMock.getNotificationsDuration()).andReturn(notificationsDuration);
 
         URL resource = Resources.getResource("sql/get_potential_users_due_to_task_reminder.sql");
         userDAO.setGetPotentialUsersDueToTaskReminderSql(CharStreams.toString(new InputStreamReader(resource.openStream())));
 
-        EasyMock.replay(reminderIntervalDAOMock);
+        EasyMock.replay(reminderIntervalDAOMock, notificationsDurationDAOMock);
         userDAO.getPotentialUsersForTaskReminder();
-        EasyMock.verify(reminderIntervalDAOMock);
+        EasyMock.verify(reminderIntervalDAOMock, notificationsDurationDAOMock);
     }
 
     @Before
     public void prepare() {
         reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
+        notificationsDurationDAOMock = EasyMock.createMock(NotificationsDurationDAO.class);
         applicationContextMock = EasyMock.createMock(ApplicationContext.class);
-        userDAO = new UserDAO(sessionFactory, reminderIntervalDAOMock, applicationContextMock);
+        userDAO = new UserDAO(sessionFactory, reminderIntervalDAOMock, notificationsDurationDAOMock, applicationContextMock);
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

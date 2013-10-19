@@ -224,7 +224,8 @@ public class ApprovalService {
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form, ApprovalRound approvalRound) {
-        if (!form.isCompleteForSendingToPortico()) {
+        if (!form.hasEnoughReferencesToSendToPortico() || (!form.hasEnoughQualificationsToSendToPortico() 
+                && approvalRound.getMissingQualificationExplanation() == null)) {
             throw new IllegalStateException("Send to portico data is not valid");
         }
     }

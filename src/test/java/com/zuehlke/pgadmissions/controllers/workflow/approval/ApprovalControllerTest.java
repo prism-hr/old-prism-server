@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -279,15 +281,27 @@ public class ApprovalControllerTest {
     public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfAny() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
         Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
+        
+        Date nowDate = new Date();
+        Date testDate = DateUtils.addMonths(nowDate, 1);
+        Date deadlineDate = DateUtils.addMonths(nowDate, 2);
+        
+        final Program program = new Program();
+        program.setId(100000);
+        
+        final ProgramInstance programInstance = new ProgramInstance();
+        programInstance.setId(1);
+        programInstance.setProgram(program);
+        programInstance.setApplicationStartDate(nowDate);
+        programInstance.setApplicationDeadline(deadlineDate);
+        
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(testDate).studyOption("1", "full").build();
 
-        Date startDate = new Date();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
-
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails)
-                .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, suprvisorTwo).build()).build();
-
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("abc").programmeDetails(programmeDetails)
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
+        
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
@@ -296,7 +310,7 @@ public class ApprovalControllerTest {
         assertNull(returnedApprovalRound.getId());
         assertEquals(2, returnedApprovalRound.getSupervisors().size());
         assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, suprvisorTwo)));
-        assertEquals(startDate, returnedApprovalRound.getRecommendedStartDate());
+        assertEquals(testDate, returnedApprovalRound.getRecommendedStartDate());
     }
 
     @Test
@@ -313,11 +327,24 @@ public class ApprovalControllerTest {
         RegisteredUser decliningUser = new RegisteredUserBuilder().id(4).build();
         Supervisor decliningSupervisor = new SupervisorBuilder().declinedSupervisionReason("Because I can! Hahaha!").user(decliningUser).build();
 
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(interviewOne, interviewTwo, interviewThree)
-                .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, supervisorTwo, decliningSupervisor).build()).build();
-
+        Date nowDate = new Date();
+        Date testDate = DateUtils.addMonths(nowDate, 1);
+        Date deadlineDate = DateUtils.addMonths(nowDate, 3);
+        
+        final Program program = new Program();
+        program.setId(100000);
+        
+        final ProgramInstance programInstance = new ProgramInstance();
+        programInstance.setId(1);
+        programInstance.setProgram(program);
+        programInstance.setApplicationStartDate(nowDate);
+        programInstance.setApplicationDeadline(deadlineDate);
+        
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("abc").comments(interviewOne, interviewTwo, interviewThree)
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, supervisorTwo, decliningSupervisor).build()).build();
+        
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
@@ -337,10 +364,24 @@ public class ApprovalControllerTest {
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
 
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).build();
-
+        Date nowDate = new Date();
+        Date testDate = DateUtils.addMonths(nowDate, 1);
+        Date deadlineDate = DateUtils.addMonths(nowDate, 3);
+        
+        final Program program = new Program();
+        program.setId(100000);
+        
+        final ProgramInstance programInstance = new ProgramInstance();
+        programInstance.setId(1);
+        programInstance.setProgram(program);
+        programInstance.setApplicationStartDate(nowDate);
+        programInstance.setApplicationDeadline(deadlineDate);
+        
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).
+        		latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
+        
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
@@ -348,7 +389,7 @@ public class ApprovalControllerTest {
 
         assertNull(returnedApprovalRound.getId());
         assertTrue(returnedApprovalRound.getSupervisors().isEmpty());
-        assertEquals(startDate, returnedApprovalRound.getRecommendedStartDate());
+        assertEquals(testDate, returnedApprovalRound.getRecommendedStartDate());
 
     }
 
@@ -708,10 +749,22 @@ public class ApprovalControllerTest {
         Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();
         Project project = new ProjectBuilder().program(program).advert(advert).primarySupervisor(primarySupervisor).secondarySupervisor(secondarySupervisor)
                 .build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project).build();
-
+        
+        Date nowDate = new Date();
+        Date testDate = DateUtils.addMonths(nowDate, 1);
+        Date deadlineDate = DateUtils.addMonths(nowDate, 2);
+        
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project).
+        		latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
+        
+        final ProgramInstance programInstance = new ProgramInstance();
+        programInstance.setId(1);
+        programInstance.setProgram(program);
+        programInstance.setApplicationStartDate(nowDate);
+        programInstance.setApplicationDeadline(deadlineDate);
+        
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application);
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");

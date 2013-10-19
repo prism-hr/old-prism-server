@@ -50,292 +50,292 @@ import com.zuehlke.pgadmissions.dto.TimelineReference;
 
 public class TimelineServiceTest {
 
-	private SimpleDateFormat format;
-	private UserService userServiceMock;
-	private TimelineService timelineService;
-	private RegisteredUser currentUser;
+    private SimpleDateFormat format;
+    private UserService userServiceMock;
+    private TimelineService timelineService;
+    private RegisteredUser currentUser;
+
+    @Test
+    public void shouldGetObjectOrderedByEnteredDateIfNoComments() throws Exception {
+
+        Date submissionDate = format.parse("01 04 2012 14:02:03");
+        Date validatedDate = format.parse("03 04 2012 09:14:12");
+        Date rejectedDate = format.parse("03 04 2012 15:57:45");
+        Date referenceDate = format.parse("03 04 2012 11:00:45");
+        RegisteredUser userOne = new RegisteredUserBuilder().id(1).build();
+        RegisteredUser userTwo = new RegisteredUserBuilder().id(2).build();
+        RegisteredUser userThree = new RegisteredUserBuilder().id(3).build();
+        RegisteredUser userFour = new RegisteredUserBuilder().id(4).build();
+
+        Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1)
+                .build();
+        Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo)
+                .build();
+        Event rejectedPhaseEnteredEvent = new StateChangeEventBuilder().date(rejectedDate).newStatus(ApplicationFormStatus.REJECTED).id(3).user(userThree)
+                .build();
+        Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).build()).id(4).user(userFour).build();
 
-	@Test
-	public void shouldGetObjectOrderedByEnteredDateIfNoComments() throws Exception {
-
-		Date submissionDate = format.parse("01 04 2012 14:02:03");
-		Date validatedDate = format.parse("03 04 2012 09:14:12");
-		Date rejectedDate = format.parse("03 04 2012 15:57:45");
-		Date referenceDate = format.parse("03 04 2012 11:00:45");
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).build();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(2).build();
-		RegisteredUser userThree = new RegisteredUserBuilder().id(3).build();
-		RegisteredUser userFour = new RegisteredUserBuilder().id(4).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
+        applicationForm.getEvents().clear();
+        applicationForm.getEvents().addAll(Arrays.asList(rejectedPhaseEnteredEvent, validationPhaseEnteredEvent, reviewPhaseEnteredEvent, referenceEvent));
 
-		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1).build();
-		Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo).build();
-		Event rejectedPhaseEnteredEvent = new StateChangeEventBuilder().date(rejectedDate).newStatus(ApplicationFormStatus.REJECTED).id(3).user(userThree).build();
-		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).build()).id(4).user(userFour).build();
+        List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
+        assertEquals(5, objects.size());
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
-		applicationForm.getEvents().clear();
-		applicationForm.getEvents().addAll(Arrays.asList(rejectedPhaseEnteredEvent, validationPhaseEnteredEvent, reviewPhaseEnteredEvent, referenceEvent));
+        TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(0);
+
+        assertEquals(rejectedDate, timelinePhaseOne.getEventDate());
+        assertNull(timelinePhaseOne.getExitedPhaseDate());
+        assertEquals(ApplicationFormStatus.REJECTED, timelinePhaseOne.getStatus());
+        assertEquals(userThree, timelinePhaseOne.getAuthor());
 
-		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
-		assertEquals(5, objects.size());
+        TimelineReference timelineReference = (TimelineReference) objects.get(1);
+        assertEquals(referenceDate, timelineReference.getEventDate());
+        assertEquals(userFour, timelineReference.getAuthor());
 
-		TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(0);
+        TimelinePhase timelinePhaseThree = (TimelinePhase) objects.get(2);
+        assertEquals(validatedDate, timelinePhaseThree.getEventDate());
+        assertEquals(rejectedDate, timelinePhaseThree.getExitedPhaseDate());
+        assertEquals(ApplicationFormStatus.REVIEW, timelinePhaseThree.getStatus());
+        assertEquals(userTwo, timelinePhaseThree.getAuthor());
 
-		assertEquals(rejectedDate, timelinePhaseOne.getEventDate());
-		assertNull(timelinePhaseOne.getExitedPhaseDate());
-		assertEquals(ApplicationFormStatus.REJECTED, timelinePhaseOne.getStatus());
-		assertEquals(userThree, timelinePhaseOne.getAuthor());
+        TimelinePhase timelinePhaseFour = (TimelinePhase) objects.get(3);
+        assertEquals(submissionDate, timelinePhaseFour.getEventDate());
+        assertEquals(validatedDate, timelinePhaseFour.getExitedPhaseDate());
+        assertEquals(ApplicationFormStatus.VALIDATION, timelinePhaseFour.getStatus());
+        assertEquals(userOne, timelinePhaseFour.getAuthor());
 
-		TimelineReference timelineReference = (TimelineReference) objects.get(1);
-		assertEquals(referenceDate, timelineReference.getEventDate());
-		assertEquals(userFour, timelineReference.getAuthor());
+    }
 
-		TimelinePhase timelinePhaseThree = (TimelinePhase) objects.get(2);
-		assertEquals(validatedDate, timelinePhaseThree.getEventDate());
-		assertEquals(rejectedDate, timelinePhaseThree.getExitedPhaseDate());
-		assertEquals(ApplicationFormStatus.REVIEW, timelinePhaseThree.getStatus());
-		assertEquals(userTwo, timelinePhaseThree.getAuthor());
+    @Test
+    public void shouldAddCreatedPhaseIfUserIsApplicant() throws ParseException {
+        Date creationDate = format.parse("01 03 2012 14:02:03");
+        Date submissionDate = format.parse("01 04 2012 14:02:03");
 
-		TimelinePhase timelinePhaseFour = (TimelinePhase) objects.get(3);
-		assertEquals(submissionDate, timelinePhaseFour.getEventDate());
-		assertEquals(validatedDate, timelinePhaseFour.getExitedPhaseDate());
-		assertEquals(ApplicationFormStatus.VALIDATION, timelinePhaseFour.getStatus());
-		assertEquals(userOne, timelinePhaseFour.getAuthor());
+        RegisteredUser userOne = new RegisteredUserBuilder().id(1).build();
+        Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1)
+                .build();
 
-	}
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).appDate(creationDate).applicant(currentUser)
+                .build();
+        applicationForm.getEvents().clear();
+        applicationForm.getEvents().addAll(Arrays.asList(validationPhaseEnteredEvent));
 
-	@Test
-	public void shouldAddCreatedPhaseIfUserIsApplicant() throws ParseException {
-		Date creationDate = format.parse("01 03 2012 14:02:03");
-		Date submissionDate = format.parse("01 04 2012 14:02:03");
+        List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
+        assertEquals(2, objects.size());
+        TimelinePhase timelinePhaseTwo = (TimelinePhase) objects.get(0);
+        assertEquals(ApplicationFormStatus.VALIDATION, timelinePhaseTwo.getStatus());
 
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).build();
-		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1)
-				.build();
+        TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(1);
+        assertEquals(creationDate, timelinePhaseOne.getEventDate());
+        assertEquals(currentUser, timelinePhaseOne.getAuthor());
+        assertEquals(ApplicationFormStatus.UNSUBMITTED, timelinePhaseOne.getStatus());
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).appDate(creationDate).applicant(currentUser).build();
-		applicationForm.getEvents().clear();
-		applicationForm.getEvents().addAll(Arrays.asList(validationPhaseEnteredEvent));
+    }
 
-		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
-		assertEquals(2, objects.size());
-		TimelinePhase timelinePhaseTwo = (TimelinePhase) objects.get(0);
-		assertEquals(ApplicationFormStatus.VALIDATION, timelinePhaseTwo.getStatus());
+    @Test
+    public void shouldOderObejctsByMostRecentActivity() throws ParseException {
 
-		TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(1);
-		assertEquals(creationDate, timelinePhaseOne.getEventDate());
-		assertEquals(currentUser, timelinePhaseOne.getAuthor());
-		assertEquals(ApplicationFormStatus.UNSUBMITTED, timelinePhaseOne.getStatus());
+        Date validatedDate = format.parse("03 04 2012 09:14:12");
+        Date referenceDate = format.parse("03 04 2012 11:00:45");
+        Date commentDate = format.parse("03 04 2012 15:14:12");
 
-	}
+        Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).build();
 
-	@Test
-	public void shouldOderObejctsByMostRecentActivity() throws ParseException {
+        Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).build()).id(4).build();
 
-		Date validatedDate = format.parse("03 04 2012 09:14:12");
-		Date referenceDate = format.parse("03 04 2012 11:00:45");
-		Date commentDate = format.parse("03 04 2012 15:14:12");
+        Comment comment = new CommentBuilder().date(commentDate).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(reviewPhaseEnteredEvent, referenceEvent).comments(comment)
+                .program(new ProgramBuilder().build()).build();
 
-		Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2)
-				.build();
+        List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
+        assertEquals(3, objects.size());
 
-		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).build()).id(4).build();
+        assertTrue(objects.get(0) instanceof TimelineReference);
+        assertTrue(objects.get(1) instanceof TimelinePhase);
+        assertTrue(objects.get(2) instanceof ApplicationCreatedPhase);
 
-		Comment comment = new CommentBuilder().date(commentDate).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(reviewPhaseEnteredEvent, referenceEvent).comments(comment).program(new ProgramBuilder().build()).build();
+    }
 
-		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
-		assertEquals(3, objects.size());
+    @Test
+    public void shouldAddReviewRoundIfReviewStateChange() throws ParseException {
+        ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
+        StateChangeEvent reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().newStatus(ApplicationFormStatus.REVIEW).id(2).reviewRound(reviewRound)
+                .build();
 
-		assertTrue(objects.get(0) instanceof TimelineReference);
-		assertTrue(objects.get(1) instanceof TimelinePhase);
-		assertTrue(objects.get(2) instanceof ApplicationCreatedPhase);
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
+        applicationForm.getEvents().clear();
+        applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
 
-	}
+        TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
 
-	@Test
-	public void shouldAddReviewRoundIfReviewStateChange() throws ParseException {
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
-		StateChangeEvent reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().newStatus(ApplicationFormStatus.REVIEW).id(2).reviewRound(reviewRound)
-				.build();
+        assertEquals(reviewRound, phase.getReviewRound());
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
-		applicationForm.getEvents().clear();
-		applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
+    }
 
-		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
+    @Test
+    public void shouldAddInterviewIfInterviewStateChange() throws ParseException {
 
-		assertEquals(reviewRound, phase.getReviewRound());
+        Interview interview = new InterviewBuilder().id(1).build();
+        InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().newStatus(ApplicationFormStatus.INTERVIEW).id(1)
+                .interview(interview).build();
 
-	}
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
+        applicationForm.getEvents().clear();
+        applicationForm.getEvents().addAll(Arrays.asList(interviewStateChangeEvent));
 
-	@Test
-	public void shouldAddInterviewIfInterviewStateChange() throws ParseException {
+        TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
 
-		Interview interview = new InterviewBuilder().id(1).build();
-		InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().newStatus(ApplicationFormStatus.INTERVIEW).id(1)
-				.interview(interview).build();
+        assertEquals(interview, phase.getInterview());
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
-		applicationForm.getEvents().clear();
-		applicationForm.getEvents().addAll(Arrays.asList(interviewStateChangeEvent));
+    }
 
-		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
+    @Test
+    public void shouldAddApprovalRoundIfApprovalStateChange() throws ParseException {
 
-		assertEquals(interview, phase.getInterview());
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
+        StateChangeEvent reviewPhaseEnteredEvent = new ApprovalStateChangeEventBuilder().newStatus(ApplicationFormStatus.REVIEW).id(2)
+                .approvalRound(approvalRound).build();
 
-	}
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
+        applicationForm.getEvents().clear();
+        applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
 
-	@Test
-	public void shouldAddApprovalRoundIfApprovalStateChange() throws ParseException {
+        TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
 
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
-		StateChangeEvent reviewPhaseEnteredEvent = new ApprovalStateChangeEventBuilder().newStatus(ApplicationFormStatus.REVIEW).id(2)
-				.approvalRound(approvalRound).build();
+        assertEquals(approvalRound, phase.getApprovalRound());
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
-		applicationForm.getEvents().clear();
-		applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
+    }
 
-		TimelinePhase phase = (TimelinePhase) timelineService.getTimelineObjects(applicationForm).get(1);
+    @Test
+    public void shouldAddRefereeToTimelineReference() throws ParseException {
 
-		assertEquals(approvalRound, phase.getApprovalRound());
+        Referee referee = new RefereeBuilder().id(4).build();
+        Event event = new ReferenceEventBuilder().referee(referee).build();
 
-	}
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
+        applicationForm.getEvents().clear();
+        applicationForm.getEvents().addAll(Arrays.asList(event));
 
-	@Test
-	public void shouldAddRefereeToTimelineReference() throws ParseException {
+        TimelineReference timelineReference = (TimelineReference) timelineService.getTimelineObjects(applicationForm).get(0);
 
-		Referee referee = new RefereeBuilder().id(4).build();
-		Event event = new ReferenceEventBuilder().referee(referee).build();
+        assertEquals(referee, timelineReference.getReferee());
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
-		applicationForm.getEvents().clear();
-		applicationForm.getEvents().addAll(Arrays.asList(event));
+    }
 
-		TimelineReference timelineReference = (TimelineReference) timelineService.getTimelineObjects(applicationForm).get(0);
+    @Test
+    public void shouldAddCommentsToCorrectPhase() throws Exception {
 
-		assertEquals(referee, timelineReference.getReferee());
+        Date submissionDate = format.parse("01 04 2012 14:02:03");
+        Date validatedDate = format.parse("03 04 2012 09:14:12");
 
-	}
+        Date commentDateOne = submissionDate;
+        Comment commentOne = new CommentBuilder().date(commentDateOne).id(1).build();
 
-	@Test
-	public void shouldAddCommentsToCorrectPhase() throws Exception {
+        Date commentDateTwo = format.parse("02 04 2012 11:52:46");
+        Comment commentTwo = new CommentBuilder().date(commentDateTwo).id(4).build();
 
-		Date submissionDate = format.parse("01 04 2012 14:02:03");
-		Date validatedDate = format.parse("03 04 2012 09:14:12");
+        Date commentDateThree = format.parse("03 04 2012 17:01:41");
+        Comment commentThree = new CommentBuilder().date(commentDateThree).id(5).build();
 
-		Date commentDateOne = submissionDate;
-		Comment commentOne = new CommentBuilder().date(commentDateOne).id(1).build();
+        // reference comments should be ignored
+        Date commentDateFour = format.parse("03 04 2012 16:00:00");
+        Comment referenceComment = new ReferenceCommentBuilder().date(commentDateFour).id(5).build();
 
-		Date commentDateTwo = format.parse("02 04 2012 11:52:46");
-		Comment commentTwo = new CommentBuilder().date(commentDateTwo).id(4).build();
+        Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).id(1).build();
+        Event reviewPhaseEnteredEvent = new StateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).build();
 
-		Date commentDateThree = format.parse("03 04 2012 17:01:41");
-		Comment commentThree = new CommentBuilder().date(commentDateThree).id(5).build();
+        ApplicationForm applicationForm = EasyMock.createNiceMock(ApplicationForm.class);
+        EasyMock.expect(applicationForm.getApplicationTimestamp()).andReturn(new Date(0));
+        EasyMock.expect(applicationForm.getEvents()).andReturn(Arrays.asList(validationPhaseEnteredEvent, reviewPhaseEnteredEvent));
+        EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(Arrays.asList(commentThree, commentOne, referenceComment, commentTwo));
+        EasyMock.replay(applicationForm);
 
-		// reference comments should be ignored
-		Date commentDateFour = format.parse("03 04 2012 16:00:00");
-		Comment referenceComment = new ReferenceCommentBuilder().date(commentDateFour).id(5).build();
+        List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
+        assertEquals(3, phases.size());
 
-		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).id(1).build();
-		Event reviewPhaseEnteredEvent = new StateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).build();
+        TimelinePhase timelinePhaseOne = (TimelinePhase) phases.get(0);
+        assertEquals(ApplicationFormStatus.REVIEW, timelinePhaseOne.getStatus());
+        assertEquals(1, timelinePhaseOne.getComments().size());
+        assertEquals(commentThree, timelinePhaseOne.getComments().iterator().next());
 
-		ApplicationForm applicationForm = EasyMock.createNiceMock(ApplicationForm.class);
-		EasyMock.expect(applicationForm.getApplicationTimestamp()).andReturn(new Date(0));
-		EasyMock.expect(applicationForm.getEvents()).andReturn(Arrays.asList(validationPhaseEnteredEvent, reviewPhaseEnteredEvent));
-		EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(Arrays.asList(commentThree, commentOne, referenceComment, commentTwo));
-		EasyMock.replay(applicationForm);
+        TimelinePhase timelinePhaseTwo = (TimelinePhase) phases.get(1);
+        assertEquals(ApplicationFormStatus.VALIDATION, timelinePhaseTwo.getStatus());
+        assertEquals(2, timelinePhaseTwo.getComments().size());
+        Iterator<Comment> iterator = timelinePhaseTwo.getComments().iterator();
+        assertEquals(commentTwo, iterator.next());
+        assertEquals(commentOne, iterator.next());
 
-		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
-		assertEquals(3, phases.size());
+    }
 
-		TimelinePhase timelinePhaseOne = (TimelinePhase) phases.get(0);
-		assertEquals(ApplicationFormStatus.REVIEW, timelinePhaseOne.getStatus());
-		assertEquals(1, timelinePhaseOne.getComments().size());
-		assertEquals(commentThree, timelinePhaseOne.getComments().iterator().next());
+    @Test
+    public void shouldSetRejectedByApproverTrueIfRejectUserIsApproverInProgram() {
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        Program program = new ProgramBuilder().id(1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+        EasyMock.replay(userMock);
 
-		TimelinePhase timelinePhaseTwo = (TimelinePhase) phases.get(1);
-		assertEquals(ApplicationFormStatus.VALIDATION, timelinePhaseTwo.getStatus());
-		assertEquals(2, timelinePhaseTwo.getComments().size());
-		Iterator<Comment> iterator = timelinePhaseTwo.getComments().iterator();
-		assertEquals(commentTwo, iterator.next());
-		assertEquals(commentOne, iterator.next());
+        Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).build();
+        applicationForm.getEvents().add(event);
 
-	}
+        List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
+        TimelinePhase phase = (TimelinePhase) phases.get(1);
+        assertTrue(phase.isRejectedByApprover());
+    }
 
-	@Test
-	public void shouldSetRejectedByApproverTrueIfRejectUserIsApproverInProgram() {
-		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		Program program = new ProgramBuilder().id(1).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
-		EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
-		EasyMock.replay(userMock);
+    @Test
+    public void shouldSetRejectedByApproverFalseIfRejectUserIsNOTApproverInProgram() {
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        Program program = new ProgramBuilder().id(1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
+        EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+        EasyMock.replay(userMock);
 
-		Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).build();
-		applicationForm.getEvents().add(event);
+        Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).build();
+        applicationForm.getEvents().add(event);
 
-		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
-		TimelinePhase phase = (TimelinePhase) phases.get(1);
-		assertTrue(phase.isRejectedByApprover());
-	}
+        List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
+        TimelinePhase phase = (TimelinePhase) phases.get(0);
+        assertFalse(phase.isRejectedByApprover());
+    }
 
-	@Test
-	public void shouldSetRejectedByApproverFalseIfRejectUserIsNOTApproverInProgram() {
-		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		Program program = new ProgramBuilder().id(1).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
-		EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
-		EasyMock.replay(userMock);
+    @Test
+    public void shouldSetMessageCodeOntimelinePhasesForApprovalRestarts() throws ParseException {
 
-		Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).build();
-		applicationForm.getEvents().add(event);
+        Date firstApprovalDate = format.parse("01 03 2012 14:02:03");
+        Date secondApprovalDate = format.parse("01 04 2012 14:02:03");
+        Date thirdApprovalDate = format.parse("05 04 2012 14:02:03");
 
-		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
-		TimelinePhase phase = (TimelinePhase) phases.get(0);
-		assertFalse(phase.isRejectedByApprover());
-	}
+        Event approvalEventOne = new StateChangeEventBuilder().date(firstApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(1).build();
+        Event approvalEventTwo = new StateChangeEventBuilder().date(secondApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(2).build();
+        Event approvalEventThree = new StateChangeEventBuilder().date(thirdApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(3).build();
 
-	@Test
-	public void shouldSetMessageCodeOntimelinePhasesForApprovalRestarts() throws ParseException{
-	
-			Date firstApprovalDate = format.parse("01 03 2012 14:02:03");
-			Date secondApprovalDate = format.parse("01 04 2012 14:02:03");
-			Date thirdApprovalDate = format.parse("05 04 2012 14:02:03");
-			
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build())
+                .events(approvalEventOne, approvalEventTwo, approvalEventThree).build();
 
-			Event approvalEventOne = new StateChangeEventBuilder().date(firstApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(1)
-					.build();
-			Event approvalEventTwo = new StateChangeEventBuilder().date(secondApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(2)
-					.build();
-			Event approvalEventThree = new StateChangeEventBuilder().date(thirdApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(3)
-					.build();
+        List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
+        assertEquals(4, objects.size());
+        TimelinePhase timelinePhase2 = (TimelinePhase) objects.get(0);
+        assertEquals("timeline.phase.approval", timelinePhase2.getMessageCode());
+        TimelinePhase timelinePhase3 = (TimelinePhase) objects.get(1);
+        assertEquals("timeline.phase.approval", timelinePhase3.getMessageCode());
+        TimelinePhase timelinePhase4 = (TimelinePhase) objects.get(2);
+        assertEquals("timeline.phase.approval", timelinePhase4.getMessageCode());
+        TimelinePhase timelinePhase1 = (TimelinePhase) objects.get(3);
+        assertEquals("timeline.phase.not_submitted", timelinePhase1.getMessageCode());
+    }
 
-			ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).events(approvalEventOne, approvalEventTwo, approvalEventThree).build();
+    @Before
+    public void setup() {
+        format = new SimpleDateFormat("dd MM yyyy HH:mm:ss");
+        userServiceMock = EasyMock.createMock(UserService.class);
+        timelineService = new TimelineService(userServiceMock);
 
-			List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
-			assertEquals(4, objects.size());
-			TimelinePhase timelinePhase2 = (TimelinePhase) objects.get(0);
-			assertEquals("timeline.phase.approval.restart", timelinePhase2.getMessageCode());
-			TimelinePhase timelinePhase3 = (TimelinePhase) objects.get(1);
-			assertEquals("timeline.phase.approval.restart", timelinePhase3.getMessageCode());
-			TimelinePhase timelinePhase4 = (TimelinePhase) objects.get(2);
-			assertEquals("timeline.phase.approval", timelinePhase4.getMessageCode());
-			TimelinePhase timelinePhase1 = (TimelinePhase) objects.get(3);
-			assertEquals("timeline.phase.not_submitted", timelinePhase1.getMessageCode());
-			
+        currentUser = new RegisteredUserBuilder().id(2).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.replay(userServiceMock);
 
-	}
-	@Before
-	public void setup() {
-		format = new SimpleDateFormat("dd MM yyyy HH:mm:ss");
-		userServiceMock = EasyMock.createMock(UserService.class);
-		timelineService = new TimelineService(userServiceMock);
-
-		currentUser = new RegisteredUserBuilder().id(2).build();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-		EasyMock.replay(userServiceMock);
-
-	}
+    }
 
 }

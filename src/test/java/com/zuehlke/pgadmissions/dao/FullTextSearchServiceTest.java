@@ -68,10 +68,10 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                                                 + "INSERT INTO APPLICATION_ROLE (id) VALUES ('VIEWER');").executeUpdate();
 
                 user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com").username("tyler@durden.com")
-                                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
 
                 similiarToUser1 = new RegisteredUserBuilder().firstName("Taylor").lastName("Dordeen").email("taylor@dordeen.com").username("taylor@durden.com")
-                                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
 
                 registeredUserDAO.save(user1);
                 registeredUserDAO.save(similiarToUser1);

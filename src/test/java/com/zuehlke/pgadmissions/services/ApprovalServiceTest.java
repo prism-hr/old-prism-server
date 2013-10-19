@@ -39,14 +39,12 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -454,7 +452,6 @@ public class ApprovalServiceTest {
         confirmSupervisionDTO.setDeclinedSupervisionReason("reason");
         confirmSupervisionDTO.setSecondarySupervisorEmail("d.jones@ucl.ac.uk");
 
-        commentDAOMock.save(EasyMock.isA(RequestRestartComment.class));
         Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
         commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user1);
@@ -465,7 +462,6 @@ public class ApprovalServiceTest {
 
         assertFalse(primarySupervisor.getConfirmedSupervision());
         assertEquals("reason", primarySupervisor.getDeclinedSupervisionReason());
-        assertEquals(user1, applicationForm.getApproverRequestedRestart());
 
         SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();
         assertSame(applicationForm, comment.getApplication());

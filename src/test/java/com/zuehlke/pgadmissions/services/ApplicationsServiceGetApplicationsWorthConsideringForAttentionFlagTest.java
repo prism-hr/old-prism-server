@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -120,7 +121,7 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
                 sessionFactory
                         .getCurrentSession()
                         .createSQLQuery(
-                                "DELETE FROM APPLICATION_FORM;DELETE FROM PROGRAM_APPROVER_LINK;DELETE FROM PROGRAM_ADMINISTRATOR_LINK;DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
+                                "DELETE FROM SUPERVISOR;DELETE FROM APPLICATION_FORM;DELETE FROM PROGRAM_APPROVER_LINK;DELETE FROM PROGRAM_ADMINISTRATOR_LINK;DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
                                 .executeUpdate();
             }
         });
@@ -133,7 +134,7 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
                 try {
-                    ApprovalRound approvalRound = new ApprovalRoundBuilder().build();
+                    ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(superUser).isPrimary(true).build()).build();
                     ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).applicationNumber("ABC")
                                     .program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).latestApprovalRound(approvalRound)
                                     .pendingApprovalRestart(true).applicant(user).build();

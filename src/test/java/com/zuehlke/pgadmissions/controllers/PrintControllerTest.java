@@ -98,8 +98,8 @@ public class PrintControllerTest {
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new RegisteredUserBuilder().id(5).build()).build();
 		EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
 		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
-		EasyMock.expect(currentUser.hasAdminRightsOnApplication(EasyMock.eq(applicationFormOne))).andReturn(true);
-		EasyMock.expect(currentUser.hasAdminRightsOnApplication(EasyMock.eq(applicationFormTwo))).andReturn(true);
+		EasyMock.expect(currentUser.isRefereeOfApplicationForm(EasyMock.eq(applicationFormOne))).andReturn(false);
+		EasyMock.expect(currentUser.isRefereeOfApplicationForm(EasyMock.eq(applicationFormTwo))).andReturn(false);
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
@@ -149,7 +149,8 @@ public class PrintControllerTest {
 		assertEquals(bytes.length, response.getContentLength());
 	}
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void shouldSkipApplicationsUserCannotSees() throws ServletRequestBindingException, DocumentException, IOException{
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setParameter("appList", "23;34;");

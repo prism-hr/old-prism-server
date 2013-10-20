@@ -93,7 +93,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
     public String addComment(@RequestParam String applicationId, 
-    		@RequestParam String action,
+    		@RequestParam(required = false) String action,
     		@Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, 
     		BindingResult result) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
@@ -102,7 +102,9 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
         
         ApplicationFormAction invokedAction;
         
-        if (action.equals("abort")) {
+        if (action != null &&
+            action.length() > 0 &&
+            action.equals("abort")) {
         	invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
         }
         
@@ -132,9 +134,10 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
     		comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
     				stateChangeComment.getNextStatus());
     		Interview interview = applicationForm.getLatestInterview();
-            interview.setStage(InterviewStage.INACTIVE);
-            interviewService.save(interview);
-    				
+    		if (interview != null) {
+	            interview.setStage(InterviewStage.INACTIVE);
+	            interviewService.save(interview);
+    		}
     		applicationForm.setApplicationAdministrator(null);
     		applicationForm.setDueDate(new Date());
     	}

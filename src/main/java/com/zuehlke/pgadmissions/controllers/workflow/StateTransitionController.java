@@ -130,10 +130,19 @@ public class StateTransitionController {
             public boolean evaluate(final Object object) {
                 ApplicationFormStatus status = (ApplicationFormStatus) object;
                 if (status.equals(ApplicationFormStatus.APPROVED)) {
-                    if (currentUser.isInRoleInProgram(Authority.ADMINISTRATOR, form.getProgram())
-                                    && currentUser.isNotInRoleInProgram(Authority.APPROVER, form.getProgram())) {
+                    if (currentUser.isNotInRole("SUPERADMINISTRATOR") &&
+                    	currentUser.isNotInRoleInProgram(Authority.APPROVER, form.getProgram())) {
                         return false;
                     }
+                }
+                if (form.getNextStatus() != null &&
+                	status.equals(form.getNextStatus())) {
+                	if (!status.equals(ApplicationFormStatus.INTERVIEW)) {
+                    	return false;
+                	}
+                	if (!currentUser.hasAdminRightsOnApplication(form)) {
+                		return false;
+                	}
                 }
                 return true;
             }

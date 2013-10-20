@@ -75,7 +75,7 @@ public class ValidationTransitionControllerTest {
     @Test
     public void shouldResolveViewForApplicationForm() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).build();
-        EasyMock.expect(stateTransitionServiceMock.resolveView(applicationForm)).andReturn("view");
+        EasyMock.expect(stateTransitionServiceMock.resolveView(applicationForm, null)).andReturn("view");
         EasyMock.replay(stateTransitionServiceMock, userServiceMock);
         assertEquals("view", controller.getStateTransitionView(applicationForm, null, new ModelMap()));
         EasyMock.verify(stateTransitionServiceMock, userServiceMock);

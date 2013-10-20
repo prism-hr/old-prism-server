@@ -70,7 +70,9 @@
 							
 							<section id="commentsection" class="form-rows">
 								<h2 class="no-arrow">
-									<#if applicationForm.isInState('VALIDATION')>
+									<#if applicationForm.nextStatus??>
+										Move Application to Different Stage
+									<#elseif applicationForm.isInState('VALIDATION')>
 										Complete Validation Stage
 									<#elseif applicationForm.isInState('REVIEW')>
 										Complete Review Stage
@@ -89,8 +91,9 @@
 										<#else>
 											<div class="alert alert-info"> <i class="icon-info-sign"></i>
 										</#if>
-										
-										<#if applicationForm.isInState('VALIDATION')>
+										<#if applicationForm.nextStatus??>
+											Select a different stage to move the application to.
+										<#elseif applicationForm.isInState('VALIDATION')>
 											Validate the application here.
 										<#elseif applicationForm.isInState('REVIEW')>
 											Evaluate the reviewers' comments and decide which stage to progress the application to.
@@ -186,33 +189,11 @@
 													<select class="max" name="status" id="status">
 														<option value="">Select...</option>
 														<#list stati as status>
-															<#if status == "APPROVED" && 
-																user.isInRole("SUPERADMINISTRATOR") ||
-																user.isApproverInProgram(applicationForm.program)>
-																<option value="${status}" 
-																<#if comment.nextStatus?? && comment.nextStatus == status> 
-																	selected="selected" 
-																</#if>
-																>${status.displayValue()}</option>
-															<#else>
-																<#if applicationForm.nextStatus??>
-																	<#if applicationForm.nextStatus != status ||
-																		user.hasAdminRightsOnApplication(applicationForm) &&
-																		status == 'INTERVIEW'>
-																		<option value="${status}" 
-																		<#if comment.nextStatus?? && comment.nextStatus == status> 
-																			selected="selected" 
-																		</#if>
-																		>${status.displayValue()}</option>
-																	</#if>
-																<#else>
-																	<option value="${status}" 
-																	<#if comment.nextStatus?? && comment.nextStatus == status> 
-																		selected="selected" 
-																	</#if>
-																	>${status.displayValue()}</option>
-																</#if>
+															<option value="${status}" 
+															<#if comment.nextStatus?? && comment.nextStatus == status> 
+																selected="selected" 
 															</#if>
+															>${status.displayValue()}</option>
 														</#list>
 													</select>	
 													<@spring.bind "comment.nextStatus" /> 
@@ -295,7 +276,9 @@
 										<input type="hidden" id="lastName" name ="lastName"/>
 										<input type="hidden" id="email" name ="email"/>
 										<input type="hidden" id="confirmNextStageField" name="confirmNextStage"/>
-										<input type="hidden" id="action" name="action" value="${(RequestParameters.action)!}"/>
+										<#if RequestParameters.action?has_content>
+											<input type="hidden" id="action" name="action" value="${(RequestParameters.action)!}"/>
+										</#if>
 									</form>
 								</section>
 							</div>

@@ -130,18 +130,32 @@ public class ApprovalControllerTest {
     public void shouldGetApprovalPage() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
         Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
+        
+        Date nowDate = new Date();
+        Date testDate = DateUtils.addMonths(nowDate, 1);
+        Date deadlineDate = DateUtils.addMonths(nowDate, 2);
+        
+        final Program program = new Program();
+        program.setId(100000);
+        
+        final ProgramInstance programInstance = new ProgramInstance();
+        programInstance.setId(1);
+        programInstance.setProgram(program);
+        programInstance.setApplicationStartDate(nowDate);
+        programInstance.setApplicationDeadline(deadlineDate);
 
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
-                .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, suprvisorTwo).build()).build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("abc")
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
 
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
+        modelMap.put("approvalRound", application.getLatestApprovalRound());
         modelMap.put("user", currentUserMock);
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
-        ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");        
+        ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
         
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap, null));
@@ -754,8 +768,14 @@ public class ApprovalControllerTest {
         Date testDate = DateUtils.addMonths(nowDate, 1);
         Date deadlineDate = DateUtils.addMonths(nowDate, 2);
         
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project).
-        		latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
+        Supervisor primary = new Supervisor();
+        primary.setUser(primarySupervisor);
+        primary.setIsPrimary(true);
+        Supervisor secondary = new Supervisor();
+        secondary.setUser(secondarySupervisor);
+        
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project)
+        		.latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).build();
         
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);

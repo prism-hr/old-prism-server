@@ -31,7 +31,7 @@ public class StateTransitionViewResolver {
             		"&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString() + "&rejectionIdForced=true";
         }
 
-        else if (action != null && 
+        else if (action != null &&
         		action.equals("abort")) {
         	return STATE_TRANSITION_VIEW;
         } 

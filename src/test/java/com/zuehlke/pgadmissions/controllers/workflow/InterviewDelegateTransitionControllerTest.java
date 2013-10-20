@@ -63,7 +63,7 @@ public class InterviewDelegateTransitionControllerTest {
     @Test
     public void shouldCreateInterviewEvaluationCommentWithLatestInterview() {
         Interview interview = new InterviewBuilder().id(5).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestInterview(interview).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestInterview(interview).status(ApplicationFormStatus.INTERVIEW).build();
         List<Document> documents = Collections.emptyList();
         StateChangeComment stateComment = new StateChangeComment();
         stateComment.setComment("comment");
@@ -87,7 +87,7 @@ public class InterviewDelegateTransitionControllerTest {
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
 
         EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
-        String view = controller.addComment(applicationForm.getApplicationNumber(), "", stateComment, bindingResultMock);
+        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment.getComment(), stateComment, bindingResultMock);
         EasyMock.verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock);
 
         assertEquals("bob", view);

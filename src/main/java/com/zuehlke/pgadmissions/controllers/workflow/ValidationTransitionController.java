@@ -93,7 +93,7 @@ public class ValidationTransitionController extends StateTransitionController {
 
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
     public String addComment(@RequestParam String applicationId, 
-    		@RequestParam String action, 
+    		@RequestParam(required = false) String action, 
     		@Valid @ModelAttribute("comment") ValidationComment comment, 
     		BindingResult result,
             ModelMap model, 
@@ -108,7 +108,8 @@ public class ValidationTransitionController extends StateTransitionController {
         
         ApplicationFormAction invokedAction;
         
-        if (action.equals("abort")) {
+        if (action != null &&
+        	action.equals("abort")) {
         	invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
         }
      

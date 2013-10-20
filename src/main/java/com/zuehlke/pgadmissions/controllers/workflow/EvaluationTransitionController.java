@@ -73,7 +73,7 @@ public class EvaluationTransitionController extends StateTransitionController {
                     @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, 
                     BindingResult result, 
                     ModelMap modelMap,
-                    @RequestParam String action,
+                    @RequestParam(required = false) String action,
                     @RequestParam(required = false) Boolean delegate, 
                     @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
 
@@ -83,7 +83,8 @@ public class EvaluationTransitionController extends StateTransitionController {
         
         ApplicationFormAction invokedAction;
         
-        if (action.equals("abort")) {
+        if (action != null &&
+        	action.equals("abort")) {
         	invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
         }
         

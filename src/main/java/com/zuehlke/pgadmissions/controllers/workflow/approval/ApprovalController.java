@@ -204,7 +204,7 @@ public class ApprovalController {
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
     public String getMoveToApprovalPage(ModelMap modelMap,
-    		@RequestParam String action) {
+    		@RequestParam(required = false) String action) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
@@ -217,7 +217,6 @@ public class ApprovalController {
 	        	porticoData.setRefereesSendToPortico(applicationForm.getRefereesToSendToPorticoIds());
 	        	porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
 	        	modelMap.put("sendToPorticoData", porticoData);
-
         }
         return APPROVAL_PAGE;
     }

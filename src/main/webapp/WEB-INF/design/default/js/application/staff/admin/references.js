@@ -88,11 +88,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // EDIT REFERENCE DATA
     // --------------------------------------------------------------------------------
-    $('.editReferenceButton').each(function() {
-    	$(this).live("click", function() {
-    		editReferenceData(false, true);
-        });
-    });
+	attachReferenceEditListeners();
     
     $(".file").each(function() {
     	watchUpload($(this));
@@ -151,18 +147,25 @@ function clearRefereeForm(form) {
 
 function showProperRefereeEntry() {
 	var $refereeId = $('#editedRefereeId').val();
-	var $refereeEntry = "";
 	
 	if($refereeId == "newReferee") {
-		$refereeEntry = $("#referee_newReferee")[0];
+		$("#referee_newReferee").show();
 	} else {
 		$('a[name="showRefereeLink"]').each(function() {
 			if($refereeId == $(this).attr("toggles").replace("referee_", "")) {
-				$refereeEntry = this;
-				return;
+				$("#" + $(this).attr("toggles")).show();
 			}
 		});
 	}
+	attachReferenceEditListeners();
+}
+
+function attachReferenceEditListeners () {
+    $('.editReferenceButton').each(function() {
+    	$(this).live("click", function() {
+    		editReferenceData(false, true);
+        });
+    });
 }
 
 function postRefereesData(postSendToPorticoData, forceSavingReference) {
@@ -287,7 +290,6 @@ function editReferenceData() {
     };
 
     $('#ajaxloader').show();
-    console.trace();
     $.ajax({
     	dataType: "json",
         type : 'POST',
@@ -304,7 +306,7 @@ function editReferenceData() {
         	clearRefereeFormErrors();
         	if (data.success == "false") {
         		if (data.comment != null) {
-        			$("#commentError_" + refereeId).html('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.comment + '</div>');
+        			$("#refereeComment_" + refereeId).next().after('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.comment + '</div>');
         		}
         	}
         },

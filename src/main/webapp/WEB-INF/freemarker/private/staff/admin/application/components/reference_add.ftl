@@ -1,5 +1,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
 
+<@spring.bind "refereesAdminEditDTO.*"/>
+
 <div class="row-group">
     <div class="row">
         <label for="refereeComment_${encRefereeId}" class="plain-label">Comment<em>*</em></label>
@@ -26,9 +28,9 @@
               </ul>
               <input id="applicantRating_${encRefereeId}" name="applicantRating_${encRefereeId}" class="rating-input" type="number" value="${refereesAdminEditDTO.applicantRating!}" min="0" max="5" />
               
-              <@spring.bind "refereesAdminEditDTO.applicantRating" />
+             <@spring.bind "refereesAdminEditDTO.applicantRating" />
               <#list spring.status.errorMessages as error>
-              <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+              	<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
               </#list>
             </div>
           
@@ -53,19 +55,20 @@
                   <input type="hidden" class="file" id="document_COMMENT" value="${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}"/>
                 </span> </div>
               </div>
-            
-            <ul id="psUploadedDocument" class="uploaded-files">
-            	
-                <#if refereesAdminEditDTO.referenceDocument??> 
-                <li class="done">
-                    <span class="uploaded-file" name="supportingDocumentSpan">
-                        <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}'/>" target="_blank">
-                        ${(refereesAdminEditDTO.referenceDocument.fileName?html)!}</a>
-                        <a id="deleteLq" class="btn btn-danger delete" data-desc="Change reference document"><i class="icon-trash icon-large"></i> Delete</a>
-                    </span>
-                </li>
-                </#if>
-            </ul>
+              
+          	<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+			<div id="commentDocumentProgress" class="progress" style="display: none;"></span> </div>
+			<ul id="commentUploadedDocument"  class="uploaded-files" style="display:none;">
+            	<#if refereesAdminEditDTO.referenceDocument??> 
+	            	<li class="done">
+	                	<span class="uploaded-file" name="supportingDocumentSpan">
+	                    	<a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}'/>" target="_blank">
+	                    	${(refereesAdminEditDTO.referenceDocument.fileName?html)!}</a>
+	                    	<a id="deleteLq" class="btn btn-danger delete" data-desc="Change reference document"><i class="icon-trash icon-large"></i> Delete</a>
+	                	</span>
+	            	</li>
+        		</#if>
+        	</ul>
             <@spring.bind "refereesAdminEditDTO.referenceDocument" /> 
             <#list spring.status.errorMessages as error>
                 <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
@@ -91,8 +94,10 @@
             <#if refereesAdminEditDTO.isSuitableForUCLSet() && !refereesAdminEditDTO.suitableForUCL> checked="checked"</#if>
             /> No</label>
             <@spring.bind "refereesAdminEditDTO.suitableForUCL" /> 
-                <#list spring.status.errorMessages as error> <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div></#list>
-            </div>
+            <#list spring.status.errorMessages as error>
+                <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+            </#list>
+    	</div>
     </div>
     <div class="row multi-line" id="field-issuitableprog">
         <span id="supervise-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
@@ -106,7 +111,7 @@
             /> No</label> 
             <@spring.bind "refereesAdminEditDTO.suitableForProgramme" /> 
             <#list spring.status.errorMessages as error> 
-            <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+            	<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
             </#list>
         </div>
         
@@ -120,15 +125,12 @@
         </#if>      
 
     </div>
-    
-  	<@spring.bind "refereesAdminEditDTO.*" />
    
   	<#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
   	<input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
     
 </div>
 
-	
 <#assign scores = refereesAdminEditDTO.scores>
 <#if refereesAdminEditDTO.alert??>
 	<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
@@ -142,4 +144,3 @@
     </div>
 </div>
 </#if>
-    

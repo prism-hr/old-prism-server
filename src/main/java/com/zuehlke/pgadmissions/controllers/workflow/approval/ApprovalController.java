@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -22,9 +25,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
@@ -71,6 +76,7 @@ import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
@@ -120,6 +126,8 @@ public class ApprovalController {
     private final DomicileService domicileService;
 
     private final DomicilePropertyEditor domicilePropertyEditor;
+    
+    private final MessageSource messageSource;
 
     private final ScoringDefinitionParser scoringDefinitionParser;
 
@@ -136,7 +144,7 @@ public class ApprovalController {
     private final ProgramInstanceService programInstanceService;
 
     public ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -145,8 +153,8 @@ public class ApprovalController {
             GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
-            DomicilePropertyEditor domicilePropertyEditor, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor,
-            ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider,
+            DomicilePropertyEditor domicilePropertyEditor, MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor 
+            scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider,
             final ApplicationDescriptorProvider applicationDescriptorProvider, ProgramInstanceService programInstanceService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
@@ -164,6 +172,7 @@ public class ApprovalController {
         this.datePropertyEditor = datePropertyEditor;
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
+        this.messageSource = messageSource;
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
@@ -439,6 +448,29 @@ public class ApprovalController {
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
 
         return QUALIFICATION_SECTION;
+    }
+    
+    @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+                    BindingResult result, Model model) throws ScoringDefinitionParseException {
+
+        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
+
+        createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
+        refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (!result.hasErrors()) {
+            refereeService.editReferenceComment(applicationForm, refereesAdminEditDTO);
+            map.put("success", "true");
+        } else {
+            map.put("success", "false");
+			map.putAll(FieldErrorUtils.populateMapWithErrors(result, messageSource));
+        }
+
+        Gson gson = new Gson();
+        return gson.toJson(map);
     }
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)

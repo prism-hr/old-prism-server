@@ -97,7 +97,7 @@
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
-            <button id="editReferenceButton_${encRefereeId}" type="button" class="btn btn-primary editReferenceButton">Update Reference</button>
+            <button id="editReferenceButton" value="${encRefereeId}" type="button" class="btn btn-primary editReferenceButton">Update Reference</button>
         </div>
     </div>
     

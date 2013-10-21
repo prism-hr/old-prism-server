@@ -29,8 +29,7 @@
 			    </#if>
 			    
 			    	Should you wish an offer to be considered without any supporting transcripts, please enter your case for 
-			    		dispensation in the comment field below.
-			    		
+			    		dispensation in the comment field below. 		
 	    </div>
 				
 	    <div class="row-group" id="explanationArea">

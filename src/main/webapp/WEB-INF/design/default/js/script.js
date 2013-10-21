@@ -481,14 +481,15 @@ function doUpload($upload_field) {
             type : $upload_field.attr('data-type')
         },
         success : function(data) {
-            $container.removeClass('posting');
+            $container.removeClass("posting");
             if (data.indexOf('alert-error') != -1) {
                 // There was an uploading error.
                 $container.append(data);
+                $upload_field.val('');
+				$uploadedDocuments.find('li').last().remove();
             } else if ($(data).find('input').length == 0) {
                 // There was (probably) a server error.
                 $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');
-				
 				$upload_field.val('');
 				$uploadedDocuments.find('li').last().remove();
 				

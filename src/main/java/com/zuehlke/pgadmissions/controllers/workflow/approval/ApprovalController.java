@@ -452,8 +452,10 @@ public class ApprovalController {
     
     @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
-                    BindingResult result, Model model) throws ScoringDefinitionParseException {
+    public String updateReference(@ModelAttribute ApplicationForm applicationForm, 
+    		@ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+            BindingResult result,
+            Model model) throws ScoringDefinitionParseException {
 
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 

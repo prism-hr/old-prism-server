@@ -51,7 +51,7 @@
 </div>
 
 <script type="text/javascript">
-    var $closeReferenceSectionAfterSaving = true;
+	var $editRefereesDataUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/editReferenceData";
     var $postRefereesDataUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereesData";
     var $postReferenceUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postReference";
     var $postRefereeAndReferenceUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereeAndReference";

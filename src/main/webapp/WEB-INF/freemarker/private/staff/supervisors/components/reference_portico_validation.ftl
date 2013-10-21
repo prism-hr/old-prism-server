@@ -16,15 +16,15 @@
     <@spring.bind "sendToPorticoData.refereesSendToPortico" />
     <#if spring.status.errorCodes?seq_contains("portico.submit.referees.invalid")>
         <div class="alert alert-error">
-                 <i class="icon-warning-sign" data-desc="Please complete all of the mandatory fields in this section."></i> 
-                Select the references that you wish to send to UCL Admissions. <b>You must select 2.</b>
-          
-        </div>
+        	<i class="icon-warning-sign" data-desc="Please complete all of the mandatory fields in this section."></i>
     <#else>
         <div class="alert alert-info">
-        	<i class="icon-info-sign"></i> Select two completed references to submit for offer processing. You can also create and update references and provide them on behalf of the Applicant's referees.
-        </div>
-    </#if>
+        	<i class="icon-info-sign"></i>
+    </#if>    
+        
+	        Select the references that you wish to submit with your offer recommendation. <b> You must select 2 completed references</b>.
+	        	You can also edit existing references and/or create new references on behalf of referees if you need to.
+    </div>
     
     <#list applicationForm.referees as referee>
         <#assign encRefereeId = encrypter.encrypt(referee.id) />
@@ -45,7 +45,6 @@
     <div id="referee_newReferee" style="display:none">
         <#assign encRefereeId = "newReferee" />
         <#include "/private/staff/admin/application/components/referee_add.ftl"/>
-        
         <#include "/private/staff/admin/application/components/reference_add.ftl"/>
     </div>
     
@@ -60,7 +59,7 @@
 </div>
 
 <script type="text/javascript">
-    var $closeReferenceSectionAfterSaving = false;
+	var $editRefereesDataUrl = "/pgadmissions/approval/editReferenceData";
     var $postRefereesDataUrl = "/pgadmissions/approval/postRefereesData";
     var $postReferenceUrl = "/pgadmissions/approval/postReference";
 </script>

@@ -2,17 +2,18 @@ $(document).ready(function()
 {
 	$('#applyQualificationsAndReferences').click(function()
 	{
-		// TODO show ajax progress
 		$('#ajaxloader').show();
 		
 		var qualificationsSendToPortico = collectQualificationsSendToPortico();
 		var refereesSendToPorticoData = collectRefereesSendToPortico();
-		var explanation = $("#explanationText").val();
-
-		if(qualificationsSendToPortico.length > 0){
-			// explanation doesn't matter when at least one qualification is selected
-			explanation = "";
-		}
+		
+	    var explanationText = $.trim($("#explanationText").val());
+	    if(explanationText.length > 0){
+	    	data.emptyQualificationsExplanation = explanationText;
+	    }
+	    else {
+	    	explanationText = null;
+	    }
 
 		$.ajax({
 			type: 'POST',
@@ -39,7 +40,7 @@ $(document).ready(function()
 			    applicationNumber : $('#applicationId').val(),
 			    qualificationsSendToPortico : JSON.stringify(qualificationsSendToPortico),
 				refereesSendToPortico : JSON.stringify(refereesSendToPorticoData),
-			    emptyQualificationsExplanation: explanation,
+			    emptyQualificationsExplanation: explanationText,
 			    cacheBreaker: new Date().getTime()
 			},
 			success: function(data)
@@ -57,6 +58,5 @@ $(document).ready(function()
 				$('#ajaxloader').fadeOut('fast');
 			}
 		});
-	});
-		
+	});	
 });

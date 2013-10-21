@@ -76,9 +76,11 @@ function postQualificationsData() {
         cacheBreaker: new Date().getTime()
     };
     
-    if($.trim($("#explanationText").val()).length > 0){
-    	data.emptyQualificationsExplanation = $("#explanationText").val();
+    var explanationText = $.trim($("#explanationText").val());
+    if(explanationText.length > 0){
+    	data.emptyQualificationsExplanation = explanationText;
     }
+    
     $.ajax({
         type : 'POST',
         statusCode : {

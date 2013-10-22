@@ -7,7 +7,7 @@
         <label class="plain-label" for="refereeComment_${encRefereeId}">Comment<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
         <div class="field">
-            <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80" >${(referee.reference.comment?html)!}</textarea>
+            <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80">${(referee.reference.comment?html)!}</textarea>
         </div>
         
         <div class="row multi-line"> 
@@ -33,7 +33,7 @@
         <label class="plain-label" for="referenceDocument_${encRefereeId}">Attach Document (PDF)</label>
         <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
         <div class="field <#if referee.reference.documents[0]??>uploaded</#if>" id="psUploadFields">
-        	<div class="fileupload fileupload-new" data-provides="fileupload">
+        	<div class="fileupload fileupload-new" data-provides="fileupload" <#if referee.reference.documents[0]??>style="display:none"</#if>>
                 <div class="input-append">
                   <div class="uneditable-input span4" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
                   <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
@@ -45,20 +45,20 @@
  
            	<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
 			<div id="commentDocumentProgress" class="progress" style="display:none;"></span> </div>
-            <ul id="psUploadedDocument" class="uploaded-files" style="display:none;">
+            <ul id="psUploadedDocument" class="uploaded-files">
                 <#if referee.reference.documents[0]??> 
 	                <li class="done">
 	                    <span class="uploaded-file" name="supportingDocumentSpan">
-		                    <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(referee.reference.documents[0].id))!}'/>" target="_blank">
+	                		<input type="text" style="display:none" name="documents" value="${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}" class="file">
+		                    <a id="reference_document_link_${encRefereeId}" + class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(referee.reference.documents[0].id))!}'/>" target="_blank">
 		                    ${(referee.reference.documents[0].fileName?html)!}</a>
-		                    <a id="deleteLq" class="btn btn-danger delete" data-desc="Change reference document"><i class="icon-trash icon-large"></i> Delete</a> 
+		                    <a id="reference_document_delete_${encRefereeId}" class="btn btn-danger delete" data-desc="Change reference document"><i class="icon-trash icon-large"></i> Delete</a> 
 	                    </span>
 	                </li>
                 </#if>
             </ul>
         </div>
     </div>
-        
 </div>
 
 <div class="row-group">

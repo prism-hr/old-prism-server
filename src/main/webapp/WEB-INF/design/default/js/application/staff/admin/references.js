@@ -89,10 +89,7 @@ $(document).ready(function() {
     // EDIT REFERENCE DATA
     // --------------------------------------------------------------------------------
 	attachReferenceEditListeners();
-    
-    $(".file").each(function() {
-    	watchUpload($(this));
-    });
+    attachFileUploaders();
 });
 
 function clearRefereeFormErrors() {
@@ -158,6 +155,7 @@ function showProperRefereeEntry() {
 		});
 	}
 	attachReferenceEditListeners();
+    attachFileUploaders();
 }
 
 function attachReferenceEditListeners () {
@@ -165,6 +163,12 @@ function attachReferenceEditListeners () {
     	$(this).live("click", function() {
     		editReferenceData(false, true);
         });
+    });
+}
+
+function attachFileUploaders() {
+    $(".file").each(function() {
+    	watchUpload($(this));
     });
 }
 

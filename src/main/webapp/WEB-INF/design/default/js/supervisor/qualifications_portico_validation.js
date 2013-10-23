@@ -116,6 +116,6 @@ function disableExplanation(){
 	$('#explanationTextLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
  	$('#explanationText').val("");
  	$('#explanationText').prop('disabled', 'disabled');
- 	$('.counter badge').remove();
+ 	$('#explanationText').next().remove();
  	addCounter();
 }

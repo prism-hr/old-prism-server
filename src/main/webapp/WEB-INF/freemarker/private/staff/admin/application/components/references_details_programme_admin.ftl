@@ -11,35 +11,42 @@
 <div id="refereesTable" class="open">
 <#if hasReferees>
 
-	<div class="alert alert-info">
-    <i class="icon-info-sign"></i> Select two completed references to submit for offer processing. You can also create and update references and provide them on behalf of the Applicant's referees.
-    </div>
+	<form>
+	
+		<#include "/private/staff/admin/application/components/referees_table.ftl"/>
 
-    <#include "/private/staff/admin/application/components/referees_table.ftl"/>
-    
-    <#list applicationForm.referees as referee>
-        <#assign encRefereeId = encrypter.encrypt(referee.id) />
-        <div id="referee_${encRefereeId}" style="display:none">
-            
-            <#include "/private/staff/admin/application/components/referee_view.ftl"/>
-            
-            <#if referee.hasResponded() && !referee.isDeclined()>
-                <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
-            </#if>
-        
-            <#if !referee.hasResponded() && !referee.isDeclined()>
-                <#include "/private/staff/admin/application/components/reference_add.ftl"/>
-            </#if>
-        </div>
-    </#list>
-    
-    <div id="referee_newReferee" style="display:none">
-        <#assign encRefereeId = "newReferee" />
-        <#include "/private/staff/admin/application/components/referee_add.ftl"/>
-        
-        <#include "/private/staff/admin/application/components/reference_add.ftl"/>
-    </div>
+		<div class="alert alert-info">
+	    	<i class="icon-info-sign"></i>
+	    	&nbsp;Launch the form below to provide and edit references on behalf of referees. If you wish to at this stage, 
+	    		you may also select the references that you wish to submit with your offer recommendation.
+	    		You will be required to do this when the application reaches the Approval stage.
+	    </div>
+	    
+	    <#list applicationForm.referees as referee>
+	        <#assign encRefereeId = encrypter.encrypt(referee.id) />
+	        <div id="referee_${encRefereeId}" style="display:none">
+	            
+	            <#include "/private/staff/admin/application/components/referee_view.ftl"/>
+	            
+	            <#if referee.hasResponded() && !referee.isDeclined()>
+	                <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
+	            </#if>
+	        
+	            <#if !referee.hasResponded() && !referee.isDeclined()>
+	                <#include "/private/staff/admin/application/components/reference_add.ftl"/>
+	            </#if>
+	        </div>
+	    </#list>
+	    
+	    <div id="referee_newReferee" style="display:none">
+	        <#assign encRefereeId = "newReferee" />
+	        <#include "/private/staff/admin/application/components/referee_add.ftl"/>
+	        
+	        <#include "/private/staff/admin/application/components/reference_add.ftl"/>
+	    </div>
 
+	</form>
+	
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">
         <button id="newReferenceButton" class="btn btn-success right" type="button">New Reference</button>

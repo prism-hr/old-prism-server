@@ -13,11 +13,9 @@ $(document).ready(function() {
     $('#newReferenceButton').live("click", function () {
 		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
 		$('#referee_newReferee').show();
-		$('#referee_newReferee input').val('');
-		$('#refereeComment_newReferee').attr('value', '');
 		$('#editedRefereeId').val('newReferee');
-		$('#suitableUCL_true, #suitableUCL_false, #suitableProgramme_true, #suitableProgramme_false').prop('checked', false);
 		clearRefereeFormErrors();
+		clearRefereeForm($("#referee_newReferee"));
 		$('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
 	});
     
@@ -34,11 +32,19 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
     $('#refereeClearButton').live("click", function() {
         clearRefereeFormErrors();
-    	
-    	$('input[name="refereeSendToUcl"]').each(function() {
-    		$(this).attr("checked", false);
-        });
-
+        
+        var refereeBeingEdited = getRefereeBeingEdited();
+        
+        if (refereeBeingEdited == null) {
+        	$('input[name="refereeSendToUcl"]').each(function() {
+        		$(this).attr("checked", false);
+            });
+        }
+        else {
+        	clearRefereeFormErrors();
+        	clearRefereeForm($("#" + refereeBeingEdited));
+        }
+        
 		$('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
     });    
     
@@ -52,12 +58,7 @@ $(document).ready(function() {
         $("#referee_newReferee").hide();
         $("#" + $(this).attr("toggles")).show();
         $('#editedRefereeId').val($(this).attr("toggles").replace("referee_", "")); // set the id of the referee we are looking at
-        clearRefereeFormErrors();
-        if(!$(this).attr("responded")){
-        	var refereeId = $('#editedRefereeId').val();
-        	clearRefereeForm($("#referee_" + refereeId));
-        }
-        
+        clearRefereeFormErrors();        
     });
     
     // --------------------------------------------------------------------------------
@@ -74,15 +75,15 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // POST SEND TO PORTICO REFEREE DATA
     // --------------------------------------------------------------------------------
-    $('#refereeSaveButton').live("click", function() {
-        postRefereesData(true, false);
+    $('#refereeSaveButton').live("click", function(event) {
+        postRefereesData(true, false, event);
     });
 
     // --------------------------------------------------------------------------------
     // POST ADD REFERENCE DATA
     // --------------------------------------------------------------------------------
-	$(".addReferenceButton").live("click", function() {
-		postRefereesData(false, true);
+	$(".addReferenceButton").live("click", function(event) {
+		postRefereesData(false, true, event);
     });
     
     // --------------------------------------------------------------------------------
@@ -107,8 +108,8 @@ function clearRefereeForm(form) {
     
     form.find("textarea").each(function() {
         $(this).val("");
-		addCounter();
-		$(this).parent().find('.badge').html('2000 Characters left');
+     	$(this).next().remove();
+     	addCounter();
     });
     
     form.find("input:radio").each(function() {
@@ -140,6 +141,13 @@ function clearRefereeForm(form) {
     	$(this).val("");
     });
     
+    form.find(".icon-star.hover").each(function() {
+    	$(this).removeClass("icon-star hover").addClass("icon-star-empty");
+    });
+    
+    form.find(".icon-thumbs-down.hover").each(function() {
+    	$(this).removeClass("hover");
+    });
 }
 
 function showProperRefereeEntry() {
@@ -160,8 +168,8 @@ function showProperRefereeEntry() {
 
 function attachReferenceEditListeners () {
     $('.editReferenceButton').each(function() {
-    	$(this).live("click", function() {
-    		editReferenceData(false, true);
+    	$(this).live("click", function(event) {
+    		editReferenceData(event);
         });
     });
 }
@@ -172,8 +180,14 @@ function attachFileUploaders() {
     });
 }
 
-function postRefereesData(postSendToPorticoData, forceSavingReference) {
+function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
     var refereeId = $('#editedRefereeId').val();
+	var refereeBeingEdited = getRefereeBeingEdited();
+    
+    if (refereeId != "newReferee" && 
+    	refereeBeingEdited != null) {
+        editReferenceData(event);
+    }
     
     var suitableUCL = "";
     if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
@@ -210,7 +224,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
     	postData['refereesSendToPortico'] = JSON.stringify(refereesSendToPortico);
     }
     
-    if(refereeId == "newReferee"){
+    if(refereeId == "newReferee") {
         postData['containsRefereeData'] = true;
 		postData['firstname'] = $("#firstname_" + refereeId).val();
 		postData['lastname'] =$("#lastname_" + refereeId).val();
@@ -235,10 +249,8 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
 	var checkedReferees = collectRefereesSendToPortico();
 	var uncheckedReferees = collectRefereesNotSendToPortico();
 	var editedReferee = $('#editedRefereeId').val();
-	var editsWereInProgress = areAnyRefereesBeingEdited();
 
     $('#ajaxloader').show();
-    
     $.ajax({
         type : 'POST',
         statusCode : {
@@ -251,21 +263,26 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         url : $postRefereesDataUrl,
         data :  postData,
         success : function(data) {
-        	$("#referencesSection").html(data);
+        	if (refereeId == "newReferee") {
+        		$("#referencesSection").html(data);
+                if (refereeBeingEdited != null) {
+                	if ((event.target.id) == "addReferenceButton_newReferee" ||
+                		data.indexOf("alert alert-error") != -1) {
+                		showProperRefereeEntry();
+                	}
+                }
+        	}
+        	refreshRefereesTable(checkedReferees, editedReferee, uncheckedReferees);
             addCounter();
-            refreshRefereesTable(checkedReferees, editedReferee, uncheckedReferees);
-            if (editsWereInProgress) {
-            	showProperRefereeEntry();
-            }
 			addToolTips();
         },
         complete : function() {
-           $('#ajaxloader').fadeOut('fast');
+        	$('#ajaxloader').fadeOut('fast');
         }
     });
 }
 
-function editReferenceData() {
+function editReferenceData(event) {
     var refereeId = $('#editedRefereeId').val();
     
     var suitableUCL = "";
@@ -311,8 +328,20 @@ function editReferenceData() {
         	if (data.success == "false") {
         		if (data.comment != null) {
         			$("#refereeComment_" + refereeId).next().after('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.comment + '</div>');
+    				$("#refereeSendToUcl_" + refereeId).prop('checked', false);
+        			$("#refereeSendToUcl_" + refereeId).attr("disabled", true);
         		}
         	}
+    		else {
+    			if ($('input[name="refereeSendToUcl"]:checked').size() < 2) {
+    				$("#refereeSendToUcl_" + refereeId).removeAttr("disabled");
+    				$("#refereeSendToUcl_" + refereeId).prop('checked', true);
+    			}
+    			
+    			if ((event.target.id) == "refereeSaveButton") {
+    				$("#referee_" + refereeId).hide();
+    			}
+    		}
         },
         complete : function() {
             $('#ajaxloader').fadeOut('fast');
@@ -360,16 +389,12 @@ function refreshRefereesTable(selectedValues, newRefereeValue, unchekedValues) {
 	}
 }
 
-function areAnyRefereesBeingEdited() {
-	var visible = false;
+function getRefereeBeingEdited() {
+	var refereeId = null;
 	$("div[id^=referee_]").each(function() {
 		if (this.style.display != "none") {
-			visible = true;
-			return;
+			refereeId = $(this).attr("id");
 		};
 	});
-	if ($("#referee_newReferee")[0].style.display != "none") {
-		visible = true;
-	}
-	return visible;
+	return refereeId;
 }

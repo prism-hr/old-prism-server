@@ -89,8 +89,8 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
             		referees.remove(i);
             	}
             }
-        	
-            if (referees.size() != 2) {
+
+            if (referees.size() < 2) {
                 errors.rejectValue("refereesSendToPortico", "portico.submit.referees.invalid");
             }
         }

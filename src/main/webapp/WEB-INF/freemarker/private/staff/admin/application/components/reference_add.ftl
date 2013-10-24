@@ -122,13 +122,20 @@
             </#list>
         </div>
         
-        <#if scores!?size == 0>
-        <!-- Add reference add button -->
-        <div class="row">
-            <div class="field">
-                <button id="addReferenceButton_${encRefereeId}" type="button" class="btn btn-primary addReferenceButton">Add Reference</button>
-            </div>
-        </div>
+        <#if isEditedReferee == 1>
+			<#assign scores = refereesAdminEditDTO.scores>
+			<#if refereesAdminEditDTO.alert??>
+				<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
+			</#if>
+		</#if>
+        
+        <#if !(scores)?has_content>
+	        <!-- Add reference add button -->
+	        <div class="row">
+	            <div class="field">
+	                <button id="addReferenceButton_${encRefereeId}" type="button" class="btn btn-primary addReferenceButton">Add Reference</button>
+	            </div>
+	        </div>
         </#if>      
 
     </div>
@@ -148,11 +155,16 @@
 </#if>
 
 <#if (scores)?has_content>
-<div class="row-group">
-    <div id="scoring-questions_${encRefereeId}">
-      <#assign errorsContainerName = "refereesAdminEditDTO">
-      <h3>Programme Specific Questions</h3>
-      <#include "/private/staff/scores.ftl"/>
-    </div>
-</div>
+	<div class="row-group">
+	    <div id="scoring-questions_${encRefereeId}">
+	      <#assign errorsContainerName = "refereesAdminEditDTO">
+	      <h3>Programme Specific Questions</h3>
+	      <#include "/private/staff/scores.ftl"/>
+	    </div>
+	    <div class="row">
+	    	<div class="field">
+	        	<button id="addReferenceButton_${encRefereeId}" type="button" class="btn btn-primary addReferenceButton">Add Reference</button>
+	        </div>
+	    </div>
+	</div>
 </#if>

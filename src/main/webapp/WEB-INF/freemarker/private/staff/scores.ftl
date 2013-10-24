@@ -25,7 +25,7 @@
 	<#if originalQuestion.tooltip??>
 		<span class="hint" data-desc="${originalQuestion.tooltip}"></span>
 	</#if>
-    <div class="field">
+    <div id="question_container_${score_index}" class="field">
       <#if score.questionType == "TEXT">
       
           <input id="question_${score_index}" class="text-input max" type="text" value="${score.textResponse!}"/>

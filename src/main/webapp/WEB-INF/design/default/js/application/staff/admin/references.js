@@ -204,25 +204,16 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
     var $ref_doc_hidden     = $ref_doc_container.find('.uploaded-files .file');
 	
     postData =  {
-        applicationId : $('#applicationId').val(),
-        refereesSendToPortico: JSON.stringify(refereesSendToPortico),
-        comment: $('#refereeComment_' + refereeId).val(),
-        referenceDocument: $ref_doc_hidden.val(),
-        suitableForUCL : suitableUCL,
-        suitableForProgramme : suitableForProgramme, 
-        applicantRating : $('#applicantRating_' + refereeId).val(),
-        editedRefereeId : $('#editedRefereeId').val(),
-        cacheBreaker: new Date().getTime()
-    };
-
-    if(forceSavingReference){
-    	postData['forceSavingReference'] = true;
-    }
-    
-    if(postSendToPorticoData){
-    	var refereesSendToPortico = collectRefereesSendToPortico();
-    	postData['refereesSendToPortico'] = JSON.stringify(refereesSendToPortico);
-    }
+            applicationId : $('#applicationId').val(),
+            comment: $('#refereeComment_' + refereeId).val(),
+            referenceDocument: $ref_doc_hidden.val(),
+            suitableForUCL : suitableUCL,
+            suitableForProgramme : suitableForProgramme, 
+            applicantRating : $('#applicantRating_' + refereeId).val(),
+            editedRefereeId : $('#editedRefereeId').val(),
+            cacheBreaker: new Date().getTime(),
+            scores : getScores($("#scoring-questions_"+refereeId))
+        };
     
     if(refereeId == "newReferee") {
         postData['containsRefereeData'] = true;
@@ -243,12 +234,16 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
 		postData['editedRefereeId'] = refereeId;
 	}
     
-    var scoreData=getScores($("#scoring-questions_"+refereeId));
-    postData['scores']=scoreData;
+    if(forceSavingReference){
+    	postData['forceSavingReference'] = true;
+    }
     
 	var checkedReferees = collectRefereesSendToPortico();
 	var uncheckedReferees = collectRefereesNotSendToPortico();
-	var editedReferee = $('#editedRefereeId').val();
+    
+    if(postSendToPorticoData){
+    	postData['refereesSendToPortico'] = JSON.stringify(checkedReferees);
+    }
 
     $('#ajaxloader').show();
     $.ajax({
@@ -272,7 +267,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
                 	}
                 }
         	}
-        	refreshRefereesTable(checkedReferees, editedReferee, uncheckedReferees);
+        	refreshRefereesTable(checkedReferees, refereeId, uncheckedReferees);
             addCounter();
 			addToolTips();
         },
@@ -327,9 +322,14 @@ function editReferenceData(event) {
         	clearRefereeFormErrors();
         	if (data.success == "false") {
         		if (data.comment != null) {
-        			$("#refereeComment_" + refereeId).next().after('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.comment + '</div>');
+        			$("#field_container_refereeComment_" + refereeId).append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.comment + '</div>');
     				$("#refereeSendToUcl_" + refereeId).prop('checked', false);
         			$("#refereeSendToUcl_" + refereeId).attr("disabled", true);
+        		}
+        		for (var i = 0; i < $("div[id=referee_" + refereeId + "]").find("div[id^=question_container_]").size(); i ++) {
+        			if (data["scores[" + i + "]"] != undefined) {
+        				$("div[id=referee_" + refereeId + "]").find($("div[id=question_container_" + i + "]")).append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data["scores[" + i + "]"] + '</div>');
+        			}	
         		}
         	}
     		else {
@@ -351,8 +351,7 @@ function editReferenceData(event) {
 }
 
 function collectRefereesSendToPortico(){
-    referees = new Array();
-    
+    var referees = new Array();
     $('input[name="refereeSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {

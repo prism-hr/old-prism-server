@@ -3,10 +3,10 @@
 <@spring.bind "refereesAdminEditDTO.*"/>
 
 <div class="row-group">
-    <div class="row">
+    <div "class="row">
         <label class="plain-label" for="refereeComment_${encRefereeId}">Comment<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
-        <div class="field">
+        <div id="field_container_refereeComment_${encRefereeId}" class="field">
             <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80">${(referee.reference.comment?html)!}</textarea>
         </div>
         
@@ -93,23 +93,32 @@
     <input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
     
     <#assign scores = refereesAdminEditDTO.scores>
-	<#if refereesAdminEditDTO.alert??>
-		<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
-	</#if>
-	<#if (scores)?has_content>
+    
+	<#if !(scores)?has_content>
+		<div class="row">
+        	<div class="field">
+            	<button id="editReferenceButton" value="${encRefereeId}" type="button" class="btn btn-primary editReferenceButton">Update Reference</button>
+        	</div>
+    	</div>
+	</#if> 
+
+</div>
+
+<#if refereesAdminEditDTO.alert??>
+	<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
+</#if>
+
+<#if (scores)?has_content>
 	<div class="row-group">
 	    <div id="scoring-questions_${encRefereeId}">
 	      <#assign errorsContainerName = "refereesAdminEditDTO">
 	      <h3>Programme Specific Questions</h3>
 	      <#include "/private/staff/scores.ftl"/>
 	    </div>
+	   	<div class="row">
+    		<div class="field">
+        		<button id="editReferenceButton" value="${encRefereeId}" type="button" class="btn btn-primary editReferenceButton">Update Reference</button>
+    		</div>
+		</div>
 	</div>
-	</#if>
-    
-    <!-- Add reference add button -->
-    <div class="row">
-        <div class="field">
-            <button id="editReferenceButton" value="${encRefereeId}" type="button" class="btn btn-primary editReferenceButton">Update Reference</button>
-        </div>
-    </div>
-</div>
+</#if>

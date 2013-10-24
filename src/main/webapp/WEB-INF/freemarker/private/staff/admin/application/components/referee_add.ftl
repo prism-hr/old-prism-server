@@ -195,4 +195,3 @@
         autosuggest($("#firstname_${encRefereeId}"), $("#lastname_${encRefereeId}"), $("#email_${encRefereeId}"));
     });
 </script>
-

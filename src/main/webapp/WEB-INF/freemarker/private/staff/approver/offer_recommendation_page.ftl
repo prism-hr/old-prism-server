@@ -50,7 +50,7 @@
           <section class="form-rows">
             <h2 class="no-arrow">Confirm Offer Recommendation</h2>
             <div>
-              <form method="POST" action="<@spring.url '/offerRecommendation'/>">				
+              <form id="offerRecommendationForm" method="POST" action="<@spring.url '/offerRecommendation'/>">				
           		  <@spring.bind "offerRecommendedComment.*" />
                 <#if spring.status.errors.hasErrors()>
                   <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
@@ -60,6 +60,11 @@
                     Confirm the details of the study offer that you wish to recommend.
                 </div>
                 
+                <!-- Assign supervisors --> 
+                <#assign supervisors = offerRecommendedComment.supervisors>
+                <#assign supervisorsEntityName = 'offerRecommendedComment'>
+                <#include "/private/staff/supervisors/components/assign_supervisors_section.ftl"/>
+                                
                 <div class="row-group">
                     <h3 id="lbl_projectDescription">Project Description</h3>
                     <div class="row">
@@ -140,7 +145,7 @@
                 </div>
 
                 <div class="buttons">
-                  <button type="submit" id="rejectButton" class="btn btn-primary">Submit</button>
+                  <button type="submit" id="offerRecommendationSubmitButton" class="btn btn-primary">Submit</button>
                 </div>
                 <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
               </form>

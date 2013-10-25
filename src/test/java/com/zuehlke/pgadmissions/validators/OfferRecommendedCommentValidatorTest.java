@@ -14,7 +14,9 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -26,6 +28,8 @@ public class OfferRecommendedCommentValidatorTest {
     private OfferRecommendedComment comment;
 
     private OfferRecommendedCommentValidator offerRecommendedCommentValidator;
+
+    private SupervisorsValidator supervisorsValidator;
 
     @Test
     public void shouldSupportOfferRecommendedComment() {
@@ -71,9 +75,13 @@ public class OfferRecommendedCommentValidatorTest {
 
     @Before
     public void setup() {
+        Supervisor supervisor1 = new SupervisorBuilder().id(4).build();
+        Supervisor supervisor2 = new SupervisorBuilder().id(5).isPrimary(true).build();
         comment = new OfferRecommendedCommentBuilder().projectTitle("title").projectAbstract("abstract").recommendedConditionsAvailable(true)
-                .recommendedStartDate(DateTime.now().plusDays(1).toDate()).recommendedConditions("conditions").build();
+                .recommendedStartDate(DateTime.now().plusDays(1).toDate()).recommendedConditions("conditions").supervisors(supervisor1, supervisor2).build();
         offerRecommendedCommentValidator = new OfferRecommendedCommentValidator();
         offerRecommendedCommentValidator.setValidator((javax.validation.Validator) validator);
+        supervisorsValidator = new SupervisorsValidator();
+        offerRecommendedCommentValidator.setSupervisorsValidator(supervisorsValidator);
     }
 }

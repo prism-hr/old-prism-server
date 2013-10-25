@@ -130,6 +130,24 @@
 								</li>
 							</ul>
 		        
+		          <#elseif timelineObject.status?? && timelineObject.status == 'APPROVED'>
+		        
+                  <ul class="status-info">
+                      <li class="${timelineObject.type}">
+                          <div class="box">
+                              <p class="added">
+                                  <#assign latestApprovalRound = applicationForm.latestApprovalRound>
+                                  <#assign size_users = latestApprovalRound.supervisors?size>
+                                  <#list latestApprovalRound.supervisors as supervisor>
+                                    <#assign index_i = supervisor_index>
+                                    ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if supervisor.isPrimary> (Primary)</#if><#if (index_i &lt; (size_users - 1))>, </#if>
+                                  </#list>
+                                  added as supervisor<#if size_users &gt; 1>s</#if>.
+                              </p>
+                          </div>
+                      </li>
+                  </ul>
+		        
 							</#if> 
 							
 		          <#if !shownTargetForCompletingStage && 

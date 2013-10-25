@@ -23,13 +23,16 @@ import com.zuehlke.pgadmissions.controllers.workflow.approval.OfferRecommendatio
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
+import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OfferRecommendedCommentValidator;
 
@@ -53,7 +56,11 @@ public class OfferRecommendationControllerTest {
 
     private DatePropertyEditor datePropertyEditorMock;
 
-	private ProgramInstanceService programInstanceServiceMock;
+    private ProgramInstanceService programInstanceServiceMock;
+
+    private SupervisorsProvider supervisorsProviderMock;
+
+    private SupervisorPropertyEditor supervisorPropertyEditorMock;
 
     @Test
     public void shouldGetOfferRecommendationPage() {
@@ -152,9 +159,10 @@ public class OfferRecommendationControllerTest {
         binderMock.setValidator(offerRecommendedCommentValidatorMock);
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
+        binderMock.registerCustomEditor(Supervisor.class, supervisorPropertyEditorMock);
+        
         EasyMock.replay(binderMock);
         controller.registerPropertyEditors(binderMock);
-
         EasyMock.verify(binderMock);
     }
 
@@ -169,8 +177,10 @@ public class OfferRecommendationControllerTest {
         offerRecommendedCommentValidatorMock = EasyMock.createMock(OfferRecommendedCommentValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
+        supervisorsProviderMock = EasyMock.createMock(SupervisorsProvider.class);
+        supervisorPropertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
         controller = new OfferRecommendationController(applicationsServiceMock, userServiceMock, actionsProviderMock, accessServiceMock,
                 applicationDescriptorProviderMock, approvalServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock,
-                programInstanceServiceMock);
+                programInstanceServiceMock, supervisorsProviderMock, supervisorPropertyEditorMock);
     }
 }

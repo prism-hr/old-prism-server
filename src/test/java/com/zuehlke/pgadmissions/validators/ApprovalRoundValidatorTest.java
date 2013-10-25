@@ -7,6 +7,7 @@ import java.util.Collections;
 
 import junit.framework.Assert;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,8 @@ public class ApprovalRoundValidatorTest {
 
     private ApprovalRoundValidator approvalRoundValidator;
 
+    private SupervisorsValidator supervisorsValidator;
+    
     @Test
     public void shouldSupportReviewRound() {
         assertTrue(approvalRoundValidator.supports(ApprovalRound.class));
@@ -56,37 +59,6 @@ public class ApprovalRoundValidatorTest {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
         approvalRoundValidator.validate(approvalRound, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
-    }
-
-    @Test
-    public void shouldRejectIfSupervisorListIsEmpty() {
-        approvalRound.getSupervisors().clear();
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
-        approvalRoundValidator.validate(approvalRound, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("approvalround.supervisors.incomplete", mappingResult.getFieldError("supervisors").getCode());
-    }
-
-    @Test
-    public void shouldRejectIfOnlyOneSupervisor() {
-        Supervisor supervisor = new SupervisorBuilder().id(4).build();
-
-        approvalRound.setSupervisors(Collections.singletonList(supervisor));
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
-        approvalRoundValidator.validate(approvalRound, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("approvalround.supervisors.incomplete", mappingResult.getFieldError("supervisors").getCode());
-    }
-
-    @Test
-    public void shouldRejectIfNoSupervisorSetAsPrimary() {
-        Supervisor supervisor2 = approvalRound.getSupervisors().get(1);
-        supervisor2.setIsPrimary(false);
-
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
-        approvalRoundValidator.validate(approvalRound, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("approvalround.supervisors.noprimary", mappingResult.getFieldError("supervisors").getCode());
     }
 
     @Test
@@ -206,6 +178,9 @@ public class ApprovalRoundValidatorTest {
 
         approvalRoundValidator = new ApprovalRoundValidator();
         approvalRoundValidator.setValidator((javax.validation.Validator) validator);
+
+        supervisorsValidator = new SupervisorsValidator();
+        approvalRoundValidator.setSupervisorsValidator(supervisorsValidator);
     }
     
 }

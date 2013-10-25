@@ -253,7 +253,13 @@ public class ApprovalService {
         form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         sendNotificationToApplicant(form);
         form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER);
+        
+        List<Supervisor> supervisors = form.getLatestApprovalRound().getSupervisors();
+        supervisors.clear();
+        supervisors.addAll(offerRecommendedComment.getSupervisors());
+        
         applicationDAO.save(form);
+        
         
         offerRecommendedComment.setApplication(form);
         offerRecommendedComment.setComment("");

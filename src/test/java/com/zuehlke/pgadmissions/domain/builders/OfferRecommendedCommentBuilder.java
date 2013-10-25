@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -23,6 +25,7 @@ public class OfferRecommendedCommentBuilder {
     private Boolean recommendedConditionsAvailable;
     private String recommendedConditions;
     private CommentType commentType;
+    private List<Supervisor> supervisors = Lists.newArrayList();
 
     public OfferRecommendedCommentBuilder createdTimeStamp(Date createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
@@ -78,6 +81,11 @@ public class OfferRecommendedCommentBuilder {
         this.user = user;
         return this;
     }
+    
+    public OfferRecommendedCommentBuilder supervisors(Supervisor... supervisors) {
+        this.supervisors.addAll(Arrays.asList(supervisors));
+        return this;
+    }
 
     public OfferRecommendedComment build() {
         OfferRecommendedComment supervisionConfirmationComment = new OfferRecommendedComment();
@@ -92,6 +100,7 @@ public class OfferRecommendedCommentBuilder {
         supervisionConfirmationComment.setRecommendedStartDate(recommendedStartDate);
         supervisionConfirmationComment.setRecommendedConditionsAvailable(recommendedConditionsAvailable);
         supervisionConfirmationComment.setRecommendedConditions(recommendedConditions);
+        supervisionConfirmationComment.setSupervisors(supervisors);
         return supervisionConfirmationComment;
     }
 }

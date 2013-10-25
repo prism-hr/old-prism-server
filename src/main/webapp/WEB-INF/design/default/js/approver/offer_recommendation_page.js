@@ -9,6 +9,21 @@ $(document).ready(function() {
     	recommendedConditionsChanged();
     });
     
+    $("#offerRecommendationForm").submit(function(e) {
+        e.preventDefault();
+        
+        var primarySupervisor = $('input[name=primarySupervisor]:checked').val();
+        $('#applicationSupervisorsList li').each(function() {
+        	var supervisorId = $(this).data('supervisorid');
+        	if(supervisorId == primarySupervisor){
+        		supervisorId = supervisorId + "|primary";
+        	}
+            $('#offerRecommendationForm').append("<input name='supervisors' type='hidden' value='" + supervisorId + "'/>");
+        });
+        
+        this.submit(); 
+    });
+    
     recommendedConditionsChanged();
  });
 

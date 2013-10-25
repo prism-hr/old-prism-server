@@ -75,7 +75,7 @@
                               (!applicationForm.hasEnoughReferencesToSendToPortico() || 
                               (!applicationForm.hasEnoughQualificationsToSendToPortico() && 
                               approvalRound.getMissingQualificationExplanation()?has_content))>
-                                <#include "/private/staff/supervisors/supervisors_section.ftl"/>
+                                <#include "/private/staff/supervisors/propose_offer_recommendations.ftl"/>
                             <#else>
                                 <#include "/private/staff/supervisors/portico_validation_section.ftl"/>
                             </#if>

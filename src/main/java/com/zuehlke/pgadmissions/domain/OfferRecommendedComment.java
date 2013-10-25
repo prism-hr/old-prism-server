@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
@@ -41,6 +44,9 @@ public class OfferRecommendedComment extends Comment {
     @Enumerated(EnumType.STRING)
     @Column(name = "comment_type")
     private CommentType type;
+
+    @Transient
+    private List<Supervisor> supervisors = new ArrayList<Supervisor>();
 
     public String getProjectTitle() {
         return projectTitle;
@@ -88,6 +94,14 @@ public class OfferRecommendedComment extends Comment {
 
     public void setType(CommentType type) {
         this.type = type;
+    }
+
+    public List<Supervisor> getSupervisors() {
+        return supervisors;
+    }
+
+    public void setSupervisors(List<Supervisor> supervisors) {
+        this.supervisors = supervisors;
     }
 
 }

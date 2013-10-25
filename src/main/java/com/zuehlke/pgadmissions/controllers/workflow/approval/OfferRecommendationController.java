@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.approval;
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -25,14 +26,17 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
+import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OfferRecommendedCommentValidator;
 
@@ -57,18 +61,22 @@ public class OfferRecommendationController {
     private final OfferRecommendedCommentValidator offerRecommendedCommentValidator;
 
     private final DatePropertyEditor datePropertyEditor;
-    
+
     private final ProgramInstanceService programInstanceService;
 
+    private final SupervisorsProvider supervisorsProvider;
+    
+    private final SupervisorPropertyEditor supervisorPropertyEditor;
+
     public OfferRecommendationController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
             ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider, ApprovalService approvalService,
             OfferRecommendedCommentValidator offerRecommendedCommentValidator, DatePropertyEditor datePropertyEditor,
-            ProgramInstanceService programInstanceService) {
+            ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider, SupervisorPropertyEditor supervisorPropertyEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.accessService = accessService;
@@ -78,6 +86,8 @@ public class OfferRecommendationController {
         this.offerRecommendedCommentValidator = offerRecommendedCommentValidator;
         this.datePropertyEditor = datePropertyEditor;
         this.programInstanceService = programInstanceService;
+        this.supervisorsProvider = supervisorsProvider;
+        this.supervisorPropertyEditor = supervisorPropertyEditor;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -85,23 +95,24 @@ public class OfferRecommendationController {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(application, user, CONFIRM_OFFER_RECOMMENDATION);
-        
+
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
         ApprovalRound approvalRound = application.getLatestApprovalRound();
         if (approvalRound != null) {
             offerRecommendedComment.setProjectTitle(approvalRound.getProjectTitle());
             offerRecommendedComment.setProjectAbstract(approvalRound.getProjectAbstract());
-            
+
             Date startDate = approvalRound.getRecommendedStartDate();
-            
+
             if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
-            	startDate = programInstanceService.getEarliestPossibleStartDate(application);
+                startDate = programInstanceService.getEarliestPossibleStartDate(application);
             }
-            
+
             offerRecommendedComment.setRecommendedStartDate(startDate);
             offerRecommendedComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
             offerRecommendedComment.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
             offerRecommendedComment.setRecommendedConditions(approvalRound.getRecommendedConditions());
+            offerRecommendedComment.getSupervisors().addAll(approvalRound.getSupervisors());
         }
         modelMap.put("offerRecommendedComment", offerRecommendedComment);
 
@@ -156,6 +167,7 @@ public class OfferRecommendationController {
     @InitBinder("offerRecommendedComment")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(offerRecommendedCommentValidator);
+        binder.registerCustomEditor(Supervisor.class, supervisorPropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
     }
@@ -163,5 +175,20 @@ public class OfferRecommendationController {
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return getCurrentUser();
+    }
+
+    @ModelAttribute("nominatedSupervisors")
+    public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
+        return supervisorsProvider.getNominatedSupervisors(applicationId);
+    }
+
+    @ModelAttribute("programmeSupervisors")
+    public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId) {
+        return supervisorsProvider.getProgrammeSupervisors(applicationId);
+    }
+
+    @ModelAttribute("previousSupervisors")
+    public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
+        return supervisorsProvider.getPreviousSupervisorsAndInterviewersWillingToSupervise(applicationId);
     }
 }

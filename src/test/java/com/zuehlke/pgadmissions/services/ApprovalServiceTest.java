@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -13,11 +14,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
@@ -494,9 +497,10 @@ public class ApprovalServiceTest {
         ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
                 .enabled(true).studyOption("1", "full").build();
         Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
+        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().supervisors(new Supervisor()).build();
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
-                .programmeDetails(programmeDetails).build();
-        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
+                .programmeDetails(programmeDetails).latestApprovalRound(latestApprovalRound).build();
+        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedCommentBuilder().supervisors(supervisor).build();
 
         applicationFormDAOMock.save(application);
         commentDAOMock.save(offerRecommendedComment);
@@ -519,6 +523,7 @@ public class ApprovalServiceTest {
         assertEquals("", offerRecommendedComment.getComment());
         assertEquals(CommentType.OFFER_RECOMMENDED_COMMENT, offerRecommendedComment.getType());
         assertSame(currentUser, offerRecommendedComment.getUser());
+        assertThat(latestApprovalRound.getSupervisors(), Matchers.contains(supervisor));
     }
 
     @Test
@@ -535,7 +540,7 @@ public class ApprovalServiceTest {
                 .applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").build();
         Program program = new ProgramBuilder().id(1).enabled(true).instances(instanceDisabled, instanceEnabled).build();
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
-                .programmeDetails(programmeDetails).build();
+                .programmeDetails(programmeDetails).latestApprovalRound(new ApprovalRound()).build();
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
 
         programmeDetailDAOMock.save(EasyMock.same(programmeDetails));

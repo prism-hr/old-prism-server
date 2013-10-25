@@ -2,16 +2,21 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 
 @Component
 public class ApprovalRoundValidator extends AbstractValidator {
+
+    @Autowired
+    private SupervisorsValidator supervisorsValidator;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -24,20 +29,7 @@ public class ApprovalRoundValidator extends AbstractValidator {
         ApprovalRound approvalRound = (ApprovalRound) target;
 
         // supervisors validation
-        if (approvalRound.getSupervisors().size() != 2) {
-            errors.rejectValue("supervisors", "approvalround.supervisors.incomplete");
-        } else {
-            int primarySupervisors = 0;
-            for (Supervisor supervisor : approvalRound.getSupervisors()) {
-                if (BooleanUtils.isTrue(supervisor.getIsPrimary())) {
-                    primarySupervisors++;
-                }
-            }
-
-            if (primarySupervisors != 1) {
-                errors.rejectValue("supervisors", "approvalround.supervisors.noprimary");
-            }
-        }
+        ValidationUtils.invokeValidator(supervisorsValidator, approvalRound, errors);
 
         // project description validation
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectDescriptionAvailable", EMPTY_DROPDOWN_ERROR_MESSAGE);
@@ -61,6 +53,10 @@ public class ApprovalRoundValidator extends AbstractValidator {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditions", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
+    }
+
+    void setSupervisorsValidator(SupervisorsValidator supervisorsValidator) {
+        this.supervisorsValidator = supervisorsValidator;
     }
 
 }

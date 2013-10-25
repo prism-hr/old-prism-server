@@ -9,49 +9,48 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public abstract class TimelineObject implements Comparable<TimelineObject> {
 
-	protected Date eventDate = null;
-	
-	protected RegisteredUser author;
-	
-	public Date getEventDate() {
-		return eventDate;
-	}
+    protected Date eventDate = null;
 
-	public void setEventDate(Date date) {
-		this.eventDate = date;
-	}
+    protected RegisteredUser author;
 
-	public RegisteredUser getAuthor() {
-		return author;
-	}
+    public Date getEventDate() {
+        return eventDate;
+    }
 
-	public void setAuthor(RegisteredUser author) {
-		this.author = author;
-	}
-	
-	
-	@Override
-	public int compareTo(TimelineObject otherPhase) {
-		return new CompareToBuilder().append(otherPhase.getMostRecentActivityDate(), getMostRecentActivityDate()).toComparison();
-	}
+    public void setEventDate(Date date) {
+        this.eventDate = date;
+    }
 
-	abstract String getMessageCode(); 
+    public RegisteredUser getAuthor() {
+        return author;
+    }
 
-	abstract String getType();
-	
-	abstract Date getMostRecentActivityDate();
-	
-	abstract String getUserCapacity();
-	
-	public String getTooltipMessage() {
-	    String userCapacity = StringUtils.EMPTY;
-	    if (StringUtils.equalsIgnoreCase("admin", getUserCapacity())) {
-	        userCapacity = "Administrator";
-	    } else {
-	        userCapacity = StringUtils.capitalize(getUserCapacity());
-	    }
-	    return String.format("%s %s (%s) as: %s", author.getFirstName(), author.getLastName(), author.getEmail(), userCapacity); 
-	}
+    public void setAuthor(RegisteredUser author) {
+        this.author = author;
+    }
+
+    @Override
+    public int compareTo(TimelineObject otherPhase) {
+        return new CompareToBuilder().append(otherPhase.getMostRecentActivityDate(), getMostRecentActivityDate()).toComparison();
+    }
+
+    abstract String getMessageCode();
+
+    abstract String getType();
+
+    abstract Date getMostRecentActivityDate();
+
+    abstract String getUserCapacity();
+
+    public String getTooltipMessage() {
+        String userCapacity = StringUtils.EMPTY;
+        if (StringUtils.equalsIgnoreCase("admin", getUserCapacity())) {
+            userCapacity = "Administrator";
+        } else {
+            userCapacity = StringUtils.capitalize(getUserCapacity());
+        }
+        return String.format("%s %s (%s) as: %s", author.getFirstName(), author.getLastName(), author.getEmail(), userCapacity);
+    }
 
     public String getTooltipMessage(String role) {
         return String.format("%s %s (%s) as: %s", author.getFirstName(), author.getLastName(), author.getEmail(), StringUtils.capitalize(role));

@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-	<h3 id="p_newSupervisor">Create New Supervisor</h3>																			
+<h3 id="p_newSupervisor">Create New Supervisor</h3>																			
 
 <div class="row">
 	<label id="lbl_newSupervisorFirstName" class="plain-label" for="newSupervisorFirstName">Supervisor First Name<em>*</em></label> 

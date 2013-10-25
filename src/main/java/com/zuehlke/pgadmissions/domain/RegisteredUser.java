@@ -605,6 +605,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return isSupervisorInApprovalRound(approvalRound, this);
     }
 
+    public boolean isSupervisorIn(final List<Supervisor> supervisors) {
+        return containsSupervisor(this, supervisors);
+    }
+
     public boolean isSupervisorOfApplicationForm(final ApplicationForm form) {
         return isSupervisorOfApplicationForm(form, this);
     }

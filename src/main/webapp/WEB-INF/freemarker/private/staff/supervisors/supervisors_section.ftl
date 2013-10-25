@@ -219,4 +219,4 @@
 <div id="postApprovalData"></div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/supervisor.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/assign_supervisors.js'/>"></script>

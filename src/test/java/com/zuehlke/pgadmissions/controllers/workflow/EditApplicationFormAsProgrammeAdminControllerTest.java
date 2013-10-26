@@ -64,6 +64,7 @@ import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 
 public class EditApplicationFormAsProgrammeAdminControllerTest {
 
@@ -72,7 +73,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private UserService userServiceMock;
     private EncryptionHelper encryptionHelperMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
-
+    private ApplicationFormAccessService accessServiceMock;
     private RefereeService refereeServiceMock;
     private RefereesAdminEditDTOValidator refereesAdminEditDTOValidatorMock;
     private SendToPorticoDataDTOEditor sendToPorticoDataDTOEditorMock;
@@ -100,11 +101,12 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
+        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock, refereeServiceMock,
                         refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, messageSourceMock,
                         scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, applicationDescriptorProviderMock, domicileServiceMock,
-                        domicilePropertyEditorMock);
+                        domicilePropertyEditorMock, accessServiceMock);
     }
 
     @Test

@@ -155,10 +155,11 @@ public class ApprovalControllerTest {
         modelMap.put("user", currentUserMock);
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+        
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
         ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
-        
+
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap, null));
         EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
@@ -175,6 +176,8 @@ public class ApprovalControllerTest {
 
     @Test
     public void shouldGetProgrammeSupervisors() {
+    	EasyMock.reset(currentUserMock);
+    	
         final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
         final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
 
@@ -182,10 +185,11 @@ public class ApprovalControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
+        EasyMock.expect(currentUserMock.canEditAsAdministrator(application)).andReturn(true).anyTimes();
 
-        EasyMock.replay(applicationServiceMock);
+        EasyMock.replay(applicationServiceMock, currentUserMock);
         List<RegisteredUser> supervisorsUsers = controller.getProgrammeSupervisors("abc");
-        EasyMock.verify(applicationServiceMock);
+        EasyMock.verify(applicationServiceMock, currentUserMock);
 
         assertEquals(2, supervisorsUsers.size());
         assertTrue(supervisorsUsers.containsAll(Arrays.asList(interUser1, interUser2)));
@@ -193,7 +197,7 @@ public class ApprovalControllerTest {
 
     @Test
     public void shouldGetApplicantNominatedSupervisors() {
-        EasyMock.reset(userServiceMock);
+        EasyMock.reset(userServiceMock, currentUserMock);
         final RegisteredUser interUser1 = new RegisteredUserBuilder().id(1).build();
         final RegisteredUser interUser2 = new RegisteredUserBuilder().id(2).build();
         final RegisteredUser interUser3 = new RegisteredUserBuilder().id(3).build();
@@ -211,14 +215,16 @@ public class ApprovalControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        EasyMock.expect(currentUserMock.canEditAsAdministrator(applicationForm)).andReturn(true).anyTimes();
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1).times(2);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2).times(2);
 
-        EasyMock.replay(userServiceMock, applicationServiceMock);
+        EasyMock.replay(userServiceMock, applicationServiceMock, currentUserMock);
         List<RegisteredUser> nominatedSupervisors = controller.getNominatedSupervisors("5");
         List<RegisteredUser> programmeSupervisors = controller.getProgrammeSupervisors("5");
-        EasyMock.verify(userServiceMock, applicationServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock, currentUserMock);
 
         assertEquals(2, nominatedSupervisors.size());
         assertTrue(nominatedSupervisors.containsAll(Arrays.asList(interUser1, interUser2)));
@@ -228,7 +234,7 @@ public class ApprovalControllerTest {
 
     @Test
     public void shouldRemoveApplicantNominatedSupervisorsFromProgramSupervisors() {
-        EasyMock.reset(userServiceMock);
+        EasyMock.reset(userServiceMock, currentUserMock);
         final RegisteredUser interUser1 = new RegisteredUserBuilder().id(1).build();
         final RegisteredUser interUser2 = new RegisteredUserBuilder().id(2).build();
 
@@ -244,13 +250,15 @@ public class ApprovalControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        EasyMock.expect(currentUserMock.canEditAsAdministrator(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
 
-        EasyMock.replay(userServiceMock, applicationServiceMock);
+        EasyMock.replay(userServiceMock, applicationServiceMock, currentUserMock);
         List<RegisteredUser> nominatedSupervisors = controller.getNominatedSupervisors("5");
-        EasyMock.verify(userServiceMock, applicationServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock, currentUserMock);
 
         assertEquals(2, nominatedSupervisors.size());
         assertTrue(nominatedSupervisors.containsAll(Arrays.asList(interUser1, interUser2)));
@@ -258,7 +266,7 @@ public class ApprovalControllerTest {
 
     @Test
     public void shouldGetListOfPreviousSupervisorsAndAddReviewersWillingToApprovalRoundWitDefaultSupervisorsAndApplicantSupervisorsRemoved() {
-        EasyMock.reset(userServiceMock);
+        EasyMock.reset(userServiceMock, currentUserMock);
         final RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(9).build();
         final RegisteredUser interviewerWillingToSuperviseOne = new RegisteredUserBuilder().id(8).build();
         final RegisteredUser interviewerWillingToSuperviseTwo = new RegisteredUserBuilder().id(7).build();
@@ -279,15 +287,17 @@ public class ApprovalControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).comments(interviewOne, interviewTwo, interviewThree)
                 .programmeDetails(programmeDetails).build();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        EasyMock.expect(currentUserMock.canEditAsAdministrator(applicationForm)).andReturn(true).anyTimes();
 
         EasyMock.expect(userServiceMock.getAllPreviousSupervisorsOfProgram(program)).andReturn(
                 Arrays.asList(previousSupervisor, defaultSupervisor, interviewerWillingToSuperviseOne));
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(defaultSupervisor).anyTimes();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interviewerWillingToSuperviseOne).anyTimes();
 
-        EasyMock.replay(userServiceMock, applicationServiceMock);
+        EasyMock.replay(userServiceMock, applicationServiceMock, currentUserMock);
         List<RegisteredUser> interviewerUsers = controller.getPreviousSupervisorsAndInterviewersWillingToSupervise("5");
-        EasyMock.verify(userServiceMock, applicationServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock, currentUserMock);
 
         assertEquals(2, interviewerUsers.size());
         assertTrue(interviewerUsers.containsAll(Arrays.asList(previousSupervisor, interviewerWillingToSuperviseTwo)));
@@ -360,6 +370,7 @@ public class ApprovalControllerTest {
                 .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, supervisorTwo, decliningSupervisor).build()).build();
         
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
+        
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
@@ -412,7 +423,7 @@ public class ApprovalControllerTest {
     @Test
     public void shouldGetApplication() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-
+        
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 
         EasyMock.replay(applicationServiceMock);
@@ -425,7 +436,7 @@ public class ApprovalControllerTest {
 
     @Test
     public void shouldGetCurrentUser() {
-        assertEquals(currentUserMock, controller.getUser());
+        assertEquals(currentUserMock, controller.getCurrentUser());
     }
 
     @Test
@@ -504,7 +515,7 @@ public class ApprovalControllerTest {
         binderMock.registerCustomEditor(List.class, sendToPorticoDataDTOEditorMock);
 
         EasyMock.replay(binderMock);
-        controller.registerSendToPorticoDataBinder(binderMock);
+        controller.registerSendToPorticoData(binderMock);
         EasyMock.verify(binderMock);
     }
 
@@ -831,7 +842,8 @@ public class ApprovalControllerTest {
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.replay(userServiceMock);
+        EasyMock.expect(currentUserMock.canEditAsAdministrator(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
+        EasyMock.replay(userServiceMock, currentUserMock);
 
         bindingResultMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);

@@ -339,7 +339,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         return QUALIFICATION_SECTION;
     }
 
-    @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
+    @RequestMapping(value = "/postRefereesDataAndValidateForApproval", method = RequestMethod.POST)
     public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
             @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
             @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,

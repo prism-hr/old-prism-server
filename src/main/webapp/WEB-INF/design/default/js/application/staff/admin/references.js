@@ -183,9 +183,9 @@ function attachFileUploaders() {
 function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
     var refereeId = $('#editedRefereeId').val();
 	var refereeBeingEdited = getRefereeBeingEdited();
-    
-    if (refereeId != "newReferee" && 
-    	refereeBeingEdited != null) {
+	
+    if ((event.target.id) == "refereeSaveButton" &&
+    	$("#" + refereeBeingEdited + "_hasResponded").val() == "responded") {
         editReferenceData(event);
     }
     

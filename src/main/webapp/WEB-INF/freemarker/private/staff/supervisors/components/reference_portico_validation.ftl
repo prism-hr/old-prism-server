@@ -66,6 +66,5 @@
 
 <script type="text/javascript">
 	var $editRefereesDataUrl = "/pgadmissions/approval/editReferenceData";
-    var $postRefereesDataUrl = "/pgadmissions/approval/postRefereesData";
-    var $postReferenceUrl = "/pgadmissions/approval/postReference";
+    var $postRefereesDataUrl = "/pgadmissions/approval/postRefereesDataAndValidateForApproval";
 </script>

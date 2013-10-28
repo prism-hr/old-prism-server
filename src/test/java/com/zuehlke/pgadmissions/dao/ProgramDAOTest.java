@@ -184,7 +184,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
             .closingDate(closingDates.plusMonths(1).toDate()).build();
         ProgramClosingDate badge3 = new ProgramClosingDateBuilder()
             .closingDate(closingDates.plusMonths(2).toDate()).build();
-        Program program = new ProgramBuilder().code("code").build();
+        Program program = new ProgramBuilder().code("code2").build();
         badge1.setProgram(program);
         badge2.setProgram(program);
         badge3.setProgram(program);
@@ -209,7 +209,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         .closingDate(closingDates.plusMonths(1).toDate()).build();
         ProgramClosingDate badge3 = new ProgramClosingDateBuilder()
         .closingDate(closingDates.plusMonths(2).toDate()).build();
-        Program program = new ProgramBuilder().code("code").build();
+        Program program = new ProgramBuilder().code("code3").build();
         badge1.setProgram(program);
         badge2.setProgram(program);
         badge3.setProgram(program);
@@ -226,7 +226,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnNullIfProgramHasNoClosingDates() {
         DateTime closingDates = new DateTime(2013, 05, 20, 00, 00);
-        Program program = new ProgramBuilder().code("code").build();
+        Program program = new ProgramBuilder().code("code4").build();
         
         save(program);
         flushAndClearSession();

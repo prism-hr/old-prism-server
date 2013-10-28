@@ -44,7 +44,7 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldLoadClosingDateWithProgram() throws Exception {
-    	ProgramClosingDate closingDate = createClosingDate(getDate("01-Jun-2013"), 10);
+    	ProgramClosingDate closingDate = createClosingDate(getDate("02-Jun-2013"), 10);
     	
     	addClosingDateToProgram(closingDate, program);
     	
@@ -57,7 +57,7 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteClosingDateWithProgram() throws Exception {
-    	ProgramClosingDate closingDate = createClosingDate(getDate("01-Jun-2013"), 10);
+    	ProgramClosingDate closingDate = createClosingDate(getDate("03-Jun-2013"), 10);
     	Integer closingDateId = addClosingDateToProgram(closingDate, program);
 
     	delete(program);
@@ -72,7 +72,7 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldRemoveClosingDateFromProgram() throws Exception {
-    	ProgramClosingDate closingDate = createClosingDate(getDate("01-Jun-2013"), 10);
+    	ProgramClosingDate closingDate = createClosingDate(getDate("04-Jun-2013"), 10);
     	Integer closingDateId = addClosingDateToProgram(closingDate, program);
     	
     	removeClosingDateFromProgram(closingDate, program);
@@ -87,7 +87,7 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldUpdateClosingDateOfProgram() throws Exception {
-    	Date day = getDate("01-Jun-2013");
+    	Date day = getDate("05-Jun-2013");
 		ProgramClosingDate closingDate = createClosingDate(day, 10);
 		addClosingDateToProgram(closingDate, program);
 		

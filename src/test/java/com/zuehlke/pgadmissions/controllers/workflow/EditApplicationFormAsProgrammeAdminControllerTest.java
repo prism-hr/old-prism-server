@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.MessageSource;
+import org.springframework.ui.ModelMap;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -153,7 +154,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
-        Model model = new ExtendedModelMap();
+        ModelMap model = new ModelMap();
 
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expect(refereeServiceMock.editReferenceComment(applicationForm, refereesAdminEditDTO)).andReturn(null);
@@ -178,7 +179,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         FieldError fieldError = new FieldError("refereesAdminEditDTO", "comment", null);
         result.addError(fieldError);
-        Model model = new ExtendedModelMap();
+        ModelMap model = new ModelMap();
 
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
 
@@ -347,8 +348,10 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     @Test
     public void shouldGetMainPage() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).build();
-
-        String viewName = controller.view(applicationForm);
+        
+        ModelMap modelMap = new ModelMap();
+        
+        String viewName = controller.view(applicationForm, modelMap);
         assertEquals("/private/staff/admin/application/main_application_page_programme_administrator", viewName);
     }
 

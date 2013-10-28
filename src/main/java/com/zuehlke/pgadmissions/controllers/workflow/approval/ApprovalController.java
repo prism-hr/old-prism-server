@@ -76,7 +76,7 @@ import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 @RequestMapping("/approval")
 public class ApprovalController extends EditApplicationFormAsProgrammeAdminController {
 
-    private static final String SUPERVISORS_SECTION = "/private/staff/supervisors/supervisors_section";
+    private static final String PROPOSE_OFFER_RECOMMENDATION_SECTION = "/private/staff/supervisors/propose_offer_recommendation";
     private static final String PORTICO_VALIDATION_SECTION = "/private/staff/supervisors/portico_validation_section";
     private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
     private static final String QUALIFICATION_SECTION = "/private/staff/supervisors/components/qualification_portico_validation";
@@ -155,7 +155,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     @RequestMapping(method = RequestMethod.GET, value = "supervisors_section")
     public String getSupervisorSection() {
-        return SUPERVISORS_SECTION;
+        return PROPOSE_OFFER_RECOMMENDATION_SECTION;
     }
     
     @ModelAttribute
@@ -314,7 +314,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         if (bindingResult.hasErrors()) {
-            return SUPERVISORS_SECTION;
+            return PROPOSE_OFFER_RECOMMENDATION_SECTION;
         }
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));        
@@ -341,7 +341,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
-        return SUPERVISORS_SECTION;
+        return PROPOSE_OFFER_RECOMMENDATION_SECTION;
     }
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)

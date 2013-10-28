@@ -12,8 +12,6 @@
   <form>        
     <#if hasReferees>
     
-    	<@spring.bind "refereesAdminEditDTO.*"/>
-    
 	    <#list applicationForm.referees as referee>
 	    
 	    <!-- All hidden input - Start -->

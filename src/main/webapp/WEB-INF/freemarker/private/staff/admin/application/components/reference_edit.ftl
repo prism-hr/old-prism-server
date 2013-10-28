@@ -92,7 +92,12 @@
     <#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
     <input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
     
-    <#assign scores = refereesAdminEditDTO.scores>
+    <#-- <#if isEditedReferee == 1>
+		<#assign scores = refereesAdminEditDTO.scores>
+		<#if refereesAdminEditDTO.alert??>
+			<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
+		</#if>
+	</#if> -->
     
 	<#if !(scores)?has_content>
 		<div class="row">
@@ -103,10 +108,6 @@
 	</#if> 
 
 </div>
-
-<#if refereesAdminEditDTO.alert??>
-	<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
-</#if>
 
 <#if (scores)?has_content>
 	<div class="row-group">

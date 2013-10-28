@@ -1,6 +1,5 @@
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
-<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
 
 <#if alertForScoringQuestions??>
 	<div class="alert alert-info">

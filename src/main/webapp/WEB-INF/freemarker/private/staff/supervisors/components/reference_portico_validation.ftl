@@ -1,10 +1,12 @@
+<#import "/spring.ftl" as spring/> 
+<#setting locale = "en_US">
+<@spring.bind "refereesAdminEditDTO.*"/>
+
 <#if applicationForm.referees?has_content> 
     <#assign hasReferees = true> 
 <#else> 
     <#assign hasReferees = false> 
-</#if> 
-<#import "/spring.ftl" as spring /> 
-<#setting locale = "en_US">
+</#if>
 
 <h2 id="referee-H2" class="no-arrow empty">References</h2>
 
@@ -66,6 +68,5 @@
 
 <script type="text/javascript">
 	var $editRefereesDataUrl = "/pgadmissions/approval/editReferenceData";
-    var $postRefereesDataUrl = "/pgadmissions/approval/postRefereesData";
-    var $postReferenceUrl = "/pgadmissions/approval/postReference";
+    var $postRefereesDataUrl = "/pgadmissions/approval/postRefereesDataAndValidateForApproval";
 </script>

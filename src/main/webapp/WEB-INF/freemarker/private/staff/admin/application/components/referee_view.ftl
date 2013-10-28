@@ -1,4 +1,9 @@
 <div class="row-group">
+
+	<#if referee.hasResponded()>
+    	<input type="hidden" id="referee_${encRefereeId}_hasResponded" value="responded"/>
+    </#if>
+    
     <div class="admin_row">
         <label class="admin_header">Reference <#if referee.declined> - Declined</#if></label>
         <div class="field">&nbsp</div>
@@ -39,7 +44,7 @@
         <span class="admin_row_label">Country</span>
         <div class="field" id="ref_address_country">${(referee.addressLocation.domicile.name?html)!"Not Provided"}</div>
     </div>
-
+    
     <!-- Email address -->
     <div class="admin_row">
         <span class="admin_row_label">Email</span>

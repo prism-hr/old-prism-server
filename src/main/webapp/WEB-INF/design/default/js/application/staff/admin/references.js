@@ -1,6 +1,7 @@
 $(document).ready(function() {
     
     addToolTips();
+    bindRatings();
     
     // if editedRefereeId is empty assume that new referee is the current one
 	if($('#editedRefereeId').val() == "") {
@@ -183,9 +184,9 @@ function attachFileUploaders() {
 function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
     var refereeId = $('#editedRefereeId').val();
 	var refereeBeingEdited = getRefereeBeingEdited();
-    
-    if (refereeId != "newReferee" && 
-    	refereeBeingEdited != null) {
+	
+    if ((event.target.id) == "refereeSaveButton" &&
+    	$("#" + refereeBeingEdited + "_hasResponded").val() == "responded") {
         editReferenceData(event);
     }
     
@@ -244,6 +245,8 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
     if(postSendToPorticoData){
     	postData['refereesSendToPortico'] = JSON.stringify(checkedReferees);
     }
+    
+    postData['scores'] = getScores($("div[id=" + refereeBeingEdited + "]"));
 
     $('#ajaxloader').show();
     $.ajax({
@@ -270,6 +273,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
         	refreshRefereesTable(checkedReferees, refereeId, uncheckedReferees);
             addCounter();
 			addToolTips();
+			bindRatings();
         },
         complete : function() {
         	$('#ajaxloader').fadeOut('fast');
@@ -302,7 +306,8 @@ function editReferenceData(event) {
         referenceDocument: $ref_doc_hidden.val(),
         suitableForUCL : suitableUCL,
         suitableForProgramme : suitableForProgramme,
-        applicantRating : $('#applicantRating_' + refereeId).val()
+        applicantRating : $('#applicantRating_' + refereeId).val(),
+        scores: getScores($("div[id=referee_" + refereeId + "]"))
     };
 
     $('#ajaxloader').show();
@@ -396,4 +401,18 @@ function getRefereeBeingEdited() {
 		};
 	});
 	return refereeId;
+}
+
+function bindRatings() {
+	$items = $('.rating-list li i');
+	$($items).click(function() {
+		rating('select', $(this) );
+	});
+	$($items).hover(function() {
+	    rating('hover', $(this));
+	});
+	$items.mouseout(function(){
+		rating('out', $(this));
+	});
+	rating('check', $(this));
 }

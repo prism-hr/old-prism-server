@@ -277,7 +277,7 @@ function addCounter() {
 		    $(this).data("maxlength", 500);
 		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'feedCode' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply') {
 			display = false;
-		} else if ($(this).attr('id')=='referenceComment'||$(this).attr('id')=='review-comment'||$(this).attr('id')=='interview-comment'||$(this).attr('id')=='genericComment'||$(this).attr('id')=='state_change_comment'){
+		} else if ($(this).attr('id')=="referenceComment"||$(this).attr('id').indexOf('refereeComment')==0||$(this).attr('id')=='review-comment'||$(this).attr('id')=='interview-comment'||$(this).attr('id')=='genericComment'||$(this).attr('id')=='state_change_comment'){
 			$(this).data("maxlength", 50000);
 		}
 		else {

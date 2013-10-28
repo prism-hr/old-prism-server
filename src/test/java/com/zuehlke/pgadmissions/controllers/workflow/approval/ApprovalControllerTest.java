@@ -185,7 +185,7 @@ public class ApprovalControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
-        EasyMock.expect(currentUserMock.canEditAsAdministrator(application)).andReturn(true).anyTimes();
+        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(application)).andReturn(true).anyTimes();
 
         EasyMock.replay(applicationServiceMock, currentUserMock);
         List<RegisteredUser> supervisorsUsers = controller.getProgrammeSupervisors("abc");
@@ -216,7 +216,7 @@ public class ApprovalControllerTest {
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.expect(currentUserMock.canEditAsAdministrator(applicationForm)).andReturn(true).anyTimes();
+        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true).anyTimes();
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1).times(2);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2).times(2);
@@ -251,7 +251,7 @@ public class ApprovalControllerTest {
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.expect(currentUserMock.canEditAsAdministrator(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
+        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
 
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
@@ -288,7 +288,7 @@ public class ApprovalControllerTest {
                 .programmeDetails(programmeDetails).build();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.expect(currentUserMock.canEditAsAdministrator(applicationForm)).andReturn(true).anyTimes();
+        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true).anyTimes();
 
         EasyMock.expect(userServiceMock.getAllPreviousSupervisorsOfProgram(program)).andReturn(
                 Arrays.asList(previousSupervisor, defaultSupervisor, interviewerWillingToSuperviseOne));
@@ -842,7 +842,7 @@ public class ApprovalControllerTest {
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.expect(currentUserMock.canEditAsAdministrator(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
+        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
         EasyMock.replay(userServiceMock, currentUserMock);
 
         bindingResultMock = EasyMock.createMock(BindingResult.class);

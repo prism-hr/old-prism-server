@@ -45,6 +45,8 @@ import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -133,12 +135,13 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
     public String getMoveToApprovalPage(ModelMap modelMap,
-    		@RequestParam(required = false) String action) {
+    		@ModelAttribute ApprovalRound approvalRound,
+    		BindingResult approvalRoundResult,
+    		@RequestParam(required = false) String action) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
-        modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
-        
+    	
         if (applicationForm.getLatestApprovalRound() != null) {
 	        	SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
 	        	porticoData.setApplicationNumber(applicationForm.getApplicationNumber());
@@ -153,6 +156,18 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     @RequestMapping(method = RequestMethod.GET, value = "supervisors_section")
     public String getSupervisorSection() {
         return SUPERVISORS_SECTION;
+    }
+    
+    @ModelAttribute
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
+        return applicationForm;
     }
     
     @ModelAttribute("nominatedSupervisors")
@@ -310,8 +325,10 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
-    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("approvalRound") ApprovalRound approvalRound,
-            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
+    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, 
+    		@ModelAttribute("approvalRound") ApprovalRound approvalRound,
+            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, 
+            BindingResult result) {
         if (sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getRefereesSendToPortico() == null) {
             throw new ResourceNotFoundException();
         }
@@ -339,10 +356,12 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         return QUALIFICATION_SECTION;
     }
 
-    @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
+    @RequestMapping(value = "/postRefereesDataAndValidateForApproval", method = RequestMethod.POST)
     public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
-            @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
-            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
+            @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, 
+            BindingResult porticoResult,
+            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, 
+            BindingResult referenceResult,
             @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();

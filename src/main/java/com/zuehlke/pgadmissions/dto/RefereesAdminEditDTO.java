@@ -15,6 +15,7 @@ public class RefereesAdminEditDTO {
     private String editedRefereeId;
 
     // reference data
+    
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     private String comment;
 
@@ -25,6 +26,10 @@ public class RefereesAdminEditDTO {
     private Boolean suitableForProgramme;
 
     private Integer applicantRating;
+    
+    private List<Score> scores = new ArrayList<Score>();
+    
+    private String alert;
 
     // referee data
 
@@ -52,10 +57,6 @@ public class RefereesAdminEditDTO {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
     private String messenger;
-
-    private List<Score> scores = new ArrayList<Score>();
-
-    private String alert;
 
     public String getComment() {
         return comment;

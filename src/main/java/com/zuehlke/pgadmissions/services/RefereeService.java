@@ -167,6 +167,8 @@ public class RefereeService {
         reference.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
         reference.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
         reference.setApplicantRating(refereesAdminEditDTO.getApplicantRating());
+        reference.getScores().clear();
+        reference.getScores().addAll(refereesAdminEditDTO.getScores());
 
         Document document = refereesAdminEditDTO.getReferenceDocument();
         if (document != null) {
@@ -230,6 +232,7 @@ public class RefereeService {
         referenceComment.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
         referenceComment.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
         referenceComment.setApplicantRating(refereesAdminEditDTO.getApplicantRating());
+        referenceComment.setScores(refereesAdminEditDTO.getScores());
 
         Document document = refereesAdminEditDTO.getReferenceDocument();
         if (document != null) {

@@ -1,7 +1,3 @@
-<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
-
-<@spring.bind "refereesAdminEditDTO.*"/>
-
 <#assign isEditedReferee = 0>
 <#if editedRefereeId?? &&
 	encRefereeId == editedRefereeId>
@@ -122,12 +118,12 @@
             </#list>
         </div>
         
-        <#if isEditedReferee == 1>
+        <#-- <#if isEditedReferee == 1>
 			<#assign scores = refereesAdminEditDTO.scores>
 			<#if refereesAdminEditDTO.alert??>
 				<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
 			</#if>
-		</#if>
+		</#if> -->
         
         <#if !(scores)?has_content>
 	        <!-- Add reference add button -->
@@ -146,13 +142,6 @@
 	</#if>
     
 </div>
-
-<#if isEditedReferee == 1>
-	<#assign scores = refereesAdminEditDTO.scores>
-	<#if refereesAdminEditDTO.alert??>
-		<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
-	</#if>
-</#if>
 
 <#if (scores)?has_content>
 	<div class="row-group">

@@ -4,15 +4,15 @@ ALTER TABLE APPROVAL_COMMENT
 	ADD PRIMARY KEY (id),
 	ADD INDEX (supervisor_id),
 	ADD INDEX (secondary_supervisor_id),
-	ADD FOREIGN KEY (id) REFERENCES COMMENT (id),
-	ADD FOREIGN KEY (supervisor_id) REFERENCES SUPERVISOR (id),
-	ADD FOREIGN KEY (secondary_supervisor_id) REFERENCES SUPERVISOR (id)
+	ADD CONSTRAINT `approval_comment_comment_fk` FOREIGN KEY (id) REFERENCES COMMENT (id),
+	ADD CONSTRAINT `approval_comment_supervisor_fk` FOREIGN KEY (supervisor_id) REFERENCES SUPERVISOR (id),
+	ADD CONSTRAINT `approval_comment_secondary_supervisor_fk` FOREIGN KEY (secondary_supervisor_id) REFERENCES SUPERVISOR (id)
 ;
 
 ALTER TABLE SUPERVISION_CONFIRMATION_COMMENT
 	ADD COLUMN secondary_supervisor_id INT(10) UNSIGNED AFTER supervisor_id,
 	ADD INDEX (secondary_supervisor_id),
-	ADD FOREIGN KEY (secondary_supervisor_id) REFERENCES SUPERVISOR (id)
+	ADD CONSTRAINT `supervision_confirmation_comment_secondary_supervisor_fk` FOREIGN KEY (secondary_supervisor_id) REFERENCES SUPERVISOR (id)
 ;	
 
 ALTER TABLE OFFER_RECOMMENDED_COMMENT
@@ -20,8 +20,8 @@ ALTER TABLE OFFER_RECOMMENDED_COMMENT
 	ADD COLUMN secondary_supervisor_id INT(10) UNSIGNED AFTER supervisor_id,
 	ADD INDEX (supervisor_id),
 	ADD INDEX (secondary_supervisor_id),
-	ADD FOREIGN KEY (supervisor_id) REFERENCES SUPERVISOR (id),
-	ADD FOREIGN KEY (secondary_supervisor_id) REFERENCES SUPERVISOR (id)
+	ADD CONSTRAINT `offer_recommended_comment_supervisor_fk` FOREIGN KEY (supervisor_id) REFERENCES SUPERVISOR (id),
+	ADD CONSTRAINT `offer_recommended_comment_secondary_supervisor_fk` FOREIGN KEY (secondary_supervisor_id) REFERENCES SUPERVISOR (id)
 ;
 
 UPDATE OFFER_RECOMMENDED_COMMENT INNER JOIN COMMENT

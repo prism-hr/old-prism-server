@@ -30,8 +30,8 @@
           <input id="question_${score_index}" class="text-input max" type="text" value="${score.textResponse!}"/>
           
       <#elseif score.questionType == "TEXTAREA">
-          
-          <textarea id="question_${score_index}" class="textarea-input max" rows="6">${score.textResponse!}</textarea>
+          <#assign maxLength = originalQuestion.maxLength!50000>
+          <textarea id="question_${score_index}" class="textarea-input max scoring-textarea" rows="6" maxlength=${maxLength?c}>${score.textResponse!}</textarea>
           
       <#elseif score.questionType == "DATE">
           <input id="question_${score_index}" class="full date date-input" type="text" value="${(score.dateResponse?string('dd MMM yyyy'))!}" />

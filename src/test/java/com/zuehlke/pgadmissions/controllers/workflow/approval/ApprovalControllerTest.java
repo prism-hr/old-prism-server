@@ -169,7 +169,7 @@ public class ApprovalControllerTest {
 
     @Test
     public void shouldGetSupervisorsSection() {
-        Assert.assertEquals("/private/staff/supervisors/supervisors_section", controller.getSupervisorSection());
+        Assert.assertEquals("/private/staff/supervisors/propose_offer_recommendation", controller.getSupervisorSection());
     }
 
     @Test
@@ -475,7 +475,7 @@ public class ApprovalControllerTest {
         actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         EasyMock.replay(errorsMock, actionsProviderMock);
-        assertEquals("/private/staff/supervisors/supervisors_section", controller.assignSupervisors(modelMap, approvalRound, errorsMock, sessionStatus));
+        assertEquals("/private/staff/supervisors/propose_offer_recommendation", controller.assignSupervisors(modelMap, approvalRound, errorsMock, sessionStatus));
         EasyMock.verify(errorsMock, actionsProviderMock);
 
         assertFalse(sessionStatus.isComplete());
@@ -537,7 +537,7 @@ public class ApprovalControllerTest {
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
 
         String returnValue = controller.applySendToPorticoData(applicationForm, approvalRound, sendToPorticoData, result);
-        assertEquals("/private/staff/supervisors/supervisors_section", returnValue);
+        assertEquals("/private/staff/supervisors/propose_offer_recommendation", returnValue);
 
         EasyMock.verify(qualificationServiceMock, refereeServiceMock);
     }
@@ -563,7 +563,7 @@ public class ApprovalControllerTest {
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
 
         String returnValue = controller.applySendToPorticoData(applicationForm, approvalRound, sendToPorticoData, result);
-        assertEquals("/private/staff/supervisors/supervisors_section", returnValue);
+        assertEquals("/private/staff/supervisors/propose_offer_recommendation", returnValue);
         assertEquals("explanation", approvalRound.getMissingQualificationExplanation());
 
         EasyMock.verify(qualificationServiceMock, refereeServiceMock);

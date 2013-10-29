@@ -90,27 +90,6 @@ function saveComment() {
     $('#stateChangeForm').submit();
 }
 
-function getCreateInterviewersSection() {
-    $('#ajaxloader').show();
-    $.ajax({
-        type : 'GET',
-        statusCode : {
-            401 : function() { window.location.reload(); },
-            500 : function() { window.location.href = "/pgadmissions/error"; },
-            404 : function() { window.location.href = "/pgadmissions/404"; },
-            400 : function() { window.location.href = "/pgadmissions/400"; },
-            403 : function() { window.location.href = "/pgadmissions/404"; }
-        },
-        url : "/pgadmissions/interview/create_interviewer_section?applicationId=" + $('#applicationId').val(),
-        success : function(data) {
-            $('#createInterviewerSection').html(data);
-        },
-        complete : function() {
-            $('#ajaxloader').fadeOut('fast');
-        }
-    });
-}
-
 function changeState() {
     if ($('#status').val() == 'INTERVIEW') {
         if ($('input:radio[name=switch]:checked').val() == 'yes') {
@@ -165,59 +144,6 @@ function refreshControls() {
         $("#approvedDetails").hide();
         $('input:radio[name=switch]')[0].checked = true;
     }
-}
-
-function saveUpdatedProjectDetails() {
-
-    var postData = {
-            'projectTitle' : $('#projectTitle').val(),
-            'projectAbstract' : $('#projectAbstract').val(),
-            'recommendedConditions' : $('#recommendedConditions').val(),
-            'recommendedStartDate' : $('#recommendedStartDate').val(),
-            'recommendedConditionsAvailable' : ($('input:radio[name=recommendedConditionsAvailable]:checked').val() === "true" ? true : false),
-            'projectDescriptionAvailable' : true,
-            'projectStillAcceptsApplications': isProjectAcceptingApplications()
-    };
-    
-    $('#ajaxloader').show();
-    $.ajax({
-        type : 'POST',
-        dataType : "json",
-        statusCode : {
-            401 : function() { window.location.reload(); },
-            500 : function() { window.location.href = "/pgadmissions/error"; },
-            404 : function() { window.location.href = "/pgadmissions/404"; },
-            400 : function() { window.location.href = "/pgadmissions/400"; },
-            403 : function() { window.location.href = "/pgadmissions/404"; }
-        },
-        url : "/pgadmissions/applications/" + $('#applicationId').val() + "/approvalRound/latest/comment",
-        data : postData,
-        success : function(data) {
-            $("#approvedDetails").find("div.alert").remove();
-            if (!data.success) {
-                if (data.projectTitle != null) {
-                    $('#projectTitle').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.projectTitle + '</div>');
-                }
-
-                if (data.projectAbstract != null) {
-                    $('#projectAbstract').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.projectAbstract + '</div>');
-                }
-                   
-                if (data.recommendedConditions != null) {
-                    $('#recommendedConditions').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.recommendedConditions + '</div>');
-                }
-                
-                if (data.recommendedStartDate != null) {
-                    $('#recommendedStartDate').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.recommendedStartDate + '</div>');
-                }
-            } else {
-            	saveComment();
-            }
-        },
-        complete : function() {
-            $('#ajaxloader').fadeOut('fast');
-        }
-    });
 }
 
 function isProjectAcceptingApplications(){

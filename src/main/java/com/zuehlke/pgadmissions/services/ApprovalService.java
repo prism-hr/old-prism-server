@@ -97,11 +97,12 @@ public class ApprovalService {
             Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
             if (!secondarySupervisor.getUser().getEmail().equals(confirmSupervisionDTO.getSecondarySupervisorEmail())) {
                 RegisteredUser user = userService.getUserByEmail(confirmSupervisionDTO.getSecondarySupervisorEmail());
-                for (Supervisor s : approvalRound.getSupervisors()) {
-                    if (!s.getIsPrimary()) {
-                        s.setUser(user);
-                    }
-                }
+                approvalRound.getSupervisors().remove(secondarySupervisor); // remove old supervisor
+                
+                Supervisor newSecondarySupervisor = new Supervisor();
+                newSecondarySupervisor.setUser(user);
+                newSecondarySupervisor.setApprovalRound(approvalRound);
+                approvalRound.getSupervisors().add(newSecondarySupervisor);
             }
 
             approvalRound.setProjectDescriptionAvailable(true);
@@ -119,19 +120,20 @@ public class ApprovalService {
             form.setDueDate(new Date());
         }
 
-        SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, form, supervisor);
+        SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, approvalRound, supervisor);
         commentDAO.save(supervisionConfirmationComment);
     }
 
-    private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm application,
+    private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApprovalRound approvalRound,
             Supervisor supervisor) {
         SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
-        supervisionConfirmationComment.setApplication(application);
+        supervisionConfirmationComment.setApplication(approvalRound.getApplication());
         supervisionConfirmationComment.setDate(new Date());
         supervisionConfirmationComment.setSupervisor(supervisor);
         supervisionConfirmationComment.setType(CommentType.SUPERVISION_CONFIRMATION);
         supervisionConfirmationComment.setUser(userService.getCurrentUser());
         supervisionConfirmationComment.setComment(StringUtils.EMPTY);
+        supervisionConfirmationComment.setSecondarySupervisor(approvalRound.getSecondarySupervisor());
 
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             supervisionConfirmationComment.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
@@ -182,6 +184,8 @@ public class ApprovalService {
         approvalComment.setRecommendedConditions(approvalRound.getRecommendedConditions());
         approvalComment.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
         approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
+        approvalComment.setSupervisor(approvalRound.getPrimarySupervisor());
+        approvalComment.setSecondarySupervisor(approvalRound.getSecondarySupervisor());
         approvalComment.setUser(userService.getCurrentUser());
 
         if (sendReferenceRequest) {
@@ -224,8 +228,8 @@ public class ApprovalService {
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form, ApprovalRound approvalRound) {
-        if (!form.hasEnoughReferencesToSendToPortico() || (!form.hasEnoughQualificationsToSendToPortico() 
-                && approvalRound.getMissingQualificationExplanation() == null)) {
+        if (!form.hasEnoughReferencesToSendToPortico()
+                || (!form.hasEnoughQualificationsToSendToPortico() && approvalRound.getMissingQualificationExplanation() == null)) {
             throw new IllegalStateException("Send to portico data is not valid");
         }
     }
@@ -253,18 +257,24 @@ public class ApprovalService {
         form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         sendNotificationToApplicant(form);
         form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER);
-        
+
         List<Supervisor> supervisors = form.getLatestApprovalRound().getSupervisors();
         supervisors.clear();
         supervisors.addAll(offerRecommendedComment.getSupervisors());
-        
+
         applicationDAO.save(form);
-        
-        
+
         offerRecommendedComment.setApplication(form);
         offerRecommendedComment.setComment("");
         offerRecommendedComment.setType(CommentType.OFFER_RECOMMENDED_COMMENT);
         offerRecommendedComment.setUser(userService.getCurrentUser());
+        for (Supervisor supervisor : offerRecommendedComment.getSupervisors()) {
+            if (supervisor.getIsPrimary()) {
+                offerRecommendedComment.setSupervisor(supervisor);
+            } else {
+                offerRecommendedComment.setSecondarySupervisor(supervisor);
+            }
+        }
         commentDAO.save(offerRecommendedComment);
         return true;
     }

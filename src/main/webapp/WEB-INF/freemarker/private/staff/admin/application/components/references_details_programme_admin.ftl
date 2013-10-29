@@ -42,7 +42,6 @@
 	    <div id="referee_newReferee" style="display:none">
 	        <#assign encRefereeId = "newReferee" />
 	        <#include "/private/staff/admin/application/components/referee_add.ftl"/>
-	        
 	        <#include "/private/staff/admin/application/components/reference_add.ftl"/>
 	    </div>
 

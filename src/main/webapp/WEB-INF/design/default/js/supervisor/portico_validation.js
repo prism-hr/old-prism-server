@@ -8,11 +8,11 @@ $(document).ready(function()
 		var refereesSendToPorticoData = collectRefereesSendToPortico();
 		
 	    var explanationText = $.trim($("#explanationText").val());
-	    if(explanationText.length > 0){
+	    if(explanationText.trim().length > 0){
 	    	data.emptyQualificationsExplanation = explanationText;
 	    }
 	    else {
-	    	explanationText = null;
+	    	explanationText = "";
 	    }
 
 		$.ajax({

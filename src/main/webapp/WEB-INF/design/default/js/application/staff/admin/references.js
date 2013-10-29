@@ -35,11 +35,17 @@ $(document).ready(function() {
     $('#refereeClearButton').live("click", function() {
         clearRefereeFormErrors();
         
-        var refereeBeingEdited = getRefereeBeingEdited();
+        var refereeBeingEdited = null;
+        
+        $("div[id^=referee_]").each(function() {
+    		if (this.style.display != "none") {
+    			refereeBeingEdited = $(this).attr("id");
+    		};
+    	});
         
         if (refereeBeingEdited == null) {
         	$('input[name="refereeSendToUcl"]').each(function() {
-        		$(this).attr("checked", false);
+        		$(this).removeAttr("checked");
             });
         }
         else {
@@ -184,12 +190,6 @@ function attachFileUploaders() {
 
 function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
     var refereeId = $('#editedRefereeId').val();
-	var refereeBeingEdited = getRefereeBeingEdited();
-	
-    if ((event.target.id) == "refereeSaveButton" &&
-    	$("#" + refereeBeingEdited + "_hasResponded").val() == "responded") {
-        editReferenceData(event);
-    }
     
     var suitableForUCL = "";
     if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
@@ -242,13 +242,12 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
     postData['forceSavingReference'] = forceSavingReference;
     
 	var checkedReferees = collectRefereesSendToPortico();
-	var uncheckedReferees = collectRefereesNotSendToPortico();
     
     if(postSendToPorticoData){
     	postData['refereesSendToPortico'] = JSON.stringify(checkedReferees);
     }
     
-    postData['scores'] = getScores($("div[id=" + refereeBeingEdited + "]"));
+    postData['scores'] = getScores($("div[id=referee_" + refereeId + "]"));
 
     $('#ajaxloader').show();
     $.ajax({
@@ -263,34 +262,54 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
         url : $postRefereesDataUrl,
         data : postData,
         success : function(data) {
-	        var doRefreshPane = false;
-			if ((event.target.id).indexOf("addReferenceButton") == 0) {
-				// We are adding something new - refresh the panel
-				doRefreshPane = true;
-			}
-			else if ((event.target.id) == "refereeSaveButton") {
-				// We tried to save something
-				if (refereeBeingEdited != null &&
-					$("#" + refereeBeingEdited).find("#editReferenceButton").size() == 0) {
+        	if ($("#referee_" + refereeId).find("button[id=addReferenceButton_" + refereeId + "]").length == 1) {
+        		// Process the new referee entry
+    	        var doRefreshPane = false;
+    	        var trySelectForPortico = false;
+				if ((event.target.id).indexOf("addReferenceButton") == 0) {
+					// We are adding something new - refresh the panel
+					doRefreshPane = true;
+					if (data.indexOf("alert alert-error") == -1) {
+						trySelectForPortico = true;
+					}
+				}
+				else if ((event.target.id) == "refereeSaveButton") {
 					// We tried to save something new
 					if (data.indexOf("alert alert-error") != -1) {
 						// We got some errors from the server
 						doRefreshPane = true;
 					}
+					else {
+						trySelectForPortico = true;
+					}
 				}
-			}
-			if (doRefreshPane) {
-	    		$("#referencesSection").html(data);
-	    		showProperRefereeEntry();
-			}
-			else {
-				$("#referee_" + refereeId).hide();
-			}
-        	refreshRefereesTable(checkedReferees, refereeId, uncheckedReferees);
-            addCounter();
-			addToolTips();
-			bindRatings();
-			bindFileUploaders();
+				$("#referencesSection").html(data);
+				if (doRefreshPane == true) {
+		    		showProperRefereeEntry();
+				}
+				else {
+					$("#referee_" + refereeId).hide();
+				}
+				if (trySelectForPortico) {
+	    			if ($('input[name="refereeSendToUcl"]:checked').length < 2 &&
+	    				$("#refereeSendToUcl_" + refereeId).attr('disabled') != 'disabled') {
+	    				$("#refereeSendToUcl_" + refereeId).attr('checked', 'checked');
+	    				$("#refereeSendToUcl_" + refereeId).removeAttr('disabled');
+	    			}
+				}
+				else {
+					$("#refereeSendToUcl_" + refereeId).removeAttr('checked');
+	    			$("#refereeSendToUcl_" + refereeId).attr('disabled', 'disabled');
+				}
+	            addCounter();
+				addToolTips();
+				bindRatings();
+				bindFileUploaders();
+        	}
+        	else {
+        		// Process the edited referee entry
+        		editReferenceData(event);
+        	}
         },
         complete : function() {
         	$('#ajaxloader').fadeOut('fast');
@@ -345,21 +364,20 @@ function editReferenceData(event) {
         	if (data.success == "false") {
         		if (data.comment != null) {
         			$("#field_container_refereeComment_" + refereeId).append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.comment + '</div>');
-    				$("#refereeSendToUcl_" + refereeId).prop('checked', false);
-        			$("#refereeSendToUcl_" + refereeId).attr("disabled", true);
+    				$("#refereeSendToUcl_" + refereeId).removeAttr('checked');
+        			$("#refereeSendToUcl_" + refereeId).attr('disabled', 'disabled');
         		}
-        		for (var i = 0; i < $("div[id=referee_" + refereeId + "]").find("div[id^=question_container_]").size(); i ++) {
+        		for (var i = 0; i < $("div[id=referee_" + refereeId + "]").find("div[id^=question_container_]").length; i ++) {
         			if (data["scores[" + i + "]"] != undefined) {
         				$("div[id=referee_" + refereeId + "]").find($("div[id=question_container_" + i + "]")).append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data["scores[" + i + "]"] + '</div>');
         			}	
         		}
         	}
     		else {
-    			if ($('input[name="refereeSendToUcl"]:checked').size() < 2) {
-    				$("#refereeSendToUcl_" + refereeId).removeAttr("disabled");
-    				$("#refereeSendToUcl_" + refereeId).prop('checked', true);
+    			if ($('input[name="refereeSendToUcl"]:checked').length < 2) {
+    				$("#refereeSendToUcl_" + refereeId).attr('checked', 'checked');
+    				$("#refereeSendToUcl_" + refereeId).removeAttr('disabled');
     			}
-    			
     			if ((event.target.id) == "refereeSaveButton") {
     				$("#referee_" + refereeId).hide();
     			}
@@ -381,43 +399,6 @@ function collectRefereesSendToPortico(){
         }
     });
     return referees;
-}
-
-function collectRefereesNotSendToPortico(){
-	referees = new Array();
-	
-	$('input[name="refereeSendToUcl"]:checkbox').each(function() {
-		var checked = $(this).attr("checked");
-		if (!checked && $(this).val() != $('#editedRefereeId').val()) {
-			referees.push($(this).val());
-		}
-	});
-	return referees;
-}
-
-function refreshRefereesTable(selectedValues, newRefereeValue, unchekedValues) {
-	if (selectedValues.length == 2) {
-		$("input[value="+selectedValues[i]+"]").attr("checked", false); 
-		return;
-	}
-	
-	if($('#anyReferenceErrors').val() == 'false') {
-		$("input[value=" + newRefereeValue +"]").attr("checked", true); 
-	}
-	
-	for (var i = 0; i<unchekedValues.length; i++) {
-		$("input[value=" + unchekedValues[i] +"]").attr("checked", false); 
-	}
-}
-
-function getRefereeBeingEdited() {
-	var refereeId = null;
-	$("div[id^=referee_]").each(function() {
-		if (this.style.display != "none") {
-			refereeId = $(this).attr("id");
-		};
-	});
-	return refereeId;
 }
 
 function bindRatings() {

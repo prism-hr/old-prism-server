@@ -32,9 +32,9 @@
                             <tr>
                                 <td>
                                     <input id="refereeSendToUcl_${encRefereeId}" type="checkbox" name="refereeSendToUcl" value="${encRefereeId}"
-                                    <#if existingReferee.sendToUCL?? && existingReferee.sendToUCL>checked="checked"</#if> 
-                                    <#if !existingReferee.hasResponded()>disabled="disabled"</#if> 
-                                    data-desc="<#if existingReferee.hasResponded()>Send reference for offer processing<#else>Reference not provided</#if>"
+                                    <#if existingReferee.sendToUCL?? && existingReferee.sendToUCL && existingReferee.hasProvidedReference()>checked="checked"</#if> 
+                                    <#if !existingReferee.hasProvidedReference()>disabled="disabled"</#if> 
+                                    data-desc="<#if existingReferee.hasProvidedReference()>Send reference for offer processing<#else>Reference not provided</#if>"
                                     />
                                 </td>
                                 <td>

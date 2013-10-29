@@ -1,5 +1,4 @@
 <div class="row-group">
-
 	<#if referee.hasResponded()>
     	<input type="hidden" id="referee_${encRefereeId}_hasResponded" value="responded"/>
     </#if>

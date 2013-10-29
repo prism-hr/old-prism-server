@@ -2,6 +2,7 @@ $(document).ready(function() {
     
     addToolTips();
     bindRatings();
+    bindFileUploaders();
     
     // if editedRefereeId is empty assume that new referee is the current one
 	if($('#editedRefereeId').val() == "") {
@@ -190,9 +191,9 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
         editReferenceData(event);
     }
     
-    var suitableUCL = "";
+    var suitableForUCL = "";
     if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
-        suitableUCL = $('input:radio[name=suitableForUCL_' + refereeId + ']:checked').val();
+        suitableForUCL = $('input:radio[name=suitableForUCL_' + refereeId + ']:checked').val();
     }
 
     var suitableForProgramme = "";
@@ -203,12 +204,14 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
     var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
     var $ref_doc_container  = $ref_doc_upload_field.closest('div.field');
     var $ref_doc_hidden     = $ref_doc_container.find('.uploaded-files .file');
+    
+    var containsRefereeData = false;
 	
     postData =  {
             applicationId : $('#applicationId').val(),
             comment: $('#refereeComment_' + refereeId).val(),
             referenceDocument: $ref_doc_hidden.val(),
-            suitableForUCL : suitableUCL,
+            suitableForUCL : suitableForUCL,
             suitableForProgramme : suitableForProgramme, 
             applicantRating : $('#applicantRating_' + refereeId).val(),
             editedRefereeId : $('#editedRefereeId').val(),
@@ -217,7 +220,7 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
         };
     
     if(refereeId == "newReferee") {
-        postData['containsRefereeData'] = true;
+    	containsRefereeData = true;
 		postData['firstname'] = $("#firstname_" + refereeId).val();
 		postData['lastname'] =$("#lastname_" + refereeId).val();
 		postData['jobEmployer'] = $("#employer_" + refereeId).val(); 
@@ -235,9 +238,8 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
 		postData['editedRefereeId'] = refereeId;
 	}
     
-    if(forceSavingReference){
-    	postData['forceSavingReference'] = true;
-    }
+    postData['containsRefereeData'] = containsRefereeData;
+    postData['forceSavingReference'] = forceSavingReference;
     
 	var checkedReferees = collectRefereesSendToPortico();
 	var uncheckedReferees = collectRefereesNotSendToPortico();
@@ -253,27 +255,42 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
         type : 'POST',
         statusCode : {
             401 : function() { window.location.reload(); },
-            500 : function() { window.location.href = "/pgadmissions/error"; },
-            404 : function() { window.location.href = "/pgadmissions/404"; },
-            400 : function() { window.location.href = "/pgadmissions/400"; },
-            403 : function() { window.location.href = "/pgadmissions/404"; }
+            500 : function() { window.location.href = "/pgadmissions/error";},
+            404 : function() { window.location.href = "/pgadmissions/404";},
+            400 : function() { window.location.href = "/pgadmissions/400";},
+            403 : function() { window.location.href = "/pgadmissions/404";}
         },
         url : $postRefereesDataUrl,
-        data :  postData,
+        data : postData,
         success : function(data) {
-        	if (refereeId == "newReferee") {
-        		$("#referencesSection").html(data);
-                if (refereeBeingEdited != null) {
-                	if ((event.target.id) == "addReferenceButton_newReferee" ||
-                		data.indexOf("alert alert-error") != -1) {
-                		showProperRefereeEntry();
-                	}
-                }
-        	}
+	        var doRefreshPane = false;
+			if ((event.target.id).indexOf("addReferenceButton") == 0) {
+				// We are adding something new - refresh the panel
+				doRefreshPane = true;
+			}
+			else if ((event.target.id) == "refereeSaveButton") {
+				// We tried to save something
+				if (refereeBeingEdited != null &&
+					$("#" + refereeBeingEdited).find("#editReferenceButton").size() == 0) {
+					// We tried to save something new
+					if (data.indexOf("alert alert-error") != -1) {
+						// We got some errors from the server
+						doRefreshPane = true;
+					}
+				}
+			}
+			if (doRefreshPane) {
+	    		$("#referencesSection").html(data);
+	    		showProperRefereeEntry();
+			}
+			else {
+				$("#referee_" + refereeId).hide();
+			}
         	refreshRefereesTable(checkedReferees, refereeId, uncheckedReferees);
             addCounter();
 			addToolTips();
 			bindRatings();
+			bindFileUploaders();
         },
         complete : function() {
         	$('#ajaxloader').fadeOut('fast');
@@ -415,4 +432,10 @@ function bindRatings() {
 		rating('out', $(this));
 	});
 	rating('check', $(this));
+}
+
+function bindFileUploaders() {
+    $(".file").each(function() {
+    	watchUpload($(this));
+    });
 }

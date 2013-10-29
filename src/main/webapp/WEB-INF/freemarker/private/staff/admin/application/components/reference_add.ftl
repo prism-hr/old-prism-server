@@ -1,3 +1,5 @@
+<@spring.bind "refereesAdminEditDTO.*"/>
+
 <#assign isEditedReferee = 0>
 <#if editedRefereeId?? &&
 	encRefereeId == editedRefereeId>

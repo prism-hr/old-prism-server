@@ -1,6 +1,5 @@
 <#import "/spring.ftl" as spring/> 
 <#setting locale = "en_US">
-<@spring.bind "refereesAdminEditDTO.*"/>
 
 <#if applicationForm.referees?has_content> 
     <#assign hasReferees = true> 

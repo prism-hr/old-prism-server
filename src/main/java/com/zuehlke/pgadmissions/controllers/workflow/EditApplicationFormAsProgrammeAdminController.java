@@ -200,8 +200,11 @@ public class EditApplicationFormAsProgrammeAdminController {
         
         createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
 
-        if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
-
+        if (BooleanUtils.isTrue(forceSavingReference) || 
+        	refereesAdminEditDTO.hasUserStartedTyping() ||
+        	(BooleanUtils.isTrue(forceSavingReference) &&
+        	BooleanUtils.isFalse(refereesAdminEditDTO.getContainsRefereeData()))) {
+        	
             refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
 
             if (referenceResult.hasErrors()) {

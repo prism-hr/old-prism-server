@@ -1,5 +1,3 @@
-<script type="text/javascript" src="<@spring.url '/design/default/js/scores.js' />"></script>
-
 <@spring.bind "refereesAdminEditDTO.*"/>
 
 <div class="row-group">

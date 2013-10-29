@@ -135,11 +135,10 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
     public String getMoveToApprovalPage(ModelMap modelMap,
-    		@ModelAttribute ApprovalRound approvalRound,
-    		BindingResult approvalRoundResult,
-    		@RequestParam(required = false) String action) throws ScoringDefinitionParseException {
+    		@RequestParam(required = false) String action) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
     	
         if (applicationForm.getLatestApprovalRound() != null) {
@@ -210,7 +209,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @ModelAttribute("approvalRound")
-    public ApprovalRound getApprovalRound(@RequestParam String applicationId) {
+    public ApprovalRound getApprovalRound(String applicationId) {
         ApprovalRound approvalRound = new ApprovalRound();
         ApplicationForm applicationForm = getApplicationForm((String) applicationId);
         ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
@@ -382,13 +381,18 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
-        if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
+        
+        if (BooleanUtils.isTrue(forceSavingReference) || 
+        	refereesAdminEditDTO.hasUserStartedTyping() || 
+        	(BooleanUtils.isTrue(forceSavingReference) &&
+            BooleanUtils.isFalse(refereesAdminEditDTO.getContainsRefereeData()))) {
+        	
             refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
 
             if (referenceResult.hasErrors()) {
                 return REFERENCE_SECTION;
             }
-
+  
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
             Referee referee = newComment.getReferee();
             applicationsService.refresh(applicationForm);

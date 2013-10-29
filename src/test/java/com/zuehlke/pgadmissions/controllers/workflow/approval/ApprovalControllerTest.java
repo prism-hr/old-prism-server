@@ -138,7 +138,7 @@ public class ApprovalControllerTest {
         Date deadlineDate = DateUtils.addMonths(nowDate, 2);
         
         final Program program = new Program();
-        program.setId(100000);
+        program.setId(1);
         
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);
@@ -153,11 +153,9 @@ public class ApprovalControllerTest {
         modelMap.put("applicationForm", application);
         modelMap.put("approvalRound", application.getLatestApprovalRound());
         modelMap.put("user", currentUserMock);
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
         
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
-
         ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
 
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);

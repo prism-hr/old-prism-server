@@ -8,6 +8,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,6 +44,10 @@ public class SupervisionConfirmationComment extends Comment {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
     @Column(name = "recommended_conditions")
     private String recommendedConditions;
+
+    @ManyToOne
+    @JoinColumn(name = "secondary_supervisor_id")
+    private Supervisor secondarySupervisor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "comment_type")
@@ -102,6 +107,14 @@ public class SupervisionConfirmationComment extends Comment {
 
     public void setRecommendedConditions(String recommendedConditions) {
         this.recommendedConditions = recommendedConditions;
+    }
+
+    public Supervisor getSecondarySupervisor() {
+        return secondarySupervisor;
+    }
+
+    public void setSecondarySupervisor(Supervisor secondarySupervisor) {
+        this.secondarySupervisor = secondarySupervisor;
     }
 
 }

@@ -43,113 +43,7 @@
 				   </div>
 		         <!-- Box end -->
                  <div class="excontainer">
-							<#if timelineObject.reviewRound?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) || user.isInRole('ADMITTER'))>
-							<#if timelineObject.reviewRound.reviewers?? && timelineObject.reviewRound.reviewers?size &gt; 0>
-							<ul class="status-info">
-								<li class="${timelineObject.type}">
-									<div class="box">
-										<p class="added">
-											<#assign size_users = timelineObject.reviewRound.reviewers?size>
-											<#list timelineObject.reviewRound.reviewers as reviewer>
-											<#assign index_i = reviewer_index>
-											${reviewer.user.firstName?html} ${reviewer.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
-											</#list>
-											added as reviewer<#if size_users &gt; 1>s</#if>.
-										</p>
-									</div>
-								</li>
-							</ul>
-							</#if>
-		        
-							<#elseif timelineObject.interview??>
-							<#if timelineObject.interview.interviewers??>
-							<ul class="status-info">
-								<li class="${timelineObject.type}">
-									<div class="box">
-										<p class="added">
-											<#assign size_users = timelineObject.interview.interviewers?size>
-											<#list timelineObject.interview.interviewers as interviewer>
-											<#assign index_i = interviewer_index>
-											${interviewer.user.firstName?html} ${interviewer.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
-											</#list>
-											added as interviewer<#if size_users &gt; 1>s</#if>.
-										</p>
-									</div>
-								</li>
-								<li class="${timelineObject.type}">
-									<div class="box">
-										<div class="title">
-											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
-											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
-											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
-										</div>
-										<p class="datetime">
-										  <span></span>
-										  <#if timelineObject.interview.stage == 'SCHEDULED'>
-                                          	<b>Date and time of interview: </b>
-  										  	${timelineObject.interview.interviewDueDate?string('dd MMM yy')}
-  										  	at ${timelineObject.interview.interviewTime}
-  										  	(${timelineObject.interview.timeZone.getDisplayName(false, 1)}).
-										  <#else>
-										    Scheduling in progress.
-										  </#if>
-									  </p>
-									</div>
-								</li>
-							</ul>
-							</#if>
-		           
-							<#elseif timelineObject.approvalRound??>
-							<#if timelineObject.approvalRound.supervisors?? && timelineObject.approvalRound.supervisors?size &gt; 0>
-                                <ul class="status-info">
-                                    <li class="${timelineObject.type}">
-                                        <div class="box">
-                                            <p class="added">
-                                                <#assign size_users = timelineObject.approvalRound.supervisors?size>
-                                                <#list timelineObject.approvalRound.supervisors as supervisor>
-                                                  <#assign index_i = supervisor_index>
-                                                  ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if supervisor.isPrimary> (Primary)</#if><#if (index_i &lt; (size_users - 1))>, </#if>
-                                                </#list>
-                                                added as supervisor<#if size_users &gt; 1>s</#if>.
-                                            </p>
-                                        </div>
-                                    </li>
-                                </ul>
-							</#if>
-							
-							<#elseif timelineObject.status?? && timelineObject.status == 'REJECTED'>
-							<ul class="status-info">
-								<li class="${timelineObject.type}">
-									<div class="box">
-										<div class="title">
-											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
-											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
-										</div>
-										<p class="rejection"><i class="icon-puzzle-piece"></i><em>${applicationForm.rejection.rejectionReason.text?html}</em></p>
-									</div>
-								</li>
-							</ul>
-		        
-		          <#elseif timelineObject.status?? && timelineObject.status == 'APPROVED'>
-		        
-                  <ul class="status-info">
-                      <li class="${timelineObject.type}">
-                          <div class="box">
-                              <p class="added">
-                                  <#assign latestApprovalRound = applicationForm.latestApprovalRound>
-                                  <#assign size_users = latestApprovalRound.supervisors?size>
-                                  <#list latestApprovalRound.supervisors as supervisor>
-                                    <#assign index_i = supervisor_index>
-                                    ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if supervisor.isPrimary> (Primary)</#if><#if (index_i &lt; (size_users - 1))>, </#if>
-                                  </#list>
-                                  added as supervisor<#if size_users &gt; 1>s</#if>.
-                              </p>
-                          </div>
-                      </li>
-                  </ul>
-		        
-							</#if> 
-							
+
 		          <#if !shownTargetForCompletingStage && 
                   		(timelineObject.type != 'reference' && timelineObject.type != 'confirmEligibility')>
 		            <#if timelineObject.type == 'validation' || timelineObject.type == 'review'  || timelineObject.type == 'interview' || timelineObject.type == 'approval'> 
@@ -164,18 +58,90 @@
                   </ul>
                 </#if>
                 <#assign shownTargetForCompletingStage = true>
-              </#if>							          
+              </#if>
+              
+							<#if timelineObject.reviewRound?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) || user.isInRole('ADMITTER'))>
+  							<#if timelineObject.reviewRound.reviewers?? && timelineObject.reviewRound.reviewers?size &gt; 0>
+  							<ul class="status-info">
+  								<li class="${timelineObject.type}">
+  									<div class="box">
+  										<p class="added">
+  											<#assign size_users = timelineObject.reviewRound.reviewers?size>
+  											<#list timelineObject.reviewRound.reviewers as reviewer>
+  											<#assign index_i = reviewer_index>
+  											${reviewer.user.firstName?html} ${reviewer.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
+  											</#list>
+  											added as reviewer<#if size_users &gt; 1>s</#if>.
+  										</p>
+  									</div>
+  								</li>
+  							</ul>
+  							</#if>
+		        
+							<#elseif timelineObject.interview??>
+  							<#if timelineObject.interview.interviewers??>
+  							<ul class="status-info">
+  								<li class="${timelineObject.type}">
+  									<div class="box">
+  										<p class="added">
+  											<#assign size_users = timelineObject.interview.interviewers?size>
+  											<#list timelineObject.interview.interviewers as interviewer>
+  											<#assign index_i = interviewer_index>
+  											${interviewer.user.firstName?html} ${interviewer.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
+  											</#list>
+  											added as interviewer<#if size_users &gt; 1>s</#if>.
+  										</p>
+  									</div>
+  								</li>
+  								<li class="${timelineObject.type}">
+  									<div class="box">
+  										<div class="title">
+  											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
+  											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
+  											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
+  										</div>
+  										<p class="datetime">
+  										  <span></span>
+  										  <#if timelineObject.interview.stage == 'SCHEDULED'>
+                                            	<b>Date and time of interview: </b>
+    										  	${timelineObject.interview.interviewDueDate?string('dd MMM yy')}
+    										  	at ${timelineObject.interview.interviewTime}
+    										  	(${timelineObject.interview.timeZone.getDisplayName(false, 1)}).
+  										  <#else>
+  										    Scheduling in progress.
+  										  </#if>
+  									  </p>
+  									</div>
+  								</li>
+  							</ul>
+  							</#if>
+							<#elseif timelineObject.status?? && timelineObject.status == 'REJECTED'>
+							<ul class="status-info">
+								<li class="${timelineObject.type}">
+									<div class="box">
+										<div class="title">
+											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
+											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
+										</div>
+										<p class="rejection"><i class="icon-puzzle-piece"></i><em>${applicationForm.rejection.rejectionReason.text?html}</em></p>
+									</div>
+								</li>
+							</ul>
+		        
+							</#if> 
+							
+              							          
 		          <#if timelineObject.comments?? || timelineObject.projectTitle??>
 		          <ul>
 		          	<#if timelineObject.projectTitle??>
-			         <li>                          
-  			           <div class="box">
-						 <p class="project_title"><span data-desc="Project title and description" aria-describedby="ui-tooltip-2"></span>
-							   	<b>${timelineObject.projectTitle}</b><br>
-							   	<i>${timelineObject.projectDescription}</i>
-            			 </p>
-		              </div>
-  			         </li>
+                  <li>                          
+                    <div class="box">
+                       <p class="project_title"><span data-desc="Project title and description" aria-describedby="ui-tooltip-2"></span>
+                        	<b>${timelineObject.projectTitle}</b><br>
+                        	<i>${timelineObject.projectDescription}</i>
+                       </p>
+                    </div>
+                  </li>
 		          	</#if>
 		          
 		            <#list timelineObject.comments as comment>

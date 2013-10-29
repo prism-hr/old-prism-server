@@ -126,6 +126,7 @@
 #timeline-statuses ul .box p.restart,
 #timeline-statuses ul .box p.project_title,
 #timeline-statuses ul .box p.start_date,
+#timeline-statuses ul .box p.added,
 #timeline-statuses ul .box p.conditional_offer,
 #timeline-statuses ul .box p.sQuestion,
 #timeline-statuses ul .box p.unconditional_offer { padding: 10px 10px 5px 36px; position: relative; line-height: 16px; }
@@ -146,6 +147,7 @@
 #timeline-statuses ul .box p.restart span { position: absolute; left: 10px; top: 6px; width: 20px; height: 22px; display: block; }
 #timeline-statuses ul .box p.project_title span,
 #timeline-statuses ul .box p.start_date span,
+#timeline-statuses ul .box p.added span,
 #timeline-statuses ul .box p.conditional_offer span,
 #timeline-statuses ul .box p.sQuestion span,
 #timeline-statuses ul .box p.unconditional_offer span { position: absolute; left: 6px; top: 6px; width: 25px; height: 27px; display: block; }
@@ -159,6 +161,7 @@
 #timeline-statuses ul .box p.restart span { background: url(../../../images/icon_restart.png) no-repeat 0 0; }
 #timeline-statuses ul .box p.project_title span { background: url(../../../images/project_description.png) no-repeat -1px 1px; }
 #timeline-statuses ul .box p.start_date span { background: url(../../../images/provisional_start_date.png) no-repeat -1px -2px; }
+#timeline-statuses ul .box p.added span { background: url(../../../images/icon_added_users.png) no-repeat 1px 5px; }
 #timeline-statuses ul .box p.conditional_offer span { background: url(../../../images/conditional_offer_recommended.png) no-repeat -2px -4px ; }
 #timeline-statuses ul .box p.unconditional_offer span { background: url(../../../images/unconditional_offer_recommended.png) no-repeat -2px -4px ; }
 

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -13,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.Capture;
@@ -96,7 +97,7 @@ public class ApprovalServiceTest {
     private PorticoQueueService porticoQueueServiceMock;
 
     private MailSendingService mailSendingServiceMock;
-    
+
     private ProgramInstanceService programInstanceServiceMock;
 
     @Before
@@ -116,7 +117,7 @@ public class ApprovalServiceTest {
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
 
         approvalService = new ApprovalService(userServiceMock, applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, eventFactoryMock,
-                commentDAOMock, supervisorDAOMock, programmeDetailDAOMock, porticoQueueServiceMock, mailSendingServiceMock, programInstanceServiceMock ) {
+                commentDAOMock, supervisorDAOMock, programmeDetailDAOMock, porticoQueueServiceMock, mailSendingServiceMock, programInstanceServiceMock) {
             @Override
             public ApprovalRound newApprovalRound() {
                 return approvalRound;
@@ -238,8 +239,11 @@ public class ApprovalServiceTest {
     @Test
     public void shouldMoveToApprovaAndApplyApprovalComment() {
         Date date = new Date();
+        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
+        Supervisor secondarySupervisor = new SupervisorBuilder().build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).projectAbstract("abstract").projectTitle("title").projectDescriptionAvailable(true)
-                .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(date).build();
+                .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(date)
+                .supervisors(primarySupervisor, secondarySupervisor).build();
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
         applyValidSendToPorticoData(applicationForm);
@@ -268,6 +272,8 @@ public class ApprovalServiceTest {
         assertEquals(CommentType.APPROVAL, approvalComment.getType());
         assertSame(applicationForm, approvalComment.getApplication());
         assertSame(user, approvalComment.getUser());
+        assertSame(primarySupervisor, approvalComment.getSupervisor());
+        assertSame(secondarySupervisor, approvalComment.getSecondarySupervisor());
 
     }
 
@@ -355,8 +361,10 @@ public class ApprovalServiceTest {
         Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
         Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(user).build();
 
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor, secondarySupervisor).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation")
+                .supervisors(primarySupervisor, secondarySupervisor).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+        approvalRound.setApplication(applicationForm);
 
         Date startDate = Calendar.getInstance().getTime();
 
@@ -390,6 +398,7 @@ public class ApprovalServiceTest {
         assertTrue(comment.getRecommendedConditionsAvailable());
         assertEquals(startDate, comment.getRecommendedStartDate());
         assertSame(primarySupervisor, comment.getSupervisor());
+        assertSame(secondarySupervisor, comment.getSecondarySupervisor());
         assertEquals(CommentType.SUPERVISION_CONFIRMATION, comment.getType());
         assertSame(currentUser, comment.getUser());
 
@@ -400,45 +409,46 @@ public class ApprovalServiceTest {
         assertEquals("conditions", approvalRound.getRecommendedConditions());
         assertTrue(approvalRound.getRecommendedConditionsAvailable());
         assertEquals(startDate, approvalRound.getRecommendedStartDate());
+        assertSame(primarySupervisor, approvalRound.getPrimarySupervisor());
+        assertSame(secondarySupervisor, approvalRound.getSecondarySupervisor());
     }
 
     @Test
     public void shouldModifySecondarySupervision() {
-    	RegisteredUser currentUser = new RegisteredUserBuilder().id(2).build();
-    	RegisteredUser user = new RegisteredUserBuilder().id(3).email("a.user@ucl.co.uk").build();
-    	RegisteredUser anotherUser = new RegisteredUserBuilder().id(3).email("a.n.other@ucl.co.uk").build();
-    	Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
-    	Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(user).build();
-    	
-    	ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor, secondarySupervisor).build();
-    	ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
-    	
-    	Date startDate = Calendar.getInstance().getTime();
-    	
-    	ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
-    	confirmSupervisionDTO.setConfirmedSupervision(true);
-    	confirmSupervisionDTO.setProjectTitle("title");
-    	confirmSupervisionDTO.setProjectAbstract("abstract");
-    	confirmSupervisionDTO.setRecommendedStartDate(startDate);
-    	confirmSupervisionDTO.setRecommendedConditionsAvailable(true);
-    	confirmSupervisionDTO.setRecommendedConditions("conditions");
-    	confirmSupervisionDTO.setSecondarySupervisorEmail("a.n.other@ucl.co.uk");
-    	
-    	Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
-    	commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
-    	EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-    	EasyMock.expect(userServiceMock.getUserByEmail("a.n.other@ucl.co.uk")).andReturn(anotherUser);
-    	    	
-    	EasyMock.replay(commentDAOMock, userServiceMock);
-    	approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-    	EasyMock.verify(commentDAOMock, userServiceMock);
-    	
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(2).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(3).email("a.user@ucl.co.uk").build();
+        RegisteredUser anotherUser = new RegisteredUserBuilder().id(3).email("a.n.other@ucl.co.uk").build();
+        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
+        Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(user).build();
 
-    	Assert.assertEquals(anotherUser, secondarySupervisor.getUser());
-    	
-    	
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation")
+                .supervisors(primarySupervisor, secondarySupervisor).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+
+        Date startDate = Calendar.getInstance().getTime();
+
+        ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
+        confirmSupervisionDTO.setConfirmedSupervision(true);
+        confirmSupervisionDTO.setProjectTitle("title");
+        confirmSupervisionDTO.setProjectAbstract("abstract");
+        confirmSupervisionDTO.setRecommendedStartDate(startDate);
+        confirmSupervisionDTO.setRecommendedConditionsAvailable(true);
+        confirmSupervisionDTO.setRecommendedConditions("conditions");
+        confirmSupervisionDTO.setSecondarySupervisorEmail("a.n.other@ucl.co.uk");
+
+        Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
+        commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(userServiceMock.getUserByEmail("a.n.other@ucl.co.uk")).andReturn(anotherUser);
+
+        EasyMock.replay(commentDAOMock, userServiceMock);
+        approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
+        EasyMock.verify(commentDAOMock, userServiceMock);
+
+        assertThat(approvalRound.getSupervisors(), not(hasItems(secondarySupervisor)));
+        assertEquals(anotherUser, approvalRound.getSecondarySupervisor().getUser());
     }
-    
+
     @Test
     public void shouldDeclineSupervisionAndRestartApprovalRound() {
         RegisteredUser user1 = new RegisteredUserBuilder().firstName("John Paul").lastName("Jones").build();
@@ -449,6 +459,7 @@ public class ApprovalServiceTest {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").projectDescriptionAvailable(false)
                 .supervisors(primarySupervisor, secondarySupervisor).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+        approvalRound.setApplication(applicationForm);
 
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
         confirmSupervisionDTO.setConfirmedSupervision(false);
@@ -500,7 +511,8 @@ public class ApprovalServiceTest {
         ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().supervisors(new Supervisor()).build();
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
                 .programmeDetails(programmeDetails).latestApprovalRound(latestApprovalRound).build();
-        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedCommentBuilder().supervisors(supervisor).build();
+        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
+        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedCommentBuilder().supervisors(primarySupervisor, supervisor).build();
 
         applicationFormDAOMock.save(application);
         commentDAOMock.save(offerRecommendedComment);
@@ -508,22 +520,22 @@ public class ApprovalServiceTest {
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
-        
+
         EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
         approvalService.moveToApproved(application, offerRecommendedComment);
         EasyMock.verify(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
-        
+
         assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
         assertEquals(currentUser, application.getApprover());
 
         assertEquals(1, application.getEvents().size());
         assertEquals(event, application.getEvents().get(0));
-        
+
         assertSame(application, offerRecommendedComment.getApplication());
         assertEquals("", offerRecommendedComment.getComment());
         assertEquals(CommentType.OFFER_RECOMMENDED_COMMENT, offerRecommendedComment.getType());
         assertSame(currentUser, offerRecommendedComment.getUser());
-        assertThat(latestApprovalRound.getSupervisors(), Matchers.contains(supervisor));
+        assertThat(latestApprovalRound.getSupervisors(), Matchers.contains(primarySupervisor, supervisor));
     }
 
     @Test
@@ -546,9 +558,9 @@ public class ApprovalServiceTest {
         programmeDetailDAOMock.save(EasyMock.same(programmeDetails));
         applicationFormDAOMock.save(application);
         commentDAOMock.save(offerRecommendedComment);
-        
+
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
-        
+
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(false);
         EasyMock.expect(programInstanceServiceMock.getEarliestPossibleStartDate(application)).andReturn(DateUtils.addDays(startDate, 3));
@@ -556,7 +568,7 @@ public class ApprovalServiceTest {
         EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programmeDetailDAOMock, programInstanceServiceMock);
         approvalService.moveToApproved(application, offerRecommendedComment);
         EasyMock.verify(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programmeDetailDAOMock, programInstanceServiceMock);
-        
+
         assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
         assertEquals(currentUser, application.getApprover());
         assertEquals(programmeDetails.getStartDate(), instanceEnabled.getApplicationStartDate());

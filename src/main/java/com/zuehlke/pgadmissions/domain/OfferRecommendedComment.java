@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -40,6 +42,14 @@ public class OfferRecommendedComment extends Comment {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
     @Column(name = "recommended_conditions")
     private String recommendedConditions;
+
+    @ManyToOne
+    @JoinColumn(name = "supervisor_id")
+    private Supervisor supervisor;
+
+    @ManyToOne
+    @JoinColumn(name = "secondary_supervisor_id")
+    private Supervisor secondarySupervisor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "comment_type")
@@ -86,6 +96,22 @@ public class OfferRecommendedComment extends Comment {
 
     public void setRecommendedConditions(String recommendedConditions) {
         this.recommendedConditions = recommendedConditions;
+    }
+
+    public Supervisor getSupervisor() {
+        return supervisor;
+    }
+
+    public void setSupervisor(Supervisor supervisor) {
+        this.supervisor = supervisor;
+    }
+
+    public Supervisor getSecondarySupervisor() {
+        return secondarySupervisor;
+    }
+
+    public void setSecondarySupervisor(Supervisor secondarySupervisor) {
+        this.secondarySupervisor = secondarySupervisor;
     }
 
     public CommentType getType() {

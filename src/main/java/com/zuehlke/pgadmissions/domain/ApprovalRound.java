@@ -36,7 +36,7 @@ public class ApprovalRound implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "approval_round_id")
     private List<Supervisor> supervisors = new ArrayList<Supervisor>();
 

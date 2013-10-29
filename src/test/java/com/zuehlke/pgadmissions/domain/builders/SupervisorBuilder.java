@@ -13,7 +13,7 @@ public class SupervisorBuilder {
 	private Date lastNotified;
 	private Date confirmedSupervisionDate;
 	private ApprovalRound approvalRound;
-	private Boolean isPrimary;
+	private Boolean isPrimary = false;
 	private Boolean confirmedSupervision;
 	private String declinedSupervisionReason;
 

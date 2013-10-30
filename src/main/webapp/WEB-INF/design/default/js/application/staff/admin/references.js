@@ -1,8 +1,7 @@
 $(document).ready(function() {
     
     addToolTips();
-    bindRatings();
-    bindFileUploaders();
+    bindFileUploader();
     
     // if editedRefereeId is empty assume that new referee is the current one
 	if($('#editedRefereeId').val() == "") {
@@ -92,7 +91,6 @@ $(document).ready(function() {
     // EDIT REFERENCE DATA
     // --------------------------------------------------------------------------------
 	attachReferenceEditListeners();
-    attachFileUploaders();
 });
 
 function clearRefereeFormErrors() {

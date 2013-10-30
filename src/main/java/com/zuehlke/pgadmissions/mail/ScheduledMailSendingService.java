@@ -72,7 +72,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
 
     public void sendDigestsToUsers() {
-        log.info("Sending email digest to users");
+        log.trace("Sending email digest to users");
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
         List<Integer> users = thisProxy.getPotentialUsersForTaskReminder();
         for (Integer userId : users) {
@@ -88,7 +88,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         for (Integer userId : users) {
             thisProxy.sendUpdateEmail(userId);
         }
-        log.info("Finished sending email digest to users");
+        log.trace("Finished sending email digest to users");
     }
 
     @Transactional
@@ -204,7 +204,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
      */
     @Transactional
     public void sendReferenceReminder() {
-        log.info("Running sendReferenceReminder Task");
+        log.trace("Running sendReferenceReminder Task");
         List<Integer> refereesDueAReminder = refereeDAO.getRefereesIdsDueAReminder();
         for (Integer referee : refereesDueAReminder) {
             applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
@@ -236,7 +236,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public void sendInterviewParticipantVoteReminder() {
-        log.info("Running interviewParticipantVoteReminder Task");
+        log.trace("Running interviewParticipantVoteReminder Task");
         List<Integer> participantsDueAReminder = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
         for (Integer participantId : participantsDueAReminder) {
             applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
@@ -267,7 +267,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public void sendNewUserInvitation() {
-        log.info("Running sendNewUserInvitation Task");
+        log.trace("Running sendNewUserInvitation Task");
         List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
         for (Integer user : users) {
             applicationContext.getBean(this.getClass()).sendNewUserInvitation(user);

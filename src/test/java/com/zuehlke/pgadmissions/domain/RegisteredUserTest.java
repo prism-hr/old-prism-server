@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -156,11 +157,20 @@ public class RegisteredUserTest {
     @Test
     public void shouldReturnFalseIfUserApproverAndApplicationInValidateStage() {
         Program program = new ProgramBuilder().id(1).build();
-        RegisteredUser approver = new RegisteredUserBuilder().id(1).programsOfWhichApprover(program)
-                .roles(new RoleBuilder().id(Authority.APPROVER).build()).build();
+        RegisteredUser approver = new RegisteredUserBuilder().id(1).programsOfWhichApprover(program).roles(new RoleBuilder().id(Authority.APPROVER).build())
+                .build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).approver(approver).status(ApplicationFormStatus.VALIDATION).build();
         assertFalse(approver.canSee(applicationForm));
+
+    }
+
+    @Test
+    public void shouldReturnTrueIfUserProjectAdminInApplication() {
+        RegisteredUser administrator = new RegisteredUserBuilder().id(1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION)
+                .project(new ProjectBuilder().administrator(administrator).build()).build();
+        assertTrue(administrator.canSee(applicationForm));
 
     }
 
@@ -608,11 +618,10 @@ public class RegisteredUserTest {
     @Test
     public void shouldReturnTrueIfUserHasRoleForProgram() {
         Program program = new ProgramBuilder().id(1).build();
-        RegisteredUser user1 = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMINISTRATOR).build())
-                .programsOfWhichApprover(program).build();
+        RegisteredUser user1 = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).programsOfWhichApprover(program).build();
         assertFalse(user1.isInRoleInProgram(Authority.ADMINISTRATOR, program));
-        RegisteredUser user2 = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMINISTRATOR).build())
-                .programsOfWhichAdministrator(program).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).programsOfWhichAdministrator(program)
+                .build();
         assertTrue(user2.isInRoleInProgram(Authority.ADMINISTRATOR, program));
     }
 
@@ -665,8 +674,8 @@ public class RegisteredUserTest {
         Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").build();
         Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").build();
 
-        RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee1, referee2, referee3)
-                .role(new RoleBuilder().id(Authority.REVIEWER).build()).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee1, referee2, referee3).role(new RoleBuilder().id(Authority.REVIEWER).build())
+                .build();
 
         assertTrue(user.hasRefereesInApplicationForm(form));
     }
@@ -678,8 +687,8 @@ public class RegisteredUserTest {
         Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").build();
         Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").build();
 
-        RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee1, referee2, referee3)
-                .role(new RoleBuilder().id(Authority.REVIEWER).build()).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee1, referee2, referee3).role(new RoleBuilder().id(Authority.REVIEWER).build())
+                .build();
 
         assertFalse(user.hasRefereesInApplicationForm(form));
     }
@@ -791,8 +800,7 @@ public class RegisteredUserTest {
         Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").build();
 
         RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment)
-                .roles(new RoleBuilder().id(Authority.REVIEWER).build()).username("email").firstName("bob").lastName("bobson")
-                .email("email@test.com").build();
+                .roles(new RoleBuilder().id(Authority.REVIEWER).build()).username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
         assertTrue(reviewer.hasDeclinedToProvideReviewForApplication(application));
     }
 
@@ -810,8 +818,7 @@ public class RegisteredUserTest {
         Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").build();
 
         RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment)
-                .roles(new RoleBuilder().id(Authority.REVIEWER).build()).username("email").firstName("bob").lastName("bobson")
-                .email("email@test.com").build();
+                .roles(new RoleBuilder().id(Authority.REVIEWER).build()).username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
         assertFalse(reviewer.hasDeclinedToProvideReviewForApplication(application));
     }
 
@@ -843,8 +850,7 @@ public class RegisteredUserTest {
         Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").build();
 
         RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment)
-                .roles(new RoleBuilder().id(Authority.REVIEWER).build()).username("email").firstName("bob").lastName("bobson")
-                .email("email@test.com").build();
+                .roles(new RoleBuilder().id(Authority.REVIEWER).build()).username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
         assertFalse(reviewer.hasRespondedToProvideReviewForApplication(application));
     }
 
@@ -1002,8 +1008,8 @@ public class RegisteredUserTest {
         Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").build();
 
         RegisteredUser interviewer = new RegisteredUserBuilder().programsOfWhichInterviewer(program).comments(comment1, comment)
-                .roles(new RoleBuilder().id(Authority.INTERVIEWER).build()).username("email").firstName("bob").lastName("bobson")
-                .email("email@test.com").build();
+                .roles(new RoleBuilder().id(Authority.INTERVIEWER).build()).username("email").firstName("bob").lastName("bobson").email("email@test.com")
+                .build();
         assertFalse(interviewer.hasRespondedToProvideInterviewFeedbackForApplication(application));
     }
 
@@ -1063,7 +1069,14 @@ public class RegisteredUserTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().administrators(user).build())
                 .status(ApplicationFormStatus.VALIDATION).build();
         assertTrue(user.hasAdminRightsOnApplication(applicationForm));
+    }
 
+    @Test
+    public void shouldHaveAdminRightsOnAppIfAdministratorInApplicationProject() {
+        RegisteredUser user = new RegisteredUserBuilder().id(8).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(new Program()).project(new ProjectBuilder().administrator(user).build())
+                .status(ApplicationFormStatus.VALIDATION).build();
+        assertTrue(user.hasAdminRightsOnApplication(applicationForm));
     }
 
     @Test
@@ -1150,8 +1163,8 @@ public class RegisteredUserTest {
     @Test
     public void shouldHaveStaffRigstIfApprover() {
         Program program = new ProgramBuilder().id(4).build();
-        RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().id(Authority.APPROVER).build())
-                .programsOfWhichApprover(program).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().id(Authority.APPROVER).build()).programsOfWhichApprover(program)
+                .build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).build();
         assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));

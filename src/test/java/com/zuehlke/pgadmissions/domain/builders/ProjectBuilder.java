@@ -7,15 +7,16 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
-public class ProjectBuilder{
+public class ProjectBuilder {
     private Integer id;
     private RegisteredUser author;
     private Program program;
     private Advert advert;
     private Date closingDate;
+    private RegisteredUser administrator;
     private RegisteredUser primarySupervisor;
     private RegisteredUser secondarySupervisor;
-    private boolean disabled=false;
+    private boolean disabled = false;
 
     public ProjectBuilder id(Integer id) {
         this.id = id;
@@ -42,6 +43,11 @@ public class ProjectBuilder{
         return this;
     }
 
+    public ProjectBuilder administrator(RegisteredUser administrator) {
+        this.administrator = administrator;
+        return this;
+    }
+
     public ProjectBuilder primarySupervisor(RegisteredUser primarySupervisor) {
         this.primarySupervisor = primarySupervisor;
         return this;
@@ -53,21 +59,22 @@ public class ProjectBuilder{
     }
 
     public ProjectBuilder disabled(boolean disabled) {
-    	this.disabled = disabled;
-    	return this;
+        this.disabled = disabled;
+        return this;
     }
-    
-    public Project build(){
-    	Project project = new Project();
-	 	project.setId( id) ;
-	 	project.setAdvert( advert) ;
-	    project.setAuthor( author) ;
-	    project.setProgram( program) ;
-	    project.setClosingDate( closingDate) ;
-	    project.setPrimarySupervisor( primarySupervisor) ;
-	    project.setSecondarySupervisor( secondarySupervisor) ;
-	    project.setDisabled(disabled);
-	    return project;
+
+    public Project build() {
+        Project project = new Project();
+        project.setId(id);
+        project.setAdvert(advert);
+        project.setAuthor(author);
+        project.setProgram(program);
+        project.setClosingDate(closingDate);
+        project.setAdministrator(administrator);
+        project.setPrimarySupervisor(primarySupervisor);
+        project.setSecondarySupervisor(secondarySupervisor);
+        project.setDisabled(disabled);
+        return project;
     }
 
 }

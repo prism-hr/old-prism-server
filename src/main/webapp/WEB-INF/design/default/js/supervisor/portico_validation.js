@@ -6,14 +6,7 @@ $(document).ready(function()
 		
 		var qualificationsSendToPortico = collectQualificationsSendToPortico();
 		var refereesSendToPorticoData = collectRefereesSendToPortico();
-		
 	    var explanationText = $.trim($("#explanationText").val());
-	    if(explanationText.trim().length > 0){
-	    	data.emptyQualificationsExplanation = explanationText;
-	    }
-	    else {
-	    	explanationText = "";
-	    }
 
 		$.ajax({
 			type: 'POST',
@@ -44,14 +37,17 @@ $(document).ready(function()
 			    cacheBreaker: new Date().getTime()
 			},
 			success: function(data)
-			{	
+			{
 				if(data == "OK"){					
 					window.location.href = '/pgadmissions/applications?messageCode=move.approval&application=' + $('#applicationId').val();
 				
 				}else{
 					$('#approve-content').html(data);
 				}
+	            addCounter();
 				addToolTips();
+				bindRatings();
+				bindFileUploaders();
 			},
 			complete: function()
 			{

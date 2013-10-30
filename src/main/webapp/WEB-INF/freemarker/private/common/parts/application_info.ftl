@@ -47,7 +47,7 @@
   	   </span>
   		
       ${applicationForm.applicationNumber} 
-      ${(applicationForm.personalDetails.title?capitalize)!} ${(applicationForm.applicant.firstName?html)!} ${(applicationForm.applicant.firstName2?html)!} ${(applicationForm.applicant.firstName3?html)!} ${(applicationForm.applicant.lastName?html)!}
+      ${(applicationForm.personalDetails.title.displayValue)!} ${(applicationForm.applicant.firstName?html)!} ${(applicationForm.applicant.firstName2?html)!} ${(applicationForm.applicant.firstName3?html)!} ${(applicationForm.applicant.lastName?html)!}
       <#if user != applicationForm.applicant>
         <#if applicationForm.averageRatingFormatted??>
           <span class="rating icon-star" data-desc="Rating"><span>${applicationForm.averageRatingFormatted} / 5.00</span></span>

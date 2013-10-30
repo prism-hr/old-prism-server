@@ -17,17 +17,20 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
@@ -49,9 +52,12 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
 
     private ApplicationForm application;
 
+    private RoleDAO roleDAO;
+
     @Before
     public void prepare() {
         applicationDAO = new ApplicationFormListDAO(sessionFactory, null);
+        roleDAO = new RoleDAO(sessionFactory);
 
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                         .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
@@ -63,6 +69,29 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
         flushAndClearSession();
     }
 
+    @Test
+    public void shouldReturnAllSubmittedApplicationsForProjectAdministrator() {
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
+                .submittedDate(new Date()).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED)
+                .submittedDate(new Date()).build();
+        RegisteredUser administrator = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .role(roleDAO.getRoleByAuthority(Authority.INTERVIEWER)).build();
+        Project project = new ProjectBuilder().administrator(administrator).program(program).primarySupervisor(administrator).author(administrator).advert(new AdvertBuilder().description("advert").build()).build();
+        applicationFormTwo.setProject(project);
+        save(administrator, project, applicationFormOne, applicationFormTwo);
+        flushAndClearSession();
+        
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setPreFilter(ApplicationsPreFilter.ALL);
+        filtering.setOrder(SortOrder.DESCENDING);
+        
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(administrator, filtering, 5);
+        assertFalse(contains(applicationFormOne, applications));
+        assertTrue(contains(applicationFormTwo, applications));
+    }
+    
     @Test
     public void shouldReturnAllSubmittedApplicationsForSuperAdmin() {
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
@@ -84,7 +113,7 @@ public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnOwnApplicationsAndRefereeingApplicationsIfApplicant() {
-        RoleDAO roleDAO = new RoleDAO(sessionFactory);
+        
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
                         .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                         .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();

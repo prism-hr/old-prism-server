@@ -119,6 +119,7 @@ public class ProjectConfigurationController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(projectDTOValidator);
         binder.registerCustomEditor(Program.class, "program", programPropertyEditor);
+        binder.registerCustomEditor(Person.class, "administrator", personPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(Person.class, "primarySupervisor", personPropertyEditor);

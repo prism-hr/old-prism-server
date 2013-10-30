@@ -35,6 +35,10 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
         if (isInRole(user, Authority.ADMINISTRATOR) && isProgrammeAdministrator(form, user)) {
             return true;
         }
+        
+        if(isProjectAdministrator(form, user)){
+            return true;
+        }
 
         if (isStatus(form, ApplicationFormStatus.REVIEW)) {
             if (isReviewerInReviewRound(form.getLatestReviewRound(), user)) {

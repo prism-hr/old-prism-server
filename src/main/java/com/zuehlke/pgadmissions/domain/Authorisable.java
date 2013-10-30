@@ -102,6 +102,10 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
             return true;
         }
 
+        if (isProjectAdministrator(form, user)) {
+            return true;
+        }
+        
         if (isProgrammeAdministrator(form, user)) {
             return true;
         }
@@ -129,7 +133,7 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
         if (isInRoleInProgramme(form.getProgram(), user, Authority.APPROVER)) {
             return true;
         }
-        
+
         if (isInRoleInProgramme(form.getProgram(), user, Authority.VIEWER)) {
             return true;
         }

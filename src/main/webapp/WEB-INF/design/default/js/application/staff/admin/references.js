@@ -1,7 +1,7 @@
 $(document).ready(function() {
     
     addToolTips();
-    bindFileUploader();
+    bindFileUploaders();
     
     // if editedRefereeId is empty assume that new referee is the current one
 	if($('#editedRefereeId').val() == "") {

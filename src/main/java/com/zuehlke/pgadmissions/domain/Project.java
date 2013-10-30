@@ -47,9 +47,13 @@ public class Project implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "secondary_supervisor_id")
     private RegisteredUser secondarySupervisor;
-    
-    @Column(name="disabled")
+
+    @Column(name = "disabled")
     private boolean disabled;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "administrator_id")
+    private RegisteredUser administrator;
 
     public Integer getId() {
         return id;
@@ -107,16 +111,24 @@ public class Project implements Serializable {
         this.secondarySupervisor = secondarySupervisor;
     }
 
-	public boolean isDisabled() {
-		return disabled;
-	}
+    public boolean isDisabled() {
+        return disabled;
+    }
 
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
-	public boolean isAcceptingApplications() {
-		return !disabled && advert!=null && advert.getActive();
-	}
+    public RegisteredUser getAdministrator() {
+        return administrator;
+    }
+
+    public void setAdministrator(RegisteredUser administrator) {
+        this.administrator = administrator;
+    }
+
+    public boolean isAcceptingApplications() {
+        return !disabled && advert != null && advert.getActive();
+    }
 
 }

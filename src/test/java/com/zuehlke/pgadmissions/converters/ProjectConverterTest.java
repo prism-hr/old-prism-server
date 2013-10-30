@@ -31,13 +31,16 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 public class ProjectConverterTest {
 
 	private static final int PROJECT_ID = 1;
+	private static final String ADMINISTRATOR_EMAIL = "administrator@email.com";
 	private static final String SECONDARY_SUPERVISOR_EMAIL = "secondary@email.com";
 	private static final String PRIMARY_SUPERVISOR_EMAIL = "primary@email.com";
 	private ProjectConverter converter;
 	private UserService userService;
 	private ProgramsService programService;
+	private Person administratorPerson;
 	private Person primarySupervisorPerson;
 	private Person secondarySupervisorPerson;
+	private RegisteredUser administratorUser;
 	private RegisteredUser primarySupervisorUser;
 	private RegisteredUser secondarySupervisorUser;
 	private Program program;
@@ -50,7 +53,7 @@ public class ProjectConverterTest {
 		setupSupervisorsPerson();
 		setupSupervisorsUser();
 		setupProject();
-		setupFullProjectDTO(primarySupervisorPerson, secondarySupervisorPerson, program);
+		setupFullProjectDTO(administratorPerson, primarySupervisorPerson, secondarySupervisorPerson, program);
 		setupUserService();
 		setupProgramService();
 		converter = new ProjectConverter(userService, programService);
@@ -104,6 +107,7 @@ public class ProjectConverterTest {
 		assertThat(project.getAdvert().getTitle(), equalTo(dto.getTitle()));
 		assertThat(project.getProgram(), equalTo(dto.getProgram()));
 		assertThat(project.getClosingDate(), equalTo(dto.getClosingDate()));
+		assertThat(project.getAdministrator(), equalTo(administratorUser));
 		assertThat(project.getPrimarySupervisor(), equalTo(primarySupervisorUser));
 		assertThat(project.getSecondarySupervisor(), equalTo(secondarySupervisorUser));
 	}
@@ -115,11 +119,13 @@ public class ProjectConverterTest {
 	
 	
 	private void setupSupervisorsPerson() {
+	    administratorPerson = new PersonBuilder().id(0).email(ADMINISTRATOR_EMAIL).build();
 		primarySupervisorPerson = new PersonBuilder().id(1).email(PRIMARY_SUPERVISOR_EMAIL).build();
 		secondarySupervisorPerson =  new PersonBuilder().id(2).email(SECONDARY_SUPERVISOR_EMAIL).build();
 	}
 
 	private void setupSupervisorsUser() {
+	    administratorUser = new RegisteredUserBuilder().id(0).email(ADMINISTRATOR_EMAIL).build();
 		primarySupervisorUser = new RegisteredUserBuilder().id(1).email(PRIMARY_SUPERVISOR_EMAIL).build();
 		secondarySupervisorUser = new RegisteredUserBuilder().id(2).email(SECONDARY_SUPERVISOR_EMAIL).build();
 	}
@@ -128,12 +134,13 @@ public class ProjectConverterTest {
 		program = new ProgramBuilder().id(1).build();
 	}
 
-	private void setupFullProjectDTO(Person primarySupervisor, Person secondarySupervisor, Program program) {
+	private void setupFullProjectDTO(Person administrator, Person primarySupervisor, Person secondarySupervisor, Program program) {
 		ProjectDTOBuilder builder = new ProjectDTOBuilder();
 		builder.id(PROJECT_ID)
 		.program(program)
 		.title("title").description("description").funding("funding")
 		.closingDateSpecified(true).closingDate(DateUtils.truncateToDay(new Date()))
+		.administrator(administrator)
 		.primarySupervisor(primarySupervisor)
 		.secondarySupervisorSpecified(true).secondarySupervisor(secondarySupervisor)
 		.active(true);
@@ -154,6 +161,7 @@ public class ProjectConverterTest {
 
 	private void setupUserService() {
 		userService = EasyMock.createMock(UserService.class);
+		expect(userService.getUserByEmailIncludingDisabledAccounts(ADMINISTRATOR_EMAIL)).andReturn(administratorUser);
 		expect(userService.getUserByEmailIncludingDisabledAccounts(PRIMARY_SUPERVISOR_EMAIL)).andReturn(primarySupervisorUser);
 		expect(userService.getUserByEmailIncludingDisabledAccounts(SECONDARY_SUPERVISOR_EMAIL)).andReturn(secondarySupervisorUser);
 		EasyMock.replay(userService);

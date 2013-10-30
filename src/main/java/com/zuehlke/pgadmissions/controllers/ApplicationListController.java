@@ -133,7 +133,7 @@ public class ApplicationListController {
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
 
         if (filtering.getPreFilter() == URGENT && applications.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            response.setStatus(HttpServletResponse.SC_SEE_OTHER);
         }
 
         Map<String, Boolean> updatedApplications = new HashMap<String, Boolean>();

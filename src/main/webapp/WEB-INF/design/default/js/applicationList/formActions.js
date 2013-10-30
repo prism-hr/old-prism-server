@@ -414,7 +414,7 @@ function populateApplicationList() {
 			404 : function() { window.location.href = "/pgadmissions/404"; },
 			400 : function() { window.location.href = "/pgadmissions/400"; },
 			403 : function() { window.location.href = "/pgadmissions/404"; },
-			204 : function() { window.location.href = "/pgadmissions/applications?messageCode=application.urgent.list.empty&applyFilters=my"; }
+			303 : function() { window.location.href = "/pgadmissions/applications?messageCode=application.urgent.list.empty&applyFilters=my"; }
 		},
 		url : "/pgadmissions/applications/section",
 		data : options,

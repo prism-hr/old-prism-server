@@ -10,9 +10,13 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class ProjectDTO {
 
-	private Integer id;
-	
+    private Integer id;
+
     private Program program;
+
+    private Boolean administratorSpecified;
+
+    private Person administrator;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     private String title;
@@ -29,7 +33,7 @@ public class ProjectDTO {
     private Date closingDate;
 
     private Boolean active;
-    
+
     private Person primarySupervisor;
 
     private Boolean secondarySupervisorSpecified;
@@ -42,6 +46,22 @@ public class ProjectDTO {
 
     public void setProgram(Program program) {
         this.program = program;
+    }
+
+    public Boolean getAdministratorSpecified() {
+        return administratorSpecified;
+    }
+
+    public void setAdministratorSpecified(Boolean administratorSpecified) {
+        this.administratorSpecified = administratorSpecified;
+    }
+
+    public Person getAdministrator() {
+        return administrator;
+    }
+
+    public void setAdministrator(Person administrator) {
+        this.administrator = administrator;
     }
 
     public String getTitle() {
@@ -82,10 +102,11 @@ public class ProjectDTO {
 
     /**
      * Sets the date with day as most significant value.
+     * 
      * @param closingDate
      */
     public void setClosingDate(Date closingDate) {
-        this.closingDate = closingDate == null? closingDate : DateUtils.truncateToDay(closingDate);
+        this.closingDate = closingDate == null ? closingDate : DateUtils.truncateToDay(closingDate);
     }
 
     public Boolean getActive() {
@@ -96,37 +117,36 @@ public class ProjectDTO {
         this.active = active;
     }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Person getPrimarySupervisor() {
-		return primarySupervisor;
-	}
+    public Person getPrimarySupervisor() {
+        return primarySupervisor;
+    }
 
-	public void setPrimarySupervisor(Person primarySupervisor) {
-		this.primarySupervisor = primarySupervisor;
-	}
+    public void setPrimarySupervisor(Person primarySupervisor) {
+        this.primarySupervisor = primarySupervisor;
+    }
 
-	public Boolean getSecondarySupervisorSpecified() {
-		return secondarySupervisorSpecified;
-	}
+    public Boolean getSecondarySupervisorSpecified() {
+        return secondarySupervisorSpecified;
+    }
 
-	public void setSecondarySupervisorSpecified(Boolean secondarySupervisorSpecified) {
-		this.secondarySupervisorSpecified = secondarySupervisorSpecified;
-	}
-	
-	public Person getSecondarySupervisor() {
-		return secondarySupervisor;
-	}
+    public void setSecondarySupervisorSpecified(Boolean secondarySupervisorSpecified) {
+        this.secondarySupervisorSpecified = secondarySupervisorSpecified;
+    }
 
-	public void setSecondarySupervisor(Person secondarySupervisor) {
-		this.secondarySupervisor = secondarySupervisor;
-	}
+    public Person getSecondarySupervisor() {
+        return secondarySupervisor;
+    }
 
-	
+    public void setSecondarySupervisor(Person secondarySupervisor) {
+        this.secondarySupervisor = secondarySupervisor;
+    }
+
 }

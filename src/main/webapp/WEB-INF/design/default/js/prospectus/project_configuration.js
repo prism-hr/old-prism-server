@@ -7,6 +7,7 @@ $(document).ready(function(){
 		registerShowProjectAdvertButton();
 		registerRemoveProjectAdvertButton();
 		registerHasClosingDateProjectAdvertRadio();
+		registerHasProjectAdministratorRadio();
 		registerHasSecondarySupervisorRadio();
 		registerClearButton();
 		registerAutosuggest();
@@ -24,6 +25,7 @@ function registerDefaultClosingDateSelector() {
 function registerAutosuggest(){
 	autosuggest($("#primarySupervisorFirstName"), $("#primarySupervisorLastName"), $("#primarySupervisorEmail"));
 	autosuggest($("#secondarySupervisorFirstName"), $("#secondarySupervisorLastName"), $("#secondarySupervisorEmail"));
+	autosuggest($("#projectAdministratorFirstName"), $("#projectAdministratorLastName"), $("#projectAdministratorEmail"));
 }
 
 function registerProgramSelect() {
@@ -41,6 +43,11 @@ function registerAddProjectAdvertButton(){
 
 function addOrEditProjectAdvert(){
 	clearProjectAdvertErrors();
+	var projectAdministrator = {
+			firstname : $("#projectAdministratorFirstName").val(),
+			lastname : $("#projectAdministratorLastName").val(),
+			email : $("#projectAdministratorEmail").val()
+	};
 	var primarySupervisor = {
 		firstname : $("#primarySupervisorFirstName").val(),
 		lastname : $("#primarySupervisorLastName").val(),
@@ -73,6 +80,8 @@ function addOrEditProjectAdvert(){
 		data: {
 			id : projectId,
 			program : $("#projectAdvertProgramSelect").val(),
+			administratorSpecified : projectAdvertHasAdministrator(),
+			administrator : JSON.stringify(projectAdministrator),
 			title : $("#projectAdvertTitleInput").val(),
 			description : $("#projectAdvertDescriptionText").val(),
 			funding : $("#projectAdvertFundingText").val(),
@@ -101,6 +110,10 @@ function addOrEditProjectAdvert(){
 
 function displayErrors(map){
 	appendErrorToElementIfPresent(map['program'],$("#projectAdvertProgramDiv"));
+	appendErrorToElementIfPresent(map['administrator.firstname'],$("#projectAdministratorFirstNameDiv"));
+	appendErrorToElementIfPresent(map['administrator.lastname'],$("#projectAdministratorLastNameDiv"));
+	appendErrorToElementIfPresent(map['administrator.email'],$("#projectAdministratorEmailDiv"));
+	appendErrorToElementIfPresent(map['administrator'],$("#projectAdministratorEmailDiv"));
 	appendErrorToElementIfPresent(map['title'],$("#projectAdvertTitleDiv"));
 	appendErrorToElementIfPresent(map['description'],$("#projectAdvertDescriptionDiv"));
 	appendErrorToElementIfPresent(map['active'],$("#projectAdvertIsActiveDiv"));
@@ -157,6 +170,9 @@ function clearAll(){
 	$('#projectAdvertLinkToApply').val('');
 	$('#projectAdvertButtonToApply').val('');
 	loadDefaultPrimarySupervisor();
+	$("#projectAdvertHasAdministratorRadioYes").prop("checked", false);
+	$("#projectAdvertHasAdministratorRadioNo").prop("checked", true);
+	checkProjectAdministrator();
 	$("#projectAdvertHasSecondarySupervisorRadioYes").prop("checked", false);
 	$("#projectAdvertHasSecondarySupervisorRadioNo").prop("checked", true);
 	checkSecondarySupervisor();
@@ -192,6 +208,14 @@ function selectDefaultClosingDate() {
 	}
 }
 
+function registerHasProjectAdministratorRadio(){
+	$("#projectAdvertHasAdministratorDiv [name='projectAdvertHasAdministratorRadio']").each(function () { 
+		$(this).bind('change', function(){
+			checkProjectAdministrator();
+		});
+	});
+}
+
 function registerHasSecondarySupervisorRadio(){
 	$("#projectAdvertHasSecondarySupervisorDiv [name='projectAdvertHasSecondarySupervisorRadio']").each(function () { 
 		$(this).bind('change', function(){
@@ -209,6 +233,20 @@ function checkProjectClosingDate(){
 		$('#projectAdvertClosingDateInput').val("");
 		$('#projectAdvertClosingDateInput').attr('disabled','disabled');	
 		$('#projectAdvertClosingDateInput').parent().parent().find('label').addClass("grey-label").parent().find('.hint').addClass("grey");
+	}
+}
+
+function checkProjectAdministrator(){
+	var projectAdministratorFields = $('#projectAdministratorDiv input:text');
+	if(projectAdvertRadioHasValue('projectAdvertHasAdministratorRadio')){
+		projectAdministratorFields.each(function (){
+			enableField($(this));
+		});
+	}
+	else{
+		projectAdministratorFields.each(function (){
+			clearAndDisable($(this));
+		});
 	}
 }
 
@@ -297,6 +335,8 @@ function fillProjectAdvertForm(data){
 	clearProjectAdvertErrors();
 	var advert = project.advert;
 	
+	displayProjectAdministrator(project.administrator);
+	
 	$("#projectAdvertTitleInput").val(advert.title);
 	$("#projectAdvertDescriptionText").val(advert.description);
 	
@@ -323,13 +363,14 @@ function fillProjectAdvertForm(data){
 	$('#projectAdvertLinkToApply').val(data['linkToApply']);
 	$('#projectAdvertButtonToApply').val(data['buttonToApply']);
 }
+
 function checktoDisableProjet() {
 	if ($("#projectAdvertProgramSelect").val() != "") {
 		$(".projectGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 		$(".projectGroup input, .projectGroup textarea, .projectGroup select").removeAttr("readonly", "readonly");
 		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button").removeAttr("disabled", "disabled");
 		$("#addProjectAdvert").removeClass("disabled");
-		$("#projectAdvertClosingDateInput, #secondarySupervisorFirstName, #secondarySupervisorLastName, #secondarySupervisorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
+		$("#projectAdvertClosingDateInput, #secondarySupervisorFirstName, #secondarySupervisorLastName, #secondarySupervisorEmail, #projectAdministratorFirstName, #projectAdministratorLastName, #projectAdministratorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
 		if ($("#primarySupervisorDiv").hasClass('isAdmin')) {
 			$("#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail").removeAttr("disabled").removeAttr("readonly");
 			$("#primarySupervisorDiv label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
@@ -343,6 +384,9 @@ function checktoDisableProjet() {
 		$('#secondarySupervisorFirstNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
 		$('#secondarySupervisorLastNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
 		$('#secondarySupervisorEmailLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#projectAdministratorFirstNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#projectAdministratorLastNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#projectAdministratorEmailLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
 	} else {
 		$(".projectGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
 		$(".projectGroup input, .projectGroup textarea, .projectGroup select, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo").attr("readonly", "readonly");
@@ -468,6 +512,18 @@ function displayPrimarySupervisor(supervisor){
 	setValue($('#primarySupervisorEmail'), supervisor.email);
 }
 
+function displayProjectAdministrator(administrator){
+	if(administrator) {
+		setValue($('#projectAdministratorFirstName'), administrator.firstname);
+		setValue($('#projectAdministratorLastName'), administrator.lastname);
+		setValue($('#projectAdministratorEmail'), administrator.email);
+		$("#projectAdvertHasAdministratorRadioYes").prop("checked", true);
+	} else {
+		$("#projectAdvertHasAdministratorRadioNo").prop("checked", true);
+	}
+	checkProjectAdministrator();
+}
+
 function displaySecondarySupervisor(supervisor){
 	if(supervisor) {
 		setValue($('#secondarySupervisorFirstName'), supervisor.firstname);
@@ -503,6 +559,10 @@ function appendProjectRow(project){
 }	
 function projectAdvertHasClosingDate(){
 	return projectAdvertRadioHasValue('projectAdvertHasClosingDateRadio');
+}
+
+function projectAdvertHasAdministrator(){
+	return projectAdvertRadioHasValue('projectAdvertHasAdministratorRadio');
 }
 
 function projectAdvertHasSecondarySupervisor(){

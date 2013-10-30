@@ -53,6 +53,45 @@
                 </div>
               </div>            
             </div>
+            
+        <div class="row-group aSDisplay projectGroup" id="projectAdministratorDiv">
+        <h3>Administrator</h3>
+        <div class="row" id="projectAdvertHasAdministratorDiv">
+            <label class="plain-label">Would you like to specify a project administrator? <em>*</em>
+            </label> <span class="hint" data-desc="<@spring.message 'prospectus.hasSecondarySupervisor'/>"></span>
+            <div class="field">
+              <input id="projectAdvertHasAdministratorRadioYes" type="radio" name="projectAdvertHasAdministratorRadio" value="true">
+                Yes
+              </input>
+              <input id="projectAdvertHasAdministratorRadioNo" type="radio" name="projectAdvertHasAdministratorRadio" value="false" checked>
+                No
+              </input>
+            </div>
+        </div>
+        <div id="projectAdministratorFields">
+          <div class="row" id="projectAdministratorFirstNameDiv">
+            <label id="projectAdministratorFirstNameLabel" class="plain-label normal" for="projectAdministratorFirstName">First Name<em>*</em></label>
+            <span class="hint" data-desc="<@spring.message 'prospectus.projectAdministratorFirstName'/>"></span>
+            <div class="field">
+              <input class="full" type="text" name="projectAdministratorFirstName" id="projectAdministratorFirstName" autocomplete="off" disabled/>
+            </div>
+          </div>
+          <div class="row" id="projectAdministratorLastNameDiv">
+            <label id="projectAdministratorLastNameLabel" class="plain-label normal" for="projectAdministratorLastName">Last Name<em>*</em></label>
+            <span class="hint" data-desc="<@spring.message 'prospectus.projectAdministratorLastName'/>"></span>
+            <div class="field">
+              <input class="full" type="text" name="projectAdministratorLastName" id="projectAdministratorLastName" autocomplete="off" disabled/>
+            </div>
+          </div>
+          <div class="row" id="projectAdministratorEmailDiv">
+            <label id="projectAdministratorEmailLabel" class="plain-label normal" for="projectAdministratorEmail">Email<em>*</em></label>
+            <span class="hint" data-desc="<@spring.message 'prospectus.projectAdministratorEmail'/>"></span>
+            <div class="field">
+              <input class="full" type="text" name="projectAdministratorEmail" id="projectAdministratorEmail" autocomplete="off" disabled/>
+            </div>
+          </div>
+        </div>
+      </div>
  
           <div class="row-group projectGroup">
                 <h3>Advert</h3>

@@ -35,13 +35,7 @@ $(document).ready(function() {
     $('#refereeClearButton').live("click", function() {
         clearRefereeFormErrors();
         
-        var refereeBeingEdited = null;
-        
-        $("div[id^=referee_]").each(function() {
-    		if (this.style.display != "none") {
-    			refereeBeingEdited = $(this).attr("id");
-    		};
-    	});
+        var refereeBeingEdited = getRefereeBeingEdited();
         
         if (refereeBeingEdited == null) {
         	$('input[name="refereeSendToUcl"]').each(function() {
@@ -275,7 +269,8 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
 				}
 				else if ((event.target.id) == "refereeSaveButton") {
 					// We tried to save something new
-					if (data.indexOf("alert alert-error") != -1) {
+					if (data.indexOf("alert alert-error") != -1 && 
+							getRefereeBeingEdited() != null) {
 						// We got some errors from the server
 						doRefreshPane = true;
 					}
@@ -301,15 +296,15 @@ function postRefereesData(postSendToPorticoData, forceSavingReference, event) {
 					$("#refereeSendToUcl_" + refereeId).removeAttr('checked');
 	    			$("#refereeSendToUcl_" + refereeId).attr('disabled', 'disabled');
 				}
-	            addCounter();
-				addToolTips();
-				bindRatings();
-				bindFileUploaders();
         	}
-        	else {
+        	else if ((event.target.id).indexOf("addReferenceButton") == -1) {
         		// Process the edited referee entry
         		editReferenceData(event);
         	}
+            addCounter();
+			addToolTips();
+			bindRatings();
+			bindFileUploaders();
         },
         complete : function() {
         	$('#ajaxloader').fadeOut('fast');
@@ -419,4 +414,14 @@ function bindFileUploaders() {
     $(".file").each(function() {
     	watchUpload($(this));
     });
+}
+
+function getRefereeBeingEdited() {
+	var refereeBeingEdited = null;
+    $("div[id^=referee_]").each(function() {
+		if (this.style.display != "none") {
+			refereeBeingEdited = $(this).attr("id");
+		};
+	});
+    return refereeBeingEdited;
 }

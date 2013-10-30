@@ -200,6 +200,10 @@ public abstract class AbstractAuthorisationAPI {
         return areEqual(user, form.getApplicant());
     }
 
+    public boolean isProjectAdministrator(final ApplicationForm form, final RegisteredUser user) {
+        return form.getProject() != null && areEqual(user, form.getProject().getAdministrator());
+    }
+
     public boolean isProgrammeAdministrator(final ApplicationForm form, final RegisteredUser user) {
         return containsUser(user, form.getProgram().getAdministrators());
     }

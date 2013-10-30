@@ -226,7 +226,7 @@ public class ApplicationListControllerTest {
 
         // THEN
         assertSame(applications, model.get("applications"));
-        assertEquals(HttpServletResponse.SC_NO_CONTENT, response.getStatus());
+        assertEquals(HttpServletResponse.SC_SEE_OTHER, response.getStatus());
     }
 
     @Test

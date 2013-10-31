@@ -20,9 +20,6 @@
 								<td scope="col">
 									<div class="role-icons <#list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority?lower_case} </#list>">
 										<span class="is-admin" data-desc="Administrator"></span>
-										<span class="is-interviewer" data-desc="Interviewer"></span>
-										<span class="is-reviewer" data-desc="Reviewer"></span>
-										<span class="is-supervisor" data-desc="Supervisor"></span>
 										<span class="is-approver" data-desc="Approver"></span>
 										<span class="is-viewer" data-desc="Viewer"></span>
 									</div>

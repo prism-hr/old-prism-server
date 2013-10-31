@@ -37,45 +37,44 @@ import com.zuehlke.pgadmissions.validators.UserDTOValidator;
 @Controller
 @RequestMapping("/manageUsers")
 public class ManageUsersController {
-    
-	private static final String NEW_USER_VIEW_NAME = "private/staff/superAdmin/create_new_user_in_role_page";
-	
-	private final ProgramsService programsService;
-	
-	private final UserService userService;
-	
-	private final ProgramPropertyEditor programPropertyEditor;
-	
-	private final UserDTOValidator newUserDTOValidator;
-	
-	private final EncryptionHelper encryptionHelper;
-	
-	private final SuperadminUserDTOValidator userDTOValidator;
-	
-	private final PersonPropertyEditor registryPropertyEditor;
-	
-	private final ConfigurationService configurationService;
 
-	public ManageUsersController() {
-		this(null, null, null, null, null, null, null, null);
-	}
+    private static final String NEW_USER_VIEW_NAME = "private/staff/superAdmin/create_new_user_in_role_page";
 
-	@Autowired
-    public ManageUsersController(ProgramsService programsService, UserService userService,
-            ProgramPropertyEditor programPropertyEditor, UserDTOValidator newUserDTOValidator,
-            EncryptionHelper encryptionHelper, final SuperadminUserDTOValidator userDTOValidator,
+    private final ProgramsService programsService;
+
+    private final UserService userService;
+
+    private final ProgramPropertyEditor programPropertyEditor;
+
+    private final UserDTOValidator newUserDTOValidator;
+
+    private final EncryptionHelper encryptionHelper;
+
+    private final SuperadminUserDTOValidator userDTOValidator;
+
+    private final PersonPropertyEditor registryPropertyEditor;
+
+    private final ConfigurationService configurationService;
+
+    public ManageUsersController() {
+        this(null, null, null, null, null, null, null, null);
+    }
+
+    @Autowired
+    public ManageUsersController(ProgramsService programsService, UserService userService, ProgramPropertyEditor programPropertyEditor,
+            UserDTOValidator newUserDTOValidator, EncryptionHelper encryptionHelper, final SuperadminUserDTOValidator userDTOValidator,
             final PersonPropertyEditor registryPropertyEditor, final ConfigurationService configurationService) {
-		this.programsService = programsService;
-		this.userService = userService;
-		this.programPropertyEditor = programPropertyEditor;
-		this.newUserDTOValidator = newUserDTOValidator;
-		this.encryptionHelper = encryptionHelper;
+        this.programsService = programsService;
+        this.userService = userService;
+        this.programPropertyEditor = programPropertyEditor;
+        this.newUserDTOValidator = newUserDTOValidator;
+        this.encryptionHelper = encryptionHelper;
         this.userDTOValidator = userDTOValidator;
         this.registryPropertyEditor = registryPropertyEditor;
         this.configurationService = configurationService;
-	}
-	
-	@InitBinder(value = "registryUserDTO")
+    }
+
+    @InitBinder(value = "registryUserDTO")
     public void registerValidatorsAndPropertyEditorsForRegistryUsers(WebDataBinder binder) {
         binder.registerCustomEditor(Person.class, registryPropertyEditor);
     }
@@ -86,51 +85,46 @@ public class ManageUsersController {
         binder.registerCustomEditor(Program.class, programPropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
-    
+
     @InitBinder(value = "adminDTO")
     public void registerValidator(WebDataBinder binder) {
         binder.setValidator(userDTOValidator);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
 
-	@ModelAttribute("programs")
-	public List<Program> getPrograms() {
-	    RegisteredUser currentUser = getCurrentUser();
-		if (currentUser.isInRole(Authority.SUPERADMINISTRATOR)) {
-			return programsService.getAllPrograms();
-		}
-		return currentUser.getProgramsOfWhichAdministrator();
-	}
+    @ModelAttribute("programs")
+    public List<Program> getPrograms() {
+        RegisteredUser currentUser = getCurrentUser();
+        if (currentUser.isInRole(Authority.SUPERADMINISTRATOR)) {
+            return programsService.getAllPrograms();
+        }
+        return currentUser.getProgramsOfWhichAdministrator();
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
 
-	@ModelAttribute("authorities")
-	public List<Authority> getAuthorities() {
-	    return Arrays.asList(
-	            Authority.ADMINISTRATOR, 
-	            Authority.APPROVER, 
-	            Authority.INTERVIEWER, 
-	            Authority.REVIEWER, 
-	            Authority.SUPERVISOR);
-	}
-	
-	@ModelAttribute("adminDTO")
+    @ModelAttribute("authorities")
+    public List<Authority> getAuthorities() {
+        return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.VIEWER);
+    }
+
+    @ModelAttribute("adminDTO")
     public UserDTO getUserDTO() {
         return new UserDTO();
     }
 
-	@ModelAttribute("userDTO")
-	public UserDTO getNewUserDTO(@RequestParam(required=false) String user, @RequestParam(required = false) String programCode) {
+    @ModelAttribute("userDTO")
+    public UserDTO getNewUserDTO(@RequestParam(required = false) String user, @RequestParam(required = false) String programCode) {
         if (user == null) {
             return newUserDTO(programCode);
         }
         return createUserDTOFromExistingUser(user, programCode);
-	}
-	
-	@ModelAttribute("superadmins")
+    }
+
+    @ModelAttribute("superadmins")
     public List<RegisteredUser> getSuperadmins() {
         List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
 
@@ -146,23 +140,21 @@ public class ManageUsersController {
         });
         return superadmins;
     }
-    
+
     @ModelAttribute("allRegistryUsers")
     public List<Person> getAllRegistryContacts() {
         return configurationService.getAllRegistryUsers();
     }
 
-	
-	
-	@RequestMapping(method = RequestMethod.GET, value = {"/edit", "/edit/saveSuperadmin", "/edit/saveUser", "/edit/saveRegistryContact"})
-	public String getAddUsersView() {
-		if (!isCurrentUserAdministrator() && getCurrentUser().isNotInRole(Authority.ADMITTER)) {
-		    throw new ResourceNotFoundException();
-		}
-		return NEW_USER_VIEW_NAME;
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/edit/saveSuperadmin")
+    @RequestMapping(method = RequestMethod.GET, value = { "/edit", "/edit/saveSuperadmin", "/edit/saveUser", "/edit/saveRegistryContact" })
+    public String getAddUsersView() {
+        if (!isCurrentUserAdministrator() && getCurrentUser().isNotInRole(Authority.ADMITTER)) {
+            throw new ResourceNotFoundException();
+        }
+        return NEW_USER_VIEW_NAME;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/edit/saveSuperadmin")
     public String handleAddSuperadmin(@Valid @ModelAttribute("adminDTO") UserDTO userDTO, BindingResult result) {
         if (!userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
             throw new ResourceNotFoundException();
@@ -181,33 +173,33 @@ public class ManageUsersController {
         return "redirect:/manageUsers/edit";
 
     }
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/edit/saveUser")
-	public String handleEditUserRoles(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult result) {
+
+    @RequestMapping(method = RequestMethod.POST, value = "/edit/saveUser")
+    public String handleEditUserRoles(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult result) {
         if (!isCurrentUserAdministrator()) {
             throw new ResourceNotFoundException();
         }
-        
+
         if (result.hasErrors()) {
             return NEW_USER_VIEW_NAME;
         }
-        
-        
+
         RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
         if (existingUser != null) {
             userService.updateUserWithNewRoles(existingUser, userDTO.getSelectedProgram(), userDTO.getSelectedAuthorities());
         } else {
-            existingUser = userService.createNewUserForProgramme(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getSelectedProgram(), userDTO.getSelectedAuthorities());
+            existingUser = userService.createNewUserForProgramme(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+                    userDTO.getSelectedProgram(), userDTO.getSelectedAuthorities());
         }
-        
+
         if (userDTO.getSelectedProgram() == null) {
             return "redirect:/manageUsers/edit";
         }
-        
+
         return "redirect:/manageUsers/edit?programCode=" + userDTO.getSelectedProgram().getCode();
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/edit/saveRegistryUsers")
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/edit/saveRegistryUsers")
     public String handleEditRegistryUsers(@ModelAttribute RegistryUserDTO registryUserDTO) {
         if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMITTER)) {
             throw new ResourceNotFoundException();
@@ -218,21 +210,20 @@ public class ManageUsersController {
         }
         return "redirect:/manageUsers/edit";
     }
-	
+
     @RequestMapping(method = RequestMethod.POST, value = "/remove")
     public String handleRemoveUserFromProgram(@ModelAttribute("userDTO") UserDTO userDTO) {
         if (!isCurrentUserAdministrator()) {
             throw new ResourceNotFoundException();
         }
         RegisteredUser userToRemove = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
-        userService.deleteUserFromProgramme(userToRemove,
-                userDTO.getSelectedProgram());
+        userService.deleteUserFromProgramme(userToRemove, userDTO.getSelectedProgram());
         if (userToRemove.getId().equals(getCurrentUser().getId()) && userToRemove.getProgramsOfWhichAdministrator().isEmpty()) {
             return "redirect:/applications";
         }
         return "redirect:/manageUsers/edit?programCode=" + userDTO.getSelectedProgram().getCode();
     }
-	
+
     private UserDTO createUserDTOFromExistingUser(final String user, final String programCode) {
         RegisteredUser selectedUser = userService.getUser(encryptionHelper.decryptToInteger(user));
         UserDTO userDTO = new UserDTO();
@@ -253,28 +244,28 @@ public class ManageUsersController {
         userDTO.setSelectedProgram(getSelectedProgram(programCode));
         return userDTO;
     }
-        
+
     public StringTrimmerEditor newStringTrimmerEditor() {
         return new StringTrimmerEditor(false);
-    }	
+    }
 
-	protected Program getSelectedProgram(final String programCode) {
-		if (programCode == null) {
-			return null;
-		}
-		Program selectedProgram = programsService.getProgramByCode(programCode);
-		if (selectedProgram == null) {
-			throw new ResourceNotFoundException();
-		}
-		return selectedProgram;
-	}
-	
-	private boolean isCurrentUserAdministrator() {
-	    RegisteredUser currentUser = getCurrentUser();
-	    return currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.isInRole(Authority.ADMINISTRATOR);
-	}
+    protected Program getSelectedProgram(final String programCode) {
+        if (programCode == null) {
+            return null;
+        }
+        Program selectedProgram = programsService.getProgramByCode(programCode);
+        if (selectedProgram == null) {
+            throw new ResourceNotFoundException();
+        }
+        return selectedProgram;
+    }
 
-	private RegisteredUser getCurrentUser() {
-	    return userService.getCurrentUser();
-	}
+    private boolean isCurrentUserAdministrator() {
+        RegisteredUser currentUser = getCurrentUser();
+        return currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.isInRole(Authority.ADMINISTRATOR);
+    }
+
+    private RegisteredUser getCurrentUser() {
+        return userService.getCurrentUser();
+    }
 }

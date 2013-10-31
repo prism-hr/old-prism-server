@@ -117,7 +117,7 @@ public class UserService {
 
         addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newAuthorities);
         addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newAuthorities);
-        addToProgramsOfWhichViewerIfRequired(selectedUser, selectedProgram);
+        addOrRemoveFromProgramsOfWhichViewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 
         userDAO.save(selectedUser);
     }
@@ -134,12 +134,6 @@ public class UserService {
         selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
 
         userDAO.save(selectedUser);
-    }
-
-    private void addToProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram) {
-        if (!selectedUser.getProgramsOfWhichViewer().contains(selectedProgram)) {
-            selectedUser.getProgramsOfWhichViewer().add(selectedProgram);
-        }
     }
 
     private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
@@ -159,12 +153,17 @@ public class UserService {
         }
     }
 
+    private void addOrRemoveFromProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+        if (newAuthoritiesContains(newAuthorities, Authority.VIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichViewer())) {
+            selectedUser.getProgramsOfWhichViewer().add(selectedProgram);
+        } else if (!newAuthoritiesContains(newAuthorities, Authority.VIEWER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichViewer())) {
+            selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
+        }
+    }
+
     private void addToRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities, Authority authority) {
         if (!selectedUser.isInRole(authority) && newAuthoritiesContains(newAuthorities, authority)) {
             selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
-        }
-        if (selectedUser.isNotInRole(Authority.VIEWER)) {
-            selectedUser.getRoles().add(roleDAO.getRoleByAuthority(Authority.VIEWER));
         }
     }
 

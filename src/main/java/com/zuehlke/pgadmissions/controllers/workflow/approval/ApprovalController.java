@@ -183,13 +183,6 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         return nominatedSupervisors;
     }
 
-    @ModelAttribute("programmeSupervisors")
-    public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId) {
-        List<RegisteredUser> programmeSupervisors = getApplicationForm(applicationId).getProgram().getSupervisors();
-        programmeSupervisors.removeAll(getNominatedSupervisors(applicationId));
-        return programmeSupervisors;
-    }
-
     @ModelAttribute("previousSupervisors")
     public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
         List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
@@ -198,13 +191,12 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
         List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
         for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
-            if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors()) && !listContainsId(registeredUser, availablePreviousSupervisors)) {
+            if (!listContainsId(registeredUser, availablePreviousSupervisors)) {
                 availablePreviousSupervisors.add(registeredUser);
             }
         }
 
         availablePreviousSupervisors.removeAll(getNominatedSupervisors(applicationId));
-        availablePreviousSupervisors.removeAll(getProgrammeSupervisors(applicationId));
         return availablePreviousSupervisors;
     }
 

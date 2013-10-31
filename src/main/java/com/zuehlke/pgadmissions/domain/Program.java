@@ -61,9 +61,6 @@ public class Program extends Authorisable implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichAdministrator")
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichSupervisor")
-    private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
-
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichViewer")
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
 
@@ -142,18 +139,6 @@ public class Program extends Authorisable implements Serializable {
 
     public void setInstances(final List<ProgramInstance> instances) {
         this.instances = instances;
-    }
-
-    public List<RegisteredUser> getSupervisors() {
-        return supervisors;
-    }
-
-    public void setSupervisors(final List<RegisteredUser> supervisors) {
-        this.supervisors = supervisors;
-    }
-
-    public boolean hasSupervisors() {
-        return !supervisors.isEmpty();
     }
 
     public boolean isEnabled() {

@@ -235,14 +235,12 @@ public class ApplicationFormListCriteriaBuilder {
                 case SUPERVISOR:
                     criteria.createAlias("programmeDetails", "pddetails", JoinType.LEFT_OUTER_JOIN);
                     criteria.createAlias("approvalRounds", "approvRounds", JoinType.LEFT_OUTER_JOIN);
-                    criteria.createAlias("p.supervisors", "programme_supervisor", JoinType.LEFT_OUTER_JOIN);
                     criteria.createAlias("pddetails.suggestedSupervisors", "programme_details_supervisor", JoinType.LEFT_OUTER_JOIN);
                     criteria.createAlias("approvRounds.supervisors", "approvrounds_supervisor", JoinType.LEFT_OUTER_JOIN);
                     criteria.createAlias("approvrounds_supervisor.user", "approvrounds_supervisor_user", JoinType.LEFT_OUTER_JOIN);
 
                     newCriterion = Restrictions
                             .disjunction()
-                            .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "programme_supervisor.firstName", "programme_supervisor.lastName"))
                             .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "approvrounds_supervisor_user.firstName",
                                     "approvrounds_supervisor_user.lastName"))
                             .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "programme_details_supervisor.firstname",

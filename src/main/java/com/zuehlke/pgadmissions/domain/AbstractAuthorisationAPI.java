@@ -125,17 +125,8 @@ public abstract class AbstractAuthorisationAPI {
         if (containsProgramme(programme, user.getProgramsOfWhichAdministrator())) {
             authorities.add(Authority.ADMINISTRATOR);
         }
-        if (containsProgramme(programme, user.getProgramsOfWhichReviewer())) {
-            authorities.add(Authority.REVIEWER);
-        }
-        if (containsProgramme(programme, user.getProgramsOfWhichInterviewer())) {
-            authorities.add(Authority.INTERVIEWER);
-        }
         if (containsProgramme(programme, user.getProgramsOfWhichApprover())) {
             authorities.add(Authority.APPROVER);
-        }
-        if (containsProgramme(programme, user.getProgramsOfWhichSupervisor())) {
-            authorities.add(Authority.SUPERVISOR);
         }
         if (containsProgramme(programme, user.getProgramsOfWhichViewer())) {
             authorities.add(Authority.VIEWER);

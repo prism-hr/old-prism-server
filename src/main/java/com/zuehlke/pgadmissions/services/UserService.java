@@ -117,9 +117,6 @@ public class UserService {
 
         addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newAuthorities);
         addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newAuthorities);
-        addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
-        addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
-        addOrRemoveFromProgramsOfWhichSupervisorIfRequired(selectedUser, selectedProgram, newAuthorities);
         addToProgramsOfWhichViewerIfRequired(selectedUser, selectedProgram);
 
         userDAO.save(selectedUser);
@@ -134,18 +131,6 @@ public class UserService {
         if (selectedUser.getProgramsOfWhichApprover().isEmpty()) {
             selectedUser.removeRole(Authority.APPROVER);
         }
-        selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
-        if (selectedUser.getProgramsOfWhichReviewer().isEmpty()) {
-            selectedUser.removeRole(Authority.REVIEWER);
-        }
-        selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
-        if (selectedUser.getProgramsOfWhichInterviewer().isEmpty()) {
-            selectedUser.removeRole(Authority.INTERVIEWER);
-        }
-        selectedUser.getProgramsOfWhichSupervisor().remove(selectedProgram);
-        if (selectedUser.getProgramsOfWhichSupervisor().isEmpty()) {
-            selectedUser.removeRole(Authority.SUPERVISOR);
-        }
         selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
 
         userDAO.save(selectedUser);
@@ -154,15 +139,6 @@ public class UserService {
     private void addToProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram) {
         if (!selectedUser.getProgramsOfWhichViewer().contains(selectedProgram)) {
             selectedUser.getProgramsOfWhichViewer().add(selectedProgram);
-        }
-    }
-
-    private void addOrRemoveFromProgramsOfWhichSupervisorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-        if (newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichSupervisor())) {
-            selectedUser.getProgramsOfWhichSupervisor().add(selectedProgram);
-        } else if (!newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR)
-                && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichSupervisor())) {
-            selectedUser.getProgramsOfWhichSupervisor().remove(selectedProgram);
         }
     }
 
@@ -180,23 +156,6 @@ public class UserService {
             selectedUser.getProgramsOfWhichApprover().add(selectedProgram);
         } else if (!newAuthoritiesContains(newAuthorities, Authority.APPROVER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichApprover())) {
             selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
-        }
-    }
-
-    private void addOrRemoveFromProgramsOfWhichReviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-        if (newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichReviewer())) {
-            selectedUser.getProgramsOfWhichReviewer().add(selectedProgram);
-        } else if (!newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichReviewer())) {
-            selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
-        }
-    }
-
-    private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-        if (newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichInterviewer())) {
-            selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);
-        } else if (!newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER)
-                && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichInterviewer())) {
-            selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
         }
     }
 
@@ -258,11 +217,6 @@ public class UserService {
             addPendingRoleNotificationToUser(newUser, Authority.SUPERADMINISTRATOR, null);
         }
 
-        if (authList.contains(Authority.REVIEWER)) {
-            newUser.getProgramsOfWhichReviewer().add(program);
-            addPendingRoleNotificationToUser(newUser, Authority.REVIEWER, program);
-        }
-
         if (authList.contains(Authority.ADMINISTRATOR)) {
             newUser.getProgramsOfWhichAdministrator().add(program);
             addPendingRoleNotificationToUser(newUser, Authority.ADMINISTRATOR, program);
@@ -271,16 +225,6 @@ public class UserService {
         if (authList.contains(Authority.APPROVER)) {
             newUser.getProgramsOfWhichApprover().add(program);
             addPendingRoleNotificationToUser(newUser, Authority.APPROVER, program);
-        }
-
-        if (authList.contains(Authority.INTERVIEWER)) {
-            newUser.getProgramsOfWhichInterviewer().add(program);
-            addPendingRoleNotificationToUser(newUser, Authority.INTERVIEWER, program);
-        }
-
-        if (authList.contains(Authority.SUPERVISOR)) {
-            newUser.getProgramsOfWhichSupervisor().add(program);
-            addPendingRoleNotificationToUser(newUser, Authority.SUPERVISOR, program);
         }
 
         if (authList.contains(Authority.VIEWER)) {

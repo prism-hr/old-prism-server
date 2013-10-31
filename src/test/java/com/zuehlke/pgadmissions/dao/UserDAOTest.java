@@ -206,40 +206,6 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
                 .email("email@test.com").username("username6").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(true).build();
 
-        RegisteredUser reviewerOne = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username7").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-
-        RegisteredUser reviewerTwo = new RegisteredUserBuilder().programsOfWhichReviewer(programTwo).firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username8").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-
-        RegisteredUser reviewerThree = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username9").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(true).build();
-
-        RegisteredUser interviewerOne = new RegisteredUserBuilder().programsOfWhichInterviewer(programOne).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username14").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(true).build();
-
-        RegisteredUser interviewerTwo = new RegisteredUserBuilder().programsOfWhichInterviewer(programTwo).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username15").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(true).build();
-
-        RegisteredUser interviewerThree = new RegisteredUserBuilder().programsOfWhichInterviewer(programOne).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username16").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(true).build();
-
-        RegisteredUser supervisorOne = new RegisteredUserBuilder().programsOfWhichSupervisor(programOne).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username17").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(true).build();
-
-        RegisteredUser supervisorTwo = new RegisteredUserBuilder().programsOfWhichSupervisor(programTwo).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username18").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(true).build();
-
-        RegisteredUser supervisorThree = new RegisteredUserBuilder().programsOfWhichSupervisor(programOne).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username19").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(true).build();
-
         RegisteredUser administratorOne = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne).firstName("Jane").lastName("Doe")
                 .email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(true).build();
@@ -252,36 +218,24 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
                 .email("email@test.com").username("username12").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(true).build();
 
-        RegisteredUser reviewerAndApprover = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).programsOfWhichApprover(programOne)
-                .firstName("Jane").lastName("Doe").email("email@test.com").username("username13").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
-
         RegisteredUser viewer = new RegisteredUserBuilder().programsOfWhichViewer(programOne).programsOfWhichApprover(programOne).firstName("Jane")
                 .lastName("Doe").email("email@test.com").username("username20").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(true).build();
 
         save(superAdminOne, superAdminTwo, superAdminThree, administratorOne, administratorThree, administratorTwo, approverOne, approverThree, approverTwo,
-                reviewerOne, reviewerThree, reviewerTwo, interviewerOne, interviewerTwo, interviewerThree, reviewerAndApprover, supervisorOne, supervisorTwo,
-                supervisorThree, viewer);
+                viewer);
 
         flushAndClearSession();
 
         List<RegisteredUser> usersInProgram = userDAO.getUsersForProgram(programOne);
-        assertEquals(numberOfExistingSuperAdminUsers + 15, usersInProgram.size());
-        assertTrue(listContainsId(reviewerAndApprover, usersInProgram));
+        assertEquals(numberOfExistingSuperAdminUsers + 8, usersInProgram.size());
         assertTrue(listContainsId(superAdminOne, usersInProgram));
         assertTrue(listContainsId(superAdminThree, usersInProgram));
         assertTrue(listContainsId(superAdminTwo, usersInProgram));
-        assertTrue(listContainsId(reviewerOne, usersInProgram));
-        assertTrue(listContainsId(reviewerThree, usersInProgram));
-        assertTrue(listContainsId(interviewerOne, usersInProgram));
-        assertTrue(listContainsId(interviewerThree, usersInProgram));
         assertTrue(listContainsId(approverOne, usersInProgram));
         assertTrue(listContainsId(approverThree, usersInProgram));
         assertTrue(listContainsId(administratorOne, usersInProgram));
         assertTrue(listContainsId(administratorThree, usersInProgram));
-        assertTrue(listContainsId(supervisorOne, usersInProgram));
-        assertTrue(listContainsId(supervisorThree, usersInProgram));
         assertTrue(listContainsId(viewer, usersInProgram));
     }
 

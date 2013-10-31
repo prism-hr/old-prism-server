@@ -61,9 +61,8 @@ public class MoveToReviewController {
 
     @Autowired
     public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
-                    ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
-                    final ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
-                    ApplicationDescriptorProvider applicationDescriptorProvider) {
+            ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
+            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.reviewService = reviewService;
@@ -156,19 +155,11 @@ public class MoveToReviewController {
         return nominatedSupervisors;
     }
 
-    @ModelAttribute("programmeReviewers")
-    public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId) {
-        List<RegisteredUser> programReviewers = getApplicationForm(applicationId).getProgram().getProgramReviewers();
-        programReviewers.removeAll(getNominatedSupervisors(applicationId));
-        return programReviewers;
-    }
-
     @ModelAttribute("previousReviewers")
     public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         List<RegisteredUser> previousReviewersOfProgram = userService.getAllPreviousReviewersOfProgram(applicationForm.getProgram());
         previousReviewersOfProgram.removeAll(getNominatedSupervisors(applicationId));
-        previousReviewersOfProgram.removeAll(getProgrammeReviewers(applicationId));
         return previousReviewersOfProgram;
     }
 
@@ -186,7 +177,7 @@ public class MoveToReviewController {
         RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
         if (possibleUser == null) {
             possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail, null,
-                            applicationForm, Authority.REVIEWER);
+                    applicationForm, Authority.REVIEWER);
         }
         return possibleUser;
     }

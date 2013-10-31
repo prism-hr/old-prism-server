@@ -209,7 +209,7 @@ public class MoveToReviewControllerTest {
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
                         .build();
 
-        final Program program = new ProgramBuilder().reviewers(interUser1, interUser2).id(6).build();
+        final Program program = new ProgramBuilder().id(6).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
@@ -238,49 +238,6 @@ public class MoveToReviewControllerTest {
     }
 
     @Test
-    public void shouldGetProgrammeReviewersAndRemoveApplicantNominatedSupervisors() {
-        EasyMock.reset(userServiceMock);
-        final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
-        final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
-        final RegisteredUser interUser3 = new RegisteredUserBuilder().id(5).build();
-
-        String emailOfSupervisor1 = "1@ucl.ac.uk";
-        String emailOfSupervisor2 = "2@ucl.ac.uk";
-        SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
-        SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
-
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                        .build();
-
-        final Program program = new ProgramBuilder().reviewers(interUser1, interUser2, interUser3).id(6).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
-        controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                        reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock, null) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                if (applicationId.equals("5")) {
-                    return applicationForm;
-                }
-                return null;
-            }
-
-            @Override
-            public ReviewRound getReviewRound(Object applicationId) {
-                return null;
-            }
-
-        };
-
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
-        EasyMock.replay(userServiceMock);
-
-        List<RegisteredUser> reviewersUsers = controller.getProgrammeReviewers("5");
-        assertEquals(1, reviewersUsers.size());
-        assertTrue(reviewersUsers.containsAll(Arrays.asList(interUser3)));
-    }
-
-    @Test
     public void shouldGetApplicationFromIdForAdmin() {
         Program program = new ProgramBuilder().id(6).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
@@ -304,10 +261,10 @@ public class MoveToReviewControllerTest {
     }
 
     @Test
-    public void shouldGetListOfPreviousReviewersAndRemoveDefaultReviewersAndApplicantNominatedSupervisors() {
+    public void shouldGetListOfPreviousReviewersAndRemoveApplicantNominatedSupervisors() {
         EasyMock.reset(userServiceMock);
-        final RegisteredUser applicantNominatedSupervisor = new RegisteredUserBuilder().id(5).build();
-        final RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(7).build();
+        final RegisteredUser supervisor1 = new RegisteredUserBuilder().id(5).build();
+        final RegisteredUser supervisor2 = new RegisteredUserBuilder().id(7).build();
         final RegisteredUser reviewer = new RegisteredUserBuilder().id(6).build();
 
         String emailOfSupervisor1 = "1@ucl.ac.uk";
@@ -318,7 +275,7 @@ public class MoveToReviewControllerTest {
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
                         .build();
 
-        final Program program = new ProgramBuilder().reviewers(defaultReviewer).id(6).build();
+        final Program program = new ProgramBuilder().id(6).build();
 
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
@@ -338,10 +295,10 @@ public class MoveToReviewControllerTest {
 
         };
 
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(applicantNominatedSupervisor).times(2);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(defaultReviewer).times(2);
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(supervisor1).times(2);
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(supervisor2).times(2);
         List<RegisteredUser> reviewerList = new ArrayList<RegisteredUser>();
-        reviewerList.add(defaultReviewer);
+        reviewerList.add(supervisor2);
         reviewerList.add(reviewer);
         EasyMock.expect(userServiceMock.getAllPreviousReviewersOfProgram(program)).andReturn(reviewerList);
         EasyMock.replay(userServiceMock);

@@ -226,30 +226,6 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldSaveAndLoadProgramsOfWhichReviewer() throws Exception {
-
-		Program program = new ProgramBuilder().code("111111").title("hello").build();
-		save(program);
-		flushAndClearSession();
-
-		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).firstName("Jane").lastName("Doe")
-				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).build();
-
-		save(reviewer);
-
-		flushAndClearSession();
-
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, reviewer.getId());
-		assertEquals(1, reloadedUser.getProgramsOfWhichReviewer().size());
-		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichReviewer().get(0).getId());
-
-		Program reloadedProgram = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
-		assertTrue(reloadedProgram.getProgramReviewers().contains(reloadedUser));
-	}
-	
-	
-	@Test
 	public void shouldSaveAndLoadProgramsOfWhichInterviewer() throws Exception {
 		
 		Program program = new ProgramBuilder().code("111111").title("hello").build();

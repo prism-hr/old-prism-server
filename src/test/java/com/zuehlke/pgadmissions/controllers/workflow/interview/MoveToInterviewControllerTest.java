@@ -86,7 +86,7 @@ public class MoveToInterviewControllerTest {
     }
 
     @Test
-    public void shouldGetNominatedInterviewers() {
+    public void shouldGetNominatedSupervisors() {
         EasyMock.reset(userServiceMock);
         final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
         final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
@@ -99,7 +99,7 @@ public class MoveToInterviewControllerTest {
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
                         .build();
 
-        final Program program = new ProgramBuilder().reviewers(interUser1, interUser2).id(6).build();
+        final Program program = new ProgramBuilder().id(6).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
@@ -115,37 +115,7 @@ public class MoveToInterviewControllerTest {
     }
 
     @Test
-    public void shouldGetProgrammeInterviewersAndRemoveApplicantNominatedSupervisors() {
-        EasyMock.reset(userServiceMock);
-        final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
-        final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
-        final RegisteredUser interUser3 = new RegisteredUserBuilder().id(5).build();
-
-        String emailOfSupervisor1 = "1@ucl.ac.uk";
-        String emailOfSupervisor2 = "2@ucl.ac.uk";
-        SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
-        SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
-
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                        .build();
-
-        final Program program = new ProgramBuilder().interviewers(interUser1, interUser2, interUser3).id(6).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
-
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock);
-        List<RegisteredUser> interviewersUsers = controller.getProgrammeInterviewers("abc");
-        EasyMock.verify(userServiceMock, applicationServiceMock);
-
-        assertEquals(1, interviewersUsers.size());
-        assertTrue(interviewersUsers.containsAll(Arrays.asList(interUser3)));
-    }
-
-    @Test
-    public void shouldGetListOfPreviousInterviewersAndAddReviewersWillingToInterviewWithDefaultInterviewersAndApplicantNominatedSupervisorsRemoved() {
+    public void shouldGetListOfPreviousInterviewersAndAddReviewersWillingToInterviewWithApplicantNominatedSupervisorsRemoved() {
         EasyMock.reset(userServiceMock);
         String emailOfSupervisor1 = "1@ucl.ac.uk";
         String emailOfSupervisor2 = "2@ucl.ac.uk";
@@ -163,7 +133,7 @@ public class MoveToInterviewControllerTest {
         ReviewComment reviewTwo = new ReviewCommentBuilder().id(1).user(defaultInterviewer).willingToInterview(true).build();
         ReviewComment reviewThree = new ReviewCommentBuilder().id(1).user(reviewerWillingToIntergviewTwo).willingToInterview(true).build();
 
-        final Program program = new ProgramBuilder().id(6).interviewers(defaultInterviewer).build();
+        final Program program = new ProgramBuilder().id(6).build();
 
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).comments(reviewOne, reviewTwo, reviewThree)
                         .programmeDetails(programmeDetails).build();
@@ -174,8 +144,8 @@ public class MoveToInterviewControllerTest {
         previousInterviewers.add(defaultInterviewer);
         previousInterviewers.add(reviewerWillingToIntergviewOne);
         EasyMock.expect(userServiceMock.getAllPreviousInterviewersOfProgram(program)).andReturn(previousInterviewers);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(defaultInterviewer).times(2);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(reviewerWillingToIntergviewOne).times(2);
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(defaultInterviewer);
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(reviewerWillingToIntergviewOne);
 
         EasyMock.replay(userServiceMock, applicationServiceMock);
         List<RegisteredUser> interviewerUsers = controller.getPreviousInterviewersAndReviewersWillingToInterview("abc");

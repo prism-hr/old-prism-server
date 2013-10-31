@@ -128,15 +128,6 @@ public class UserDAO {
         Criteria programsOfWhichApprover = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichApprover")
                 .add(Restrictions.eq("id", program.getId()));
 
-        Criteria programsOfWhichReviewer = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichReviewer")
-                .add(Restrictions.eq("id", program.getId()));
-
-        Criteria programsOfWhichInterviewer = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-                .createCriteria("programsOfWhichInterviewer").add(Restrictions.eq("id", program.getId()));
-
-        Criteria programsOfWhichSupervisor = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-                .createCriteria("programsOfWhichSupervisor").add(Restrictions.eq("id", program.getId()));
-
         Criteria programsOfWhichViewer = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichViewer")
                 .add(Restrictions.eq("id", program.getId()));
 
@@ -157,30 +148,6 @@ public class UserDAO {
         });
 
         CollectionUtils.forAllDo(programsOfWhichApprover.list(), new Closure() {
-            @Override
-            public void execute(Object target) {
-                RegisteredUser user = (RegisteredUser) target;
-                users.put(user.getId(), user);
-            }
-        });
-
-        CollectionUtils.forAllDo(programsOfWhichReviewer.list(), new Closure() {
-            @Override
-            public void execute(Object target) {
-                RegisteredUser user = (RegisteredUser) target;
-                users.put(user.getId(), user);
-            }
-        });
-
-        CollectionUtils.forAllDo(programsOfWhichInterviewer.list(), new Closure() {
-            @Override
-            public void execute(Object target) {
-                RegisteredUser user = (RegisteredUser) target;
-                users.put(user.getId(), user);
-            }
-        });
-
-        CollectionUtils.forAllDo(programsOfWhichSupervisor.list(), new Closure() {
             @Override
             public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;

@@ -108,9 +108,6 @@ public class ProgramsServiceTest {
         EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
         EasyMock.expect(userMock.getProgramsOfWhichAdministrator()).andReturn(Collections.<Program> emptyList());
         EasyMock.expect(userMock.getProgramsOfWhichApprover()).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(userMock.getProgramsOfWhichReviewer()).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(userMock.getProgramsOfWhichInterviewer()).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(userMock.getProgramsOfWhichSupervisor()).andReturn(Collections.<Program> emptyList());
         EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousReviewer(userMock)).andReturn(Collections.<Program> emptyList());
         EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousInterviewer(userMock)).andReturn(Collections.<Program> emptyList());
         EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousSupervisor(userMock)).andReturn(Collections.<Program> emptyList());

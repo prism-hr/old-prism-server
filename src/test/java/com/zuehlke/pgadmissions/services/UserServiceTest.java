@@ -208,8 +208,7 @@ public class UserServiceTest {
     public void shouldAddUserRoleAdminIfNotAlreadyAdminAndAdminInNewRoles() {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
         Program selectedProgram = new ProgramBuilder().id(4).build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(new RoleBuilder().id(Authority.ADMINISTRATOR).build())
-                .anyTimes();
+        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).anyTimes();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
 
         EasyMock.replay(roleDAOMock);
@@ -247,8 +246,7 @@ public class UserServiceTest {
     public void shouldAddUserRoleInterviewerIfNotAlreadyInterviewerAndRevieweInNewRoles() {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
         Program selectedProgram = new ProgramBuilder().id(4).build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.INTERVIEWER)).andReturn(new RoleBuilder().id(Authority.INTERVIEWER).build())
-                .anyTimes();
+        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.INTERVIEWER)).andReturn(new RoleBuilder().id(Authority.INTERVIEWER).build()).anyTimes();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
 
         EasyMock.replay(roleDAOMock);
@@ -261,8 +259,7 @@ public class UserServiceTest {
     public void shouldAddUserRoleSupervisorIfNotAlreadySupervisorAndRevieweInNewRoles() {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
         Program selectedProgram = new ProgramBuilder().id(4).build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERVISOR)).andReturn(new RoleBuilder().id(Authority.SUPERVISOR).build())
-                .anyTimes();
+        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERVISOR)).andReturn(new RoleBuilder().id(Authority.SUPERVISOR).build()).anyTimes();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
         EasyMock.replay(roleDAOMock);
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.SUPERVISOR);
@@ -328,52 +325,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldAddProgramToReviewerListIfNew() {
-        Program selectedProgram = new ProgramBuilder().id(1).build();
-        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
-        Role role = new RoleBuilder().id(Authority.REVIEWER).build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REVIEWER)).andReturn(role).anyTimes();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
-        EasyMock.replay(roleDAOMock);
-        userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.REVIEWER);
-        assertTrue(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
-        assertTrue(selectedUser.getProgramsOfWhichViewer().contains(selectedProgram));
-        EasyMock.verify(roleDAOMock);
-    }
-
-    @Test
-    public void shouldAddProgramToInterviewerListIfNew() {
-        Program selectedProgram = new ProgramBuilder().id(1).build();
-        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
-        Role role = new RoleBuilder().id(Authority.INTERVIEWER).build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.INTERVIEWER)).andReturn(role).anyTimes();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
-        EasyMock.replay(roleDAOMock);
-
-        userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.INTERVIEWER);
-
-        assertTrue(selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram));
-        assertTrue(selectedUser.getProgramsOfWhichViewer().contains(selectedProgram));
-        EasyMock.verify(roleDAOMock);
-    }
-
-    @Test
-    public void shouldAddProgramToSupervisorListIfNew() {
-        Program selectedProgram = new ProgramBuilder().id(1).build();
-        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
-        Role role = new RoleBuilder().id(Authority.SUPERVISOR).build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERVISOR)).andReturn(role).anyTimes();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
-        EasyMock.replay(roleDAOMock);
-
-        userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.SUPERVISOR);
-
-        assertTrue(selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram));
-        assertTrue(selectedUser.getProgramsOfWhichViewer().contains(selectedProgram));
-        EasyMock.verify(roleDAOMock);
-    }
-
-    @Test
     public void shouldRemoveFromProgramsOfWhichAdministratorIfNoLongerInList() {
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build());
         EasyMock.replay(roleDAOMock);
@@ -384,16 +335,6 @@ public class UserServiceTest {
         assertFalse(selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram));
     }
 
-    @Test
-    public void shouldRemoveFromProgramsOfWhichSupervisorIfNoLongerInList() {
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build());
-        EasyMock.replay(roleDAOMock);
-
-        Program selectedProgram = new ProgramBuilder().id(1).build();
-        RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichSupervisor(selectedProgram).id(1).build();
-        userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
-        assertFalse(selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram));
-    }
 
     @Test
     public void shouldRemoveFromProgramsOfWhichApproverIfNoLongerInList() {
@@ -406,27 +347,7 @@ public class UserServiceTest {
         assertFalse(selectedUser.getProgramsOfWhichApprover().contains(selectedProgram));
     }
 
-    @Test
-    public void shouldRemoveFromProgramsOfWhichReviewerIfNoLongerInList() {
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build());
-        EasyMock.replay(roleDAOMock);
 
-        Program selectedProgram = new ProgramBuilder().id(1).build();
-        RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichReviewer(selectedProgram).id(1).build();
-        userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
-        assertFalse(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
-    }
-
-    @Test
-    public void shouldRemoveFromProgramsOfWhichInterviewerIfNoLongerInList() {
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build());
-        EasyMock.replay(roleDAOMock);
-
-        Program selectedProgram = new ProgramBuilder().id(1).build();
-        RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichInterviewer(selectedProgram).id(1).build();
-        userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
-        assertFalse(selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram));
-    }
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowISEwhenUserAlreadyExistsForNewUserInProgramme() {
@@ -446,7 +367,7 @@ public class UserServiceTest {
 
         EasyMock.expect(
                 userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR,
-                        Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER, Authority.VIEWER))).andReturn(newUser);
+                        Authority.APPROVER, Authority.VIEWER))).andReturn(newUser);
 
         userDAOMock.save(newUser);
         EasyMock.expectLastCall().andDelegateTo(new CheckProgrammeAndSimulateSaveDAO(program));
@@ -454,56 +375,41 @@ public class UserServiceTest {
         Role role_1 = new RoleBuilder().build();
         Role role_2 = new RoleBuilder().build();
         Role role_3 = new RoleBuilder().build();
-        Role role_4 = new RoleBuilder().build();
-        Role role_5 = new RoleBuilder().build();
         Role role_6 = new RoleBuilder().build();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERADMINISTRATOR)).andReturn(role_1);
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(role_2);
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPROVER)).andReturn(role_3);
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REVIEWER)).andReturn(role_4);
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.INTERVIEWER)).andReturn(role_5);
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(role_6);
 
         EasyMock.replay(userDAOMock, roleDAOMock, userFactoryMock);
 
         RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserForProgramme("la", "le", "some@email.com", program,
-                Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER);
+                Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER);
 
         EasyMock.verify(userDAOMock, roleDAOMock, userFactoryMock);
         assertEquals(newUser, createdUser);
 
         assertTrue(createdUser.getProgramsOfWhichAdministrator().contains(program));
         assertTrue(createdUser.getProgramsOfWhichApprover().contains(program));
-        assertTrue(createdUser.getProgramsOfWhichInterviewer().contains(program));
-        assertTrue(createdUser.getProgramsOfWhichReviewer().contains(program));
 
-        assertEquals(6, createdUser.getPendingRoleNotifications().size());
+        assertEquals(4, createdUser.getPendingRoleNotifications().size());
+        
         PendingRoleNotification pendingRoleNotification = createdUser.getPendingRoleNotifications().get(0);
         assertEquals(role_1, pendingRoleNotification.getRole());
         assertNull(pendingRoleNotification.getProgram());
         assertEquals(currentUserMock, pendingRoleNotification.getAddedByUser());
 
         pendingRoleNotification = createdUser.getPendingRoleNotifications().get(1);
-        assertEquals(role_4, pendingRoleNotification.getRole());
-        assertEquals(program, pendingRoleNotification.getProgram());
-        assertEquals(currentUserMock, pendingRoleNotification.getAddedByUser());
-
-        pendingRoleNotification = createdUser.getPendingRoleNotifications().get(2);
         assertEquals(role_2, pendingRoleNotification.getRole());
         assertEquals(program, pendingRoleNotification.getProgram());
         assertEquals(currentUserMock, pendingRoleNotification.getAddedByUser());
 
-        pendingRoleNotification = createdUser.getPendingRoleNotifications().get(3);
+        pendingRoleNotification = createdUser.getPendingRoleNotifications().get(2);
         assertEquals(role_3, pendingRoleNotification.getRole());
         assertEquals(program, pendingRoleNotification.getProgram());
         assertEquals(currentUserMock, pendingRoleNotification.getAddedByUser());
 
-        pendingRoleNotification = createdUser.getPendingRoleNotifications().get(4);
-        assertEquals(role_5, pendingRoleNotification.getRole());
-        assertEquals(program, pendingRoleNotification.getProgram());
-        assertEquals(currentUserMock, pendingRoleNotification.getAddedByUser());
-
-        pendingRoleNotification = createdUser.getPendingRoleNotifications().get(5);
+        pendingRoleNotification = createdUser.getPendingRoleNotifications().get(3);
         assertEquals(role_6, pendingRoleNotification.getRole());
         assertEquals(program, pendingRoleNotification.getProgram());
         assertEquals(currentUserMock, pendingRoleNotification.getAddedByUser());
@@ -535,8 +441,6 @@ public class UserServiceTest {
 
         assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
         assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
-        assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());
-        assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
 
         assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
     }
@@ -560,8 +464,6 @@ public class UserServiceTest {
 
         assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
         assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
-        assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());
-        assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
 
         assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
     }
@@ -585,8 +487,6 @@ public class UserServiceTest {
 
         assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
         assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
-        assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());
-        assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
 
         assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
     }
@@ -816,7 +716,7 @@ public class UserServiceTest {
 
         @Override
         public void save(RegisteredUser user) {
-            Assert.assertTrue(user.getProgramsOfWhichReviewer().contains(expectedProgramme));
+            Assert.assertTrue(user.getProgramsOfWhichApprover().contains(expectedProgramme));
         }
     }
 }

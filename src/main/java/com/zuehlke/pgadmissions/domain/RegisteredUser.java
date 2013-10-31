@@ -152,21 +152,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PROGRAM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "reviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PROGRAM_INTERVIEWER_LINK", joinColumns = { @JoinColumn(name = "interviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PROGRAM_SUPERVISOR_LINK", joinColumns = { @JoinColumn(name = "supervisor_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_VIEWER_LINK", joinColumns = { @JoinColumn(name = "viewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
@@ -353,18 +338,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public List<Program> getProgramsOfWhichApprover() {
         return programsOfWhichApprover;
-    }
-
-    public List<Program> getProgramsOfWhichInterviewer() {
-        return programsOfWhichInterviewer;
-    }
-
-    public List<Program> getProgramsOfWhichReviewer() {
-        return programsOfWhichReviewer;
-    }
-
-    public List<Program> getProgramsOfWhichSupervisor() {
-        return programsOfWhichSupervisor;
     }
 
     public List<Program> getProgramsOfWhichViewer() {
@@ -693,18 +666,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public void setProgramsOfWhichApprover(final List<Program> programsOfWhichApprover) {
         this.programsOfWhichApprover = programsOfWhichApprover;
-    }
-
-    public void setProgramsOfWhichInterviewer(final List<Program> programsOfWhichInterviewer) {
-        this.programsOfWhichInterviewer = programsOfWhichInterviewer;
-    }
-
-    public void setProgramsOfWhichReviewer(final List<Program> programsOfWhichReviewer) {
-        this.programsOfWhichReviewer = programsOfWhichReviewer;
-    }
-
-    public void setProgramsOfWhichSupervisor(final List<Program> programsOfWhichSupervisor) {
-        this.programsOfWhichSupervisor = programsOfWhichSupervisor;
     }
 
     public void setProgramsOfWhichViewer(final List<Program> programsOfWhichViewer) {

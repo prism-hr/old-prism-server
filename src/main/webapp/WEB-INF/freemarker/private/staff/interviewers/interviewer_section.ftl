@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
-<#assign avaliableOptionsSize = (programmeInterviewers?size + previousInterviewers?size + 4)/>
+<#assign avaliableOptionsSize = previousInterviewers?size + 4 />
 <#if (avaliableOptionsSize > 25)>
 <#assign avaliableOptionsSize = 25 />
 </#if> 
@@ -23,14 +23,6 @@
                 ${interviewer.lastName?html}
                 </option>
             </#list>
-        </optgroup>
-        <optgroup id="default" label="Default interviewers"> 
-            <#list programmeInterviewers as interviewer> 
-                <option value="${encrypter.encrypt(interviewer.id)}" category="default" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
-                ${interviewer.firstName?html}
-                ${interviewer.lastName?html}
-                </option>
-            </#list> 
         </optgroup>
         <optgroup id="previous" label="Previous interviewers"> 
             <#list previousInterviewers as interviewer>

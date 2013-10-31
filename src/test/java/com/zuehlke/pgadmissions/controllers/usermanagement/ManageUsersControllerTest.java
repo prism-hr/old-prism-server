@@ -155,13 +155,10 @@ public class ManageUsersControllerTest {
         EasyMock.replay(currentUserMock);
 
         List<Authority> authorities = controller.getAuthorities();
-        assertEquals(5, authorities.size());
         assertThat(authorities, contains( //
                 Authority.ADMINISTRATOR, //
                 Authority.APPROVER, //
-                Authority.INTERVIEWER, //
-                Authority.REVIEWER, //
-                Authority.SUPERVISOR));
+                Authority.VIEWER));
     }
 
     @Test(expected = ResourceNotFoundException.class)

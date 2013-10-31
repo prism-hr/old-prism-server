@@ -49,7 +49,7 @@ public class ApplicationFormAccessService {
         }
         
         Set<Authority> internalGroup = new HashSet<Authority>();
-        internalGroup.addAll(asList(Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR, Authority.ADMITTER, Authority.ADMINISTRATOR));
+        internalGroup.addAll(asList(Authority.ADMITTER, Authority.ADMINISTRATOR));
         
         for (ApplicationFormUpdate update : missedUpdates) {
             if (update.getUpdateVisibility()==ApplicationUpdateScope.ALL_USERS) {

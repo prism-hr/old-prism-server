@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -50,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -65,7 +68,6 @@ import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -92,6 +94,7 @@ import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
@@ -127,19 +130,20 @@ public class ApprovalControllerTest {
     private ActionsProvider actionsProviderMock;
     private ApplicationDescriptorProvider applicationDescriptorProviderMock;
     private ProgramInstanceService programInstanceServiceMock;
+    private SupervisorsProvider supervisorsProviderMock;
 
     @Test
     public void shouldGetApprovalPage() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
         Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
-        
+
         Date nowDate = new Date();
         Date testDate = DateUtils.addMonths(nowDate, 1);
         Date deadlineDate = DateUtils.addMonths(nowDate, 2);
-        
+
         final Program program = new Program();
         program.setId(1);
-        
+
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);
         programInstance.setProgram(program);
@@ -153,7 +157,7 @@ public class ApprovalControllerTest {
         modelMap.put("applicationForm", application);
         modelMap.put("approvalRound", application.getLatestApprovalRound());
         modelMap.put("user", currentUserMock);
-        
+
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
         ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
@@ -173,157 +177,50 @@ public class ApprovalControllerTest {
     }
 
     @Test
-    public void shouldGetProgrammeSupervisors() {
-    	EasyMock.reset(currentUserMock);
-    	
-        final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
-        final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
-
-        final Program program = new ProgramBuilder().supervisors(interUser1, interUser2).id(6).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
-        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(application)).andReturn(true).anyTimes();
-
-        EasyMock.replay(applicationServiceMock, currentUserMock);
-        List<RegisteredUser> supervisorsUsers = controller.getProgrammeSupervisors("abc");
-        EasyMock.verify(applicationServiceMock, currentUserMock);
-
-        assertEquals(2, supervisorsUsers.size());
-        assertTrue(supervisorsUsers.containsAll(Arrays.asList(interUser1, interUser2)));
+    public void shouldGetListOfNominatedSupervisors() {
+        ArrayList<RegisteredUser> list = Lists.newArrayList();
+        
+        expect(supervisorsProviderMock.getNominatedSupervisors("app1")).andReturn(list);
+        
+        replay(supervisorsProviderMock);
+        assertSame(list, controller.getNominatedSupervisors("app1"));
+        verify(supervisorsProviderMock);
     }
 
     @Test
-    public void shouldGetApplicantNominatedSupervisors() {
-        EasyMock.reset(userServiceMock, currentUserMock);
-        final RegisteredUser interUser1 = new RegisteredUserBuilder().id(1).build();
-        final RegisteredUser interUser2 = new RegisteredUserBuilder().id(2).build();
-        final RegisteredUser interUser3 = new RegisteredUserBuilder().id(3).build();
-        final RegisteredUser interUser4 = new RegisteredUserBuilder().id(4).build();
-
-        String emailOfSupervisor1 = "1@ucl.ac.uk";
-        String emailOfSupervisor2 = "2@ucl.ac.uk";
-        SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
-        SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
-
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
-
-        final Program program = new ProgramBuilder().id(6).supervisors(interUser1, interUser2, interUser3, interUser4).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true).anyTimes();
-
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1).times(2);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2).times(2);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, currentUserMock);
-        List<RegisteredUser> nominatedSupervisors = controller.getNominatedSupervisors("5");
-        List<RegisteredUser> programmeSupervisors = controller.getProgrammeSupervisors("5");
-        EasyMock.verify(userServiceMock, applicationServiceMock, currentUserMock);
-
-        assertEquals(2, nominatedSupervisors.size());
-        assertTrue(nominatedSupervisors.containsAll(Arrays.asList(interUser1, interUser2)));
-        assertEquals(2, programmeSupervisors.size());
-        assertTrue(programmeSupervisors.containsAll(Arrays.asList(interUser3, interUser4)));
-    }
-
-    @Test
-    public void shouldRemoveApplicantNominatedSupervisorsFromProgramSupervisors() {
-        EasyMock.reset(userServiceMock, currentUserMock);
-        final RegisteredUser interUser1 = new RegisteredUserBuilder().id(1).build();
-        final RegisteredUser interUser2 = new RegisteredUserBuilder().id(2).build();
-
-        String emailOfSupervisor1 = "1@ucl.ac.uk";
-        String emailOfSupervisor2 = "2@ucl.ac.uk";
-        SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
-        SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
-
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
-
-        final Program program = new ProgramBuilder().id(6).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
-
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, currentUserMock);
-        List<RegisteredUser> nominatedSupervisors = controller.getNominatedSupervisors("5");
-        EasyMock.verify(userServiceMock, applicationServiceMock, currentUserMock);
-
-        assertEquals(2, nominatedSupervisors.size());
-        assertTrue(nominatedSupervisors.containsAll(Arrays.asList(interUser1, interUser2)));
-    }
-
-    @Test
-    public void shouldGetListOfPreviousSupervisorsAndAddReviewersWillingToApprovalRoundWitDefaultSupervisorsAndApplicantSupervisorsRemoved() {
-        EasyMock.reset(userServiceMock, currentUserMock);
-        final RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(9).build();
-        final RegisteredUser interviewerWillingToSuperviseOne = new RegisteredUserBuilder().id(8).build();
-        final RegisteredUser interviewerWillingToSuperviseTwo = new RegisteredUserBuilder().id(7).build();
-        final RegisteredUser previousSupervisor = new RegisteredUserBuilder().id(6).build();
-        InterviewComment interviewOne = new InterviewCommentBuilder().id(1).user(interviewerWillingToSuperviseOne).willingToSupervise(true).build();
-        InterviewComment interviewTwo = new InterviewCommentBuilder().id(1).user(defaultSupervisor).willingToSupervise(true).build();
-        InterviewComment interviewThree = new InterviewCommentBuilder().id(1).user(interviewerWillingToSuperviseTwo).willingToSupervise(true).build();
-
-        String emailOfSupervisor1 = "1@ucl.ac.uk";
-        String emailOfSupervisor2 = "2@ucl.ac.uk";
-        SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
-        SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
-
-        final Program program = new ProgramBuilder().id(6).supervisors(defaultSupervisor).build();
-
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).comments(interviewOne, interviewTwo, interviewThree)
-                .programmeDetails(programmeDetails).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true).anyTimes();
-
-        EasyMock.expect(userServiceMock.getAllPreviousSupervisorsOfProgram(program)).andReturn(
-                Arrays.asList(previousSupervisor, defaultSupervisor, interviewerWillingToSuperviseOne));
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(defaultSupervisor).anyTimes();
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interviewerWillingToSuperviseOne).anyTimes();
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, currentUserMock);
-        List<RegisteredUser> interviewerUsers = controller.getPreviousSupervisorsAndInterviewersWillingToSupervise("5");
-        EasyMock.verify(userServiceMock, applicationServiceMock, currentUserMock);
-
-        assertEquals(2, interviewerUsers.size());
-        assertTrue(interviewerUsers.containsAll(Arrays.asList(previousSupervisor, interviewerWillingToSuperviseTwo)));
+    public void shouldGetListOfPreviousSupervisorsAndAddReviewersWillingToSupervise() {
+        ArrayList<RegisteredUser> list = Lists.newArrayList();
+        
+        expect(supervisorsProviderMock.getPreviousSupervisorsAndInterviewersWillingToSupervise("app1")).andReturn(list);
+        
+        replay(supervisorsProviderMock);
+        assertSame(list, controller.getPreviousSupervisorsAndInterviewersWillingToSupervise("app1"));
+        verify(supervisorsProviderMock);
     }
 
     @Test
     public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfAny() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
         Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
-        
+
         Date nowDate = new Date();
         Date testDate = DateUtils.addMonths(nowDate, 1);
         Date deadlineDate = DateUtils.addMonths(nowDate, 2);
-        
+
         final Program program = new Program();
         program.setId(100000);
-        
+
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);
         programInstance.setProgram(program);
         programInstance.setApplicationStartDate(nowDate);
         programInstance.setApplicationDeadline(deadlineDate);
-        
+
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(testDate).studyOption("1", "full").build();
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("abc").programmeDetails(programmeDetails)
                 .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
-        
+
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
@@ -354,21 +251,27 @@ public class ApprovalControllerTest {
         Date nowDate = new Date();
         Date testDate = DateUtils.addMonths(nowDate, 1);
         Date deadlineDate = DateUtils.addMonths(nowDate, 3);
-        
+
         final Program program = new Program();
         program.setId(100000);
-        
+
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);
         programInstance.setProgram(program);
         programInstance.setApplicationStartDate(nowDate);
         programInstance.setApplicationDeadline(deadlineDate);
-        
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("abc").comments(interviewOne, interviewTwo, interviewThree)
-                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, supervisorTwo, decliningSupervisor).build()).build();
-        
+
+        final ApplicationForm application = new ApplicationFormBuilder()
+                .id(2)
+                .program(program)
+                .applicationNumber("abc")
+                .comments(interviewOne, interviewTwo, interviewThree)
+                .latestApprovalRound(
+                        new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, supervisorTwo, decliningSupervisor).build())
+                .build();
+
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        
+
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
         EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
@@ -392,19 +295,19 @@ public class ApprovalControllerTest {
         Date nowDate = new Date();
         Date testDate = DateUtils.addMonths(nowDate, 1);
         Date deadlineDate = DateUtils.addMonths(nowDate, 3);
-        
+
         final Program program = new Program();
         program.setId(100000);
-        
+
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);
         programInstance.setProgram(program);
         programInstance.setApplicationStartDate(nowDate);
         programInstance.setApplicationDeadline(deadlineDate);
-        
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).
-        		latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
-        
+
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails)
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
+
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
@@ -421,7 +324,7 @@ public class ApprovalControllerTest {
     @Test
     public void shouldGetApplication() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-        
+
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 
         EasyMock.replay(applicationServiceMock);
@@ -475,7 +378,8 @@ public class ApprovalControllerTest {
         actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         EasyMock.replay(errorsMock, actionsProviderMock);
-        assertEquals("/private/staff/supervisors/propose_offer_recommendation", controller.assignSupervisors(modelMap, approvalRound, errorsMock, sessionStatus));
+        assertEquals("/private/staff/supervisors/propose_offer_recommendation",
+                controller.assignSupervisors(modelMap, approvalRound, errorsMock, sessionStatus));
         EasyMock.verify(errorsMock, actionsProviderMock);
 
         assertFalse(sessionStatus.isComplete());
@@ -774,26 +678,26 @@ public class ApprovalControllerTest {
         Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();
         Project project = new ProjectBuilder().program(program).advert(advert).primarySupervisor(primarySupervisor).secondarySupervisor(secondarySupervisor)
                 .build();
-        
+
         Date nowDate = new Date();
         Date testDate = DateUtils.addMonths(nowDate, 1);
         Date deadlineDate = DateUtils.addMonths(nowDate, 2);
-        
+
         Supervisor primary = new Supervisor();
         primary.setUser(primarySupervisor);
         primary.setIsPrimary(true);
         Supervisor secondary = new Supervisor();
         secondary.setUser(secondarySupervisor);
-        
+
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project)
-        		.latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).build();
-        
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).build();
+
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);
         programInstance.setProgram(program);
         programInstance.setApplicationStartDate(nowDate);
         programInstance.setApplicationDeadline(deadlineDate);
-        
+
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application);
         EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
@@ -838,6 +742,7 @@ public class ApprovalControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
+        supervisorsProviderMock = createMock(SupervisorsProvider.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
@@ -850,7 +755,7 @@ public class ApprovalControllerTest {
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
-                domicileServiceMock, domicilePropertyEditorMock, messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, 
-                accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock, programInstanceServiceMock);
+                domicileServiceMock, domicilePropertyEditorMock, messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock,
+                accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock, programInstanceServiceMock, supervisorsProviderMock);
     }
 }

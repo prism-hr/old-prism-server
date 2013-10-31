@@ -61,15 +61,6 @@ public class Program extends Authorisable implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichAdministrator")
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichReviewer")
-    private List<RegisteredUser> programReviewers = new ArrayList<RegisteredUser>();
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichInterviewer")
-    private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichSupervisor")
-    private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
-
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichViewer")
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
 
@@ -134,15 +125,6 @@ public class Program extends Authorisable implements Serializable {
         this.administrators.addAll(administrators);
     }
 
-    public List<RegisteredUser> getProgramReviewers() {
-        return programReviewers;
-    }
-
-    public void setProgramReviewers(final List<RegisteredUser> reviewers) {
-        this.programReviewers.clear();
-        this.programReviewers.addAll(reviewers);
-    }
-
     public boolean isApprover(final RegisteredUser user) {
         return isApproverInProgramme(this, user);
     }
@@ -151,36 +133,12 @@ public class Program extends Authorisable implements Serializable {
         return isAdminInProgramme(this, user);
     }
 
-    public boolean isInterviewerOfProgram(final RegisteredUser user) {
-        return isInterviewerOfProgram(this, user);
-    }
-
     public List<ProgramInstance> getInstances() {
         return instances;
     }
 
     public void setInstances(final List<ProgramInstance> instances) {
         this.instances = instances;
-    }
-
-    public List<RegisteredUser> getInterviewers() {
-        return interviewers;
-    }
-
-    public void setInterviewers(final List<RegisteredUser> interviewers) {
-        this.interviewers = interviewers;
-    }
-
-    public List<RegisteredUser> getSupervisors() {
-        return supervisors;
-    }
-
-    public void setSupervisors(final List<RegisteredUser> supervisors) {
-        this.supervisors = supervisors;
-    }
-
-    public boolean hasSupervisors() {
-        return !supervisors.isEmpty();
     }
 
     public boolean isEnabled() {

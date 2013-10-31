@@ -182,11 +182,6 @@ public class OfferRecommendationController {
         return supervisorsProvider.getNominatedSupervisors(applicationId);
     }
 
-    @ModelAttribute("programmeSupervisors")
-    public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId) {
-        return supervisorsProvider.getProgrammeSupervisors(applicationId);
-    }
-
     @ModelAttribute("previousSupervisors")
     public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
         return supervisorsProvider.getPreviousSupervisorsAndInterviewersWillingToSupervise(applicationId);

@@ -42,339 +42,301 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
-	@Test
-	public void shouldSaveAndLoadUserWithSimpleValues() throws Exception {
+    @Test
+    public void shouldSaveAndLoadUserWithSimpleValues() throws Exception {
 
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").firstName2("bob").firstName3("Claudio").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).originalApplicationQueryString("?hi&hello").build();
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").firstName2("bob").firstName3("Claudio").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .originalApplicationQueryString("?hi&hello").build();
 
-		assertNull(user.getId());
+        assertNull(user.getId());
 
-		sessionFactory.getCurrentSession().save(user);
+        sessionFactory.getCurrentSession().save(user);
 
-		assertNotNull(user.getId());
-		Integer id = user.getId();
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
-		assertSame(user, reloadedUser);
+        assertNotNull(user.getId());
+        Integer id = user.getId();
+        RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+        assertSame(user, reloadedUser);
 
-		flushAndClearSession();
+        flushAndClearSession();
 
-		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
-		assertNotSame(user, reloadedUser);
-		assertEquals(user.getId(), reloadedUser.getId());
-		assertEquals(user.getPassword(), reloadedUser.getPassword());
-		assertEquals(user.getUsername(), reloadedUser.getUsername());
-		assertEquals(user.getFirstName(), reloadedUser.getFirstName());
-		assertEquals(user.getFirstName2(), reloadedUser.getFirstName2());
-		assertEquals(user.getFirstName3(), reloadedUser.getFirstName3());
-		assertEquals(user.getLastName(), reloadedUser.getLastName());
-		assertEquals(user.getEmail(), reloadedUser.getEmail());
-		assertEquals("?hi&hello", reloadedUser.getOriginalApplicationQueryString());
-		assertFalse(reloadedUser.isAccountNonExpired());
-		assertFalse(reloadedUser.isAccountNonLocked());
-		assertFalse(reloadedUser.isCredentialsNonExpired());
-		assertFalse(reloadedUser.isEnabled());
-	}
+        reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+        assertNotSame(user, reloadedUser);
+        assertEquals(user.getId(), reloadedUser.getId());
+        assertEquals(user.getPassword(), reloadedUser.getPassword());
+        assertEquals(user.getUsername(), reloadedUser.getUsername());
+        assertEquals(user.getFirstName(), reloadedUser.getFirstName());
+        assertEquals(user.getFirstName2(), reloadedUser.getFirstName2());
+        assertEquals(user.getFirstName3(), reloadedUser.getFirstName3());
+        assertEquals(user.getLastName(), reloadedUser.getLastName());
+        assertEquals(user.getEmail(), reloadedUser.getEmail());
+        assertEquals("?hi&hello", reloadedUser.getOriginalApplicationQueryString());
+        assertFalse(reloadedUser.isAccountNonExpired());
+        assertFalse(reloadedUser.isAccountNonLocked());
+        assertFalse(reloadedUser.isCredentialsNonExpired());
+        assertFalse(reloadedUser.isEnabled());
+    }
 
-	@Test
-	public void shouldLoadRegisteredUserWithReferees() {
-		
-		Referee referee1 = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").phoneNumber("hallihallo").build();
-		Referee referee2 = new RefereeBuilder().id(5).firstname("ref1").lastname("erre1").email("ref1@test.com").phoneNumber("hallihallo").build();
-		
+    @Test
+    public void shouldLoadRegisteredUserWithReferees() {
 
-		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
-		
-		sessionFactory.getCurrentSession().save(admin1);
-		flushAndClearSession();
-		referee1.setUser(admin1);
-		referee2.setUser(admin1);
+        Referee referee1 = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").phoneNumber("hallihallo").build();
+        Referee referee2 = new RefereeBuilder().id(5).firstname("ref1").lastname("erre1").email("ref1@test.com").phoneNumber("hallihallo").build();
 
-		save(referee1, referee2);
+        RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
 
-		RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin1.getId()));
-		
-		assertTrue(reloadedUser.getReferees().contains(referee1));
-		assertTrue(reloadedUser.getReferees().contains(referee2));
-		assertNotNull(referee1.getUser());
+        sessionFactory.getCurrentSession().save(admin1);
+        flushAndClearSession();
+        referee1.setUser(admin1);
+        referee2.setUser(admin1);
 
-	}
+        save(referee1, referee2);
 
-	@Test
-	public void shouldSaveAndLoadRegisteredUserWithReferee() {
-		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
+        RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin1.getId()));
 
-		flushAndClearSession();
-		assertNull(admin1.getId());
+        assertTrue(reloadedUser.getReferees().contains(referee1));
+        assertTrue(reloadedUser.getReferees().contains(referee2));
+        assertNotNull(referee1.getUser());
 
-		sessionFactory.getCurrentSession().save(admin1);
+    }
 
-		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("ref@test.com").user(admin1).phoneNumber("hallihallo").build();
-		save(referee);
-		assertNotNull(admin1.getId());
-		Integer id = admin1.getId();
-		RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id));
-		
-		assertSame(admin1, reloadedUser);
+    @Test
+    public void shouldSaveAndLoadRegisteredUserWithReferee() {
+        RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
 
-		flushAndClearSession();
+        flushAndClearSession();
+        assertNull(admin1.getId());
 
-		
-		reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id));
-		
-		assertEquals(admin1.getId(), reloadedUser.getId());
-		assertEquals("email", reloadedUser.getUsername());
-		Assert.assertNotNull(reloadedUser.getReferees());
-		Assert.assertTrue(listContainsId(referee, reloadedUser.getReferees()));
-	}
+        sessionFactory.getCurrentSession().save(admin1);
 
-	@Test
-	public void shouldSaveAndLoadUserWithRoles() throws Exception {
+        Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("ref@test.com").user(admin1).phoneNumber("hallihallo").build();
+        save(referee);
+        assertNotNull(admin1.getId());
+        Integer id = admin1.getId();
+        RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id));
 
-		// clear out whatever test data is in there -remember, it will all be
-		// rolled back!
-		sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
+        assertSame(admin1, reloadedUser);
 
-		Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
-		Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
-		save(roleOne, roleTwo);
-		flushAndClearSession();
+        flushAndClearSession();
 
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleOne).role(roleTwo).build();
+        reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id));
 
-		sessionFactory.getCurrentSession().save(user);
+        assertEquals(admin1.getId(), reloadedUser.getId());
+        assertEquals("email", reloadedUser.getUsername());
+        Assert.assertNotNull(reloadedUser.getReferees());
+        Assert.assertTrue(listContainsId(referee, reloadedUser.getReferees()));
+    }
 
-		Integer id = user.getId();
-		flushAndClearSession();
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+    @Test
+    public void shouldSaveAndLoadUserWithRoles() throws Exception {
 
-		assertEquals(2, reloadedUser.getRoles().size());
-		assertTrue(listContainsId(roleOne, reloadedUser.getRoles()));
-		assertTrue(listContainsId(roleTwo, reloadedUser.getRoles()));
-	}
+        // clear out whatever test data is in there -remember, it will all be
+        // rolled back!
+        sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 
-	@Test
-	public void shouldDeleteRoleMappingWhenDeletingUser() throws Exception {
-		// clear out whatever test data is in there -remember, it will all be
-		// rolled back!
-		sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
-		Role role = new RoleBuilder().id(Authority.APPLICANT).build();
-		save(role);
-		flushAndClearSession();
+        Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
+        Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
+        save(roleOne, roleTwo);
+        flushAndClearSession();
 
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(role).build();
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleOne).role(roleTwo).build();
 
-		sessionFactory.getCurrentSession().save(user);
+        sessionFactory.getCurrentSession().save(user);
 
-		Integer id = user.getId();
+        Integer id = user.getId();
+        flushAndClearSession();
+        RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
 
-		flushAndClearSession();
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
-		assertEquals(BigInteger.valueOf(1),
-				sessionFactory.getCurrentSession().createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = '" + Authority.APPLICANT + "'").uniqueResult());
-		sessionFactory.getCurrentSession().delete(reloadedUser);
-		flushAndClearSession();
+        assertEquals(2, reloadedUser.getRoles().size());
+        assertTrue(listContainsId(roleOne, reloadedUser.getRoles()));
+        assertTrue(listContainsId(roleTwo, reloadedUser.getRoles()));
+    }
 
-		assertEquals(BigInteger.valueOf(0),
-				sessionFactory.getCurrentSession().createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = '" + Authority.APPLICANT + "'").uniqueResult());
-	}
-	
-	@Test
-	public void shouldSaveAndLoadProgramsOfWhichAdministrator() throws Exception {
+    @Test
+    public void shouldDeleteRoleMappingWhenDeletingUser() throws Exception {
+        // clear out whatever test data is in there -remember, it will all be
+        // rolled back!
+        sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
+        Role role = new RoleBuilder().id(Authority.APPLICANT).build();
+        save(role);
+        flushAndClearSession();
 
-		Program program = new ProgramBuilder().code("111111").title("hello").build();
-		save(program);
-		flushAndClearSession();
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(role).build();
 
-		RegisteredUser admin = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe")
-				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).build();
+        sessionFactory.getCurrentSession().save(user);
 
-		save(admin);
+        Integer id = user.getId();
 
-		flushAndClearSession();
+        flushAndClearSession();
+        RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+        assertEquals(
+                BigInteger.valueOf(1),
+                sessionFactory.getCurrentSession()
+                        .createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = '" + Authority.APPLICANT + "'").uniqueResult());
+        sessionFactory.getCurrentSession().delete(reloadedUser);
+        flushAndClearSession();
 
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin.getId());
-		assertEquals(1, reloadedUser.getProgramsOfWhichAdministrator().size());
-		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichAdministrator().get(0).getId());
-	}
+        assertEquals(
+                BigInteger.valueOf(0),
+                sessionFactory.getCurrentSession()
+                        .createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = '" + Authority.APPLICANT + "'").uniqueResult());
+    }
 
-	@Test
-	public void shouldLoadProgramsOfWhichApprover() throws Exception {
+    @Test
+    public void shouldSaveAndLoadProgramsOfWhichAdministrator() throws Exception {
 
-		Program program = new ProgramBuilder().code("111111").title("hello").build();
-		save(program);
-		flushAndClearSession();
+        Program program = new ProgramBuilder().code("111111").title("hello").build();
+        save(program);
+        flushAndClearSession();
 
-		RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program).firstName("Jane").lastName("Doe")
-				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).build();
+        RegisteredUser admin = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username10").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .build();
 
-		save(approver);
+        save(admin);
 
-		flushAndClearSession();
+        flushAndClearSession();
 
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, approver.getId());
-		assertEquals(1, reloadedUser.getProgramsOfWhichApprover().size());
-		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichApprover().get(0).getId());
-	}
+        RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin.getId());
+        assertEquals(1, reloadedUser.getProgramsOfWhichAdministrator().size());
+        assertEquals(program.getId(), reloadedUser.getProgramsOfWhichAdministrator().get(0).getId());
+    }
 
-	@Test
-	public void shouldSaveAndLoadProgramsOfWhichReviewer() throws Exception {
+    @Test
+    public void shouldLoadProgramsOfWhichApprover() throws Exception {
 
-		Program program = new ProgramBuilder().code("111111").title("hello").build();
-		save(program);
-		flushAndClearSession();
+        Program program = new ProgramBuilder().code("111111").title("hello").build();
+        save(program);
+        flushAndClearSession();
 
-		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).firstName("Jane").lastName("Doe")
-				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).build();
+        RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program).firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username10").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .build();
 
-		save(reviewer);
+        save(approver);
 
-		flushAndClearSession();
+        flushAndClearSession();
 
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, reviewer.getId());
-		assertEquals(1, reloadedUser.getProgramsOfWhichReviewer().size());
-		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichReviewer().get(0).getId());
+        RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, approver.getId());
+        assertEquals(1, reloadedUser.getProgramsOfWhichApprover().size());
+        assertEquals(program.getId(), reloadedUser.getProgramsOfWhichApprover().get(0).getId());
+    }
 
-		Program reloadedProgram = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
-		assertTrue(reloadedProgram.getProgramReviewers().contains(reloadedUser));
-	}
-	
-	
-	@Test
-	public void shouldSaveAndLoadProgramsOfWhichInterviewer() throws Exception {
-		
-		Program program = new ProgramBuilder().code("111111").title("hello").build();
-		save(program);
-		flushAndClearSession();
-		
-		RegisteredUser interviewer = new RegisteredUserBuilder().programsOfWhichInterviewer(program).firstName("Jane").lastName("Doe")
-				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).build();
-		
-		save(interviewer);
-		
-		flushAndClearSession();
-		
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, interviewer.getId());
-		assertEquals(1, reloadedUser.getProgramsOfWhichInterviewer().size());
-		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichInterviewer().get(0).getId());
-	}
-	
-	
-	@Test
-	public void shouldLoadRegisteredUserWithComments() {
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").build();
-		
-		sessionFactory.getCurrentSession().save(applicant);
-		
-		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(1).build();
-		
-		sessionFactory.getCurrentSession().save(application);
-		
-		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").build();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).adminsNotified(false).comment("This is a review comment").commentType(CommentType.REVIEW).build();
-		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").build();
-		
-		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
-		
-		sessionFactory.getCurrentSession().save(admin1);
-		flushAndClearSession();
-		comment.setUser(admin1);
-		reviewComment.setUser(admin1);
-		comment1.setUser(admin1);
+    @Test
+    public void shouldLoadRegisteredUserWithComments() {
+        RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com")
+                .build();
 
-		save(comment, comment1, reviewComment);
+        sessionFactory.getCurrentSession().save(applicant);
 
-		RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin1.getId()));
-		
-		assertEquals(3, reloadedUser.getComments().size());
-		assertTrue(reloadedUser.getComments().contains(comment));
-		assertTrue(reloadedUser.getComments().contains(comment1));
-		assertTrue(reloadedUser.getComments().contains(reviewComment));
-		assertNotNull(comment.getUser());
-		assertNotNull(comment1.getUser());
-		assertNotNull(reviewComment.getUser());
+        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(1).build();
 
-	}
-	
-	@Test
-	public void shouldSaveAndLoadNotificationRecordsWithUser() throws ParseException {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-		NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.APPLICANT_SUBMISSION_NOTIFICATION).build();
-		NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26")).notificationType(NotificationType.REFEREE_RESPONDED_NOTIFICATION).build();
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(recordOne, recordTwo).build();
-		
-		save(user);
-		Integer recordOneId = recordOne.getId();
-		assertNotNull(recordOneId);
-		assertNotNull(recordTwo.getId());
-		flushAndClearSession();
-		
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
-		assertEquals(2, reloadedUser.getNotificationRecords().size());
-		assertTrue(listContainsId(recordOne, reloadedUser.getNotificationRecords()));
+        sessionFactory.getCurrentSession().save(application);
+
+        Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").build();
+        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).adminsNotified(false).comment("This is a review comment")
+                .commentType(CommentType.REVIEW).build();
+        Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").build();
+
+        RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
+
+        sessionFactory.getCurrentSession().save(admin1);
+        flushAndClearSession();
+        comment.setUser(admin1);
+        reviewComment.setUser(admin1);
+        comment1.setUser(admin1);
+
+        save(comment, comment1, reviewComment);
+
+        RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin1.getId()));
+
+        assertEquals(3, reloadedUser.getComments().size());
+        assertTrue(reloadedUser.getComments().contains(comment));
+        assertTrue(reloadedUser.getComments().contains(comment1));
+        assertTrue(reloadedUser.getComments().contains(reviewComment));
+        assertNotNull(comment.getUser());
+        assertNotNull(comment1.getUser());
+        assertNotNull(reviewComment.getUser());
+
+    }
+
+    @Test
+    public void shouldSaveAndLoadNotificationRecordsWithUser() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
+        NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26"))
+                .notificationType(NotificationType.APPLICANT_SUBMISSION_NOTIFICATION).build();
+        NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26"))
+                .notificationType(NotificationType.REFEREE_RESPONDED_NOTIFICATION).build();
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(recordOne, recordTwo).build();
+
+        save(user);
+        Integer recordOneId = recordOne.getId();
+        assertNotNull(recordOneId);
+        assertNotNull(recordTwo.getId());
+        flushAndClearSession();
+
+        RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
+        assertEquals(2, reloadedUser.getNotificationRecords().size());
+        assertTrue(listContainsId(recordOne, reloadedUser.getNotificationRecords()));
         assertTrue(listContainsId(recordTwo, reloadedUser.getNotificationRecords()));
-		
-		recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
-		reloadedUser.getNotificationRecords().remove(recordOne);
-		save(reloadedUser);
-		flushAndClearSession();
-		
-		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
-		assertEquals(1, reloadedUser.getNotificationRecords().size());
-		assertEquals(recordTwo.getId(), reloadedUser.getNotificationRecords().get(0).getId());
-		assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
-	}
-	
-	@Test
-	public void shouldSaveAndLoadPendingRoleNotificationsWithUser() throws ParseException {
-		RoleDAO roleDAO = new RoleDAO(sessionFactory);
-		Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
-		Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-		save(program);
-		
-		PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
-		PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
-		
-		
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).build();
-		
-		save(user);
-		Integer recordOneId = pendingOne.getId();
-		assertNotNull(recordOneId);
-		assertNotNull(pendingTwo.getId());
-		flushAndClearSession();
-		
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
-		assertEquals(2, reloadedUser.getPendingRoleNotifications().size());
-		assertTrue(listContainsId(pendingOne, reloadedUser.getPendingRoleNotifications()));
+        recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
+        reloadedUser.getNotificationRecords().remove(recordOne);
+        save(reloadedUser);
+        flushAndClearSession();
+
+        reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
+        assertEquals(1, reloadedUser.getNotificationRecords().size());
+        assertEquals(recordTwo.getId(), reloadedUser.getNotificationRecords().get(0).getId());
+        assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
+    }
+
+    @Test
+    public void shouldSaveAndLoadPendingRoleNotificationsWithUser() throws ParseException {
+        RoleDAO roleDAO = new RoleDAO(sessionFactory);
+        Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+        Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
+        save(program);
+
+        PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
+        PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
+
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo)
+                .build();
+
+        save(user);
+        Integer recordOneId = pendingOne.getId();
+        assertNotNull(recordOneId);
+        assertNotNull(pendingTwo.getId());
+        flushAndClearSession();
+
+        RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
+        assertEquals(2, reloadedUser.getPendingRoleNotifications().size());
+        assertTrue(listContainsId(pendingOne, reloadedUser.getPendingRoleNotifications()));
         assertTrue(listContainsId(pendingTwo, reloadedUser.getPendingRoleNotifications()));
-		
-		pendingOne = (PendingRoleNotification) sessionFactory.getCurrentSession().get(PendingRoleNotification.class, recordOneId);
-		reloadedUser.getPendingRoleNotifications().remove(pendingOne);
-		save(reloadedUser);
-		flushAndClearSession();
-		
-		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
-		assertEquals(1, reloadedUser.getPendingRoleNotifications().size());
-		assertEquals(pendingTwo.getId(), reloadedUser.getPendingRoleNotifications().get(0).getId());
-		assertNull(sessionFactory.getCurrentSession().get(PendingRoleNotification.class, recordOneId));
-	}
-	
-	private boolean listContainsId(Referee referee, List<Referee> referees) {
+
+        pendingOne = (PendingRoleNotification) sessionFactory.getCurrentSession().get(PendingRoleNotification.class, recordOneId);
+        reloadedUser.getPendingRoleNotifications().remove(pendingOne);
+        save(reloadedUser);
+        flushAndClearSession();
+
+        reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
+        assertEquals(1, reloadedUser.getPendingRoleNotifications().size());
+        assertEquals(pendingTwo.getId(), reloadedUser.getPendingRoleNotifications().get(0).getId());
+        assertNull(sessionFactory.getCurrentSession().get(PendingRoleNotification.class, recordOneId));
+    }
+
+    private boolean listContainsId(Referee referee, List<Referee> referees) {
         for (Referee entry : referees) {
             if (entry.getId().equals(referee.getId())) {
                 return true;
@@ -382,7 +344,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         }
         return false;
     }
-	
+
     private boolean listContainsId(Role role, List<Role> roles) {
         for (Role entry : roles) {
             if (entry.getId().equals(role.getId())) {
@@ -391,7 +353,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         }
         return false;
     }
-    
+
     private boolean listContainsId(NotificationRecord record, List<NotificationRecord> notificationRecords) {
         for (NotificationRecord entry : notificationRecords) {
             if (entry.getId().equals(record.getId())) {
@@ -400,7 +362,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         }
         return false;
     }
-    
+
     private boolean listContainsId(PendingRoleNotification record, List<PendingRoleNotification> notificationRecords) {
         for (PendingRoleNotification entry : notificationRecords) {
             if (entry.getId().equals(record.getId())) {

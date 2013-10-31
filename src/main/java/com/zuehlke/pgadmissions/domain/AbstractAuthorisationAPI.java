@@ -125,17 +125,8 @@ public abstract class AbstractAuthorisationAPI {
         if (containsProgramme(programme, user.getProgramsOfWhichAdministrator())) {
             authorities.add(Authority.ADMINISTRATOR);
         }
-        if (containsProgramme(programme, user.getProgramsOfWhichReviewer())) {
-            authorities.add(Authority.REVIEWER);
-        }
-        if (containsProgramme(programme, user.getProgramsOfWhichInterviewer())) {
-            authorities.add(Authority.INTERVIEWER);
-        }
         if (containsProgramme(programme, user.getProgramsOfWhichApprover())) {
             authorities.add(Authority.APPROVER);
-        }
-        if (containsProgramme(programme, user.getProgramsOfWhichSupervisor())) {
-            authorities.add(Authority.SUPERVISOR);
         }
         if (containsProgramme(programme, user.getProgramsOfWhichViewer())) {
             authorities.add(Authority.VIEWER);
@@ -249,47 +240,12 @@ public abstract class AbstractAuthorisationAPI {
         return isInRole(user, Authority.REFEREE) && user.hasRefereesInApplicationForm(form);
     }
 
-    public boolean isInterviewerOfProgram(final Program programme, final RegisteredUser user) {
-        for (RegisteredUser interviewer : programme.getInterviewers()) {
-            if (areEqual(user, interviewer)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean isInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
         return isInterviewerInInterview(form.getLatestInterview(), user);
     }
 
     public boolean isReviewerInLatestReviewRoundOfApplication(final ApplicationForm form, final RegisteredUser user) {
         return isReviewerInReviewRound(form.getLatestReviewRound(), user);
-    }
-
-    public boolean isReviewerInProgramme(final Program programme, final RegisteredUser user) {
-        if (programme == null) {
-            return false;
-        }
-
-        if (containsUser(user, programme.getProgramReviewers())) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isSupervisorInProgramme(final Program programme, final RegisteredUser user) {
-        return containsUser(user, programme.getSupervisors());
-    }
-
-    public boolean isAdminOrReviewerInProgramme(final Program programme, final RegisteredUser user) {
-        if (programme == null) {
-            return false;
-        }
-
-        if (containsUser(user, programme.getAdministrators()) || containsUser(user, programme.getProgramReviewers())) {
-            return true;
-        }
-        return false;
     }
 
     public boolean isAdminInProgramme(final Program programme, final RegisteredUser user) {

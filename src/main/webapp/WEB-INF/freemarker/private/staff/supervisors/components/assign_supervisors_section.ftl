@@ -1,5 +1,5 @@
   <div class="row-group" id="assignSupervisorsToAppSection"> 
-  <#assign avaliableOptionsSize = (programmeSupervisors?size + previousSupervisors?size + 4)/>
+  <#assign avaliableOptionsSize = previousSupervisors?size + 4 >
   <#if (avaliableOptionsSize > 25)>
   <#assign avaliableOptionsSize = 25 />
   </#if> 
@@ -18,14 +18,6 @@
         ${supervisor.lastName?html}
         </option>
         </#list>
-      </optgroup>
-      <optgroup id="default" label="Default supervisors">
-      <#list programmeSupervisors as supervisor> 
-        <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default"  <#if supervisor.isSupervisorIn(supervisors)> disabled="disabled" </#if>>
-        ${supervisor.firstName?html}
-        ${supervisor.lastName?html}
-        </option>
-      </#list>
       </optgroup>
       <optgroup id="previous" label="Previous supervisors">
       <#list previousSupervisors as supervisor> 

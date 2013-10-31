@@ -257,10 +257,6 @@ public abstract class AbstractAuthorisationAPI {
         return isReviewerInReviewRound(form.getLatestReviewRound(), user);
     }
 
-    public boolean isSupervisorInProgramme(final Program programme, final RegisteredUser user) {
-        return containsUser(user, programme.getSupervisors());
-    }
-
     public boolean isAdminInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
             return false;

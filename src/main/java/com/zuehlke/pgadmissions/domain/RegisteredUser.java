@@ -581,10 +581,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return isReviewerInLatestReviewRoundOfApplication(form, this);
     }
 
-    public boolean isSupervisorInProgramme(final Program programme) {
-        return isSupervisorInProgramme(programme, this);
-    }
-
     public boolean isReviewerInReviewRound(final ReviewRound reviewRound) {
         return isReviewerInReviewRound(reviewRound, this);
     }

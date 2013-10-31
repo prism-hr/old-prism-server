@@ -166,7 +166,7 @@ public class ValidApplicationFormBuilder {
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
         program = new ProgramBuilder().id(Integer.MAX_VALUE).administrators(user).approver(user).code("TMRMBISING99").enabled(true).instances(instance)
-                .supervisors(user).title("MRes Medical and Biomedical Imaging").build();
+                .title("MRes Medical and Biomedical Imaging").build();
         interest = new SourcesOfInterestBuilder().id(Integer.MAX_VALUE).code("BRIT_COUN").name("British Council").build();
         programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging").projectName("Project Title")
                 .sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")

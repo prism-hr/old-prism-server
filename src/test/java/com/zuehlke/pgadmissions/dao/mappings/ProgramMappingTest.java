@@ -119,32 +119,6 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
         assertTrue(listContainsId(adminTwo, reloadedProgramOne.getAdministrators()));
     }
 
-    @Test
-    public void shouldLoadProgramsWithSupervisors() {
-        Program program = new Program();
-        program.setCode("abcD");
-
-        program.setTitle("Program's title");
-        save(program);
-
-        RegisteredUser interviewerOne = new RegisteredUserBuilder().programsOfWhichSupervisor(program).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
-
-        RegisteredUser interviewerTwo = new RegisteredUserBuilder().programsOfWhichSupervisor(program).firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
-
-        save(interviewerOne, interviewerTwo);
-        flushAndClearSession();
-
-        Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
-
-        assertEquals(2, reloadedProgramOne.getSupervisors().size());
-        assertTrue(listContainsId(interviewerOne, reloadedProgramOne.getSupervisors()));
-        assertTrue(listContainsId(interviewerOne, reloadedProgramOne.getSupervisors()));
-    }
-
     private boolean listContainsId(ProgramInstance instance, List<ProgramInstance> instances) {
         for (ProgramInstance entry : instances) {
             if (entry.getId().equals(instance.getId())) {

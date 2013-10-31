@@ -22,7 +22,6 @@ public class ProgramBuilder {
     private boolean atasRequired;
 
     private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
-    private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
@@ -73,13 +72,6 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder supervisors(RegisteredUser... supervisors) {
-        for (RegisteredUser supervisor : supervisors) {
-            this.supervisors.add(supervisor);
-        }
-        return this;
-    }
-
     public ProgramBuilder scoringDefinitions(Map<ScoringStage, ScoringDefinition> scoringDefinitions) {
         this.scoringDefinitions.putAll(scoringDefinitions);
         return this;
@@ -115,7 +107,6 @@ public class ProgramBuilder {
         program.setEnabled(enabled);
         program.getApprovers().addAll(approvers);
         program.getAdministrators().addAll(administrators);
-        program.getSupervisors().addAll(supervisors);
         program.getInstances().addAll(instances);
         program.getViewers().addAll(viewers);
         program.getScoringDefinitions().putAll(scoringDefinitions);

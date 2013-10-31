@@ -68,9 +68,9 @@ public class MoveToInterviewController {
 
     @Autowired
     public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
-                    InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
-                    InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService,
-                    final ActionsProvider actionsProvider, final ApplicationDescriptorProvider applicationDescriptorProvider) {
+            InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
+            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService,
+            final ActionsProvider actionsProvider, final ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -142,14 +142,6 @@ public class MoveToInterviewController {
         return nominatedSupervisors;
     }
 
-    @ModelAttribute("programmeInterviewers")
-    public List<RegisteredUser> getProgrammeInterviewers(@RequestParam String applicationId) {
-        List<RegisteredUser> programmeInterviewers = getApplicationForm(applicationId).getProgram().getInterviewers();
-        List<RegisteredUser> nominatedSupervisors = getNominatedSupervisors(applicationId);
-        programmeInterviewers.removeAll(nominatedSupervisors);
-        return programmeInterviewers;
-    }
-
     @ModelAttribute("previousInterviewers")
     public List<RegisteredUser> getPreviousInterviewersAndReviewersWillingToInterview(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
@@ -157,13 +149,11 @@ public class MoveToInterviewController {
 
         List<RegisteredUser> reviewersWillingToInterview = applicationForm.getReviewersWillingToInterview();
         for (RegisteredUser registeredUser : reviewersWillingToInterview) {
-            if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers())
-                            && !listContainsId(registeredUser, previousInterviewersOfProgram)) {
+            if (!listContainsId(registeredUser, previousInterviewersOfProgram)) {
                 previousInterviewersOfProgram.add(registeredUser);
             }
         }
         previousInterviewersOfProgram.removeAll(getNominatedSupervisors(applicationId));
-        previousInterviewersOfProgram.removeAll(getProgrammeInterviewers(applicationId));
         return previousInterviewersOfProgram;
 
     }
@@ -233,7 +223,7 @@ public class MoveToInterviewController {
         RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
         if (possibleUser == null) {
             possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail, null,
-                            applicationForm, Authority.REVIEWER);
+                    applicationForm, Authority.REVIEWER);
         }
         return possibleUser;
     }

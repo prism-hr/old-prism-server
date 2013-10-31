@@ -491,10 +491,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return isAdminInProgramme(programme, this);
     }
 
-    public boolean isAdminOrReviewerInProgramme(final Program programme) {
-        return isAdminOrReviewerInProgramme(programme, this);
-    }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return credentialsNonExpired;
@@ -545,10 +541,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return isInterviewerOfApplication(form, this);
     }
 
-    public boolean isInterviewerInProgram(final Program programme) {
-        return isInterviewerOfProgram(programme, this);
-    }
-
     public boolean isApproverInProgram(final Program programme) {
         return isApproverInProgramme(programme, this);
     }
@@ -591,10 +583,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public boolean isSupervisorInProgramme(final Program programme) {
         return isSupervisorInProgramme(programme, this);
-    }
-
-    public boolean isReviewerInProgramme(final Program programme) {
-        return isReviewerInProgramme(programme, this);
     }
 
     public boolean isReviewerInReviewRound(final ReviewRound reviewRound) {

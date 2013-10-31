@@ -249,15 +249,6 @@ public abstract class AbstractAuthorisationAPI {
         return isInRole(user, Authority.REFEREE) && user.hasRefereesInApplicationForm(form);
     }
 
-    public boolean isInterviewerOfProgram(final Program programme, final RegisteredUser user) {
-        for (RegisteredUser interviewer : programme.getInterviewers()) {
-            if (areEqual(user, interviewer)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean isInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
         return isInterviewerInInterview(form.getLatestInterview(), user);
     }
@@ -266,30 +257,8 @@ public abstract class AbstractAuthorisationAPI {
         return isReviewerInReviewRound(form.getLatestReviewRound(), user);
     }
 
-    public boolean isReviewerInProgramme(final Program programme, final RegisteredUser user) {
-        if (programme == null) {
-            return false;
-        }
-
-        if (containsUser(user, programme.getProgramReviewers())) {
-            return true;
-        }
-        return false;
-    }
-
     public boolean isSupervisorInProgramme(final Program programme, final RegisteredUser user) {
         return containsUser(user, programme.getSupervisors());
-    }
-
-    public boolean isAdminOrReviewerInProgramme(final Program programme, final RegisteredUser user) {
-        if (programme == null) {
-            return false;
-        }
-
-        if (containsUser(user, programme.getAdministrators()) || containsUser(user, programme.getProgramReviewers())) {
-            return true;
-        }
-        return false;
     }
 
     public boolean isAdminInProgramme(final Program programme, final RegisteredUser user) {

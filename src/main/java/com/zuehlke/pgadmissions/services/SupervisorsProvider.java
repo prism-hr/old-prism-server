@@ -7,7 +7,6 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -28,7 +27,6 @@ public class SupervisorsProvider {
     @Inject
     private ApplicationsService applicationsService;
 
-    @ModelAttribute("nominatedSupervisors")
     public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
         ArrayList<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
         ApplicationForm applicationForm = getApplicationForm(applicationId);
@@ -42,14 +40,6 @@ public class SupervisorsProvider {
         return nominatedSupervisors;
     }
 
-    @ModelAttribute("programmeSupervisors")
-    public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId) {
-        List<RegisteredUser> programmeSupervisors = getApplicationForm(applicationId).getProgram().getSupervisors();
-        programmeSupervisors.removeAll(getNominatedSupervisors(applicationId));
-        return programmeSupervisors;
-    }
-
-    @ModelAttribute("previousSupervisors")
     public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
         List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
         ApplicationForm applicationForm = getApplicationForm(applicationId);
@@ -57,13 +47,12 @@ public class SupervisorsProvider {
 
         List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
         for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
-            if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors()) && !listContainsId(registeredUser, availablePreviousSupervisors)) {
+            if (!listContainsId(registeredUser, availablePreviousSupervisors)) {
                 availablePreviousSupervisors.add(registeredUser);
             }
         }
 
         availablePreviousSupervisors.removeAll(getNominatedSupervisors(applicationId));
-        availablePreviousSupervisors.removeAll(getProgrammeSupervisors(applicationId));
         return availablePreviousSupervisors;
     }
 

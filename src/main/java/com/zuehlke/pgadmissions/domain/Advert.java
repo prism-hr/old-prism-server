@@ -23,7 +23,7 @@ public class Advert implements Serializable {
     
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     @ATASConstraint
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "study_duration")

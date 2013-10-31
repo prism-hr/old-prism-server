@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
-<#assign avaliableOptionsSize = (programmeReviewers?size + previousReviewers?size + 4)/>
+<#assign avaliableOptionsSize = previousReviewers?size + 4 />
 <#if (avaliableOptionsSize > 25)>
 	<#assign avaliableOptionsSize = 25 />
 </#if> 
@@ -16,11 +16,6 @@
 	    <optgroup id="nominated" label="Applicant nominated supervisors">
 	      <#list nominatedSupervisors as reviewer>
 	      	<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="nominated" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
-	      </#list>
-	    </optgroup>
-	    <optgroup id="default" label="Default reviewers">
-	      <#list programmeReviewers as reviewer>
-	      	<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
 	      </#list>
 	    </optgroup>
 	    <optgroup id="previous" label="Previous reviewers">

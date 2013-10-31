@@ -648,27 +648,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     }
 
     @Test
-    public void shouldReturnApplicationWithSupervisorInProgram() {
-        Program program = new ProgramBuilder().code("232323").title("232323 title").build();
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("AASW")
-                .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
-        RegisteredUser supervisorUser1 = new RegisteredUserBuilder().firstName("Guybrush").lastName("Threepwood").username("AASWW")
-                .role(roleDAO.getRoleByAuthority(Authority.SUPERVISOR)).build();
-        Supervisor supervisor1 = new SupervisorBuilder().isPrimary(true).user(supervisorUser1).build();
-        program.setSupervisors(Arrays.asList(supervisorUser1));
-        supervisorUser1.setProgramsOfWhichSupervisor(Arrays.asList(program));
-        ApplicationForm formWithSupervisor = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(applicant).program(program).build();
-        save(applicant, supervisorUser1, supervisor1, program, formWithSupervisor);
-
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUPERVISOR).searchTerm("Threepwood").build();
-
-        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser,
-                newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
-        assertEquals(1, applications.size());
-        assertEquals(supervisor1.getUser().getLastName(), applications.get(0).getProgram().getSupervisors().get(0).getLastName());
-    }
-
-    @Test
     public void shouldReturnApplicationsBasedOnTheirClosingDate() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)

@@ -137,12 +137,12 @@ public class ApplicationFormAccessServiceTest {
     }
     
     @Test
-    public void reviewerShouldNeedToSeeApplicationBecuaseTheUpdateIsForAllUsers() {
+    public void administratorShouldNeedToSeeApplicationBecuaseTheUpdateIsForAllUsers() {
         Date lastUpdatedTimestamp = new DateTime(2013, 5, 4, 0, 0).toDate();
         Program program = new ProgramBuilder().id(34).build();
         Role reviewerRole = new RoleBuilder().id(Authority.REVIEWER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1)
-                .programsOfWhichReviewer(program)
+                .programsOfWhichAdministrator(program)
                 .role(reviewerRole)
                 .build();
         ApplicationForm form = new ApplicationFormBuilder().id(2)

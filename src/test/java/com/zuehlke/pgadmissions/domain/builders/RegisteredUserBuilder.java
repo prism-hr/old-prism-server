@@ -38,9 +38,6 @@ public class RegisteredUserBuilder {
     private List<Role> roles = new ArrayList<Role>();
     private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
-    private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
-    private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
-    private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
 
     private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
@@ -77,26 +74,11 @@ public class RegisteredUserBuilder {
         return this;
     }
 
-    public RegisteredUserBuilder programsOfWhichSupervisor(Program... programs) {
-        this.programsOfWhichSupervisor.addAll(Arrays.asList(programs));
-        return this;
-    }
-
     public RegisteredUserBuilder programsOfWhichApprover(Program... programs) {
         this.programsOfWhichApprover.addAll(Arrays.asList(programs));
         return this;
     }
 
-    public RegisteredUserBuilder programsOfWhichReviewer(Program... programs) {
-        this.programsOfWhichReviewer.addAll(Arrays.asList(programs));
-        return this;
-    }
-
-    public RegisteredUserBuilder programsOfWhichInterviewer(Program... programs) {
-        this.programsOfWhichInterviewer.addAll(Arrays.asList(programs));
-        return this;
-    }
-    
     public RegisteredUserBuilder programsOfWhichViewer(Program... programs) {
         this.programsOfWhichViewer.addAll(Arrays.asList(programs));
         return this;
@@ -239,9 +221,6 @@ public class RegisteredUserBuilder {
         
         user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
         user.setProgramsOfWhichApprover(programsOfWhichApprover);
-        user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
-        user.setProgramsOfWhichInterviewer(programsOfWhichInterviewer);
-        user.setProgramsOfWhichSupervisor(programsOfWhichSupervisor);
         user.setProgramsOfWhichViewer(programsOfWhichViewer);
         user.setConfirmPassword(confirmPassword);
         user.setReferees(referees);

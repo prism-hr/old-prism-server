@@ -44,55 +44,32 @@ public class SupervisorsProviderTest {
     private SupervisorsProvider controller;
 
     @Test
-    public void shouldGetProgrammeSupervisors() {
-        final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
-        final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
-
-        final Program program = new ProgramBuilder().supervisors(interUser1, interUser2).id(6).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
-
-        replay();
-        List<RegisteredUser> supervisorsUsers = controller.getProgrammeSupervisors("abc");
-        verify();
-
-        assertEquals(2, supervisorsUsers.size());
-        assertTrue(supervisorsUsers.containsAll(Arrays.asList(interUser1, interUser2)));
-    }
-
-    @Test
     public void shouldGetApplicantNominatedSupervisors() {
         final RegisteredUser interUser1 = new RegisteredUserBuilder().id(1).build();
         final RegisteredUser interUser2 = new RegisteredUserBuilder().id(2).build();
-        final RegisteredUser interUser3 = new RegisteredUserBuilder().id(3).build();
-        final RegisteredUser interUser4 = new RegisteredUserBuilder().id(4).build();
 
         String emailOfSupervisor1 = "1@ucl.ac.uk";
         String emailOfSupervisor2 = "2@ucl.ac.uk";
         SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
-
+ 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
                 .build();
 
-        final Program program = new ProgramBuilder().id(6).supervisors(interUser1, interUser2, interUser3, interUser4).build();
+        final Program program = new ProgramBuilder().id(6).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm).anyTimes();
 
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1).times(2);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2).times(2);
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
 
         replay();
         List<RegisteredUser> nominatedSupervisors = controller.getNominatedSupervisors("5");
-        List<RegisteredUser> programmeSupervisors = controller.getProgrammeSupervisors("5");
         verify();
 
         assertEquals(2, nominatedSupervisors.size());
         assertTrue(nominatedSupervisors.containsAll(Arrays.asList(interUser1, interUser2)));
-        assertEquals(2, programmeSupervisors.size());
-        assertTrue(programmeSupervisors.containsAll(Arrays.asList(interUser3, interUser4)));
     }
 
     @Test
@@ -141,7 +118,7 @@ public class SupervisorsProviderTest {
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
                 .build();
 
-        final Program program = new ProgramBuilder().id(6).supervisors(defaultSupervisor).build();
+        final Program program = new ProgramBuilder().id(6).build();
 
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).comments(interviewOne, interviewTwo, interviewThree)
                 .programmeDetails(programmeDetails).build();

@@ -1,8 +1,13 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
@@ -17,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.workflow.approval.OfferRecommendationController;
@@ -160,10 +166,32 @@ public class OfferRecommendationControllerTest {
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
         binderMock.registerCustomEditor(Supervisor.class, supervisorPropertyEditorMock);
-        
+
         EasyMock.replay(binderMock);
         controller.registerPropertyEditors(binderMock);
         EasyMock.verify(binderMock);
+    }
+
+    @Test
+    public void shouldGetListOfNominatedSupervisors() {
+        ArrayList<RegisteredUser> list = Lists.newArrayList();
+
+        expect(supervisorsProviderMock.getNominatedSupervisors("app1")).andReturn(list);
+
+        replay(supervisorsProviderMock);
+        assertSame(list, controller.getNominatedSupervisors("app1"));
+        verify(supervisorsProviderMock);
+    }
+
+    @Test
+    public void shouldGetListOfPreviousSupervisorsAndAddReviewersWillingToSupervise() {
+        ArrayList<RegisteredUser> list = Lists.newArrayList();
+
+        expect(supervisorsProviderMock.getPreviousSupervisorsAndInterviewersWillingToSupervise("app1")).andReturn(list);
+
+        replay(supervisorsProviderMock);
+        assertSame(list, controller.getPreviousSupervisorsAndInterviewersWillingToSupervise("app1"));
+        verify(supervisorsProviderMock);
     }
 
     @Before

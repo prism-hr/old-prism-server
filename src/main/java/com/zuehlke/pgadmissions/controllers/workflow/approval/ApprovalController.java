@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +27,6 @@ import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgrammeAdminController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -36,10 +34,8 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
@@ -65,6 +61,7 @@ import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
@@ -99,9 +96,11 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     private final ActionsProvider actionsProvider;
 
     private final ProgramInstanceService programInstanceService;
+    
+    private final SupervisorsProvider supervisorsProvider;
 
     public ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @InitBinder(value = "sendToPorticoData")
@@ -117,8 +116,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
             DomicilePropertyEditor domicilePropertyEditor, MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor 
-            scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider,
-            final ApplicationDescriptorProvider applicationDescriptorProvider, ProgramInstanceService programInstanceService) {
+            scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
+            ApplicationDescriptorProvider applicationDescriptorProvider, ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider) {
     	super(userService, applicationsService, documentPropertyEditor, refereeService, refereesAdminEditDTOValidator, sendToPorticoDataDTOEditor,
                 encryptionHelper, messageSource, scoringDefinitionParser, scoresPropertyEditor, scoreFactory, applicationDescriptorProvider,
                 domicileService, domicilePropertyEditor, accessService);
@@ -131,6 +130,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         this.datePropertyEditor = datePropertyEditor;
         this.actionsProvider = actionsProvider;
         this.programInstanceService = programInstanceService;
+        this.supervisorsProvider = supervisorsProvider;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
@@ -171,41 +171,12 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     
     @ModelAttribute("nominatedSupervisors")
     public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
-        ArrayList<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
-        if (latestApprovalRound == null) {
-            List<SuggestedSupervisor> suggestedSupervisors = applicationForm.getProgrammeDetails().getSuggestedSupervisors();
-            for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
-                nominatedSupervisors.add(findOrCreateRegisterUserFromSuggestedSupervisorForForm(suggestedSupervisor, applicationForm));
-            }
-        }
-        return nominatedSupervisors;
-    }
-
-    @ModelAttribute("programmeSupervisors")
-    public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId) {
-        List<RegisteredUser> programmeSupervisors = getApplicationForm(applicationId).getProgram().getSupervisors();
-        programmeSupervisors.removeAll(getNominatedSupervisors(applicationId));
-        return programmeSupervisors;
+        return supervisorsProvider.getNominatedSupervisors(applicationId);
     }
 
     @ModelAttribute("previousSupervisors")
     public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
-        List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        availablePreviousSupervisors.addAll(userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram()));
-
-        List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
-        for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
-            if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors()) && !listContainsId(registeredUser, availablePreviousSupervisors)) {
-                availablePreviousSupervisors.add(registeredUser);
-            }
-        }
-
-        availablePreviousSupervisors.removeAll(getNominatedSupervisors(applicationId));
-        availablePreviousSupervisors.removeAll(getProgrammeSupervisors(applicationId));
-        return availablePreviousSupervisors;
+        return supervisorsProvider.getPreviousSupervisorsAndInterviewersWillingToSupervise(applicationId);
     }
 
     @ModelAttribute("approvalRound")
@@ -414,25 +385,6 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         sendToPorticoDataDTOValidator.validate(sendToPorticoData, porticoResult);
 
         return REFERENCE_SECTION;
-    }
-
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private RegisteredUser findOrCreateRegisterUserFromSuggestedSupervisorForForm(SuggestedSupervisor suggestedSupervisor, ApplicationForm applicationForm) {
-        String supervisorEmail = suggestedSupervisor.getEmail();
-        RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
-        if (possibleUser == null) {
-            possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail,
-                    DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm, Authority.SUPERVISOR);
-        }
-        return possibleUser;
     }
 
     public List<Question> getCustomQuestions(ApplicationForm applicationForm) throws ScoringDefinitionParseException {

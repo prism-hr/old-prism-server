@@ -57,13 +57,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "pending_approval_restart")
-    private boolean pendingApprovalRestart = false;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "approver_requested_restart_id")
-    private RegisteredUser approverRequestedRestart = null;
-
     @Transient
     private boolean acceptedTerms;
 
@@ -149,10 +142,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicant_id")
     private RegisteredUser applicant = null;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "approver_user_id")
-    private RegisteredUser approver = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_requested_registry_id")
@@ -290,14 +279,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setApplicant(RegisteredUser user) {
         this.applicant = user;
-    }
-
-    public RegisteredUser getApprover() {
-        return approver;
-    }
-
-    public void setApprover(RegisteredUser approver) {
-        this.approver = approver;
     }
 
     public Date getApplicationTimestamp() {
@@ -896,14 +877,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Override
     public ApplicationForm getApplication() {
         return this;
-    }
-
-    public RegisteredUser getApproverRequestedRestart() {
-        return approverRequestedRestart;
-    }
-
-    public void setApproverRequestedRestart(RegisteredUser approverRequestedRestart) {
-        this.approverRequestedRestart = approverRequestedRestart;
     }
 
     public byte[] getIpAddress() {

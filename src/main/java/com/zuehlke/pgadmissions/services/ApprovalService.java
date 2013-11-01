@@ -253,7 +253,6 @@ public class ApprovalService {
         }
 
         form.setStatus(ApplicationFormStatus.APPROVED);
-        form.setApprover(userService.getCurrentUser());
         form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         sendNotificationToApplicant(form);
         form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER);

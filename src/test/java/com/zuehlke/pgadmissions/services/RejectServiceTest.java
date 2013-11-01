@@ -107,7 +107,6 @@ public class RejectServiceTest {
 
 		EasyMock.verify(applicationDaoMock);
 		Assert.assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
-		Assert.assertEquals(approver, application.getApprover());
 		Assert.assertEquals(rejection,application.getRejection());
 		assertEquals(1, application.getEvents().size());
 		assertEquals(event, application.getEvents().get(0));
@@ -125,7 +124,6 @@ public class RejectServiceTest {
 		EasyMock.verify(applicationDaoMock);
 		Assert.assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
 		Assert.assertEquals(rejection,application.getRejection());
-		Assert.assertEquals(admin, application.getApprover());
 	}
 
 	@Test

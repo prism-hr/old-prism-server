@@ -37,7 +37,6 @@ public class ApplicationFormBuilder {
     private Address currentAddress;
     private Address contactAddress;
     private Integer id;
-    private RegisteredUser approver;
     private RegisteredUser applicant;
     private String projectTitle;
     private Boolean registryUsersNotified = false;
@@ -70,8 +69,6 @@ public class ApplicationFormBuilder {
     private RegisteredUser applicationAdministrator;
     private RegisteredUser adminRequestedRegistry;
     private String applicationNumber;
-    private boolean pendingApprovalRestart;
-    private RegisteredUser approverRequestedRestart = null;
     private String uclBookingReferenceNumber;
     private String ipAddress;
     private Boolean suppressChangeStateNotifications;
@@ -97,16 +94,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder uclBookingReferenceNumber(String number) {
         this.uclBookingReferenceNumber = number;
-        return this;
-    }
-
-    public ApplicationFormBuilder approverRequestedRestart(RegisteredUser approverRequestedRestart) {
-        this.approverRequestedRestart = approverRequestedRestart;
-        return this;
-    }
-
-    public ApplicationFormBuilder pendingApprovalRestart(boolean pendingApprovalRestart) {
-        this.pendingApprovalRestart = pendingApprovalRestart;
         return this;
     }
 
@@ -236,11 +223,6 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder approver(RegisteredUser user) {
-        this.approver = user;
-        return this;
-    }
-
     public ApplicationFormBuilder qualification(Qualification... qualifications) {
         for (Qualification qual : qualifications) {
             this.qualifications.add(qual);
@@ -354,7 +336,6 @@ public class ApplicationFormBuilder {
 
         application.setSubmittedDate(submittedDate);
 
-        application.setApprover(approver);
         application.setReferees(referees);
 
         application.setApplicationTimestamp(appDate);
@@ -393,7 +374,6 @@ public class ApplicationFormBuilder {
 
         application.setRegistryUsersDueNotification(registryUsersNotified);
         application.setAdminRequestedRegistry(adminRequestedRegistry);
-        application.setApproverRequestedRestart(approverRequestedRestart);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
 
         application.getEmploymentPositions().addAll(employmentPositions);

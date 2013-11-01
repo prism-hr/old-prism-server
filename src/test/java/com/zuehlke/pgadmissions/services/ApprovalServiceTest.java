@@ -169,7 +169,7 @@ public class ApprovalServiceTest {
     public void shouldSetDueDateOnApplicationUpdateFormAndSaveBoth() {
 
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).pendingApprovalRestart(true).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).build();
         applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION)
                 .build());
         applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(5).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER)
@@ -526,7 +526,6 @@ public class ApprovalServiceTest {
         EasyMock.verify(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programInstanceServiceMock);
 
         assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
-        assertEquals(currentUser, application.getApprover());
 
         assertEquals(1, application.getEvents().size());
         assertEquals(event, application.getEvents().get(0));
@@ -570,7 +569,6 @@ public class ApprovalServiceTest {
         EasyMock.verify(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programmeDetailDAOMock, programInstanceServiceMock);
 
         assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
-        assertEquals(currentUser, application.getApprover());
         assertEquals(programmeDetails.getStartDate(), instanceEnabled.getApplicationStartDate());
 
         assertEquals(1, application.getEvents().size());

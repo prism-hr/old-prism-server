@@ -103,8 +103,6 @@ public class RejectServiceIntegrationTest {
 
 		Assert.assertEquals(ApplicationFormStatus.REJECTED, storedAppl.getStatus());
 		Assert.assertEquals(reason1.getId(), storedAppl.getRejection().getRejectionReason().getId());
-			
-		Assert.assertEquals(approver.getId(), application.getApprover().getId());
 	}
 
 	private void flushNClear() {

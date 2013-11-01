@@ -137,13 +137,13 @@ public class ApplicationsServiceGetApplicationsWorthConsideringForAttentionFlagT
                     ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(superUser).isPrimary(true).build()).build();
                     ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).applicationNumber("ABC")
                                     .program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).latestApprovalRound(approvalRound)
-                                    .pendingApprovalRestart(true).applicant(user).build();
+                                    .applicant(user).build();
 
                     ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                                     .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).build();
 
                     ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).applicationNumber("ABCD")
-                                    .program(program).latestApprovalRound(approvalRound).pendingApprovalRestart(true)
+                                    .program(program).latestApprovalRound(approvalRound)
                                     .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).build();
 
                     ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)

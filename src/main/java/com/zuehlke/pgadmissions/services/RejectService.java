@@ -72,7 +72,6 @@ public class RejectService {
 			throw new IllegalArgumentException("approver is not an approver or administrator in the program of the application!");
 		}
         form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.ALL_USERS, new Date()));
-		form.setApprover(approver);
 		form.setStatus(ApplicationFormStatus.REJECTED);		
 		form.setRejection(rejection);
 		form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));

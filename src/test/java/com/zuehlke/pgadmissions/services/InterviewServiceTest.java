@@ -67,6 +67,7 @@ public class InterviewServiceTest {
     private InterviewVoteCommentDAO interviewVoteCommentDAOMock;
     private CommentFactory commentFactoryMock;
     private CommentService commentServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetInterviewById() {
@@ -108,10 +109,11 @@ public class InterviewServiceTest {
         mailServiceMock.sendInterviewConfirmationToApplicant(applicationForm);
         mailServiceMock.sendInterviewConfirmationToInterviewers(asList(interviewer));
         mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
+        applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
 
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock);
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
         interviewService.moveApplicationToInterview(user, interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, stageDurationServiceMock, mailServiceMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, stageDurationServiceMock, mailServiceMock, applicationFormUserRoleServiceMock);
 
         assertEquals(dateFormat.parse("03 04 2012"), applicationForm.getDueDate());
         assertEquals(applicationForm, interview.getApplication());
@@ -143,10 +145,11 @@ public class InterviewServiceTest {
         InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
         mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
+        applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
 
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock, commentServiceMock);
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock, commentServiceMock, applicationFormUserRoleServiceMock);
         interviewService.moveApplicationToInterview(user, interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock, commentServiceMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock, commentServiceMock, applicationFormUserRoleServiceMock);
 
         Assert.assertNotNull(applicationForm.getDueDate());
         assertEquals(applicationForm, interview.getApplication());
@@ -174,9 +177,9 @@ public class InterviewServiceTest {
                 interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
 
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock);
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock, applicationFormUserRoleServiceMock);
         interviewService.moveApplicationToInterview(user, interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock, applicationFormUserRoleServiceMock);
 
     }
 
@@ -196,9 +199,9 @@ public class InterviewServiceTest {
                 interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
 
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock);
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock, applicationFormUserRoleServiceMock);
         interviewService.moveApplicationToInterview(user, interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock, applicationFormUserRoleServiceMock);
 
     }
 
@@ -217,9 +220,9 @@ public class InterviewServiceTest {
 
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
-        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
+        EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
         interviewService.moveApplicationToInterview(currentUser, interview, applicationForm);
-        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock);
+        EasyMock.verify(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
 
         assertNull(applicationForm.getNotificationForType(INTERVIEW_ADMINISTRATION_REMINDER));
     }
@@ -263,10 +266,11 @@ public class InterviewServiceTest {
         interviewParticipantDAOMock.save(participant);
         interviewVoteCommentDAOMock.save(interviewVoteComment);
         mailServiceMock.sendInterviewVoteConfirmationToAdministrators(participant);
+        applicationFormUserRoleServiceMock.interviewParticipantResponded(participant);
 
-        EasyMock.replay(interviewParticipantDAOMock, interviewVoteCommentDAOMock, mailServiceMock);
+        EasyMock.replay(interviewParticipantDAOMock, interviewVoteCommentDAOMock, mailServiceMock, applicationFormUserRoleServiceMock);
         interviewService.postVote(participant, interviewVoteComment);
-        EasyMock.verify(interviewParticipantDAOMock, interviewVoteCommentDAOMock, mailServiceMock);
+        EasyMock.verify(interviewParticipantDAOMock, interviewVoteCommentDAOMock, mailServiceMock, applicationFormUserRoleServiceMock);
 
         assertTrue(participant.getResponded());
     }
@@ -300,10 +304,11 @@ public class InterviewServiceTest {
         interviewDAOMock.save(interview);
         mailServiceMock.sendInterviewConfirmationToApplicant(applicationForm);
         mailServiceMock.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
+        applicationFormUserRoleServiceMock.interviewConfirmed(interview);
 
-        EasyMock.replay(interviewDAOMock, mailServiceMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock);
+        EasyMock.replay(interviewDAOMock, mailServiceMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock, applicationFormUserRoleServiceMock);
         interviewService.confirmInterview(user, interview, interviewConfirmDTO);
-        EasyMock.verify(interviewDAOMock, mailServiceMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock);
+        EasyMock.verify(interviewDAOMock, mailServiceMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock, applicationFormUserRoleServiceMock);
 
         assertEquals(date, interview.getInterviewDueDate());
         assertEquals("11:11", interview.getInterviewTime());
@@ -324,8 +329,10 @@ public class InterviewServiceTest {
         stageDurationServiceMock = createMock(StageDurationService.class);
         commentServiceMock = createMock(CommentService.class);
         commentFactoryMock = createMock(CommentFactory.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        
         interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, interviewerDAOMock, interviewParticipantDAOMock,
-                mailServiceMock, interviewVoteCommentDAOMock, stageDurationServiceMock, commentServiceMock, commentFactoryMock) {
+                mailServiceMock, interviewVoteCommentDAOMock, stageDurationServiceMock, commentServiceMock, commentFactoryMock, applicationFormUserRoleServiceMock) {
             @Override
             public Interview newInterview() {
                 return interview;

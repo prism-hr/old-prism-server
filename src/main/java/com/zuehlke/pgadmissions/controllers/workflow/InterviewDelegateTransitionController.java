@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -50,7 +51,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
     private InterviewService interviewService;
 
     public InterviewDelegateTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -58,9 +59,9 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
                     CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
                     StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
                     ApplicationFormAccessService accessService, ActionsProvider actionsProvider, InterviewService interviewService,
-                    ApplicationDescriptorProvider applicationDescriptorProvider) {
+                    ApplicationDescriptorProvider applicationDescriptorProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                        documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
+                        documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider, applicationFormUserRoleService);
         this.interviewService = interviewService;
     }
 
@@ -150,6 +151,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationsService.save(applicationForm);
+        applicationFormUserRoleService.processingDelegated(applicationForm);
         commentService.save(comment);
 
         applicationsService.refresh(applicationForm);

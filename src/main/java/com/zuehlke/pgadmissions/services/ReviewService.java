@@ -32,21 +32,23 @@ public class ReviewService {
 	private final EventFactory eventFactory;
 	private final ReviewerDAO reviewerDAO;
 	private final MailSendingService mailService;
+	private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
 	public ReviewService() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
     public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO,
             StageDurationService stageDurationService, EventFactory eventFactory, ReviewerDAO reviewerDAO,
-            MailSendingService mailService) {
+            MailSendingService mailService, ApplicationFormUserRoleService applicationFormUserRoleService) {
 		this.applicationDAO = applicationDAO;
 		this.reviewRoundDAO = reviewRoundDAO;
 		this.stageDurationService = stageDurationService;
 		this.eventFactory = eventFactory;
 		this.reviewerDAO = reviewerDAO;
         this.mailService = mailService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
 	}
 
 	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound) {
@@ -71,7 +73,9 @@ public class ReviewService {
 		application.removeNotificationRecord(NotificationType.REVIEW_REMINDER);
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);
+            applicationFormUserRoleService.validationStageCompleted(application);
         }
+        applicationFormUserRoleService.movedToReviewStage(reviewRound);
 		applicationDAO.save(application);
 	}
 

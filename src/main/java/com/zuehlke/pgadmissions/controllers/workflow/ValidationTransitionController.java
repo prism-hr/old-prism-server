@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -40,41 +41,39 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 @Controller
 @RequestMapping("/progress")
 public class ValidationTransitionController extends StateTransitionController {
-	
+
     public ValidationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ValidationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-                    CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
-                    StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
+            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider,
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                        documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
+                documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider, applicationFormUserRoleService);
     }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "/getPage")
-    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm,
-    		@RequestParam(required = false) String action,
-    		ModelMap model) {
-    	if (action != null &&
-    		action.equals("abort")) {
-    		if (getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
-    			model.put("comment", applicationForm.getLatestStateChangeComment());
-        		if (applicationForm.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
-        			if (applicationForm.getApplicationAdministrator() != null) {
-        				model.put("delegate", true);
-        				model.put("delegatedInterviewer", applicationForm.getApplicationAdministrator());
-        			}
-        			
-        			else {
-        				model.put("delegate", false);
-        			}
-        		}
-    		}
 
-    	}
+    @RequestMapping(method = RequestMethod.GET, value = "/getPage")
+    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String action, ModelMap model) {
+        if (action != null && action.equals("abort")) {
+            if (getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
+                model.put("comment", applicationForm.getLatestStateChangeComment());
+                if (applicationForm.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
+                    if (applicationForm.getApplicationAdministrator() != null) {
+                        model.put("delegate", true);
+                        model.put("delegatedInterviewer", applicationForm.getApplicationAdministrator());
+                    }
+
+                    else {
+                        model.put("delegate", false);
+                    }
+                }
+            }
+
+        }
         return stateTransitionService.resolveView(applicationForm, action);
     }
 
@@ -92,38 +91,33 @@ public class ValidationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
-    public String addComment(@RequestParam String applicationId, 
-    		@RequestParam(required = false) String action, 
-    		@Valid @ModelAttribute("comment") ValidationComment comment, 
-    		BindingResult result,
-            ModelMap model, 
-            @RequestParam(required = false) Boolean delegate,
-            @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+    public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
+            @Valid @ModelAttribute("comment") ValidationComment comment, BindingResult result, ModelMap model,
+            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
 
         model.put("delegate", delegate);
         ApplicationForm form = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
 
         // validate action is still available
-        
+
         ApplicationFormAction invokedAction;
-        
-        if (action != null &&
-        	action.equals("abort")) {
-        	invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
+
+        if (action != null && action.equals("abort")) {
+            invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
         }
-     
+
         else {
-        	invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
+            invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
         }
-        
+
         actionsProvider.validateAction(form, user, invokedAction);
 
         try {
             if (result.hasErrors()) {
                 return STATE_TRANSITION_VIEW;
             }
-            
+
             if (BooleanUtils.isNotTrue(delegate)) {
                 form.setApplicationAdministrator(null);
             }
@@ -147,6 +141,7 @@ public class ValidationTransitionController extends StateTransitionController {
                 form.setRegistryUsersDueNotification(true);
                 applicationsService.save(form);
             }
+            applicationFormUserRoleService.stateChanged(form);
 
         } catch (Exception e) {
             return STATE_TRANSITION_VIEW;
@@ -162,7 +157,7 @@ public class ValidationTransitionController extends StateTransitionController {
 
     private boolean answeredOneOfTheQuestionsUnsure(final ValidationComment comment) {
         return comment.getHomeOrOverseas() == HomeOrOverseas.UNSURE || comment.getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
-                        || comment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
+                || comment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
     }
 
     @ModelAttribute("validationQuestionOptions")

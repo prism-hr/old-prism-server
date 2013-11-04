@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
@@ -56,6 +57,7 @@ public class RefereeServiceTest {
     private EncryptionUtils encryptionUtilsMock;
     private EncryptionHelper encryptionHelper;
     private ApplicantRatingService applicantRatingServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Before
     public void setUp() {
@@ -68,8 +70,10 @@ public class RefereeServiceTest {
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
         encryptionHelper = createMock(EncryptionHelper.class);
         applicantRatingServiceMock = createMock(ApplicantRatingService.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        
         refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock, roleDAOMock, commentServiceMock, eventFactoryMock,
-                        applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock);
+                applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
     }
 
     @Test
@@ -77,7 +81,7 @@ public class RefereeServiceTest {
         ApplicationForm applicationForm = new ApplicationForm();
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().comment("old comment").suitableForProgramme(false).suitableForUcl(false)
-                        .document(null).build();
+                .document(null).build();
         Referee referee = new RefereeBuilder().user(refereeUser).id(8).reference(referenceComment).build();
 
         Document document = new DocumentBuilder().build();
@@ -130,11 +134,12 @@ public class RefereeServiceTest {
         EasyMock.expectLastCall().once();
         applicationFormDAOMock.save(applicationForm);
         EasyMock.expectLastCall().once();
+        applicationFormUserRoleServiceMock.referencePosted(referee);
 
-        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicationFormUserRoleServiceMock);
         ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
         referee.setReference(referenceComment);
-        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicationFormUserRoleServiceMock);
 
         assertSame(applicationForm, referenceComment.getApplication());
         assertSame(referee, referenceComment.getReferee());
@@ -180,10 +185,11 @@ public class RefereeServiceTest {
         EasyMock.expectLastCall().once();
         applicationFormDAOMock.save(applicationForm);
         EasyMock.expectLastCall().once();
+        applicationFormUserRoleServiceMock.referencePosted(referee);
 
-        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicationFormUserRoleServiceMock);
         ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicationFormUserRoleServiceMock);
 
         RegisteredUser refereeUser = referenceComment.getUser();
         assertEquals("Franciszek", refereeUser.getFirstName());
@@ -223,7 +229,7 @@ public class RefereeServiceTest {
         refereesAdminEditDTO.setJobEmployer("Employer");
         refereesAdminEditDTO.setJobTitle("Job");
         Address address = new AddressBuilder().address1("1").address2("2").address3("3").address4("4").address5("5")
-                        .domicile(new DomicileBuilder().code("aa").build()).build();
+                .domicile(new DomicileBuilder().code("aa").build()).build();
         refereesAdminEditDTO.setAddressLocation(address);
         refereesAdminEditDTO.setEmail("aaa@.fff.ccc");
         refereesAdminEditDTO.setPhoneNumber("+44 111111111");
@@ -239,10 +245,11 @@ public class RefereeServiceTest {
         EasyMock.expectLastCall().once();
         applicationFormDAOMock.save(applicationForm);
         EasyMock.expectLastCall().once();
+        applicationFormUserRoleServiceMock.referencePosted(isA(Referee.class));
 
-        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicationFormUserRoleServiceMock);
         ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock, applicationFormUserRoleServiceMock);
 
         RegisteredUser refereeUser = referenceComment.getUser();
         assertEquals("Franciszek", refereeUser.getFirstName());
@@ -281,7 +288,7 @@ public class RefereeServiceTest {
         Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         Role approverRole = new RoleBuilder().id(Authority.APPROVER).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole, adminRole, approverRole).firstName("bob").lastName("bobson")
-                        .email("email@test.com").build();
+                .email("email@test.com").build();
         userServiceMock.save(user);
         Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").build();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
@@ -309,11 +316,11 @@ public class RefereeServiceTest {
     @Test
     public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
         final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
-                        .enabled(true).build();
+                .enabled(true).build();
         Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com")
-                        .application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
+                .application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
         refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock, roleDAOMock, commentServiceMock, eventFactoryMock,
-                        applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock) {
+                applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock, applicationFormUserRoleServiceMock) {
             @Override
             RegisteredUser newRegisteredUser() {
                 return user;
@@ -396,7 +403,7 @@ public class RefereeServiceTest {
         RegisteredUser admin2 = new RegisteredUserBuilder().id(2).firstName("anna").lastName("allen").email("email@test.com").build();
         Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
         ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant)
-                        .program(new ProgramBuilder().title("klala").administrators(admin1, admin2).build()).build();
+                .program(new ProgramBuilder().title("klala").administrators(admin1, admin2).build()).build();
         referee.setApplication(form);
 
         refereeDAOMock.save(referee);

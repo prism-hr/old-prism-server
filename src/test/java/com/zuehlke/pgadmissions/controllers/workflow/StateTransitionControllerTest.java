@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -33,6 +34,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -57,6 +59,7 @@ public class StateTransitionControllerTest {
     private DocumentPropertyEditor documentPropertyEditorMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldRegisterValidator() {
@@ -164,7 +167,7 @@ public class StateTransitionControllerTest {
                 .build();
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock,null) {
+                actionsProviderMock, null, applicationFormUserRoleServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -194,7 +197,7 @@ public class StateTransitionControllerTest {
 
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock,null) {
+                actionsProviderMock, null, applicationFormUserRoleServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -217,7 +220,7 @@ public class StateTransitionControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, new StateTransitionService(),
-                accessServiceMock, actionsProviderMock,null) {
+                accessServiceMock, actionsProviderMock, null, applicationFormUserRoleServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -242,9 +245,11 @@ public class StateTransitionControllerTest {
         documentServiceMock = EasyMock.createMock(DocumentService.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock,null);
+                actionsProviderMock, null, applicationFormUserRoleServiceMock);
     }
 
     @After

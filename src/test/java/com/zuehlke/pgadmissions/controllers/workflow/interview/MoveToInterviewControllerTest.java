@@ -1,5 +1,12 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
+import static org.easymock.EasyMock.verify;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.sameInstance;
@@ -50,6 +57,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -68,6 +76,7 @@ public class MoveToInterviewControllerTest {
     private InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditorMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetInterviewPage() {
@@ -87,7 +96,7 @@ public class MoveToInterviewControllerTest {
 
     @Test
     public void shouldGetNominatedSupervisors() {
-        EasyMock.reset(userServiceMock);
+        reset(userServiceMock);
         final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
         final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
 
@@ -97,18 +106,18 @@ public class MoveToInterviewControllerTest {
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                        .build();
+                .build();
 
         final Program program = new ProgramBuilder().id(6).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
+        expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
+        expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
 
-        EasyMock.replay(userServiceMock, applicationServiceMock);
+        replay(userServiceMock, applicationServiceMock);
         List<RegisteredUser> interviewers = controller.getNominatedSupervisors("abc");
-        EasyMock.verify(userServiceMock, applicationServiceMock);
+        verify(userServiceMock, applicationServiceMock);
 
         assertEquals(2, interviewers.size());
         assertTrue(interviewers.containsAll(Arrays.asList(interUser1, interUser2)));
@@ -116,14 +125,14 @@ public class MoveToInterviewControllerTest {
 
     @Test
     public void shouldGetListOfPreviousInterviewersAndAddReviewersWillingToInterviewWithApplicantNominatedSupervisorsRemoved() {
-        EasyMock.reset(userServiceMock);
+        reset(userServiceMock);
         String emailOfSupervisor1 = "1@ucl.ac.uk";
         String emailOfSupervisor2 = "2@ucl.ac.uk";
         SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
         SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                        .build();
+                .build();
 
         final RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(9).build();
         final RegisteredUser reviewerWillingToIntergviewOne = new RegisteredUserBuilder().id(8).build();
@@ -136,20 +145,20 @@ public class MoveToInterviewControllerTest {
         final Program program = new ProgramBuilder().id(6).build();
 
         final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).comments(reviewOne, reviewTwo, reviewThree)
-                        .programmeDetails(programmeDetails).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
+                .programmeDetails(programmeDetails).build();
+        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
 
         List<RegisteredUser> previousInterviewers = new ArrayList<RegisteredUser>();
         previousInterviewers.add(previousInterviewer);
         previousInterviewers.add(defaultInterviewer);
         previousInterviewers.add(reviewerWillingToIntergviewOne);
-        EasyMock.expect(userServiceMock.getAllPreviousInterviewersOfProgram(program)).andReturn(previousInterviewers);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(defaultInterviewer);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(reviewerWillingToIntergviewOne);
+        expect(userServiceMock.getAllPreviousInterviewersOfProgram(program)).andReturn(previousInterviewers);
+        expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(defaultInterviewer);
+        expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(reviewerWillingToIntergviewOne);
 
-        EasyMock.replay(userServiceMock, applicationServiceMock);
+        replay(userServiceMock, applicationServiceMock);
         List<RegisteredUser> interviewerUsers = controller.getPreviousInterviewersAndReviewersWillingToInterview("abc");
-        EasyMock.verify(userServiceMock, applicationServiceMock);
+        verify(userServiceMock, applicationServiceMock);
 
         assertEquals(2, interviewerUsers.size());
         assertTrue(interviewerUsers.containsAll(Arrays.asList(reviewerWillingToIntergviewTwo, previousInterviewer)));
@@ -160,12 +169,12 @@ public class MoveToInterviewControllerTest {
         Interviewer interviewerOne = new InterviewerBuilder().id(1).build();
         Interviewer interviewerTwo = new InterviewerBuilder().id(2).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
-                        .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+                .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
+        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
-        EasyMock.replay(applicationServiceMock);
+        replay(applicationServiceMock);
         Interview returnedInterview = controller.getInterview("abc");
-        EasyMock.verify(applicationServiceMock);
+        verify(applicationServiceMock);
 
         assertNull(returnedInterview.getId());
         assertThat(returnedInterview.getInterviewers(), hasItems(interviewerOne, interviewerTwo));
@@ -176,11 +185,11 @@ public class MoveToInterviewControllerTest {
     public void shouldReturnNewInterviewWithApplicationAdministratorIfAny() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").applicationAdministrator(user).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
-        EasyMock.replay(applicationServiceMock);
+        replay(applicationServiceMock);
         Interview returnedInterview = controller.getInterview("abc");
-        EasyMock.verify(applicationServiceMock);
+        verify(applicationServiceMock);
 
         assertNull(returnedInterview.getId());
         assertThat(returnedInterview.getInterviewers(), Matchers.<Interviewer> hasItems(hasProperty("user", sameInstance(user))));
@@ -202,12 +211,12 @@ public class MoveToInterviewControllerTest {
         Interviewer decliningInterviewer = new InterviewerBuilder().id(4).user(decliningUser).interviewComment(interviewComment).build();
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(reviewOne, reviewTwo, reviewThree)
-                        .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo, decliningInterviewer).build()).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+                .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo, decliningInterviewer).build()).build();
+        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
-        EasyMock.replay(applicationServiceMock);
+        replay(applicationServiceMock);
         Interview returnedInterview = controller.getInterview("abc");
-        EasyMock.verify(applicationServiceMock);
+        verify(applicationServiceMock);
 
         assertNull(returnedInterview.getId());
         assertEquals(3, returnedInterview.getInterviewers().size());
@@ -220,11 +229,11 @@ public class MoveToInterviewControllerTest {
     public void shouldReturnNewInterviewWithEmtpyInterviewersIfNoLatestInterview() {
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
 
-        EasyMock.replay(applicationServiceMock);
+        replay(applicationServiceMock);
         Interview returnedInterview = controller.getInterview("abc");
-        EasyMock.verify(applicationServiceMock);
+        verify(applicationServiceMock);
 
         assertNull(returnedInterview.getId());
         assertTrue(returnedInterview.getInterviewers().isEmpty());
@@ -236,10 +245,10 @@ public class MoveToInterviewControllerTest {
         Program program = new ProgramBuilder().id(6).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
-        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationServiceMock, currentUserMock);
+        expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
+        expect(currentUserMock.canSee(applicationForm)).andReturn(true);
+        expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        replay(applicationServiceMock, currentUserMock);
 
         ApplicationForm returnedForm = controller.getApplicationForm("5");
         assertEquals(applicationForm, returnedForm);
@@ -248,9 +257,9 @@ public class MoveToInterviewControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+        expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 
-        EasyMock.replay(applicationServiceMock);
+        replay(applicationServiceMock);
         controller.getApplicationForm("5");
     }
 
@@ -268,10 +277,11 @@ public class MoveToInterviewControllerTest {
         modelMap.put("user", currentUserMock);
 
         interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
+        applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
 
-        EasyMock.replay(interviewServiceMock);
+        replay(interviewServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.moveToInterview(interview, bindingResultMock, modelMap);
-        EasyMock.verify(interviewServiceMock);
+        verify(interviewServiceMock, applicationFormUserRoleServiceMock);
 
         assertEquals("/private/common/ajax_OK", view);
     }
@@ -285,12 +295,13 @@ public class MoveToInterviewControllerTest {
         modelMap.put("applicationForm", application);
         modelMap.put("user", currentUserMock);
 
-        EasyMock.expect(currentUserMock.getId()).andReturn(3).anyTimes();
+        expect(currentUserMock.getId()).andReturn(3).anyTimes();
         interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
+        applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
 
-        EasyMock.replay(interviewServiceMock, currentUserMock);
+        replay(interviewServiceMock, currentUserMock, applicationFormUserRoleServiceMock);
         String view = controller.moveToInterview(interview, bindingResultMock, modelMap);
-        EasyMock.verify(interviewServiceMock, currentUserMock);
+        verify(interviewServiceMock, currentUserMock, applicationFormUserRoleServiceMock);
 
         assertEquals("/private/common/simpleResponse", view);
         assertEquals("redirectToVote", modelMap.get("message"));
@@ -298,58 +309,59 @@ public class MoveToInterviewControllerTest {
 
     @Test
     public void shouldNotSaveInterviewAndReturnToInterviewPageIfHasErrors() {
-        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+        BindingResult errorsMock = createMock(BindingResult.class);
         final ApplicationForm application = new ApplicationFormBuilder().id(1).build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
         modelMap.put("user", currentUserMock);
 
         Interview interview = new InterviewBuilder().application(application).build();
-        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+        expect(errorsMock.hasErrors()).andReturn(true);
 
-        EasyMock.replay(errorsMock);
+        replay(errorsMock);
         assertEquals("/private/staff/interviewers/interviewer_section", controller.moveToInterview(interview, errorsMock, modelMap));
-        EasyMock.verify(errorsMock);
+        verify(errorsMock);
 
     }
 
     @Test
     public void shouldAddInterviewValidatorAndInterviewerPropertyEditor() {
-        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        WebDataBinder binderMock = createMock(WebDataBinder.class);
         binderMock.setValidator(interviewValidatorMock);
-        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+        binderMock.registerCustomEditor(eq(String.class), anyObject(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(Interviewer.class, interviewerPropertyEditorMock);
         binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
         binderMock.registerCustomEditor(null, "timeslots", interviewTimeslotsPropertyEditorMock);
-        binderMock.registerCustomEditor(EasyMock.<Class<?>> eq(null), EasyMock.eq("duration"), EasyMock.anyObject(CustomNumberEditor.class));
-        EasyMock.replay(binderMock);
+        binderMock.registerCustomEditor(EasyMock.<Class<?>> eq(null), eq("duration"), anyObject(CustomNumberEditor.class));
+        replay(binderMock);
         controller.registerValidatorAndPropertyEditor(binderMock);
-        EasyMock.verify(binderMock);
+        verify(binderMock);
     }
 
     @Before
     public void setUp() {
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-        userServiceMock = EasyMock.createMock(UserService.class);
-        currentUserMock = EasyMock.createMock(RegisteredUser.class);
-        interviewValidatorMock = EasyMock.createMock(InterviewValidator.class);
-        interviewerPropertyEditorMock = EasyMock.createMock(InterviewerPropertyEditor.class);
-        datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-        interviewServiceMock = EasyMock.createMock(InterviewService.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
-        interviewTimeslotsPropertyEditorMock = EasyMock.createMock(InterviewTimeslotsPropertyEditor.class);
-        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        applicationServiceMock = createMock(ApplicationsService.class);
+        userServiceMock = createMock(UserService.class);
+        currentUserMock = createMock(RegisteredUser.class);
+        interviewValidatorMock = createMock(InterviewValidator.class);
+        interviewerPropertyEditorMock = createMock(InterviewerPropertyEditor.class);
+        datePropertyEditorMock = createMock(DatePropertyEditor.class);
+        interviewServiceMock = createMock(InterviewService.class);
+        accessServiceMock = createMock(ApplicationFormAccessService.class);
+        interviewTimeslotsPropertyEditorMock = createMock(InterviewTimeslotsPropertyEditor.class);
+        actionsProviderMock = createMock(ActionsProvider.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-        EasyMock.replay(userServiceMock);
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        replay(userServiceMock);
 
-        bindingResultMock = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        EasyMock.replay(bindingResultMock);
+        bindingResultMock = createMock(BindingResult.class);
+        expect(bindingResultMock.hasErrors()).andReturn(false);
+        replay(bindingResultMock);
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                        interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock, actionsProviderMock,
-                        null);
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock, actionsProviderMock, null,
+                applicationFormUserRoleServiceMock);
 
     }
 }

@@ -44,6 +44,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -69,16 +70,17 @@ public class ReferenceController {
     private final ActionsProvider actionsProvider;
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
     private final ApplicantRatingService applicantRatingService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     ReferenceController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
             DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
             ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
-            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService) {
+            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;
@@ -92,6 +94,7 @@ public class ReferenceController {
         this.actionsProvider = actionsProvider;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
         this.applicantRatingService = applicantRatingService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @ModelAttribute("applicationForm")
@@ -194,6 +197,7 @@ public class ReferenceController {
             applicationForm.getApplicationComments().add(comment);
             applicantRatingService.computeAverageRating(applicationForm);
             refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
+            applicationFormUserRoleService.referencePosted(comment.getReferee());
         }
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));

@@ -44,7 +44,7 @@ public class UserDAO {
     private final SessionFactory sessionFactory;
 
     private final ReminderIntervalDAO reminderIntervalDAO;
-    
+
     private final NotificationsDurationDAO notificationsDurationDAO;
 
     private final ApplicationContext applicationContext;
@@ -60,7 +60,8 @@ public class UserDAO {
     }
 
     @Autowired
-    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO, ApplicationContext applicationContext) {
+    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO,
+            ApplicationContext applicationContext) {
         this.sessionFactory = sessionFactory;
         this.reminderIntervalDAO = reminderIntervalDAO;
         this.notificationsDurationDAO = notificationsDurationDAO;
@@ -187,8 +188,8 @@ public class UserDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .createAlias("roles", "role")
                 .add(Restrictions.and(Restrictions.not(Restrictions.eq("role.id", Authority.APPLICANT)),
-                        Restrictions.not(Restrictions.eq("role.id", Authority.REFEREE)))).addOrder(Order.asc("firstName"))
-                .addOrder(Order.asc("lastName")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+                        Restrictions.not(Restrictions.eq("role.id", Authority.REFEREE)))).addOrder(Order.asc("firstName")).addOrder(Order.asc("lastName"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public List<Integer> getUsersIdsWithPendingRoleNotifications() {
@@ -266,12 +267,22 @@ public class UserDAO {
         int interval = reminderInterval.getDuration();
         DurationUnitEnum unit = reminderInterval.getUnit();
         String sqlQuery = StringUtils.replace(getPotentialUsersDueToTaskReminderSql, "${TIME_UNIT}", unit.sqlValue());
-        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval).
-                setParameter("notificationsDuration", notificationsDuration).list();
+        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval)
+                .setParameter("notificationsDuration", notificationsDuration).list();
     }
 
     public List<Integer> getUsersForUpdateNotification() {
         return sessionFactory.getCurrentSession().createSQLQuery(getUsersDueToUpdateNotificationSql).list();
+    }
+
+    public List<RegisteredUser> getSuperadministrators() {
+        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createAlias("roles", "role")
+                .add(Restrictions.eq("role.id", Authority.SUPERADMINISTRATOR)).list();
+    }
+
+    public List<RegisteredUser> getAdmitters() {
+        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createAlias("roles", "role")
+                .add(Restrictions.eq("role.id", Authority.ADMITTER)).list();
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

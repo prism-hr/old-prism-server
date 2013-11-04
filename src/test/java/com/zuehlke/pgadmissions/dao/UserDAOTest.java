@@ -144,6 +144,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         // clear out whatever test data is in there -remember, it will all be
         // rolled back!
         sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_USER_ROLE").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 
@@ -646,6 +647,32 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         EasyMock.replay(reminderIntervalDAOMock, notificationsDurationDAOMock);
         userDAO.getPotentialUsersForTaskReminder();
         EasyMock.verify(reminderIntervalDAOMock, notificationsDurationDAOMock);
+    }
+    
+    @Test
+    public void shouldGetAllSuperAdministrators(){
+        RoleDAO roleDAO = new RoleDAO(sessionFactory);
+        Role superadministratorRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
+        
+        RegisteredUser superadmin = new RegisteredUserBuilder().role(superadministratorRole).firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        sessionFactory.getCurrentSession().save(superadmin);
+        
+        List<RegisteredUser> superadministrators = userDAO.getSuperadministrators();
+        assertTrue(listContainsId(superadmin, superadministrators));
+    }
+    
+    @Test
+    public void shouldGetAllAdmitters(){
+        RoleDAO roleDAO = new RoleDAO(sessionFactory);
+        Role admitterRole = roleDAO.getRoleByAuthority(Authority.ADMITTER);
+        
+        RegisteredUser admitter = new RegisteredUserBuilder().role(admitterRole).firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        sessionFactory.getCurrentSession().save(admitter);
+        
+        List<RegisteredUser> admitters = userDAO.getAdmitters();
+        assertTrue(listContainsId(admitter, admitters));
     }
 
     @Before

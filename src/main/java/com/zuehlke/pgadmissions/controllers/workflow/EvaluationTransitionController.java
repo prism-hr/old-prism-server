@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -39,20 +40,21 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 @Controller
 @RequestMapping("/progress")
 public class EvaluationTransitionController extends StateTransitionController {
-	
+
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
     public EvaluationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-                    CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
-                    StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
+            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider,
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                        documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
+                documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider, applicationFormUserRoleService);
     }
 
     @ModelAttribute("comment")
@@ -70,40 +72,36 @@ public class EvaluationTransitionController extends StateTransitionController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
     public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
-                    @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, 
-                    BindingResult result, 
-                    ModelMap modelMap,
-                    @RequestParam(required = false) String action,
-                    @RequestParam(required = false) Boolean delegate, 
-                    @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+            @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap,
+            @RequestParam(required = false) String action, @RequestParam(required = false) Boolean delegate,
+            @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
 
         modelMap.put("delegate", delegate);
 
         // validate validation action is still available
-        
+
         ApplicationFormAction invokedAction;
-        
-        if (action != null &&
-        	action.equals("abort")) {
-        	invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
+
+        if (action != null && action.equals("abort")) {
+            invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
         }
-        
+
         else {
-	        switch (stateChangeComment.getType()) {
-	        case APPROVAL_EVALUATION:
-	        	invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
-	            break;
-	        case REVIEW_EVALUATION:
-	        	invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
-	            break;
-	        case INTERVIEW_EVALUATION:
-	        	invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
-	            break;
-	        default:
-	            throw new IllegalStateException("illegal StateChangeComment type passed to evaluation controller");
-	        }
+            switch (stateChangeComment.getType()) {
+            case APPROVAL_EVALUATION:
+                invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
+                break;
+            case REVIEW_EVALUATION:
+                invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
+                break;
+            case INTERVIEW_EVALUATION:
+                invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+                break;
+            default:
+                throw new IllegalStateException("illegal StateChangeComment type passed to evaluation controller");
+            }
         }
-        
+
         actionsProvider.validateAction(applicationForm, getCurrentUser(), invokedAction);
 
         if (result.hasErrors()) {
@@ -122,11 +120,12 @@ public class EvaluationTransitionController extends StateTransitionController {
         ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
 
         Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
-                        stateChangeComment.getType(), nextStatus);
+                stateChangeComment.getType(), nextStatus);
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationsService.save(applicationForm);
+        applicationFormUserRoleService.stateChanged(applicationForm);
         commentService.save(newComment);
 
         if (nextStatus == ApplicationFormStatus.APPROVAL) {

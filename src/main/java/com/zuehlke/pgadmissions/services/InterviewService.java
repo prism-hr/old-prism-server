@@ -50,15 +50,16 @@ public class InterviewService {
     private final StageDurationService stageDurationService;
     private final CommentService commentService;
     private final CommentFactory commentFactory;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public InterviewService() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
             InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO,
-            final StageDurationService stageDurationService, CommentService commentService, CommentFactory commentFactory) {
+            final StageDurationService stageDurationService, CommentService commentService, CommentFactory commentFactory, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;
@@ -69,6 +70,7 @@ public class InterviewService {
         this.stageDurationService = stageDurationService;
         this.commentService = commentService;
         this.commentFactory = commentFactory;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     public Interview getInterviewById(Integer id) {
@@ -117,6 +119,7 @@ public class InterviewService {
 
         if (previousStatus == ApplicationFormStatus.VALIDATION) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
+            applicationFormUserRoleService.validationStageCompleted(applicationForm);
         }
 
     }
@@ -132,6 +135,7 @@ public class InterviewService {
         interviewParticipant.setResponded(true);
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
+        applicationFormUserRoleService.interviewParticipantResponded(interviewParticipant);
 
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
@@ -161,6 +165,7 @@ public class InterviewService {
         commentService.save(scheduleComment);
 
         assignInterviewDueDate(interview, interview.getApplication());
+        applicationFormUserRoleService.interviewConfirmed(interview);
         removeApplicationAdministratorReminders(interview);
 
         sendConfirmationEmails(interview);

@@ -1,6 +1,12 @@
 package com.zuehlke.pgadmissions.controllers.referees;
 
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REFERENCE;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -8,7 +14,6 @@ import static org.junit.Assert.assertSame;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.easymock.EasyMock;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,6 +57,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -73,43 +79,44 @@ public class ReferenceControllerTest {
     private ScoreFactory scoreFactoryMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicantRatingService applicantRatingService;
+    private ApplicantRatingService applicantRatingServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         Referee referee = new RefereeBuilder().build();
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        replay(applicationsServiceMock, currentUser, userServiceMock);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
+        verify(applicationsServiceMock, currentUser, userServiceMock);
 
         assertEquals(applicationForm, returnedApplicationForm);
     }
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
-        EasyMock.replay(applicationsServiceMock);
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        replay(applicationsServiceMock);
         controller.getApplicationForm("1");
     }
 
     @Test(expected = InsufficientApplicationFormPrivilegesException.class)
     public void shouldThrowResourceNoFoundExceptionIfUserNotRefereeForForm() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        currentUser = createMock(RegisteredUser.class);
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 
-        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        replay(applicationsServiceMock, currentUser, userServiceMock);
         controller.getApplicationForm("1");
-        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
+        verify(applicationsServiceMock, currentUser, userServiceMock);
     }
 
     @Test
@@ -121,20 +128,20 @@ public class ReferenceControllerTest {
 
         actionsProviderMock.validateAction(applicationForm, currentUser, ApplicationFormAction.ADD_REFERENCE);
 
-        EasyMock.replay(actionsProviderMock);
+        replay(actionsProviderMock);
         assertEquals("private/referees/upload_references", controller.getUploadReferencesPage(modelMap));
-        EasyMock.verify(actionsProviderMock);
+        verify(actionsProviderMock);
     }
 
     @Test(expected = ActionNoLongerRequiredException.class)
     public void shouldReturnExpiredViewIfApplicationAlreadyDecided() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).build();
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-        EasyMock.replay(currentUser, userServiceMock, applicationsServiceMock);
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
+        replay(currentUser, userServiceMock, applicationsServiceMock);
         assertSame(applicationForm, controller.getApplicationForm("app1"));
-        EasyMock.verify(currentUser, userServiceMock, applicationsServiceMock);
+        verify(currentUser, userServiceMock, applicationsServiceMock);
     }
 
     @Test(expected = ActionNoLongerRequiredException.class)
@@ -142,14 +149,14 @@ public class ReferenceControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
         Referee referee = new RefereeBuilder().reference(new ReferenceComment()).build();
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
+        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
 
-        EasyMock.replay(currentUser, userServiceMock, applicationsServiceMock);
+        replay(currentUser, userServiceMock, applicationsServiceMock);
         controller.getApplicationForm("app1");
-        EasyMock.verify(currentUser, userServiceMock, applicationsServiceMock);
+        verify(currentUser, userServiceMock, applicationsServiceMock);
     }
 
     @Test
@@ -166,16 +173,16 @@ public class ReferenceControllerTest {
         customQuestions.getQuestion().add(question1);
         ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
-        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
-        EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
+        expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
+        expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
 
-        EasyMock.replay(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock, scoreFactoryMock);
+        replay(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock, scoreFactoryMock);
         ReferenceComment returnedReference = controller.getComment("1");
-        EasyMock.verify(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock, scoreFactoryMock);
+        verify(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock, scoreFactoryMock);
 
         assertNull(returnedReference.getId());
         assertEquals(referee, returnedReference.getReferee());
@@ -192,15 +199,15 @@ public class ReferenceControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
         final Referee referee = new RefereeBuilder().id(8).build();
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
-        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
+        expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
+        expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 
-        EasyMock.replay(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock);
+        replay(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock);
         ReferenceComment returnedReference = controller.getComment("1");
-        EasyMock.verify(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock);
+        verify(currentUser, userServiceMock, applicationsServiceMock, scoringDefinitionParserMock);
 
         assertNull(returnedReference.getId());
         assertEquals(referee, returnedReference.getReferee());
@@ -212,15 +219,15 @@ public class ReferenceControllerTest {
 
     @Test
     public void shouldBindPRopertyEditorAndValidator() {
-        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        WebDataBinder binderMock = createMock(WebDataBinder.class);
         binderMock.setValidator(referenceValidator);
-        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+        binderMock.registerCustomEditor(eq(String.class), anyObject(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(Document.class, documentPropertyEditor);
         binderMock.registerCustomEditor(null, "scores", scoresPropertyEditorMock);
 
-        EasyMock.replay(binderMock);
+        replay(binderMock);
         controller.registerPropertyEditors(binderMock);
-        EasyMock.verify(binderMock);
+        verify(binderMock);
     }
 
     @Test
@@ -249,37 +256,39 @@ public class ReferenceControllerTest {
 
         commentServiceMock.save(reference);
         refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
-        applicantRatingService.computeAverageRating(application);
+        applicantRatingServiceMock.computeAverageRating(application);
+        applicationFormUserRoleServiceMock.referencePosted(referee);
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
         actionsProviderMock.validateAction(application, currentUser, ADD_REFERENCE);
 
-        EasyMock.replay(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingService);
+        replay(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors, modelMap));
-        EasyMock.verify(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingService);
-        
-        Assert.assertThat(application.getApplicationComments(), Matchers.<Comment>contains(reference));
+        verify(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
+
+        Assert.assertThat(application.getApplicationComments(), Matchers.<Comment> contains(reference));
     }
 
     @Before
     public void setUp() {
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        commentServiceMock = EasyMock.createMock(CommentService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-        documentPropertyEditor = EasyMock.createMock(DocumentPropertyEditor.class);
-        referenceValidator = EasyMock.createMock(FeedbackCommentValidator.class);
-        refereeServiceMock = EasyMock.createMock(RefereeService.class);
-        userServiceMock = EasyMock.createMock(UserService.class);
-        scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
-        scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
-        scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
-        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        applicantRatingService = EasyMock.createMock(ApplicantRatingService.class);
+        currentUser = createMock(RegisteredUser.class);
+        commentServiceMock = createMock(CommentService.class);
+        applicationsServiceMock = createMock(ApplicationsService.class);
+        documentPropertyEditor = createMock(DocumentPropertyEditor.class);
+        referenceValidator = createMock(FeedbackCommentValidator.class);
+        refereeServiceMock = createMock(RefereeService.class);
+        userServiceMock = createMock(UserService.class);
+        scoringDefinitionParserMock = createMock(ScoringDefinitionParser.class);
+        scoresPropertyEditorMock = createMock(ScoresPropertyEditor.class);
+        accessServiceMock = createMock(ApplicationFormAccessService.class);
+        scoreFactoryMock = createMock(ScoreFactory.class);
+        actionsProviderMock = createMock(ActionsProvider.class);
+        applicantRatingServiceMock = createMock(ApplicantRatingService.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
         controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator,
-                        commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock,
-                        null, applicantRatingService);
+                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock, null,
+                applicantRatingServiceMock, applicationFormUserRoleServiceMock);
 
     }
 

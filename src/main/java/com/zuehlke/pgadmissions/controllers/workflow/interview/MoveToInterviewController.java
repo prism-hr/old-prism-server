@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -61,16 +62,17 @@ public class MoveToInterviewController {
     private final ApplicationFormAccessService accessService;
     private final ActionsProvider actionsProvider;
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     MoveToInterviewController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
             InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
             InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService,
-            final ActionsProvider actionsProvider, final ApplicationDescriptorProvider applicationDescriptorProvider) {
+            final ActionsProvider actionsProvider, final ApplicationDescriptorProvider applicationDescriptorProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -81,6 +83,7 @@ public class MoveToInterviewController {
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @ModelAttribute("applicationForm")
@@ -118,6 +121,7 @@ public class MoveToInterviewController {
 
         interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+        applicationFormUserRoleService.movedToInterviewStage(interview);
         if (interview.isParticipant(getUser())) {
             modelMap.addAttribute("message", "redirectToVote");
             return "/private/common/simpleResponse";

@@ -38,14 +38,15 @@ public class RefereeService {
     private final EncryptionUtils encryptionUtils;
     private final EncryptionHelper encryptionHelper;
     private final ApplicantRatingService applicantRatingService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public RefereeService() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, UserService userService, RoleDAO roleDAO, CommentService commentService,
-            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService) {
+            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.refereeDAO = refereeDAO;
         this.encryptionUtils = encryptionUtils;
         this.userService = userService;
@@ -55,6 +56,7 @@ public class RefereeService {
         this.applicationFormDAO = applicationFormDAO;
         this.encryptionHelper = encryptionHelper;
         this.applicantRatingService = applicantRatingService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     public Referee getRefereeById(Integer id) {
@@ -202,6 +204,8 @@ public class RefereeService {
         if (applicationForm.getReferencesToSendToPortico().size() < 2) {
             referee.setSendToUCL(true);
         }
+        
+        applicationFormUserRoleService.referencePosted(referee);
 
         saveReferenceAndSendMailNotifications(referee);
         return referenceComment;

@@ -62,16 +62,18 @@ public class ApprovalService {
     private final MailSendingService mailSendingService;
 
     private final ProgramInstanceService programInstanceService;
+    
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public ApprovalService() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO,
             StageDurationService stageDurationService, EventFactory eventFactory, CommentDAO commentDAO, SupervisorDAO supervisorDAO,
             ProgrammeDetailDAO programmeDetailDAO, PorticoQueueService approvedSenderService, MailSendingService mailSendingService,
-            ProgramInstanceService programInstanceService) {
+            ProgramInstanceService programInstanceService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
@@ -83,6 +85,7 @@ public class ApprovalService {
         this.approvedSenderService = approvedSenderService;
         this.mailSendingService = mailSendingService;
         this.programInstanceService = programInstanceService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     public void confirmOrDeclineSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
@@ -190,8 +193,10 @@ public class ApprovalService {
 
         if (sendReferenceRequest) {
             mailSendingService.sendReferenceRequest(form.getReferees(), form);
+            applicationFormUserRoleService.validationStageCompleted(form);
         }
         commentDAO.save(approvalComment);
+        applicationFormUserRoleService.movedToApprovalStage(approvalRound);
     }
 
     private void copyLastNotifiedForRepeatSupervisors(ApplicationForm form, ApprovalRound approvalRound) {

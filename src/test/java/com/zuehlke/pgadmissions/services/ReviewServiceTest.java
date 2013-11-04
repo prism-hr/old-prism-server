@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static java.util.Arrays.asList;
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -50,6 +51,7 @@ public class ReviewServiceTest {
 	private Reviewer reviewer;
 	private EventFactory eventFactoryMock;
 	private MailSendingService mailServiceMock;
+	private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
 	@Before
 	public void setUp() {
@@ -61,7 +63,9 @@ public class ReviewServiceTest {
 		stageDurationDAOMock = EasyMock.createMock(StageDurationService.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
 		mailServiceMock = EasyMock.createMock(MailSendingService.class);
-		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock, reviewerDAO, mailServiceMock){
+		applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+		
+		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock, reviewerDAO, mailServiceMock, applicationFormUserRoleServiceMock){
 			@Override
 			public ReviewRound newReviewRound() {
 				return reviewRound;
@@ -117,9 +121,12 @@ public class ReviewServiceTest {
 		StateChangeEvent event = new ReviewStateChangeEventBuilder().id(1).build();		
 		EasyMock.expect(eventFactoryMock.createEvent(reviewRound)).andReturn(event);
 		mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
-		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, mailServiceMock, stageDurationDAOMock, eventFactoryMock);
-
+		applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
+		applicationFormUserRoleServiceMock.movedToReviewStage(reviewRound);
+		
+		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, mailServiceMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleServiceMock);
 		reviewService.moveApplicationToReview(applicationForm, reviewRound);
+		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock, mailServiceMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleServiceMock);
 		
 		assertEquals(DateUtils.truncate(com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 2*1400), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
 		assertEquals(applicationForm, reviewRound.getApplication());
@@ -128,7 +135,6 @@ public class ReviewServiceTest {
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(event, applicationForm.getEvents().get(0));
-		EasyMock.verify(reviewRoundDAOMock, mailServiceMock, applicationFormDAOMock);
 		assertTrue(applicationForm.getNotificationRecords().isEmpty());
 	}
 
@@ -140,9 +146,11 @@ public class ReviewServiceTest {
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
 		reviewRoundDAOMock.save(reviewRound);
 		applicationFormDAOMock.save(applicationForm);
-		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock);
+		applicationFormUserRoleServiceMock.movedToReviewStage(reviewRound);
+		
+		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, applicationFormUserRoleServiceMock);
 		reviewService.moveApplicationToReview(applicationForm, reviewRound);
-		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock);
+		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, applicationFormUserRoleServiceMock);
 
 	}
 

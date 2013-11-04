@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.StageDurationService;
@@ -62,15 +63,17 @@ public class SubmitApplicationFormController {
     private final ApplicationFormAccessService accessService;
 
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
+    
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public SubmitApplicationFormController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
                     StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService,
-                    ApplicationDescriptorProvider applicationDescriptorProvider) {
+                    ApplicationDescriptorProvider applicationDescriptorProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
@@ -78,6 +81,7 @@ public class SubmitApplicationFormController {
         this.eventFactory = eventFactory;
         this.accessService = accessService;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -108,6 +112,7 @@ public class SubmitApplicationFormController {
         assignBatchDeadline(applicationForm);
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
+        applicationFormUserRoleService.applicationSubmitted(applicationForm);
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 

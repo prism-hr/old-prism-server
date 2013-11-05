@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICATION_MOVED_TO_APPROVED_NOTIFICATION;
-
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
-import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
-import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
@@ -39,8 +32,6 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 @Transactional
 public class ApprovalService {
 
-    private final Logger log = LoggerFactory.getLogger(ApprovalService.class);
-
     private final ApplicationFormDAO applicationDAO;
 
     private final ApprovalRoundDAO approvalRoundDAO;
@@ -51,40 +42,27 @@ public class ApprovalService {
 
     private final CommentDAO commentDAO;
 
-    private final ProgrammeDetailDAO programmeDetailDAO;
-
     private final UserService userService;
-
-    private final PorticoQueueService approvedSenderService;
-
-    private final SupervisorDAO supervisorDAO;
 
     private final MailSendingService mailSendingService;
 
-    private final ProgramInstanceService programInstanceService;
-    
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public ApprovalService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO,
-            StageDurationService stageDurationService, EventFactory eventFactory, CommentDAO commentDAO, SupervisorDAO supervisorDAO,
-            ProgrammeDetailDAO programmeDetailDAO, PorticoQueueService approvedSenderService, MailSendingService mailSendingService,
-            ProgramInstanceService programInstanceService, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            StageDurationService stageDurationService, EventFactory eventFactory, CommentDAO commentDAO, MailSendingService mailSendingService,
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
         this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
         this.commentDAO = commentDAO;
-        this.supervisorDAO = supervisorDAO;
-        this.programmeDetailDAO = programmeDetailDAO;
-        this.approvedSenderService = approvedSenderService;
         this.mailSendingService = mailSendingService;
-        this.programInstanceService = programInstanceService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
@@ -101,7 +79,7 @@ public class ApprovalService {
             if (!secondarySupervisor.getUser().getEmail().equals(confirmSupervisionDTO.getSecondarySupervisorEmail())) {
                 RegisteredUser user = userService.getUserByEmail(confirmSupervisionDTO.getSecondarySupervisorEmail());
                 approvalRound.getSupervisors().remove(secondarySupervisor); // remove old supervisor
-                
+
                 Supervisor newSecondarySupervisor = new Supervisor();
                 newSecondarySupervisor.setUser(user);
                 newSecondarySupervisor.setApprovalRound(approvalRound);
@@ -125,7 +103,7 @@ public class ApprovalService {
 
         SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, approvalRound, supervisor);
         commentDAO.save(supervisionConfirmationComment);
-        
+
         applicationFormUserRoleService.supervisionConfirmed(supervisor);
     }
 
@@ -241,90 +219,4 @@ public class ApprovalService {
         }
     }
 
-    public void save(ApprovalRound approvalRound) {
-        approvalRoundDAO.save(approvalRound);
-    }
-
-    public boolean moveToApproved(ApplicationForm form, OfferRecommendedComment offerRecommendedComment) {
-        if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
-            throw new IllegalStateException();
-        }
-
-        if (!programInstanceService.isPrefferedStartDateWithinBounds(form)) {
-            Date earliestPossibleStartDate = programInstanceService.getEarliestPossibleStartDate(form);
-            if (earliestPossibleStartDate == null) {
-                return false;
-            }
-            form.getProgrammeDetails().setStartDate(earliestPossibleStartDate);
-            programmeDetailDAO.save(form.getProgrammeDetails());
-        }
-
-        form.setStatus(ApplicationFormStatus.APPROVED);
-        form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
-        sendNotificationToApplicant(form);
-        form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER);
-
-        List<Supervisor> supervisors = form.getLatestApprovalRound().getSupervisors();
-        supervisors.clear();
-        supervisors.addAll(offerRecommendedComment.getSupervisors());
-
-        applicationDAO.save(form);
-
-        offerRecommendedComment.setApplication(form);
-        offerRecommendedComment.setComment("");
-        offerRecommendedComment.setType(CommentType.OFFER_RECOMMENDED_COMMENT);
-        offerRecommendedComment.setUser(userService.getCurrentUser());
-        for (Supervisor supervisor : offerRecommendedComment.getSupervisors()) {
-            if (supervisor.getIsPrimary()) {
-                offerRecommendedComment.setSupervisor(supervisor);
-            } else {
-                offerRecommendedComment.setSecondarySupervisor(supervisor);
-            }
-        }
-        commentDAO.save(offerRecommendedComment);
-        return true;
-    }
-
-    private void sendNotificationToApplicant(ApplicationForm form) {
-        try {
-            mailSendingService.sendApprovedNotification(form);
-            NotificationRecord notificationRecord = form.getNotificationForType(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
-            if (notificationRecord == null) {
-                notificationRecord = new NotificationRecord(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
-                form.addNotificationRecord(notificationRecord);
-            }
-            notificationRecord.setDate(new Date());
-        } catch (Exception e) {
-            log.warn("{}", e);
-        }
-    }
-
-    public void sendToPortico(ApplicationForm form) {
-        approvedSenderService.sendToPortico(form);
-    }
-
-    public void addSupervisorInPreviousApprovalRound(ApplicationForm form, RegisteredUser newUser) {
-        Supervisor supervisor = newSupervisor();
-        supervisor.setUser(newUser);
-        supervisorDAO.save(supervisor);
-        ApprovalRound latestApprovalRound = form.getLatestApprovalRound();
-        if (latestApprovalRound == null) {
-            ApprovalRound approvalRound = newApprovalRound();
-            approvalRound.getSupervisors().add(supervisor);
-            approvalRound.setApplication(form);
-            save(approvalRound);
-            form.setLatestApprovalRound(approvalRound);
-        } else {
-            latestApprovalRound.getSupervisors().add(supervisor);
-            save(latestApprovalRound);
-        }
-    }
-
-    public Supervisor newSupervisor() {
-        return new Supervisor();
-    }
-
-    public ApprovalRound newApprovalRound() {
-        return new ApprovalRound();
-    }
 }

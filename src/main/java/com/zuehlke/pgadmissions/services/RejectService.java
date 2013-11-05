@@ -29,29 +29,20 @@ public class RejectService {
 	
 	private final Logger log = LoggerFactory.getLogger(RejectService.class);
 
-	private final ApplicationFormDAO applicationDao;
-	
-	private final RejectReasonDAO rejectDao;
-	
-	private final EventFactory eventFactory;
-	
-	private final PorticoQueueService porticoQueueService;
-	
-	private final MailSendingService mailService;
-
-	public RejectService() {
-		this(null, null, null, null, null);
-	}
-
 	@Autowired
-    public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao, EventFactory eventFactory,
-    		PorticoQueueService rejectedSenderService, MailSendingService mailService) {
-		this.applicationDao = applicationDAO;
-		this.rejectDao = rejectDao;
-		this.eventFactory = eventFactory;
-		this.porticoQueueService = rejectedSenderService;
-		this.mailService = mailService;
-	}
+	private ApplicationFormDAO applicationDao;
+	
+	@Autowired
+	private RejectReasonDAO rejectDao;
+	
+	@Autowired
+	private EventFactory eventFactory;
+	
+	@Autowired
+	private PorticoQueueService porticoQueueService;
+	
+	@Autowired
+	private MailSendingService mailService;
 
 	public List<RejectReason> getAllRejectionReasons() {
 		return rejectDao.getAllReasons();
@@ -61,17 +52,9 @@ public class RejectService {
 		return rejectDao.getRejectReasonById(id);
 	}
 
-	public void moveApplicationToReject(final ApplicationForm form, final RegisteredUser approver, final Rejection rejection) {
-		if (rejection == null) {
-			throw new IllegalArgumentException("rejection must be provided!");
-		}
-		if (approver == null) {
-			throw new IllegalArgumentException("approver must not be null!");
-		}
-		if (!(form.getProgram().isApprover(approver) || approver.hasAdminRightsOnApplication(form))) {
-			throw new IllegalArgumentException("approver is not an approver or administrator in the program of the application!");
-		}
-        form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.ALL_USERS, new Date()));
+	public void moveApplicationToReject(final ApplicationForm form, final Rejection rejection) {
+
+	    form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.ALL_USERS, new Date()));
 		form.setStatus(ApplicationFormStatus.REJECTED);		
 		form.setRejection(rejection);
 		form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));

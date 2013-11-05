@@ -1,16 +1,22 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.unitils.easymock.EasyMockUnitils.replay;
+import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
@@ -31,15 +37,33 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class RejectServiceTest {
 
+    @TestedObject
 	private RejectService rejectService;
 
+    @Mock
+    @InjectIntoByType
 	private RejectReasonDAO rejectDaoMock;
-	
+
+    @Mock
+    @InjectIntoByType
 	private ApplicationFormDAO applicationDaoMock;
 
-	private ApplicationForm application;
+    @Mock
+    @InjectIntoByType
+    private EventFactory eventFactoryMock;
+    
+    @Mock
+    @InjectIntoByType
+    private MailSendingService mailServiceMock;
+    
+    @Mock
+    @InjectIntoByType
+    private PorticoQueueService porticoQueueService;
+
+    private ApplicationForm application;
 	
 	private RejectReason reason1;
 	
@@ -49,20 +73,9 @@ public class RejectServiceTest {
 	
 	private RegisteredUser approver;
 
-	private EventFactory eventFactoryMock;
-
-	private MailSendingService mailServiceMock;
-	
-	private PorticoQueueService porticoQueueService;
 	
 	@Before
 	public void setUp() {
-		applicationDaoMock = EasyMock.createMock(ApplicationFormDAO.class);		
-		rejectDaoMock = EasyMock.createMock(RejectReasonDAO.class);
-		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		porticoQueueService = createMock(PorticoQueueService.class);
-		mailServiceMock = createMock(MailSendingService.class);
-
 		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
 		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().id(Authority.APPROVER).build()).build();
 		Program program = new ProgramBuilder().id(10023).administrators(admin).approver(approver).build();
@@ -70,25 +83,6 @@ public class RejectServiceTest {
 
 		reason1 = new RejectReasonBuilder().id(1).text("idk").build();
 		reason2 = new RejectReasonBuilder().id(2).text("idc").build();
-		
-		rejectService = new RejectService(applicationDaoMock, rejectDaoMock, eventFactoryMock, porticoQueueService, mailServiceMock);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void shouldThrowIAEIfRejectionIsNull() {
-		rejectService.moveApplicationToReject(application, approver, null);
-	}
-
-
-	@Test(expected = IllegalArgumentException.class)
-	public void shouldThrowIAEIfApproverIsNull() {
-		rejectService.moveApplicationToReject(application, null, new Rejection());
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void shouldThrowIAEIfWrongApprover() {
-		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(3423).username("wrong approver").role(new RoleBuilder().id(Authority.APPROVER).build()).build();
-		rejectService.moveApplicationToReject(application, wrongApprover, new Rejection());
 	}
 
 	@Test
@@ -96,34 +90,20 @@ public class RejectServiceTest {
 		Rejection rejection = new RejectionBuilder().id(1).build();
 		
 		applicationDaoMock.save(application);
-		EasyMock.expectLastCall();
+		expectLastCall();
 		
 		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
-		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.REJECTED)).andReturn(event);
+		expect(eventFactoryMock.createEvent(ApplicationFormStatus.REJECTED)).andReturn(event);
+		mailServiceMock.sendRejectionConfirmationToApplicant(application);
 		
-		EasyMock.replay(applicationDaoMock, eventFactoryMock);
-
-		rejectService.moveApplicationToReject(application, approver, rejection);
-
-		EasyMock.verify(applicationDaoMock);
-		Assert.assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
-		Assert.assertEquals(rejection,application.getRejection());
+		replay();
+		rejectService.moveApplicationToReject(application, rejection);
+		verify();
+		
+		assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
+		assertEquals(rejection,application.getRejection());
 		assertEquals(1, application.getEvents().size());
 		assertEquals(event, application.getEvents().get(0));
-	}
-
-	@Test
-	public void shouldMoveToRejectAsAdministrator() {
-		Rejection rejection = new RejectionBuilder().id(1).build();
-		applicationDaoMock.save(application);
-		EasyMock.expectLastCall();
-		EasyMock.replay(applicationDaoMock);
-
-		rejectService.moveApplicationToReject(application, admin,rejection);
-
-		EasyMock.verify(applicationDaoMock);
-		Assert.assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
-		Assert.assertEquals(rejection,application.getRejection());
 	}
 
 	@Test
@@ -131,23 +111,24 @@ public class RejectServiceTest {
 		List<RejectReason> values = new ArrayList<RejectReason>();
 		values.add(reason1);
 		values.add(reason2);
-		EasyMock.expect(rejectDaoMock.getAllReasons()).andReturn(values);
-		EasyMock.replay(rejectDaoMock);
-
+		expect(rejectDaoMock.getAllReasons()).andReturn(values);
+		
+		replay();
 		List<RejectReason> reasons = rejectService.getAllRejectionReasons();
-
-		EasyMock.verify(rejectDaoMock);
-		Assert.assertNotNull(reasons);
-		Assert.assertEquals(2, reasons.size());
-		Assert.assertEquals("idc", reasons.get(1).getText());
+		verify();
+		
+		assertNotNull(reasons);
+		assertEquals(2, reasons.size());
+		assertEquals("idc", reasons.get(1).getText());
 	}
 	
 	@Test
 	public void shouldGetRejectReasonById(){
 		RejectReason rejectReason = new RejectReasonBuilder().id(1).build();
-		EasyMock.expect(rejectDaoMock.getRejectReasonById(1)).andReturn(rejectReason);
-		EasyMock.replay(rejectDaoMock);
+		expect(rejectDaoMock.getRejectReasonById(1)).andReturn(rejectReason);
 		
-		Assert.assertEquals(rejectReason,rejectService.getRejectReasonById(1));
+		replay();
+		assertEquals(rejectReason,rejectService.getRejectReasonById(1));
+		verify();
 	}
 }

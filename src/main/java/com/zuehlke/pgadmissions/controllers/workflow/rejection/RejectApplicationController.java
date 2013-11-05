@@ -99,7 +99,7 @@ public class RejectApplicationController {
         }
         application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(application, getCurrentUser(), new Date());
-        rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
+        rejectService.moveApplicationToReject(application, rejection);
         rejectService.sendToPortico(application);
         return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
     }

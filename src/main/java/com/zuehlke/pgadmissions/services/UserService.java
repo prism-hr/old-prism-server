@@ -228,6 +228,7 @@ public class UserService {
         }
 
         userDAO.save(newUser);
+        
         return newUser;
     }
 

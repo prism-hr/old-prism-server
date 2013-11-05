@@ -41,23 +41,30 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 @Transactional
 public class ApplicationFormUserRoleService {
 
-    @Autowired
-    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+    private final ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
-    @Autowired
-    private RoleDAO roleDAO;
+    private final RoleDAO roleDAO;
 
-    @Autowired
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
     
-    @Autowired
-    private ApplicationFormDAO applicationFormDAO;
+    private final ApplicationFormDAO applicationFormDAO;
     
-    private Map<ApplicationFormStatus, String> initiateStageMap = Maps.newHashMap();
+    private final Map<ApplicationFormStatus, String> initiateStageMap = Maps.newHashMap();
     
-    private Map<ApplicationFormStatus, String> completeStageMap = Maps.newHashMap();
+    private final Map<ApplicationFormStatus, String> completeStageMap = Maps.newHashMap();
 
     public ApplicationFormUserRoleService() {
+        this(null, null, null, null);
+    }
+
+    @Autowired
+    public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, 
+    		RoleDAO roleDAO, UserDAO userDAO, ApplicationFormDAO applicationFormDAO) {
+        this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
+        this.roleDAO = roleDAO;
+        this.userDAO = userDAO;
+        this.applicationFormDAO = applicationFormDAO;
+        
         initiateStageMap.put(ApplicationFormStatus.REVIEW, "ASSIGN_REVIEWERS");
         initiateStageMap.put(ApplicationFormStatus.INTERVIEW, "ASSIGN_INTERVIEWERS");
         initiateStageMap.put(ApplicationFormStatus.APPROVAL, "ASSIGN_SUPERVISORS");
@@ -367,11 +374,14 @@ public class ApplicationFormUserRoleService {
     	}
     }
     
-    public void registerApplicationUpdate (ApplicationForm applicationForm, int updateVisibility) {
-    	
+    public void registerApplicationUpdate (ApplicationForm applicationForm, Date updateTimestamp, int updateVisibility) {
+    	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndAuthorityUpdateVisility(applicationForm, updateVisibility)) {
+    		applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
+    		applicationFormUserRole.setRaisesUpdateFlag(true);
+    	}
     }
     
-    public void deregisterApplcationUpdate (ApplicationForm applicationForm, RegisteredUser registeredUser) {
+    public void deregisterApplicationUpdate (ApplicationForm applicationForm, RegisteredUser registeredUser) {
     	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndUser(applicationForm, registeredUser)) {
     		applicationFormUserRole.setRaisesUpdateFlag(false);
     	}

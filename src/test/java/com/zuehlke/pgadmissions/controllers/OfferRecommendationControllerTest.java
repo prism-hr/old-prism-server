@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -56,7 +56,7 @@ public class OfferRecommendationControllerTest {
 
     private ApplicationDescriptorProvider applicationDescriptorProviderMock;
 
-    private ApprovalService approvalServiceMock;
+    private OfferRecommendationService offerRecommendationServiceMock;
 
     private OfferRecommendedCommentValidator offerRecommendedCommentValidatorMock;
 
@@ -107,12 +107,12 @@ public class OfferRecommendationControllerTest {
         modelMap.put("user", user);
 
         actionsProviderMock.validateAction(applicationForm, user, CONFIRM_OFFER_RECOMMENDATION);
-        EasyMock.expect(approvalServiceMock.moveToApproved(applicationForm, comment)).andReturn(true);
-        approvalServiceMock.sendToPortico(applicationForm);
+        EasyMock.expect(offerRecommendationServiceMock.moveToApproved(applicationForm, comment)).andReturn(true);
+        offerRecommendationServiceMock.sendToPortico(applicationForm);
 
-        EasyMock.replay(approvalServiceMock, actionsProviderMock);
+        EasyMock.replay(offerRecommendationServiceMock, actionsProviderMock);
         String res = controller.recommendOffer(comment, result, modelMap);
-        EasyMock.verify(approvalServiceMock, actionsProviderMock);
+        EasyMock.verify(offerRecommendationServiceMock, actionsProviderMock);
 
         assertEquals("redirect:/applications", res);
         assertEquals("move.approved", modelMap.get("messageCode"));
@@ -149,11 +149,11 @@ public class OfferRecommendationControllerTest {
         modelMap.put("user", user);
 
         actionsProviderMock.validateAction(applicationForm, user, CONFIRM_OFFER_RECOMMENDATION);
-        EasyMock.expect(approvalServiceMock.moveToApproved(applicationForm, comment)).andReturn(false);
+        EasyMock.expect(offerRecommendationServiceMock.moveToApproved(applicationForm, comment)).andReturn(false);
 
-        EasyMock.replay(approvalServiceMock, actionsProviderMock);
+        EasyMock.replay(offerRecommendationServiceMock, actionsProviderMock);
         String res = controller.recommendOffer(comment, result, modelMap);
-        EasyMock.verify(approvalServiceMock, actionsProviderMock);
+        EasyMock.verify(offerRecommendationServiceMock, actionsProviderMock);
 
         Assert.assertEquals("redirect:/rejectApplication?applicationId=app1&rejectionId=7", res);
     }
@@ -201,14 +201,14 @@ public class OfferRecommendationControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
-        approvalServiceMock = EasyMock.createMock(ApprovalService.class);
+        offerRecommendationServiceMock = EasyMock.createMock(OfferRecommendationService.class);
         offerRecommendedCommentValidatorMock = EasyMock.createMock(OfferRecommendedCommentValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         supervisorsProviderMock = EasyMock.createMock(SupervisorsProvider.class);
         supervisorPropertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
         controller = new OfferRecommendationController(applicationsServiceMock, userServiceMock, actionsProviderMock, accessServiceMock,
-                applicationDescriptorProviderMock, approvalServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock,
+                applicationDescriptorProviderMock, offerRecommendationServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock,
                 programInstanceServiceMock, supervisorsProviderMock, supervisorPropertyEditorMock);
     }
 }

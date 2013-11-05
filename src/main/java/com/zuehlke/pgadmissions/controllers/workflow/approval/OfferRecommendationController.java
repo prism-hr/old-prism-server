@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -56,7 +56,7 @@ public class OfferRecommendationController {
 
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
-    private final ApprovalService approvalService;
+    private final OfferRecommendationService offerRecommendedService;
 
     private final OfferRecommendedCommentValidator offerRecommendedCommentValidator;
 
@@ -65,7 +65,7 @@ public class OfferRecommendationController {
     private final ProgramInstanceService programInstanceService;
 
     private final SupervisorsProvider supervisorsProvider;
-    
+
     private final SupervisorPropertyEditor supervisorPropertyEditor;
 
     public OfferRecommendationController() {
@@ -74,15 +74,16 @@ public class OfferRecommendationController {
 
     @Autowired
     public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
-            ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider, ApprovalService approvalService,
-            OfferRecommendedCommentValidator offerRecommendedCommentValidator, DatePropertyEditor datePropertyEditor,
-            ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider, SupervisorPropertyEditor supervisorPropertyEditor) {
+            ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider,
+            OfferRecommendationService offerRecommendedService, OfferRecommendedCommentValidator offerRecommendedCommentValidator,
+            DatePropertyEditor datePropertyEditor, ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider,
+            SupervisorPropertyEditor supervisorPropertyEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
-        this.approvalService = approvalService;
+        this.offerRecommendedService = offerRecommendedService;
         this.offerRecommendedCommentValidator = offerRecommendedCommentValidator;
         this.datePropertyEditor = datePropertyEditor;
         this.programInstanceService = programInstanceService;
@@ -133,8 +134,8 @@ public class OfferRecommendationController {
         application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(application, getCurrentUser(), new Date());
 
-        if (approvalService.moveToApproved(application, offerRecommendedComment)) {
-            approvalService.sendToPortico(application);
+        if (offerRecommendedService.moveToApproved(application, offerRecommendedComment)) {
+            offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
             modelMap.put("application", application.getApplicationNumber());
             return "redirect:/applications";

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -304,28 +305,22 @@ public class ApplicationFormUserRoleService {
 
     }
     
-    public void createUserinSuperAdministratorRole(RegisteredUser registeredUser) {
+    public void createUserInSuperAdministratorRole (RegisteredUser registeredUser) {
     	List<ApplicationForm> applications = applicationFormDAO.getAllAdministerableApplications();
-        
     	for (ApplicationForm application : applications) {
-    		ApplicationFormStatus currentStatus = application.getStatus();
-    		ApplicationFormStatus nextStatus = application.getNextStatus();
-    		ApplicationFormActionRequired actionRequired;
-    		
-    		if (nextStatus == null) {
-    			actionRequired = new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true);
-    		} else {
-    			actionRequired = new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false);
-    		}
-            
-    		createApplicationFormUserRole(application, registeredUser, Authority.ADMINISTRATOR, false, actionRequired);
-    		
-    		if (nextStatus == null &&
-    			currentStatus == ApplicationFormStatus.INTERVIEW &&
-    			application.getLatestInterview().isScheduling()) {
-    			createApplicationFormUserRole(application, registeredUser, Authority.ADMINISTRATOR, false, 
-    					new ApplicationFormActionRequired("CONFIRM_INTERVIEW_ARRANGEMENTS", application.getDueDate(), true));
-    		}
+    		ApplicationFormUserRole applicationFormUserRole = 
+    				createApplicationFormUserRole(application, registeredUser, Authority.SUPERADMINISTRATOR, false);	
+    		assignActionsToNewAdmitter(application, applicationFormUserRole);
+    		assignActionsToNewAdministrator(application, applicationFormUserRole);
+    		assignActionsToNewApprover(application, applicationFormUserRole);
+    	}
+    }
+    
+    public void createUserInAdmitterRole (RegisteredUser registeredUser) {
+    	List<ApplicationForm> applications = applicationFormDAO.getAllAdministerableApplications();
+    	for (ApplicationForm application : applications) {
+    		assignActionsToNewAdmitter(application,
+    				createApplicationFormUserRole(application, registeredUser, Authority.ADMITTER, false));
     	}
     }
     
@@ -333,44 +328,88 @@ public class ApplicationFormUserRoleService {
     	List<ApplicationForm> applications = applicationFormDAO.getAdministerableApplicationsByProgram(program);
         
     	for (ApplicationForm application : applications) {
-    		ApplicationFormStatus currentStatus = application.getStatus();
-    		ApplicationFormStatus nextStatus = application.getNextStatus();
-    		
-    		List<ApplicationFormActionRequired> actionsRequired = new ArrayList<ApplicationFormActionRequired>();
-    		
-    		if (nextStatus == null) {
-    			if (currentStatus == ApplicationFormStatus.INTERVIEW &&
-    	    		application.getLatestInterview().isScheduling()) {
-    				actionsRequired.add(new ApplicationFormActionRequired("CONFIRM_INTERVIEW_ARRANGEMENTS", application.getDueDate(), true));
-    			}
-    			actionsRequired.add(new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true));
-    		} else {}
-    			actionsRequired.add(new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false));
-    		
-    		createApplicationFormUserRole(application, registeredUser, Authority.ADMINISTRATOR, false,
-    				actionsRequired.toArray(new ApplicationFormActionRequired[0]));
+    		assignActionsToNewAdministrator(application, 
+    				createApplicationFormUserRole(application, registeredUser, Authority.ADMINISTRATOR, false));
     	}
     }
     
-    public void createUserInProgramApproverole(RegisteredUser registeredUser, Program program) {
+    public void createUserInProgramApproveRole(RegisteredUser registeredUser, Program program) {
     	List<ApplicationForm> applications = applicationFormDAO.getAdministerableApplicationsByProgram(program);
         
     	for (ApplicationForm application : applications) {
-    		ApplicationFormStatus currentStatus = application.getStatus();
-    		ApplicationFormStatus nextStatus = application.getNextStatus();
-    		
-    		ApplicationFormActionRequired actionRequired;
-    		
-    		if (currentStatus == ApplicationFormStatus.APPROVAL) {
-	    		if (nextStatus == null) {
-	    			actionRequired = new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true);
-	    		} else {}
-	    			actionRequired = new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false);
-	    		
-	    		createApplicationFormUserRole(application, registeredUser, Authority.ADMINISTRATOR, false, actionRequired);
-    		}
+    		assignActionsToNewApprover(application, 
+    				createApplicationFormUserRole(application, registeredUser, Authority.APPROVER, false));
     	}
-    } 
+    }
+    
+    private void assignActionsToNewAdmitter(ApplicationForm application, ApplicationFormUserRole applicationFormUserRole) {
+    	ApplicationFormStatus currentStatus = application.getStatus();
+		ApplicationFormStatus nextStatus = application.getNextStatus();
+		List<ApplicationFormStatus> admitterCommentScope = Arrays.asList(ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL);
+		
+		if (admitterCommentScope.contains(currentStatus) &&
+				(nextStatus == null ||
+				admitterCommentScope.contains(nextStatus)) &&
+				!application.hasConfirmElegibilityComment()) {
+			applicationFormUserRole.getActions().add(new ApplicationFormActionRequired("CONFIRM_ELIGIBILITY", new Date(), false));	
+		}
+    }
+    
+    public void revokeUserRole (RegisteredUser registeredUser, Authority authority) {
+    	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByUserAndAuthority(registeredUser, authority)) {
+    		applicationFormUserRoleDAO.delete(applicationFormUserRole);
+    	}
+    }
+    
+    public void revokeUserProgramRole (RegisteredUser registeredUser, Program program, Authority authority) {
+    	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByUserAndProgramAndAuthority(registeredUser, program, authority)) {
+    		applicationFormUserRoleDAO.delete(applicationFormUserRole);
+    	}
+    }
+    
+    public void registerApplicationUpdate (ApplicationForm applicationForm, int updateVisibility) {
+    	
+    }
+    
+    public void deregisterApplcationUpdate (ApplicationForm applicationForm, RegisteredUser registeredUser) {
+    	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndUser(applicationForm, registeredUser)) {
+    		applicationFormUserRole.setRaisesUpdateFlag(false);
+    	}
+    }
+    
+    private void assignActionsToNewAdministrator(ApplicationForm application, ApplicationFormUserRole applicationFormUserRole) {
+    	ApplicationFormStatus currentStatus = application.getStatus();
+		ApplicationFormStatus nextStatus = application.getNextStatus();
+		
+		List<ApplicationFormActionRequired> actionsRequired = new ArrayList<ApplicationFormActionRequired>();
+		
+		if (nextStatus == null) {
+			if (currentStatus == ApplicationFormStatus.INTERVIEW &&
+	    		application.getLatestInterview().isScheduling()) {
+				actionsRequired.add(new ApplicationFormActionRequired("CONFIRM_INTERVIEW_ARRANGEMENTS", application.getDueDate(), true));
+			}
+			actionsRequired.add(new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true));
+		} else {
+			actionsRequired.add(new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false));
+		}
+		applicationFormUserRole.getActions().addAll(actionsRequired);
+    }
+    
+    private void assignActionsToNewApprover(ApplicationForm application, ApplicationFormUserRole applicationFormUserRole) {
+    	ApplicationFormStatus currentStatus = application.getStatus();
+		ApplicationFormStatus nextStatus = application.getNextStatus();
+		
+		ApplicationFormActionRequired actionRequired;
+		
+		if (currentStatus == ApplicationFormStatus.APPROVAL) {
+    		if (nextStatus == null) {
+    			actionRequired = new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true);
+    		} else {
+    			actionRequired = new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false);
+    		}
+    		applicationFormUserRole.getActions().add(actionRequired);
+		}
+    }
     
     private void assignToAdministrators(ApplicationForm applicationForm, String action, Date dueDate, Boolean bindDealineToDueDate) {
         Map<RegisteredUser, Authority> administrators = Maps.newHashMap();

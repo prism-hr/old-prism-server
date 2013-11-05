@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
@@ -31,8 +32,6 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
-import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 @Service
 @Transactional
@@ -72,9 +71,7 @@ public class ApplicationFormUserRoleService {
         }
 
         ValidationComment validationComment = application.getValidationComment();
-        boolean anyUnsure = validationComment.getHomeOrOverseas() == HomeOrOverseas.UNSURE
-                || validationComment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE
-                || validationComment.getQualifiedForPhd() == ValidationQuestionOptions.UNSURE;
+        boolean anyUnsure = validationComment.isAtLeastOneAnswerUnsure();
 
         for (RegisteredUser admitter : userDAO.getAdmitters()) {
             if (anyUnsure) {
@@ -167,6 +164,14 @@ public class ApplicationFormUserRoleService {
         for (RegisteredUser approver : approvers) {
             createApplicationFormUserRole(applicationForm, approver, Authority.APPROVER, false, new ApplicationFormActionRequired("COMPLETE_APPROVAL_STAGE",
                     applicationForm.getDueDate(), true));
+        }
+    }
+    
+    public void admitterCommentPosted(AdmitterComment comment) {
+        ApplicationForm application = comment.getApplication();
+        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.ADMITTER);
+        for(ApplicationFormUserRole role : roles) {
+            role.getActions().clear();
         }
     }
 
@@ -319,9 +324,6 @@ public class ApplicationFormUserRoleService {
                 Authority.APPROVALADMINISTRATOR, Authority.INTERVIEWADMINISTRATOR, Authority.PROJECTADMINISTRATOR, Authority.REVIEWADMINISTRATOR,
                 Authority.APPROVER);
         for (ApplicationFormUserRole role : roles) {
-//            for (ApplicationFormActionRequired action : role.getActions()) {
-//                applicationFormUserRoleDAO.delete(action);
-//            }
             applicationFormUserRoleDAO.clearActions(role);
             
         }
@@ -339,4 +341,5 @@ public class ApplicationFormUserRoleService {
             }
         }
     }
+
 }

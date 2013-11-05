@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -41,6 +42,12 @@ public class ApplicationFormUserRole implements Serializable {
 
     @Column(name = "is_interested_in_applicant")
     private Boolean interestedInApplicant = false;
+    
+    @Column(name = "update_timestamp")
+    private Date updateTimestamp;
+    
+    @Column(name = "raises_update_flag")
+    private Boolean raisesUpdateFlag = false;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_user_role_id", nullable = false)
@@ -85,9 +92,24 @@ public class ApplicationFormUserRole implements Serializable {
     public void setInterestedInApplicant(Boolean isInterestedInApplicant) {
         this.interestedInApplicant = isInterestedInApplicant;
     }
+    
+    public Date getUpdateTimestamp() {
+        return updateTimestamp;
+    }
+    
+    public void setUpdateTimestamp(Date updateTimestamp) {
+    	this.updateTimestamp = updateTimestamp;
+    }
+    
+    public Boolean getRaisesUpdateFlag() {
+        return raisesUpdateFlag;
+    }
+
+    public void setRaisesUpdateFlag(Boolean raisesUpdateFlag) {
+        this.raisesUpdateFlag = raisesUpdateFlag;
+    }
 
     public List<ApplicationFormActionRequired> getActions() {
         return actions;
     }
-
 }

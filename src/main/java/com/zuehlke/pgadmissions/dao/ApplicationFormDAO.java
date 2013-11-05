@@ -92,4 +92,18 @@ public class ApplicationFormDAO {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
                 .add(Restrictions.eq("program", program)).add(Restrictions.eq("project", project)).list();
     }
+    
+    public List<ApplicationForm> getAllAdministerableApplications() {
+    	return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).
+    			add(Restrictions.ne("status", ApplicationFormStatus.UNSUBMITTED)).
+    			add(Restrictions.eq("withdrawnBeforeSubmit", false)).list();
+    }
+    
+    public List<ApplicationForm> getAdministerableApplicationsByProgram(Program program) {
+    	return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).
+    			add(Restrictions.eq("program", program)).
+    			add(Restrictions.ne("status", ApplicationFormStatus.UNSUBMITTED)).
+    			add(Restrictions.eq("withdrawnBeforeSubmit", false)).list();
+    }
+    
 }

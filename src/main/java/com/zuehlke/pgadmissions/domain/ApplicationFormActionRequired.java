@@ -32,6 +32,9 @@ public class ApplicationFormActionRequired implements Serializable {
 
     @Column(name = "bind_deadline_to_due_date")
     private Boolean bindDeadlineToDueDate = false;
+    
+    @Column(name = "raises_urgent_flag")
+    private Boolean raisesUrgentFlag = false;
 
     public ApplicationFormActionRequired() {
     }
@@ -67,11 +70,19 @@ public class ApplicationFormActionRequired implements Serializable {
     }
 
     public Boolean getBindDeadlineToDueDate() {
-        return bindDeadlineToDueDate;
+        return this.bindDeadlineToDueDate;
     }
 
     public void setBindDeadlineToDueDate(Boolean bindDeadlineToDueDate) {
         this.bindDeadlineToDueDate = bindDeadlineToDueDate;
+    }
+    
+    public Boolean getRaisesUrgentFlag() {
+        return raisesUrgentFlag;
+    }
+
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
+        this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
 }

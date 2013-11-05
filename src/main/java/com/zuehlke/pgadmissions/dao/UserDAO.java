@@ -253,6 +253,7 @@ public class UserDAO {
     }
 
     public List<Integer> getPotentialUsersForTaskNotification() {
+    	updateApplicationFormActionUrgentFlag();
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
         int interval = reminderInterval.getDuration();
         DurationUnitEnum unit = reminderInterval.getUnit();
@@ -261,6 +262,7 @@ public class UserDAO {
     }
 
     public List<Integer> getPotentialUsersForTaskReminder() {
+    	updateApplicationFormActionUrgentFlag();
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
         NotificationsDuration notificationsDurationObj = notificationsDurationDAO.getNotificationsDuration();
         int notificationsDuration = notificationsDurationObj.getDurationInDays();
@@ -272,6 +274,7 @@ public class UserDAO {
     }
 
     public List<Integer> getUsersForUpdateNotification() {
+    	updateApplicationFormActionUrgentFlag();
         return sessionFactory.getCurrentSession().createSQLQuery(getUsersDueToUpdateNotificationSql).list();
     }
 
@@ -292,6 +295,13 @@ public class UserDAO {
             }
         }
         return false;
+    }
+    
+    private void updateApplicationFormActionUrgentFlag() {
+    	sessionFactory.getCurrentSession().createSQLQuery(
+    			"UPDATE APPLICATION_FORM_ACTION_REQUIRED " +
+    			"SET raises_urgent_flag = 1" +
+    			"WHERE deadline_timestamp < CURRENT_DATE()");
     }
 
     /* package */void setGetPotentialUsersDueToTaskReminderSql(String getPotentialUsersDueToTaskReminderSql) {

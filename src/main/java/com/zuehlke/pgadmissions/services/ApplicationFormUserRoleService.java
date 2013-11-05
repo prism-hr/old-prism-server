@@ -40,30 +40,23 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 @Transactional
 public class ApplicationFormUserRoleService {
 
-    private final ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
-
-    private final RoleDAO roleDAO;
-
-    private final UserDAO userDAO;
-    
-    private final ApplicationFormDAO applicationFormDAO;
-    
-    private final Map<ApplicationFormStatus, String> initiateStageMap = Maps.newHashMap();
-    
-    private final Map<ApplicationFormStatus, String> completeStageMap = Maps.newHashMap();
-
-    public ApplicationFormUserRoleService() {
-        this(null, null, null, null);
-    }
+    @Autowired
+    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
     @Autowired
-    public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, 
-    		RoleDAO roleDAO, UserDAO userDAO, ApplicationFormDAO applicationFormDAO) {
-        this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
-        this.roleDAO = roleDAO;
-        this.userDAO = userDAO;
-        this.applicationFormDAO = applicationFormDAO;
-        
+    private RoleDAO roleDAO;
+
+    @Autowired
+    private UserDAO userDAO;
+    
+    @Autowired
+    private ApplicationFormDAO applicationFormDAO;
+    
+    private Map<ApplicationFormStatus, String> initiateStageMap = Maps.newHashMap();
+    
+    private Map<ApplicationFormStatus, String> completeStageMap = Maps.newHashMap();
+
+    public ApplicationFormUserRoleService() {
         initiateStageMap.put(ApplicationFormStatus.REVIEW, "ASSIGN_REVIEWERS");
         initiateStageMap.put(ApplicationFormStatus.INTERVIEW, "ASSIGN_INTERVIEWERS");
         initiateStageMap.put(ApplicationFormStatus.APPROVAL, "ASSIGN_SUPERVISORS");

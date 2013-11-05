@@ -205,11 +205,7 @@ public class UserService {
             throw new IllegalStateException(String.format("user with email: %s already exists!", email));
         }
 
-        // make a new user a VIEWER per default for the programme
         List<Authority> authList = new ArrayList<Authority>(Arrays.asList(authorities));
-        if (!authList.contains(Authority.VIEWER)) {
-            authList.add(Authority.VIEWER);
-        }
 
         newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authList);
         if (authList.contains(Authority.SUPERADMINISTRATOR)) {

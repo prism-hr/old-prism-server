@@ -2,12 +2,12 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +24,9 @@ public class Role implements GrantedAuthority, Serializable {
     @Id
     @Enumerated(EnumType.STRING)
     private Authority id;
+    
+    @Column(name = "update_visibility")
+    private int updateVisibility = 1;
 
     @Override
     public String getAuthority() {
@@ -39,6 +42,10 @@ public class Role implements GrantedAuthority, Serializable {
 
     public Authority getId() {
         return id;
+    }
+    
+    public int getUpdateVisibility() {
+    	return updateVisibility;
     }
 
     @Override

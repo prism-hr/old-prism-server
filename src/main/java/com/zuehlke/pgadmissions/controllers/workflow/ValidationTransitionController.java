@@ -113,39 +113,34 @@ public class ValidationTransitionController extends StateTransitionController {
 
         actionsProvider.validateAction(form, user, invokedAction);
 
-        try {
-            if (result.hasErrors()) {
-                return STATE_TRANSITION_VIEW;
-            }
-
-            if (BooleanUtils.isNotTrue(delegate)) {
-                form.setApplicationAdministrator(null);
-            }
-
-            if (BooleanUtils.isTrue(comment.getFastTrackApplication())) {
-                applicationsService.fastTrackApplication(form.getApplicationNumber());
-            }
-
-            form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
-            accessService.updateAccessTimestamp(form, user, new Date());
-            applicationsService.save(form);
-            comment.setDate(new Date());
-            commentService.save(comment);
-
-            if (comment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
-                applicationsService.makeApplicationNotEditable(form);
-            }
-
-            if (answeredOneOfTheQuestionsUnsure(comment) && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
-                form.setAdminRequestedRegistry(user);
-                form.setRegistryUsersDueNotification(true);
-                applicationsService.save(form);
-            }
-            applicationFormUserRoleService.stateChanged(form);
-
-        } catch (Exception e) {
+        if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
+
+        if (BooleanUtils.isNotTrue(delegate)) {
+            form.setApplicationAdministrator(null);
+        }
+
+        if (BooleanUtils.isTrue(comment.getFastTrackApplication())) {
+            applicationsService.fastTrackApplication(form.getApplicationNumber());
+        }
+
+        form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
+        accessService.updateAccessTimestamp(form, user, new Date());
+        applicationsService.save(form);
+        comment.setDate(new Date());
+        commentService.save(comment);
+
+        if (comment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
+            applicationsService.makeApplicationNotEditable(form);
+        }
+
+        if (answeredOneOfTheQuestionsUnsure(comment) && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
+            form.setAdminRequestedRegistry(user);
+            form.setRegistryUsersDueNotification(true);
+            applicationsService.save(form);
+        }
+        applicationFormUserRoleService.stateChanged(comment);
 
         if (BooleanUtils.isTrue(delegate)) {
             return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();

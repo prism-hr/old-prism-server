@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -119,13 +118,13 @@ public class EvaluationTransitionController extends StateTransitionController {
         }
         ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
 
-        Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
+        StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
                 stateChangeComment.getType(), nextStatus);
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.stateChanged(applicationForm);
+        applicationFormUserRoleService.stateChanged(newComment);
         commentService.save(newComment);
 
         if (nextStatus == ApplicationFormStatus.APPROVAL) {

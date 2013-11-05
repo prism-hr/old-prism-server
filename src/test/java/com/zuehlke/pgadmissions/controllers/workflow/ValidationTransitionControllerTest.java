@@ -107,7 +107,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         applicationServiceMock.save(applicationForm);
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
-        applicationFormUserRoleService.stateChanged(applicationForm);
+        applicationFormUserRoleService.stateChanged(comment);
         
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, applicationFormUserRoleService);
         String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
@@ -139,7 +139,7 @@ public class ValidationTransitionControllerTest {
         RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
         commentServiceMock.save(comment);
         EasyMock.expect(stateTransitionServiceMock.resolveView(applicationForm)).andReturn("view");
-        applicationFormUserRoleService.stateChanged(applicationForm);
+        applicationFormUserRoleService.stateChanged(comment);
 
         EasyMock.replay(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock, applicationFormUserRoleService);
         assertEquals("view",

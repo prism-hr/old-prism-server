@@ -125,6 +125,8 @@ public class ApprovalService {
 
         SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, approvalRound, supervisor);
         commentDAO.save(supervisionConfirmationComment);
+        
+        applicationFormUserRoleService.supervisionConfirmed(supervisor);
     }
 
     private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApprovalRound approvalRound,

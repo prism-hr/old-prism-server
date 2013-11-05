@@ -73,6 +73,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     public void sendDigestsToUsers() {
         log.trace("Sending email digest to users");
+        
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
         List<Integer> users = thisProxy.getPotentialUsersForTaskReminder();
         for (Integer userId : users) {
@@ -167,41 +168,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Reminds users that they are required to provide references.<br/>
-     * Finds all applications in the system that urgently require references, and;<br/>
-     * Schedules their Referees to be reminded.
-     * <p/>
-     * <p>
-     * <b>Recipients</b><br/>
-     * Referee
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b>
-     * <ol>
-     * <li>Referees are scheduled to be reminded to provide references, when;</li>
-     * <ol>
-     * <li>They have previously been notified or reminded to do so, and;</li>
-     * <li>The time elapsed since the previous notification or reminder:
-     * <ol>
-     * <li>Equals the system defined maximum time interval between reminders, or;</li>
-     * <li>Exceeds the system defined maximum time interval between reminders.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </li> </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b><br/>
-     * Scheduled Notification
-     * </p>
-     */
     @Transactional
     public void sendReferenceReminder() {
         log.trace("Running sendReferenceReminder Task");

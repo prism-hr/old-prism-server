@@ -75,8 +75,5 @@ public class ApplicationFormUpdate implements Serializable {
 
     public void setUpdateTimestamp(Date updateTimestamp) {
         this.updateTimestamp = updateTimestamp;
-    }
-    
-    
-    
+    }    
 }

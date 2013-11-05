@@ -181,7 +181,7 @@ public class RejectApplicationControllerTest {
     public void moveToRejectWithValidRejection() {
 
         Rejection rejection = new RejectionBuilder().id(3).build();
-        rejectServiceMock.moveApplicationToReject(application, admin, rejection);
+        rejectServiceMock.moveApplicationToReject(application, rejection);
         EasyMock.expectLastCall();
         rejectServiceMock.sendToPortico(application);
 

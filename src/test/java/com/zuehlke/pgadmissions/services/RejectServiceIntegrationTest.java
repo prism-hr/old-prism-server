@@ -96,7 +96,7 @@ public class RejectServiceIntegrationTest {
 		SecurityContextHolder.setContext(secContext);
 		
 		Rejection rejection = new RejectionBuilder().rejectionReason(reason1).build();
-		rejectsService.moveApplicationToReject(application, approver, rejection);
+		rejectsService.moveApplicationToReject(application, rejection);
 		flushNClear();
 
 		ApplicationForm storedAppl = applicationDAO.get(application.getId());

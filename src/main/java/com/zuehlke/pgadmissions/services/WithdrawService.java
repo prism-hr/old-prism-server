@@ -18,6 +18,8 @@ public class WithdrawService {
 
     @Autowired
     private EventFactory eventFactory;
+    
+    @Autowired ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @Transactional
     public void withdrawApplication(final ApplicationForm application) {
@@ -29,6 +31,7 @@ public class WithdrawService {
         application.setStatus(ApplicationFormStatus.WITHDRAWN);
         application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
         applicationService.save(application);
+        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
     }
 
     @Transactional

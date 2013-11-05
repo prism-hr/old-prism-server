@@ -36,7 +36,11 @@ public class WithdrawServiceTest {
 
     @Mock
     @InjectIntoByType
-    private EventFactory eventFactory;
+    private EventFactory eventFactoryMock;
+    
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @TestedObject
     private WithdrawService service;
@@ -46,9 +50,10 @@ public class WithdrawServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
 
         StateChangeEvent event = new StateChangeEvent();
-        expect(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
+        expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
 
         applicationServiceMock.save(applicationForm);
+        applicationFormUserRoleServiceMock.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);
@@ -65,9 +70,10 @@ public class WithdrawServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).build();
 
         StateChangeEvent event = new StateChangeEvent();
-        expect(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
+        expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
 
         applicationServiceMock.save(applicationForm);
+        applicationFormUserRoleServiceMock.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);

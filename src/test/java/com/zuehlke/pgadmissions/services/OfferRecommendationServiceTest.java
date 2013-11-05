@@ -77,6 +77,10 @@ public class OfferRecommendationServiceTest {
     @Mock
     @InjectIntoByType
     private PorticoQueueService approvedSenderServiceMock;
+    
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @TestedObject
     private OfferRecommendationService service;
@@ -106,6 +110,7 @@ public class OfferRecommendationServiceTest {
         expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
         expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
         mailSendingServiceMock.sendApprovedNotification(application);
+        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
 
         replay();
         service.moveToApproved(application, offerRecommendedComment);
@@ -149,6 +154,7 @@ public class OfferRecommendationServiceTest {
         expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(false);
         expect(programInstanceServiceMock.getEarliestPossibleStartDate(application)).andReturn(DateUtils.addDays(startDate, 3));
         mailSendingServiceMock.sendApprovedNotification(application);
+        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
 
         replay();
         service.moveToApproved(application, offerRecommendedComment);

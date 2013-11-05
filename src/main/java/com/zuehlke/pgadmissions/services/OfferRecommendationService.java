@@ -52,6 +52,9 @@ public class OfferRecommendationService {
     
     @Autowired
     private PorticoQueueService approvedSenderService;
+    
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public boolean moveToApproved(ApplicationForm form, OfferRecommendedComment offerRecommendedComment) {
         if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
@@ -90,6 +93,7 @@ public class OfferRecommendationService {
             }
         }
         commentDAO.save(offerRecommendedComment);
+        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form);
         return true;
     }
 

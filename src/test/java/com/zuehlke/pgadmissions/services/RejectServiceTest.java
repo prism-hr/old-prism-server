@@ -62,6 +62,10 @@ public class RejectServiceTest {
     @Mock
     @InjectIntoByType
     private PorticoQueueService porticoQueueService;
+    
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private ApplicationForm application;
 	
@@ -95,6 +99,7 @@ public class RejectServiceTest {
 		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		expect(eventFactoryMock.createEvent(ApplicationFormStatus.REJECTED)).andReturn(event);
 		mailServiceMock.sendRejectionConfirmationToApplicant(application);
+		applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
 		
 		replay();
 		rejectService.moveApplicationToReject(application, rejection);

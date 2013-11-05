@@ -42,6 +42,9 @@ public class RejectService {
 	
 	@Autowired
 	private MailSendingService mailService;
+	
+	@Autowired
+	private ApplicationFormUserRoleService applicationFormUserRoleService;
 
 	public List<RejectReason> getAllRejectionReasons() {
 		return rejectDao.getAllReasons();
@@ -60,7 +63,7 @@ public class RejectService {
 		
 		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);
-		
+		applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form);
 	}
 	
 	private void sendRejectNotificationToApplicant(ApplicationForm form) {

@@ -71,7 +71,7 @@ public class ApplicationFormUserRoleService {
                     new Date(), false));
         }
 
-        ValidationComment validationComment = (ValidationComment) application.getLatestStateChangeComment();
+        ValidationComment validationComment = application.getValidationComment();
         boolean anyUnsure = validationComment.getHomeOrOverseas() == HomeOrOverseas.UNSURE
                 || validationComment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE
                 || validationComment.getQualifiedForPhd() == ValidationQuestionOptions.UNSURE;
@@ -140,7 +140,7 @@ public class ApplicationFormUserRoleService {
 
             for (InterviewParticipant participant : interview.getParticipants()) {
                 boolean isApplicant = participant.getUser().getId().equals(application.getApplicant().getId());
-                Authority authority = isApplicant ? Authority.INTERVIEWER : Authority.APPLICANT;
+                Authority authority = isApplicant ? Authority.APPLICANT : Authority.INTERVIEWER;
                 createApplicationFormUserRole(application, participant.getUser(), authority, false, new ApplicationFormActionRequired(
                         "PROVIDE_INTERVIEW_AVAILABILITY", new Date(), false));
             }
@@ -259,7 +259,7 @@ public class ApplicationFormUserRoleService {
             applicationFormUserRole.setRole(roleDAO.getRoleByAuthority(authority));
             applicationFormUserRole.setUser(user);
         }
-        
+
         applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
         for (ApplicationFormActionRequired action : actions) {
             applicationFormUserRole.getActions().add(action);
@@ -319,7 +319,11 @@ public class ApplicationFormUserRoleService {
                 Authority.APPROVALADMINISTRATOR, Authority.INTERVIEWADMINISTRATOR, Authority.PROJECTADMINISTRATOR, Authority.REVIEWADMINISTRATOR,
                 Authority.APPROVER);
         for (ApplicationFormUserRole role : roles) {
-            role.getActions().clear();
+//            for (ApplicationFormActionRequired action : role.getActions()) {
+//                applicationFormUserRoleDAO.delete(action);
+//            }
+            applicationFormUserRoleDAO.clearActions(role);
+            
         }
     }
 

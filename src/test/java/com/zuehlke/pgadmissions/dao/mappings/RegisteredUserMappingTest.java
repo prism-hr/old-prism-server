@@ -133,6 +133,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         // clear out whatever test data is in there -remember, it will all be
         // rolled back!
         sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_ACTION_OPTIONAL").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_USER_ROLE").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
@@ -161,6 +162,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         // clear out whatever test data is in there -remember, it will all be
         // rolled back!
         sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_ACTION_OPTIONAL").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_USER_ROLE").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();

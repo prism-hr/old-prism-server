@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -15,8 +16,8 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRoleId;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -36,26 +37,56 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
     private ApplicationForm application;
 
     @Test
-    public void shouldSaveAndOverrideApplicationFormUserRole() throws ParseException {
+    public void shouldSaveAndLoadApplicationFormUserRole() throws ParseException {
 
         Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
 
-        ApplicationFormUserRoleId id = new ApplicationFormUserRoleId(application, user, refereeRole);
-
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
-                .currentRole(true).build();
+                .interestedInApplicant(true).build();
+
+        ApplicationFormActionRequired actionRequired1 = new ApplicationFormActionRequired();
+        actionRequired1.setAction("PROVIDE_REFERENCE");
+        actionRequired1.setBindDeadlineToDueDate(false);
+        actionRequired1.setDeadlineTimestamp(new Date());
+        applicationFormUserRole.getActions().add(actionRequired1);
+
+        flushAndClearSession();
+
         applicationFormUserRoleDAO.save(applicationFormUserRole);
+        
+        ApplicationFormUserRole returned = (ApplicationFormUserRole) sessionFactory.getCurrentSession().get(ApplicationFormUserRole.class, applicationFormUserRole.getId());
 
-        flushAndClearSession();
+        assertEquals("ABC", returned.getApplicationForm().getApplicationNumber());
+        assertEquals("Jane", returned.getUser().getFirstName());
+        assertEquals(refereeRole.getId(), returned.getRole().getId());
 
-        ApplicationFormUserRole updatedApplicationFormUserRole = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
-                .currentRole(false).build();
-        applicationFormUserRoleDAO.save(updatedApplicationFormUserRole);
+        assertEquals(1, returned.getActions().size());
+        ApplicationFormActionRequired actionRequired = returned.getActions().get(0);
+        assertEquals("PROVIDE_REFERENCE", actionRequired.getAction());
+        assertFalse(actionRequired.getBindDeadlineToDueDate());
 
-        flushAndClearSession();
+    }
 
-        ApplicationFormUserRole returnedRole = applicationFormUserRoleDAO.findById(id);
-        assertFalse(returnedRole.isCurrentRole());
+    @Test
+    public void shouldFindApplicationFormUserRoleByApplicationFormAndUserAndAuthority() throws ParseException {
+
+        RegisteredUser secondUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@123.com").username("franek")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        sessionFactory.getCurrentSession().save(secondUser);
+
+        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+        Role admitterRole = roleDAO.getRoleByAuthority(Authority.ADMITTER);
+
+        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
+                .interestedInApplicant(true).build();
+        ApplicationFormUserRole role2 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(admitterRole)
+                .interestedInApplicant(true).build();
+        ApplicationFormUserRole role3 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(secondUser).role(refereeRole)
+                .interestedInApplicant(true).build();
+        save(role1, role2, role3);
+
+        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.REFEREE);
+        assertEquals(role1, role);
     }
 
     @Test
@@ -65,12 +96,12 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         Role admitterRole = roleDAO.getRoleByAuthority(Authority.ADMITTER);
         Role superAdministratorRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
 
-        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole).currentRole(true)
-                .build();
-        ApplicationFormUserRole role2 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(admitterRole).currentRole(true)
-                .build();
+        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
+                .interestedInApplicant(true).build();
+        ApplicationFormUserRole role2 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(admitterRole)
+                .interestedInApplicant(true).build();
         ApplicationFormUserRole role3 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(superAdministratorRole)
-                .currentRole(true).build();
+                .interestedInApplicant(true).build();
         save(role1, role2, role3);
 
         List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.REFEREE,
@@ -85,12 +116,12 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         Role admitterRole = roleDAO.getRoleByAuthority(Authority.ADMITTER);
         Role superAdministratorRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
 
-        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole).currentRole(true)
-                .build();
-        ApplicationFormUserRole role2 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(admitterRole).currentRole(true)
-                .build();
+        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
+                .interestedInApplicant(true).build();
+        ApplicationFormUserRole role2 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(admitterRole)
+                .interestedInApplicant(true).build();
         ApplicationFormUserRole role3 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(superAdministratorRole)
-                .currentRole(true).build();
+                .interestedInApplicant(true).build();
         save(role1, role2, role3);
 
         List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationForm(application);

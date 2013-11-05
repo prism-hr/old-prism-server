@@ -482,10 +482,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return returnList;
         }
 
-        if (user.hasStaffRightsOnApplicationForm(this) ||
-        	user.isApplicationAdministrator(this) ||
-        	user.isViewerOfProgramme(this, user) || 
-        	user.isInRole(Authority.ADMITTER)) {
+        if (user.hasStaffRightsOnApplicationForm(this) || user.isApplicationAdministrator(this) || user.isViewerOfProgramme(this, user)
+                || user.isInRole(Authority.ADMITTER)) {
             returnList.addAll(applicationComments);
             Collections.sort(returnList);
             return returnList;
@@ -983,27 +981,27 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
-    
+
     public List<Integer> getQualicationsToSendToPorticoIds() {
-    	List<Integer> qualificationIdsToSend = new ArrayList<Integer>();
-    	for (int i = 0; i < getQualifications().size(); i++) {
-    		if (getQualifications().get(i).getSendToUCL()) {
-    			qualificationIdsToSend.add(getQualifications().get(i).getId());
-    		}
-    	}
-    	if (qualificationIdsToSend.isEmpty()) {
-    		return null;
-    	}
-    	return qualificationIdsToSend;
+        List<Integer> qualificationIdsToSend = new ArrayList<Integer>();
+        for (int i = 0; i < getQualifications().size(); i++) {
+            if (getQualifications().get(i).getSendToUCL()) {
+                qualificationIdsToSend.add(getQualifications().get(i).getId());
+            }
+        }
+        if (qualificationIdsToSend.isEmpty()) {
+            return null;
+        }
+        return qualificationIdsToSend;
     }
-    
+
     public boolean hasQualificationsWithTranscripts() {
-    	for (Qualification qualification : getQualifications()) {
-    		if (qualification.getProofOfAward() != null) {
-    			return true;
-    		}
-    	}
-    	return false;
+        for (Qualification qualification : getQualifications()) {
+            if (qualification.getProofOfAward() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<ReferenceComment> getReferencesToSendToPortico() {
@@ -1025,30 +1023,29 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
-    
+
     public List<Integer> getRefereesToSendToPorticoIds() {
-    	List<Integer> refereeIdsToSend = new ArrayList<Integer>();
-    	for (int i = 0; i < getReferees().size(); i++) {
-    		if (getReferees().get(i).getSendToUCL()) {
-    			refereeIdsToSend.add(getReferees().get(i).getId());
-    		}
-    	}
-    	if (refereeIdsToSend.isEmpty()) {
-    		return null;
-    	}
-    	return refereeIdsToSend;
+        List<Integer> refereeIdsToSend = new ArrayList<Integer>();
+        for (int i = 0; i < getReferees().size(); i++) {
+            if (getReferees().get(i).getSendToUCL()) {
+                refereeIdsToSend.add(getReferees().get(i).getId());
+            }
+        }
+        if (refereeIdsToSend.isEmpty()) {
+            return null;
+        }
+        return refereeIdsToSend;
     }
-    
+
     public boolean hasEnoughReferencesToSendToPortico() {
-       if (getReferencesToSendToPortico().size() == 2) {
-           return true;
-       }
-       return false;
+        if (getReferencesToSendToPortico().size() == 2) {
+            return true;
+        }
+        return false;
     }
 
     public boolean hasEnoughQualificationsToSendToPortico() {
-        if (getQualificationsToSendToPortico().size() > 0 &&
-                getQualificationsToSendToPortico().size() <= 2) {
+        if (getQualificationsToSendToPortico().size() > 0 && getQualificationsToSendToPortico().size() <= 2) {
             return true;
         }
         return false;
@@ -1107,7 +1104,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public StateChangeComment getLatestStateChangeComment() {
-    	StateChangeComment stateChangeComment = null;
+        StateChangeComment stateChangeComment = null;
         switch (getStatus()) {
         case APPROVAL:
             stateChangeComment = getEvaluationCommentForLatestApprovalRound();
@@ -1128,27 +1125,36 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return null;
     }
-    
+
+    public ValidationComment getValidationComment() {
+        List<Comment> applicationComments = getApplicationCommentsReversed();
+        for (Comment comment : applicationComments) {
+            if (comment instanceof ValidationComment && comment.getType() != CommentType.ADMITTER_COMMENT) {
+                return (ValidationComment) comment;
+            }
+        }
+        return null;
+    }
+
     public ApplicationFormStatus getNextStatus() {
-    	StateChangeComment latestStateChangeComment = getLatestStateChangeComment();
+        StateChangeComment latestStateChangeComment = getLatestStateChangeComment();
         if (latestStateChangeComment != null) {
             return latestStateChangeComment.getNextStatus();
         }
         return null;
     }
-    
+
     public Integer getAverageRatingPercent() {
         return MathUtils.convertRatingToPercent(getAverageRating());
     }
-    
+
     public String getAverageRatingFormatted() {
         return MathUtils.formatRating(getAverageRating());
     }
-    
+
     private List<Comment> getApplicationCommentsReversed() {
         return Lists.reverse(getApplicationComments());
     }
-    
 
     private ReviewEvaluationComment getEvaluationCommentForLatestRoundOfReview() {
         ReviewRound latestReviewRound = getLatestReviewRound();
@@ -1196,16 +1202,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
                         return interviewEvaluationComment;
                     }
                 }
-            }
-        }
-        return null;
-    }
-
-    private ValidationComment getValidationComment() {
-        List<Comment> applicationComments = getApplicationCommentsReversed();
-        for (Comment comment : applicationComments) {
-            if (comment instanceof ValidationComment && comment.getType() != CommentType.ADMITTER_COMMENT) {
-                return (ValidationComment) comment;
             }
         }
         return null;

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -48,6 +49,15 @@ public class ApplicationFormUserRoleDAO {
 
     public ApplicationFormUserRole get(Integer id) {
         return (ApplicationFormUserRole) sessionFactory.getCurrentSession().get(ApplicationFormUserRole.class, id);
+    }
+
+    public void delete(ApplicationFormActionRequired action) {
+        sessionFactory.getCurrentSession().delete(action);
+    }
+
+    public void clearActions(ApplicationFormUserRole role) {
+        role.getActions().clear();
+        sessionFactory.getCurrentSession().flush();
     }
 
 }

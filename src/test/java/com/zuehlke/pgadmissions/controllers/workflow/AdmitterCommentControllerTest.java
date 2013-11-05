@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EventFactory;
@@ -87,6 +88,10 @@ public class AdmitterCommentControllerTest {
     @Mock
     @InjectIntoByType
     private EventFactory eventFactoryMock;
+    
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Mock
     BindingResult resultMock;
@@ -174,6 +179,7 @@ public class AdmitterCommentControllerTest {
         accessServiceMock.updateAccessTimestamp(eq(application), eq(currentUser), EasyMock.isA(Date.class));
         applicationsServiceMock.save(application);
         commentServiceMock.save(comment);
+        applicationFormUserRoleServiceMock.admitterCommentPosted(comment);
 
         replay();
         String result = controller.confirmEligibility(modelMap, comment, resultMock);

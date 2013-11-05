@@ -135,7 +135,7 @@ public class ValidationTransitionController extends StateTransitionController {
             applicationsService.makeApplicationNotEditable(form);
         }
 
-        if (answeredOneOfTheQuestionsUnsure(comment) && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
+        if (comment.isAtLeastOneAnswerUnsure() && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
             form.setAdminRequestedRegistry(user);
             form.setRegistryUsersDueNotification(true);
             applicationsService.save(form);
@@ -148,11 +148,6 @@ public class ValidationTransitionController extends StateTransitionController {
 
         applicationsService.refresh(form);
         return stateTransitionService.resolveView(form);
-    }
-
-    private boolean answeredOneOfTheQuestionsUnsure(final ValidationComment comment) {
-        return comment.getHomeOrOverseas() == HomeOrOverseas.UNSURE || comment.getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
-                || comment.getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
     }
 
     @ModelAttribute("validationQuestionOptions")

@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EventFactory;
@@ -74,6 +75,9 @@ public class AdmitterCommentController {
 
     @Autowired
     private ApplicationDescriptorProvider applicationDescriptorProvider;
+    
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @ModelAttribute("user")
     public RegisteredUser getUser() {
@@ -145,6 +149,7 @@ public class AdmitterCommentController {
         application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(application, user, new Date());
         applicationsService.save(application);
+        applicationFormUserRoleService.admitterCommentPosted(comment);
 
         return "redirect:/applications?messageCode=validation.comment.success&application=" + application.getApplicationNumber();
     }

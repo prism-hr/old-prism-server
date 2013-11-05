@@ -5,27 +5,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Service
 public class WithdrawService {
 
-    private final ApplicationsService applicationService;
-
-    private final PorticoQueueService porticoQueueService;
-
-    public WithdrawService() {
-        this(null, null);
-    }
+    @Autowired
+    private ApplicationsService applicationService;
 
     @Autowired
-    public WithdrawService(final ApplicationsService applicationService, final PorticoQueueService porticoQueueService) {
-        this.applicationService = applicationService;
-        this.porticoQueueService = porticoQueueService;
-    }
+    private PorticoQueueService porticoQueueService;
+
+    @Autowired
+    private EventFactory eventFactory;
 
     @Transactional
-    public void saveApplicationFormAndSendMailNotifications(final ApplicationForm form) {
-        applicationService.save(form);
+    public void withdrawApplication(final ApplicationForm application) {
+
+        if (!application.isSubmitted()) {
+            application.setWithdrawnBeforeSubmit(true);
+        }
+
+        application.setStatus(ApplicationFormStatus.WITHDRAWN);
+        application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
+        applicationService.save(application);
     }
 
     @Transactional

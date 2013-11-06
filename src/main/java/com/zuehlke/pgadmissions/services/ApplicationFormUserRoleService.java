@@ -89,8 +89,8 @@ public class ApplicationFormUserRoleService {
 
     public void validationStageCompleted(ApplicationForm application) {
         for (Referee referee : application.getReferees()) {
-            createApplicationFormUserRole(application, referee.getUser(), Authority.REFEREE, false, new ApplicationFormActionRequired("PROVIDE_REFERENCE",
-                    new Date(), false));
+            createApplicationFormUserRole(application, referee.getUser(), Authority.REFEREE, false, 
+            		new ApplicationFormActionRequired("PROVIDE_REFERENCE", new Date(), false, true));
         }
 
         ValidationComment validationComment = application.getValidationComment();
@@ -98,8 +98,8 @@ public class ApplicationFormUserRoleService {
 
         for (RegisteredUser admitter : userDAO.getAdmitters()) {
             if (anyUnsure) {
-                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false, new ApplicationFormActionRequired("CONFIRM_ELIGIBILITY",
-                        new Date(), false));
+                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false, 
+                		new ApplicationFormActionRequired("CONFIRM_ELIGIBILITY", new Date(), false, true));
             } else {
                 createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);
             }
@@ -118,19 +118,19 @@ public class ApplicationFormUserRoleService {
         if (nextStatus == ApplicationFormStatus.APPROVED) {
             for (RegisteredUser approver : approvers) {
                 createApplicationFormUserRole(application, approver, Authority.APPROVER, false, new ApplicationFormActionRequired(
-                        "COMPLETE_OFFER_RECOMMENDATION", new Date(), false));
+                        "COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true));
             }
 
             for (RegisteredUser superAdministrator : userDAO.getSuperadministrators()) {
                 createApplicationFormUserRole(application, superAdministrator, Authority.SUPERADMINISTRATOR, false, new ApplicationFormActionRequired(
-                        "COMPLETE_OFFER_RECOMMENDATION", new Date(), false));
+                        "COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true));
             }
         }
 
         if (application.getStatus() == ApplicationFormStatus.APPROVAL && nextStatus != null) {
             for (RegisteredUser approver : approvers) {
                 createApplicationFormUserRole(application, approver, Authority.APPROVER, false, new ApplicationFormActionRequired(initiateStageMap.get(nextStatus),
-                        new Date(), false));
+                        new Date(), false, true));
             }
         }
     }
@@ -141,7 +141,8 @@ public class ApplicationFormUserRoleService {
         assignToAdministrators(application, "COMPLETE_REVIEW_STAGE", application.getDueDate(), true);
 
         for (Reviewer reviewer : reviewRound.getReviewers()) {
-            createApplicationFormUserRole(reviewRound.getApplication(), reviewer.getUser(), Authority.REVIEWER, true);
+            createApplicationFormUserRole(reviewRound.getApplication(), reviewer.getUser(), Authority.REVIEWER, true,
+            		new ApplicationFormActionRequired("PROVIDE_REVIEW", new Date(), false, true));
         }
     }
 
@@ -155,13 +156,15 @@ public class ApplicationFormUserRoleService {
             for (InterviewParticipant participant : interview.getParticipants()) {
                 boolean isApplicant = participant.getUser().getId().equals(application.getApplicant().getId());
                 Authority authority = isApplicant ? Authority.APPLICANT : Authority.INTERVIEWER;
-                createApplicationFormUserRole(application, participant.getUser(), authority, false, new ApplicationFormActionRequired(
-                        "PROVIDE_INTERVIEW_AVAILABILITY", new Date(), false));
+                createApplicationFormUserRole(application, participant.getUser(), authority, false, 
+                		new ApplicationFormActionRequired("PROVIDE_INTERVIEW_AVAILABILITY", new Date(), false, true));
             }
         } else {
             for (Interviewer interviewer : interview.getInterviewers()) {
+            	boolean raisesUrgentFlag = interview.getInterviewDueDate().after(new Date());
+            	
                 createApplicationFormUserRole(application, interviewer.getUser(), Authority.INTERVIEWER, false, new ApplicationFormActionRequired(
-                        "PROVIDE_INTERVIEW_FEEDBACK", interview.getInterviewDueDate(), false));
+                        "PROVIDE_INTERVIEW_FEEDBACK", interview.getInterviewDueDate(), false, raisesUrgentFlag));
             }
         }
         assignToAdministrators(application, "COMPLETE_INTERVIEW_STAGE", application.getDueDate(), true);
@@ -173,14 +176,14 @@ public class ApplicationFormUserRoleService {
 
         Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
         createApplicationFormUserRole(approvalRound.getApplication(), primarySupervisor.getUser(), Authority.SUPERVISOR, false,
-                new ApplicationFormActionRequired("CONFIRM_PRIMARY_SUPERVISION", new Date(), false));
+                new ApplicationFormActionRequired("CONFIRM_PRIMARY_SUPERVISION", new Date(), false, true));
 
         assignToAdministrators(applicationForm, "COMPLETE_APPROVAL_STAGE", applicationForm.getDueDate(), true);
 
         List<RegisteredUser> approvers = applicationForm.getProgram().getApprovers();
         for (RegisteredUser approver : approvers) {
-            createApplicationFormUserRole(applicationForm, approver, Authority.APPROVER, false, new ApplicationFormActionRequired("COMPLETE_APPROVAL_STAGE",
-                    applicationForm.getDueDate(), true));
+            createApplicationFormUserRole(applicationForm, approver, Authority.APPROVER, false, 
+            		new ApplicationFormActionRequired("COMPLETE_APPROVAL_STAGE", applicationForm.getDueDate(), true, false));
         }
     }
     
@@ -244,7 +247,7 @@ public class ApplicationFormUserRoleService {
             }
             role.getActions().clear();
             if (!isApplicant) {
-                role.getActions().add(new ApplicationFormActionRequired("PROVIDE_INTERVIEW_FEEDBACK", new Date(), false));
+                role.getActions().add(new ApplicationFormActionRequired("PROVIDE_INTERVIEW_FEEDBACK", new Date(), false, true));
             }
         }
         deassignFromAdministrators(application);
@@ -268,27 +271,6 @@ public class ApplicationFormUserRoleService {
 
     public void processingDelegated(ApplicationForm applicationForm) {
         // TODO Auto-generated method stub
-    }
-
-    private ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,
-            boolean interestedInApplicant, ApplicationFormActionRequired... actions) {
-
-        ApplicationFormUserRole applicationFormUserRole = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(applicationForm, user, authority);
-
-        if (applicationFormUserRole == null) {
-            applicationFormUserRole = new ApplicationFormUserRole();
-            applicationFormUserRole.setApplicationForm(applicationForm);
-            applicationFormUserRole.setRole(roleDAO.getRoleByAuthority(authority));
-            applicationFormUserRole.setUser(user);
-        }
-
-        applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
-        for (ApplicationFormActionRequired action : actions) {
-            applicationFormUserRole.getActions().add(action);
-        }
-
-        applicationFormUserRoleDAO.save(applicationFormUserRole);
-        return applicationFormUserRole;
     }
 
     public void supervisionConfirmed(Supervisor supervisor) {
@@ -358,7 +340,7 @@ public class ApplicationFormUserRoleService {
 				(nextStatus == null ||
 				admitterCommentScope.contains(nextStatus)) &&
 				!application.hasConfirmElegibilityComment()) {
-			applicationFormUserRole.getActions().add(new ApplicationFormActionRequired("CONFIRM_ELIGIBILITY", new Date(), false));	
+			applicationFormUserRole.getActions().add(new ApplicationFormActionRequired("CONFIRM_ELIGIBILITY", new Date(), false, true));	
 		}
     }
     
@@ -387,6 +369,28 @@ public class ApplicationFormUserRoleService {
     	}
     }
     
+    private ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,
+            boolean interestedInApplicant, ApplicationFormActionRequired... actions) {
+
+        ApplicationFormUserRole applicationFormUserRole = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(applicationForm, user, authority);
+
+        if (applicationFormUserRole == null) {
+            applicationFormUserRole = new ApplicationFormUserRole();
+            applicationFormUserRole.setApplicationForm(applicationForm);
+            applicationFormUserRole.setRole(roleDAO.getRoleByAuthority(authority));
+            applicationFormUserRole.setUser(user);
+        }
+
+        applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
+        
+        for (ApplicationFormActionRequired action : actions) {
+            applicationFormUserRole.getActions().add(action);
+        }
+
+        applicationFormUserRoleDAO.save(applicationFormUserRole);
+        return applicationFormUserRole;
+    }
+    
     private void assignActionsToNewAdministrator(ApplicationForm application, ApplicationFormUserRole applicationFormUserRole) {
     	ApplicationFormStatus currentStatus = application.getStatus();
 		ApplicationFormStatus nextStatus = application.getNextStatus();
@@ -394,13 +398,16 @@ public class ApplicationFormUserRoleService {
 		List<ApplicationFormActionRequired> actionsRequired = new ArrayList<ApplicationFormActionRequired>();
 		
 		if (nextStatus == null) {
+			boolean raisesUrgentFlag = application.getDueDate().after(new Date());
+			
 			if (currentStatus == ApplicationFormStatus.INTERVIEW &&
 	    		application.getLatestInterview().isScheduling()) {
-				actionsRequired.add(new ApplicationFormActionRequired("CONFIRM_INTERVIEW_ARRANGEMENTS", application.getDueDate(), true));
+				actionsRequired.add(new ApplicationFormActionRequired("CONFIRM_INTERVIEW_ARRANGEMENTS", application.getDueDate(), true, raisesUrgentFlag));
 			}
-			actionsRequired.add(new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true));
+			actionsRequired.add(new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true, raisesUrgentFlag));
+			applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
 		} else {
-			actionsRequired.add(new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false));
+			actionsRequired.add(new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false, false));
 		}
 		applicationFormUserRole.getActions().addAll(actionsRequired);
     }
@@ -413,9 +420,10 @@ public class ApplicationFormUserRoleService {
 		
 		if (currentStatus == ApplicationFormStatus.APPROVAL) {
     		if (nextStatus == null) {
-    			actionRequired = new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true);
+    			boolean raisesUrgentFlag = application.getDueDate().after(new Date());
+    			actionRequired = new ApplicationFormActionRequired(completeStageMap.get(currentStatus), application.getDueDate(), true, raisesUrgentFlag);
     		} else {
-    			actionRequired = new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false);
+    			actionRequired = new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false, false);
     		}
     		applicationFormUserRole.getActions().add(actionRequired);
 		}
@@ -439,8 +447,9 @@ public class ApplicationFormUserRoleService {
             }
         }
         for (Entry<RegisteredUser, Authority> administrator : administrators.entrySet()) {
-            createApplicationFormUserRole(applicationForm, administrator.getKey(), administrator.getValue(), false, new ApplicationFormActionRequired(action,
-                    dueDate, bindDealineToDueDate));
+        	boolean raisesUrgentFlag = dueDate.after(new Date());
+            createApplicationFormUserRole(applicationForm, administrator.getKey(), administrator.getValue(), false, 
+            		new ApplicationFormActionRequired(action, dueDate, bindDealineToDueDate, raisesUrgentFlag));
         }
     }
 
@@ -458,14 +467,17 @@ public class ApplicationFormUserRoleService {
     private void resetActionDeadline(ApplicationForm applicationForm, Date newDueDate) {
         applicationForm.setDueDate(newDueDate);
         List<ApplicationFormUserRole> applicationFormUserRoles = applicationFormUserRoleDAO.findByApplicationForm(applicationForm);
+        boolean raisesUrgentFlag = newDueDate.after(new Date());
         for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoles) {
             List<ApplicationFormActionRequired> actions = applicationFormUserRole.getActions();
             for (ApplicationFormActionRequired action : actions) {
                 if (action.getBindDeadlineToDueDate()) {
                     action.setDeadlineTimestamp(newDueDate);
+                    action.setRaisesUrgentFlag(raisesUrgentFlag);
                 }
             }
+        	applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
         }
     }
-
+    
 }

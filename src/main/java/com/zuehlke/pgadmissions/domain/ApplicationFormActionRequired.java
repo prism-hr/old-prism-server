@@ -45,12 +45,6 @@ public class ApplicationFormActionRequired implements Serializable {
     public ApplicationFormActionRequired() {
     }
 
-    public ApplicationFormActionRequired(String action, Date deadlineTimestamp, Boolean bindDeadlineToDueDate) {
-        this.action = action;
-        this.deadlineTimestamp = deadlineTimestamp;
-        this.bindDeadlineToDueDate = bindDeadlineToDueDate;
-    }
-
     public ApplicationFormActionRequired(String action, Date deadlineTimestamp, Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag) {
         this.action = action;
         this.deadlineTimestamp = deadlineTimestamp;

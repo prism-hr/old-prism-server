@@ -5,14 +5,6 @@
         <col style="width: 90px" />
         <col style="width: 30px" />
     </colgroup>
-    <thead>
-        <tr>
-        	<th>&nbsp;</th>
-            <th>Qualification</th>
-            <th>Date</th>
-            <th>&nbsp;</th>
-        </tr>
-    </thead>
     <tbody>
         <#assign anyQualificationEnabled = false>
         <#list applicationForm.qualifications as existingQualification>
@@ -51,10 +43,12 @@
             </td>
 
             <td>
-                <#if existingQualification.isQualificationCompleted()> 
-                    ${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!} 
-                <#else> 
-                    Expected 
+                <#if existingQualification.isQualificationCompleted()>
+                    Awarded:
+                    <strong>${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}</strong>
+                <#else>
+                    Expected:
+                    <strong>${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}</strong>
                 </#if>
             </td> 
             <td><a name="showQualificationLink" id="showQualificationLink_${encQualificationId}" toggles="qualification_${encQualificationId}" class="button-show button-hint" data-desc="Show">edit</a></td>

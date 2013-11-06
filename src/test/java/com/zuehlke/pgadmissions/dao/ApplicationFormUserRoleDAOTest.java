@@ -1,10 +1,14 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,6 +30,8 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ActionDefinition;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 
 public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
@@ -53,8 +59,9 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         applicationFormUserRoleDAO.save(applicationFormUserRole);
-        
-        ApplicationFormUserRole returned = (ApplicationFormUserRole) sessionFactory.getCurrentSession().get(ApplicationFormUserRole.class, applicationFormUserRole.getId());
+
+        ApplicationFormUserRole returned = (ApplicationFormUserRole) sessionFactory.getCurrentSession().get(ApplicationFormUserRole.class,
+                applicationFormUserRole.getId());
 
         assertEquals("ABC", returned.getApplicationForm().getApplicationNumber());
         assertEquals("Jane", returned.getUser().getFirstName());
@@ -126,6 +133,87 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationForm(application);
         assertThat(roles, containsInAnyOrder(role1, role2, role3));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldFindActionsByUserAndApplicationForm() {
+        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+        Role admitterRole = roleDAO.getRoleByAuthority(Authority.ADMITTER);
+        Role superAdministratorRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
+
+        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
+                .interestedInApplicant(true).build();
+        ApplicationFormUserRole role2 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(admitterRole)
+                .interestedInApplicant(true).build();
+        ApplicationFormUserRole role3 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(superAdministratorRole)
+                .interestedInApplicant(true).build();
+
+        role1.getActions().add(new ApplicationFormActionRequired("COMMENT", new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired("EMAIL_APPLICANT", new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired("PROVIDE_REFERENCE", new Date(), false, false));
+
+        role2.getActions().add(new ApplicationFormActionRequired("CONFIRM_ELIGIBILITY", new Date(), false, false));
+        role2.getActions().add(new ApplicationFormActionRequired("EMAIL_APPLICANT", new Date(), false, true));
+
+        save(role1, role2, role3);
+
+        List<ActionDefinition> actions = applicationFormUserRoleDAO.findActionsByUserAndApplicationForm(user, application);
+        System.out.println(actions);
+
+        assertThat(actions, containsInAnyOrder( //
+                allOf(hasProperty("action", equalTo("COMMENT")), hasProperty("raisesUrgentFlag", equalTo(false))), //
+                allOf(hasProperty("action", equalTo("EMAIL_APPLICANT")), hasProperty("raisesUrgentFlag", equalTo(true))), //
+                allOf(hasProperty("action", equalTo("PROVIDE_REFERENCE")), hasProperty("raisesUrgentFlag", equalTo(false))), //
+                allOf(hasProperty("action", equalTo("CONFIRM_ELIGIBILITY")), hasProperty("raisesUrgentFlag", equalTo(false))))); //
+    }
+
+    @Test
+    public void shouldFindRaisesUpdateFlagByUserAndApplicationForm() {
+        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+        Role admitterRole = roleDAO.getRoleByAuthority(Authority.ADMITTER);
+        Role superAdministratorRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
+        
+        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
+                .interestedInApplicant(true).build();
+        ApplicationFormUserRole role2 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(admitterRole)
+                .interestedInApplicant(true).build();
+        ApplicationFormUserRole role3 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(superAdministratorRole)
+                .interestedInApplicant(true).raisesUpdateFlag(true).build();
+        
+        save(role1, role2, role3);
+        
+        Boolean raisesUpdateFlag = applicationFormUserRoleDAO.findRaisesUpdateFlagByUserAndApplicationForm(user, application);
+        assertTrue(raisesUpdateFlag);
+    }
+    
+    @Test
+    public void shouldActionBeAvailableForUserAndApplicationForm() {
+        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+        
+        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
+                .interestedInApplicant(true).build();
+        
+        role1.getActions().add(new ApplicationFormActionRequired("COMMENT", new Date(), false, false));
+        
+        save(role1);
+        
+        Boolean actionAvailable = applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, application, ApplicationFormAction.COMMENT);
+        assertTrue(actionAvailable);
+    }
+    @Test
+    public void shouldActionBeNotAvailableForUserAndApplicationForm() {
+        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+        
+        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
+                .interestedInApplicant(true).build();
+        
+        role1.getActions().add(new ApplicationFormActionRequired("EMAIL_APPLICANT", new Date(), false, false));
+        
+        save(role1);
+        
+        Boolean actionAvailable = applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, application, ApplicationFormAction.COMMENT);
+        assertFalse(actionAvailable);
     }
 
     @Before

@@ -31,8 +31,7 @@ $(document).ready(function() {
                 var selText = $option.text();
                 var category = $option.attr("category");
                 if(appendNewSupervisorToList(id, selText, category)){
-                	$("#programSupervisors option[value='" + id + "']").addClass('selected').removeAttr('selected').attr('disabled', 'disabled');
-                }
+                	$("#programSupervisors option[value='" + id + "']").addClass('selected').removeAttr('selected').attr('disabled', 'disabled');                }
             }
         }
         resetSupervisorsErrors();
@@ -161,6 +160,8 @@ function addExistingUserToSupervisorsLists(newSupervisor) {
 function disableAddingSupervisorsToList() {
 
 	$('#programSupervisors').attr("disabled", "disabled");
+    $('#assignSupervisorsToAppSection label').addClass("grey-label").parent().find('.hint').addClass("grey");
+
 	$("#addSupervisorBtn").addClass("disabled");
 	
 	$("#p_newSupervisor").addClass("grey-label").parent().find('.hint').addClass("grey");
@@ -187,6 +188,7 @@ function disableAddingSupervisorsToList() {
 
 function enableAddingSupervisorsToList() {
 	$('#programSupervisors').removeAttr("disabled", "disabled");
+    $('#assignSupervisorsToAppSection label').removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	$("#addSupervisorBtn").removeClass("disabled");
 	
 	$("#p_newSupervisor").removeClass("grey-label").parent().find('.hint').removeClass("grey");

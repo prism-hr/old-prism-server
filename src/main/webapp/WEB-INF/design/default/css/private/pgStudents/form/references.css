@@ -35,5 +35,5 @@ section.form-rows.navy table.existing th { background-position: 0 -125px; }
 /* Table with scrolling content and fixed header. */
 #refereesTable td.scrollparent { padding: 0; }
 #refereesTable td.scrollparent .button-edit, #existingUsers td.scrollparent .button-delete { margin: 0 }
-#refereesTable .scroll { max-height: 155px; overflow: auto; } /* roughly five rows high. */
+#refereesTable .scroll { max-height: 169px; overflow: auto; } /* roughly five rows high. */
 #refereesTable .scroll table { border-collapse: collapse; width: 100%; }

@@ -16,14 +16,6 @@
     <col style="width: 36px" />
     <col style="width: 36px" />
     </colgroup>
-    <thead>
-      <tr>
-        <th>Funding</th>
-        <th>Awarded</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-      </tr>
-    </thead>
     <tbody>
      <tr>
         <td colspan="4" class="scrollparent">
@@ -31,7 +23,7 @@
             <table class="table-striped table-hover">
                 <colgroup>
                 <col />
-                <col style="width: 90px" />
+                <col style="width: 150px" />
                 <col style="width: 30px" />
                 <col style="width: 30px" />
                 </colgroup>
@@ -46,7 +38,7 @@
                         (&pound;
                         ${(existingFunding.value?html)!}) - no document!
                         </#if> </td>
-                      <td>${existingFunding.awardDate?string('dd MMM yyyy')}</td>
+                      <td>Awarded: <strong>${existingFunding.awardDate?string('dd MMM yyyy')}</strong></td>
                       <td><a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_
                         ${encrypter.encrypt(existingFunding.id)}
                         " class="button-edit button-hint">edit</a></td>

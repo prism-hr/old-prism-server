@@ -3,7 +3,7 @@
   <div>
     <form>
         <div id="researchOpportunityFeedSection">
-            <div class="row-group" id="existing-feed-table-row-group">
+            <div id="existing-feed-table-row-group">
                 <div class="tableContainer table table-condensed">
                     <table id="existing-feed-table" class="table table-condensed table-bordered" style="">
                         <colgroup>

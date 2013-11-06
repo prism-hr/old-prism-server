@@ -1420,7 +1420,7 @@ span.icon-status.not-submitted:before {
 }
 #previewModal {
   width: 650px !important;
-  margin-left: -318px !important;
+  margin-left: -400px !important;
 }
 
 #previewModal.modal.large {
@@ -2022,7 +2022,7 @@ background: #909194;
 	.field .input-small {
 		width: 90px;
 	}
-	.modal .modal-body .field, section.form-rows .field {
+	section.form-rows .field {
 		margin-left: 290px !important;
 	}
 	.field .max {

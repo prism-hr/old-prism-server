@@ -14,13 +14,6 @@
     <col style="width: 36px" />
     <col style="width: 36px" />
     </colgroup>
-    <thead>
-      <tr>
-        <th>Referees</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-      </tr>
-    </thead>
     <tbody>
       <tr>
          <td colspan="3" class="scrollparent">

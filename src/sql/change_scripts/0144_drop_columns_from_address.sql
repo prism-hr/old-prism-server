@@ -1,0 +1,6 @@
+ALTER TABLE APPLICATION_FORM_ADDRESS 
+DROP COLUMN post_code,
+DROP COLUMN purpose,
+DROP COLUMN start_date,
+DROP COLUMN end_date,
+DROP COLUMN contact_address;

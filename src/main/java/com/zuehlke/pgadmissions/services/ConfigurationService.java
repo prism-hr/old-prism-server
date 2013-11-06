@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 
 @Service
 public class ConfigurationService {
@@ -41,23 +42,26 @@ public class ConfigurationService {
     
     private final RoleDAO roleDAO;
     
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    
     private final UserFactory userFactory;
     
 
     public ConfigurationService() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ConfigurationService(final StageDurationDAO stageDurationDAO,
             final ReminderIntervalDAO reminderIntervalDAO, final NotificationsDurationDAO notificationsDurationDAO,
-            final PersonDAO personDAO, final UserDAO userDAO,
+            final PersonDAO personDAO, final UserDAO userDAO, final ApplicationFormUserRoleService applicationFormUserRoleService,
             final UserFactory userFactory, final RoleDAO roleDAO) {
         this.stageDurationDAO = stageDurationDAO;
         this.reminderIntervalDAO = reminderIntervalDAO;
         this.notificationsDurationDAO = notificationsDurationDAO;
         this.personDAO = personDAO;
         this.userDAO  = userDAO;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.userFactory = userFactory;
         this.roleDAO = roleDAO;
     }
@@ -126,6 +130,7 @@ public class ConfigurationService {
         if (user!=null) {
             user.removeRole(Authority.ADMITTER);
             userDAO.save(user);
+            applicationFormUserRoleService.revokeUserRole(user, Authority.ADMITTER);
         }
     }
 
@@ -147,6 +152,7 @@ public class ConfigurationService {
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
         }
+        applicationFormUserRoleService.createUserInAdmitterRole(user);
     }
 
     @Transactional

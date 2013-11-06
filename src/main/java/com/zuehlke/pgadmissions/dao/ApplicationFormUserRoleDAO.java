@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -105,4 +106,22 @@ public class ApplicationFormUserRoleDAO {
         return actionDefinitions;
     }
 
+    public Boolean findRaisesUpdateFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
+        return (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)//
+                .add(Restrictions.eq("applicationForm", applicationForm)) //
+                .add(Restrictions.eq("user", user)) //
+                .setProjection(Projections.projectionList().add(Projections.max("raisesUpdateFlag"))) //
+                .uniqueResult();
+    }
+
+    public boolean checkActionAvailableForUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm, ApplicationFormAction action) {
+        Object result = sessionFactory.getCurrentSession() //
+                .createCriteria(ApplicationFormActionRequired.class) //
+                .createAlias("applicationFormUserRole", "role") //
+                .add(Restrictions.eq("role.applicationForm", applicationForm)) //
+                .add(Restrictions.eq("role.user", user)) //
+                .add(Restrictions.eq("action", action.name()))
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("action"))).uniqueResult();
+        return result != null;
+    }
 }

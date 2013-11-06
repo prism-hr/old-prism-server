@@ -1,0 +1,5 @@
+<customQuestions>
+		<question type="text">
+			<required>TRUE</required>
+		</question>
+</customQuestions>

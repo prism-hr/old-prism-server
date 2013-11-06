@@ -8,14 +8,6 @@
     <col style="width: 36px">
     <col style="width: 36px">
     </colgroup>
-    <thead>
-      <tr>
-        <th>Position</th>
-        <th>Dates</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-      </tr>
-    </thead>
     <tbody>
      <tr>
         <td colspan="4" class="scrollparent">

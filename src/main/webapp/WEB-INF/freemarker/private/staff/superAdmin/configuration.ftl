@@ -89,7 +89,7 @@
                 <div class="alert alert-info"> <i class="icon-info-sign"></i> Customise the e-mail templates </div>
                 <div class="row-group">
                   <div class="row">
-                    <label class="plain-label" for="emailTemplateType">Template <em>*</em></label>
+                    <label class="plain-label" for="emailTemplateType">Template<em>*</em></label>
                     <span data-desc="Select the template to edit" class="hint"></span>
                     <div class="field">
                       <select name="emailTemplateType" id="emailTemplateType" class="templateType">
@@ -150,7 +150,7 @@
                 <form class="portico-configuration-form">
                   <div class="row-group">
                     <div class="row">
-                      <label class="plain-label" for="throttoleSwitchOnId">Portico Interface <em>*</em></label>
+                      <label class="plain-label" for="throttoleSwitchOnId">Portico Interface<em>*</em></label>
                       <span data-desc="Enable/disable the Portico interface" class="hint"></span>
                       <div class="field">
                         <input id="throttoleSwitchOnId" type="radio" name="switch" value="on">
@@ -162,7 +162,7 @@
                       </div>
                     </div>
                     <div class="row">
-                      <label class="plain-label" for="batchSizeId">Throttling Batch Size <em>*</em></label>
+                      <label class="plain-label" for="batchSizeId">Throttling Batch Size<em>*</em></label>
                       <span data-desc="Maximum number of rejected and withdrawn applications to send to Portico every night (0 = no limit)" class="hint"></span>
                       <div class="field">
                         <input type="text" id="batchSizeId" class="input-small" />
@@ -170,7 +170,7 @@
                     </div>
 
                     <div class="row">
-                      <label class="plain-label" for="processingDelay">Processing Delay <em>*</em></label>
+                      <label class="plain-label" for="processingDelay">Processing Delay<em>*</em></label>
                       <span data-desc="<@spring.message 'configuration.processingDelay'/>" class="hint"></span>
                       <div class="field">
                         <input type="text" id="processingDelay" class="input-small" />
@@ -199,7 +199,7 @@
               <form>
               <div class="row-group">
                 <div class="row">
-                  <label class="plain-label" for="program">Programme <em>*</em></label>
+                  <label class="plain-label" for="program">Programme<em>*</em></label>
                   <span data-desc="Select a programme." class="hint"></span>
                   <div class="field">
                     <select name="programSelect" id="programSelect">
@@ -213,7 +213,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <label class="plain-label" for="stageSelect">Form <em>*</em></label>
+                  <label class="plain-label" for="stageSelect">Form<em>*</em></label>
                   <span data-desc="Select a form." class="hint"></span>
                   <div class="field">
                     <select name="stageSelect" id="stageSelect">
@@ -226,7 +226,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <label class="plain-label" for="scoringConfigurationContent">Configuration <em>*</em></label>
+                  <label class="plain-label" for="scoringConfigurationContent">Configuration<em>*</em></label>
                   <span data-desc="Enter the XML configuration for your custom form. You can find guidance on writing a configuration by visiting our helpdesk." class="hint"></span>
                   <div class="field">
                     <textarea name="scoringConfigurationContent" id="scoringConfigurationContent" class="input-xxlarge" rows="15" cols="150"></textarea>

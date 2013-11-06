@@ -65,6 +65,11 @@
   							<ul class="status-info">
   								<li class="${timelineObject.type}">
   									<div class="box">
+                      <div class="title">
+                        <span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
+                        <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
+                        <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
+                      </div>
   										<p class="added">
   											<#assign size_users = timelineObject.reviewRound.reviewers?size>
   											<#list timelineObject.reviewRound.reviewers as reviewer>

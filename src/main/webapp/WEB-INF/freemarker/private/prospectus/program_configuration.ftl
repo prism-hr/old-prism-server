@@ -23,13 +23,13 @@
                       <i class="icon-info-sign"></i> Manage the advert for your programme here.
                   </div>
                     <div class="row" id="programAdvertDescriptionDiv">
-                      <label for="programAdvertDescriptionText" class="plain-label">Description <em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.description'/>"></span>
+                      <label for="programAdvertDescriptionText" class="plain-label">Description<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.description'/>"></span>
                       <div class="field">
                           <textarea id="programAdvertDescriptionText" class="max" rows="6" cols="150"></textarea>
                       </div>
                     </div>
                     <div class="row" id="programAdvertStudyDurationDiv">
-                      <label for="programAdvertStudyDurationInput" class="plain-label">Duration of Study <em>*</em>
+                      <label for="programAdvertStudyDurationInput" class="plain-label">Duration of Study<em>*</em>
                       </label> <span class="hint" data-desc="<@spring.message 'prospectus.durationOfStudy'/>"></span>
                       <div class="field">
                           <input class="numeric input-small" type="text" size="4" id="programAdvertStudyDurationInput" />
@@ -47,7 +47,7 @@
                       </div>
                     </div>
                     <div class="row" id="programAdvertIsActiveDiv">
-                  <label class="plain-label">Are you currently accepting applications? <em>*</em>
+                  <label class="plain-label">Are you currently accepting applications?<em>*</em>
                   </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
                   <div class="field">
                     <input id="programAdvertIsActiveRadioYes" type="radio" name="switch" value="true">
@@ -83,7 +83,7 @@
               <div class="row-group" id="programAdvertClosingDateGroup">
                 <input type="hidden" id="programAdvertClosingDateId"/>
                 <div class="row" id="programAdvertClosingDateDiv">
-                  <label for="closingDate" class="plain-label">Closing Date <em>*</em></label>
+                  <label for="closingDate" class="plain-label">Closing Date<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'prospectus.closingDate'/>"></span>
                   <div class="field">
                     <input type="text" id="programAdvertClosingDateInput" class="full date"/>

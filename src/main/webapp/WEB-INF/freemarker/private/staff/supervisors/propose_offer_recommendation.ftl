@@ -129,7 +129,7 @@
     <label id="lbl_offerConditions" class="plain-label grey-label">Recommended Conditions</label>
     <span class="hint grey" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
     <#else>
-    <label id="lbl_offerConditions" class="plain-label">Recommended Conditions <em>*</em></label>
+    <label id="lbl_offerConditions" class="plain-label">Recommended Conditions<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
     </#if> 
     <div class="field">

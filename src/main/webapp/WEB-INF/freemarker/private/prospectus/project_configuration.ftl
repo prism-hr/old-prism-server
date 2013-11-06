@@ -57,7 +57,7 @@
         <div class="row-group aSDisplay projectGroup" id="projectAdministratorDiv">
         <h3>Administrator</h3>
         <div class="row" id="projectAdvertHasAdministratorDiv">
-            <label class="plain-label">Would you like to specify a project administrator? <em>*</em>
+            <label class="plain-label">Would you like to specify a project administrator?<em>*</em>
             </label> <span class="hint" data-desc="<@spring.message 'prospectus.hasSecondarySupervisor'/>"></span>
             <div class="field">
               <input id="projectAdvertHasAdministratorRadioYes" type="radio" name="projectAdvertHasAdministratorRadio" value="true">
@@ -99,14 +99,14 @@
                 	<i class="icon-info-sign"></i> Manage the adverts and closing dates for your project here.
            		 </div>
                 <div class="row" id="projectAdvertTitleDiv">
-                    <label for="projectAdvertTitleInput" class="plain-label">Title <em>*</em></label>
+                    <label for="projectAdvertTitleInput" class="plain-label">Title<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'prospectus.title'/>"></span>
                     <div class="field">
                         <input class="numeric max" type="text" id="projectAdvertTitleInput" />
                     </div>
                 </div>
                 <div class="row" id="projectAdvertDescriptionDiv">
-                    <label for="projectAdvertDescriptionText" class="plain-label">Description <em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.projectDec'/>"></span>
+                    <label for="projectAdvertDescriptionText" class="plain-label">Description<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.projectDec'/>"></span>
                     <div class="field">
                         <textarea id="projectAdvertDescriptionText" class="max" rows="6" cols="150"></textarea>
                     </div>
@@ -118,7 +118,7 @@
                       </div>
                     </div>
               <div class="row" id="projectAdvertHasClosingDateDiv">
-                <label class="plain-label">Would you like to set a closing date? <em>*</em>
+                <label class="plain-label">Would you like to set a closing date?<em>*</em>
                 </label> <span class="hint" data-desc="<@spring.message 'prospectus.projectClosingDate'/>"></span>
                 <div class="field">
                   <input id="projectAdvertHasClosingDateRadioYes" type="radio" name="projectAdvertHasClosingDateRadio" value="true">
@@ -130,7 +130,7 @@
                 </div>
               </div>
               <div class="row" id="projectAdvertClosingDateDiv">
-                <label for="closingDate" class="plain-label">Closing Date <em>*</em></label>
+                <label for="closingDate" class="plain-label">Closing Date<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'prospectus.closingDate'/>"></span>
                 <div class="field">
                   <input type="text" id="projectAdvertClosingDateInput" class="full date" disabled/>
@@ -167,7 +167,7 @@
       <div class="row-group aSDisplay projectGroup" id="secondarySupervisorDiv">
         <h3>Secondary Supervisor</h3>
 				<div class="row" id="projectAdvertHasSecondarySupervisorDiv">
-            <label class="plain-label">Would you like to specify a secondary Supervisor? <em>*</em>
+            <label class="plain-label">Would you like to specify a secondary Supervisor?<em>*</em>
             </label> <span class="hint" data-desc="<@spring.message 'prospectus.hasSecondarySupervisor'/>"></span>
             <div class="field">
               <input id="projectAdvertHasSecondarySupervisorRadioYes" type="radio" name="projectAdvertHasSecondarySupervisorRadio" value="true">
@@ -206,7 +206,7 @@
                                                
           <div class="row-group projectGroup">
               <div class="row" id="projectAdvertIsActiveDiv">
-                <label class="plain-label">Are you currently accepting applications? <em>*</em>
+                <label class="plain-label">Are you currently accepting applications?<em>*</em>
                 </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
                 <div class="field">
                   <input id="projectAdvertIsActiveRadioYes" type="radio" name="projectAdvertIsActiveRadio" value="true">

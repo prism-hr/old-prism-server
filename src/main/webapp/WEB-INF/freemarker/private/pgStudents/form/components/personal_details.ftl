@@ -177,7 +177,7 @@
             <h3>Nationalities</h3>
              <div class="row"> 
                 <div class="nationality-item">
-                    <label class="plain-label" for="nationality">Primary Nationality <em>*</em></label>
+                    <label class="plain-label" for="nationality">Primary Nationality<em>*</em></label>
                      <span class="hint" data-desc="<@spring.message 'myaccount.primaryNationality'/>"></span>
                      <div class="field">
                       <select class="full" id="primaryNationality" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>

@@ -16,11 +16,7 @@
     <input type="hidden" class="question-type" value = "${score.questionType}"/>
     <input type="hidden" class="question" value = "${score.question}"/>
     <input type="hidden" class="question-required" value = "${originalQuestion.required?string("true", "false")}"/>
-    <label class="plain-label question-label" for="question_${score_index}">${score.question}
-    <#if originalQuestion.required>
-    	&nbsp;<em>*</em> 
-    </#if>
-    </label>
+    <label class="plain-label question-label" for="question_${score_index}">${score.question}<#if originalQuestion.required><em>*</em></#if></label>
 	<#if originalQuestion.tooltip??>
 		<span class="hint" data-desc="${originalQuestion.tooltip}"></span>
 	</#if>

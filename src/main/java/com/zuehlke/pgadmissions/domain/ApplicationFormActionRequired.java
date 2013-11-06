@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -32,9 +34,13 @@ public class ApplicationFormActionRequired implements Serializable {
 
     @Column(name = "bind_deadline_to_due_date")
     private Boolean bindDeadlineToDueDate = false;
-    
+
     @Column(name = "raises_urgent_flag")
     private Boolean raisesUrgentFlag = false;
+
+    @ManyToOne
+    @JoinColumn(name = "application_form_user_role_id", nullable = false, updatable = false, insertable = false)
+    private ApplicationFormUserRole applicationFormUserRole;
 
     public ApplicationFormActionRequired() {
     }
@@ -43,6 +49,13 @@ public class ApplicationFormActionRequired implements Serializable {
         this.action = action;
         this.deadlineTimestamp = deadlineTimestamp;
         this.bindDeadlineToDueDate = bindDeadlineToDueDate;
+    }
+
+    public ApplicationFormActionRequired(String action, Date deadlineTimestamp, Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag) {
+        this.action = action;
+        this.deadlineTimestamp = deadlineTimestamp;
+        this.bindDeadlineToDueDate = bindDeadlineToDueDate;
+        this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
     public Integer getId() {
@@ -76,13 +89,21 @@ public class ApplicationFormActionRequired implements Serializable {
     public void setBindDeadlineToDueDate(Boolean bindDeadlineToDueDate) {
         this.bindDeadlineToDueDate = bindDeadlineToDueDate;
     }
-    
+
     public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
 
     public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+
+    public ApplicationFormUserRole getApplicationFormUserRole() {
+        return applicationFormUserRole;
+    }
+
+    public void setApplicationFormUserRole(ApplicationFormUserRole applicationFormUserRole) {
+        this.applicationFormUserRole = applicationFormUserRole;
     }
 
 }

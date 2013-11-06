@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormLastAccessDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUpdateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormLastAccess;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -22,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Transactional
 @Service
-public class ApplicationFormAccessService {
+public class ApplicationFormAccessService extends ApplicationFormUserRoleService {
 
     @Autowired
     private ApplicationFormUpdateDAO applicationFormUpdateDAO;
@@ -31,17 +30,12 @@ public class ApplicationFormAccessService {
     private ApplicationFormLastAccessDAO applicationFormLastAccessDAO;
 
     public void updateAccessTimestamp(ApplicationForm form, RegisteredUser user, Date timestamp) {
-        ApplicationFormLastAccess access = applicationFormLastAccessDAO.getLastAccess(form, user);
-        if (access == null) {
-            access = new ApplicationFormLastAccess();
-            access.setApplicationForm(form);
-            access.setUser(user);
-        }
-        access.setLastAccessTimestamp(timestamp);
-        applicationFormLastAccessDAO.saveAccess(access);
+    	// The date parameter is not doing anything here. We can remove it when we finish the integration
+        deregisterApplicationUpdate(form, user);
     }
 
     public boolean userNeedsToSeeApplicationUpdates(ApplicationForm form, RegisteredUser user) {
+    	// This is doing nothing at all now. We handle it through the new functions
         List<ApplicationFormUpdate> missedUpdates = applicationFormUpdateDAO.getUpdatesForUser(form, user);
 
         if (missedUpdates == null || missedUpdates.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -38,39 +39,53 @@ public class ApplicationFormUserRoleDAO {
     }
 
     public List<ApplicationFormUserRole> findByApplicationFormAndUser(ApplicationForm applicationForm, RegisteredUser user) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user)).list();
     }
 
     public List<ApplicationFormUserRole> findByApplicationFormAndAuthorityUpdateVisility(ApplicationForm applicationForm, int updateVisibility) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
-                .add(Restrictions.eq("role.updateVisibility", updateVisibility)).list();
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.ge("role.updateVisibility", updateVisibility)).list();
+    }
+    
+    public Date findUpdateTimestampByApplicationFormAndAuthorityUpdateVisility(ApplicationForm applicationForm, int updateVisibility) {
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.ge("role.updateVisibility", updateVisibility))
+                .setProjection(Projections.projectionList().add(Projections.max("updateTimestamp"))).uniqueResult();
     }
 
     public ApplicationFormUserRole findByApplicationFormAndUserAndAuthority(ApplicationForm applicationForm, RegisteredUser user, Authority authority) {
         return (ApplicationFormUserRole) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .add(Restrictions.eq("applicationForm", applicationForm)).add(Restrictions.eq("user", user)).add(Restrictions.eq("role.id", authority))
-                .uniqueResult();
+                .add(Restrictions.eq("applicationForm", applicationForm)).add(Restrictions.eq("user", user))
+                .add(Restrictions.eq("role.id", authority)).uniqueResult();
     }
 
     public List<ApplicationFormUserRole> findByApplicationFormAndAuthorities(ApplicationForm applicationForm, Authority... authorities) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.in("role.id", authorities)).list();
     }
 
     public List<ApplicationFormUserRole> findByUserAndProgramAndAuthority(RegisteredUser registeredUser, Program program, Authority authority) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).createAlias("applicationForm.program", "program")
-                .add(Restrictions.eq("registeredUser", registeredUser)).add(Restrictions.eq("program", program)).add(Restrictions.eq("role.id", authority))
-                .list();
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.createAlias("applicationForm.program", "program")
+                .add(Restrictions.eq("registeredUser", registeredUser))
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("role.id", authority)).list();
     }
 
     public List<ApplicationFormUserRole> findByUserAndAuthority(RegisteredUser registeredUser, Authority authority) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("registeredUser", registeredUser))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("registeredUser", registeredUser))
                 .add(Restrictions.eq("role.id", authority)).list();
     }
 
     public List<ApplicationFormUserRole> findByApplicationForm(ApplicationForm applicationForm) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm)).list();
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm)).list();
     }
 
     public ApplicationFormUserRole get(Integer id) {

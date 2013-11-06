@@ -48,6 +48,9 @@ public class ApplicationFormUserRole implements Serializable {
     
     @Column(name = "raises_update_flag")
     private Boolean raisesUpdateFlag = false;
+    
+    @Column(name = "raises_urgent_flag")
+    private Boolean raisesUrgentFlag = false;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_user_role_id", nullable = false)
@@ -107,6 +110,14 @@ public class ApplicationFormUserRole implements Serializable {
 
     public void setRaisesUpdateFlag(Boolean raisesUpdateFlag) {
         this.raisesUpdateFlag = raisesUpdateFlag;
+    }
+    
+    public Boolean getRaisesUrgentFlag() {
+        return raisesUrgentFlag;
+    }
+
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
+        this.raisesUpdateFlag = raisesUrgentFlag;
     }
 
     public List<ApplicationFormActionRequired> getActions() {

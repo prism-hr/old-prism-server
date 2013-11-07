@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
@@ -68,19 +67,19 @@ public class ReferenceController {
     private final ScoreFactory scoreFactory;
     private final ApplicationFormAccessService accessService;
     private final ActionsProvider actionsProvider;
-    private final ApplicationDescriptorProvider applicationDescriptorProvider;
     private final ApplicantRatingService applicantRatingService;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     ReferenceController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
             DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
             ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
-            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService,
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;
@@ -92,7 +91,6 @@ public class ReferenceController {
         this.scoreFactory = scoreFactory;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
         this.applicantRatingService = applicantRatingService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
@@ -118,7 +116,7 @@ public class ReferenceController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")
@@ -166,7 +164,7 @@ public class ReferenceController {
     public String getUploadReferencesPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REFERENCE);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
         accessService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
@@ -176,7 +174,7 @@ public class ReferenceController {
             throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REFERENCE);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {

@@ -70,7 +70,6 @@ public class InterviewCommentControllerTest {
     private ActionsProvider actionsProviderMock;
     private ApplicationFormAccessService accessServiceMock;
     private ApplicantRatingService applicantRatingServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -101,7 +100,7 @@ public class InterviewCommentControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.ADD_INTERVIEW_FEEDBACK);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK);
 
         replay(actionsProviderMock);
         assertEquals("private/staff/interviewers/feedback/interview_feedback", controller.getInterviewFeedbackPage(modelMap));
@@ -213,11 +212,11 @@ public class InterviewCommentControllerTest {
         commentServiceMock.save(comment);
         applicantRatingServiceMock.computeAverageRating(interview);
         applicantRatingServiceMock.computeAverageRating(application);
-        applicationFormUserRoleServiceMock.interviewFeedbackPosted(interviewer);
+        accessServiceMock.interviewFeedbackPosted(interviewer);
 
-        replay(commentServiceMock, applicationsServiceMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
+        replay(commentServiceMock, applicationsServiceMock, applicantRatingServiceMock, accessServiceMock);
         assertEquals("redirect:/applications?messageCode=interview.feedback&application=abc", controller.addComment(comment, errorsMock, modelMap));
-        verify(commentServiceMock, applicationsServiceMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
+        verify(commentServiceMock, applicationsServiceMock, applicantRatingServiceMock, accessServiceMock);
         Assert.assertSame(comment, interviewer.getInterviewComment());
     }
 
@@ -234,10 +233,9 @@ public class InterviewCommentControllerTest {
         actionsProviderMock = createMock(ActionsProvider.class);
         accessServiceMock = createMock(ApplicationFormAccessService.class);
         applicantRatingServiceMock = createMock(ApplicantRatingService.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
                 documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, actionsProviderMock, accessServiceMock,
-                null, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
+                applicantRatingServiceMock);
 
     }
 }

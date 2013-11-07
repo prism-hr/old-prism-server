@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,13 +10,11 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -28,8 +25,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
@@ -43,8 +38,6 @@ public class ApplicationFormListCriteriaBuilder {
     private Criteria criteria;
 
     private final SessionFactory sessionFactory;
-
-    private Boolean attentionFlagsOnly = false;
 
     private RegisteredUser user = null;
 
@@ -86,16 +79,6 @@ public class ApplicationFormListCriteriaBuilder {
         return this;
     }
 
-    public ApplicationFormListCriteriaBuilder allVisibleApplications() {
-        attentionFlagsOnly = false;
-        return this;
-    }
-
-    public ApplicationFormListCriteriaBuilder attentionFlag() {
-        attentionFlagsOnly = true;
-        return this;
-    }
-
     public Criteria build() {
         criteria.setReadOnly(true);
         criteria.setProjection(Projections.id());
@@ -106,16 +89,6 @@ public class ApplicationFormListCriteriaBuilder {
 
         if (maxResults > -1) {
             criteria.setMaxResults(maxResults);
-        }
-
-        if (BooleanUtils.isTrue(attentionFlagsOnly)) {
-            buildCriteriaForNormalUser();
-        } else {
-            if (user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMITTER)) {
-                buildCriteriaForSuperAdministratorOrAdmitter();
-            } else {
-                buildCriteriaForNormalUser();
-            }
         }
 
         criteria = setAliases(criteria);
@@ -146,59 +119,10 @@ public class ApplicationFormListCriteriaBuilder {
         return criteria;
     }
 
-    private void buildCriteriaForSuperAdministratorOrAdmitter() {
-        criteria.add(getAllApplicationsForSuperAdministrator());
-        criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
-    }
-
-    private void buildCriteriaForNormalUser() {
-        Disjunction disjunction = Restrictions.disjunction();
-
-        if (user.isInRole(Authority.APPLICANT)) {
-            disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichApplicant(user)));
-            disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichReferee(user)));
-        } else {
-            criteria.add(getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit());
-        }
-
-        if (user.isInRole(Authority.REFEREE)) {
-            disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichReferee(user)));
-        }
-
-        if (user.isInRole(Authority.ADMITTER)) {
-            disjunction.add(Subqueries.propertyIn("id", getAllApplicationsWhichNeedConfirmingTheirEligibility()));
-        }
-
-        if (!user.getProgramsOfWhichAdministrator().isEmpty()) {
-            disjunction.add(Subqueries.propertyIn("id", getSubmittedApplicationsInProgramsOfWhichAdmin(user)));
-        }
-
-        if (!user.getProgramsOfWhichApprover().isEmpty()) {
-            disjunction.add(Subqueries.propertyIn("id", getApprovedApplicationsInProgramsOfWhichApprover(user)));
-        }
-
-        if (applicationsFilter.getPreFilter() == ApplicationsPreFilter.ALL) {
-            if (!user.getProgramsOfWhichViewer().isEmpty()) {
-                disjunction.add(Subqueries.propertyIn("id", getApplicationsInProgramsOfWhichViewer(user)));
-            }
-        }
-
-        disjunction.add(Subqueries.propertyIn("id", getSubmittedApplicationsOfWhichApplicationAdministrator(user)));
-
-        disjunction.add(Subqueries.propertyIn("id", getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(user)));
-
-        disjunction.add(Subqueries.propertyIn("id", getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(user)));
-
-        disjunction.add(Subqueries.propertyIn("id", getApplicationsCurrentlyInApprovalOrApprovedOfWhichSupervisorOfLatestApprovalRound(user)));
-
-        disjunction.add(Subqueries.propertyIn("id", getApplicationsOfWhichProjectAdministrator(user)));
-
-        criteria.add(disjunction);
-    }
-
     private Criteria setAliases(final Criteria criteria) {
         criteria.createAlias("applicant", "a");
         criteria.createAlias("program", "p");
+        criteria.createAlias("applicationFormUserRoles", "r");
         return criteria;
     }
 
@@ -269,7 +193,7 @@ public class ApplicationFormListCriteriaBuilder {
         if (order == SortOrder.DESCENDING) {
             ascending = false;
         }
-
+        
         switch (sortCategory) {
 
         case APPLICANT_NAME:
@@ -336,74 +260,6 @@ public class ApplicationFormListCriteriaBuilder {
         } else {
             return Order.desc(propertyName);
         }
-    }
-
-    private DetachedCriteria getAllApplicationsWhichNeedConfirmingTheirEligibility() {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id")).add(Restrictions.isNotNull("adminRequestedRegistry"))
-                .add(Restrictions.eq("registryUsersDueNotification", true));
-    }
-
-    private Criterion getAllApplicationsWhichHaveBeenWithdrawnAfterInitialSubmit() {
-        return Restrictions.eq("withdrawnBeforeSubmit", false);
-    }
-
-    private Criterion getAllApplicationsForSuperAdministrator() {
-        return Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED));
-    }
-
-    private DetachedCriteria applicationsOfWhichReferee(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id")).createAlias("referees", "referee")
-                .add(Restrictions.eq("referee.user", user));
-    }
-
-    private DetachedCriteria applicationsOfWhichApplicant(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id")).add(Restrictions.eq("applicant", user));
-    }
-
-    private DetachedCriteria getSubmittedApplicationsOfWhichApplicationAdministrator(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id"))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED))).add(Restrictions.eq("applicationAdministrator", user));
-    }
-
-    private DetachedCriteria getSubmittedApplicationsInProgramsOfWhichAdmin(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id"))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
-                .add(Restrictions.in("program", user.getProgramsOfWhichAdministrator()));
-    }
-
-    private DetachedCriteria getApprovedApplicationsInProgramsOfWhichApprover(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id"))
-                .add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL)).add(Restrictions.in("program", user.getProgramsOfWhichApprover()));
-    }
-
-    private DetachedCriteria getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id"))
-                .add(Restrictions.eq("status", ApplicationFormStatus.REVIEW)).createAlias("latestReviewRound", "latestReviewRound")
-                .createAlias("latestReviewRound.reviewers", "reviewer").add(Restrictions.eq("reviewer.user", user));
-    }
-
-    private DetachedCriteria getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id"))
-                .add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW)).createAlias("latestInterview", "latestInterview")
-                .createAlias("latestInterview.interviewers", "interviewer").add(Restrictions.eq("interviewer.user", user));
-    }
-
-    private DetachedCriteria getApplicationsCurrentlyInApprovalOrApprovedOfWhichSupervisorOfLatestApprovalRound(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id"))
-                .add(Restrictions.in("status", Arrays.asList(ApplicationFormStatus.APPROVAL, ApplicationFormStatus.APPROVED)))
-                .createAlias("latestApprovalRound", "latestApprovalRound").createAlias("latestApprovalRound.supervisors", "supervisor")
-                .add(Restrictions.eq("supervisor.user", user));
-    }
-
-    private DetachedCriteria getApplicationsInProgramsOfWhichViewer(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id"))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
-                .add(Restrictions.in("program", user.getProgramsOfWhichViewer()));
-    }
-
-    private DetachedCriteria getApplicationsOfWhichProjectAdministrator(RegisteredUser user2) {
-        return DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.property("id")).createAlias("project", "project")
-                .add(Restrictions.eq("project.administrator", user));
     }
 
 }

@@ -1,18 +1,20 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 public class ApplicationDescriptor {
-    private ActionsDefinitions actionsDefinition;
-    private Boolean needsToSeeUpdate; 
     
-    public ApplicationDescriptor(){
+    private List<ActionDefinition> actionDefinitions = Lists.newArrayList();
+    
+    private Boolean needsToSeeUpdate;
+
+    public ApplicationDescriptor() {
     }
 
-    public ActionsDefinitions getActionsDefinition() {
-        return actionsDefinition;
-    }
-
-    public void setActionsDefinition(ActionsDefinitions actionsDefinitions) {
-        this.actionsDefinition = actionsDefinitions;
+    public List<ActionDefinition> getActionDefinitions() {
+        return actionDefinitions;
     }
 
     public Boolean getNeedsToSeeUpdate() {
@@ -21,6 +23,15 @@ public class ApplicationDescriptor {
 
     public void setNeedsToSeeUpdate(Boolean needsToSeeUpdate) {
         this.needsToSeeUpdate = needsToSeeUpdate;
+    }
+
+    public boolean isRequiresAttention() {
+        for (ActionDefinition action : actionDefinitions) {
+            if (action.getRaisesUrgentFlag()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

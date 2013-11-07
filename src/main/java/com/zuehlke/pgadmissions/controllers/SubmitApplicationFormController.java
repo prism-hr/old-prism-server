@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -61,7 +61,7 @@ public class SubmitApplicationFormController {
 
     private final ApplicationFormAccessService accessService;
 
-    private final ApplicationDescriptorProvider applicationDescriptorProvider;
+    private final ActionsProvider actionsProvider;
 
     public SubmitApplicationFormController() {
         this(null, null, null, null, null, null, null);
@@ -69,15 +69,15 @@ public class SubmitApplicationFormController {
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-                    StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService,
-                    ApplicationDescriptorProvider applicationDescriptorProvider) {
+            StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService,
+            ActionsProvider actionsProvider) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
         this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
         this.accessService = accessService;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
+        this.actionsProvider = actionsProvider;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -175,7 +175,7 @@ public class SubmitApplicationFormController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")

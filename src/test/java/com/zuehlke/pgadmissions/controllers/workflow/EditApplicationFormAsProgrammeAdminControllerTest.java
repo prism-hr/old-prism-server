@@ -15,9 +15,9 @@ import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.MessageSource;
-import org.springframework.ui.ModelMap;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.MapBindingResult;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -60,12 +60,12 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
+import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 
 public class EditApplicationFormAsProgrammeAdminControllerTest {
 
@@ -82,9 +82,9 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
-    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
     private DomicileService domicileServiceMock;
     private DomicilePropertyEditor domicilePropertyEditorMock;
+    private ActionsProvider actionsProviderMock;
 
     @Before
     public void setUp() {
@@ -99,15 +99,14 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
-        applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock, refereeServiceMock,
-                        refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, messageSourceMock,
-                        scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, applicationDescriptorProviderMock, domicileServiceMock,
-                        domicilePropertyEditorMock, accessServiceMock);
+                refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, messageSourceMock, scoringDefinitionParserMock,
+                scoresPropertyEditorMock, scoreFactoryMock, domicileServiceMock, domicilePropertyEditorMock, accessServiceMock, actionsProviderMock);
     }
 
     @Test
@@ -116,7 +115,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                        .build();
+                .build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
@@ -150,7 +149,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     public void shouldUpdateReference() throws ScoringDefinitionParseException {
         Program program = new ProgramBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                        .build();
+                .build();
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
@@ -173,7 +172,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     public void shouldReportUpdateReferenceFormErrors() throws ScoringDefinitionParseException {
         Program program = new ProgramBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                        .build();
+                .build();
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
@@ -188,7 +187,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         EasyMock.replay(refereeServiceMock, messageSourceMock);
         String ret = controller.updateReference(applicationForm, refereesAdminEditDTO, result, model);
         EasyMock.verify(refereeServiceMock, messageSourceMock);
-        
+
         Map<String, String> retMap = new Gson().fromJson(ret, Map.class);
         assertEquals(2, retMap.size());
         assertEquals("false", retMap.get("success"));
@@ -199,7 +198,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     public void shouldSaveSendToPorticoReferencesWithoutAddingNewReference() throws ScoringDefinitionParseException {
         Program program = new ProgramBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                        .build();
+                .build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 
@@ -227,7 +226,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                        .build();
+                .build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 
@@ -267,7 +266,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).program(program)
-                        .build();
+                .build();
         SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 
@@ -347,11 +346,9 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
     @Test
     public void shouldGetMainPage() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(ApplicationFormStatus.INTERVIEW).build();
-        
-        ModelMap modelMap = new ModelMap();
-        
-        String viewName = controller.view(applicationForm, modelMap);
+        ApplicationForm applicationForm = new ApplicationForm();
+
+        String viewName = controller.view(applicationForm);
         assertEquals("/private/staff/admin/application/main_application_page_programme_administrator", viewName);
     }
 

@@ -63,7 +63,7 @@ public class InterviewDelegateTransitionControllerTest {
     private ActionsProvider actionsProviderMock;
     private InterviewService interviewServiceMock;
     private ApplicationFormUserRoleService applicationFormUserRoleService;
-    
+
     private RegisteredUser currentUser = new RegisteredUser();
 
     @Test
@@ -78,8 +78,8 @@ public class InterviewDelegateTransitionControllerTest {
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
         stateComment.setFastTrackApplication(false);
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock, null, applicationFormUserRoleService) {
+                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -87,8 +87,9 @@ public class InterviewDelegateTransitionControllerTest {
 
         };
         InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).build();
-        expect(commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(),
-                        stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
+        expect(
+                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(), stateComment.getType(),
+                        stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         applicationFormUserRoleService.processingDelegated(applicationForm);
@@ -112,8 +113,8 @@ public class InterviewDelegateTransitionControllerTest {
         stateComment.setType(CommentType.APPROVAL_EVALUATION);
         stateComment.setFastTrackApplication(false);
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock, null, applicationFormUserRoleService) {
+                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -121,8 +122,8 @@ public class InterviewDelegateTransitionControllerTest {
 
         };
         StateChangeSuggestionComment comment = new StateChangeSuggestionCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).id(6).build();
-        expect(commentFactoryMock.createStateChangeSuggestionComment(currentUser, applicationForm, stateComment.getComment(),
-                        stateComment.getNextStatus())).andReturn(comment);
+        expect(commentFactoryMock.createStateChangeSuggestionComment(currentUser, applicationForm, stateComment.getComment(), stateComment.getNextStatus()))
+                .andReturn(comment);
         commentServiceMock.save(comment);
         interviewServiceMock.save(interview);
         applicationFormUserRoleService.processingDelegated(applicationForm);
@@ -141,8 +142,8 @@ public class InterviewDelegateTransitionControllerTest {
         expect(bindingResultMock.hasErrors()).andReturn(true);
 
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock, null, applicationFormUserRoleService) {
+                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
             public ApplicationForm getApplicationForm(String applicationId) {
                 return new ApplicationForm();
             }
@@ -172,10 +173,10 @@ public class InterviewDelegateTransitionControllerTest {
         actionsProviderMock = createMock(ActionsProvider.class);
         interviewServiceMock = createMock(InterviewService.class);
         applicationFormUserRoleService = createMock(ApplicationFormUserRoleService.class);
-        
+
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                        encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                        stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock, null, applicationFormUserRoleService);
+                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
+                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock);
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }
 

@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
@@ -110,8 +112,10 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendTaskEmailIfNecessary(final Integer userId, DigestNotificationType digestNotificationType) {
         final RegisteredUser user = userDAO.get(userId);
-        List<ApplicationForm> applicationsWorthAttention = applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user,
-                new ApplicationsFiltering(), -1);
+        // FIXME amend implementation
+        List<ApplicationForm> applicationsWorthAttention = Collections.emptyList();
+//                applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user,
+//                new ApplicationsFiltering(), -1);
         if (!applicationsWorthAttention.isEmpty()) {
             if (sendDigest(user, digestNotificationType)) {
                 user.setLatestTaskNotificationDate(new Date());

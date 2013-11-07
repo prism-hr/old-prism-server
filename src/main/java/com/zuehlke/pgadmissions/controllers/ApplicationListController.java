@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
@@ -69,7 +69,7 @@ public class ApplicationListController {
     private final ApplicationsFilteringService filteringService;
 
     private final ApplicationFormAccessService accessService;
-
+    
     private final ActionsProvider actionsProvider;
 
     public ApplicationListController() {
@@ -137,11 +137,11 @@ public class ApplicationListController {
         }
 
         Map<String, Boolean> updatedApplications = new HashMap<String, Boolean>();
-        Map<String, ActionsDefinitions> actionDefinitions = new LinkedHashMap<String, ActionsDefinitions>();
+        Map<String, ApplicationDescriptor> actionDefinitions = new LinkedHashMap<String, ApplicationDescriptor>();
         for (ApplicationForm applicationForm : applications) {
             updatedApplications.put(applicationForm.getApplicationNumber(), accessService.userNeedsToSeeApplicationUpdates(applicationForm, getUser()));
-            ActionsDefinitions actionsDefinition = actionsProvider.calculateActions(user, applicationForm);
-            actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
+            ApplicationDescriptor descriptor = actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+            actionDefinitions.put(applicationForm.getApplicationNumber(), descriptor);
         }
 
         model.addAttribute("updateApplications", updatedApplications);

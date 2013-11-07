@@ -23,6 +23,8 @@ public class ApplicationFormUserRoleBuilder {
     private RegisteredUser user;
 
     private Role role;
+    
+    private Boolean raisesUpdateFlag = false;
 
     public ApplicationFormUserRoleBuilder id(Integer id) {
         this.id = id;
@@ -53,6 +55,11 @@ public class ApplicationFormUserRoleBuilder {
         this.role = role;
         return this;
     }
+
+    public ApplicationFormUserRoleBuilder raisesUpdateFlag(Boolean raisesUpdateFlag) {
+        this.raisesUpdateFlag = raisesUpdateFlag;
+        return this;
+    }
     
     public ApplicationFormUserRole build() {
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRole();
@@ -62,6 +69,7 @@ public class ApplicationFormUserRoleBuilder {
         applicationFormUserRole.setApplicationForm(applicationForm);
         applicationFormUserRole.setUser(user);
         applicationFormUserRole.setRole(role);
+        applicationFormUserRole.setRaisesUpdateFlag(raisesUpdateFlag);
         return applicationFormUserRole;
     }
 

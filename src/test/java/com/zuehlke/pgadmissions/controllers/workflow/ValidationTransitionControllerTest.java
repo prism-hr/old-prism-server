@@ -97,7 +97,7 @@ public class ValidationTransitionControllerTest {
         commentServiceMock.save(comment);
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService) {
+                actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -108,11 +108,11 @@ public class ValidationTransitionControllerTest {
         applicationServiceMock.save(applicationForm);
         applicationServiceMock.makeApplicationNotEditable(applicationForm);
         applicationFormUserRoleService.stateChanged(comment);
-        
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, applicationFormUserRoleService);
+
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
         String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
                 delegatedInterviewer);
-        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, applicationFormUserRoleService);
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
 
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
     }
@@ -127,7 +127,7 @@ public class ValidationTransitionControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService) {
+                actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -141,10 +141,10 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(stateTransitionServiceMock.resolveView(applicationForm)).andReturn("view");
         applicationFormUserRoleService.stateChanged(comment);
 
-        EasyMock.replay(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock, applicationFormUserRoleService);
+        EasyMock.replay(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock);
         assertEquals("view",
                 controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), false, delegatedInterviewer));
-        EasyMock.verify(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock, applicationFormUserRoleService);
+        EasyMock.verify(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock);
 
         assertEquals(2, comment.getDocuments().size());
         assertTrue(comment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
@@ -164,7 +164,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService) {
+                actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -201,7 +201,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService) {
+                actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -238,7 +238,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService) {
+                actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -275,7 +275,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService) {
+                actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -311,7 +311,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService) {
+                actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -347,7 +347,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService) {
+                actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -389,7 +389,7 @@ public class ValidationTransitionControllerTest {
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleService);
+                actionsProviderMock);
         currentUser = new RegisteredUser();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }

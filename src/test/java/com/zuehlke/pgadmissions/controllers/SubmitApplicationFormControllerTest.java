@@ -27,7 +27,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -71,7 +71,7 @@ public class SubmitApplicationFormControllerTest {
 
     private ApplicationFormAccessService accessServiceMock;
 
-    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
+    private ActionsProvider actionsProviderMock;
 
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
@@ -222,7 +222,7 @@ public class SubmitApplicationFormControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).build();
         expect(errorsMock.hasErrors()).andReturn(true);
         expect(errorsMock.getFieldError("program")).andReturn(new FieldError("applicationForm", "application.program.invalid", null));
-        
+
         replay(errorsMock);
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         verify(errorsMock);
@@ -250,7 +250,7 @@ public class SubmitApplicationFormControllerTest {
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock, applicationFormUserRoleServiceMock);
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         verify(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock, applicationFormUserRoleServiceMock);
-        
+
         assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
 
         assertEquals(batchDeadline, applicationForm.getBatchDeadline());
@@ -276,12 +276,11 @@ public class SubmitApplicationFormControllerTest {
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
-        
+
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
         String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         verify(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
-        
-        
+
         assertEquals("redirect:/applications?messageCode=application.submitted&application=abc", view);
     }
 
@@ -297,11 +296,11 @@ public class SubmitApplicationFormControllerTest {
         expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
-        
+
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock);
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         verify(applicationsServiceMock, errorsMock, stageDurationServiceMock);
-        
+
         assertEquals(httpServletRequestMock.getRemoteAddr(), applicationForm.getIpAddressAsString());
     }
 
@@ -401,11 +400,11 @@ public class SubmitApplicationFormControllerTest {
         stageDurationServiceMock = createMock(StageDurationService.class);
         eventFactoryMock = createMock(EventFactory.class);
         accessServiceMock = createMock(ApplicationFormAccessService.class);
-        applicationDescriptorProviderMock = createMock(ApplicationDescriptorProvider.class);
+        actionsProviderMock = createMock(ActionsProvider.class);
         applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
-        
+
         applicationController = new SubmitApplicationFormController(applicationsServiceMock, userServiceMock, applicationFormValidatorMock,
-                stageDurationServiceMock, eventFactoryMock, accessServiceMock, applicationDescriptorProviderMock, applicationFormUserRoleServiceMock);
+                stageDurationServiceMock, eventFactoryMock, accessServiceMock, actionsProviderMock);
         httpServletRequestMock = new MockHttpServletRequest();
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

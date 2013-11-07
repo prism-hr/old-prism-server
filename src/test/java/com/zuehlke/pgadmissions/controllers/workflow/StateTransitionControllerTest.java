@@ -167,7 +167,7 @@ public class StateTransitionControllerTest {
                 .build();
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleServiceMock) {
+                actionsProviderMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -197,7 +197,7 @@ public class StateTransitionControllerTest {
 
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleServiceMock) {
+                actionsProviderMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -220,7 +220,7 @@ public class StateTransitionControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, new StateTransitionService(),
-                accessServiceMock, actionsProviderMock, null, applicationFormUserRoleServiceMock) {
+                accessServiceMock, actionsProviderMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String application) {
@@ -249,7 +249,7 @@ public class StateTransitionControllerTest {
 
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock, null, applicationFormUserRoleServiceMock);
+                actionsProviderMock);
     }
 
     @After

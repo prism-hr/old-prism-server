@@ -25,11 +25,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -37,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
@@ -96,9 +96,9 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     protected final ScoreFactory scoreFactory;
 
-    protected final ApplicationDescriptorProvider applicationDescriptorProvider;
-    
     protected final ApplicationFormAccessService accessService;
+    
+    protected final ActionsProvider actionsProvider;
 
     public EditApplicationFormAsProgrammeAdminController() {
         this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -106,11 +106,11 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @Autowired
     public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationsService,
-                    final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
-                    final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-                    final EncryptionHelper encryptionHelper, final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
-                    ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationDescriptorProvider applicationDescriptorProvider,
-                    DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, ApplicationFormAccessService accessService) {
+            final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
+            final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
+            final EncryptionHelper encryptionHelper, final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
+            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, DomicileService domicileService,
+            DomicilePropertyEditor domicilePropertyEditor, ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.userService = userService;
         this.applicationsService = applicationsService;
         this.documentPropertyEditor = documentPropertyEditor;
@@ -122,10 +122,10 @@ public class EditApplicationFormAsProgrammeAdminController {
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
         this.accessService = accessService;
+        this.actionsProvider = actionsProvider;
     }
 
     @InitBinder(value = "sendToPorticoData")
@@ -152,13 +152,11 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String updateReference(@ModelAttribute ApplicationForm applicationForm, 
-    	@ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
-        BindingResult refereesAdminEditDTOResult,
-        ModelMap modelMap) throws ScoringDefinitionParseException {
-    	String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
+    public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+            BindingResult refereesAdminEditDTOResult, ModelMap modelMap) throws ScoringDefinitionParseException {
+        String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         modelMap.addAttribute("editedRefereeId", editedRefereeId);
-        
+
         createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
         refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, refereesAdminEditDTOResult);
 
@@ -177,12 +175,9 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-    public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, 
-    	@ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
-        BindingResult referenceResult,
-        @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
-        @RequestParam(required = false) Boolean forceSavingReference, 
-        Model model) throws ScoringDefinitionParseException {
+    public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+            BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
+            @RequestParam(required = false) Boolean forceSavingReference, Model model) throws ScoringDefinitionParseException {
 
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         model.addAttribute("editedRefereeId", editedRefereeId);
@@ -198,14 +193,12 @@ public class EditApplicationFormAsProgrammeAdminController {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
         }
-        
+
         createScoresWithQuestion(applicationForm, refereesAdminEditDTO);
 
-        if (BooleanUtils.isTrue(forceSavingReference) || 
-        	refereesAdminEditDTO.hasUserStartedTyping() ||
-        	(BooleanUtils.isTrue(forceSavingReference) &&
-        	BooleanUtils.isFalse(refereesAdminEditDTO.getContainsRefereeData()))) {
-        	
+        if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()
+                || (BooleanUtils.isTrue(forceSavingReference) && BooleanUtils.isFalse(refereesAdminEditDTO.getContainsRefereeData()))) {
+
             refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
 
             if (referenceResult.hasErrors()) {
@@ -219,6 +212,9 @@ public class EditApplicationFormAsProgrammeAdminController {
             Referee referee = newComment.getReferee();
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
+
+            applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+            accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
             applicationsService.save(applicationForm);
             accessService.referencePosted(referee);
             accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
@@ -243,7 +239,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     public RefereesAdminEditDTO getRefereesAdminEditDTO(@RequestParam String applicationId) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
-        
+
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
             try {
@@ -288,74 +284,74 @@ public class EditApplicationFormAsProgrammeAdminController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     public void createScoresWithQuestion(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {
-    	List<Score> scores = refereesAdminEditDTO.getScores();
+        List<Score> scores = refereesAdminEditDTO.getScores();
         if (!scores.isEmpty()) {
             List<Question> questions = getCustomQuestions(applicationForm);
             for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);            
+                Score score = scores.get(i);
                 if (i < questions.size()) {
-                	score.setOriginalQuestion(questions.get(i));
+                    score.setOriginalQuestion(questions.get(i));
                 }
             }
         }
     }
-    
-//    @ModelAttribute("DTOsForExistingReferees")
-//    public HashMap<String, RefereesAdminEditDTO> getDTOsForExistingReferees (@RequestParam String applicationId) {
-//    	ApplicationForm applicationForm = getApplicationForm(applicationId);
-//    	HashMap<String, RefereesAdminEditDTO> existingRefereeDTOs = new HashMap<String, RefereesAdminEditDTO>();
-//		
-//    	ScoringDefinition scoringDefinition = null;
-//    	CustomQuestions customQuestions = null;
-//    	List<Score> scores = null;
-//    	
-//    	try {
-//			scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
-//			customQuestions = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-//			scores = scoreFactory.createScores(customQuestions.getQuestion());
-//        } catch (ScoringDefinitionParseException e) {
-//            log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
-//        }
-//    	
-//    	for (Referee referee : applicationForm.getReferees()) {
-//    		if (referee.hasProvidedReference()) {
-//				RefereesAdminEditDTO refereeDTO = new RefereesAdminEditDTO();
-//				refereeDTO.setEditedRefereeId(encryptionHelper.encrypt(referee.getId()));
-//				refereeDTO.setContainsRefereeData(false);
-//				refereeDTO.setComment(referee.getReference().getComment());
-//				
-//				if (!referee.getReference().getDocuments().isEmpty()) {
-//					refereeDTO.setReferenceDocument(referee.getReference().getDocuments().get(0));
-//				}
-//				
-//				refereeDTO.setApplicantRating(referee.getReference().getApplicantRating());
-//				refereeDTO.setSuitableForUCL(referee.getReference().getSuitableForUCL());
-//				refereeDTO.setSuitableForProgramme(referee.getReference().getSuitableForProgramme());
-//				refereeDTO.setScores(referee.getReference().getScores());
-//				refereeDTO.setAlert(referee.getReference().getAlert());
-//	                
-//				if (refereeDTO.getScores().isEmpty() &&
-//					scoringDefinition != null) {
-//	                refereeDTO.getScores().addAll(scores);
-//				}
-//				else {
-//					for (Score score : referee.getReference().getScores()) {
-//						score.setOriginalQuestion(new Question()); /* Not possible. We do not store the original question. */
-//					}
-//				}
-//				
-//				if (refereeDTO.getAlert() == null &&
-//					scoringDefinition != null) {
-//	                refereeDTO.setAlert(customQuestions.getAlert());
-//				}
-//				
-//				existingRefereeDTOs.put(encryptionHelper.encrypt(referee.getId()), refereeDTO);
-//    		}
-//    	}
-//    	return existingRefereeDTOs;
-//    }   
+
+    // @ModelAttribute("DTOsForExistingReferees")
+    // public HashMap<String, RefereesAdminEditDTO> getDTOsForExistingReferees (@RequestParam String applicationId) {
+    // ApplicationForm applicationForm = getApplicationForm(applicationId);
+    // HashMap<String, RefereesAdminEditDTO> existingRefereeDTOs = new HashMap<String, RefereesAdminEditDTO>();
+    //
+    // ScoringDefinition scoringDefinition = null;
+    // CustomQuestions customQuestions = null;
+    // List<Score> scores = null;
+    //
+    // try {
+    // scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
+    // customQuestions = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
+    // scores = scoreFactory.createScores(customQuestions.getQuestion());
+    // } catch (ScoringDefinitionParseException e) {
+    // log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
+    // }
+    //
+    // for (Referee referee : applicationForm.getReferees()) {
+    // if (referee.hasProvidedReference()) {
+    // RefereesAdminEditDTO refereeDTO = new RefereesAdminEditDTO();
+    // refereeDTO.setEditedRefereeId(encryptionHelper.encrypt(referee.getId()));
+    // refereeDTO.setContainsRefereeData(false);
+    // refereeDTO.setComment(referee.getReference().getComment());
+    //
+    // if (!referee.getReference().getDocuments().isEmpty()) {
+    // refereeDTO.setReferenceDocument(referee.getReference().getDocuments().get(0));
+    // }
+    //
+    // refereeDTO.setApplicantRating(referee.getReference().getApplicantRating());
+    // refereeDTO.setSuitableForUCL(referee.getReference().getSuitableForUCL());
+    // refereeDTO.setSuitableForProgramme(referee.getReference().getSuitableForProgramme());
+    // refereeDTO.setScores(referee.getReference().getScores());
+    // refereeDTO.setAlert(referee.getReference().getAlert());
+    //
+    // if (refereeDTO.getScores().isEmpty() &&
+    // scoringDefinition != null) {
+    // refereeDTO.getScores().addAll(scores);
+    // }
+    // else {
+    // for (Score score : referee.getReference().getScores()) {
+    // score.setOriginalQuestion(new Question()); /* Not possible. We do not store the original question. */
+    // }
+    // }
+    //
+    // if (refereeDTO.getAlert() == null &&
+    // scoringDefinition != null) {
+    // refereeDTO.setAlert(customQuestions.getAlert());
+    // }
+    //
+    // existingRefereeDTOs.put(encryptionHelper.encrypt(referee.getId()), refereeDTO);
+    // }
+    // }
+    // return existingRefereeDTOs;
+    // }
 }

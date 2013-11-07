@@ -37,10 +37,10 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
-public class ApplicationSumarryServiceTest {
+public class ApplicationSumaryServiceTest {
 
     private static final String PERSONAL_STATEMENT_FILE_NAME = "MyPersonalStatement.pdf";
 
@@ -78,7 +78,7 @@ public class ApplicationSumarryServiceTest {
 
     private RegisteredUser currentUser;
 
-    private ActionsDefinitions actionsDefinitionMock;
+    private ApplicationDescriptor applicationDescriptorMock;
 
     private UserService userServiceMock;
 
@@ -95,7 +95,7 @@ public class ApplicationSumarryServiceTest {
         dateOfSubmission = new DateTime(2013, 4, 23, 9, 20).toDate();
         dateOfLastUpdate = new DateTime(2013, 4, 20, 9, 20).toDate();
         currentUser = getCurrentUser();
-        actionsDefinitionMock = createMock(ActionsDefinitions.class);
+        applicationDescriptorMock = createMock(ApplicationDescriptor.class);
         userServiceMock = createMock(UserService.class);
         encryptionHelperMock = createMock(EncryptionHelper.class);
         applicationsServiceMock = createMock(ApplicationsService.class);
@@ -135,18 +135,18 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
+        replay(userServiceMock, applicationDescriptorMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
+        verify(userServiceMock, applicationDescriptorMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -177,18 +177,18 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
+        replay(userServiceMock, encryptionHelperMock, applicationDescriptorMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
+        verify(userServiceMock, applicationDescriptorMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -219,19 +219,18 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
-        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(
-                NUMBER_OF_APPLICATIONS);
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
+        replay(userServiceMock, encryptionHelperMock, applicationDescriptorMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
+        verify(userServiceMock, applicationDescriptorMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -262,18 +261,18 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
+        replay(userServiceMock, encryptionHelperMock, applicationDescriptorMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
+        verify(userServiceMock, applicationDescriptorMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -303,18 +302,17 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
-        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(
-                NUMBER_OF_APPLICATIONS);
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
         expect(encryptionHelperMock.encrypt(form.getPersonalStatement().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
+        replay(userServiceMock, encryptionHelperMock, applicationDescriptorMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
+        verify(userServiceMock, applicationDescriptorMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -332,7 +330,6 @@ public class ApplicationSumarryServiceTest {
         assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
 
-    
     @Test
     public void shouldReturnSummaryWithNoPersonalStatementProvided() {
         ApplicationForm form = getSampleApplicationForm();
@@ -343,18 +340,17 @@ public class ApplicationSumarryServiceTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        expect(actionsProviderMock.calculateActions(currentUser, form)).andReturn(actionsDefinitionMock);
+        expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(actionsDefinitionMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
 
-        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(
-                NUMBER_OF_APPLICATIONS);
+        expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
         expect(encryptionHelperMock.encrypt(form.getCv().getId())).andReturn("XYZ");
 
-        replay(userServiceMock, encryptionHelperMock, actionsDefinitionMock, applicationsServiceMock, actionsProviderMock);
+        replay(userServiceMock, encryptionHelperMock, applicationDescriptorMock, applicationsServiceMock, actionsProviderMock);
         Map<String, String> result = service.getSummary("APP");
-        verify(userServiceMock, actionsDefinitionMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
+        verify(userServiceMock, applicationDescriptorMock, encryptionHelperMock, applicationsServiceMock, actionsProviderMock);
 
         assertFalse(result.isEmpty());
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
@@ -370,36 +366,32 @@ public class ApplicationSumarryServiceTest {
         String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
-    
+
     private ApplicationForm getSampleApplicationForm() {
-        RegisteredUser applicant = new RegisteredUserBuilder().id(APPLICANT_ID).email(APPLICANT_EMAIL_ADDRESS)
-                .firstName(APPLICANT_NAME).lastName(APPLICANT_SURNAME).build();
+        RegisteredUser applicant = new RegisteredUserBuilder().id(APPLICANT_ID).email(APPLICANT_EMAIL_ADDRESS).firstName(APPLICANT_NAME)
+                .lastName(APPLICANT_SURNAME).build();
 
         Referee referee = new RefereeBuilder().build();
         Referee refereeWhoResponded = new RefereeBuilder().declined(true).build();
 
-        PersonalDetails details = new PersonalDetailsBuilder().id(321).title(APPLICANT_TITLE)
-                .phoneNumber(APPLICANT_PHONE_NUMBER).build();
+        PersonalDetails details = new PersonalDetailsBuilder().id(321).title(APPLICANT_TITLE).phoneNumber(APPLICANT_PHONE_NUMBER).build();
 
         Qualification qualification = new QualificationBuilder().awardDate(dateOfLastUpdate).build();
-        Qualification mostRecentQualification = new QualificationBuilder().awardDate(dateOfSubmission)
-                .title(MOST_RECENT_QUALIFICATION_TITLE).build();
+        Qualification mostRecentQualification = new QualificationBuilder().awardDate(dateOfSubmission).title(MOST_RECENT_QUALIFICATION_TITLE).build();
 
         EmploymentPosition position = new EmploymentPositionBuilder().endDate(dateOfLastUpdate).toEmploymentPosition();
-        EmploymentPosition mostRecentPosition = new EmploymentPositionBuilder().employerName("Shortcuts production")
-                .endDate(dateOfSubmission).toEmploymentPosition();
+        EmploymentPosition mostRecentPosition = new EmploymentPositionBuilder().employerName("Shortcuts production").endDate(dateOfSubmission)
+                .toEmploymentPosition();
 
         Document personalStatement = new DocumentBuilder().id(369).fileName(PERSONAL_STATEMENT_FILE_NAME).build();
         Document cv = new DocumentBuilder().id(379).fileName(CV_FILE_NAME).build();
 
         Funding funding = new FundingBuilder().description(FUNDING_DESCRIPTION).build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).personalStatement(personalStatement)
-                .referees(referee, refereeWhoResponded).personalDetails(details).fundings(funding)
-                .qualifications(qualification, mostRecentQualification)
-                .employmentPositions(position, mostRecentPosition).status(ApplicationFormStatus.APPROVED)
-                .submittedDate(dateOfSubmission).cv(cv).lastUpdated(dateOfLastUpdate).applicant(applicant)
-                .applicationNumber(SAMPLE_APPLICATION_NUMBER).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).personalStatement(personalStatement).referees(referee, refereeWhoResponded)
+                .personalDetails(details).fundings(funding).qualifications(qualification, mostRecentQualification)
+                .employmentPositions(position, mostRecentPosition).status(ApplicationFormStatus.APPROVED).submittedDate(dateOfSubmission).cv(cv)
+                .lastUpdated(dateOfLastUpdate).applicant(applicant).applicationNumber(SAMPLE_APPLICATION_NUMBER).build();
         return applicationForm;
 
     }

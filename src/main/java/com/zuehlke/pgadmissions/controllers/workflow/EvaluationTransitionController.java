@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -43,17 +42,16 @@ public class EvaluationTransitionController extends StateTransitionController {
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
     public EvaluationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
+                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
     }
 
     @ModelAttribute("comment")
@@ -83,7 +81,7 @@ public class EvaluationTransitionController extends StateTransitionController {
         ApplicationFormAction invokedAction;
 
         if (action != null && action.equals("abort")) {
-            invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
+            invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
         }
 
         else {
@@ -119,8 +117,8 @@ public class EvaluationTransitionController extends StateTransitionController {
         }
         ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
 
-        StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
-                stateChangeComment.getType(), nextStatus);
+        StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(),
+                stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus);
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());

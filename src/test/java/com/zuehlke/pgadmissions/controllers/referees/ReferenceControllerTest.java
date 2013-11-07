@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.referees;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ADD_REFERENCE;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
@@ -126,7 +125,7 @@ public class ReferenceControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", currentUser);
 
-        actionsProviderMock.validateAction(applicationForm, currentUser, ApplicationFormAction.ADD_REFERENCE);
+        actionsProviderMock.validateAction(applicationForm, currentUser, ApplicationFormAction.PROVIDE_REFERENCE);
 
         replay(actionsProviderMock);
         assertEquals("private/referees/upload_references", controller.getUploadReferencesPage(modelMap));
@@ -260,7 +259,7 @@ public class ReferenceControllerTest {
         applicationFormUserRoleServiceMock.referencePosted(referee);
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
-        actionsProviderMock.validateAction(application, currentUser, ADD_REFERENCE);
+        actionsProviderMock.validateAction(application, currentUser, ApplicationFormAction.PROVIDE_REFERENCE);
 
         replay(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors, modelMap));
@@ -287,7 +286,7 @@ public class ReferenceControllerTest {
         applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
         controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator,
-                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock, null,
+                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock,
                 applicantRatingServiceMock, applicationFormUserRoleServiceMock);
 
     }

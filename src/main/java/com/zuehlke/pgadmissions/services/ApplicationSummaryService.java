@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.dto.ActionsDefinitions;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Service
@@ -62,8 +62,8 @@ public class ApplicationSummaryService {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
         result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
-        ActionsDefinitions actionsDefinition = actionsProvider.calculateActions(userService.getCurrentUser(), form);
-        result.put("requiresAttention", BooleanUtils.toStringTrueFalse(actionsDefinition.isRequiresAttention()));
+        ApplicationDescriptor applicationDescriptor = actionsProvider.getApplicationDescriptorForUser(form, userService.getCurrentUser());
+        result.put("requiresAttention", BooleanUtils.toStringTrueFalse(applicationDescriptor.isRequiresAttention()));
         result.put("applicationNumber", form.getApplicationNumber());
     }
 

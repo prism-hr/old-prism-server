@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_SUPERVISION;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
@@ -13,7 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -44,8 +43,6 @@ public class ConfirmSupervisionControllerTest {
 
     private ActionsProvider actionsProviderMock;
 
-    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
-    
     private ProgramInstanceService programInstanceServiceMock;
 
     @Test
@@ -56,7 +53,7 @@ public class ConfirmSupervisionControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
+        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
 
         EasyMock.replay(actionsProviderMock);
         String res = controller.confirmSupervision(modelMap);
@@ -79,7 +76,7 @@ public class ConfirmSupervisionControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
+        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
 
         EasyMock.replay(approvalServiceMock, actionsProviderMock);
         String res = controller.applyConfirmSupervision(confirmSupervisionDTO, result, modelMap);
@@ -122,10 +119,8 @@ public class ConfirmSupervisionControllerTest {
         confirmSupervisionDTOValidatorMock = EasyMock.createMock(ConfirmSupervisionDTOValidator.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock, datePropertyEditorMock,
-                        confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock,
-                        programInstanceServiceMock);
+                confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock, programInstanceServiceMock);
     }
 }

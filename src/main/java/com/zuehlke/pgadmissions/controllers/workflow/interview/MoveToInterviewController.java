@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
@@ -61,17 +60,16 @@ public class MoveToInterviewController {
     private final InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
     private final ApplicationFormAccessService accessService;
     private final ActionsProvider actionsProvider;
-    private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     MoveToInterviewController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
             InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
             InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService,
-            final ActionsProvider actionsProvider, final ApplicationDescriptorProvider applicationDescriptorProvider) {
+            final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -81,7 +79,6 @@ public class MoveToInterviewController {
         this.interviewTimeslotsPropertyEditor = interviewTimeslotsPropertyEditor;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -120,7 +117,7 @@ public class MoveToInterviewController {
 
         // No update was registered here previously - omission
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        
+
         interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
         accessService.movedToInterviewStage(interview);
         accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
@@ -135,7 +132,7 @@ public class MoveToInterviewController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("nominatedSupervisors")

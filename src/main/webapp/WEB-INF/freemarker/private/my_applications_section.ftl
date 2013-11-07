@@ -2,8 +2,8 @@
 <#setting locale = "en_US">
 <#list applications as application>
     <#assign actionsDefinition = actionDefinitions[application.applicationNumber]>
-        <#assign actionsRequiringAttention = actionsDefinition.actionsRequiringAttention>
-    <#assign actions = actionsDefinition.actions>
+    <#assign actionsRequiringAttention = actionsDefinition.requiresAttention>
+    <#assign actions = actionsDefinition.actionDefinitions>
     <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow" >
   <td class="centre"><input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" /></td>
   <td <#if actionsDefinition.requiresAttention> data-desc="This application requires your attention" class="applicant-name flagred"
@@ -47,10 +47,10 @@
       <select class="actionType selectpicker" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
         <option class="title">Actions</option>
         <#list actions as action>
-          <#if action.id == "emailApplicant">
-            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}" <#if actionsRequiringAttention?seq_contains(action)> class="bold" data-icon="icon-bell-alt"</#if>> ${action.displayName}</option>
+          <#if action.action == "EMAIL_APPLICANT">
+            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}" <#if action.raisesUrgentFlag> class="bold" data-icon="icon-bell-alt"</#if>> <@spring.message 'action.${action.action}'/> </option>
           <#else>
-            <option value="${action.id}" <#if actionsRequiringAttention?seq_contains(action)> class="bold" data-icon="icon-bell-alt"</#if>>${action.displayName}</option>
+            <option value="${action.action}" <#if action.raisesUrgentFlag> class="bold" data-icon="icon-bell-alt"</#if>> <@spring.message 'action.${action.action}'/> </option>
           </#if>
         </#list>
     </select></td>

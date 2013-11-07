@@ -48,7 +48,7 @@ public class ApplicationsService {
     private MailSendingService mailService;
 
     private ProgrammeDetailsService programmeDetailsService;
-    
+
     private ProgramDAO programDAO;
 
     public ApplicationsService() {
@@ -96,23 +96,21 @@ public class ApplicationsService {
         applicationForm.setProgram(program);
         applicationForm.setProject(project);
 
-
         Long runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
         applicationForm.setApplicationNumber(program.getCode() + "-" + thisYear + "-" + String.format("%06d", ++runningCount));
         applicationFormDAO.save(applicationForm);
 
-        
         if (project != null) {
             List<SuggestedSupervisor> suggestedSupervisors = createSuggestedSupervisors(project);
             ProgrammeDetails programmeDetails = new ProgrammeDetails();
             programmeDetails.getSuggestedSupervisors().addAll(suggestedSupervisors);
             programmeDetails.setProgrammeName(applicationForm.getProgram().getTitle());
-            
+
             applicationForm.setProgrammeDetails(programmeDetails);
             programmeDetails.setApplication(applicationForm);
             programmeDetailsService.save(programmeDetails);
         }
-        
+
         return applicationForm;
     }
 
@@ -169,11 +167,7 @@ public class ApplicationsService {
     }
 
     public List<ApplicationForm> getAllVisibleAndMatchedApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
-        if (filtering.getPreFilter() == ApplicationsPreFilter.URGENT) {
-            return applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user, filtering, APPLICATION_BLOCK_SIZE);
-        } else {
-            return applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
-        }
+        return applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
     }
 
     public void delegateInterviewAdministration(final ApplicationForm applicationForm, final RegisteredUser delegate) {

@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -54,8 +53,6 @@ public class OfferRecommendationController {
 
     private final ActionsProvider actionsProvider;
 
-    private final ApplicationDescriptorProvider applicationDescriptorProvider;
-
     private final OfferRecommendationService offerRecommendedService;
 
     private final OfferRecommendedCommentValidator offerRecommendedCommentValidator;
@@ -69,12 +66,12 @@ public class OfferRecommendationController {
     private final SupervisorPropertyEditor supervisorPropertyEditor;
 
     public OfferRecommendationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null,  null, null, null, null, null);
     }
 
     @Autowired
     public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
-            ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider,
+            ApplicationFormAccessService accessService,  
             OfferRecommendationService offerRecommendedService, OfferRecommendedCommentValidator offerRecommendedCommentValidator,
             DatePropertyEditor datePropertyEditor, ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider,
             SupervisorPropertyEditor supervisorPropertyEditor) {
@@ -82,7 +79,6 @@ public class OfferRecommendationController {
         this.userService = userService;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
         this.offerRecommendedService = offerRecommendedService;
         this.offerRecommendedCommentValidator = offerRecommendedCommentValidator;
         this.datePropertyEditor = datePropertyEditor;
@@ -161,7 +157,7 @@ public class OfferRecommendationController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     protected RegisteredUser getCurrentUser() {

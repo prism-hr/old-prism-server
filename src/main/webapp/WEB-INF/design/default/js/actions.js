@@ -24,46 +24,53 @@ $(document).ready(function() {
         
 		$('#ajaxloader').show();
             switch ($(this).val()) {
-            case 'view':
+            case 'VIEW':
+            case 'VIEW_EDIT':
                 window.location.href = "/pgadmissions/application?view=view&applicationId="+ id;
                 break;
-            case 'comment':
+            case 'COMMENT':
                 window.location.href = "/pgadmissions/comment?applicationId="+ id;
                 break;
-            case 'reference':
+            case 'PROVIDE_REFERENCE':
                 window.location.href = "/pgadmissions/referee/addReferences?applicationId="+ id;
                 break;
-            case 'validate':
+            case 'ASSIGN_INTERVIEWERS':
+            case 'ASSIGN_REVIEWERS':
+            case 'ASSIGN_SUPERVISORS':
+            case 'COMPLETE_APPROVAL_STAGE':
+            case 'COMPLETE_INTERVIEW_STAGE':
+            case 'COMPLETE_REVIEW_STAGE':
+            case 'COMPLETE_VALIDATION_STAGE':
                 window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id;
                 break;
-            case 'abort':
+            case 'MOVE_TO_DIFFERENT_STAGE':
                 window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id + "&action=abort";
                 break;
-            case 'review':
+            case 'PROVIDE_REVIEW':
                 window.location.href = "/pgadmissions/reviewFeedback?applicationId="+ id;
                 break;
-            case 'interviewFeedback':
+            case 'PROVIDE_INTERVIEW_FEEDBACK':
                 window.location.href = "/pgadmissions/interviewFeedback?applicationId="+ id;
                 break;
-            case 'interviewVote':
+            case 'PROVIDE_INTERVIEW_AVAILABILITY':
             	window.location.href = "/pgadmissions/interviewVote?applicationId="+ id;
             	break;
-            case 'interviewConfirm':
+            case 'CONFIRM_INTERVIEW_ARRANGEMENTS':
             	window.location.href = "/pgadmissions/interviewConfirm?applicationId="+ id;
             	break;
-            case 'confirmSupervision':
+            case 'CONFIRM_PRIMARY_SUPERVISION':
                 window.location.href = "/pgadmissions/confirmSupervision?applicationId="+ id;
                 break;
-            case 'confirmEligibility':
+            case 'CONFIRM_ELIGIBILITY':
             	window.location.href = "/pgadmissions/admitter/confirmEligibility?applicationId=" + id;
             	break;
-            case 'completeRejection':
+            case 'CONFIRM_REJECTION':
             	window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
             	break;
-            case 'confirmOfferRecommendation':
+            case 'CONFIRM_OFFER_RECOMMENDATION':
             	window.location.href = "/pgadmissions/offerRecommendation?applicationId=" + id;
             	break;
-            case 'withdraw':
+            case 'WITHDRAW':
                 var message = 'Are you sure you want to withdraw the application? <b>You will not be able to submit a withdrawn application.</b>';
                 var onOk = function() {
                     $.ajax({

@@ -41,36 +41,8 @@ public class ApplicationFormListDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public List<ApplicationForm> getApplicationsWorthConsideringForAttentionFlag(final RegisteredUser user, 
-            final ApplicationsFiltering filtering, final int itemsPerPge) {
-        HashSet<ApplicationForm> applicationsWhichNeedAttention = new LinkedHashSet<ApplicationForm>();
-        
-        Criteria criteria = new ApplicationFormListCriteriaBuilder(sessionFactory)
-            .attentionFlag()
-            .forUser(user)
-            .filter(filtering)
-            .useDisjunction(filtering.getUseDisjunction())
-            .build();
-
-        ArrayList<Object> applicationIds = new ArrayList<Object>(new LinkedHashSet<Object>(criteria.list()));
-        int idx = 0;
-        for (idx = filtering.getLatestConsideredFlagIndex(); idx < applicationIds.size(); idx++) {
-            ApplicationForm form = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) applicationIds.get(idx));
-            if (actionsProvider.calculateActions(user, form).isRequiresAttention()) {
-                applicationsWhichNeedAttention.add(form);
-            }
-            if (applicationsWhichNeedAttention.size() == itemsPerPge) {
-                break;
-            }
-        }
-        filtering.setLatestConsideredFlagIndex(idx + 1);
-        return new ArrayList<ApplicationForm>(applicationsWhichNeedAttention);
-    }
-
-    @SuppressWarnings("unchecked")
     public List<ApplicationForm> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {
         Criteria criteria = new ApplicationFormListCriteriaBuilder(sessionFactory)
-            .allVisibleApplications()
             .forUser(user)
             .filter(filtering)
             .maxResults(itemsPerPage)

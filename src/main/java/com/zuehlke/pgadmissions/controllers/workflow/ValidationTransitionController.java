@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -42,24 +41,22 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class ValidationTransitionController extends StateTransitionController {
 
     public ValidationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ValidationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
+                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
-    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, 
-    		@RequestParam(required = false) String action, 
-    		ModelMap model) {
-    	RegisteredUser user = getCurrentUser();
-    	
+    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String action, ModelMap model) {
+        RegisteredUser user = getCurrentUser();
+
         if (action != null && action.equals("abort")) {
             if (user.hasAdminRightsOnApplication(applicationForm)) {
                 model.put("comment", applicationForm.getLatestStateChangeComment());
@@ -107,7 +104,7 @@ public class ValidationTransitionController extends StateTransitionController {
         ApplicationFormAction invokedAction;
 
         if (action != null && action.equals("abort")) {
-            invokedAction = ApplicationFormAction.ABORT_STAGE_TRANSITION;
+            invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
         }
 
         else {
@@ -131,14 +128,14 @@ public class ValidationTransitionController extends StateTransitionController {
         // Wrong update setting. All users should see state transition.
         form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(form, user, new Date());
-        
+
         comment.setDate(new Date());
         commentService.save(comment);
-        
+
         if (comment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
             applicationsService.makeApplicationNotEditable(form);
         }
-        
+
         applicationsService.save(form);
         accessService.stateChanged(comment);
         accessService.registerApplicationUpdate(form, new Date(), ApplicationUpdateScope.ALL_USERS);

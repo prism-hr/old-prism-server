@@ -111,7 +111,7 @@ public class InterviewVoteControllerTest {
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
         controller = new InterviewVoteController(applicationsServiceMock, userServiceMock, interviewParticipantValidatorMock, interviewServiceMock,
-                        acceptedTimeslotsPropertyEditorMock, actionsProviderMock, null);
+                acceptedTimeslotsPropertyEditorMock, actionsProviderMock);
 
     }
 

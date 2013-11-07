@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_INTERVIEW_TIME;
-
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -19,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
+import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
@@ -52,23 +50,21 @@ public class InterviewConfirmController {
 
     private final InterviewConfirmDTOValidator interviewConfirmDTOValidator;
 
-    private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     public InterviewConfirmController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewConfirmController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
                     final ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
-                    InterviewConfirmDTOValidator interviewConfirmDTOValidator, ApplicationDescriptorProvider applicationDescriptorProvider) {
+                    InterviewConfirmDTOValidator interviewConfirmDTOValidator) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
         this.interviewConfirmDTOValidator = interviewConfirmDTOValidator;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @ModelAttribute("applicationForm")
@@ -89,7 +85,7 @@ public class InterviewConfirmController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute(value = "interviewConfirmDTO")
@@ -107,7 +103,7 @@ public class InterviewConfirmController {
     public String getInterviewConfirmPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, CONFIRM_INTERVIEW_TIME);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
         
         InterviewConfirmDTO interviewConfirmDTO = new InterviewConfirmDTO();
         interviewConfirmDTO.setFurtherDetails(applicationForm.getLatestInterview().getFurtherDetails());
@@ -123,7 +119,7 @@ public class InterviewConfirmController {
                     BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, CONFIRM_INTERVIEW_TIME);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
 
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;

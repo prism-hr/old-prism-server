@@ -57,7 +57,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -76,7 +75,7 @@ public class MoveToInterviewControllerTest {
     private InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditorMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private ApplicationFormAccessService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetInterviewPage() {
@@ -350,7 +349,6 @@ public class MoveToInterviewControllerTest {
         accessServiceMock = createMock(ApplicationFormAccessService.class);
         interviewTimeslotsPropertyEditorMock = createMock(InterviewTimeslotsPropertyEditor.class);
         actionsProviderMock = createMock(ActionsProvider.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         replay(userServiceMock);
@@ -360,8 +358,7 @@ public class MoveToInterviewControllerTest {
         replay(bindingResultMock);
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock, actionsProviderMock, null,
-                applicationFormUserRoleServiceMock);
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock, actionsProviderMock);
 
     }
 }

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -54,16 +53,15 @@ public class MoveToReviewController {
     private final ReviewRoundValidator reviewRoundValidator;
     private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
     private final ApplicationFormAccessService accessService;
-    private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     MoveToReviewController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
             ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
-            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
+            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.reviewService = reviewService;
@@ -71,7 +69,6 @@ public class MoveToReviewController {
         this.reviewRoundValidator = reviewRoundValidator;
         this.reviewerPropertyEditor = reviewerPropertyEditor;
         this.accessService = accessService;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
@@ -148,7 +145,7 @@ public class MoveToReviewController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("nominatedSupervisors")

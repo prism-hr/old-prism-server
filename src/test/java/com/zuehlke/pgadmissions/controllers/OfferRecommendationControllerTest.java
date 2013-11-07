@@ -24,7 +24,6 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.workflow.approval.OfferRecommendationController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
@@ -53,8 +52,6 @@ public class OfferRecommendationControllerTest {
     private ApplicationFormAccessService accessServiceMock;
 
     private ActionsProvider actionsProviderMock;
-
-    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
 
     private OfferRecommendationService offerRecommendationServiceMock;
 
@@ -200,7 +197,6 @@ public class OfferRecommendationControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
-        applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
         offerRecommendationServiceMock = EasyMock.createMock(OfferRecommendationService.class);
         offerRecommendedCommentValidatorMock = EasyMock.createMock(OfferRecommendedCommentValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
@@ -208,7 +204,7 @@ public class OfferRecommendationControllerTest {
         supervisorsProviderMock = EasyMock.createMock(SupervisorsProvider.class);
         supervisorPropertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
         controller = new OfferRecommendationController(applicationsServiceMock, userServiceMock, actionsProviderMock, accessServiceMock,
-                applicationDescriptorProviderMock, offerRecommendationServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock,
-                programInstanceServiceMock, supervisorsProviderMock, supervisorPropertyEditorMock);
+                offerRecommendationServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock, programInstanceServiceMock,
+                supervisorsProviderMock, supervisorPropertyEditorMock);
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -61,17 +60,15 @@ public class StateTransitionController {
 
     protected final ActionsProvider actionsProvider;
 
-    protected final ApplicationDescriptorProvider applicationDescriptorProvider;
-
     public StateTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-                    CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
-                    StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
+            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
+            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -84,7 +81,6 @@ public class StateTransitionController {
         this.stateTransitionService = stateTransitionService;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
     @InitBinder(value = "comment")
@@ -103,7 +99,7 @@ public class StateTransitionController {
             throw new MissingApplicationFormException(applicationId);
         }
         if (!currentUser.hasAdminRightsOnApplication(applicationForm) && !currentUser.isApplicationAdministrator(applicationForm)
-                        && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
+                && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
@@ -113,7 +109,7 @@ public class StateTransitionController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     RegisteredUser getCurrentUser() {
@@ -130,19 +126,17 @@ public class StateTransitionController {
             public boolean evaluate(final Object object) {
                 ApplicationFormStatus status = (ApplicationFormStatus) object;
                 if (status.equals(ApplicationFormStatus.APPROVED)) {
-                    if (currentUser.isNotInRole("SUPERADMINISTRATOR") &&
-                    	currentUser.isNotInRoleInProgram(Authority.APPROVER, form.getProgram())) {
+                    if (currentUser.isNotInRole("SUPERADMINISTRATOR") && currentUser.isNotInRoleInProgram(Authority.APPROVER, form.getProgram())) {
                         return false;
                     }
                 }
-                if (form.getNextStatus() != null &&
-                	status.equals(form.getNextStatus())) {
-                	if (!status.equals(ApplicationFormStatus.INTERVIEW)) {
-                    	return false;
-                	}
-                	if (!currentUser.hasAdminRightsOnApplication(form)) {
-                		return false;
-                	}
+                if (form.getNextStatus() != null && status.equals(form.getNextStatus())) {
+                    if (!status.equals(ApplicationFormStatus.INTERVIEW)) {
+                        return false;
+                    }
+                    if (!currentUser.hasAdminRightsOnApplication(form)) {
+                        return false;
+                    }
                 }
                 return true;
             }

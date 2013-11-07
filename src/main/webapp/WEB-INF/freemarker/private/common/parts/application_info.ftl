@@ -15,15 +15,14 @@
           <span class="icon-status ${nextStatus.displayValue()?lower_case?replace(' ','-')}" data-desc="${nextStatus.displayValue()}">${nextStatus.displayValue()}</span>
         </#if>
       </div>
-        <#assign actions = applicationDescriptor.actionsDefinition.actions>
-        <#assign actionsRequiringAttention = applicationDescriptor.actionsDefinition.actionsRequiringAttention>
+        <#assign actions = applicationDescriptor.actionDefinitions>
         <select class="actionType selectpicker" name="app_[${applicationForm.applicationNumber}]" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}">
             <option class="title">Actions</option>
             <#list actions as action>
-              <#if action.id == "emailApplicant">
-                <option value="emailApplicant" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}" <#if actionsRequiringAttention?seq_contains(action)> class="bold" data-icon="icon-bell-alt"</#if>>${action.displayName}</option>
+              <#if action.action == "EMAIL_APPLICANT">
+                <option value="emailApplicant" data-email="${applicationForm.applicant.email?html}" data-applicationnumber="${applicationForm.applicationNumber?html}" <#if action.raisesUrgentFlag> class="bold" data-icon="icon-bell-alt"</#if>><@spring.message 'action.${action.action}'/></option>
               <#else>
-                <option value="${action.id}" <#if actionsRequiringAttention?seq_contains(action)> class="bold" data-icon="icon-bell-alt"</#if>>${action.displayName}</option>
+                <option value="${action.action}" <#if action.raisesUrgentFlag> class="bold" data-icon="icon-bell-alt"</#if>><@spring.message 'action.${action.action}'/></option>
               </#if>
             </#list>
         </select>
@@ -36,7 +35,7 @@
   <div class="row">
     <div class="applicantinfo"> 
    
-	  <#assign requiresAttention=applicationDescriptor.actionsDefinition.requiresAttention>
+	  <#assign requiresAttention=applicationDescriptor.requiresAttention>
 	  <#assign needsToSeeUpdate=applicationDescriptor.needsToSeeUpdate>
 	  <span <#if requiresAttention> data-desc="This application requires your attention" class="flagred"
 	  <#elseif needsToSeeUpdate> data-desc="This application has been updated" class="flagyellow"

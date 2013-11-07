@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_SUPERVISION;
+import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION;
 
 import java.util.Date;
 
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -57,19 +56,17 @@ public class ConfirmSupervisionController {
 
     private final ActionsProvider actionsProvider;
 
-    private final ApplicationDescriptorProvider applicationDescriptorProvider;
-    
     private final ProgramInstanceService programInstanceService;
 
     public ConfirmSupervisionController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null,  null);
     }
 
     @Autowired
     public ConfirmSupervisionController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
                     DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator,
                     ApplicationFormAccessService accessService, ActionsProvider actionsProvider, 
-                    ApplicationDescriptorProvider applicationDescriptorProvider, ProgramInstanceService programInstanceService) {
+                      ProgramInstanceService programInstanceService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
@@ -77,7 +74,6 @@ public class ConfirmSupervisionController {
         this.confirmSupervisionDTOValidator = confirmSupervisionDTOValidator;
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
         this.programInstanceService = programInstanceService;
     }
 
@@ -94,7 +90,7 @@ public class ConfirmSupervisionController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("confirmSupervisionDTO")
@@ -137,7 +133,7 @@ public class ConfirmSupervisionController {
     public String confirmSupervision(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
+        actionsProvider.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
         accessService.deregisterApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
@@ -146,7 +142,7 @@ public class ConfirmSupervisionController {
     public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
+        actionsProvider.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
 
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;

@@ -36,7 +36,6 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -128,7 +127,6 @@ public class ApprovalControllerTest {
     private ScoreFactory scoreFactoryMock;
     private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationDescriptorProvider applicationDescriptorProviderMock;
     private ProgramInstanceService programInstanceServiceMock;
     private SupervisorsProvider supervisorsProviderMock;
 
@@ -740,7 +738,6 @@ public class ApprovalControllerTest {
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
         accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        applicationDescriptorProviderMock = EasyMock.createMock(ApplicationDescriptorProvider.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         supervisorsProviderMock = createMock(SupervisorsProvider.class);
 
@@ -756,6 +753,6 @@ public class ApprovalControllerTest {
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
                 domicileServiceMock, domicilePropertyEditorMock, messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock,
-                accessServiceMock, actionsProviderMock, applicationDescriptorProviderMock, programInstanceServiceMock, supervisorsProviderMock);
+                accessServiceMock, actionsProviderMock, programInstanceServiceMock, supervisorsProviderMock);
     }
 }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -54,7 +53,7 @@ public class RejectApplicationController {
 
     private final ApplicationFormAccessService accessService;
 
-    private final ApplicationDescriptorProvider applicationDescriptorProvider;
+    private final ActionsProvider actionsProvider;
 
     public RejectApplicationController() {
         this(null, null, null, null, null, null, null);
@@ -62,22 +61,22 @@ public class RejectApplicationController {
 
     @Autowired
     public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-                    RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator,
-                    ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider) {
+            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ApplicationFormAccessService accessService,
+            ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.rejectService = rejectService;
         this.userService = userService;
         this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
         this.rejectionValidator = rejectionValidator;
         this.accessService = accessService;
-        this.applicationDescriptorProvider = applicationDescriptorProvider;
+        this.actionsProvider = actionsProvider;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String getRejectPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        if(!user.hasAdminRightsOnApplication(application)){
+        if (!user.hasAdminRightsOnApplication(application)) {
             throw new ActionNoLongerRequiredException(application.getApplicationNumber());
         }
         accessService.deregisterApplicationUpdate(application, user);
@@ -88,7 +87,7 @@ public class RejectApplicationController {
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors, ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        if(!user.hasAdminRightsOnApplication(application)){
+        if (!user.hasAdminRightsOnApplication(application)) {
             throw new ActionNoLongerRequiredException(application.getApplicationNumber());
         }
 
@@ -97,7 +96,7 @@ public class RejectApplicationController {
         }
         application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(application, getCurrentUser(), new Date());
-        
+
         rejectService.moveApplicationToReject(application, rejection);
         rejectService.sendToPortico(application);
         accessService.moveToApprovedOrRejectedOrWithdrawn(application);
@@ -123,7 +122,7 @@ public class RejectApplicationController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return applicationDescriptorProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     protected RegisteredUser getCurrentUser() {

@@ -244,6 +244,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
+    
+    @OneToMany(mappedBy = "applicationForm", fetch = FetchType.LAZY)
+    private List<ApplicationFormUserRole> applicationFormUserRoles = new ArrayList<ApplicationFormUserRole>();
 
     @Column(name = "avg_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;

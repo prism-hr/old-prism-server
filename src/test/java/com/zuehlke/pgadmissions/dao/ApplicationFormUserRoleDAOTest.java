@@ -248,11 +248,11 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
                 .interestedInApplicant(true).build();
 
-        role1.getActions().add(new ApplicationFormActionRequired("EMAIL_APPLICANT", new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired("PROVIDE_REFERENCE", new Date(), false, false));
 
         save(role1);
 
-        Boolean actionAvailable = applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, application, ApplicationFormAction.COMMENT);
+        Boolean actionAvailable = applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, application, ApplicationFormAction.PROVIDE_REVIEW);
         assertFalse(actionAvailable);
     }
 

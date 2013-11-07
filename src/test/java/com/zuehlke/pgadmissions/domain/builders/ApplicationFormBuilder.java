@@ -39,7 +39,6 @@ public class ApplicationFormBuilder {
     private Integer id;
     private RegisteredUser applicant;
     private String projectTitle;
-    private Boolean registryUsersNotified = false;
     private Program program;
     private Date appDate;
     private Date submittedDate;
@@ -67,7 +66,6 @@ public class ApplicationFormBuilder {
     private ApprovalRound latestApprovalRound;
     private Rejection rejection;
     private RegisteredUser applicationAdministrator;
-    private RegisteredUser adminRequestedRegistry;
     private String applicationNumber;
     private String uclBookingReferenceNumber;
     private String ipAddress;
@@ -99,16 +97,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder applicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
-        return this;
-    }
-
-    public ApplicationFormBuilder registryUsersDueNotification(Boolean registryUsersDueNotification) {
-        this.registryUsersNotified = registryUsersDueNotification;
-        return this;
-    }
-
-    public ApplicationFormBuilder adminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
-        this.adminRequestedRegistry = adminRequestedRegistry;
         return this;
     }
 
@@ -372,8 +360,6 @@ public class ApplicationFormBuilder {
 
         application.setRejectNotificationDate(rejectNotificationDate);
 
-        application.setRegistryUsersDueNotification(registryUsersNotified);
-        application.setAdminRequestedRegistry(adminRequestedRegistry);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
 
         application.getEmploymentPositions().addAll(employmentPositions);

@@ -86,7 +86,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -125,7 +125,7 @@ public class ApprovalControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
     private ProgramInstanceService programInstanceServiceMock;
     private SupervisorsProvider supervisorsProviderMock;
@@ -736,7 +736,7 @@ public class ApprovalControllerTest {
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = EasyMock.createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         supervisorsProviderMock = createMock(SupervisorsProvider.class);
@@ -753,6 +753,6 @@ public class ApprovalControllerTest {
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
                 domicileServiceMock, domicilePropertyEditorMock, messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock,
-                accessServiceMock, actionsProviderMock, programInstanceServiceMock, supervisorsProviderMock);
+                applicationFormUserRoleServiceMock, actionsProviderMock, programInstanceServiceMock, supervisorsProviderMock);
     }
 }

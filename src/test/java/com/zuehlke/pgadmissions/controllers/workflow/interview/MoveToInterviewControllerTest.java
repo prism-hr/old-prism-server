@@ -52,11 +52,11 @@ import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
@@ -74,9 +74,8 @@ public class MoveToInterviewControllerTest {
     private BindingResult bindingResultMock;
     private DatePropertyEditor datePropertyEditorMock;
     private InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditorMock;
-    private ApplicationFormAccessService accessServiceMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormAccessService applicationFormUserRoleServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetInterviewPage() {
@@ -278,6 +277,7 @@ public class MoveToInterviewControllerTest {
 
         interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
 
         replay(interviewServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.moveToInterview(interview, bindingResultMock, modelMap);
@@ -298,7 +298,8 @@ public class MoveToInterviewControllerTest {
         expect(currentUserMock.getId()).andReturn(3).anyTimes();
         interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
-
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
+        
         replay(interviewServiceMock, currentUserMock, applicationFormUserRoleServiceMock);
         String view = controller.moveToInterview(interview, bindingResultMock, modelMap);
         verify(interviewServiceMock, currentUserMock, applicationFormUserRoleServiceMock);
@@ -347,10 +348,9 @@ public class MoveToInterviewControllerTest {
         interviewerPropertyEditorMock = createMock(InterviewerPropertyEditor.class);
         datePropertyEditorMock = createMock(DatePropertyEditor.class);
         interviewServiceMock = createMock(InterviewService.class);
-        accessServiceMock = createMock(ApplicationFormAccessService.class);
         interviewTimeslotsPropertyEditorMock = createMock(InterviewTimeslotsPropertyEditor.class);
         actionsProviderMock = createMock(ActionsProvider.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         replay(userServiceMock);
@@ -360,7 +360,7 @@ public class MoveToInterviewControllerTest {
         replay(bindingResultMock);
 
         controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock,
-                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, accessServiceMock, actionsProviderMock);
+                interviewerPropertyEditorMock, datePropertyEditorMock, interviewTimeslotsPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock);
 
     }
 }

@@ -1,10 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
-
-import java.util.Date;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -21,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -37,7 +33,7 @@ public class InterviewConfirmControllerTest {
 
     private InterviewConfirmController controller;
 
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     private ActionsProvider actionsProviderMock;
 
@@ -77,11 +73,10 @@ public class InterviewConfirmControllerTest {
         modelMap.put("user", currentUser);
 
         interviewServiceMock.confirmInterview(currentUser, interview, interviewConfirmDTO);
-        accessServiceMock.updateAccessTimestamp(eq(applicationForm), eq(currentUser), isA(Date.class));
 
-        EasyMock.replay(interviewServiceMock, accessServiceMock);
+        EasyMock.replay(interviewServiceMock, applicationFormUserRoleServiceMock);
         controller.submitInterviewConfirmation(interviewConfirmDTO, errors, modelMap);
-        EasyMock.verify(interviewServiceMock, accessServiceMock);
+        EasyMock.verify(interviewServiceMock, applicationFormUserRoleServiceMock);
 
     }
 
@@ -100,11 +95,11 @@ public class InterviewConfirmControllerTest {
         interviewServiceMock = EasyMock.createMock(InterviewService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         interviewConfirmDTOValidatorMock = EasyMock.createMock(InterviewConfirmDTOValidator.class);
 
-        controller = new InterviewConfirmController(applicationsServiceMock, userServiceMock, interviewServiceMock, accessServiceMock, actionsProviderMock,
+        controller = new InterviewConfirmController(applicationsServiceMock, userServiceMock, interviewServiceMock, applicationFormUserRoleServiceMock, actionsProviderMock,
                 interviewConfirmDTOValidatorMock);
     }
 

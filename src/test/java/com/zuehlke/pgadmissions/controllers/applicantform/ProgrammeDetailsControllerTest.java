@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -59,7 +59,7 @@ public class ProgrammeDetailsControllerTest {
 
     private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
     private UserService userServiceMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -104,7 +104,7 @@ public class ProgrammeDetailsControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).build();
         controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
-                sourcesOfInterestPropertyEditorMock, accessServiceMock) {
+                sourcesOfInterestPropertyEditorMock, applicationFormUserRoleServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -241,7 +241,6 @@ public class ProgrammeDetailsControllerTest {
         EasyMock.verify(programmeDetailsServiceMock, applicationsServiceMock);
 
         assertEquals("redirect:/update/getProgrammeDetails?applicationId=ABC", view);
-        assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
     }
 
     @Test
@@ -270,12 +269,12 @@ public class ProgrammeDetailsControllerTest {
         programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
         programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         sourcesOfInterestPropertyEditorMock = EasyMock.createMock(SourcesOfInterestPropertyEditor.class);
 
         controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
-                sourcesOfInterestPropertyEditorMock, accessServiceMock);
+                sourcesOfInterestPropertyEditorMock, applicationFormUserRoleServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
 

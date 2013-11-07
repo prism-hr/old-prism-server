@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
@@ -44,7 +43,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.LanguageService;
@@ -71,7 +70,7 @@ public class QualificationController {
     private final QualificationTypeDAO qualificationTypeDAO;
     private final QualificationTypePropertyEditor qualificationTypePropertyEditor;
     private final QualificationInstitutionDAO qualificationInstitutionDAO;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final FullTextSearchService searchService;
     
 	public QualificationController() {
@@ -87,7 +86,7 @@ public class QualificationController {
             UserService userService, EncryptionHelper encryptionHelper, QualificationTypeDAO qualificationTypeDAO,
             QualificationTypePropertyEditor qualificationTypePropertyEditor, 
             QualificationInstitutionDAO qualificationInstitutionDAO,
-            final ApplicationFormAccessService accessService,
+            final ApplicationFormUserRoleService applicationFormUserRoleService,
             final FullTextSearchService searchService) {
 		this.applicationService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -104,7 +103,7 @@ public class QualificationController {
         this.qualificationTypeDAO = qualificationTypeDAO;
         this.qualificationTypePropertyEditor = qualificationTypePropertyEditor;
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.searchService = searchService;
 	}
 	
@@ -152,13 +151,9 @@ public class QualificationController {
 
         ApplicationForm applicationForm = qualification.getApplication();
         
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        applicationForm.setLastUpdated(new Date());
-        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        
         qualificationService.save(qualification);
         applicationService.save(applicationForm);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 	}
 	

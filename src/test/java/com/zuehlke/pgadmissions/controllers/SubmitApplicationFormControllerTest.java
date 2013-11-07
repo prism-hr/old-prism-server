@@ -40,12 +40,12 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
@@ -68,8 +68,6 @@ public class SubmitApplicationFormControllerTest {
     private UserService userServiceMock;
 
     private MockHttpServletRequest httpServletRequestMock;
-
-    private ApplicationFormAccessService accessServiceMock;
 
     private ActionsProvider actionsProviderMock;
 
@@ -246,6 +244,7 @@ public class SubmitApplicationFormControllerTest {
         StageDuration validationDuration = new StageDurationBuilder().duration(1).stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).build();
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(validationDuration);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock, applicationFormUserRoleServiceMock);
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
@@ -276,6 +275,7 @@ public class SubmitApplicationFormControllerTest {
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
         String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
@@ -383,10 +383,12 @@ public class SubmitApplicationFormControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
         StageDuration stageDurationMock = createMock(StageDuration.class);
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
-        expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);
         expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
-        replay(stageDurationServiceMock, accessServiceMock, stageDurationMock);
+
+        replay(stageDurationServiceMock, stageDurationMock);
         applicationController.assignValidationDueDate(applicationForm);
+        verify(stageDurationServiceMock, stageDurationMock);
+
         Date dayAfterTomorrow = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 1440);
         Assert.assertTrue(String.format("Dates are not on the same day [%s] [%s]", dayAfterTomorrow, applicationForm.getDueDate()),
                 DateUtils.isSameDay(dayAfterTomorrow, applicationForm.getDueDate()));
@@ -399,12 +401,11 @@ public class SubmitApplicationFormControllerTest {
         applicationFormValidatorMock = createMock(ApplicationFormValidator.class);
         stageDurationServiceMock = createMock(StageDurationService.class);
         eventFactoryMock = createMock(EventFactory.class);
-        accessServiceMock = createMock(ApplicationFormAccessService.class);
         actionsProviderMock = createMock(ActionsProvider.class);
         applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
         applicationController = new SubmitApplicationFormController(applicationsServiceMock, userServiceMock, applicationFormValidatorMock,
-                stageDurationServiceMock, eventFactoryMock, accessServiceMock, actionsProviderMock);
+                stageDurationServiceMock, eventFactoryMock, actionsProviderMock, applicationFormUserRoleServiceMock);
         httpServletRequestMock = new MockHttpServletRequest();
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

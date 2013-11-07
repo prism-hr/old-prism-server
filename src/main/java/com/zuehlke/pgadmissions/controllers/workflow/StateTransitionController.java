@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFo
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -56,7 +56,7 @@ public class StateTransitionController {
 
     protected final StateTransitionService stateTransitionService;
 
-    protected final ApplicationFormAccessService accessService;
+    protected final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     protected final ActionsProvider actionsProvider;
 
@@ -68,7 +68,7 @@ public class StateTransitionController {
     public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -79,7 +79,7 @@ public class StateTransitionController {
         this.stateChangeValidator = stateChangeValidator;
         this.documentPropertyEditor = documentPropertyEditor;
         this.stateTransitionService = stateTransitionService;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
     }
 

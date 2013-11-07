@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -30,7 +29,7 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -51,7 +50,7 @@ public class FundingController {
 	private final DocumentPropertyEditor documentPropertyEditor;
 	private final UserService userService;
 	private final EncryptionHelper encryptionHelper;
-	private final ApplicationFormAccessService accessService;
+	private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
 	FundingController() {
 		this(null, null, null, null, null, null, null, null, null);
@@ -60,7 +59,7 @@ public class FundingController {
 	@Autowired
 	public FundingController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
 			DatePropertyEditor datePropertyEditor, FundingValidator fundingValidator, FundingService fundingService,
-			DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService) {
+			DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper, ApplicationFormUserRoleService applicationFormUserRoleService) {
 		this.applicationService = applicationsService;
 
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -70,7 +69,7 @@ public class FundingController {
 		this.documentPropertyEditor = documentPropertyEditor;
 		this.userService = userService;
 		this.encryptionHelper = encryptionHelper;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
 	}
 
 	@InitBinder(value="funding")
@@ -100,13 +99,9 @@ public class FundingController {
 		}
         ApplicationForm applicationForm = funding.getApplication();
         
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-		applicationForm.setLastUpdated(new Date());
-		
 		fundingService.save(funding);
 		applicationService.save(applicationForm);
-		accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+		applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber();
 	}
 

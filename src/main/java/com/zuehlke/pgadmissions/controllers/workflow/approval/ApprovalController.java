@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgrammeAdminController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -53,7 +52,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -113,11 +112,11 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
             DomicilePropertyEditor domicilePropertyEditor, MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
-            ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider) {
+            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormUserRoleService applicationFormUserRoleService,
+            ActionsProvider actionsProvider, ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider) {
         super(userService, applicationsService, documentPropertyEditor, refereeService, refereesAdminEditDTOValidator, sendToPorticoDataDTOEditor,
                 encryptionHelper, messageSource, scoringDefinitionParser, scoresPropertyEditor, scoreFactory, domicileService, domicilePropertyEditor,
-                accessService, actionsProvider);
+                applicationFormUserRoleService, actionsProvider);
         this.approvalService = approvalService;
         this.approvalRoundValidator = approvalRoundValidator;
         this.supervisorPropertyEditor = supervisorPropertyEditor;
@@ -144,7 +143,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
             modelMap.put("sendToPorticoData", porticoData);
         }
-        accessService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return APPROVAL_PAGE;
     }
 
@@ -281,11 +280,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             return PROPOSE_OFFER_RECOMMENDATION_SECTION;
         }
 
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         sessionStatus.setComplete();
         return "/private/common/ajax_OK";
     }
@@ -305,7 +301,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         return PROPOSE_OFFER_RECOMMENDATION_SECTION;
     }
 
@@ -317,7 +313,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         return QUALIFICATION_SECTION;
     }
 
@@ -360,10 +356,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
 
-            applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-            accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-            
-            accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
             applicationsService.save(applicationForm);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());

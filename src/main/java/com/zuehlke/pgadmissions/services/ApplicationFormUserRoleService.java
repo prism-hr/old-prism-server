@@ -353,7 +353,9 @@ public class ApplicationFormUserRoleService {
     	}
     }
     
-    protected void registerApplicationUpdate (ApplicationForm applicationForm, Date updateTimestamp, ApplicationUpdateScope updateVisibility) {
+    public void registerApplicationUpdate (ApplicationForm applicationForm, ApplicationUpdateScope updateVisibility) {
+        Date updateTimestamp = new Date();
+        applicationForm.setLastUpdated(updateTimestamp);
     	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndAuthorityUpdateVisility(applicationForm, updateVisibility)) {
     		applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
     		applicationFormUserRole.setRaisesUpdateFlag(true);

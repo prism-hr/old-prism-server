@@ -7,11 +7,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +32,7 @@ import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -50,7 +48,7 @@ public class AddressControllerTest {
     private DomicileService domicileServiceMock;
     private DomicilePropertyEditor domicilePropertyEditor;
     private UserService userServiceMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -231,11 +229,8 @@ public class AddressControllerTest {
         applicationsServiceMock.save(applicationForm);
 
         EasyMock.replay(applicationsServiceMock, errors);
-
         String view = controller.editAddresses(addressSectionDTO, errors, applicationForm);
-
-        EasyMock.verify(applicationsServiceMock);
-        assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+        EasyMock.verify(applicationsServiceMock, errors);
 
         assertEquals("location1", applicationForm.getContactAddress().getAddress1());
         assertEquals(domicileOne, applicationForm.getContactAddress().getDomicile());
@@ -268,15 +263,13 @@ public class AddressControllerTest {
         EasyMock.expect(errors.hasErrors()).andReturn(false);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").currentAddress(addressOne).contactAddress(addressTwo)
-                        .build();
+                .build();
 
         applicationsServiceMock.save(applicationForm);
+        
         EasyMock.replay(applicationsServiceMock, errors);
-
         String view = controller.editAddresses(addressSectionDTO, errors, applicationForm);
-
-        EasyMock.verify(applicationsServiceMock);
-        assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+        EasyMock.verify(applicationsServiceMock, errors);
 
         assertEquals("location1", applicationForm.getContactAddress().getAddress1());
         assertEquals(domicileOne, applicationForm.getContactAddress().getDomicile());
@@ -318,9 +311,9 @@ public class AddressControllerTest {
 
         addressSectionValidatorMock = EasyMock.createMock(AddressSectionDTOValidator.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         controller = new AddressController(applicationsServiceMock, userServiceMock, domicileServiceMock, domicilePropertyEditor, addressSectionValidatorMock,
-                        accessServiceMock);
+                applicationFormUserRoleServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

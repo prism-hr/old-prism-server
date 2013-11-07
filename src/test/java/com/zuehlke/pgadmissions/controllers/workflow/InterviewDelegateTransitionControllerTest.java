@@ -29,11 +29,11 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewEvaluationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeSuggestionCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -59,10 +59,9 @@ public class InterviewDelegateTransitionControllerTest {
     private StateChangeValidator stateChangeValidatorMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
     private BindingResult bindingResultMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
     private InterviewService interviewServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private RegisteredUser currentUser = new RegisteredUser();
 
@@ -79,7 +78,7 @@ public class InterviewDelegateTransitionControllerTest {
         stateComment.setFastTrackApplication(false);
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
                 encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
+                stateTransitionViewServiceMock, applicationFormUserRoleServiceMock, actionsProviderMock, interviewServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -92,11 +91,12 @@ public class InterviewDelegateTransitionControllerTest {
                         stateComment.getNextStatus())).andReturn(comment);
         commentServiceMock.save(comment);
         expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
-        applicationFormUserRoleService.processingDelegated(applicationForm);
+        applicationFormUserRoleServiceMock.processingDelegated(applicationForm);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
 
-        replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, applicationFormUserRoleService);
+        replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment.getComment(), stateComment, bindingResultMock);
-        verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, applicationFormUserRoleService);
+        verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, applicationFormUserRoleServiceMock);
 
         assertEquals("bob", view);
     }
@@ -114,7 +114,7 @@ public class InterviewDelegateTransitionControllerTest {
         stateComment.setFastTrackApplication(false);
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
                 encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
+                stateTransitionViewServiceMock, applicationFormUserRoleServiceMock, actionsProviderMock, interviewServiceMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -126,11 +126,12 @@ public class InterviewDelegateTransitionControllerTest {
                 .andReturn(comment);
         commentServiceMock.save(comment);
         interviewServiceMock.save(interview);
-        applicationFormUserRoleService.processingDelegated(applicationForm);
+        applicationFormUserRoleServiceMock.processingDelegated(applicationForm);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
 
-        replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, interviewServiceMock, applicationFormUserRoleService);
+        replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, interviewServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), "", stateComment, bindingResultMock);
-        verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, interviewServiceMock, applicationFormUserRoleService);
+        verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, interviewServiceMock, applicationFormUserRoleServiceMock);
 
         assertEquals("redirect:/applications?messageCode=state.change.suggestion&application=app1", view);
         assertEquals(InterviewStage.INACTIVE, interview.getStage());
@@ -143,7 +144,7 @@ public class InterviewDelegateTransitionControllerTest {
 
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
                 encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock) {
+                stateTransitionViewServiceMock, applicationFormUserRoleServiceMock, actionsProviderMock, interviewServiceMock) {
             public ApplicationForm getApplicationForm(String applicationId) {
                 return new ApplicationForm();
             }
@@ -169,14 +170,13 @@ public class InterviewDelegateTransitionControllerTest {
         stateTransitionViewServiceMock = createMock(StateTransitionService.class);
         encryptionHelperMock = createMock(EncryptionHelper.class);
         documentServiceMock = createMock(DocumentService.class);
-        accessServiceMock = createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = createMock(ActionsProvider.class);
         interviewServiceMock = createMock(InterviewService.class);
-        applicationFormUserRoleService = createMock(ApplicationFormUserRoleService.class);
 
         controller = new InterviewDelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
                 encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, accessServiceMock, actionsProviderMock, interviewServiceMock);
+                stateTransitionViewServiceMock, applicationFormUserRoleServiceMock, actionsProviderMock, interviewServiceMock);
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }
 

@@ -3,9 +3,9 @@
     <#assign application = applicationForm>
 </#if>
 
-<#assign actionsDefinition = actionDefinitions[application.applicationNumber]>
+<#assign applicationDescriptor = applicationDescriptors[application.applicationNumber]>
  
-<#assign actions = actionsDefinition.actions>
+<#assign actions = applicationDescriptor.actions>
 <select class="actionType" name="app_[${application.applicationNumber?html}]">
     <option>Actions</option>
     <#list actions as action>

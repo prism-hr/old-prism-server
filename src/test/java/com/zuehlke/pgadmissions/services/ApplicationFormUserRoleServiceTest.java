@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
@@ -38,7 +39,9 @@ public class ApplicationFormUserRoleServiceTest {
     private RegisteredUser applicant;
     
     @Test
+    @Ignore
     public void shouldAssignRolesWhenApplicationSubmitted(){
+        // TODO implement tests
         service.applicationSubmitted(application);
     }
 

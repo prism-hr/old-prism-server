@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers;
 import static com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter.URGENT;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,7 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
@@ -68,7 +67,7 @@ public class ApplicationListController {
 
     private final ApplicationsFilteringService filteringService;
 
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     
     private final ActionsProvider actionsProvider;
 
@@ -79,14 +78,14 @@ public class ApplicationListController {
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
             ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
-            ApplicationsFilteringService filteringService, final ApplicationFormAccessService accessService, final ActionsProvider actionsProvider) {
+            ApplicationsFilteringService filteringService, final ApplicationFormUserRoleService applicationFormUserRoleService, final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
         this.applicationSummaryService = applicationSummaryService;
         this.filteringService = filteringService;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
     }
 
@@ -136,17 +135,14 @@ public class ApplicationListController {
             response.setStatus(HttpServletResponse.SC_SEE_OTHER);
         }
 
-        Map<String, Boolean> updatedApplications = new HashMap<String, Boolean>();
-        Map<String, ApplicationDescriptor> actionDefinitions = new LinkedHashMap<String, ApplicationDescriptor>();
+        Map<String, ApplicationDescriptor> applicationDescriptors = new LinkedHashMap<String, ApplicationDescriptor>();
         for (ApplicationForm applicationForm : applications) {
-            updatedApplications.put(applicationForm.getApplicationNumber(), accessService.userNeedsToSeeApplicationUpdates(applicationForm, getUser()));
             ApplicationDescriptor descriptor = actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
-            actionDefinitions.put(applicationForm.getApplicationNumber(), descriptor);
+            applicationDescriptors.put(applicationForm.getApplicationNumber(), descriptor);
         }
 
-        model.addAttribute("updateApplications", updatedApplications);
         model.addAttribute("applications", applications);
-        model.addAttribute("actionDefinitions", actionDefinitions);
+        model.addAttribute("applicationDescriptors", applicationDescriptors);
         model.addAttribute("latestConsideredFlagIndex", filtering.getLatestConsideredFlagIndex());
         return APPLICATION_LIST_SECTION_VIEW_NAME;
     }

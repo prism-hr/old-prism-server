@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
@@ -50,7 +51,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -67,7 +68,7 @@ public class ReviewCommentControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
     private ApplicantRatingService applicantRatingServiceMock;
 
@@ -208,12 +209,13 @@ public class ReviewCommentControllerTest {
         commentServiceMock.save(comment);
         applicantRatingServiceMock.computeAverageRating(reviewRound);
         applicantRatingServiceMock.computeAverageRating(applicationForm);
-        accessServiceMock.reviewPosted(reviewer);
+        applicationFormUserRoleServiceMock.reviewPosted(reviewer);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
 
-        replay(commentServiceMock, applicantRatingServiceMock, accessServiceMock);
+        replay(commentServiceMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber(),
                 controller.addComment(comment, result, modelMap));
-        verify(commentServiceMock, applicantRatingServiceMock, accessServiceMock);
+        verify(commentServiceMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
 
         Assert.assertSame(comment, reviewer.getReview());
         Assert.assertThat(applicationForm.getApplicationComments(), Matchers.<Comment> contains(comment));
@@ -229,12 +231,12 @@ public class ReviewCommentControllerTest {
         scoringDefinitionParserMock = createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = createMock(ScoresPropertyEditor.class);
         scoreFactoryMock = createMock(ScoreFactory.class);
-        accessServiceMock = createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = createMock(ActionsProvider.class);
         applicantRatingServiceMock = createMock(ApplicantRatingService.class);
 
         controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
-                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock,
+                documentPropertyEditorMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, applicationFormUserRoleServiceMock, actionsProviderMock,
                 applicantRatingServiceMock);
 
     }

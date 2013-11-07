@@ -2,18 +2,14 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_ELIGIBILITY;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.Date;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.ui.ModelMap;
@@ -26,7 +22,6 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ConfirmEligibilityEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -34,12 +29,10 @@ import com.zuehlke.pgadmissions.domain.builders.AdmitterCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -76,10 +69,6 @@ public class AdmitterCommentControllerTest {
     @Mock
     @InjectIntoByType
     private ActionsProvider actionsProviderMock;
-
-    @Mock
-    @InjectIntoByType
-    private ApplicationFormAccessService accessServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -176,7 +165,6 @@ public class AdmitterCommentControllerTest {
         expect(eventFactoryMock.createEvent(comment)).andReturn(event);
 
         actionsProviderMock.validateAction(application, currentUser, CONFIRM_ELIGIBILITY);
-        accessServiceMock.updateAccessTimestamp(eq(application), eq(currentUser), EasyMock.isA(Date.class));
         applicationsServiceMock.save(application);
         commentServiceMock.save(comment);
         applicationFormUserRoleServiceMock.admitterCommentPosted(comment);
@@ -189,14 +177,6 @@ public class AdmitterCommentControllerTest {
         assertEquals(currentUser, comment.getUser());
         assertNotNull(comment.getDate());
         assertEquals(application, comment.getApplication());
-        assertNull(application.getAdminRequestedRegistry());
-        assertFalse(application.isRegistryUsersDueNotification());
-
-        ApplicationFormUpdate update = application.getApplicationUpdates().get(0);
-        assertNotNull(update);
-        assertEquals(application, update.getApplicationForm());
-        assertEquals(ApplicationUpdateScope.INTERNAL, update.getUpdateVisibility());
-        assertNotNull(update.getUpdateTimestamp());
 
         assertNotNull(application.getEvents().get(0));
         assertEquals(event, application.getEvents().get(0));

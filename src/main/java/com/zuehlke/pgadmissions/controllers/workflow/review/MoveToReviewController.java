@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -52,7 +52,7 @@ public class MoveToReviewController {
 
     private final ReviewRoundValidator reviewRoundValidator;
     private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     MoveToReviewController() {
         this(null, null, null, null, null, null, null);
@@ -61,21 +61,21 @@ public class MoveToReviewController {
     @Autowired
     public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
             ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
-            final ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+            final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.reviewService = reviewService;
         this.actionsProvider = actionsProvider;
         this.reviewRoundValidator = reviewRoundValidator;
         this.reviewerPropertyEditor = reviewerPropertyEditor;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         actionsProvider.validateAction(application, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
-        accessService.deregisterApplicationUpdate(application, getUser());
+        applicationFormUserRoleService.deregisterApplicationUpdate(application, getUser());
         return REVIEW_DETAILS_VIEW_NAME;
     }
 
@@ -93,11 +93,9 @@ public class MoveToReviewController {
             return REVIEWERS_SECTION_NAME;
         }
 
-        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        
         reviewService.moveApplicationToReview(applicationForm, reviewRound);
-        accessService.movedToReviewStage(reviewRound);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.movedToReviewStage(reviewRound);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
 
         return "/private/common/ajax_OK";
     }

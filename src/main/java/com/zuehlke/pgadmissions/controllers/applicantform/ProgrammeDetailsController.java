@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -37,7 +36,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -55,7 +54,7 @@ public class ProgrammeDetailsController {
     private final SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
     private final SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
     private final UserService userService;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     ProgrammeDetailsController() {
         this(null, null, null, null, null, null, null, null, null);
@@ -65,7 +64,7 @@ public class ProgrammeDetailsController {
     public ProgrammeDetailsController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
             DatePropertyEditor datePropertyEditor, SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
             ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService, UserService userService,
-            SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor, final ApplicationFormAccessService accessService) {
+            SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor, final ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
         this.datePropertyEditor = datePropertyEditor;
@@ -74,7 +73,7 @@ public class ProgrammeDetailsController {
         this.programmeDetailsService = programmeDetailsService;
         this.userService = userService;
         this.sourcesOfInterestPropertyEditor = sourcesOfInterestPropertyEditor;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
@@ -95,14 +94,10 @@ public class ProgrammeDetailsController {
 
         ApplicationForm applicationForm = programmeDetails.getApplication();
         
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        applicationForm.setLastUpdated(new Date());
-        
         programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(applicationForm.getProgram(), programmeDetails.getStudyOption()));
         programmeDetailsService.save(programmeDetails);
         applicationsService.save(applicationForm);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
     }
 

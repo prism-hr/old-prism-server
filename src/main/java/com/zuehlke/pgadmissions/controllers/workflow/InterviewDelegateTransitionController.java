@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
@@ -29,7 +28,7 @@ import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFo
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -56,9 +55,9 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
     public InterviewDelegateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, InterviewService interviewService) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, InterviewService interviewService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
+                documentPropertyEditor, stateTransitionService, applicationFormUserRoleService, actionsProvider);
         this.interviewService = interviewService;
     }
 
@@ -86,7 +85,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
 
     @RequestMapping(method = RequestMethod.GET, value = "/submitInterviewEvaluationComment")
     public String defaultGet(@RequestParam String applicationId) {
-        accessService.deregisterApplicationUpdate(getApplicationForm(applicationId), getCurrentUser());
+        applicationFormUserRoleService.deregisterApplicationUpdate(getApplicationForm(applicationId), getCurrentUser());
         return MY_APPLICATIONS_VIEW;
     }
 
@@ -140,15 +139,13 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
 
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
-
         applicationsService.save(applicationForm);
         commentService.save(comment);
         applicationsService.refresh(applicationForm);
+        
         // This is not finished but I put it here so that we would remember what to do when it is finished
-        accessService.processingDelegated(applicationForm);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.processingDelegated(applicationForm);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
         if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
             return stateTransitionService.resolveView(applicationForm);
         }

@@ -1,16 +1,16 @@
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
 <#list applications as application>
-    <#assign actionsDefinition = actionDefinitions[application.applicationNumber]>
-    <#assign actionsRequiringAttention = actionsDefinition.requiresAttention>
-    <#assign actions = actionsDefinition.actionDefinitions>
+    <#assign applicationDescriptor = applicationDescriptors[application.applicationNumber]>
+    <#assign actionsRequiringAttention = applicationDescriptor.requiresAttention>
+    <#assign actions = applicationDescriptor.actionDefinitions>
     <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow" >
   <td class="centre"><input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" /></td>
-  <td <#if actionsDefinition.requiresAttention> data-desc="This application requires your attention" class="applicant-name flagred"
-	  <#elseif updateApplications[application.applicationNumber]> data-desc="This application has been updated" class="applicant-name"
+  <td <#if actionsRequiringAttention> data-desc="This application requires your attention" class="applicant-name flagred"
+	  <#elseif needsToSeeUpdate> data-desc="This application has been updated" class="applicant-name"
 	  <#else> data-desc="Application is progressing normally" class="applicant-name flaggreen"</#if>>
-  <#if actionsDefinition.requiresAttention> <i class="icon-bell-alt"></i> 
-  <#elseif updateApplications[application.applicationNumber]> <i class="icon-refresh"></i>
+  <#if actionsRequiringAttention> <i class="icon-bell-alt"></i> 
+  <#elseif needsToSeeUpdate> <i class="icon-refresh"></i>
   <#else> <i class="icon-coffee"></i> </#if>
   <#if !user.isInRole('APPLICANT')>
 	${application.applicant.firstName}

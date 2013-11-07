@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -56,7 +56,7 @@ public class FundingControllerTest {
 
 	private EncryptionHelper encryptionHelperMock;
 	
-	private ApplicationFormAccessService accessServiceMock;
+	private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -194,7 +194,6 @@ public class FundingControllerTest {
 		String view = controller.editFunding(funding, errors);
 		EasyMock.verify(fundingServiceMock, applicationsServiceMock);
 		assertEquals("redirect:/update/getFunding?applicationId=ABC", view);
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test
@@ -222,10 +221,10 @@ public class FundingControllerTest {
 		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-		accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+		applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
 
 		controller = new FundingController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, fundingValidatorMock,
-				fundingServiceMock, documentPropertyEditorMock, userServiceMock, encryptionHelperMock, accessServiceMock);
+				fundingServiceMock, documentPropertyEditorMock, userServiceMock, encryptionHelperMock, applicationFormUserRoleServiceMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

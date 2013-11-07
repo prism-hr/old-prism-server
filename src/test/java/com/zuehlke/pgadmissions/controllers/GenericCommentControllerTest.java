@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -38,7 +38,7 @@ public class GenericCommentControllerTest {
     private CommentService commentServiceMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -88,7 +88,7 @@ public class GenericCommentControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
-                documentPropertyEditorMock, actionsProviderMock, accessServiceMock) {
+                documentPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -151,9 +151,9 @@ public class GenericCommentControllerTest {
         commentServiceMock = EasyMock.createMock(CommentService.class);
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
-                documentPropertyEditorMock, actionsProviderMock, accessServiceMock);
+                documentPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock);
 
     }
 }

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -24,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -42,16 +40,16 @@ public class EvaluationTransitionController extends StateTransitionController {
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
     public EvaluationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
+                documentPropertyEditor, stateTransitionService, applicationFormUserRoleService, actionsProvider);
     }
 
     @ModelAttribute("comment")
@@ -64,7 +62,7 @@ public class EvaluationTransitionController extends StateTransitionController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/submitEvaluationComment")
     public String defaultGet(@RequestParam String applicationId) {
-    	accessService.deregisterApplicationUpdate(getApplicationForm(applicationId), getCurrentUser());
+        applicationFormUserRoleService.deregisterApplicationUpdate(getApplicationForm(applicationId), getCurrentUser());
         return MY_APPLICATIONS_VIEW;
     }
 
@@ -120,13 +118,10 @@ public class EvaluationTransitionController extends StateTransitionController {
         StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(),
                 stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus);
 
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
-        
         applicationsService.save(applicationForm);
         commentService.save(newComment);
-        accessService.stateChanged(newComment);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.stateChanged(newComment);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         if (nextStatus == ApplicationFormStatus.APPROVAL) {
             applicationsService.makeApplicationNotEditable(applicationForm);
         }

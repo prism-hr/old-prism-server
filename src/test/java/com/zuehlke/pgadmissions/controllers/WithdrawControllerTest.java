@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WithdrawService;
@@ -30,7 +30,7 @@ public class WithdrawControllerTest {
     private RegisteredUser student;
 
     private UserService userServiceMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
 
     @Test
@@ -81,10 +81,10 @@ public class WithdrawControllerTest {
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         withdrawServiceMock = EasyMock.createMock(WithdrawService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
-        withdrawController = new WithdrawController(applicationsServiceMock, userServiceMock, withdrawServiceMock, accessServiceMock,
+        withdrawController = new WithdrawController(applicationsServiceMock, userServiceMock, withdrawServiceMock, applicationFormUserRoleServiceMock,
                 actionsProviderMock);
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

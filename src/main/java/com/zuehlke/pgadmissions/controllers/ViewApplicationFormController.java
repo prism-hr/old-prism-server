@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -27,7 +25,7 @@ public class ViewApplicationFormController {
     private final ApplicationsService applicationService;
     private final ApplicationPageModelBuilder applicationPageModelBuilder;
     private final UserService userService;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService ApplicationFormUserRoleService;
 
     ViewApplicationFormController() {
         this(null, null, null, null);
@@ -35,11 +33,11 @@ public class ViewApplicationFormController {
 
     @Autowired
     public ViewApplicationFormController(ApplicationsService applicationService, UserService userService,
-            ApplicationPageModelBuilder applicationPageModelBuilder, final ApplicationFormAccessService accessService) {
+            ApplicationPageModelBuilder applicationPageModelBuilder, final ApplicationFormUserRoleService ApplicationFormUserRoleService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationPageModelBuilder = applicationPageModelBuilder;
-        this.accessService = accessService;
+        this.ApplicationFormUserRoleService = ApplicationFormUserRoleService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -49,9 +47,7 @@ public class ViewApplicationFormController {
         RegisteredUser currentuser = userService.getCurrentUser();
         ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
         
-        accessService.updateAccessTimestamp(applicationForm, currentuser, new Date());
-        
-        accessService.deregisterApplicationUpdate(applicationForm, currentuser);
+        ApplicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, currentuser);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -29,7 +28,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -52,27 +51,26 @@ public class ConfirmSupervisionController {
 
     private final ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
 
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
     private final ProgramInstanceService programInstanceService;
 
     public ConfirmSupervisionController() {
-        this(null, null, null, null, null, null, null,  null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ConfirmSupervisionController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-                    DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator,
-                    ApplicationFormAccessService accessService, ActionsProvider actionsProvider, 
-                      ProgramInstanceService programInstanceService) {
+            DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator,
+            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ProgramInstanceService programInstanceService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
         this.datePropertyEditor = datePropertyEditor;
         this.confirmSupervisionDTOValidator = confirmSupervisionDTOValidator;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
         this.programInstanceService = programInstanceService;
     }
@@ -102,16 +100,16 @@ public class ConfirmSupervisionController {
 
         confirmSupervisionDTO.setProjectTitle(approvalRound.getProjectTitle());
         confirmSupervisionDTO.setProjectAbstract(approvalRound.getProjectAbstract());
-        
+
         Date startDate = approvalRound.getRecommendedStartDate();
-        
+
         if (!programInstanceService.isPrefferedStartDateWithinBounds(applicationForm, startDate)) {
-        	startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
+            startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
         }
-        
+
         confirmSupervisionDTO.setRecommendedStartDate(startDate);
         confirmSupervisionDTO.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
-        confirmSupervisionDTO.setRecommendedConditions(approvalRound.getRecommendedConditions()); 
+        confirmSupervisionDTO.setRecommendedConditions(approvalRound.getRecommendedConditions());
         confirmSupervisionDTO.setProjectAcceptingApplications(approvalRound.getProjectAcceptingApplications());
 
         return confirmSupervisionDTO;
@@ -134,7 +132,7 @@ public class ConfirmSupervisionController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
-        accessService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
 
@@ -149,10 +147,7 @@ public class ConfirmSupervisionController {
         }
 
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.INTERNAL);
-
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
 
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();

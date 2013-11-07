@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
@@ -34,7 +33,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
@@ -57,7 +56,7 @@ public class EmploymentController {
     private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
     private final UserService userService;
     private final EncryptionHelper encryptionHelper;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final DomicileService domicileService;
     private DomicilePropertyEditor domicilePropertyEditor;
     private final FullTextSearchService searchService;
@@ -70,7 +69,7 @@ public class EmploymentController {
     public EmploymentController(EmploymentPositionService employmentPositionService, LanguageService languageService, ApplicationsService applicationsService,
                     LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor,
                     ApplicationFormPropertyEditor applicationFormPropertyEditor, EmploymentPositionValidator employmentPositionValidator,
-                    UserService userService, EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService,
+                    UserService userService, EncryptionHelper encryptionHelper, final ApplicationFormUserRoleService applicationFormUserRoleService,
                     DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, final FullTextSearchService searchService) {
         this.employmentPositionService = employmentPositionService;
         this.languageService = languageService;
@@ -81,7 +80,7 @@ public class EmploymentController {
         this.employmentPositionValidator = employmentPositionValidator;
         this.userService = userService;
         this.encryptionHelper = encryptionHelper;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
         this.searchService = searchService;
@@ -122,13 +121,9 @@ public class EmploymentController {
         }
         ApplicationForm applicationForm = employment.getApplication();
         
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        applicationForm.setLastUpdated(new Date());
-        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        
         employmentPositionService.save(employment);
         applicationService.save(employment.getApplication());
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         
         return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
     }

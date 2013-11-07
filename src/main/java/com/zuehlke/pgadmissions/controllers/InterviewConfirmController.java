@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.Date;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -44,7 +40,7 @@ public class InterviewConfirmController {
 
     private final InterviewService interviewService;
 
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -57,12 +53,12 @@ public class InterviewConfirmController {
 
     @Autowired
     public InterviewConfirmController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
-                    final ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
+                    final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider,
                     InterviewConfirmDTOValidator interviewConfirmDTOValidator) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
         this.interviewConfirmDTOValidator = interviewConfirmDTOValidator;
     }
@@ -110,7 +106,7 @@ public class InterviewConfirmController {
         interviewConfirmDTO.setFurtherInterviewerDetails(applicationForm.getLatestInterview().getFurtherInterviewerDetails());
         interviewConfirmDTO.setLocationUrl(applicationForm.getLatestInterview().getLocationURL());
         modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
-        accessService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return INTERVIEW_CONFIRM_PAGE;
     }
 
@@ -124,10 +120,6 @@ public class InterviewConfirmController {
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;
         }
-        
-        // Handled in the service level here.
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, user, new Date());
         
         Interview interview = applicationForm.getLatestInterview();
         interviewService.confirmInterview(user, interview, interviewConfirmDTO);

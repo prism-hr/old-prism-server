@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -53,7 +53,7 @@ public class MoveToReviewControllerTest {
     private RegisteredUser currentUserMock;
     private MoveToReviewReviewerPropertyEditor reviewerPropertyEditorMock;
     private ReviewRoundValidator reviewRoundValidatorMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
 
     @Test
@@ -103,7 +103,7 @@ public class MoveToReviewControllerTest {
                 .latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo, reviewerThree).build()).build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                reviewerPropertyEditorMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -125,7 +125,7 @@ public class MoveToReviewControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                reviewerPropertyEditorMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -146,7 +146,7 @@ public class MoveToReviewControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                reviewerPropertyEditorMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return application;
@@ -168,7 +168,7 @@ public class MoveToReviewControllerTest {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                reviewerPropertyEditorMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -213,7 +213,7 @@ public class MoveToReviewControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
 
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                reviewerPropertyEditorMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -279,7 +279,7 @@ public class MoveToReviewControllerTest {
 
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock) {
+                reviewerPropertyEditorMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -323,14 +323,14 @@ public class MoveToReviewControllerTest {
 
         reviewerPropertyEditorMock = EasyMock.createMock(MoveToReviewReviewerPropertyEditor.class);
         bindingResultMock = EasyMock.createMock(BindingResult.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
 
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         EasyMock.replay(bindingResultMock);
         reviewRoundValidatorMock = EasyMock.createMock(ReviewRoundValidator.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, accessServiceMock, actionsProviderMock);
+                reviewerPropertyEditorMock, applicationFormUserRoleServiceMock, actionsProviderMock);
 
     }
 

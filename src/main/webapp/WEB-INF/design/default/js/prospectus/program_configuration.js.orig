@@ -7,24 +7,15 @@ $(document).ready(function(){
 		getProgramData();
 		checkDates();
 		initEditors();
+		
 });
 function initEditors() {
 	tinymce.init({
 	    selector: "#programAdvertDescriptionText",
-	    plugins: ["link wordcount"],
+	    plugins: ["link visualchars"],
 	    width: 480,
 	    menubar: false,
-	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo",
-	    setup : function(ed) {
-	    	ed.on('keyup', function(e) { $('textArea#programAdvertDescriptionText').val(tinymce.get('programAdvertDescriptionText').getContent())});
-	    }
-	});
-	tinymce.init({
-	    selector: "#programAdvertFundingText",
-	    plugins: ["link wordcount"],
-	    width: 480,
-	    menubar: false,
-	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	    toolbar: "bold italic  | bullist numlist outdent indent | link | undo redo"
 	});
 }
 function bindProgramSelectChangeAction(){
@@ -384,9 +375,9 @@ function saveAdvert(){
 		url: url,
 		data: {
 			programCode: $("#programAdvertProgramSelect").val(),
-			description:addBlankLinks(tinymce.get('programAdvertDescriptionText').getContent()),
+			description:$("#programAdvertDescriptionText").val(),
 			studyDuration:JSON.stringify(duration),
-			funding:tinymce.get('programAdvertFundingText').getContent(),
+			funding:$("#programAdvertFundingText").val(),
 			active:acceptApplications,
 			id: $("#programAdvertId").val()
 		}, 
@@ -419,11 +410,7 @@ function saveAdvert(){
 		}
 	});
 }
-function addBlankLinks(text) {
-	  var removePreviousBlank = text.replace(new RegExp("target=\"_blank\"","g"),"");
-	  var editdescription = removePreviousBlank.replace(new RegExp("<a href=","g"),"<a target=\"_blank\" href=");
-      return editdescription; 
-}
+
 function isAdvertLoaded(){
 	var advertId=$("#programAdvertId").val();
 	return  advertId !== undefined && advertId != "";
@@ -443,8 +430,6 @@ function clearAdvert(){
 function setTextAreaValue(textArea, value){
 	textArea.val(value);
 	triggerKeyUp(textArea);
-	idselect = textArea.attr('id');
-	tinymce.get(idselect).setContent(value);
 }
 
 function triggerKeyUp(element) {

@@ -1,5 +1,5 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/program_configuration.js' />"></script>
-
+<script type="text/javascript" src="<@spring.url '/design/default/js/tinymce/tinymce.min.js' />"></script>
 <section class="form-rows">
       <h2>Manage Programmes</h2>
       <div id="programAdvertDiv">

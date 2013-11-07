@@ -14,8 +14,27 @@ $(document).ready(function(){
 		clearAll();
 		loadProjects();
 		$('#projectsClear').hide();
+		initEditorsProjects()
 });
-
+function initEditorsProjects() {
+	tinymce.init({
+	    selector: "#projectAdvertDescriptionText",
+	    plugins: ["link wordcount"],
+	    width: 480,
+	    menubar: false,
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	    /*setup : function(ed) {
+	    	ed.on('keyup', function(e) { $('textArea#programAdvertDescriptionText').val(tinymce.get('programAdvertDescriptionText').getContent())});
+	    }*/
+	});
+	tinymce.init({
+	    selector: "#projectAdvertFundingText",
+	    plugins: ["link wordcount"],
+	    width: 480,
+	    menubar: false,
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	});
+}
 function registerDefaultClosingDateSelector() {
 	$("#projectAdvertProgramSelect").change(function () {
 		selectDefaultClosingDate();
@@ -83,8 +102,8 @@ function addOrEditProjectAdvert(){
 			administratorSpecified : projectAdvertHasAdministrator(),
 			administrator : JSON.stringify(projectAdministrator),
 			title : $("#projectAdvertTitleInput").val(),
-			description : $("#projectAdvertDescriptionText").val(),
-			funding : $("#projectAdvertFundingText").val(),
+			description :addBlankLinks(tinymce.get('projectAdvertDescriptionText').getContent()),
+			funding :addBlankLinks(tinymce.get('projectAdvertFundingText').getContent()),
 			closingDateSpecified : projectAdvertHasClosingDate(), 
 			closingDate : $('#projectAdvertClosingDateInput').val(),
 			active : $("input:radio[name=projectAdvertIsActiveRadio]:checked").val(),
@@ -339,8 +358,13 @@ function fillProjectAdvertForm(data){
 	
 	$("#projectAdvertTitleInput").val(advert.title);
 	$("#projectAdvertDescriptionText").val(advert.description);
+
+	tinymce.get('projectAdvertDescriptionText').setContent(advert.description);
+
 	
 	$("#projectAdvertFundingText").val(advert.funding);
+
+	tinymce.get('projectAdvertFundingText').setContent(advert.funding);
 	
 	if(project.closingDate) {
 		$("#projectAdvertHasClosingDateRadioYes").prop("checked", true);

@@ -2003,7 +2003,21 @@ background: #909194;
 .bootstrap-select.btn-group .dropdown-menu li > a.title:hover {
   background: none;
 }  
-
+.mce-tinymce {
+	float: left !important;
+	margin-bottom: 20px !important;
+}
+.editor:focus {
+	border-color: rgba(82, 168, 236, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+    outline: 0 none;
+}
+.wysiwyg label, .wysiwyg span.hint {
+	margin-top: 45px !important;
+}
+.wysiwyg .count {
+	position: relative !important;
+}
 /* Responsive queries*/
 
 @media (min-width:768px) and (max-width:979px) {

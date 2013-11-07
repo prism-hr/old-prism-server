@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -49,7 +49,7 @@ public class OfferRecommendationControllerTest {
 
     private UserService userServiceMock;
 
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     private ActionsProvider actionsProviderMock;
 
@@ -196,14 +196,14 @@ public class OfferRecommendationControllerTest {
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         offerRecommendationServiceMock = EasyMock.createMock(OfferRecommendationService.class);
         offerRecommendedCommentValidatorMock = EasyMock.createMock(OfferRecommendedCommentValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         supervisorsProviderMock = EasyMock.createMock(SupervisorsProvider.class);
         supervisorPropertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
-        controller = new OfferRecommendationController(applicationsServiceMock, userServiceMock, actionsProviderMock, accessServiceMock,
+        controller = new OfferRecommendationController(applicationsServiceMock, userServiceMock, actionsProviderMock, applicationFormUserRoleServiceMock,
                 offerRecommendationServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock, programInstanceServiceMock,
                 supervisorsProviderMock, supervisorPropertyEditorMock);
     }

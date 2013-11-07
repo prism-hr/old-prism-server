@@ -63,9 +63,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "application_number")
     private String applicationNumber;
 
-    @Column(name = "registry_users_notified")
-    private Boolean registryUsersDueNotification = false;
-
     /**
      * This field indicates that user is application interview organiser.
      */
@@ -82,11 +79,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "application_form_id")
     private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-    @JoinColumn(name = "application_form_id")
-    private List<ApplicationFormUpdate> applicationUpdates = new ArrayList<ApplicationFormUpdate>();
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -142,10 +134,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicant_id")
     private RegisteredUser applicant = null;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_requested_registry_id")
-    private RegisteredUser adminRequestedRegistry = null;
 
     @Column(name = "project_title")
     private String projectTitle;
@@ -828,39 +816,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setBatchDeadline(Date batchDeadline) {
         this.batchDeadline = batchDeadline;
-    }
-
-    public Boolean isRegistryUsersDueNotification() {
-        return registryUsersDueNotification;
-    }
-
-    @Deprecated
-    public void setRegistryUsersDueNotification(Boolean registryUsersNotified) {
-        this.registryUsersDueNotification = registryUsersNotified;
-    }
-
-    public RegisteredUser getAdminRequestedRegistry() {
-        return adminRequestedRegistry;
-    }
-
-    public List<ApplicationFormUpdate> getApplicationUpdates() {
-        return applicationUpdates;
-    }
-
-    public void setApplicationUpdates(List<ApplicationFormUpdate> applicationUpdates) {
-        this.applicationUpdates.clear();
-        this.applicationUpdates.addAll(applicationUpdates);
-    }
-    
-    @Deprecated
-    public void addApplicationUpdate(ApplicationFormUpdate applicationUpdate) {
-    	// No longer required. We will just remove it.
-        this.applicationUpdates.add(applicationUpdate);
-    }
-
-    @Deprecated
-    public void setAdminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
-        this.adminRequestedRegistry = adminRequestedRegistry;
     }
 
     public boolean isAcceptedTerms() {

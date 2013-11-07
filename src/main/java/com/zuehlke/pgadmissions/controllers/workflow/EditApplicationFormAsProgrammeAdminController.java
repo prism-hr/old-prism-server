@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -52,7 +51,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -96,7 +95,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     protected final ScoreFactory scoreFactory;
 
-    protected final ApplicationFormAccessService accessService;
+    protected final ApplicationFormUserRoleService applicationFormUserRoleService;
     
     protected final ActionsProvider actionsProvider;
 
@@ -110,7 +109,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             final EncryptionHelper encryptionHelper, final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, DomicileService domicileService,
-            DomicilePropertyEditor domicilePropertyEditor, ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+            DomicilePropertyEditor domicilePropertyEditor, ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.userService = userService;
         this.applicationsService = applicationsService;
         this.documentPropertyEditor = documentPropertyEditor;
@@ -124,7 +123,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         this.scoreFactory = scoreFactory;
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
     }
 
@@ -146,7 +145,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
-    	accessService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
 
@@ -169,7 +168,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             map.putAll(FieldErrorUtils.populateMapWithErrors(refereesAdminEditDTOResult, messageSource));
         }
         
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         Gson gson = new Gson();
         return gson.toJson(map);
     }
@@ -205,19 +204,15 @@ public class EditApplicationFormAsProgrammeAdminController {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
 
-            applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-            accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
             
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
             Referee referee = newComment.getReferee();
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
 
-            applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-            accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
             applicationsService.save(applicationForm);
-            accessService.referencePosted(referee);
-            accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.referencePosted(referee);
+            applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);
@@ -300,58 +295,4 @@ public class EditApplicationFormAsProgrammeAdminController {
         }
     }
 
-    // @ModelAttribute("DTOsForExistingReferees")
-    // public HashMap<String, RefereesAdminEditDTO> getDTOsForExistingReferees (@RequestParam String applicationId) {
-    // ApplicationForm applicationForm = getApplicationForm(applicationId);
-    // HashMap<String, RefereesAdminEditDTO> existingRefereeDTOs = new HashMap<String, RefereesAdminEditDTO>();
-    //
-    // ScoringDefinition scoringDefinition = null;
-    // CustomQuestions customQuestions = null;
-    // List<Score> scores = null;
-    //
-    // try {
-    // scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
-    // customQuestions = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
-    // scores = scoreFactory.createScores(customQuestions.getQuestion());
-    // } catch (ScoringDefinitionParseException e) {
-    // log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
-    // }
-    //
-    // for (Referee referee : applicationForm.getReferees()) {
-    // if (referee.hasProvidedReference()) {
-    // RefereesAdminEditDTO refereeDTO = new RefereesAdminEditDTO();
-    // refereeDTO.setEditedRefereeId(encryptionHelper.encrypt(referee.getId()));
-    // refereeDTO.setContainsRefereeData(false);
-    // refereeDTO.setComment(referee.getReference().getComment());
-    //
-    // if (!referee.getReference().getDocuments().isEmpty()) {
-    // refereeDTO.setReferenceDocument(referee.getReference().getDocuments().get(0));
-    // }
-    //
-    // refereeDTO.setApplicantRating(referee.getReference().getApplicantRating());
-    // refereeDTO.setSuitableForUCL(referee.getReference().getSuitableForUCL());
-    // refereeDTO.setSuitableForProgramme(referee.getReference().getSuitableForProgramme());
-    // refereeDTO.setScores(referee.getReference().getScores());
-    // refereeDTO.setAlert(referee.getReference().getAlert());
-    //
-    // if (refereeDTO.getScores().isEmpty() &&
-    // scoringDefinition != null) {
-    // refereeDTO.getScores().addAll(scores);
-    // }
-    // else {
-    // for (Score score : referee.getReference().getScores()) {
-    // score.setOriginalQuestion(new Question()); /* Not possible. We do not store the original question. */
-    // }
-    // }
-    //
-    // if (refereeDTO.getAlert() == null &&
-    // scoringDefinition != null) {
-    // refereeDTO.setAlert(customQuestions.getAlert());
-    // }
-    //
-    // existingRefereeDTOs.put(encryptionHelper.encrypt(referee.getId()), refereeDTO);
-    // }
-    // }
-    // return existingRefereeDTOs;
-    // }
 }

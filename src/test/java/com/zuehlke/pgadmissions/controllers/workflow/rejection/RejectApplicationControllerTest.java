@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -61,7 +61,7 @@ public class RejectApplicationControllerTest {
     private RejectionValidator rejectionValidatorMock;
     private BindingResult errorsMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Before
     public void setUp() {
@@ -82,9 +82,9 @@ public class RejectApplicationControllerTest {
         EasyMock.replay(userServiceMock);
         rejectionValidatorMock = EasyMock.createMock(RejectionValidator.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock, rejectReasonPropertyEditorMock,
-                rejectionValidatorMock, accessServiceMock, actionsProviderMock);
+                rejectionValidatorMock, applicationFormUserRoleServiceMock, actionsProviderMock);
 
         errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);

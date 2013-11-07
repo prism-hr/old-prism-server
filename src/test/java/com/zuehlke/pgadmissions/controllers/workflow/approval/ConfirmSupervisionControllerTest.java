@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -39,7 +39,7 @@ public class ConfirmSupervisionControllerTest {
 
     private ConfirmSupervisionDTOValidator confirmSupervisionDTOValidatorMock;
 
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     private ActionsProvider actionsProviderMock;
 
@@ -117,10 +117,10 @@ public class ConfirmSupervisionControllerTest {
         approvalServiceMock = EasyMock.createMock(ApprovalService.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         confirmSupervisionDTOValidatorMock = EasyMock.createMock(ConfirmSupervisionDTOValidator.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock, datePropertyEditorMock,
-                confirmSupervisionDTOValidatorMock, accessServiceMock, actionsProviderMock, programInstanceServiceMock);
+                confirmSupervisionDTOValidatorMock, applicationFormUserRoleServiceMock, actionsProviderMock, programInstanceServiceMock);
     }
 }

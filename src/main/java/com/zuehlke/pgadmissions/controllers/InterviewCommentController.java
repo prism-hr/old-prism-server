@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -39,7 +38,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -59,7 +58,7 @@ public class InterviewCommentController {
     private final ScoringDefinitionParser scoringDefinitionParser;
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final ActionsProvider actionsProvider;
     private final ApplicantRatingService applicantRatingService;
 
@@ -70,8 +69,8 @@ public class InterviewCommentController {
     @Autowired
     public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ActionsProvider actionsProvider, ApplicationFormAccessService accessService,
-            ApplicantRatingService applicantRatingService) {
+            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ActionsProvider actionsProvider,
+            ApplicationFormUserRoleService applicationFormUserRoleService, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -81,7 +80,7 @@ public class InterviewCommentController {
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
         this.actionsProvider = actionsProvider;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.applicantRatingService = applicantRatingService;
     }
 
@@ -146,7 +145,7 @@ public class InterviewCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, PROVIDE_INTERVIEW_FEEDBACK);
-        accessService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return INTERVIEW_FEEDBACK_PAGE;
     }
 
@@ -177,12 +176,9 @@ public class InterviewCommentController {
         applicantRatingService.computeAverageRating(comment.getInterviewer().getInterview());
         applicantRatingService.computeAverageRating(applicationForm);
 
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
-        
         applicationsService.save(applicationForm);
-        accessService.interviewFeedbackPosted(comment.getInterviewer());
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.interviewFeedbackPosted(comment.getInterviewer());
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
     }
 

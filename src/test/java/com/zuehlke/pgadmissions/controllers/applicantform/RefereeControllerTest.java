@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
@@ -53,7 +53,7 @@ public class RefereeControllerTest {
     private RefereeValidator refereeValidatorMock;
     private EncryptionHelper encryptionHelperMock;
     private UserService userServiceMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private DomicileService domicileServiceMock;
     private FullTextSearchService fullTextSearchServiceMock;
 
@@ -204,7 +204,6 @@ public class RefereeControllerTest {
         EasyMock.verify(refereeServiceMock, applicationsServiceMock, errors, encryptionHelperMock);
 
         assertEquals("redirect:/update/getReferee?applicationId=ABC", view);
-        assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
     }
 
     @Test
@@ -256,12 +255,12 @@ public class RefereeControllerTest {
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         refereeValidatorMock = EasyMock.createMock(RefereeValidator.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
 
         controller = new RefereeController(refereeServiceMock, userServiceMock, applicationsServiceMock, domicilePropertyEditor,
-                applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock, accessServiceMock, domicileServiceMock,
+                applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock, applicationFormUserRoleServiceMock, domicileServiceMock,
                 fullTextSearchServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();

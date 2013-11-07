@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -29,7 +28,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.StageDurationService;
@@ -59,9 +58,9 @@ public class SubmitApplicationFormController {
 
     private final UserService userService;
 
-    private final ApplicationFormAccessService accessService;
-
     private final ActionsProvider actionsProvider;
+    
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public SubmitApplicationFormController() {
         this(null, null, null, null, null, null, null);
@@ -69,15 +68,15 @@ public class SubmitApplicationFormController {
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService,
-            ActionsProvider actionsProvider) {
+            StageDurationService stageDurationService, EventFactory eventFactory, 
+            ActionsProvider actionsProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
         this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
-        this.accessService = accessService;
         this.actionsProvider = actionsProvider;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -99,18 +98,14 @@ public class SubmitApplicationFormController {
             log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
         }
         
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
-        applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
-        
         applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
         applicationForm.setSubmittedDate(DateUtils.truncateToDay(new Date()));
         assignValidationDueDate(applicationForm);
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
         assignBatchDeadline(applicationForm);
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
-        accessService.applicationSubmitted(applicationForm);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationSubmitted(applicationForm);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 
@@ -137,9 +132,7 @@ public class SubmitApplicationFormController {
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = getCurrentUser();
         
-        accessService.updateAccessTimestamp(applicationForm, user, new Date());
-        
-        accessService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         if (user.canEditAsApplicant(applicationForm)) {
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }

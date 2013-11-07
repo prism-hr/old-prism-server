@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -26,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -48,9 +47,9 @@ public class ValidationTransitionController extends StateTransitionController {
     public ValidationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider);
+                documentPropertyEditor, stateTransitionService, applicationFormUserRoleService, actionsProvider);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
@@ -73,7 +72,7 @@ public class ValidationTransitionController extends StateTransitionController {
             }
 
         }
-        accessService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return stateTransitionService.resolveView(applicationForm, action);
     }
 
@@ -125,10 +124,6 @@ public class ValidationTransitionController extends StateTransitionController {
             applicationsService.fastTrackApplication(form.getApplicationNumber());
         }
 
-        // Wrong update setting. All users should see state transition.
-        form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
-        accessService.updateAccessTimestamp(form, user, new Date());
-
         comment.setDate(new Date());
         commentService.save(comment);
 
@@ -137,8 +132,8 @@ public class ValidationTransitionController extends StateTransitionController {
         }
 
         applicationsService.save(form);
-        accessService.stateChanged(comment);
-        accessService.registerApplicationUpdate(form, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.stateChanged(comment);
+        applicationFormUserRoleService.registerApplicationUpdate(form, ApplicationUpdateScope.ALL_USERS);
 
         if (BooleanUtils.isTrue(delegate)) {
             return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();

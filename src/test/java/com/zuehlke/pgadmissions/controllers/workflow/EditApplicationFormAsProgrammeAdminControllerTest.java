@@ -60,7 +60,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -74,7 +74,6 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private UserService userServiceMock;
     private EncryptionHelper encryptionHelperMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
-    private ApplicationFormAccessService accessServiceMock;
     private RefereeService refereeServiceMock;
     private RefereesAdminEditDTOValidator refereesAdminEditDTOValidatorMock;
     private SendToPorticoDataDTOEditor sendToPorticoDataDTOEditorMock;
@@ -84,6 +83,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private ScoreFactory scoreFactoryMock;
     private DomicileService domicileServiceMock;
     private DomicilePropertyEditor domicilePropertyEditorMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
 
     @Before
@@ -101,12 +101,13 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock, refereeServiceMock,
                 refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, messageSourceMock, scoringDefinitionParserMock,
-                scoresPropertyEditorMock, scoreFactoryMock, domicileServiceMock, domicilePropertyEditorMock, accessServiceMock, actionsProviderMock);
+                scoresPropertyEditorMock, scoreFactoryMock, domicileServiceMock, domicilePropertyEditorMock, applicationFormUserRoleServiceMock,
+                actionsProviderMock);
     }
 
     @Test

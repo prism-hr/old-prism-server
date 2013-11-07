@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
@@ -55,7 +56,6 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -76,10 +76,9 @@ public class ReferenceControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
     private ApplicantRatingService applicantRatingServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldReturnApplicationForm() {
@@ -260,6 +259,7 @@ public class ReferenceControllerTest {
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
         actionsProviderMock.validateAction(application, currentUser, ApplicationFormAction.PROVIDE_REFERENCE);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
 
         replay(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors, modelMap));
@@ -279,15 +279,14 @@ public class ReferenceControllerTest {
         userServiceMock = createMock(UserService.class);
         scoringDefinitionParserMock = createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = createMock(ScoresPropertyEditor.class);
-        accessServiceMock = createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
         scoreFactoryMock = createMock(ScoreFactory.class);
         actionsProviderMock = createMock(ActionsProvider.class);
         applicantRatingServiceMock = createMock(ApplicantRatingService.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
         controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator,
-                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, accessServiceMock, actionsProviderMock,
-                applicantRatingServiceMock, applicationFormUserRoleServiceMock);
+                commentServiceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock, applicationFormUserRoleServiceMock, actionsProviderMock,
+                applicantRatingServiceMock);
 
     }
 

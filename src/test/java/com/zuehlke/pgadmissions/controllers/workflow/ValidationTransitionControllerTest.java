@@ -1,15 +1,12 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static junit.framework.Assert.assertNotNull;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
 import java.util.Arrays;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -35,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -60,7 +56,7 @@ public class ValidationTransitionControllerTest {
     private StateChangeValidator stateChangeValidatorMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
     private BindingResult bindingResultMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
     private ApplicationFormUserRoleService applicationFormUserRoleService;
 
@@ -96,8 +92,8 @@ public class ValidationTransitionControllerTest {
 
         commentServiceMock.save(comment);
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
+                applicationFormUserRoleServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -126,8 +122,8 @@ public class ValidationTransitionControllerTest {
         Document documentTwo = new DocumentBuilder().id(2).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
+                applicationFormUserRoleServiceMock, actionsProviderMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -150,226 +146,6 @@ public class ValidationTransitionControllerTest {
         assertTrue(comment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
     }
 
-    @Test
-    public void shouldNotifyRegistryIfHomeOrOverseasIsUnsureAndNextStateIsNotReject() throws ParseException {
-        Program program = new ProgramBuilder().id(1).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        ValidationComment comment = new ValidationCommentBuilder().id(6).qualifiedForPhd(ValidationQuestionOptions.NO)
-                .englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.UNSURE).nextStatus(ApplicationFormStatus.REVIEW)
-                .comment("comment").type(CommentType.VALIDATION).fastTrackApplication(false).build();
-
-        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
-
-        commentServiceMock.save(comment);
-
-        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-        };
-
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        applicationServiceMock.save(applicationForm);
-        EasyMock.expectLastCall().times(2);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
-                delegatedInterviewer);
-
-        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
-
-        assertNotNull(applicationForm.getAdminRequestedRegistry());
-    }
-
-    @Test
-    public void shouldNotifyRegistryIfQualifiedForPhdIsUnsureAndNextStateIsNotReject() {
-        Program program = new ProgramBuilder().id(1).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        ValidationComment comment = new ValidationCommentBuilder().id(6).qualifiedForPhd(ValidationQuestionOptions.UNSURE)
-                .englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.REVIEW)
-                .comment("comment").type(CommentType.VALIDATION).fastTrackApplication(false).build();
-
-        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
-
-        commentServiceMock.save(comment);
-
-        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-        };
-
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        applicationServiceMock.save(applicationForm);
-        EasyMock.expectLastCall().times(2);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
-                delegatedInterviewer);
-
-        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
-
-        assertNotNull(applicationForm.getAdminRequestedRegistry());
-    }
-
-    @Test
-    public void shouldNotifyRegistryIfEnglishCompentencyIsUnsureAndNextStateIsNotReject() {
-        Program program = new ProgramBuilder().id(1).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        ValidationComment comment = new ValidationCommentBuilder().id(6).qualifiedForPhd(ValidationQuestionOptions.YES)
-                .englishCompentencyOk(ValidationQuestionOptions.UNSURE).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.REVIEW)
-                .comment("comment").type(CommentType.VALIDATION).fastTrackApplication(false).build();
-
-        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
-
-        commentServiceMock.save(comment);
-
-        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-        };
-
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        applicationServiceMock.save(applicationForm);
-        EasyMock.expectLastCall().times(2);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
-                delegatedInterviewer);
-
-        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
-
-        assertNotNull(applicationForm.getAdminRequestedRegistry());
-    }
-
-    @Test
-    public void shouldNotNotifyRegistryIfHomeOrOverseasIsUnsureAndNextStateIsReject() {
-        Program program = new ProgramBuilder().id(1).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        ValidationComment comment = new ValidationCommentBuilder().id(6).qualifiedForPhd(ValidationQuestionOptions.YES)
-                .englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.UNSURE).nextStatus(ApplicationFormStatus.REJECTED)
-                .comment("comment").type(CommentType.VALIDATION).fastTrackApplication(false).build();
-
-        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
-
-        commentServiceMock.save(comment);
-
-        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-        };
-
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        applicationServiceMock.save(applicationForm);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
-                delegatedInterviewer);
-
-        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
-
-        assertTrue(BooleanUtils.isFalse(applicationForm.isRegistryUsersDueNotification()));
-    }
-
-    @Test
-    public void shouldNotNotifyRegistryIfQualifiedForPhdIsUnsureAndNextStateIsReject() {
-        Program program = new ProgramBuilder().id(1).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        ValidationComment comment = new ValidationCommentBuilder().id(6).qualifiedForPhd(ValidationQuestionOptions.UNSURE)
-                .englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.REJECTED)
-                .comment("comment").type(CommentType.VALIDATION).fastTrackApplication(false).build();
-
-        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
-
-        commentServiceMock.save(comment);
-
-        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-        };
-
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        applicationServiceMock.save(applicationForm);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
-                delegatedInterviewer);
-
-        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
-
-        assertTrue(BooleanUtils.isFalse(applicationForm.isRegistryUsersDueNotification()));
-    }
-
-    @Test
-    public void shouldNotNotifyRegistryIfEnglishCompentencyIsUnsureAndNextStateIsReject() {
-        Program program = new ProgramBuilder().id(1).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        ValidationComment comment = new ValidationCommentBuilder().id(6).qualifiedForPhd(ValidationQuestionOptions.NO)
-                .englishCompentencyOk(ValidationQuestionOptions.UNSURE).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.REJECTED)
-                .comment("comment").type(CommentType.VALIDATION).fastTrackApplication(false).build();
-
-        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
-
-        commentServiceMock.save(comment);
-
-        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-        };
-
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        applicationServiceMock.save(applicationForm);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
-                delegatedInterviewer);
-
-        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-
-        assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
-
-        assertTrue(BooleanUtils.isFalse(applicationForm.isRegistryUsersDueNotification()));
-
-    }
-
     @Before
     public void setUp() {
         bindingResultMock = EasyMock.createMock(BindingResult.class);
@@ -383,13 +159,13 @@ public class ValidationTransitionControllerTest {
         stateTransitionServiceMock = EasyMock.createMock(StateTransitionService.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
         documentServiceMock = EasyMock.createMock(DocumentService.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         applicationFormUserRoleService = createMock(ApplicationFormUserRoleService.class);
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
-                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock, accessServiceMock,
-                actionsProviderMock);
+                documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
+                applicationFormUserRoleServiceMock, actionsProviderMock);
         currentUser = new RegisteredUser();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
     }

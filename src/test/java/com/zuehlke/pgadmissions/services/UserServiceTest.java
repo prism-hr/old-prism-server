@@ -378,11 +378,10 @@ public class UserServiceTest {
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(role_6);
 
         EasyMock.replay(userDAOMock, roleDAOMock, userFactoryMock);
-
         RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserForProgramme("la", "le", "some@email.com", program,
-                Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER);
-
+                Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.VIEWER);
         EasyMock.verify(userDAOMock, roleDAOMock, userFactoryMock);
+        
         assertEquals(newUser, createdUser);
 
         assertTrue(createdUser.getProgramsOfWhichAdministrator().contains(program));

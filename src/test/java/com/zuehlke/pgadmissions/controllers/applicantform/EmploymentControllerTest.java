@@ -35,11 +35,10 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
@@ -61,7 +60,7 @@ public class EmploymentControllerTest {
     private EmploymentPositionValidator employmentValidatorMock;
     private UserService userServiceMock;
     private EncryptionHelper encryptionHelperMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private DomicileService domicileServiceMock;
     private DomicilePropertyEditor domicilePropertyEditorMock;
     private FullTextSearchService fullTextSearchServiceMock;
@@ -69,7 +68,7 @@ public class EmploymentControllerTest {
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
         EmploymentPosition employment = new EmploymentPositionBuilder().id(1)
-                        .application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build()).toEmploymentPosition();
+                .application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build()).toEmploymentPosition();
         BindingResult errors = EasyMock.createMock(BindingResult.class);
         EasyMock.replay(employmentServiceMock, errors);
         controller.editEmployment(employment, errors);
@@ -202,7 +201,6 @@ public class EmploymentControllerTest {
         String view = controller.editEmployment(employment, errors);
         EasyMock.verify(employmentServiceMock, applicationsServiceMock);
         assertEquals("redirect:/update/getEmploymentPosition?applicationId=ABC", view);
-        assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
     }
 
     @Test
@@ -231,14 +229,14 @@ public class EmploymentControllerTest {
         employmentValidatorMock = EasyMock.createMock(EmploymentPositionValidator.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
         fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
-        
+
         controller = new EmploymentController(employmentServiceMock, languageServiceMock, applicationsServiceMock, languagePropertyEditorMock,
-                        datePropertyEditorMock, applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock,
-                        accessServiceMock, domicileServiceMock, domicilePropertyEditorMock, fullTextSearchServiceMock);
+                datePropertyEditorMock, applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock,
+                applicationFormUserRoleServiceMock, domicileServiceMock, domicilePropertyEditorMock, fullTextSearchServiceMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -38,7 +37,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -58,7 +57,7 @@ public class ReviewCommentController {
     private final ScoringDefinitionParser scoringDefinitionParser;
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService ApplicationFormUserRoleService;
     private final ActionsProvider actionsProvider;
     private final ApplicantRatingService applicantRatingService;
 
@@ -69,7 +68,7 @@ public class ReviewCommentController {
     @Autowired
     public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
+            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormUserRoleService ApplicationFormUserRoleService, ActionsProvider actionsProvider,
             ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
@@ -79,7 +78,7 @@ public class ReviewCommentController {
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
-        this.accessService = accessService;
+        this.ApplicationFormUserRoleService = ApplicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
         this.applicantRatingService = applicantRatingService;
     }
@@ -143,7 +142,7 @@ public class ReviewCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
-        accessService.deregisterApplicationUpdate(applicationForm, user);
+        ApplicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
 
@@ -167,8 +166,6 @@ public class ReviewCommentController {
         if (result.hasErrors()) {
             return REVIEW_FEEDBACK_PAGE;
         }
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
 
         applicationsService.save(applicationForm);
         commentService.save(comment);
@@ -176,8 +173,8 @@ public class ReviewCommentController {
         applicationForm.getApplicationComments().add(comment);
         applicantRatingService.computeAverageRating(comment.getReviewer().getReviewRound());
         applicantRatingService.computeAverageRating(applicationForm);
-        accessService.reviewPosted(comment.getReviewer());
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.INTERNAL);
+        ApplicationFormUserRoleService.reviewPosted(comment.getReviewer());
+        ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
 
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }

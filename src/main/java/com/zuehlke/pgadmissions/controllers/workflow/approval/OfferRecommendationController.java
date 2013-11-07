@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -31,7 +30,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -49,7 +48,7 @@ public class OfferRecommendationController {
 
     private final ApplicationsService applicationsService;
 
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -71,13 +70,13 @@ public class OfferRecommendationController {
 
     @Autowired
     public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
-            ApplicationFormAccessService accessService,  
+            ApplicationFormUserRoleService applicationFormUserRoleService,  
             OfferRecommendationService offerRecommendedService, OfferRecommendedCommentValidator offerRecommendedCommentValidator,
             DatePropertyEditor datePropertyEditor, ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider,
             SupervisorPropertyEditor supervisorPropertyEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
         this.offerRecommendedService = offerRecommendedService;
         this.offerRecommendedCommentValidator = offerRecommendedCommentValidator;
@@ -112,7 +111,7 @@ public class OfferRecommendationController {
             offerRecommendedComment.getSupervisors().addAll(approvalRound.getSupervisors());
         }
         modelMap.put("offerRecommendedComment", offerRecommendedComment);
-        accessService.deregisterApplicationUpdate(application, user);
+        applicationFormUserRoleService.deregisterApplicationUpdate(application, user);
         return OFFER_RECOMMENDATION_VIEW_NAME;
     }
 
@@ -128,15 +127,11 @@ public class OfferRecommendationController {
             return OFFER_RECOMMENDATION_VIEW_NAME;
         }
         
-        // This was in the wrong place. In the rejection case there is no update until the rejection is committed.
-        application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
-        accessService.updateAccessTimestamp(application, getCurrentUser(), new Date());
-
         if (offerRecommendedService.moveToApproved(application, offerRecommendedComment)) {
             offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
             modelMap.put("application", application.getApplicationNumber());
-            accessService.registerApplicationUpdate(application, new Date(), ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
             return "redirect:/applications";
         } else {
             return "redirect:/rejectApplication?applicationId=" + application.getApplicationNumber() + "&rejectionId=7";

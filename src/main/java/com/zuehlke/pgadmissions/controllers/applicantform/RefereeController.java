@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -36,7 +35,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
@@ -57,7 +56,7 @@ public class RefereeController {
     private final RefereeValidator refereeValidator;
     private final EncryptionHelper encryptionHelper;
     private final UserService userService;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final FullTextSearchService searchService;
 
     public RefereeController() {
@@ -67,7 +66,7 @@ public class RefereeController {
     @Autowired
     public RefereeController(RefereeService refereeService, UserService userService, ApplicationsService applicationsService,
             DomicilePropertyEditor domicilePropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
-            EncryptionHelper encryptionHelper, final ApplicationFormAccessService accessService, DomicileService domicileService, 
+            EncryptionHelper encryptionHelper, final ApplicationFormUserRoleService applicationFormUserRoleService, DomicileService domicileService, 
             final FullTextSearchService searchService) {
         this.refereeService = refereeService;
         this.userService = userService;
@@ -76,7 +75,7 @@ public class RefereeController {
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
         this.refereeValidator = refereeValidator;
         this.encryptionHelper = encryptionHelper;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.domicileService = domicileService;
         this.searchService = searchService;
     }
@@ -127,12 +126,8 @@ public class RefereeController {
 
         }
 
-        application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
-        application.setLastUpdated(new Date());
-        accessService.updateAccessTimestamp(application, userService.getCurrentUser(), new Date());
-        
         applicationsService.save(application);
-        accessService.registerApplicationUpdate(application, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
     }
     

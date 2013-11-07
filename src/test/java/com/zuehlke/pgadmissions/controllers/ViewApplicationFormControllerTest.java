@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -29,7 +29,7 @@ public class ViewApplicationFormControllerTest {
     private ApplicationsService applicationsServiceMock;
     private ApplicationPageModelBuilder applicationPageModelBuilderMock;
     private UserService userServiceMock;
-    private ApplicationFormAccessService accessServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
@@ -59,13 +59,12 @@ public class ViewApplicationFormControllerTest {
         ApplicationPageModel model = new ApplicationPageModel();
 
         EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
-        accessServiceMock.updateAccessTimestamp(eq(applicationForm), eq(userMock), EasyMock.isA(Date.class));
+        applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, userMock);
 
-        EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, accessServiceMock);
-
+        EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
         ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);
-
-        EasyMock.verify(applicationsServiceMock, userMock, applicationPageModelBuilderMock, accessServiceMock);
+        EasyMock.verify(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
+        
         assertEquals("private/pgStudents/form/main_application_page", modelAndView.getViewName());
         assertEquals(model, modelAndView.getModel().get("model"));
     }
@@ -81,13 +80,12 @@ public class ViewApplicationFormControllerTest {
         ApplicationPageModel model = new ApplicationPageModel();
 
         EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
-        accessServiceMock.updateAccessTimestamp(eq(applicationForm), eq(userMock), EasyMock.isA(Date.class));
+        applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, userMock);
 
-        EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, accessServiceMock);
-
+        EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
         ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);
-
-        EasyMock.verify(applicationsServiceMock, userMock, applicationPageModelBuilderMock, accessServiceMock);
+        EasyMock.verify(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
+        
         assertEquals("private/staff/application/main_application_page", modelAndView.getViewName());
         assertEquals(model, modelAndView.getModel().get("model"));
     }
@@ -103,12 +101,12 @@ public class ViewApplicationFormControllerTest {
 
         ApplicationPageModel model = new ApplicationPageModel();
         EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
-        accessServiceMock.updateAccessTimestamp(eq(applicationForm), eq(userMock), EasyMock.isA(Date.class));
-        EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, accessServiceMock);
-
+        applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, userMock);
+        
+        EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
         ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);
-
-        EasyMock.verify(applicationsServiceMock, userMock, applicationPageModelBuilderMock, accessServiceMock);
+        EasyMock.verify(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
+        
         assertEquals("private/staff/application/main_application_page", modelAndView.getViewName());
         assertEquals(model, modelAndView.getModel().get("model"));
     }
@@ -119,8 +117,8 @@ public class ViewApplicationFormControllerTest {
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         applicationPageModelBuilderMock = EasyMock.createMock(ApplicationPageModelBuilder.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        accessServiceMock = EasyMock.createMock(ApplicationFormAccessService.class);
-        controller = new ViewApplicationFormController(applicationsServiceMock, userServiceMock, applicationPageModelBuilderMock, accessServiceMock);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        controller = new ViewApplicationFormController(applicationsServiceMock, userServiceMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
         EasyMock.replay(userServiceMock);
     }

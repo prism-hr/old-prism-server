@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.InterviewVoteCommentDAO;
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
@@ -50,7 +49,7 @@ public class InterviewService {
     private final StageDurationService stageDurationService;
     private final CommentService commentService;
     private final CommentFactory commentFactory;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService ApplicationFormUserRoleService;
 
     public InterviewService() {
         this(null, null, null, null, null, null, null, null, null, null, null);
@@ -60,7 +59,7 @@ public class InterviewService {
     public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
             InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO,
             final StageDurationService stageDurationService, CommentService commentService, CommentFactory commentFactory, 
-            ApplicationFormAccessService accessService) {
+            ApplicationFormUserRoleService ApplicationFormUserRoleService) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;
@@ -71,7 +70,7 @@ public class InterviewService {
         this.stageDurationService = stageDurationService;
         this.commentService = commentService;
         this.commentFactory = commentFactory;
-        this.accessService = accessService;
+        this.ApplicationFormUserRoleService = ApplicationFormUserRoleService;
     }
 
     public Interview getInterviewById(Integer id) {
@@ -91,8 +90,7 @@ public class InterviewService {
             interviewer.setInterview(interview);
             interviewerDAO.save(interviewer);
         }
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-
+        
         applicationForm.setLatestInterview(interview);
         ApplicationFormStatus previousStatus = applicationForm.getStatus();
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
@@ -120,8 +118,8 @@ public class InterviewService {
 
         if (previousStatus == ApplicationFormStatus.VALIDATION) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
-            accessService.validationStageCompleted(applicationForm);
-            accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+            ApplicationFormUserRoleService.validationStageCompleted(applicationForm);
+            ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
         }
 
     }
@@ -137,7 +135,7 @@ public class InterviewService {
         interviewParticipant.setResponded(true);
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
-        accessService.interviewParticipantResponded(interviewParticipant);
+        ApplicationFormUserRoleService.interviewParticipantResponded(interviewParticipant);
 
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
@@ -170,8 +168,8 @@ public class InterviewService {
         assignInterviewDueDate(interview, application);
         removeApplicationAdministratorReminders(interview);
         sendConfirmationEmails(interview);    
-        accessService.interviewConfirmed(interview);
-        accessService.registerApplicationUpdate(application, new Date(), ApplicationUpdateScope.ALL_USERS);
+        ApplicationFormUserRoleService.interviewConfirmed(interview);
+        ApplicationFormUserRoleService.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void createParticipants(final Interview interview) {

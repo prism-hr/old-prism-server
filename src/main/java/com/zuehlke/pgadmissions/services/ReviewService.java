@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
-
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,13 +9,11 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -60,7 +56,6 @@ public class ReviewService {
 	    else {
 	        baseDate = new DateTime(application.getBatchDeadline());
 	    }
-        application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
 		application.setLatestReviewRound(reviewRound);
 		reviewRound.setApplication(application);
 		reviewRoundDAO.save(reviewRound);

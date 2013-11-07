@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -27,7 +26,7 @@ import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -43,7 +42,7 @@ public class AddressController {
     private final AddressSectionDTOValidator addressSectionDTOValidator;
     private final DomicileService domicileService;
     private final UserService userService;
-    private final ApplicationFormAccessService accessService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final DomicilePropertyEditor domicilePropertyEditor;
 
     public AddressController() {
@@ -52,14 +51,14 @@ public class AddressController {
 
     @Autowired
     public AddressController(ApplicationsService applicationService, UserService userService, DomicileService domicileService,
-                    DomicilePropertyEditor domicilePropertyEditor, AddressSectionDTOValidator addressSectionDTOValidator,
-                    ApplicationFormAccessService accessService) {
+            DomicilePropertyEditor domicilePropertyEditor, AddressSectionDTOValidator addressSectionDTOValidator,
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
         this.addressSectionDTOValidator = addressSectionDTOValidator;
-        this.accessService = accessService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
@@ -97,12 +96,8 @@ public class AddressController {
         currentAddress.setAddress4(addressSectionDTO.getCurrentAddress4());
         currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
 
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
-        applicationForm.setLastUpdated(new Date());
-      
         applicationService.save(applicationForm);
-        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
 
         return "redirect:/update/getAddress?applicationId=" + applicationForm.getApplicationNumber();
     }

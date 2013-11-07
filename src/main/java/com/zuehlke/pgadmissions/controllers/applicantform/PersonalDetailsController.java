@@ -188,12 +188,15 @@ public class PersonalDetailsController {
         }
         
         ApplicationForm applicationForm = personalDetails.getApplication();
+        
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
         applicationForm.setLastUpdated(new Date());
+        
         userService.updateCurrentUser(updatedUser);
         personalDetailsService.save(personalDetails);
         applicationsService.save(applicationForm);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
 
         sessionStatus.setComplete();
 

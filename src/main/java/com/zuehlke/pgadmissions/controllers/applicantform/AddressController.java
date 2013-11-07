@@ -100,7 +100,9 @@ public class AddressController {
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationForm.setLastUpdated(new Date());
+      
         applicationService.save(applicationForm);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
 
         return "redirect:/update/getAddress?applicationId=" + applicationForm.getApplicationNumber();
     }

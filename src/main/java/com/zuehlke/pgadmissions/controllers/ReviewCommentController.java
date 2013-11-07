@@ -64,18 +64,16 @@ public class ReviewCommentController {
     private final ActionsProvider actionsProvider;
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
     private final ApplicantRatingService applicantRatingService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     ReviewCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormAccessService accessService, ActionsProvider actionsProvider,
-            ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -88,7 +86,6 @@ public class ReviewCommentController {
         this.actionsProvider = actionsProvider;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
         this.applicantRatingService = applicantRatingService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @ModelAttribute("applicationForm")
@@ -150,6 +147,7 @@ public class ReviewCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REVIEW);
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
 
@@ -175,15 +173,15 @@ public class ReviewCommentController {
         }
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
+        
         applicationsService.save(applicationForm);
-
         commentService.save(comment);
-
         comment.getReviewer().setReview(comment);
         applicationForm.getApplicationComments().add(comment);
         applicantRatingService.computeAverageRating(comment.getReviewer().getReviewRound());
         applicantRatingService.computeAverageRating(applicationForm);
-        applicationFormUserRoleService.reviewPosted(comment.getReviewer());
+        accessService.reviewPosted(comment.getReviewer());
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.INTERNAL);
 
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }

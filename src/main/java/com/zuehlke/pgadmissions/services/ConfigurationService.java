@@ -147,12 +147,13 @@ public class ConfigurationService {
             user.getPendingRoleNotifications().add(viewerNotification);
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
+            applicationFormUserRoleService.createUserInAdmitterRole(user);
         } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
             user.getRoles().add(roleDAO.getRoleByAuthority(Authority.ADMITTER));
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
+            applicationFormUserRoleService.createUserInAdmitterRole(user);
         }
-        applicationFormUserRoleService.createUserInAdmitterRole(user);
     }
 
     @Transactional
@@ -191,6 +192,5 @@ public class ConfigurationService {
                 ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
                 ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL };
     }
-
 
 }

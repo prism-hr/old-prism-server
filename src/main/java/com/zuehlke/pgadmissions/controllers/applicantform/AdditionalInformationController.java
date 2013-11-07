@@ -74,11 +74,15 @@ public class AdditionalInformationController {
 			return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
 		}
 		additionalService.save(info);
+		
 		ApplicationForm form = info.getApplication();
 		form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.ALL_USERS, new Date()));
 		accessService.updateAccessTimestamp(form, getCurrentUser(), new Date());
 		info.getApplication().setLastUpdated(new Date());
+		
 		applicationService.save(info.getApplication());
+		accessService.registerApplicationUpdate(form, new Date(), ApplicationUpdateScope.ALL_USERS);
+		
 		return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getApplicationNumber();
 
 	}

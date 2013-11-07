@@ -77,7 +77,9 @@ public class DocumentsController {
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
         applicationForm.setLastUpdated(new Date());
+        
         applicationsService.save(applicationForm);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getDocuments?applicationId=" + applicationForm.getApplicationNumber();
     }
 

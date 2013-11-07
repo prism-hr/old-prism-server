@@ -92,9 +92,12 @@ public class DeleteApplicationFormEntitiesController {
 	}
 	
 	private void updateLastAccessAndLastModified(RegisteredUser currentUser, ApplicationForm applicationForm) {
-	    applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+	    //  I don't think we need to say that we saw something here. There must be a get call somewhere to view the page.
+		applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
 	    applicationForm.setLastUpdated(new Date());
 	    accessService.updateAccessTimestamp(applicationForm, currentUser, new Date());
+	    
+	    accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         applicationsService.save(applicationForm);
 	}
 

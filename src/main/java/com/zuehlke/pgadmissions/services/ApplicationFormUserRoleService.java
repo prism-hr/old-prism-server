@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +35,8 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Service
@@ -48,7 +49,7 @@ public class ApplicationFormUserRoleService {
 
     private final UserDAO userDAO;
     
-    private final ApplicationFormDAO applicationFormDAO;
+    protected final ApplicationFormDAO applicationFormDAO;
     
     private final Map<ApplicationFormStatus, String> initiateStageMap = Maps.newHashMap();
     
@@ -307,8 +308,7 @@ public class ApplicationFormUserRoleService {
     public void createUserInSuperAdministratorRole (RegisteredUser registeredUser) {
     	List<ApplicationForm> applications = applicationFormDAO.getAllAdministerableApplications();
     	for (ApplicationForm application : applications) {
-    		ApplicationFormUserRole applicationFormUserRole = 
-    				createApplicationFormUserRole(application, registeredUser, Authority.SUPERADMINISTRATOR, false);	
+    		ApplicationFormUserRole applicationFormUserRole = createApplicationFormUserRole(application, registeredUser, Authority.SUPERADMINISTRATOR, false);	
     		assignActionsToNewAdmitter(application, applicationFormUserRole);
     		assignActionsToNewAdministrator(application, applicationFormUserRole);
     		assignActionsToNewApprover(application, applicationFormUserRole);
@@ -353,7 +353,7 @@ public class ApplicationFormUserRoleService {
     	}
     }
     
-    public void registerApplicationUpdate (ApplicationForm applicationForm, Date updateTimestamp, int updateVisibility) {
+    protected void registerApplicationUpdate (ApplicationForm applicationForm, Date updateTimestamp, ApplicationUpdateScope updateVisibility) {
     	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndAuthorityUpdateVisility(applicationForm, updateVisibility)) {
     		applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
     		applicationFormUserRole.setRaisesUpdateFlag(true);
@@ -390,7 +390,7 @@ public class ApplicationFormUserRoleService {
         boolean raisesUrgentFlag = false;
         for (ApplicationFormActionRequired action : actions) {
             applicationFormUserRole.getActions().add(action);
-            if (!raisesUrgentFlag && action.getRaisesUrgentFlag()) {
+            if (!raisesUrgentFlag && BooleanUtils.isTrue(action.getRaisesUrgentFlag())) {
             	raisesUrgentFlag = true;
             }
         }

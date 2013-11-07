@@ -48,7 +48,10 @@ public class ViewApplicationFormController {
             @RequestParam(required = false) String fundingErrors) {
         RegisteredUser currentuser = userService.getCurrentUser();
         ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+        
         accessService.updateAccessTimestamp(applicationForm, currentuser, new Date());
+        
+        accessService.deregisterApplicationUpdate(applicationForm, currentuser);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }

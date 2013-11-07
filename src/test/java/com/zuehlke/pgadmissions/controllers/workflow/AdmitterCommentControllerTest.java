@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.AdmitterCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -137,6 +138,7 @@ public class AdmitterCommentControllerTest {
         modelMap.put("user", currentUser);
 
         actionsProviderMock.validateAction(applicationForm, currentUser, CONFIRM_ELIGIBILITY);
+        applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, currentUser);
 
         replay();
         assertEquals("private/staff/admin/comment/genericcomment", controller.getConfirmEligibilityPage(modelMap));
@@ -168,7 +170,8 @@ public class AdmitterCommentControllerTest {
         applicationsServiceMock.save(application);
         commentServiceMock.save(comment);
         applicationFormUserRoleServiceMock.admitterCommentPosted(comment);
-
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, ApplicationUpdateScope.INTERNAL);
+        
         replay();
         String result = controller.confirmEligibility(modelMap, comment, resultMock);
         verify();

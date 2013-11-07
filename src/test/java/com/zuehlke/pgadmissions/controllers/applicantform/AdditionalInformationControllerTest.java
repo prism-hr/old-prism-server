@@ -1,12 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Calendar;
-
 import junit.framework.Assert;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -138,7 +133,6 @@ public class AdditionalInformationControllerTest {
 		String viewID = controller.editAdditionalInformation(info, errors);
 		EasyMock.verify(errors, applicationServiceMock, addInfoServiceMock);
 		Assert.assertEquals("redirect:/update/getAdditionalInformation?applicationId=ABC", viewID);
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test

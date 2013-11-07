@@ -1,0 +1,16 @@
+syntax: glob
+.classpath
+.project
+.settings/*
+src/sql/misc/insert_real_programs.sql
+src/sql/misc/insert_real_projects.sql
+*.bat
+chromedriver.log
+syntax: regexp
+target/*
+
+syntax: regexp
+^\.settings$
+
+syntax: regexp
+testIndexes/*

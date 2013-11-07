@@ -261,18 +261,19 @@ function bindDatePickerEnabled(selector){
 
 // Textarea Counter
 function addCounter() {
-	var $textArea = $("textarea");
+	var $textArea = $("textarea, div.editor");
     $.each($textArea, function() {
 		var display = true;
         if ($(this).attr('id') == 'convictionsText') {
 			$(this).data("maxlength", 400);
-		} else if  ($(this).attr('id') == 'projectAbstract'||$(this).attr('id') == 'projectAdvertDescriptionText'||$(this).attr('id') == 'programAdvertDescriptionText') {
+		/*} else if  ($(this).attr('id') == 'projectAbstract'|| $(this).attr('id') == 'projectAdvertDescriptionText'|| $(this).attr('id') == 'programAdvertDescriptionText') {*/
+        } else if  ($(this).attr('id') == 'projectAbstract' ) {
 			$(this).data("maxlength", 1000);
 		} else if  ($(this).attr('id') == 'position_remit') {
 			$(this).data("maxlength", 250);
 		} else if  ($(this).attr('id') == 'explanationText'||$(this).attr('id') == 'programmeFundingInformation') {
 		    $(this).data("maxlength", 500);
-		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'feedCode' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply') {
+		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'feedCode' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertDescriptionText' || $(this).attr('id') == 'programAdvertDescriptionText' || $(this).attr('id') == 'programAdvertFundingText' || $(this).attr('id') == 'projectAdvertFundingText') {
 			display = false;
 		} else if ($(this).attr('id')=="referenceComment"||$(this).attr('id').indexOf('refereeComment')==0||$(this).attr('id')=='review-comment'||$(this).attr('id')=='interview-comment'||$(this).attr('id')=='genericComment'||$(this).attr('id')=='state_change_comment'){
 			$(this).data("maxlength", 50000);
@@ -282,7 +283,12 @@ function addCounter() {
 		else {
 			$(this).data("maxlength", 2000);
 		}
-        var counter = $(this).data("maxlength") - $(this).val().length;
+        textAreaBolean = $(this).is("textarea");
+        if (textAreaBolean) { 
+            var counter = $(this).data("maxlength") - $(this).val().length;
+        } else {
+            var counter = $(this).data("maxlength") - $(this).text().length;
+        }
 
         // Create the span with all the content and characters left
 		if ($(this).parent().find('.count').length == 0 && display == true) {
@@ -290,12 +296,21 @@ function addCounter() {
 		} else {
             $(this).nextAll(".count").html(counter + ' Characters left');
         }
-		if ($(this).val().length > ($(this).data("maxlength")-10)) {
-			$(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
-			if ($(this).val().length > $(this).data("maxlength")) {
-				$(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
-			}
-		}
+        if (textAreaBolean) { 
+    		if ($(this).val().length > ($(this).data("maxlength")-10)) {
+    			$(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
+    			if ($(this).val().length > $(this).data("maxlength")) {
+    				$(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
+    			}
+    		}
+        } else {
+            if ($(this).text().length > ($(this).data("maxlength")-10)) {
+                $(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
+                if ($(this).text().length > $(this).data("maxlength")) {
+                    $(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
+                }
+            }
+        }
         // Counting on keyup
         $(this).keyup(function count(){
             counter = $(this).data("maxlength") - $(this).val().length;

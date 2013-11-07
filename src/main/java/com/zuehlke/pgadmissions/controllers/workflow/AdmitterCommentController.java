@@ -71,8 +71,6 @@ public class AdmitterCommentController {
     @Autowired
     private EventFactory eventFactory;
 
-    @Autowired
-
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();

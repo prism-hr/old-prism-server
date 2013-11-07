@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -24,16 +22,13 @@ public class ApplicationFormListDAO {
 
     private final SessionFactory sessionFactory;
     
-    private final ActionsProvider actionsProvider;
-
     public ApplicationFormListDAO() {
-        this(null, null);
+        this(null);
     }
 
     @Autowired
-    public ApplicationFormListDAO(SessionFactory sessionFactory, ActionsProvider actionsProvider) {
+    public ApplicationFormListDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        this.actionsProvider = actionsProvider;
     }
 
     public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {

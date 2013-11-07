@@ -57,6 +57,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -349,6 +350,7 @@ public class MoveToInterviewControllerTest {
         accessServiceMock = createMock(ApplicationFormAccessService.class);
         interviewTimeslotsPropertyEditorMock = createMock(InterviewTimeslotsPropertyEditor.class);
         actionsProviderMock = createMock(ActionsProvider.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormAccessService.class);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         replay(userServiceMock);

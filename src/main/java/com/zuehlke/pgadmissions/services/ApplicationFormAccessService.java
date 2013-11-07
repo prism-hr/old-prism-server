@@ -20,7 +20,7 @@ public class ApplicationFormAccessService extends ApplicationFormUserRoleService
     
     public void registerApplicationUpdate(ApplicationForm form, Date updateTimestamp, ApplicationUpdateScope applicationUpdateScope) {
         form.setLastUpdated(updateTimestamp);
-        registerApplicationUpdate(form, updateTimestamp, applicationUpdateScope);
+        super.registerApplicationUpdate(form, updateTimestamp, applicationUpdateScope);
     }
     
     @Deprecated

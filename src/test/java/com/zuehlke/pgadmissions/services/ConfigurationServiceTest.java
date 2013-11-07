@@ -62,6 +62,8 @@ public class ConfigurationServiceTest {
 
     private UserDAO userDAOMock;
 
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
     private RoleService roleServiceMock;
 
     private RoleDAO roleDAOMock;
@@ -129,7 +131,7 @@ public class ConfigurationServiceTest {
         final RegisteredUser registryUserThree_ = new RegisteredUserBuilder().id(33).email("registryUserThree@registryUserThree.com").build();
 
         service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
-                userFactoryMock, roleDAOMock) {
+                applicationFormUserRoleService, userFactoryMock, roleDAOMock) {
             @Override
             public List<Person> getAllRegistryUsers() {
                 return Arrays.asList(registryUserOne, registryUserThree);
@@ -166,7 +168,7 @@ public class ConfigurationServiceTest {
         final RegisteredUser registryUserThree_ = new RegisteredUserBuilder().id(33).email("registryUserThree@registryUserThree.com").build();
 
         service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
-                userFactory, roleDAOMock) {
+                applicationFormUserRoleService, userFactory, roleDAOMock) {
             @Override
             public List<Person> getAllRegistryUsers() {
                 return Arrays.asList(registryUserOne, registryUserThree);
@@ -218,7 +220,7 @@ public class ConfigurationServiceTest {
         final RegisteredUser registryUserThree_ = new RegisteredUserBuilder().id(33).email("registryUserThree@registryUserThree.com").build();
 
         service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
-                userFactory, roleDAOMock) {
+                applicationFormUserRoleService, userFactory, roleDAOMock) {
             @Override
             public List<Person> getAllRegistryUsers() {
                 return Arrays.asList(registryUserOne, registryUserThree);
@@ -307,7 +309,9 @@ public class ConfigurationServiceTest {
         userFactory = new UserFactory(roleServiceMock, new EncryptionUtils());
         userDAOMock = EasyMock.createMock(UserDAO.class);
         roleDAOMock = EasyMock.createMock(RoleDAO.class);
+        applicationFormUserRoleService = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        
         service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
-                userFactoryMock, roleDAOMock);
+                applicationFormUserRoleService, userFactoryMock, roleDAOMock);
     }
 }

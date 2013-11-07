@@ -68,6 +68,8 @@ public class UserServiceTest {
 
     private ProgramsService programsServiceMock;
 
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+
     @Test
     public void shouldGetUserFromDAO() {
         RegisteredUser user = new RegisteredUserBuilder().id(1).build();
@@ -183,7 +185,7 @@ public class UserServiceTest {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
         userDAOMock.save(selectedUser);
         Program selectedProgram = new ProgramBuilder().id(4).build();
-        
+
         EasyMock.replay(userDAOMock);
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
         EasyMock.verify(userDAOMock);
@@ -213,7 +215,7 @@ public class UserServiceTest {
         replay(roleDAOMock);
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         verify(roleDAOMock);
-        
+
         assertTrue(selectedUser.isInRole(Authority.ADMINISTRATOR));
     }
 
@@ -233,11 +235,11 @@ public class UserServiceTest {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
         Program selectedProgram = new ProgramBuilder().id(4).build();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REVIEWER)).andReturn(new RoleBuilder().id(Authority.REVIEWER).build()).anyTimes();
-        
+
         replay(roleDAOMock);
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.REVIEWER);
         verify(roleDAOMock);
-        
+
         assertTrue(selectedUser.isInRole(Authority.REVIEWER));
     }
 
@@ -250,7 +252,7 @@ public class UserServiceTest {
         replay(roleDAOMock);
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.INTERVIEWER);
         verify(roleDAOMock);
-        
+
         assertTrue(selectedUser.isInRole(Authority.INTERVIEWER));
     }
 
@@ -259,11 +261,11 @@ public class UserServiceTest {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
         Program selectedProgram = new ProgramBuilder().id(4).build();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERVISOR)).andReturn(new RoleBuilder().id(Authority.SUPERVISOR).build()).anyTimes();
-        
+
         replay(roleDAOMock);
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.SUPERVISOR);
         verify(roleDAOMock);
-        
+
         assertTrue(selectedUser.isInRole(Authority.SUPERVISOR));
     }
 
@@ -277,7 +279,7 @@ public class UserServiceTest {
         replay(roleDAOMock);
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.SUPERADMINISTRATOR);
         verify(roleDAOMock);
-        
+
         assertTrue(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
         EasyMock.verify(roleDAOMock);
     }
@@ -326,12 +328,11 @@ public class UserServiceTest {
     public void shouldRemoveFromProgramsOfWhichAdministratorIfNoLongerInList() {
         Program selectedProgram = new ProgramBuilder().id(1).build();
         RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichAdministrator(selectedProgram).id(1).build();
-        
+
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
-        
+
         assertFalse(selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram));
     }
-
 
     @Test
     public void shouldRemoveFromProgramsOfWhichApproverIfNoLongerInList() {
@@ -343,8 +344,6 @@ public class UserServiceTest {
         userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
         assertFalse(selectedUser.getProgramsOfWhichApprover().contains(selectedProgram));
     }
-
-
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowISEwhenUserAlreadyExistsForNewUserInProgramme() {
@@ -363,8 +362,8 @@ public class UserServiceTest {
         EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(null);
 
         EasyMock.expect(
-                userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR,
-                        Authority.APPROVER, Authority.VIEWER))).andReturn(newUser);
+                userFactoryMock.createNewUserInRoles("la", "le", "some@email.com",
+                        Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.VIEWER))).andReturn(newUser);
 
         userDAOMock.save(newUser);
         EasyMock.expectLastCall().andDelegateTo(new CheckProgrammeAndSimulateSaveDAO(program));
@@ -390,7 +389,7 @@ public class UserServiceTest {
         assertTrue(createdUser.getProgramsOfWhichApprover().contains(program));
 
         assertEquals(4, createdUser.getPendingRoleNotifications().size());
-        
+
         PendingRoleNotification pendingRoleNotification = createdUser.getPendingRoleNotifications().get(0);
         assertEquals(role_1, pendingRoleNotification.getRole());
         assertNull(pendingRoleNotification.getProgram());
@@ -544,7 +543,7 @@ public class UserServiceTest {
     public void shouldUpdateCurrentUserAndSendEmailConfirmation() throws UnsupportedEncodingException {
         final RegisteredUser currentUser = new RegisteredUserBuilder().firstName("f").lastName("l").id(7).password("12").email("em").username("em").build();
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
-                programsServiceMock) {
+                programsServiceMock, applicationFormUserRoleServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -573,7 +572,7 @@ public class UserServiceTest {
     public void shouldNotChangePassIfPasswordIsBlank() {
         final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").build();
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
-                programsServiceMock) {
+                programsServiceMock, applicationFormUserRoleServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -600,7 +599,7 @@ public class UserServiceTest {
         secondAccount.setPrimaryAccount(currentAccount);
 
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
-                programsServiceMock) {
+                programsServiceMock, applicationFormUserRoleServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -629,7 +628,7 @@ public class UserServiceTest {
                 .activationCode("abcd").email("A@B.com").password("password").build();
 
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
-                programsServiceMock) {
+                programsServiceMock, applicationFormUserRoleServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -654,7 +653,7 @@ public class UserServiceTest {
                 .activationCode("abcd").email("A@B.com").password("password").build();
 
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
-                programsServiceMock) {
+                programsServiceMock, applicationFormUserRoleServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {
@@ -687,9 +686,12 @@ public class UserServiceTest {
         userFactoryMock = EasyMock.createMock(UserFactory.class);
         mailServiceMock = createMock(MailSendingService.class);
         programsServiceMock = createMock(ProgramsService.class);
-        userService = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock, programsServiceMock);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+
+        userService = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock, programsServiceMock,
+                applicationFormUserRoleServiceMock);
         userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock,
-                programsServiceMock) {
+                programsServiceMock, applicationFormUserRoleServiceMock) {
 
             @Override
             public RegisteredUser getCurrentUser() {

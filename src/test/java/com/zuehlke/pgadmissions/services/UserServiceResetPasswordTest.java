@@ -29,6 +29,7 @@ public class UserServiceResetPasswordTest {
     private EncryptionUtils encryptionUtilsMock;
     private MailSendingService mailServiceMock;
     private ProgramsService programsServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Before
     public void setUp() {
@@ -39,8 +40,9 @@ public class UserServiceResetPasswordTest {
         filteringDAOMock = EasyMock.createMock(ApplicationsFilteringDAO.class);
         userFactoryMock = createMock(UserFactory.class);
         mailServiceMock = createMock(MailSendingService.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
-        serviceUT = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock, programsServiceMock);
+        serviceUT = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock, programsServiceMock, applicationFormUserRoleServiceMock);
     }
 
     private void replayAllMocks() {

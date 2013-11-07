@@ -114,7 +114,7 @@ public class InterviewConfirmController {
         interviewConfirmDTO.setFurtherInterviewerDetails(applicationForm.getLatestInterview().getFurtherInterviewerDetails());
         interviewConfirmDTO.setLocationUrl(applicationForm.getLatestInterview().getLocationURL());
         modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
-        
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return INTERVIEW_CONFIRM_PAGE;
     }
 
@@ -128,13 +128,15 @@ public class InterviewConfirmController {
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;
         }
+        
+        // Handled in the service level here.
+        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, user, new Date());
+        
         Interview interview = applicationForm.getLatestInterview();
         interviewService.confirmInterview(user, interview, interviewConfirmDTO);
-
-        applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         applicationsService.save(applicationForm);
-
-        accessService.updateAccessTimestamp(applicationForm, user, new Date());
+        
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }
 

@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -39,7 +40,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -62,17 +62,16 @@ public class MoveToInterviewController {
     private final ApplicationFormAccessService accessService;
     private final ActionsProvider actionsProvider;
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     MoveToInterviewController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
             InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
             InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, final ApplicationFormAccessService accessService,
-            final ActionsProvider actionsProvider, final ApplicationDescriptorProvider applicationDescriptorProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            final ActionsProvider actionsProvider, final ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
@@ -83,7 +82,6 @@ public class MoveToInterviewController {
         this.accessService = accessService;
         this.actionsProvider = actionsProvider;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @ModelAttribute("applicationForm")
@@ -100,6 +98,7 @@ public class MoveToInterviewController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ASSIGN_INTERVIEWERS);
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return INTERVIEW_PAGE;
     }
 
@@ -119,9 +118,12 @@ public class MoveToInterviewController {
             return INTERVIEWERS_SECTION;
         }
 
-        interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
+        // No update was registered here previously - omission
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        applicationFormUserRoleService.movedToInterviewStage(interview);
+        
+        interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
+        accessService.movedToInterviewStage(interview);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         if (interview.isParticipant(getUser())) {
             modelMap.addAttribute("message", "redirectToVote");
             return "/private/common/simpleResponse";

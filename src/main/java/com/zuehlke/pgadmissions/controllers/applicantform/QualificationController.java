@@ -151,12 +151,14 @@ public class QualificationController {
         }
 
         ApplicationForm applicationForm = qualification.getApplication();
+        
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         applicationForm.setLastUpdated(new Date());
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+        
         qualificationService.save(qualification);
         applicationService.save(applicationForm);
-
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 	}
 	

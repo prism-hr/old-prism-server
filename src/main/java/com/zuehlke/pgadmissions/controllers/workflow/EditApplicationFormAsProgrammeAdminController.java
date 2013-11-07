@@ -145,8 +145,8 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String view(@ModelAttribute ApplicationForm applicationForm,
-        ModelMap modelMap) {
+    public String view(@ModelAttribute ApplicationForm applicationForm) {
+    	accessService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
 
@@ -170,7 +170,8 @@ public class EditApplicationFormAsProgrammeAdminController {
             map.put("success", "false");
             map.putAll(FieldErrorUtils.populateMapWithErrors(refereesAdminEditDTOResult, messageSource));
         }
-
+        
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         Gson gson = new Gson();
         return gson.toJson(map);
     }
@@ -211,14 +212,16 @@ public class EditApplicationFormAsProgrammeAdminController {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
 
+            applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+            accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+            
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
             Referee referee = newComment.getReferee();
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
-            
-            applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-            accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
             applicationsService.save(applicationForm);
+            accessService.referencePosted(referee);
+            accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);

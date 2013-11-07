@@ -99,13 +99,15 @@ public class FundingController {
 			return STUDENT_FUNDING_DETAILS_VIEW;
 		}
         ApplicationForm applicationForm = funding.getApplication();
+        
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-		fundingService.save(funding);
 		applicationForm.setLastUpdated(new Date());
+		
+		fundingService.save(funding);
 		applicationService.save(applicationForm);
+		accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber();
-			
 	}
 
 

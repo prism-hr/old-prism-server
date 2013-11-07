@@ -118,6 +118,7 @@ public class GenericCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
 
@@ -131,8 +132,10 @@ public class GenericCommentController {
         }
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
-        applicationsService.save(applicationForm);
+        
         commentService.save(comment);
+        applicationsService.save(applicationForm);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.INTERNAL);
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }
 

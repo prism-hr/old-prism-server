@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.EventFactory;
@@ -75,9 +74,6 @@ public class AdmitterCommentController {
 
     @Autowired
     private ApplicationDescriptorProvider applicationDescriptorProvider;
-    
-    @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @ModelAttribute("user")
     public RegisteredUser getUser() {
@@ -126,6 +122,7 @@ public class AdmitterCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, CONFIRM_ELIGIBILITY);
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
 
@@ -142,15 +139,18 @@ public class AdmitterCommentController {
         comment.setUser(user);
         comment.setDate(new Date());
         comment.setApplication(application);
-        commentService.save(comment);
+        
+        // These do not do anything any more. we can deprecate them.
         application.setAdminRequestedRegistry(null);
         application.setRegistryUsersDueNotification(false);
-        application.getEvents().add(eventFactory.createEvent(comment));
         application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(application, user, new Date());
+        
+        application.getEvents().add(eventFactory.createEvent(comment));
+        commentService.save(comment);
         applicationsService.save(application);
-        applicationFormUserRoleService.admitterCommentPosted(comment);
-
+        accessService.admitterCommentPosted(comment);
+        accessService.registerApplicationUpdate(application, new Date(), ApplicationUpdateScope.INTERNAL);
         return "redirect:/applications?messageCode=validation.comment.success&application=" + application.getApplicationNumber();
     }
 

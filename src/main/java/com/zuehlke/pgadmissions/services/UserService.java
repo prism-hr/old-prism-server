@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service("userService")
@@ -39,14 +40,15 @@ public class UserService {
     private final EncryptionUtils encryptionUtils;
     private final MailSendingService mailService;
     private final ProgramsService programsService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public UserService() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, UserFactory userFactory, EncryptionUtils encryptionUtils,
-            MailSendingService mailService, ProgramsService programsService) {
+            MailSendingService mailService, ProgramsService programsService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.filteringDAO = filteringDAO;
@@ -54,6 +56,7 @@ public class UserService {
         this.encryptionUtils = encryptionUtils;
         this.mailService = mailService;
         this.programsService = programsService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     public RegisteredUser getUser(Integer id) {
@@ -126,10 +129,12 @@ public class UserService {
         selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
         if (selectedUser.getProgramsOfWhichAdministrator().isEmpty()) {
             selectedUser.removeRole(Authority.ADMINISTRATOR);
+            applicationFormUserRoleService.revokeUserProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         }
         selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
         if (selectedUser.getProgramsOfWhichApprover().isEmpty()) {
             selectedUser.removeRole(Authority.APPROVER);
+            applicationFormUserRoleService.revokeUserProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         }
         selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
 
@@ -139,17 +144,21 @@ public class UserService {
     private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
         if (newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
             selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);
+            applicationFormUserRoleService.createUserInProgramAdministratorRole(selectedUser, selectedProgram);
         } else if (!newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR)
                 && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
             selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
+            applicationFormUserRoleService.revokeUserProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         }
     }
 
     private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
         if (newAuthoritiesContains(newAuthorities, Authority.APPROVER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichApprover())) {
             selectedUser.getProgramsOfWhichApprover().add(selectedProgram);
+            applicationFormUserRoleService.createUserInProgramApproverRole(selectedUser, selectedProgram);
         } else if (!newAuthoritiesContains(newAuthorities, Authority.APPROVER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichApprover())) {
             selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
+            applicationFormUserRoleService.revokeUserProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
         }
     }
 
@@ -164,6 +173,7 @@ public class UserService {
     private void addToRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities, Authority authority) {
         if (!selectedUser.isInRole(authority) && newAuthoritiesContains(newAuthorities, authority)) {
             selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            applicationFormUserRoleService.createUserInSuperAdministratorRole(selectedUser);
         }
     }
 

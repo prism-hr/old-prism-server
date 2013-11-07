@@ -130,7 +130,9 @@ public class RefereeController {
         application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
         application.setLastUpdated(new Date());
         accessService.updateAccessTimestamp(application, userService.getCurrentUser(), new Date());
+        
         applicationsService.save(application);
+        accessService.registerApplicationUpdate(application, new Date(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
     }
     

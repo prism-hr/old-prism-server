@@ -41,7 +41,6 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -65,17 +64,16 @@ public class InterviewCommentController {
     private final ActionsProvider actionsProvider;
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
     private final ApplicantRatingService applicantRatingService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public InterviewCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ActionsProvider actionsProvider, ApplicationFormAccessService accessService,
-            ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            ApplicationDescriptorProvider applicationDescriptorProvider, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -88,7 +86,6 @@ public class InterviewCommentController {
         this.accessService = accessService;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
         this.applicantRatingService = applicantRatingService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @ModelAttribute("applicationForm")
@@ -152,6 +149,7 @@ public class InterviewCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ADD_INTERVIEW_FEEDBACK);
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return INTERVIEW_FEEDBACK_PAGE;
     }
 
@@ -184,9 +182,10 @@ public class InterviewCommentController {
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
+        
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.interviewFeedbackPosted(comment.getInterviewer());
-
+        accessService.interviewFeedbackPosted(comment.getInterviewer());
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.INTERNAL);
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
     }
 

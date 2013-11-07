@@ -116,7 +116,7 @@ public class OfferRecommendationController {
             offerRecommendedComment.getSupervisors().addAll(approvalRound.getSupervisors());
         }
         modelMap.put("offerRecommendedComment", offerRecommendedComment);
-
+        accessService.deregisterApplicationUpdate(application, user);
         return OFFER_RECOMMENDATION_VIEW_NAME;
     }
 
@@ -131,6 +131,8 @@ public class OfferRecommendationController {
             modelMap.put("offerRecommendedComment", offerRecommendedComment);
             return OFFER_RECOMMENDATION_VIEW_NAME;
         }
+        
+        // This was in the wrong place. In the rejection case there is no update until the rejection is committed.
         application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(application, getCurrentUser(), new Date());
 
@@ -138,6 +140,7 @@ public class OfferRecommendationController {
             offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
             modelMap.put("application", application.getApplicationNumber());
+            accessService.registerApplicationUpdate(application, new Date(), ApplicationUpdateScope.ALL_USERS);
             return "redirect:/applications";
         } else {
             return "redirect:/rejectApplication?applicationId=" + application.getApplicationNumber() + "&rejectionId=7";

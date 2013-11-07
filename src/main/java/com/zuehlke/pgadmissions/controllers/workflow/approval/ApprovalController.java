@@ -149,6 +149,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 	        	porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
 	        	modelMap.put("sendToPorticoData", porticoData);
         }
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return APPROVAL_PAGE;
     }
 
@@ -288,8 +289,10 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));        
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+        
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         sessionStatus.setComplete();
         return "/private/common/ajax_OK";
     }
@@ -311,6 +314,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         return PROPOSE_OFFER_RECOMMENDATION_SECTION;
     }
 
@@ -322,7 +326,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
-
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         return QUALIFICATION_SECTION;
     }
 
@@ -371,6 +375,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
             applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
             accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+            
+            accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
             applicationsService.save(applicationForm);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());

@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.StageDurationService;
@@ -63,17 +62,15 @@ public class SubmitApplicationFormController {
     private final ApplicationFormAccessService accessService;
 
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
-    
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public SubmitApplicationFormController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
                     StageDurationService stageDurationService, EventFactory eventFactory, final ApplicationFormAccessService accessService,
-                    ApplicationDescriptorProvider applicationDescriptorProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
+                    ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
@@ -81,7 +78,6 @@ public class SubmitApplicationFormController {
         this.eventFactory = eventFactory;
         this.accessService = accessService;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -102,17 +98,19 @@ public class SubmitApplicationFormController {
         } catch (UnknownHostException e) {
             log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
         }
-
-        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
+        
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
+        applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
+        
+        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
         applicationForm.setSubmittedDate(DateUtils.truncateToDay(new Date()));
         assignValidationDueDate(applicationForm);
-        applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
         assignBatchDeadline(applicationForm);
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
-        accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
-        applicationFormUserRoleService.applicationSubmitted(applicationForm);
+        accessService.applicationSubmitted(applicationForm);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 
@@ -138,7 +136,10 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = getCurrentUser();
+        
         accessService.updateAccessTimestamp(applicationForm, user, new Date());
+        
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         if (user.canEditAsApplicant(applicationForm)) {
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }

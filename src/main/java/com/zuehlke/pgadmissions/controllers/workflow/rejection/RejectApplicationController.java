@@ -54,17 +54,15 @@ public class RejectApplicationController {
 
     private final ApplicationFormAccessService accessService;
 
-    private final ActionsProvider actionsProvider;
-
     private final ApplicationDescriptorProvider applicationDescriptorProvider;
 
     public RejectApplicationController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-                    RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ActionsProvider actionsProvider,
+                    RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator,
                     ApplicationFormAccessService accessService, ApplicationDescriptorProvider applicationDescriptorProvider) {
         this.applicationsService = applicationsService;
         this.rejectService = rejectService;
@@ -72,7 +70,6 @@ public class RejectApplicationController {
         this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
         this.rejectionValidator = rejectionValidator;
         this.accessService = accessService;
-        this.actionsProvider = actionsProvider;
         this.applicationDescriptorProvider = applicationDescriptorProvider;
     }
 
@@ -83,6 +80,7 @@ public class RejectApplicationController {
         if(!user.hasAdminRightsOnApplication(application)){
             throw new ActionNoLongerRequiredException(application.getApplicationNumber());
         }
+        accessService.deregisterApplicationUpdate(application, user);
         return REJECT_VIEW_NAME;
     }
 
@@ -99,8 +97,11 @@ public class RejectApplicationController {
         }
         application.addApplicationUpdate(new ApplicationFormUpdate(application, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(application, getCurrentUser(), new Date());
+        
         rejectService.moveApplicationToReject(application, rejection);
         rejectService.sendToPortico(application);
+        accessService.moveToApprovedOrRejectedOrWithdrawn(application);
+        accessService.registerApplicationUpdate(application, new Date(), ApplicationUpdateScope.ALL_USERS);
         return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
     }
 

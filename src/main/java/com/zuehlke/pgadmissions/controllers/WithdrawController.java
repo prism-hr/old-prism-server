@@ -58,8 +58,11 @@ public class WithdrawController {
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());
+        
         withdrawService.withdrawApplication(applicationForm);
         withdrawService.sendToPortico(applicationForm);
+        accessService.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
     }
 

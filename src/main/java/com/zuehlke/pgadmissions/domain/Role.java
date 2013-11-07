@@ -13,6 +13,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Entity(name = "APPLICATION_ROLE")
@@ -26,7 +27,8 @@ public class Role implements GrantedAuthority, Serializable {
     private Authority id;
     
     @Column(name = "update_visibility")
-    private int updateVisibility = 1;
+    @Enumerated(EnumType.ORDINAL)
+    private ApplicationUpdateScope updateVisibility = ApplicationUpdateScope.ALL_USERS;
 
     @Override
     public String getAuthority() {
@@ -44,7 +46,7 @@ public class Role implements GrantedAuthority, Serializable {
         return id;
     }
     
-    public int getUpdateVisibility() {
+    public ApplicationUpdateScope getUpdateVisibility() {
     	return updateVisibility;
     }
 

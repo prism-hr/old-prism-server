@@ -831,6 +831,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return registryUsersDueNotification;
     }
 
+    @Deprecated
     public void setRegistryUsersDueNotification(Boolean registryUsersNotified) {
         this.registryUsersDueNotification = registryUsersNotified;
     }
@@ -847,11 +848,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.applicationUpdates.clear();
         this.applicationUpdates.addAll(applicationUpdates);
     }
-
+    
+    @Deprecated
     public void addApplicationUpdate(ApplicationFormUpdate applicationUpdate) {
+    	// No longer required. We will just remove it.
         this.applicationUpdates.add(applicationUpdate);
     }
 
+    @Deprecated
     public void setAdminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
         this.adminRequestedRegistry = adminRequestedRegistry;
     }

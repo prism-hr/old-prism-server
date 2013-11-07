@@ -53,7 +53,7 @@ public class EvaluationTransitionController extends StateTransitionController {
             ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider,
             ApplicationFormUserRoleService applicationFormUserRoleService) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider, applicationFormUserRoleService);
+                documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
     }
 
     @ModelAttribute("comment")
@@ -65,7 +65,8 @@ public class EvaluationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/submitEvaluationComment")
-    public String defaultGet() {
+    public String defaultGet(@RequestParam String applicationId) {
+    	accessService.deregisterApplicationUpdate(getApplicationForm(applicationId), getCurrentUser());
         return MY_APPLICATIONS_VIEW;
     }
 
@@ -123,10 +124,11 @@ public class EvaluationTransitionController extends StateTransitionController {
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
+        
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.stateChanged(newComment);
         commentService.save(newComment);
-
+        accessService.stateChanged(newComment);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         if (nextStatus == ApplicationFormStatus.APPROVAL) {
             applicationsService.makeApplicationNotEditable(applicationForm);
         }

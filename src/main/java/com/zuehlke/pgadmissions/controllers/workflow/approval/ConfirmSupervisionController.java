@@ -138,6 +138,7 @@ public class ConfirmSupervisionController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, CONFIRM_SUPERVISION);
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
 
@@ -152,6 +153,7 @@ public class ConfirmSupervisionController {
         }
 
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.INTERNAL);
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(applicationForm, getUser(), new Date());

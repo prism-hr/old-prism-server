@@ -167,6 +167,7 @@ public class ReferenceController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ADD_REFERENCE);
+        accessService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
 
@@ -188,6 +189,7 @@ public class ReferenceController {
 
         referenceValidator.validate(comment, bindingResult);
         accessService.updateAccessTimestamp(applicationForm, getCurrentUser(), new Date());
+        
         if (bindingResult.hasErrors()) {
             return ADD_REFERENCES_VIEW_NAME;
         }
@@ -201,7 +203,9 @@ public class ReferenceController {
         }
 
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
+        
         applicationsService.save(applicationForm);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
 

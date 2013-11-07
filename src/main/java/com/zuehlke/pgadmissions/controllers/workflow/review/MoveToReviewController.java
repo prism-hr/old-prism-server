@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
@@ -77,6 +78,7 @@ public class MoveToReviewController {
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         actionsProvider.validateAction(application, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
+        accessService.deregisterApplicationUpdate(application, getUser());
         return REVIEW_DETAILS_VIEW_NAME;
     }
 
@@ -94,8 +96,12 @@ public class MoveToReviewController {
             return REVIEWERS_SECTION_NAME;
         }
 
-        reviewService.moveApplicationToReview(applicationForm, reviewRound);
         accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+        
+        reviewService.moveApplicationToReview(applicationForm, reviewRound);
+        accessService.movedToReviewStage(reviewRound);
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+
         return "/private/common/ajax_OK";
     }
 

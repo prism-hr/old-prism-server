@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAccessService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -43,23 +42,26 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class ValidationTransitionController extends StateTransitionController {
 
     public ValidationTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ValidationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            ApplicationFormAccessService accessService, ActionsProvider actionsProvider, ApplicationDescriptorProvider applicationDescriptorProvider) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
-                documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider, applicationFormUserRoleService);
+                documentPropertyEditor, stateTransitionService, accessService, actionsProvider, applicationDescriptorProvider);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
-    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String action, ModelMap model) {
+    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, 
+    		@RequestParam(required = false) String action, 
+    		ModelMap model) {
+    	RegisteredUser user = getCurrentUser();
+    	
         if (action != null && action.equals("abort")) {
-            if (getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
+            if (user.hasAdminRightsOnApplication(applicationForm)) {
                 model.put("comment", applicationForm.getLatestStateChangeComment());
                 if (applicationForm.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
                     if (applicationForm.getApplicationAdministrator() != null) {
@@ -74,6 +76,7 @@ public class ValidationTransitionController extends StateTransitionController {
             }
 
         }
+        accessService.deregisterApplicationUpdate(applicationForm, user);
         return stateTransitionService.resolveView(applicationForm, action);
     }
 
@@ -125,22 +128,20 @@ public class ValidationTransitionController extends StateTransitionController {
             applicationsService.fastTrackApplication(form.getApplicationNumber());
         }
 
+        // Wrong update setting. All users should see state transition.
         form.addApplicationUpdate(new ApplicationFormUpdate(form, ApplicationUpdateScope.INTERNAL, new Date()));
         accessService.updateAccessTimestamp(form, user, new Date());
-        applicationsService.save(form);
+        
         comment.setDate(new Date());
         commentService.save(comment);
-
+        
         if (comment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
             applicationsService.makeApplicationNotEditable(form);
         }
-
-        if (comment.isAtLeastOneAnswerUnsure() && comment.getNextStatus() != ApplicationFormStatus.REJECTED) {
-            form.setAdminRequestedRegistry(user);
-            form.setRegistryUsersDueNotification(true);
-            applicationsService.save(form);
-        }
-        applicationFormUserRoleService.stateChanged(comment);
+        
+        applicationsService.save(form);
+        accessService.stateChanged(comment);
+        accessService.registerApplicationUpdate(form, new Date(), ApplicationUpdateScope.ALL_USERS);
 
         if (BooleanUtils.isTrue(delegate)) {
             return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();

@@ -121,11 +121,15 @@ public class EmploymentController {
             return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
         }
         ApplicationForm applicationForm = employment.getApplication();
+        
         applicationForm.addApplicationUpdate(new ApplicationFormUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS, new Date()));
-        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
-        employmentPositionService.save(employment);
         applicationForm.setLastUpdated(new Date());
+        accessService.updateAccessTimestamp(applicationForm, userService.getCurrentUser(), new Date());
+        
+        employmentPositionService.save(employment);
         applicationService.save(employment.getApplication());
+        accessService.registerApplicationUpdate(applicationForm, new Date(), ApplicationUpdateScope.ALL_USERS);
+        
         return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
     }
     

@@ -1,5 +1,3 @@
-DELIMITER ??
-
 	CREATE PROCEDURE UPDATE_RAISES_URGENT_FLAG ()
 	
 	BEGIN
@@ -13,7 +11,7 @@ DELIMITER ??
 		SELECT "COMPLETED";
 	
 	END
-	??
+;
 
 	CREATE PROCEDURE DELETE_USER_FROM_ROLE (
 		IN in_registered_user_id INT(10) UNSIGNED,
@@ -30,12 +28,12 @@ DELIMITER ??
 		DELETE APPLICATION_FORM_USER_ROLE.*
 		FROM APPLICATION_FORM_USER_ROLE
 		WHERE APPLICATION_FORM_USER_ROLE.registered_user_id = in_registered_user_id
-			AND APPLICATION_FORM_USER_ROLE.application_role_id = in_application_role_id;;
+			AND APPLICATION_FORM_USER_ROLE.application_role_id = in_application_role_id;
 		
 		SELECT "COMPLETED";
 	
 	END
-	??
+;
 
 	CREATE PROCEDURE DELETE_USER_FROM_PROGRAM_ROLE (
 		IN in_registered_user_id INT(10) UNSIGNED, 
@@ -63,7 +61,7 @@ DELIMITER ??
 		SELECT "COMPLETED";
 		   
 	END
-	??
+;	
 
 	CREATE PROCEDURE INSERT_USER_IN_ROLE (
 		IN in_registered_user_id INT(10) UNSIGNED, 
@@ -132,7 +130,8 @@ DELIMITER ??
 		SELECT "COMPLETED";
 		
 	END
-	??
+;
+	
 
 	CREATE PROCEDURE INSERT_USER_IN_PROGRAM_ROLE (
 		IN in_registered_user_id INT(10) UNSIGNED, 
@@ -198,6 +197,4 @@ DELIMITER ??
 		SELECT "COMPLETED";
 		
 	END
-	??
-
-DELIMITER ;
+;

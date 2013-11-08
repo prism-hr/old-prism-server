@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter.URGENT;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,12 +33,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
@@ -67,25 +63,23 @@ public class ApplicationListController {
 
     private final ApplicationsFilteringService filteringService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     
     private final ActionsProvider actionsProvider;
 
     public ApplicationListController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
             ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
-            ApplicationsFilteringService filteringService, final ApplicationFormUserRoleService applicationFormUserRoleService, final ActionsProvider actionsProvider) {
+            ApplicationsFilteringService filteringService, final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
         this.applicationSummaryService = applicationSummaryService;
         this.filteringService = filteringService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
     }
 
@@ -107,12 +101,6 @@ public class ApplicationListController {
         if (applyFilters != null) { // custom apply filters action
             if ("reload".equals(applyFilters)) {
                 filtering = filteringService.getStoredOrDefaultFiltering(getUser());
-            } else if ("my".equals(applyFilters)) {
-                filtering = new ApplicationsFiltering();
-                filtering.setPreFilter(ApplicationsPreFilter.MY);
-            } else if ("urgent".equals(applyFilters)) {
-                filtering = new ApplicationsFiltering();
-                filtering.setPreFilter(ApplicationsPreFilter.URGENT);
             }
         }
 
@@ -126,14 +114,10 @@ public class ApplicationListController {
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
     public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam Boolean useDisjunction,
-            final ModelMap model, HttpServletResponse response) {
+            final ModelMap model) {
         RegisteredUser user = getUser();
         filtering.setUseDisjunction(useDisjunction);
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
-
-        if (filtering.getPreFilter() == URGENT && applications.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_SEE_OTHER);
-        }
 
         Map<String, ApplicationDescriptor> applicationDescriptors = new LinkedHashMap<String, ApplicationDescriptor>();
         for (ApplicationForm applicationForm : applications) {

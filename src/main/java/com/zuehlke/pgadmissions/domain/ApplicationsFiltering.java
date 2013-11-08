@@ -17,7 +17,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.IndexColumn;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationsPreFilter;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
@@ -35,10 +34,6 @@ public class ApplicationsFiltering implements Serializable {
     @IndexColumn(name = "filter_position")
     private List<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
 
-    @Column(name = "pre_filter")
-    @Enumerated(EnumType.STRING)
-    private ApplicationsPreFilter preFilter = ApplicationsPreFilter.MY;
-    
     @Column(name = "use_disjunction")
     private Boolean useDisjunction = false;
     
@@ -86,14 +81,6 @@ public class ApplicationsFiltering implements Serializable {
 
     public void setFilters(List<ApplicationsFilter> filters) {
         this.filters = filters;
-    }
-
-    public ApplicationsPreFilter getPreFilter() {
-        return preFilter;
-    }
-
-    public void setPreFilter(ApplicationsPreFilter preFilter) {
-        this.preFilter = preFilter;
     }
 
     public SortCategory getSortCategory() {

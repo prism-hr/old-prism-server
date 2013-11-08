@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -55,22 +57,25 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     private final InterviewParticipantDAO interviewParticipantDAO;
 
     private final ApplicationFormListDAO applicationFormListDAO;
+    
+    private final ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
             final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO, final RoleDAO roleDAO,
             final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host, final ApplicationContext applicationContext,
-            InterviewParticipantDAO interviewParticipantDAO, ApplicationFormListDAO applicationFormListDAO) {
+            InterviewParticipantDAO interviewParticipantDAO, ApplicationFormListDAO applicationFormListDAO, ApplicationFormUserRoleDAO applicationFormUserRoleDAO) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.refereeDAO = refereeDAO;
         this.userDAO = userDAO;
         this.applicationContext = applicationContext;
         this.interviewParticipantDAO = interviewParticipantDAO;
         this.applicationFormListDAO = applicationFormListDAO;
+        this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
     }
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public void sendDigestsToUsers() {
@@ -96,19 +101,22 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public List<Integer> getPotentialUsersForTaskNotification() {
+        updateApplicationFormActionUrgentFlag();
         return userDAO.getPotentialUsersForTaskNotification();
     }
 
     @Transactional
     public List<Integer> getPotentialUsersForTaskReminder() {
+        updateApplicationFormActionUrgentFlag();
         return userDAO.getPotentialUsersForTaskReminder();
     }
 
     @Transactional
     public List<Integer> getUsersForUpdateNotification() {
+        updateApplicationFormActionUrgentFlag();
         return userDAO.getUsersForUpdateNotification();
     }
-
+    
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendTaskEmailIfNecessary(final Integer userId, DigestNotificationType digestNotificationType) {
         final RegisteredUser user = userDAO.get(userId);
@@ -267,5 +275,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
         return true;
     }
-
+    
+    private void updateApplicationFormActionUrgentFlag() {
+        applicationFormUserRoleDAO.updateRaisesUrgentFlag();
+    }
+    
 }

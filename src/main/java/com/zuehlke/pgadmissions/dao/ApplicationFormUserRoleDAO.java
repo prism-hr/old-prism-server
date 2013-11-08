@@ -187,8 +187,7 @@ public class ApplicationFormUserRoleDAO {
     	Query query = session.createSQLQuery("CALL INSERT_USER_IN_ROLE(?, ?);");
     	query.setInteger(0, registeredUser.getId());
     	query.setString(1, authority.toString());
-    	session.flush();
-    	session.clear();
+    	query.executeUpdate();
     }
     	
     public void insertUserInProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
@@ -197,8 +196,7 @@ public class ApplicationFormUserRoleDAO {
     	query.setInteger(0, registeredUser.getId());
     	query.setInteger(1, program.getId());
     	query.setString(2, authority.toString());
-    	session.flush();
-    	session.clear();
+    	query.executeUpdate();
     }
     
     public void deleteUserFromRole (RegisteredUser registeredUser, Authority authority) {
@@ -206,8 +204,7 @@ public class ApplicationFormUserRoleDAO {
     	Query query = session.createSQLQuery("CALL DELETE_USER_FROM_ROLE(?, ?);");
     	query.setInteger(0, registeredUser.getId());
     	query.setString(1, authority.toString());
-    	session.flush();
-    	session.clear();
+    	query.executeUpdate();
     }
     
     public void deleteUserFromProgramRole (RegisteredUser registeredUser, Program program, Authority authority) {
@@ -216,14 +213,12 @@ public class ApplicationFormUserRoleDAO {
     	query.setInteger(0, registeredUser.getId());
     	query.setInteger(1, program.getId());
     	query.setString(2, authority.toString());
-    	session.flush();
-    	session.clear();
+    	query.executeUpdate();
     }
     
     public void updateRaisesUrgentFlag () {
     	Session session = sessionFactory.getCurrentSession();
-    	session.createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
-    	session.flush();
-    	session.clear();
+    	Query query = session.createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
+    	query.executeUpdate();
     }
 }

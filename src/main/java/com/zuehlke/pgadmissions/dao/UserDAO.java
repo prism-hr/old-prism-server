@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -80,7 +81,10 @@ public class UserDAO {
     }
 
     public void save(RegisteredUser user) {
-        sessionFactory.getCurrentSession().saveOrUpdate(user);
+    	Session session = sessionFactory.getCurrentSession();
+        session.saveOrUpdate(user);
+        session.flush();
+        session.clear();
     }
 
     public RegisteredUser get(Integer id) {
@@ -298,12 +302,8 @@ public class UserDAO {
     }
     
     private void updateApplicationFormActionUrgentFlag() {
-    	sessionFactory.getCurrentSession().createSQLQuery(
-    			"UPDATE APPLICATION_FORM_ACTION_REQUIRED INNER JOIN APPLICATION_FORM_USER_ROLE " +
-    			"ON APPLICATION_FORM_ACTION_REQUIRED.application_form_user_role_id = APPLICATION_FORM_USER_ROLE.id " +
-    			"SET APPLICATION_FORM_ACTION_REQUIRED.raises_urgent_flag = 1, " +
-    			"APPLICATION_FORM_USER_ROLE.raises_urgent_flag = 1 " +
-    			"WHERE deadline_timestamp < CURRENT_DATE()");
+    	ApplicationFormUserRoleDAO applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO();
+    	applicationFormUserRoleDAO.updateRaisesUrgentFlag();
     }
 
     /* package */void setGetPotentialUsersDueToTaskReminderSql(String getPotentialUsersDueToTaskReminderSql) {

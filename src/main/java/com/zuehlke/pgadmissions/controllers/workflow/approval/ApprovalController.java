@@ -216,7 +216,6 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
             approvalRound.setProjectDescriptionAvailable(true);
             approvalRound.setProjectTitle(project.getAdvert().getTitle());
-            approvalRound.setProjectAbstract(project.getAdvert().getDescription());
             approvalRound.setProjectAcceptingApplications(project.getAdvert().getActive());
 
         }

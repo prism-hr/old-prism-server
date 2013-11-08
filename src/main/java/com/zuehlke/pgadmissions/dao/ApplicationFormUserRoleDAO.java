@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -178,5 +180,50 @@ public class ApplicationFormUserRoleDAO {
                 .add(Restrictions.eq("id.action", action.name())) //
                 .uniqueResult();
         return requiredResult != null || optionalResult != null;
+    }
+    
+    public void insertUserinRole(RegisteredUser registeredUser, Authority authority) {
+    	Session session = sessionFactory.getCurrentSession();
+    	Query query = session.createSQLQuery("CALL INSERT_USER_IN_ROLE(?, ?);");
+    	query.setInteger(0, registeredUser.getId());
+    	query.setString(1, authority.toString());
+    	session.flush();
+    	session.clear();
+    }
+    	
+    public void insertUserInProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
+    	Session session = sessionFactory.getCurrentSession();
+    	Query query = session.createSQLQuery("CALL INSERT_USER_IN_PROGRAM_ROLE(?, ?, ?);");
+    	query.setInteger(0, registeredUser.getId());
+    	query.setInteger(1, program.getId());
+    	query.setString(2, authority.toString());
+    	session.flush();
+    	session.clear();
+    }
+    
+    public void deleteUserFromRole (RegisteredUser registeredUser, Authority authority) {
+    	Session session = sessionFactory.getCurrentSession();
+    	Query query = session.createSQLQuery("CALL DELETE_USER_FROM_ROLE(?, ?);");
+    	query.setInteger(0, registeredUser.getId());
+    	query.setString(1, authority.toString());
+    	session.flush();
+    	session.clear();
+    }
+    
+    public void deleteUserFromProgramRole (RegisteredUser registeredUser, Program program, Authority authority) {
+    	Session session = sessionFactory.getCurrentSession();
+    	Query query = session.createSQLQuery("CALL DELETE_USER_FROM_PROGRAM_ROLE(?, ?, ?);");
+    	query.setInteger(0, registeredUser.getId());
+    	query.setInteger(1, program.getId());
+    	query.setString(2, authority.toString());
+    	session.flush();
+    	session.clear();
+    }
+    
+    public void updateRaisesUrgentFlag () {
+    	Session session = sessionFactory.getCurrentSession();
+    	session.createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
+    	session.flush();
+    	session.clear();
     }
 }

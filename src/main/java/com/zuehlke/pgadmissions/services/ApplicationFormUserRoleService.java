@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +51,6 @@ public class ApplicationFormUserRoleService {
     protected final ApplicationFormDAO applicationFormDAO;
     
     private final Map<ApplicationFormStatus, String> initiateStageMap = Maps.newHashMap();
-    
-    private final Map<ApplicationFormStatus, String> completeStageMap = Maps.newHashMap();
 
     public ApplicationFormUserRoleService() {
         this(null, null, null, null);
@@ -69,11 +68,6 @@ public class ApplicationFormUserRoleService {
         initiateStageMap.put(ApplicationFormStatus.INTERVIEW, "ASSIGN_INTERVIEWERS");
         initiateStageMap.put(ApplicationFormStatus.APPROVAL, "ASSIGN_SUPERVISORS");
         initiateStageMap.put(ApplicationFormStatus.REJECTED, "CONFIRM_REJECTION");
-        
-        completeStageMap.put(ApplicationFormStatus.VALIDATION, "COMPLETE_VALIDATION_STAGE");
-        completeStageMap.put(ApplicationFormStatus.REVIEW, "COMPLETE_REVIEW_STAGE");
-        completeStageMap.put(ApplicationFormStatus.INTERVIEW, "COMPLETE_INTERVIEW_STAGE");
-        completeStageMap.put(ApplicationFormStatus.APPROVAL, "COMPLETE_APPROVAL_STAGE");
         
     }
 
@@ -112,7 +106,9 @@ public class ApplicationFormUserRoleService {
         deassignFromAdministrators(application);
 
         ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
-        assignToAdministrators(application, initiateStageMap.get(nextStatus), new Date(), false);
+        if (initiateStageMap.containsKey(nextStatus)) {
+        	assignToAdministrators(application, initiateStageMap.get(nextStatus), new Date(), false);
+        }
         
         List<RegisteredUser> approvers = application.getProgram().getApprovers();
 
@@ -370,7 +366,7 @@ public class ApplicationFormUserRoleService {
         return applicationFormUserRole;
     }
     
-    private void assignToAdministrators(ApplicationForm applicationForm, String action, Date dueDate, Boolean bindDealineToDueDate) {
+    private void assignToAdministrators(ApplicationForm applicationForm, String action, Date dueDate, Boolean bindDeadlineToDueDate) {
         Map<RegisteredUser, Authority> administrators = Maps.newHashMap();
 
         for (RegisteredUser superAdministrator : userDAO.getSuperadministrators()) {
@@ -389,8 +385,16 @@ public class ApplicationFormUserRoleService {
         }
         for (Entry<RegisteredUser, Authority> administrator : administrators.entrySet()) {
         	boolean raisesUrgentFlag = dueDate.before(new Date());
+        	
+        	List<ApplicationFormActionRequired> requiredActions = new ArrayList<ApplicationFormActionRequired>();
+        	requiredActions.add(new ApplicationFormActionRequired(action, dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
+        	
+        	if (initiateStageMap.containsKey(action)) {
+        		requiredActions.add(new ApplicationFormActionRequired("MOVE_TO_DIFFERENT_STAGE", dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
+        	}
+        	
             createApplicationFormUserRole(applicationForm, administrator.getKey(), administrator.getValue(), false, 
-            		new ApplicationFormActionRequired(action, dueDate, bindDealineToDueDate, raisesUrgentFlag));
+            		requiredActions.toArray(new ApplicationFormActionRequired[0]));
         }
     }
 

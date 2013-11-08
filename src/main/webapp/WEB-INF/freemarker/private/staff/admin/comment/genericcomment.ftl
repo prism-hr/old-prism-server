@@ -65,7 +65,6 @@
 				        <div class="content-box-inner">
 				         <#include "/private/common/parts/application_info.ftl"/>
 				        
-				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) || user.isViewerOfProgramme(applicationForm) || user.isInRole('ADMITTER')>
 									<section class="form-rows">
 										<#if isConfirmEligibilityComment??>
 											<h2 class="no-arrow">Confirm Applicant Eligibility</h2>
@@ -152,9 +151,6 @@
 											
 										</div>
 									</section>
-			  				<#else>
-			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
-		  					</#if>
 		  					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 		  					
 				        </div><!-- .content-box-inner -->

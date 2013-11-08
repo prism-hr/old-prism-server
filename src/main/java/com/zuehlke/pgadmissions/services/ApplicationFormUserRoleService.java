@@ -240,6 +240,9 @@ public class ApplicationFormUserRoleService {
 
     public void interviewConfirmed(Interview interview) {
         ApplicationForm application = interview.getApplication();
+        
+        deassignFromAdministrators(application);
+        
         for (InterviewParticipant participant : interview.getParticipants()) {
             RegisteredUser user = participant.getUser();
             boolean isApplicant = user.getId() == application.getApplicant().getId();
@@ -256,7 +259,6 @@ public class ApplicationFormUserRoleService {
             }
             role.setRaisesUrgentFlag(!isApplicant);
         }
-        deassignFromAdministrators(application);
         assignToAdministrators(application, "COMPLETE_INTERVIEW_STAGE", application.getDueDate(), true);
     }
 

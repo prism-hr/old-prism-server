@@ -1,7 +1,4 @@
-SELECT APPLICATION_FORM_USER_ROLE.registered_user_id AS registered_user_id,
-	REGISTERED_USER.firstName AS registered_user_first_name,
-	REGISTERED_USER.lastName AS registered_user_last_name,
-	REGISTERED_USER.email AS registered_user_email
+SELECT APPLICATION_FORM_USER_ROLE.registered_user_id AS registered_user_id
 FROM APPLICATION_FORM_USER_ROLE INNER JOIN REGISTERED_USER
 	ON APPLICATION_FORM_USER_ROLE.registered_user_id = REGISTERED_USER.id
 INNER JOIN APPLICATION_FORM_ACTION_REQUIRED

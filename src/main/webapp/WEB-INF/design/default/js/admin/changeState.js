@@ -104,8 +104,12 @@ function changeState() {
 function refreshControls() {
     if ($('#status').val() == 'INTERVIEW') {
         $("#approvedDetails").hide();
-        $("#interviewDelegation").show();
-        $("#interviewDelegation").find("div.alert").remove();
+        
+        // temporarily removed
+//        $("#interviewDelegation").show();
+//        $("#interviewDelegation").find("div.alert").remove();
+        
+        
         $("#fastTrackApplicationSection").show();
         if ($('input:radio[name=switch]:checked').val() == 'yes') {
             $('#delegateFirstName').removeAttr('disabled');

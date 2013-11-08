@@ -81,7 +81,7 @@ public class ApplicationFormListCriteriaBuilder {
 
     public Criteria build() {
         criteria.setReadOnly(true);
-        criteria.setProjection(Projections.property("app.id"));
+        criteria.setProjection(Projections.groupProperty("app.id"));
 
         if (firstResult > -1) {
             criteria.setFirstResult(firstResult);

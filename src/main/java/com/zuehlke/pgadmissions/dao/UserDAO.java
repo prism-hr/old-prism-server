@@ -81,7 +81,7 @@ public class UserDAO {
     }
 
     public void save(RegisteredUser user) {
-    	Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         session.saveOrUpdate(user);
         session.flush();
     }
@@ -256,7 +256,6 @@ public class UserDAO {
     }
 
     public List<Integer> getPotentialUsersForTaskNotification() {
-    	updateApplicationFormActionUrgentFlag();
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
         int interval = reminderInterval.getDuration();
         DurationUnitEnum unit = reminderInterval.getUnit();
@@ -265,7 +264,6 @@ public class UserDAO {
     }
 
     public List<Integer> getPotentialUsersForTaskReminder() {
-    	updateApplicationFormActionUrgentFlag();
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
         NotificationsDuration notificationsDurationObj = notificationsDurationDAO.getNotificationsDuration();
         int notificationsDuration = notificationsDurationObj.getDurationInDays();
@@ -277,7 +275,6 @@ public class UserDAO {
     }
 
     public List<Integer> getUsersForUpdateNotification() {
-    	updateApplicationFormActionUrgentFlag();
         return sessionFactory.getCurrentSession().createSQLQuery(getUsersDueToUpdateNotificationSql).list();
     }
 
@@ -298,11 +295,6 @@ public class UserDAO {
             }
         }
         return false;
-    }
-    
-    private void updateApplicationFormActionUrgentFlag() {
-    	ApplicationFormUserRoleDAO applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO();
-    	applicationFormUserRoleDAO.updateRaisesUrgentFlag();
     }
 
     /* package */void setGetPotentialUsersDueToTaskReminderSql(String getPotentialUsersDueToTaskReminderSql) {

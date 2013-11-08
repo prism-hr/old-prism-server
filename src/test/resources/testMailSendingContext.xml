@@ -112,8 +112,8 @@
     <bean id="roleService" class="com.zuehlke.pgadmissions.services.RoleService" />
 
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
-
-    <bean id="applicationDescriptorProvider" class="com.zuehlke.pgadmissions.components.ApplicationDescriptorProvider" />
+    
+    <bean id="ap  plicationFormUserRoleService" class="com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService" />
 
     <context:component-scan base-package="com.zuehlke.pgadmissions.dao" />
     <context:component-scan base-package="com.zuehlke.pgadmissions.components" />

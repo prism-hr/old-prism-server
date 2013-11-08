@@ -1,0 +1,1 @@
+ALTER TABLE DOCUMENT DROP FOREIGN KEY referee_document_fkey;

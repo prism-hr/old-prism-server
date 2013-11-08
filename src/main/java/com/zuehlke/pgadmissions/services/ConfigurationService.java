@@ -130,7 +130,7 @@ public class ConfigurationService {
         if (user!=null) {
             user.removeRole(Authority.ADMITTER);
             userDAO.save(user);
-            applicationFormUserRoleService.revokeUserRole(user, Authority.ADMITTER);
+            applicationFormUserRoleService.revokeUserFromRole(user, Authority.ADMITTER);
         }
     }
 
@@ -147,12 +147,12 @@ public class ConfigurationService {
             user.getPendingRoleNotifications().add(viewerNotification);
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
-            applicationFormUserRoleService.createUserInAdmitterRole(user);
+            applicationFormUserRoleService.createUserInRole(user, Authority.ADMITTER);;
         } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
             user.getRoles().add(roleDAO.getRoleByAuthority(Authority.ADMITTER));
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
-            applicationFormUserRoleService.createUserInAdmitterRole(user);
+            applicationFormUserRoleService.createUserInRole(user, Authority.ADMITTER);
         }
     }
 

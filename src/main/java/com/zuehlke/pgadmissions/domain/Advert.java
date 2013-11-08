@@ -21,14 +21,14 @@ public class Advert implements Serializable {
     @Column(name = "title")
     private String title;
     
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
-    @ATASConstraint
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 3000)
     @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "study_duration")
     private Integer studyDuration;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     @Column(name = "funding")
     private String funding;
 

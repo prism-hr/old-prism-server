@@ -196,7 +196,7 @@ public class ConfigurationServiceTest {
 
         userDAOMock.save(EasyMock.capture(captureRegistryUserOne));
         userDAOMock.save(EasyMock.capture(captureRegistryUserTwo));
-
+        
         EasyMock.replay(roleDAOMock, personDAOMock, userDAOMock, roleServiceMock);
 
         service.saveRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo), new RegisteredUser());
@@ -306,8 +306,8 @@ public class ConfigurationServiceTest {
         personDAOMock = EasyMock.createMock(PersonDAO.class);
         userFactoryMock = EasyMock.createMock(UserFactory.class);
         roleServiceMock = EasyMock.createMock(RoleService.class);
-        userFactory = new UserFactory(roleServiceMock, new EncryptionUtils());
         userDAOMock = EasyMock.createMock(UserDAO.class);
+        userFactory = new UserFactory(roleServiceMock, new EncryptionUtils());
         roleDAOMock = EasyMock.createMock(RoleDAO.class);
         applicationFormUserRoleService = EasyMock.createMock(ApplicationFormUserRoleService.class);
         

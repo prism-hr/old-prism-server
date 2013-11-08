@@ -154,8 +154,4 @@ public class StateTransitionController {
         return new RegisteredUser();
     }
 
-    @ModelAttribute("reviewersWillingToInterview")
-    public List<RegisteredUser> getReviewersWillingToInterview(@RequestParam String applicationId) {
-        return userService.getReviewersWillingToInterview(getApplicationForm(applicationId));
-    }
 }

@@ -13,16 +13,27 @@
 	<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
 	<div class="field">
 	  <select id="programReviewers" class="list-select-from" multiple="multiple" size="${avaliableOptionsSize}">
-	    <optgroup id="nominated" label="Applicant nominated supervisors">
-	      <#list nominatedSupervisors as reviewer>
-	      	<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="nominated" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
-	      </#list>
-	    </optgroup>
-	    <optgroup id="previous" label="Previous reviewers">
-	     	<#list previousReviewers as reviewer>
-	      		<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
-	      	</#list>		
-	    </optgroup>
+	    <#if nominatedSupervisors?has_content>
+	    	<optgroup id="nominated" label="Applicant nominated supervisors">
+	      	<#list nominatedSupervisors as reviewer>
+	      		<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="nominated" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+	     	</#list>
+	    	</optgroup>
+	    </#if>
+	    <#if previousReviewers?has_content>
+		    <optgroup id="previous" label="Previous reviewers">
+		     	<#list previousReviewers as reviewer>
+		      		<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+		      	</#list>		
+		    </optgroup>
+		</#if>
+		<#if previousReviewers?has_content>
+		    <optgroup id="previous" label="Previous reviewers">
+		     	<#list previousReviewers as reviewer>
+		      		<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+		      	</#list>		
+		    </optgroup>
+		</#if>
 	  </select>
 	</div>
  </div>

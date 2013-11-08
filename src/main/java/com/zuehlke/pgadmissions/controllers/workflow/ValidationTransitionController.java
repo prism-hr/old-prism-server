@@ -53,7 +53,8 @@ public class ValidationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
-    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String action, ModelMap model) {
+    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, 
+    		@RequestParam(required = false) String action, ModelMap model) {
         RegisteredUser user = getCurrentUser();
 
         if (action != null && action.equals("abort")) {

@@ -326,6 +326,14 @@ public class ApplicationFormUserRoleService {
     	}
     }
     
+    public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
+    	return applicationFormUserRoleDAO.findUsersInterestedInApplication(applicationForm);
+    }
+    
+    public List<RegisteredUser> getOtherUsersPotentiallyInterestedInApplication(Program program) {
+    	return applicationFormUserRoleDAO.findProgramUsers(program);
+    }
+    
     public void deregisterApplicationUpdate (ApplicationForm applicationForm, RegisteredUser registeredUser) {
     	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndUser(applicationForm, registeredUser)) {
     		applicationFormUserRole.setRaisesUpdateFlag(false);

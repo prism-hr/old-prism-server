@@ -223,7 +223,7 @@ public class MoveToReviewControllerTest {
             }
 
             @Override
-            public ReviewRound getReviewRound(Object applicationId) {
+            public ReviewRound getReviewRound(String applicationId) {
                 return null;
             }
 
@@ -289,7 +289,7 @@ public class MoveToReviewControllerTest {
             }
 
             @Override
-            public ReviewRound getReviewRound(Object applicationId) {
+            public ReviewRound getReviewRound(String applicationId) {
                 return null;
             }
 

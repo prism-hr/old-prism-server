@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.controllers.workflow.review;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -19,11 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -85,7 +81,9 @@ public class MoveToReviewController {
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
+    public String moveToReview(@RequestParam String applicationId, 
+    		@Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, 
+    		BindingResult bindingResult) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
 
         actionsProvider.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
@@ -101,19 +99,12 @@ public class MoveToReviewController {
     }
 
     @ModelAttribute("reviewRound")
-    public ReviewRound getReviewRound(@RequestParam Object applicationId) {
+    public ReviewRound getReviewRound(@RequestParam String applicationId) {
         ReviewRound reviewRound = new ReviewRound();
-        ApplicationForm applicationForm = getApplicationForm((String) applicationId);
-        ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-        if (latestReviewRound != null) {
-            List<Reviewer> newReviewers = Lists.newArrayList();
-            for (Reviewer lastReviewer : latestReviewRound.getReviewers()) {
-                ReviewComment lastReview = lastReviewer.getReview();
-                if (lastReview == null || BooleanUtils.isNotTrue(lastReview.isDecline())) {
-                    newReviewers.add(lastReviewer);
-                }
-            }
-            reviewRound.setReviewers(newReviewers);
+        for (RegisteredUser interestedUser : applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId))) {
+        	Reviewer reviewer = new Reviewer();
+        	reviewer.setUser(interestedUser);
+        	reviewRound.getReviewers().add(reviewer);
         }
         return reviewRound;
     }

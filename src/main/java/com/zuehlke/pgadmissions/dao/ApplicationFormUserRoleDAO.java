@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -212,5 +213,26 @@ public class ApplicationFormUserRoleDAO {
     	Session session = sessionFactory.getCurrentSession();
     	Query query = session.createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
     	query.executeUpdate();
+    }
+    
+    public List<RegisteredUser> findUsersInterestedInApplication(ApplicationForm applicationForm) {
+        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+        		.createAlias("applicationFormUserRoles", "roles")
+        		.add(Restrictions.eq("roles.applicationForm", applicationForm))
+                .add(Restrictions.eq("roles.interestedInApplicant", true))
+                .addOrder(Order.asc("lastName"))
+                .addOrder(Order.asc("firstName"))
+                .addOrder(Order.asc("id")) 
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("registeredUser"))).list();
+    }
+    
+    public List<RegisteredUser> findProgramUsers(Program program) {
+        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+        		.createAlias("applicationFormUserRoles", "roles")
+        		.createAlias("roles.applicationForm.program", "program")
+        		.add(Restrictions.eq("program", program))
+        		.add(Restrictions.in("roles.role", Arrays.asList("REVIEWER", "INTEVIEWER", "SUPERVISOR")))
+                .add(Restrictions.eq("roles.interestedInApplicant", false))
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("registeredUser"))).list();
     }
 }

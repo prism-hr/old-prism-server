@@ -105,5 +105,4 @@ public class ApplicationFormDAO {
     			add(Restrictions.ne("status", ApplicationFormStatus.UNSUBMITTED)).
     			add(Restrictions.eq("withdrawnBeforeSubmit", false)).list();
     }
-    
 }

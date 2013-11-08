@@ -147,11 +147,11 @@ public class UserService {
     private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
         if (newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
             selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);
-            applicationFormUserRoleService.createUserInProgramRole(selectedUser, selectedProgram, Authority.ADMITTER);
+            applicationFormUserRoleService.createUserInProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         } else if (!newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR)
                 && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
             selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
-            applicationFormUserRoleService.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.ADMITTER);
+            applicationFormUserRoleService.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         }
     }
 

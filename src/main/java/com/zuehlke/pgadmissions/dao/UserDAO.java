@@ -84,7 +84,6 @@ public class UserDAO {
     	Session session = sessionFactory.getCurrentSession();
         session.saveOrUpdate(user);
         session.flush();
-        session.clear();
     }
 
     public RegisteredUser get(Integer id) {

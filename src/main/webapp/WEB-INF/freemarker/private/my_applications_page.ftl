@@ -93,33 +93,11 @@
           	<div class="filterOperators">
              <span>Show applications matching</span> <div id="operatorSwitch" class="switch switch-mini" data-on-label="ANY" data-off-label="ALL">
                 <input id="useDisjunctionId" type="checkbox" <#if filtering.useDisjunction> checked="checked" </#if> />
-             </div> <span>of the following filters.</span>
+             </div>
+             <span>of the following filters.</span>
              
             </div>
            
-            <div class="applyOptions">
-            
-            <span>Displaying:</span>
-              <div class="btn-group">
-              
-              <#if filtering.preFilter == "ALL">
-              <button class="btn" id="preFilter" disabled value="ALL">All applications</button>
-              <#elseif filtering.preFilter == "MY">
-              <button class="btn"  id="preFilter" disabled value="MY">My applications</button>	
-              <#elseif filtering.preFilter == "URGENT">
-              <button class="btn"  id="preFilter" disabled value="URGENT"><i class="icon-bell-alt"></i> Applications that Require Attention</button>                
-              </#if>
-              </button>
-              <button class="btn dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-              </button>
-                  <ul class="dropdown-menu" id="preFilterOptions">
-                    <li><a href="ALL">All applications</a></li>
-                    <li><a href="MY">My applications</a></li>
-                    <li><a href="URGENT"><i class="icon-bell-alt"></i> Applications that Require Attention</a></li>
-                  </ul>
-              </div>
-              </div>
             </div>
             <div id="search-box" class="clearfix"> 
             

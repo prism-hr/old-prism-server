@@ -10,6 +10,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StopWatch;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -46,10 +47,20 @@ public class ApplicationFormListDAO {
             .build();
 
         ArrayList<ApplicationForm> results = new ArrayList<ApplicationForm>();
+        
+        StopWatch watch = new StopWatch();
+        watch.start();
         LinkedHashSet<Object> applicationIds = new LinkedHashSet<Object>(criteria.list());
+        watch.stop();
+        System.out.println("get ids : " + watch.getLastTaskTimeMillis());
+        
+        watch = new StopWatch();
+        watch.start();
         for (Object id : applicationIds) {
             results.add((ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, (Integer) id));
         }
+        watch.stop();
+        System.out.println("get apps: " + watch.getLastTaskTimeMillis());
         return results;
     }
 }

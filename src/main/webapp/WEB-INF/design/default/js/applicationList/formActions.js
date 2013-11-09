@@ -300,14 +300,6 @@ $(document).ready(function() {
 		checkSwich();
 	});
 	
-	$("#preFilterOptions li a").click(function(event) {
-		clearRedFlagIndex();
-		event.preventDefault();
-		filterVal = $(this).attr('href');
-		filterHtml = $(this).html();
-		$('#preFilter').val(filterVal).html(filterHtml);
-		$('#search-go').click();
-	});
 	$('#operatorSwitch').on('switch-change', function () {
 		setTimeout(function() {
 			$('#search-go').click();
@@ -320,10 +312,6 @@ function checkSwich() {
 	} else  {
 		$('.filterOperators').hide();
 	}
-}
-
-function clearRedFlagIndex() {
-	latestConsideredFlagIndex = 0;
 }
 
 // ------------------------------------------------------------------------------
@@ -371,7 +359,6 @@ function fieldChange(selected, id) {
 }
 function resetPageCount() {
 	$('#block-index').val("1");
-	clearRedFlagIndex();
 }
 
 function getPageCount() {
@@ -414,7 +401,6 @@ function populateApplicationList() {
 			404 : function() { window.location.href = "/pgadmissions/404"; },
 			400 : function() { window.location.href = "/pgadmissions/400"; },
 			403 : function() { window.location.href = "/pgadmissions/404"; },
-			303 : function() { window.location.href = "/pgadmissions/applications?messageCode=application.urgent.list.empty&applyFilters=my"; }
 		},
 		url : "/pgadmissions/applications/section",
 		data : options,

@@ -56,6 +56,9 @@ public class Comment implements Comparable<Comment>, Serializable {
     @JoinColumn(name = "comment_id")
     @IndexColumn(name = "score_position")
     private List<Score> scores = new ArrayList<Score>();
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id")
+    private List<StateChangeComment> stateChangeComments = new ArrayList<StateChangeComment>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -147,5 +150,9 @@ public class Comment implements Comparable<Comment>, Serializable {
 
     public String getTooltipMessage(final String role) {
         return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role));
+    }
+    
+    public List<StateChangeComment> getStateChangeComment() {
+    	return stateChangeComments;
     }
 }

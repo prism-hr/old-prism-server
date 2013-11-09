@@ -62,7 +62,6 @@ public class ApplicationListController {
     private final ApplicationSummaryService applicationSummaryService;
 
     private final ApplicationsFilteringService filteringService;
-
     
     private final ActionsProvider actionsProvider;
 

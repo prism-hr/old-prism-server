@@ -23,23 +23,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -55,27 +51,24 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     private final ApplicationContext applicationContext;
 
     private final InterviewParticipantDAO interviewParticipantDAO;
-
-    private final ApplicationFormListDAO applicationFormListDAO;
     
     private final ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
+    public ScheduledMailSendingService() {
+        this(null, null, null, null, null, null, null, null, null, null, null);
+    }
+    
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
             final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO, final RoleDAO roleDAO,
             final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host, final ApplicationContext applicationContext,
-            InterviewParticipantDAO interviewParticipantDAO, ApplicationFormListDAO applicationFormListDAO, ApplicationFormUserRoleDAO applicationFormUserRoleDAO) {
+            InterviewParticipantDAO interviewParticipantDAO, ApplicationFormUserRoleDAO applicationFormUserRoleDAO) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.refereeDAO = refereeDAO;
         this.userDAO = userDAO;
         this.applicationContext = applicationContext;
         this.interviewParticipantDAO = interviewParticipantDAO;
-        this.applicationFormListDAO = applicationFormListDAO;
         this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
-    }
-
-    public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public void sendDigestsToUsers() {

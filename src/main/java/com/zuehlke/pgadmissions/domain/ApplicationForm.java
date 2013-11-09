@@ -86,7 +86,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private List<Event> events = new ArrayList<Event>();
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "next_status")
+    private ApplicationFormStatus nextStatus = null;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -537,6 +542,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public ApplicationFormStatus getStatus() {
         return status;
     }
+    
+    public void setStatus(ApplicationFormStatus status) {
+        this.status = status;
+        this.nextStatus = null;
+    }
+    
+    public ApplicationFormStatus getNextStatus() {
+    	return nextStatus;
+    }
+    
+    public void setNextStatus(ApplicationFormStatus nextStatus) {
+    	this.nextStatus = nextStatus;
+    }
 
     public Date getRejectNotificationDate() {
         return rejectNotificationDate;
@@ -544,10 +562,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setRejectNotificationDate(Date rejectNotificationDate) {
         this.rejectNotificationDate = rejectNotificationDate;
-    }
-
-    public void setStatus(ApplicationFormStatus status) {
-        this.status = status;
     }
 
     public boolean isInValidationStage() {
@@ -1094,14 +1108,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             if (comment instanceof ValidationComment && comment.getType() != CommentType.ADMITTER_COMMENT) {
                 return (ValidationComment) comment;
             }
-        }
-        return null;
-    }
-
-    public ApplicationFormStatus getNextStatus() {
-        StateChangeComment latestStateChangeComment = getLatestStateChangeComment();
-        if (latestStateChangeComment != null) {
-            return latestStateChangeComment.getNextStatus();
         }
         return null;
     }

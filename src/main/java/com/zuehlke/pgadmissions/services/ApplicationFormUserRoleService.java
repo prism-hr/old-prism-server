@@ -115,19 +115,22 @@ public class ApplicationFormUserRoleService {
         if (nextStatus == ApplicationFormStatus.APPROVED) {
             for (RegisteredUser approver : approvers) {
                 createApplicationFormUserRole(application, approver, Authority.APPROVER, false, 
-                		new ApplicationFormActionRequired("COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true));
+                		new ApplicationFormActionRequired("COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true),
+                		new ApplicationFormActionRequired("MOVE_TO_DIFFERENT_STAGE", new Date(), false, true));
             }
 
             for (RegisteredUser superAdministrator : userDAO.getSuperadministrators()) {
                 createApplicationFormUserRole(application, superAdministrator, Authority.SUPERADMINISTRATOR, false, 
+                		new ApplicationFormActionRequired("COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true),
                 		new ApplicationFormActionRequired("COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true));
             }
         }
 
-        if (application.getStatus() == ApplicationFormStatus.APPROVAL && nextStatus != null) {
+        else if (application.getStatus() == ApplicationFormStatus.APPROVAL && nextStatus != null) {
             for (RegisteredUser approver : approvers) {
                 createApplicationFormUserRole(application, approver, Authority.APPROVER, false, 
-                		new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false, true));
+                		new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false, true),
+                		new ApplicationFormActionRequired("COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true));
             }
         }
     }

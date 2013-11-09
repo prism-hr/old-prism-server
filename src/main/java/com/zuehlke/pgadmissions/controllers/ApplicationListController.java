@@ -40,7 +40,6 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
@@ -66,26 +65,23 @@ public class ApplicationListController {
     private final ApplicationSummaryService applicationSummaryService;
 
     private final ApplicationsFilteringService filteringService;
-
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     
     private final ActionsProvider actionsProvider;
 
     public ApplicationListController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
             ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
-            ApplicationsFilteringService filteringService, final ApplicationFormUserRoleService applicationFormUserRoleService, final ActionsProvider actionsProvider) {
+            ApplicationsFilteringService filteringService, final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
         this.applicationSummaryService = applicationSummaryService;
         this.filteringService = filteringService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
     }
 

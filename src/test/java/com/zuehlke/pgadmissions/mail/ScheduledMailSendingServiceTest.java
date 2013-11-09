@@ -16,7 +16,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +80,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         interviewParticipantDAOMock = createMock(InterviewParticipantDAO.class);
         applicationFormListDAOMock = createMock(ApplicationFormListDAO.class);
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
-                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormListDAOMock, applicationFormUserRoleDAO);
+                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleDAO);
     }
 
     @Test
@@ -115,7 +114,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     // FIXME amend or remove
     public void shouldSendTaskEmailIfNecessary() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).username("bebok").build();
-        List<ApplicationForm> applicationRequiringAttention = Lists.newArrayList(new ApplicationForm());
 
         expect(userDAOMock.get(8)).andReturn(user);
         // expect(applicationFormListDAOMock.getApplicationsWorthConsideringForAttentionFlag(eq(user), isA(ApplicationsFiltering.class),
@@ -143,7 +141,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     // FIXME amend or remove
     public void shouldNotSendTaskEmailIfNotNecessary() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).username("bebok").build();
-        List<ApplicationForm> applicationRequiringAttention = Collections.emptyList();
 
         expect(userDAOMock.get(8)).andReturn(user);
         // expect(applicationFormListDAOMock.getApplicationsWorthConsideringForAttentionFlag(eq(user), isA(ApplicationsFiltering.class),
@@ -182,7 +179,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     @Test
     public void shouldSendReferenceReminder() throws Exception {
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
-                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormListDAOMock, applicationFormUserRoleDAO) {
+                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleDAO) {
             @Override
             protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
                 return null;

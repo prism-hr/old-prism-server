@@ -55,18 +55,17 @@ public class CommentFactory {
         scheduleComment.setLocationUrl(locationUrl);
         scheduleComment.setUser(user);
         scheduleComment.setApplication(application);
-        scheduleComment.setComment("");
         return scheduleComment;
     }
 
     public StateChangeSuggestionComment createStateChangeSuggestionComment(RegisteredUser user, ApplicationForm application, String comment,
             ApplicationFormStatus nextStatus) {
-        StateChangeSuggestionComment suggestionComment = new StateChangeSuggestionComment();
-        suggestionComment.setUser(user);
-        suggestionComment.setApplication(application);
-        suggestionComment.setComment(comment);
-        suggestionComment.setNextStatus(nextStatus);
-        return suggestionComment;
+        StateChangeSuggestionComment stateChangeSuggestionComment = new StateChangeSuggestionComment();
+        stateChangeSuggestionComment.setUser(user);
+        stateChangeSuggestionComment.setApplication(application);
+        stateChangeSuggestionComment.setComment(comment);
+        stateChangeSuggestionComment.setNextStatus(nextStatus);
+        return stateChangeSuggestionComment;
 
     }
 
@@ -75,7 +74,7 @@ public class CommentFactory {
         StateChangeComment stateChangeComment = new StateChangeComment();
         stateChangeComment.setComment(strComment);
         stateChangeComment.setType(commentType);
-        stateChangeComment.setNextStatus(nextStatus);
+        setNextStatus(stateChangeComment, nextStatus);
         return stateChangeComment;
     }
 
@@ -89,34 +88,39 @@ public class CommentFactory {
             ApplicationFormStatus nextStatus) {
         ValidationComment validationComment = new ValidationComment();
         validationComment.setType(commentType);
-        validationComment.setNextStatus(nextStatus);
+        setNextStatus(validationComment, nextStatus);
         return validationComment;
     }
 
     private Comment createReviewEvaluationComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType,
             ApplicationFormStatus nextStatus) {
-        ReviewEvaluationComment comment = new ReviewEvaluationComment();
-        comment.setType(commentType);
-        comment.setNextStatus(nextStatus);
-        comment.setReviewRound(applicationForm.getLatestReviewRound());
-        return comment;
+        ReviewEvaluationComment reviewEvaluationComment = new ReviewEvaluationComment();
+        reviewEvaluationComment.setType(commentType);
+        setNextStatus(reviewEvaluationComment, nextStatus);
+        reviewEvaluationComment.setReviewRound(applicationForm.getLatestReviewRound());
+        return reviewEvaluationComment;
     }
 
     private Comment createInterviewEvaluationComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType,
             ApplicationFormStatus nextStatus) {
-        InterviewEvaluationComment comment = new InterviewEvaluationComment();
-        comment.setType(commentType);
-        comment.setNextStatus(nextStatus);
-        comment.setInterview(applicationForm.getLatestInterview());
-        return comment;
+        InterviewEvaluationComment interviewEvaluationComment = new InterviewEvaluationComment();
+        interviewEvaluationComment.setType(commentType);
+        setNextStatus(interviewEvaluationComment, nextStatus);
+        interviewEvaluationComment.setInterview(applicationForm.getLatestInterview());
+        return interviewEvaluationComment;
     }
 
     private Comment createApprovalEvaluationComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType,
             ApplicationFormStatus nextStatus) {
-        ApprovalEvaluationComment comment = new ApprovalEvaluationComment();
-        comment.setType(commentType);
-        comment.setNextStatus(nextStatus);
-        comment.setApprovalRound(applicationForm.getLatestApprovalRound());
-        return comment;
+        ApprovalEvaluationComment approvalEvaluationComment = new ApprovalEvaluationComment();
+        approvalEvaluationComment.setType(commentType);
+        setNextStatus(approvalEvaluationComment, nextStatus);
+        approvalEvaluationComment.setApprovalRound(applicationForm.getLatestApprovalRound());
+        return approvalEvaluationComment;
+    }
+    
+    private void setNextStatus(StateChangeComment comment, ApplicationFormStatus nextStatus) {
+    	comment.setNextStatus(nextStatus);
+    	comment.getApplication().setNextStatus(nextStatus);
     }
 }

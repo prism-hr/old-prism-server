@@ -159,9 +159,12 @@ public class ApplicationFormUserRoleDAO {
 
     public boolean checkActionAvailableForUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm, ApplicationFormAction action) {
         Object requiredResult = sessionFactory.getCurrentSession().createCriteria(ApplicationFormActionRequired.class)
-                .createAlias("applicationFormUserRole", "role").add(Restrictions.eq("role.applicationForm", applicationForm))
-                .add(Restrictions.eq("role.user", user)).add(Restrictions.eq("action", action.name()))
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("action"))).uniqueResult();
+                .createAlias("applicationFormUserRole", "role")
+                .add(Restrictions.eq("role.applicationForm", applicationForm))
+                .add(Restrictions.eq("role.user", user))
+                .add(Restrictions.eq("action", action.name()))
+                .setProjection(Projections.projectionList()
+                .add(Projections.groupProperty("action"))).uniqueResult();
 
         DetachedCriteria subquery = DetachedCriteria.forClass(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user)).setProjection(Projections.property("role.id"));
@@ -223,7 +226,7 @@ public class ApplicationFormUserRoleDAO {
                 .addOrder(Order.asc("lastName"))
                 .addOrder(Order.asc("firstName"))
                 .addOrder(Order.asc("id")) 
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("registeredUser"))).list();
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("id"))).list();
     }
     
     public List<RegisteredUser> findProgramUsers(Program program) {
@@ -233,6 +236,6 @@ public class ApplicationFormUserRoleDAO {
         		.add(Restrictions.eq("program", program))
         		.add(Restrictions.in("roles.role", Arrays.asList("REVIEWER", "INTEVIEWER", "SUPERVISOR")))
                 .add(Restrictions.eq("roles.interestedInApplicant", false))
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("registeredUser"))).list();
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("id"))).list();
     }
 }

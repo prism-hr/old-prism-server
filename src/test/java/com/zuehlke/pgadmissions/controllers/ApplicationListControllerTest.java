@@ -68,7 +68,6 @@ public class ApplicationListControllerTest {
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
     private ApplicationSummaryService applicationSummaryServiceMock;
     private ApplicationsFilteringService filteringServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
 
     @Test
@@ -354,10 +353,9 @@ public class ApplicationListControllerTest {
         filtersPropertyEditorMock = createMock(ApplicationsFiltersPropertyEditor.class);
         applicationSummaryServiceMock = createMock(ApplicationSummaryService.class);
         filteringServiceMock = EasyMock.createMock(ApplicationsFilteringService.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new ApplicationListController(applicationsServiceMock, applicationsReportServiceMock, userServiceMock, filtersPropertyEditorMock,
-                applicationSummaryServiceMock, filteringServiceMock, applicationFormUserRoleServiceMock, actionsProviderMock);
+                applicationSummaryServiceMock, filteringServiceMock, actionsProviderMock);
     }
 
     @SuppressWarnings("unchecked")

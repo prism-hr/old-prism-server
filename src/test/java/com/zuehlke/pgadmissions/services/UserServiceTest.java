@@ -27,7 +27,6 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -484,58 +483,6 @@ public class UserServiceTest {
         assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
 
         assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
-    }
-
-    @Test
-    public void shouldGetAllPreviousInterviewersOfProgam() {
-        RegisteredUser userOne = new RegisteredUserBuilder().id(5).build();
-        RegisteredUser userTwo = new RegisteredUserBuilder().id(6).build();
-        Program program = new ProgramBuilder().id(5).build();
-        EasyMock.expect(userDAOMock.getAllPreviousInterviewersOfProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
-        EasyMock.replay(userDAOMock);
-
-        List<RegisteredUser> users = userService.getAllPreviousInterviewersOfProgram(program);
-        assertEquals(2, users.size());
-        assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
-    }
-
-    @Test
-    public void shouldGetAllPreviousReviewersOfProgam() {
-        RegisteredUser userOne = new RegisteredUserBuilder().id(5).build();
-        RegisteredUser userTwo = new RegisteredUserBuilder().id(6).build();
-        Program program = new ProgramBuilder().id(5).build();
-        EasyMock.expect(userDAOMock.getAllPreviousReviewersOfProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
-        EasyMock.replay(userDAOMock);
-
-        List<RegisteredUser> users = userService.getAllPreviousReviewersOfProgram(program);
-        assertEquals(2, users.size());
-        assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
-    }
-
-    @Test
-    public void shouldGetAllReviewersWillingToItnerview() {
-        RegisteredUser userOne = new RegisteredUserBuilder().id(5).build();
-        RegisteredUser userTwo = new RegisteredUserBuilder().id(6).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-        EasyMock.expect(userDAOMock.getReviewersWillingToInterview(applicationForm)).andReturn(Arrays.asList(userOne, userTwo));
-        EasyMock.replay(userDAOMock);
-
-        List<RegisteredUser> users = userService.getReviewersWillingToInterview(applicationForm);
-        assertEquals(2, users.size());
-        assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
-    }
-
-    @Test
-    public void shouldGetAllPreviousSupervisorsOfProgam() {
-        RegisteredUser userOne = new RegisteredUserBuilder().id(5).build();
-        RegisteredUser userTwo = new RegisteredUserBuilder().id(6).build();
-        Program program = new ProgramBuilder().id(5).build();
-        EasyMock.expect(userDAOMock.getAllPreviousSupervisorsOfProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
-        EasyMock.replay(userDAOMock);
-
-        List<RegisteredUser> users = userService.getAllPreviousSupervisorsOfProgram(program);
-        assertEquals(2, users.size());
-        assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
     }
 
     @Test

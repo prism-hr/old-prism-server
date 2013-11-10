@@ -196,8 +196,8 @@ public class UserService {
         return Arrays.asList(newAuthorities).contains(authority);
     }
 
-    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, final DirectURLsEnum directURL,
-            final ApplicationForm application, final Authority... authorities) {
+    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, 
+    		final DirectURLsEnum directURL, final ApplicationForm application, final Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
         if (newUser != null) {
             throw new IllegalStateException(String.format("user with email: %s already exists!", email));
@@ -256,22 +256,6 @@ public class UserService {
         userDAO.save(newUser);
         
         return newUser;
-    }
-
-    public List<RegisteredUser> getAllPreviousInterviewersOfProgram(Program program) {
-        return userDAO.getAllPreviousInterviewersOfProgram(program);
-    }
-
-    public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
-        return userDAO.getAllPreviousReviewersOfProgram(program);
-    }
-
-    public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(Program program) {
-        return userDAO.getAllPreviousSupervisorsOfProgram(program);
-    }
-
-    public List<RegisteredUser> getReviewersWillingToInterview(ApplicationForm applicationForm) {
-        return userDAO.getReviewersWillingToInterview(applicationForm);
     }
 
     public void updateCurrentUser(RegisteredUser user) {

@@ -151,10 +151,21 @@ public class ApplicationFormUserRoleDAO {
     public Boolean findRaisesUpdateFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
         Boolean raisesUpdateFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)//
                 .add(Restrictions.eq("applicationForm", applicationForm)) //
-                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("user", user))
+                .addOrder(Order.desc("raisesUpdateFlag"))//
                 .setProjection(Projections.projectionList().add(Projections.max("raisesUpdateFlag"))) //
                 .uniqueResult();
         return BooleanUtils.toBoolean(raisesUpdateFlag);
+    }
+    
+    public Boolean findRaisesUrgentFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
+        Boolean raisesUrgentFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)//
+                .add(Restrictions.eq("applicationForm", applicationForm)) //
+                .add(Restrictions.eq("user", user))
+                .addOrder(Order.desc("raisesUrgentFlag"))//
+                .setProjection(Projections.projectionList().add(Projections.max("raisesUrgentFlag"))) //
+                .uniqueResult();
+        return BooleanUtils.toBoolean(raisesUrgentFlag);
     }
 
     public boolean checkActionAvailableForUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm, ApplicationFormAction action) {
@@ -229,7 +240,7 @@ public class ApplicationFormUserRoleDAO {
                 .setProjection(Projections.projectionList().add(Projections.groupProperty("id"))).list();
     }
     
-    public List<RegisteredUser> findProgramUsers(Program program) {
+    public List<RegisteredUser> findUsersPotentiallyInterestedInApplication(Program program) {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
         		.createAlias("applicationFormUserRoles", "roles")
         		.createAlias("roles.applicationForm.program", "program")

@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -289,121 +287,6 @@ public class ApplicationFormTest {
         Assert.assertEquals(approvalEvent, eventsSortedByDate.get(2));
         Assert.assertEquals(rejectedEvent, eventsSortedByDate.get(3));
         // fail("re-implement when other event types created");
-    }
-
-    @Test
-    public void shouldReturnUsersWilingToSupervise() throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
-
-        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
-        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
-        ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).build();
-        ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
-        ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).build();
-        InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).build();
-        InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-                .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
-
-        List<RegisteredUser> users = applicationForm.getUsersWillingToSupervise();
-        assertEquals(1, users.size());
-    }
-
-    @Test
-    public void shouldReturnEmptyListIfNoUsersWillingToSupervise() throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
-
-        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
-        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
-        ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).build();
-        ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
-        ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).build();
-        InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review1, review2, review3, interviewComment1)
-                .build();
-
-        List<RegisteredUser> users = applicationForm.getUsersWillingToSupervise();
-        assertEquals(Collections.EMPTY_LIST, users);
-    }
-
-    @Test
-    public void shouldReturnUsersWilingToInterview() throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
-
-        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
-        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
-        ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).build();
-        ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
-        ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).build();
-        InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).build();
-        InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-                .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
-
-        List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
-        assertEquals(2, users.size());
-    }
-
-    @Test
-    public void shouldReturnUsersWilingToWorkWithApplicant() throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
-
-        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
-        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
-        ReviewComment review1 = new ReviewCommentBuilder().willingToWorkWithApplicant(true).willingToInterview(true).id(10).user(reviewerUserTwo).build();
-        ReviewComment review2 = new ReviewCommentBuilder().willingToWorkWithApplicant(false).willingToInterview(false).id(11).user(reviewerUserTwo).build();
-        ReviewComment review3 = new ReviewCommentBuilder().willingToWorkWithApplicant(true).willingToInterview(true).id(12).user(reviewerUserOne).build();
-        InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).build();
-        InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-                .comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
-
-        List<RegisteredUser> users = applicationForm.getReviewersWillingToWorkWithApplicant();
-        assertEquals(2, users.size());
-    }
-
-    @Test
-    public void shouldReturnEmptyListIfNoUsersWillingToInterview() throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
-
-        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
-        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
-        ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review2).build();
-
-        List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
-        assertEquals(Collections.EMPTY_LIST, users);
-    }
-
-    @Test
-    public void shouldReturnEmptyListIfNoUsersWillingToWorkWithApplicant() throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
-        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(7).build();
-
-        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
-        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
-        ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review2).build();
-
-        List<RegisteredUser> users = applicationForm.getReviewersWillingToWorkWithApplicant();
-        assertEquals(Collections.EMPTY_LIST, users);
     }
 
     @Test

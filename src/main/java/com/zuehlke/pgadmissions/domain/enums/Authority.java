@@ -29,8 +29,15 @@ public enum Authority {
     /* A person which makes a commitment towards the applicant to supervise him after his application has been APPROVED */
     SUPERVISOR,
 
-    /* Enables the holder to view all applications within the programme. */
+    /* Enables the holder to view all applications within the programme */
     VIEWER,
 
-    PROJECTADMINISTRATOR, REVIEWADMINISTRATOR, INTERVIEWADMINISTRATOR, APPROVALADMINISTRATOR
+    /* A user that has delegated administrative privileges for one application */
+    PROJECTADMINISTRATOR, 
+    
+    /* A user that has delegated administrative privileges for a given application context */
+    REVIEWADMINISTRATOR, INTERVIEWADMINISTRATOR, APPROVALADMINISTRATOR,
+    
+    /* A user that an applicant suggests as their supervisor */
+    SUGGESTEDSUPERVISOR
 }

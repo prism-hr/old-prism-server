@@ -24,15 +24,11 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.io.CharStreams;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -202,59 +198,6 @@ public class UserDAO {
                 .add(Restrictions.isNull("pendingRoleNotification.notificationDate")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<RegisteredUser> getAllPreviousInterviewersOfProgram(Program program) {
-        List<Interviewer> interviewers = sessionFactory.getCurrentSession().createCriteria(Interviewer.class).createAlias("interview", "interview")
-                .createAlias("interview.application", "application").add(Restrictions.eq("application.program", program))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-        List<RegisteredUser> users = new ArrayList<RegisteredUser>();
-        for (Interviewer interviewer : interviewers) {
-            if (!listContainsId(interviewer.getUser(), users)) {
-                users.add(interviewer.getUser());
-            }
-        }
-        return users;
-    }
-
-    public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
-        List<Reviewer> reviewers = sessionFactory.getCurrentSession().createCriteria(Reviewer.class).createAlias("reviewRound", "reviewRound")
-                .createAlias("reviewRound.application", "application").add(Restrictions.eq("application.program", program))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-        List<RegisteredUser> users = new ArrayList<RegisteredUser>();
-        for (Reviewer reviewer : reviewers) {
-            if (!listContainsId(reviewer.getUser(), users)) {
-                users.add(reviewer.getUser());
-            }
-        }
-        return users;
-    }
-
-    public List<RegisteredUser> getReviewersWillingToInterview(ApplicationForm applicationForm) {
-        List<ReviewComment> reviews = sessionFactory.getCurrentSession().createCriteria(ReviewComment.class).createAlias("reviewer", "reviewer")
-                .createAlias("reviewer.reviewRound", "reviewRound").createAlias("reviewRound.application", "application")
-                .add(Restrictions.eq("application", applicationForm)).add(Restrictions.eqProperty("application.latestReviewRound", "reviewer.reviewRound"))
-                .add(Restrictions.eq("willingToInterview", true)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-        List<RegisteredUser> users = new ArrayList<RegisteredUser>();
-        for (ReviewComment reviewComment : reviews) {
-            if (!listContainsId(reviewComment.getUser(), users)) {
-                users.add(reviewComment.getUser());
-            }
-        }
-        return users;
-    }
-
-    public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(Program program) {
-        List<Supervisor> supervisors = sessionFactory.getCurrentSession().createCriteria(Supervisor.class).createAlias("approvalRound", "approvalRound")
-                .createAlias("approvalRound.application", "application").add(Restrictions.eq("application.program", program))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-        List<RegisteredUser> users = new ArrayList<RegisteredUser>();
-        for (Supervisor supervisor : supervisors) {
-            if (!listContainsId(supervisor.getUser(), users)) {
-                users.add(supervisor.getUser());
-            }
-        }
-        return users;
-    }
-
     public List<Integer> getPotentialUsersForTaskNotification() {
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
         int interval = reminderInterval.getDuration();
@@ -286,15 +229,6 @@ public class UserDAO {
     public List<RegisteredUser> getAdmitters() {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createAlias("roles", "role")
                 .add(Restrictions.eq("role.id", Authority.ADMITTER)).list();
-    }
-
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /* package */void setGetPotentialUsersDueToTaskReminderSql(String getPotentialUsersDueToTaskReminderSql) {

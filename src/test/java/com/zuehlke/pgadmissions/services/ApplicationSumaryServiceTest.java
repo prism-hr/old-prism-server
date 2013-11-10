@@ -137,7 +137,7 @@ public class ApplicationSumaryServiceTest {
 
         expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.getNeedsToSeeUrgentFlag()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
@@ -179,7 +179,7 @@ public class ApplicationSumaryServiceTest {
 
         expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.getNeedsToSeeUrgentFlag()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
@@ -221,7 +221,7 @@ public class ApplicationSumaryServiceTest {
 
         expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.getNeedsToSeeUrgentFlag()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
@@ -263,7 +263,7 @@ public class ApplicationSumaryServiceTest {
 
         expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.getNeedsToSeeUrgentFlag()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
@@ -304,7 +304,7 @@ public class ApplicationSumaryServiceTest {
 
         expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.getNeedsToSeeUrgentFlag()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 
@@ -342,7 +342,7 @@ public class ApplicationSumaryServiceTest {
 
         expect(actionsProviderMock.getApplicationDescriptorForUser(form, currentUser)).andReturn(applicationDescriptorMock);
 
-        expect(applicationDescriptorMock.isRequiresAttention()).andReturn(ATTENTION_IS_REQUIRED);
+        expect(applicationDescriptorMock.getNeedsToSeeUrgentFlag()).andReturn(ATTENTION_IS_REQUIRED);
 
         expect(userServiceMock.getNumberOfActiveApplicationsForApplicant(form.getApplicant())).andReturn(NUMBER_OF_APPLICATIONS);
 

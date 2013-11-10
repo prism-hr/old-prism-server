@@ -40,3 +40,7 @@ SET APPLICATION_FORM.next_status =
 	END
 WHERE APPLICATION_FORM.status IN ("VALIDATION", "REVIEW", "INTERVIEW", "APPROVAL")
 ;
+
+INSERT INTO APPLICATION_ROLE (id, update_visibility, do_send_update_notification)
+VALUES ("SUGGESTEDSUPERVISOR", 0, 0)
+;

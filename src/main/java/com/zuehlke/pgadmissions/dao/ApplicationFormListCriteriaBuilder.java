@@ -90,11 +90,12 @@ public class ApplicationFormListCriteriaBuilder {
         if (maxResults > -1) {
             criteria.setMaxResults(maxResults);
         }
-        criteria.createAlias("applicationForm", "app");
-        criteria.createAlias("app.applicant", "applicant");
-        criteria.createAlias("app.program", "p");
         
         criteria.add(Restrictions.eq("user", user));
+        
+        criteria.createAlias("applicationForm", "applicationForm");
+        criteria.createAlias("applicationForm.applicant", "applicant");
+        criteria.createAlias("applicationForm.program", "program");
 
         if (applicationsFilter != null) {
             List<Criterion> criterions = new ArrayList<Criterion>();
@@ -131,40 +132,40 @@ public class ApplicationFormListCriteriaBuilder {
                     newCriterion = ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "applicant.firstName", "applicant.lastName");
                     break;
                 case APPLICATION_NUMBER:
-                    newCriterion = Restrictions.ilike("app.applicationNumber", term, MatchMode.ANYWHERE);
+                    newCriterion = Restrictions.ilike("applicationForm.applicationNumber", term, MatchMode.ANYWHERE);
                     break;
                 case PROGRAMME_NAME:
-                    newCriterion = Restrictions.disjunction().add(Restrictions.like("p.title", StringUtils.upperCase(term), MatchMode.ANYWHERE))
-                            .add(Restrictions.like("p.title", StringUtils.lowerCase(term), MatchMode.ANYWHERE))
-                            .add(Restrictions.like("p.code", StringUtils.upperCase(term), MatchMode.ANYWHERE))
-                            .add(Restrictions.like("p.code", StringUtils.lowerCase(term), MatchMode.ANYWHERE));
+                    newCriterion = Restrictions.disjunction().add(Restrictions.like("project.title", StringUtils.upperCase(term), MatchMode.ANYWHERE))
+                            .add(Restrictions.like("project.title", StringUtils.lowerCase(term), MatchMode.ANYWHERE))
+                            .add(Restrictions.like("project.code", StringUtils.upperCase(term), MatchMode.ANYWHERE))
+                            .add(Restrictions.like("project.code", StringUtils.lowerCase(term), MatchMode.ANYWHERE));
                     break;
                 case APPLICATION_STATUS:
                     ApplicationFormStatus status = ApplicationFormStatus.convert(term);
                     if (status != null) {
                         if (status == ApplicationFormStatus.APPROVAL) {
-                            newCriterion = Restrictions.disjunction().add(Restrictions.eq("app.status", ApplicationFormStatus.APPROVAL));
+                            newCriterion = Restrictions.disjunction().add(Restrictions.eq("applicationForm.status", ApplicationFormStatus.APPROVAL));
                         } else {
-                            newCriterion = Restrictions.eq("app.status", status);
+                            newCriterion = Restrictions.eq("applicationForm.status", status);
                         }
                     }
                     break;
                 case PROJECT_TITLE:
-                    newCriterion = Restrictions.ilike("app.projectTitle", term, MatchMode.ANYWHERE);
+                    newCriterion = Restrictions.ilike("applicationForm.projectTitle", term, MatchMode.ANYWHERE);
                     break;
                 case SUPERVISOR:
-                    criteria.createAlias("app.programmeDetails", "pddetails", JoinType.LEFT_OUTER_JOIN);
-                    criteria.createAlias("app.approvalRounds", "approvRounds", JoinType.LEFT_OUTER_JOIN);
-                    criteria.createAlias("pddetails.suggestedSupervisors", "programme_details_supervisor", JoinType.LEFT_OUTER_JOIN);
-                    criteria.createAlias("approvRounds.supervisors", "approvrounds_supervisor", JoinType.LEFT_OUTER_JOIN);
-                    criteria.createAlias("approvrounds_supervisor.user", "approvrounds_supervisor_user", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("applicationForm.programmeDetails", "programmeDetails", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("applicationForm.approvalRounds", "approvalRounds", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("programmeDetails.suggestedSupervisor", "suggestedSupervisor", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("approvalRounds.supervisors", "supervisors", JoinType.LEFT_OUTER_JOIN);
+                    criteria.createAlias("supervisors.user", "supervisorUser", JoinType.LEFT_OUTER_JOIN);
 
                     newCriterion = Restrictions
                             .disjunction()
-                            .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "approvrounds_supervisor_user.firstName",
-                                    "approvrounds_supervisor_user.lastName"))
-                            .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "programme_details_supervisor.firstname",
-                                    "programme_details_supervisor.lastname"));
+                            .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "supervisorUser.firstName",
+                                    "supervisorUser.lastName"))
+                            .add(ConcatenableIlikeCriterion.ilike(term, MatchMode.ANYWHERE, "suggestedSupervisor.firstname",
+                                    "suggestedSupervisor.lastname"));
                 default:
                 }
                 if (searchPredicate == SearchPredicate.NOT_CONTAINING) {
@@ -172,11 +173,11 @@ public class ApplicationFormListCriteriaBuilder {
                 }
             } else if (searchCategory.getType() == CategoryType.DATE) {
                 if (searchCategory == SearchCategory.SUBMISSION_DATE) {
-                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "app.submittedDate");
+                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "applicationForm.submittedDate");
                 } else if (searchCategory == SearchCategory.LAST_EDITED_DATE) {
-                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "app.lastUpdated");
+                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "applicationForm.lastUpdated");
                 } else if (searchCategory == SearchCategory.CLOSING_DATE) {
-                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "app.batchDeadline");
+                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "applicationForm.batchDeadline");
                 }
             }
             return newCriterion;
@@ -201,20 +202,20 @@ public class ApplicationFormListCriteriaBuilder {
             break;
 
         case PROGRAMME_NAME:
-            criteria.addOrder(getOrderCriteria("p.title", ascending));
+            criteria.addOrder(getOrderCriteria("project.title", ascending));
             break;
 
         case RATING:
-            criteria.addOrder(getOrderCriteria("app.averageRating", ascending));
+            criteria.addOrder(getOrderCriteria("applicationForm.averageRating", ascending));
 
         case APPLICATION_STATUS:
-            criteria.addOrder(getOrderCriteria("app.status", ascending));
+            criteria.addOrder(getOrderCriteria("applicationForm.status", ascending));
             break;
 
         default:
         case APPLICATION_DATE:
-            criteria.addOrder(getOrderCriteria("app.submittedDate", ascending));
-            criteria.addOrder(getOrderCriteria("app.applicationTimestamp", ascending));
+            criteria.addOrder(getOrderCriteria("applicationForm.submittedDate", ascending));
+            criteria.addOrder(getOrderCriteria("applicationFrm=ork.applicationTimestamp", ascending));
             break;
         }
         return criteria;

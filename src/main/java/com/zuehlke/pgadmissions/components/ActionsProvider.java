@@ -25,11 +25,13 @@ public class ActionsProvider {
         List<ActionDefinition> requiredActions = applicationFormUserRoleDAO.findRequiredActionsByUserAndApplicationForm(user, application);
         List<ActionDefinition> optionalActions = applicationFormUserRoleDAO.findOptionalActionsByUserAndApplicationForm(user, application);
         Boolean raisesUpdateFlag = applicationFormUserRoleDAO.findRaisesUpdateFlagByUserAndApplicationForm(user, application);
+        Boolean raisesUrgentFlag = applicationFormUserRoleDAO.findRaisesUrgentFlagByUserAndApplicationForm(user, application);
 
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
         applicationDescriptor.getActionDefinitions().addAll(requiredActions);
         applicationDescriptor.getActionDefinitions().addAll(optionalActions);
-        applicationDescriptor.setNeedsToSeeUpdate(raisesUpdateFlag);
+        applicationDescriptor.setNeedsToSeeUpdateFlag(raisesUpdateFlag);
+        applicationDescriptor.setNeedsToSeeUrgentFlag(raisesUrgentFlag);
         return applicationDescriptor;
     }
     

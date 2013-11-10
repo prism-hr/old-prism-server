@@ -35,13 +35,13 @@
   <div class="row">
     <div class="applicantinfo"> 
    
-	  <#assign requiresAttention=applicationDescriptor.requiresAttention>
-	  <#assign needsToSeeUpdate=applicationDescriptor.needsToSeeUpdate>
-	  <span <#if requiresAttention> data-desc="This application requires your attention" class="flagred"
-	  <#elseif needsToSeeUpdate> data-desc="This application has been updated" class="flagyellow"
+	  <#assign needsToSeeUrgentFlag = applicationDescriptor.needsToSeeUrgentFlag>
+	  <#assign needsToSeeUpdateFlag = applicationDescriptor.needsToSeeUpdateFlag>
+	  <span <#if needsToSeeUrgentFlag> data-desc="This application requires your attention" class="flagred"
+	  <#elseif needsToSeeUpdateFlag> data-desc="This application has been updated" class="flagyellow"
 	  <#else> data-desc="Application is progressing normally" class="flaggreen"</#if>>
-  		<#if requiresAttention> <i class="icon-bell-alt"></i> 
-  		<#elseif needsToSeeUpdate> <i class="icon-refresh"></i>
+  		<#if needsToSeeUrgentFlag> <i class="icon-bell-alt"></i> 
+  		<#elseif needsToSeeUpdateFlag> <i class="icon-refresh"></i>
   		<#else> <i class="icon-coffee"></i> </#if>
   	   </span>
   		

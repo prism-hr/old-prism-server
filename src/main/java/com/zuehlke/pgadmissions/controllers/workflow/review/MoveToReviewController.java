@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.review;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -22,9 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -97,15 +94,27 @@ public class MoveToReviewController {
 
         return "/private/common/ajax_OK";
     }
+    
+    @ModelAttribute("usersInterestedInApplication") 
+    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
+    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+    }
+    
+    @ModelAttribute("usersPotentiallyInterestedInApplication") 
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
+    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+    }
 
     @ModelAttribute("reviewRound")
     public ReviewRound getReviewRound(@RequestParam String applicationId) {
         ReviewRound reviewRound = new ReviewRound();
-        for (RegisteredUser interestedUser : applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId))) {
+        
+        for (RegisteredUser interestedUser : getUsersInterestedInApplication(applicationId)) {
         	Reviewer reviewer = new Reviewer();
         	reviewer.setUser(interestedUser);
         	reviewRound.getReviewers().add(reviewer);
         }
+        
         return reviewRound;
     }
 
@@ -135,43 +144,6 @@ public class MoveToReviewController {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
         return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
-    }
-
-    @ModelAttribute("nominatedSupervisors")
-    public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
-        List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        if (applicationForm.getLatestReviewRound() == null) {
-            nominatedSupervisors.addAll(getOrCreateRegisteredUsersForForm(applicationForm));
-        }
-        return nominatedSupervisors;
-    }
-
-    @ModelAttribute("previousReviewers")
-    public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        List<RegisteredUser> previousReviewersOfProgram = userService.getAllPreviousReviewersOfProgram(applicationForm.getProgram());
-        previousReviewersOfProgram.removeAll(getNominatedSupervisors(applicationId));
-        return previousReviewersOfProgram;
-    }
-
-    private List<RegisteredUser> getOrCreateRegisteredUsersForForm(ApplicationForm applicationForm) {
-        List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
-        List<SuggestedSupervisor> suggestedSupervisors = applicationForm.getProgrammeDetails().getSuggestedSupervisors();
-        for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
-            nominatedSupervisors.add(findOrCreateRegisterUserFromSuggestedSupervisorForForm(suggestedSupervisor, applicationForm));
-        }
-        return nominatedSupervisors;
-    }
-
-    private RegisteredUser findOrCreateRegisterUserFromSuggestedSupervisorForForm(SuggestedSupervisor suggestedSupervisor, ApplicationForm applicationForm) {
-        String supervisorEmail = suggestedSupervisor.getEmail();
-        RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
-        if (possibleUser == null) {
-            possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail, null,
-                    applicationForm, Authority.REVIEWER);
-        }
-        return possibleUser;
     }
 
 }

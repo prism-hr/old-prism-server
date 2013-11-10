@@ -5,7 +5,6 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
@@ -15,10 +14,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.easymock.EasyMock;
 import org.hamcrest.Matchers;
@@ -38,20 +35,16 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -91,76 +84,6 @@ public class MoveToInterviewControllerTest {
     @Test
     public void shouldGetInterviewersSection() {
         Assert.assertEquals("/private/staff/interviewers/interviewer_section", controller.getInterviewersSection());
-    }
-
-    @Test
-    public void shouldGetNominatedSupervisors() {
-        reset(userServiceMock);
-        final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
-        final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
-
-        String emailOfSupervisor1 = "1@ucl.ac.uk";
-        String emailOfSupervisor2 = "2@ucl.ac.uk";
-        SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
-        SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
-
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
-
-        final Program program = new ProgramBuilder().id(6).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).programmeDetails(programmeDetails).build();
-        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
-
-        expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(interUser1);
-        expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(interUser2);
-
-        replay(userServiceMock, applicationServiceMock);
-        List<RegisteredUser> interviewers = controller.getNominatedSupervisors("abc");
-        verify(userServiceMock, applicationServiceMock);
-
-        assertEquals(2, interviewers.size());
-        assertTrue(interviewers.containsAll(Arrays.asList(interUser1, interUser2)));
-    }
-
-    @Test
-    public void shouldGetListOfPreviousInterviewersAndAddReviewersWillingToInterviewWithApplicantNominatedSupervisorsRemoved() {
-        reset(userServiceMock);
-        String emailOfSupervisor1 = "1@ucl.ac.uk";
-        String emailOfSupervisor2 = "2@ucl.ac.uk";
-        SuggestedSupervisor applicantNominatedSupervisor1 = new SuggestedSupervisorBuilder().id(1).email(emailOfSupervisor1).build();
-        SuggestedSupervisor applicantNominatedSupervisor2 = new SuggestedSupervisorBuilder().id(2).email(emailOfSupervisor2).build();
-
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().suggestedSupervisors(applicantNominatedSupervisor1, applicantNominatedSupervisor2)
-                .build();
-
-        final RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(9).build();
-        final RegisteredUser reviewerWillingToIntergviewOne = new RegisteredUserBuilder().id(8).build();
-        final RegisteredUser reviewerWillingToIntergviewTwo = new RegisteredUserBuilder().id(7).build();
-        final RegisteredUser previousInterviewer = new RegisteredUserBuilder().id(6).build();
-        ReviewComment reviewOne = new ReviewCommentBuilder().id(1).user(reviewerWillingToIntergviewOne).willingToInterview(true).build();
-        ReviewComment reviewTwo = new ReviewCommentBuilder().id(1).user(defaultInterviewer).willingToInterview(true).build();
-        ReviewComment reviewThree = new ReviewCommentBuilder().id(1).user(reviewerWillingToIntergviewTwo).willingToInterview(true).build();
-
-        final Program program = new ProgramBuilder().id(6).build();
-
-        final ApplicationForm application = new ApplicationFormBuilder().id(5).program(program).comments(reviewOne, reviewTwo, reviewThree)
-                .programmeDetails(programmeDetails).build();
-        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application).anyTimes();
-
-        List<RegisteredUser> previousInterviewers = new ArrayList<RegisteredUser>();
-        previousInterviewers.add(previousInterviewer);
-        previousInterviewers.add(defaultInterviewer);
-        previousInterviewers.add(reviewerWillingToIntergviewOne);
-        expect(userServiceMock.getAllPreviousInterviewersOfProgram(program)).andReturn(previousInterviewers);
-        expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor1)).andReturn(defaultInterviewer);
-        expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(emailOfSupervisor2)).andReturn(reviewerWillingToIntergviewOne);
-
-        replay(userServiceMock, applicationServiceMock);
-        List<RegisteredUser> interviewerUsers = controller.getPreviousInterviewersAndReviewersWillingToInterview("abc");
-        verify(userServiceMock, applicationServiceMock);
-
-        assertEquals(2, interviewerUsers.size());
-        assertTrue(interviewerUsers.containsAll(Arrays.asList(reviewerWillingToIntergviewTwo, previousInterviewer)));
     }
 
     @Test

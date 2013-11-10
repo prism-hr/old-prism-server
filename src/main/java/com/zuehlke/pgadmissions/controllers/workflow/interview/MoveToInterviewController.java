@@ -2,14 +2,11 @@ package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_INTERVIEWERS;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -23,16 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -106,7 +99,8 @@ public class MoveToInterviewController {
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToInterview(@Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult, ModelMap modelMap) {
+    public String moveToInterview(@Valid @ModelAttribute("interview") Interview interview, 
+    		BindingResult bindingResult, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ASSIGN_INTERVIEWERS);
@@ -131,57 +125,27 @@ public class MoveToInterviewController {
         RegisteredUser user = getUser();
         return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
-
-    @ModelAttribute("nominatedSupervisors")
-    public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
-        List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        if (applicationForm.getLatestInterview() == null) {
-            nominatedSupervisors.addAll(getOrCreateRegisteredUsersForForm(applicationForm));
-        }
-        return nominatedSupervisors;
+    
+    @ModelAttribute("usersInterestedInApplication") 
+    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
+    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
-
-    @ModelAttribute("previousInterviewers")
-    public List<RegisteredUser> getPreviousInterviewersAndReviewersWillingToInterview(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        List<RegisteredUser> previousInterviewersOfProgram = userService.getAllPreviousInterviewersOfProgram(applicationForm.getProgram());
-
-        List<RegisteredUser> reviewersWillingToInterview = applicationForm.getReviewersWillingToInterview();
-        for (RegisteredUser registeredUser : reviewersWillingToInterview) {
-            if (!listContainsId(registeredUser, previousInterviewersOfProgram)) {
-                previousInterviewersOfProgram.add(registeredUser);
-            }
-        }
-        previousInterviewersOfProgram.removeAll(getNominatedSupervisors(applicationId));
-        return previousInterviewersOfProgram;
-
+    
+    @ModelAttribute("usersPotentiallyInterestedInApplication") 
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
+    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("interview")
     public Interview getInterview(@RequestParam String applicationId) {
         Interview interview = new Interview();
-        ApplicationForm applicationForm = getApplicationForm((String) applicationId);
-        Interview latestInterview = applicationForm.getLatestInterview();
-        if (latestInterview != null) {
-            for (Interviewer interviewer : latestInterview.getInterviewers()) {
-                InterviewComment interviewComment = interviewer.getInterviewComment();
-                if (interviewComment == null || BooleanUtils.isNotTrue(interviewComment.isDecline())) {
-                    interview.getInterviewers().add(interviewer);
-                }
-            }
+        
+        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
+        	Interviewer interviewer = new Interviewer();
+        	interviewer.setUser(registeredUser);
+        	interview.getInterviewers().add(interviewer);
         }
-        Set<RegisteredUser> defaultInterviewers = Sets.newLinkedHashSet(applicationForm.getReviewersWillingToInterview());
-        if (applicationForm.getApplicationAdministrator() != null) {
-            defaultInterviewers.add(applicationForm.getApplicationAdministrator());
-        }
-        for (RegisteredUser registeredUser : defaultInterviewers) {
-            if (!registeredUser.isInterviewerInInterview(interview)) {
-                Interviewer interviewer = new Interviewer();
-                interviewer.setUser(registeredUser);
-                interview.getInterviewers().add(interviewer);
-            }
-        }
+        
         return interview;
     }
 
@@ -198,34 +162,6 @@ public class MoveToInterviewController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(null, "timeslots", interviewTimeslotsPropertyEditor);
         binder.registerCustomEditor(null, "duration", new CustomNumberEditor(Integer.class, true));
-    }
-
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private List<RegisteredUser> getOrCreateRegisteredUsersForForm(ApplicationForm applicationForm) {
-        List<RegisteredUser> nominatedSupervisors = new ArrayList<RegisteredUser>();
-        List<SuggestedSupervisor> suggestedSupervisors = applicationForm.getProgrammeDetails().getSuggestedSupervisors();
-        for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
-            nominatedSupervisors.add(findOrCreateRegisterUserFromSuggestedSupervisorForForm(suggestedSupervisor, applicationForm));
-        }
-        return nominatedSupervisors;
-    }
-
-    private RegisteredUser findOrCreateRegisterUserFromSuggestedSupervisorForForm(SuggestedSupervisor suggestedSupervisor, ApplicationForm applicationForm) {
-        String supervisorEmail = suggestedSupervisor.getEmail();
-        RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
-        if (possibleUser == null) {
-            possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), supervisorEmail, null,
-                    applicationForm, Authority.REVIEWER);
-        }
-        return possibleUser;
     }
 
     @ModelAttribute("availableTimeZones")

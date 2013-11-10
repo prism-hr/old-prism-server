@@ -1,13 +1,8 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
@@ -22,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.workflow.approval.OfferRecommendationController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -37,7 +31,6 @@ import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
-import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OfferRecommendedCommentValidator;
 
@@ -60,8 +53,6 @@ public class OfferRecommendationControllerTest {
     private DatePropertyEditor datePropertyEditorMock;
 
     private ProgramInstanceService programInstanceServiceMock;
-
-    private SupervisorsProvider supervisorsProviderMock;
 
     private SupervisorPropertyEditor supervisorPropertyEditorMock;
 
@@ -169,28 +160,6 @@ public class OfferRecommendationControllerTest {
         EasyMock.verify(binderMock);
     }
 
-    @Test
-    public void shouldGetListOfNominatedSupervisors() {
-        ArrayList<RegisteredUser> list = Lists.newArrayList();
-
-        expect(supervisorsProviderMock.getNominatedSupervisors("app1")).andReturn(list);
-
-        replay(supervisorsProviderMock);
-        assertSame(list, controller.getNominatedSupervisors("app1"));
-        verify(supervisorsProviderMock);
-    }
-
-    @Test
-    public void shouldGetListOfPreviousSupervisorsAndAddReviewersWillingToSupervise() {
-        ArrayList<RegisteredUser> list = Lists.newArrayList();
-
-        expect(supervisorsProviderMock.getPreviousSupervisorsAndInterviewersWillingToSupervise("app1")).andReturn(list);
-
-        replay(supervisorsProviderMock);
-        assertSame(list, controller.getPreviousSupervisorsAndInterviewersWillingToSupervise("app1"));
-        verify(supervisorsProviderMock);
-    }
-
     @Before
     public void prepare() {
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -201,10 +170,9 @@ public class OfferRecommendationControllerTest {
         offerRecommendedCommentValidatorMock = EasyMock.createMock(OfferRecommendedCommentValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
-        supervisorsProviderMock = EasyMock.createMock(SupervisorsProvider.class);
         supervisorPropertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
         controller = new OfferRecommendationController(applicationsServiceMock, userServiceMock, actionsProviderMock, applicationFormUserRoleServiceMock,
                 offerRecommendationServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock, programInstanceServiceMock,
-                supervisorsProviderMock, supervisorPropertyEditorMock);
+                supervisorPropertyEditorMock);
     }
 }

@@ -59,7 +59,6 @@ import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
@@ -93,10 +92,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     private final ProgramInstanceService programInstanceService;
 
-    private final SupervisorsProvider supervisorsProvider;
-
     public ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @InitBinder(value = "sendToPorticoData")
@@ -113,7 +110,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
             DomicilePropertyEditor domicilePropertyEditor, MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormUserRoleService applicationFormUserRoleService,
-            ActionsProvider actionsProvider, ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider) {
+            ActionsProvider actionsProvider, ProgramInstanceService programInstanceService) {
         super(userService, applicationsService, documentPropertyEditor, refereeService, refereesAdminEditDTOValidator, sendToPorticoDataDTOEditor,
                 encryptionHelper, messageSource, scoringDefinitionParser, scoresPropertyEditor, scoreFactory, domicileService, domicilePropertyEditor,
                 applicationFormUserRoleService, actionsProvider);
@@ -125,7 +122,6 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         this.sendToPorticoDataDTOValidator = sendToPorticoDataDTOValidator;
         this.datePropertyEditor = datePropertyEditor;
         this.programInstanceService = programInstanceService;
-        this.supervisorsProvider = supervisorsProvider;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
@@ -162,17 +158,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
-    }
-
-    @ModelAttribute("nominatedSupervisors")
-    public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
-        return supervisorsProvider.getNominatedSupervisors(applicationId);
-    }
-
-    @ModelAttribute("previousSupervisors")
-    public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
-        return supervisorsProvider.getPreviousSupervisorsAndInterviewersWillingToSupervise(applicationId);
-    }
+    }  
 
     @ModelAttribute("approvalRound")
     public ApprovalRound getApprovalRound(String applicationId) {
@@ -224,23 +210,24 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         approvalRound.setRecommendedStartDate(startDate);
-
-        List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
-        for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
-            addUserAsSupervisorInApprovalRound(registeredUser, approvalRound, false);
-        }
-
         return approvalRound;
     }
 
     private void addUserAsSupervisorInApprovalRound(RegisteredUser user, ApprovalRound approvalRound, boolean isPrimary) {
-        if (user == null || approvalRound == null || user.isSupervisorInApprovalRound(approvalRound)) {
-            return;
-        }
         Supervisor supervisor = new Supervisor();
         supervisor.setIsPrimary(isPrimary);
         supervisor.setUser(user);
         approvalRound.getSupervisors().add(supervisor);
+    }
+    
+    @ModelAttribute("usersInterestedInApplication") 
+    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
+    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+    }
+    
+    @ModelAttribute("usersPotentiallyInterestedInApplication") 
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
+    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("explanation")
@@ -361,7 +348,6 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);
 
-            // update referees send to Portico in order to validate it
             if (refereesSendToPortico != null && !refereesSendToPortico.contains(referee.getId())) {
                 refereesSendToPortico.add(referee.getId());
             }
@@ -380,4 +366,5 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
         return null;
     }
+    
 }

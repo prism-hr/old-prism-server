@@ -2,15 +2,14 @@
 <#setting locale = "en_US">
 <#list applications as application>
     <#assign applicationDescriptor = applicationDescriptors[application.applicationNumber]>
-    <#assign actionsRequiringAttention = applicationDescriptor.requiresAttention>
     <#assign actions = applicationDescriptor.actionDefinitions>
     <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow" >
   <td class="centre"><input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" /></td>
-  <td <#if actionsRequiringAttention> data-desc="This application requires your attention" class="applicant-name flagred"
-	  <#elseif applicationDescriptor.needsToSeeUpdate> data-desc="This application has been updated" class="applicant-name"
+  <td <#if applicationDescriptor.needsToSeeUrgentFlag> data-desc="This application requires your attention" class="applicant-name flagred"
+	  <#elseif applicationDescriptor.needsToSeeUpdateFlag> data-desc="This application has been updated" class="applicant-name"
 	  <#else> data-desc="Application is progressing normally" class="applicant-name flaggreen"</#if>>
-  <#if actionsRequiringAttention> <i class="icon-bell-alt"></i> 
-  <#elseif applicationDescriptor.needsToSeeUpdate> <i class="icon-refresh"></i>
+  <#if applicationDescriptor.needsToSeeUrgentFlag> <i class="icon-bell-alt"></i> 
+  <#elseif applicationDescriptor.needsToSeeUpdateFlag> <i class="icon-refresh"></i>
   <#else> <i class="icon-coffee"></i> </#if>
   <#if !user.isInRole('APPLICANT')>
 	${application.applicant.firstName}
@@ -40,7 +39,7 @@
     <#if application.nextStatus??>
       <#assign nextStatus = application.nextStatus>
       <i class="icon-chevron-right"></i>
-      <span class="icon-status ${nextStatus.displayValue()?lower_case?replace(' ','-')}" data-desc="${nextStatus.displayValue()}">${nextStatus.displayValue()}</span>
+      <span class="icon-status ${application.nextStatus.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.nextStatus.displayValue()}">${application.nextStatus.displayValue()}</span>
     </#if>
   </td>
   <td class="centre">

@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -50,19 +51,22 @@ public class ApplicationFormUserRoleService {
     
     protected final ApplicationFormDAO applicationFormDAO;
     
+    private final UserService userService;
+    
     private final Map<ApplicationFormStatus, String> initiateStageMap = Maps.newHashMap();
 
     public ApplicationFormUserRoleService() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, 
-    		RoleDAO roleDAO, UserDAO userDAO, ApplicationFormDAO applicationFormDAO) {
+    		RoleDAO roleDAO, UserDAO userDAO, ApplicationFormDAO applicationFormDAO, UserService userService) {
         this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
         this.applicationFormDAO = applicationFormDAO;
+        this.userService = userService;
         
         initiateStageMap.put(ApplicationFormStatus.REVIEW, "ASSIGN_REVIEWERS");
         initiateStageMap.put(ApplicationFormStatus.INTERVIEW, "ASSIGN_INTERVIEWERS");
@@ -330,11 +334,22 @@ public class ApplicationFormUserRoleService {
     }
     
     public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
+    	
+    	for (SuggestedSupervisor suggestedSupervisor : applicationForm.getProgrammeDetails().getSuggestedSupervisors()) {
+    		String supervisorEmail = suggestedSupervisor.getEmail();
+    		RegisteredUser possibleUser = userService.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
+    		if (possibleUser == null) {
+    			possibleUser = userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), 
+    					supervisorEmail, null, applicationForm, Authority.REVIEWER);
+    			createApplicationFormUserRole(applicationForm, possibleUser, Authority.SUGGESTEDSUPERVISOR, true);
+    		}
+    	}
+    	
     	return applicationFormUserRoleDAO.findUsersInterestedInApplication(applicationForm);
     }
     
-    public List<RegisteredUser> getOtherUsersPotentiallyInterestedInApplication(Program program) {
-    	return applicationFormUserRoleDAO.findProgramUsers(program);
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(Program program) {
+    	return applicationFormUserRoleDAO.findUsersPotentiallyInterestedInApplication(program);
     }
     
     public void deregisterApplicationUpdate (ApplicationForm applicationForm, RegisteredUser registeredUser) {
@@ -410,10 +425,10 @@ public class ApplicationFormUserRoleService {
     }
 
     private void deassignFromAdministrators(ApplicationForm applicationForm) {
-        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(applicationForm, Authority.REVIEWER,
-                Authority.INTERVIEWER, Authority.SUPERVISOR, Authority.APPLICANT, Authority.ADMINISTRATOR, Authority.SUPERADMINISTRATOR,
-                Authority.APPROVALADMINISTRATOR, Authority.INTERVIEWADMINISTRATOR, Authority.PROJECTADMINISTRATOR, Authority.REVIEWADMINISTRATOR,
-                Authority.APPROVER);
+        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(applicationForm, 
+        		Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR, Authority.APPLICANT, Authority.ADMINISTRATOR, 
+        		Authority.SUPERADMINISTRATOR, Authority.APPROVALADMINISTRATOR, Authority.INTERVIEWADMINISTRATOR, 
+        		Authority.PROJECTADMINISTRATOR, Authority.REVIEWADMINISTRATOR, Authority.APPROVER);
         for (ApplicationFormUserRole role : roles) {
             applicationFormUserRoleDAO.clearActions(role);
             role.setRaisesUrgentFlag(false);

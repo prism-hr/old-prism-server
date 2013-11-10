@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
-import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OfferRecommendedCommentValidator;
 
@@ -60,20 +59,17 @@ public class OfferRecommendationController {
 
     private final ProgramInstanceService programInstanceService;
 
-    private final SupervisorsProvider supervisorsProvider;
-
     private final SupervisorPropertyEditor supervisorPropertyEditor;
 
     public OfferRecommendationController() {
-        this(null, null, null, null, null,  null, null, null, null, null);
+        this(null, null, null, null, null,  null, null, null, null);
     }
 
     @Autowired
     public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
             ApplicationFormUserRoleService applicationFormUserRoleService,  
             OfferRecommendationService offerRecommendedService, OfferRecommendedCommentValidator offerRecommendedCommentValidator,
-            DatePropertyEditor datePropertyEditor, ProgramInstanceService programInstanceService, SupervisorsProvider supervisorsProvider,
-            SupervisorPropertyEditor supervisorPropertyEditor) {
+            DatePropertyEditor datePropertyEditor, ProgramInstanceService programInstanceService, SupervisorPropertyEditor supervisorPropertyEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
@@ -82,7 +78,6 @@ public class OfferRecommendationController {
         this.offerRecommendedCommentValidator = offerRecommendedCommentValidator;
         this.datePropertyEditor = datePropertyEditor;
         this.programInstanceService = programInstanceService;
-        this.supervisorsProvider = supervisorsProvider;
         this.supervisorPropertyEditor = supervisorPropertyEditor;
     }
 
@@ -172,13 +167,14 @@ public class OfferRecommendationController {
         return getCurrentUser();
     }
 
-    @ModelAttribute("nominatedSupervisors")
-    public List<RegisteredUser> getNominatedSupervisors(@RequestParam String applicationId) {
-        return supervisorsProvider.getNominatedSupervisors(applicationId);
+    @ModelAttribute("usersInterestedInApplication") 
+    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
+    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
-
-    @ModelAttribute("previousSupervisors")
-    public List<RegisteredUser> getPreviousSupervisorsAndInterviewersWillingToSupervise(@RequestParam String applicationId) {
-        return supervisorsProvider.getPreviousSupervisorsAndInterviewersWillingToSupervise(applicationId);
+    
+    @ModelAttribute("usersPotentiallyInterestedInApplication") 
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
+    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
+    
 }

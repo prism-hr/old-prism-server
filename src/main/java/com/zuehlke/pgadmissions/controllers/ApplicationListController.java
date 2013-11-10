@@ -112,7 +112,8 @@ public class ApplicationListController {
     }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
-    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam Boolean useDisjunction,
+    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, 
+    		@RequestParam Boolean useDisjunction,
             final ModelMap model) {
         RegisteredUser user = getUser();
         filtering.setUseDisjunction(useDisjunction);

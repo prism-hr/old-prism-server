@@ -143,7 +143,7 @@ public class ApplicationsService {
             }
         });
 
-        // first order by applications status, the by last updated
+        // first order by applications status, then by last updated
         @SuppressWarnings("unchecked")
         Ordering<ApplicationForm> ordering = Ordering//
                 .from(new BeanComparator("status"))//

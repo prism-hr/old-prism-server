@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -93,7 +90,6 @@ import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.services.SupervisorsProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
@@ -128,7 +124,6 @@ public class ApprovalControllerTest {
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
     private ProgramInstanceService programInstanceServiceMock;
-    private SupervisorsProvider supervisorsProviderMock;
 
     @Test
     public void shouldGetApprovalPage() {
@@ -172,28 +167,6 @@ public class ApprovalControllerTest {
     @Test
     public void shouldGetSupervisorsSection() {
         Assert.assertEquals("/private/staff/supervisors/propose_offer_recommendation", controller.getSupervisorSection());
-    }
-
-    @Test
-    public void shouldGetListOfNominatedSupervisors() {
-        ArrayList<RegisteredUser> list = Lists.newArrayList();
-        
-        expect(supervisorsProviderMock.getNominatedSupervisors("app1")).andReturn(list);
-        
-        replay(supervisorsProviderMock);
-        assertSame(list, controller.getNominatedSupervisors("app1"));
-        verify(supervisorsProviderMock);
-    }
-
-    @Test
-    public void shouldGetListOfPreviousSupervisorsAndAddReviewersWillingToSupervise() {
-        ArrayList<RegisteredUser> list = Lists.newArrayList();
-        
-        expect(supervisorsProviderMock.getPreviousSupervisorsAndInterviewersWillingToSupervise("app1")).andReturn(list);
-        
-        replay(supervisorsProviderMock);
-        assertSame(list, controller.getPreviousSupervisorsAndInterviewersWillingToSupervise("app1"));
-        verify(supervisorsProviderMock);
     }
 
     @Test
@@ -739,7 +712,6 @@ public class ApprovalControllerTest {
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
-        supervisorsProviderMock = createMock(SupervisorsProvider.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
@@ -753,6 +725,6 @@ public class ApprovalControllerTest {
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
                 domicileServiceMock, domicilePropertyEditorMock, messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock,
-                applicationFormUserRoleServiceMock, actionsProviderMock, programInstanceServiceMock, supervisorsProviderMock);
+                applicationFormUserRoleServiceMock, actionsProviderMock, programInstanceServiceMock);
     }
 }

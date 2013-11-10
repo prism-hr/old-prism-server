@@ -37,7 +37,6 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.DataTable;
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -46,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
@@ -65,7 +65,6 @@ public class ApplicationListControllerTest {
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
     private ApplicationSummaryService applicationSummaryServiceMock;
     private ApplicationsFilteringService filteringServiceMock;
-    private ActionsProvider actionsProviderMock;
 
     @Test
     public void shouldReturnViewForApplicationListPageWithStoredFiltersWhenSessionFiltersNotInitialized() {
@@ -171,7 +170,7 @@ public class ApplicationListControllerTest {
         // GIVEN
         ModelMap model = new ExtendedModelMap();
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
+        List<ApplicationDescriptor> applications = new ArrayList<ApplicationDescriptor>();
         
         expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
 
@@ -311,9 +310,8 @@ public class ApplicationListControllerTest {
         filtersPropertyEditorMock = createMock(ApplicationsFiltersPropertyEditor.class);
         applicationSummaryServiceMock = createMock(ApplicationSummaryService.class);
         filteringServiceMock = EasyMock.createMock(ApplicationsFilteringService.class);
-        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         controller = new ApplicationListController(applicationsServiceMock, applicationsReportServiceMock, userServiceMock, filtersPropertyEditorMock,
-                applicationSummaryServiceMock, filteringServiceMock, actionsProviderMock);
+                applicationSummaryServiceMock, filteringServiceMock);
     }
 
     @SuppressWarnings("unchecked")

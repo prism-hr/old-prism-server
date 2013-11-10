@@ -1,37 +1,29 @@
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
-<#assign avaliableOptionsSize = previousInterviewers?size + 4 />
-<#if (avaliableOptionsSize > 25)>
-<#assign avaliableOptionsSize = 25 />
-</#if> 
-<#assign selectedOptionsSize = (interview.interviewers?size) + 1/>
-<#if (selectedOptionsSize > 25)>
-<#assign selectedOptionsSize = 25 />
-</#if>
 <div id="section_1">
   <div class="row" >
     <label class="plain-label" for="programInterviewers">Assign Interviewers<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignInterviewer.assign'/>"></span>
-    <div class="field"> <#--
-      <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}">
-         -->
+    <div class="field">
         <select id="programInterviewers" class="list-select-from" multiple="multiple" size="8">
-        <optgroup id="nominated" label="Applicant nominated supervisors"> 
-            <#list nominatedSupervisors as interviewer> 
-                <option value="${encrypter.encrypt(interviewer.id)}" category="nominated" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
-                ${interviewer.firstName?html}
-                ${interviewer.lastName?html}
-                </option>
-            </#list>
-        </optgroup>
-        <optgroup id="previous" label="Previous interviewers"> 
-            <#list previousInterviewers as interviewer>
-                <option value="${encrypter.encrypt(interviewer.id)}" category="previous" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>
-                ${interviewer.firstName?html}
-                ${interviewer.lastName?html}
-                </option>
-            </#list> 
-        </optgroup>
+	        <#if usersInterestedInApplication?has_content>
+		    	<optgroup id="nominated" label="Users interested in Applicant"> 
+		            <#list usersInterestedInApplication as interviewer> 
+		                <option value="${encrypter.encrypt(interviewer.id)}" category="nominated" <#if interviewer.isInterviewerInInterview(interview)>disabled="disabled"</#if>>
+		                ${interviewer.firstName?html} ${interviewer.lastName?html}
+		                </option>
+		            </#list>
+        		</optgroup>
+        	</#if>
+        	<#if usersPotentiallyInterestedInApplication?has_content>
+		    	<optgroup id="previous" label="Other users in your Programme">
+		    		<#list usersPotentiallyInterestedInApplication as interviewer> 
+                		<option value="${encrypter.encrypt(interviewer.id)}" category="previous" <#if interviewer.isInterviewerInInterview(interview)>disabled="disabled"</#if>>
+                			${interviewer.firstName?html} ${interviewer.lastName?html}
+                		</option>
+            		</#list> 
+        		</optgroup>
+        	</#if>
       </select>
     </div>
   </div>
@@ -47,12 +39,11 @@
   <!-- Already interviewers of this application -->
   <div class="row">
     <div class="field">
-      <select id="applicationInterviewers" class="list-select-to" multiple="multiple" size="${selectedOptionsSize}">
+      <select id="applicationInterviewers" class="list-select-to" multiple="multiple" size="8">
         <#list interview.interviewers as interviewer>
-        <option value="${encrypter.encrypt(interviewer.user.id)}">
-        ${interviewer.user.firstName?html}
-        ${interviewer.user.lastName?html}
-        </option>
+	        <option value="${encrypter.encrypt(interviewer.user.id)}">
+	        	${interviewer.user.firstName?html} ${interviewer.user.lastName?html}
+	        </option>
         </#list>
       </select>
       <@spring.bind "interview.interviewers" />

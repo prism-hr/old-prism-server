@@ -1,33 +1,30 @@
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
 <#list applications as application>
-    <#assign applicationDescriptor = applicationDescriptors[application.applicationNumber]>
-    <#assign actions = applicationDescriptor.actionDefinitions>
-    <tr id="row_${application.applicationNumber}" name="applicationRow" class="applicationRow" >
-  <td class="centre"><input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" /></td>
-  <td <#if applicationDescriptor.needsToSeeUrgentFlag> data-desc="This application requires your attention" class="applicant-name flagred"
-	  <#elseif applicationDescriptor.needsToSeeUpdateFlag> data-desc="This application has been updated" class="applicant-name"
+<tr id="row_${application.applicationForm.applicationNumber}" name="applicationRow" class="applicationRow" >
+  <td class="centre"><input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationForm.applicationNumber}" value="${application.applicationForm.applicationNumber}" /></td>
+  <td <#if application.needsToSeeUrgentFlag> data-desc="This application requires your attention" class="applicant-name flagred"
+	  <#elseif application.needsToSeeUpdateFlag> data-desc="This application has been updated" class="applicant-name"
 	  <#else> data-desc="Application is progressing normally" class="applicant-name flaggreen"</#if>>
-  <#if applicationDescriptor.needsToSeeUrgentFlag> <i class="icon-bell-alt"></i> 
-  <#elseif applicationDescriptor.needsToSeeUpdateFlag> <i class="icon-refresh"></i>
+  <#if application.needsToSeeUrgentFlag> <i class="icon-bell-alt"></i> 
+  <#elseif application.needsToSeeUpdateFlag> <i class="icon-refresh"></i>
   <#else> <i class="icon-coffee"></i> </#if>
-  <#if !user.isInRole('APPLICANT')>
-	${application.applicant.firstName}
-	${application.applicant.lastName}
-  </#if> <span class="applicant-id">
-	${application.applicationNumber}
+	${application.concatenatedApplicantfirstName}
+	${application.applicantLastName}
+  <span class="applicant-id">
+	${application.applicationForm.applicationNumber}
   </span>
   </td>
-  <td class="program-title">${application.program.title} 
-  <#if (application.projectTitle)?has_content>
+  <td class="program-title">${application.programTitle} 
+  <#if application.actualProjectTitle?has_content>
     <span class="project">
-      ${(application.projectTitle?html)}
+      ${(application.actualProjectTitle?html)}
     </span>
   </#if>
   </td>
   
   <td class="rating">
-    <#if application.averageRatingFormatted?? && user != application.applicant>
+    <#if application.applicationForm.averageRating?? && user.id != application.applicantId>
       ${application.averageRatingFormatted}
     <#else>
       N/R
@@ -35,31 +32,32 @@
   </td>
   
   <td class="status">
-    <span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
+    <span class="icon-status ${application.applicationForm.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.applicationForm.status.displayValue()}">${application.applicationForm.status.displayValue()}</span>
     <#if application.nextStatus??>
       <#assign nextStatus = application.nextStatus>
       <i class="icon-chevron-right"></i>
-      <span class="icon-status ${application.nextStatus.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.nextStatus.displayValue()}">${application.nextStatus.displayValue()}</span>
+      <span class="icon-status ${application.applicationForm.nextStatus.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.applicationForm.nextStatus.displayValue()}">${application.applicationForm.nextStatus.displayValue()}</span>
     </#if>
   </td>
   <td class="centre">
-      <select class="actionType selectpicker" name="app_[${application.applicationNumber?html}]" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}">
+      <select class="actionType selectpicker" name="app_[${application.applicationForm.applicationNumber?html}]" data-email="${application.applicationForm.applicant.email?html}" data-applicationnumber="${application.applicationForm.applicationNumber?html}">
         <option class="title">Actions</option>
+        <#assign actions = application.actionDefinitions>
         <#list actions as action>
           <#if action.action == "EMAIL_APPLICANT">
-            <option value="emailApplicant" data-email="${application.applicant.email?html}" data-applicationnumber="${application.applicationNumber?html}" <#if action.raisesUrgentFlag> class="bold" data-icon="icon-bell-alt"</#if>> <@spring.message 'action.${action.action}'/> </option>
+            <option value="emailApplicant" data-email="${application.applicantEmail?html}" data-applicationnumber="${application.applicationForm.applicationNumber?html}" <#if action.raisesUrgentFlag> class="bold" data-icon="icon-bell-alt"</#if>> <@spring.message 'action.${action.action}'/> </option>
           <#else>
             <option value="${action.action}" <#if action.raisesUrgentFlag> class="bold" data-icon="icon-bell-alt"</#if>> <@spring.message 'action.${action.action}'/> </option>
           </#if>
         </#list>
     </select></td>
-  <td class="centre"><#if application.isWithdrawn() && !application.submittedDate??>
+  <td class="centre"><#if application.applicationForm.isWithdrawn() && !application.applicationForm.submittedDate?has_content>
         Aborted
-        <#elseif application.submittedDate??>
-        ${(application.submittedDate?string("dd MMM yyyy"))}
-        <#else> <a class="btn btn-success" href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Proceed</a> </#if> </td>
+        <#elseif application.applicationForm.submittedDate?has_content>
+        ${(application.applicationForm.submittedDate?string("dd MMM yyyy"))}
+        <#else> <a class="btn btn-success" href="/pgadmissions/application?view=view&applicationId=${application.applicationForm.applicationNumber}">Proceed</a> </#if> </td>
 </tr>
-    <tr class="application-details" data-application-id="${application.applicationNumber}" data-application-status="${application.status}" data-application-issubmitted="${application.submitted?string("true", "false")}">
+    <tr class="application-details" data-application-id="${application.applicationForm.applicationNumber}" data-application-status="${application.applicationForm.status}" data-application-issubmitted="${application.applicationForm.submitted?string("true", "false")}">
      <td colspan="7"><div class="application-lhs">
       <div class="details row-fluid">
         <div class="span2">
@@ -85,10 +83,10 @@
         <div class="span4">
           <ul class="documents">
             <li><b>Documents:</b></li>
-            <#if application.personalStatement?has_content>
+            <#if application.applicationForm.personalStatement?has_content>
             <li><i class="icon-file-alt"></i> <a data-field="personal-statement-link" target="_blank" href="javascript:void(0);"></a></li>
             </#if>
-            <#if application.cv?has_content>
+            <#if application.applicationForm.cv?has_content>
             <li><i class="icon-file-alt"></i> <a data-field="cv-statement-link" target="_blank" href="javascript:void(0);"></a></li>
             </#if>
           </ul>

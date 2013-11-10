@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,6 @@ import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.base.DataSourceException;
 import com.google.visualization.datasource.datatable.DataTable;
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -62,24 +60,21 @@ public class ApplicationListController {
     private final ApplicationSummaryService applicationSummaryService;
 
     private final ApplicationsFilteringService filteringService;
-    
-    private final ActionsProvider actionsProvider;
 
     public ApplicationListController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
             ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
-            ApplicationsFilteringService filteringService, final ActionsProvider actionsProvider) {
+            ApplicationsFilteringService filteringService) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
         this.applicationSummaryService = applicationSummaryService;
         this.filteringService = filteringService;
-        this.actionsProvider = actionsProvider;
     }
 
     @InitBinder(value = "filtering")
@@ -117,16 +112,8 @@ public class ApplicationListController {
             final ModelMap model) {
         RegisteredUser user = getUser();
         filtering.setUseDisjunction(useDisjunction);
-        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
-
-        Map<String, ApplicationDescriptor> applicationDescriptors = new LinkedHashMap<String, ApplicationDescriptor>();
-        for (ApplicationForm applicationForm : applications) {
-            ApplicationDescriptor descriptor = actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
-            applicationDescriptors.put(applicationForm.getApplicationNumber(), descriptor);
-        }
-
+        List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
         model.addAttribute("applications", applications);
-        model.addAttribute("applicationDescriptors", applicationDescriptors);
         model.addAttribute("latestConsideredFlagIndex", filtering.getLatestConsideredFlagIndex());
         return APPLICATION_LIST_SECTION_VIEW_NAME;
     }

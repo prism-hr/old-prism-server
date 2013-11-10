@@ -107,63 +107,32 @@ public class ApplicationFormUserRoleDAO {
         role.getActions().clear();
         sessionFactory.getCurrentSession().flush();
     }
-
-    public List<ActionDefinition> findRequiredActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
-        List<Object[]> actionObjects = (List<Object[]>) sessionFactory.getCurrentSession()
-                //
-                .createCriteria(ApplicationFormActionRequired.class)
-                //
-                .createAlias("applicationFormUserRole", "role")
-                //
-                .add(Restrictions.eq("role.applicationForm", applicationForm))
-                //
-                .add(Restrictions.eq("role.user", user))
-                //
-                .addOrder(Order.desc("raisesUrgentFlag")).addOrder(Order.asc("action"))
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("action")).add(Projections.max("raisesUrgentFlag"))).list();
-
-        List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
-        for (Object[] actionObject : actionObjects) {
-            ActionDefinition actionDefinition = new ActionDefinition((String) actionObject[0], (Boolean) actionObject[1]);
-            actionDefinitions.add(actionDefinition);
-        }
-        return actionDefinitions;
-    }
-
-    public List<ActionDefinition> findOptionalActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm application) {
-        DetachedCriteria subquery = DetachedCriteria.forClass(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", application))
-                .add(Restrictions.eq("user", user)).setProjection(Projections.property("role.id"));
-
-        List<Object> actionObjects = (List<Object>) sessionFactory.getCurrentSession() //
-                .createCriteria(ApplicationFormActionOptional.class) //
-                .add(Subqueries.propertyIn("id.role.id", subquery)) //
-                .add(Restrictions.eq("id.status", application.getStatus())) //
-                .addOrder(Order.asc("id.action")).setProjection(Projections.distinct(Projections.property("id.action"))).list();
-
-        List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
-        for (Object actionObject : actionObjects) {
-            ActionDefinition actionDefinition = new ActionDefinition((String) actionObject, false);
-            actionDefinitions.add(actionDefinition);
-        }
-        return actionDefinitions;
+    
+    public List<ActionDefinition> findActionsByUserAndApplicationForm (RegisteredUser user, ApplicationForm applicationForm) {
+    	List<ActionDefinition> requiredActionList = findRequiredActionsByUserAndApplicationForm(user, applicationForm);
+    	List<ActionDefinition> optionalActionList = findOptionalActionsByUserAndApplicationForm(user, applicationForm);
+    	List<ActionDefinition> actionList = Lists.newArrayListWithCapacity(requiredActionList.size() + optionalActionList.size());
+    	actionList.addAll(requiredActionList);
+    	actionList.addAll(optionalActionList);
+    	return actionList;
     }
 
     public Boolean findRaisesUpdateFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
-        Boolean raisesUpdateFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)//
-                .add(Restrictions.eq("applicationForm", applicationForm)) //
+        Boolean raisesUpdateFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user))
-                .addOrder(Order.desc("raisesUpdateFlag"))//
-                .setProjection(Projections.projectionList().add(Projections.max("raisesUpdateFlag"))) //
+                .addOrder(Order.desc("raisesUpdateFlag"))
+                .setProjection(Projections.projectionList().add(Projections.max("raisesUpdateFlag")))
                 .uniqueResult();
         return BooleanUtils.toBoolean(raisesUpdateFlag);
     }
     
     public Boolean findRaisesUrgentFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
-        Boolean raisesUrgentFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)//
-                .add(Restrictions.eq("applicationForm", applicationForm)) //
+        Boolean raisesUrgentFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user))
-                .addOrder(Order.desc("raisesUrgentFlag"))//
-                .setProjection(Projections.projectionList().add(Projections.max("raisesUrgentFlag"))) //
+                .addOrder(Order.desc("raisesUrgentFlag"))
+                .setProjection(Projections.projectionList().add(Projections.max("raisesUrgentFlag")))
                 .uniqueResult();
         return BooleanUtils.toBoolean(raisesUrgentFlag);
     }
@@ -180,11 +149,11 @@ public class ApplicationFormUserRoleDAO {
         DetachedCriteria subquery = DetachedCriteria.forClass(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user)).setProjection(Projections.property("role.id"));
 
-        Object optionalResult = sessionFactory.getCurrentSession() //
-                .createCriteria(ApplicationFormActionOptional.class) //
-                .add(Subqueries.propertyIn("id.role.id", subquery)) //
-                .add(Restrictions.eq("id.status", applicationForm.getStatus())) //
-                .add(Restrictions.eq("id.action", action.name())) //
+        Object optionalResult = sessionFactory.getCurrentSession()
+                .createCriteria(ApplicationFormActionOptional.class)
+                .add(Subqueries.propertyIn("id.role.id", subquery))
+                .add(Restrictions.eq("id.status", applicationForm.getStatus()))
+                .add(Restrictions.eq("id.action", action.name()))
                 .uniqueResult();
         return requiredResult != null || optionalResult != null;
     }
@@ -249,4 +218,48 @@ public class ApplicationFormUserRoleDAO {
                 .add(Restrictions.eq("roles.interestedInApplicant", false))
                 .setProjection(Projections.projectionList().add(Projections.groupProperty("id"))).list();
     }
+    
+    private List<ActionDefinition> findRequiredActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
+        List<Object[]> actionObjects = (List<Object[]>) sessionFactory.getCurrentSession()
+                .createCriteria(ApplicationFormActionRequired.class)
+                .createAlias("applicationFormUserRole", "role")
+                .add(Restrictions.eq("role.applicationForm", applicationForm))
+                .add(Restrictions.eq("role.user", user))
+                .addOrder(Order.desc("raisesUrgentFlag")).addOrder(Order.asc("action"))
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("action")).add(Projections.max("raisesUrgentFlag"))).list();
+
+        List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
+        for (Object[] actionObject : actionObjects) {
+            ActionDefinition actionDefinition = new ActionDefinition((String) actionObject[0], (Boolean) actionObject[1]);
+            actionDefinitions.add(actionDefinition);
+        }
+        return actionDefinitions;
+    }
+
+    private List<ActionDefinition> findOptionalActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm application) {
+        DetachedCriteria subquery = DetachedCriteria.forClass(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", application))
+                .add(Restrictions.eq("user", user)).setProjection(Projections.property("role.id"));
+
+        List<Object> actionObjects = (List<Object>) sessionFactory.getCurrentSession()
+                .createCriteria(ApplicationFormActionOptional.class)
+                .add(Subqueries.propertyIn("id.role.id", subquery))
+                .add(Restrictions.eq("id.status", application.getStatus()))
+                .addOrder(Order.asc("id.action")).setProjection(Projections.distinct(Projections.property("id.action"))).list();
+
+        List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
+        boolean hasViewAction = false;
+        for (Object actionObject : actionObjects) {
+        	String definition = (String) actionObject;
+        	if (definition.equals("VIEW")) {
+        		hasViewAction = true;
+        	} else if (definition.equals("VIEW_EDIT")
+        			&& BooleanUtils.isTrue(hasViewAction)) {
+        		actionDefinitions.remove(actionDefinitions.size() - 1);
+        	}
+            ActionDefinition actionDefinition = new ActionDefinition((String) definition, false);
+            actionDefinitions.add(actionDefinition);
+        }
+        return actionDefinitions;
+    }
+    
 }

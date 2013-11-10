@@ -1,33 +1,28 @@
-  <div class="row-group" id="assignSupervisorsToAppSection"> 
-  <#assign avaliableOptionsSize = previousSupervisors?size + 4 >
-  <#if (avaliableOptionsSize > 25)>
-  <#assign avaliableOptionsSize = 25 />
-  </#if> 
-  <#assign selectedOptionsSize = (supervisors?size) + 1/>
-  <#if (selectedOptionsSize > 25)>
-  <#assign selectedOptionsSize = 25 />
-  </#if>
+<div class="row-group" id="assignSupervisorsToAppSection"> 
   <div class="row">
     <label class="plain-label" for="programSupervisors">Assign Supervisors<em>*</em></label>
     <span class="hint" data-desc="<@spring.message 'assignSupervisor.defaultSupervisors'/>"></span>
     <div class="field">
-      <select id="programSupervisors" class="list-select-from" class="max" multiple="multiple" size="${avaliableOptionsSize}">
-      <optgroup id="nominated" label="Applicant nominated supervisors">
-        <#list nominatedSupervisors as supervisor> <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="nominated" <#if supervisor.isSupervisorIn(supervisors)> disabled="disabled" </#if>>
-        ${supervisor.firstName?html}
-        ${supervisor.lastName?html}
-        </option>
-        </#list>
-      </optgroup>
-      <optgroup id="previous" label="Previous supervisors">
-      <#list previousSupervisors as supervisor> 
-        <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous" <#if supervisor.isSupervisorIn(supervisors)> disabled="disabled" </#if>>
-        ${supervisor.firstName?html}
-        ${supervisor.lastName?html}
-        </option>
-      </#list>
-      </optgroup>
-      </select>
+    	<select id="programSupervisors" class="list-select-from" class="max" multiple="multiple" size="8">
+      		<#if usersInterestedInApplication?has_content>
+		    	<optgroup id="nominated" label="Users interested in Applicant"> 
+	      			<#list usersInterestedInApplication as supervisor> 
+	      				<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="nominated" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
+	      					${supervisor.firstName?html} ${supervisor.lastName?html}
+	      				</option>
+	      			</#list>
+      			</optgroup>
+      		</#if>
+     		<#if usersPotentiallyInterestedInApplication?has_content>
+		    	<optgroup id="previous" label="Other users in your Programme">
+		    		<#list usersPotentiallyInterestedInApplication as supervisor> 
+	      				<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
+	      					${supervisor.firstName?html} ${supervisor.lastName?html}
+	      				</option>
+      				</#list>
+     			</optgroup>
+     		</#if>
+      	</select>
     </div>
   </div>
   
@@ -44,14 +39,14 @@
     <div class="field">
       <ol id="applicationSupervisorsList">
         <#list supervisors as supervisor>
-        <li data-supervisorid="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" class="ui-widget-content">
-          ${supervisor.user.firstName?html}
-          ${supervisor.user.lastName?html}
-          <span style="float:right; padding-right:20px;"> <input type="radio" value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" name="primarySupervisor"
-          <#if  supervisor.isPrimary?? && supervisor.isPrimary >
-            checked="checked"
-          </#if>
-          > Primary Supervisor </span> </li>
+	        <li data-supervisorid="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" class="ui-widget-content">
+	          ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}
+	          <span style="float:right; padding-right:20px;"> <input type="radio" value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" name="primarySupervisor"
+	          <#if  supervisor.isPrimary?? && supervisor.isPrimary >
+	            checked="checked"
+	          </#if>
+	          > Primary Supervisor </span>
+	        </li>
         </#list>
       </ol>
       <@spring.bind "${supervisorsEntityName}.supervisors" />
@@ -61,5 +56,4 @@
 
 <!-- Create supervisor -->
 <div class="row-group" id ="createsupervisorsection"> <#include "/private/staff/supervisors/create_supervisor_section.ftl"/> </div>
-
 <script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/assign_supervisors.js'/>"></script>

@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Service("applicationsReportService")
@@ -139,13 +140,14 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
         
         data.addColumns(cd);
-        List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
+        List<ApplicationDescriptor> applications = new ArrayList<ApplicationDescriptor>();
         do {
             applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
             filtering.setBlockCount(filtering.getBlockCount() + 1);
 
             // Fill the data table.
-            for (ApplicationForm app : applications) {
+            for (ApplicationDescriptor application : applications) {
+            	ApplicationForm app = application.getApplicationForm();
 
                 if (!app.isSubmitted() || app.getWithdrawnBeforeSubmit()) {
                     continue;

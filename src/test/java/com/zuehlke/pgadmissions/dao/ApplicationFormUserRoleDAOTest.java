@@ -158,7 +158,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         save(role1, role2, role3);
 
-        List<ActionDefinition> actions = applicationFormUserRoleDAO.findRequiredActionsByUserAndApplicationForm(user, application);
+        List<ActionDefinition> actions = applicationFormUserRoleDAO.findActionsByUserAndApplicationForm(user, application);
         System.out.println(actions);
 
         assertThat(actions, containsInAnyOrder( //
@@ -184,7 +184,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         save(role1, role2, role3);
 
-        List<ActionDefinition> actions = applicationFormUserRoleDAO.findOptionalActionsByUserAndApplicationForm(user, application);
+        List<ActionDefinition> actions = applicationFormUserRoleDAO.findActionsByUserAndApplicationForm(user, application);
         System.out.println(actions);
 
         assertThat(actions, containsInAnyOrder( //

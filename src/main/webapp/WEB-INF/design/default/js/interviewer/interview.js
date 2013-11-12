@@ -67,8 +67,8 @@ $(document).ready(function() {
                     return;
                 }
                 if (newInterviewer.isNew) {
-                    $('#previous').append('<option value="' + newInterviewer.id + '" category="previous" disabled="disabled">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + '</option>');
-                    $('#applicationInterviewers').append('<option value="' + newInterviewer.id + '">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + '</option>');
+                    $('#previous').append('<option value="' + newInterviewer.id + '" category="previous" disabled="disabled">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + ' (' + newInterviewer.email + ' )</option>');
+                    $('#applicationInterviewers').append('<option value="' + newInterviewer.id + '">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + ' (' + newInterviewer.email + ' )</option>');
                     $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
 
                 } else {
@@ -577,8 +577,8 @@ function addExistingUserToInterviewersLists(newInterviewer) {
         return;
     }
 
-    $('#previous').append('<option value="' + newInterviewer.id + '" category="previous" disabled="disabled">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + '</option>');
-    $('#applicationInterviewers').append('<option value="' + newInterviewer.id + '">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + '</option>');
+    $('#previous').append('<option value="' + newInterviewer.id + '" category="previous" disabled="disabled">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + ' (' + newInterviewer.email + ' )</option>');
+    $('#applicationInterviewers').append('<option value="' + newInterviewer.id + '">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + ' (' + newInterviewer.email + ' )</option>');
     $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
 
 }

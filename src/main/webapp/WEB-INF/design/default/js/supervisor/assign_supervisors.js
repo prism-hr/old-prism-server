@@ -31,7 +31,8 @@ $(document).ready(function() {
                 var selText = $option.text();
                 var category = $option.attr("category");
                 if(appendNewSupervisorToList(id, selText, category)){
-                	$("#programSupervisors option[value='" + id + "']").addClass('selected').removeAttr('selected').attr('disabled', 'disabled');                }
+                	$("#programSupervisors option[value='" + id + "']").addClass('selected').removeAttr('selected').attr('disabled', 'disabled');
+                }
             }
         }
         resetSupervisorsErrors();
@@ -62,19 +63,19 @@ $(document).ready(function() {
             url : "/pgadmissions/approval/createSupervisor",
             data : $.param(postData),
             success : function(data) {
-                var newSuperviosr;
+                var newSupervisor;
                 try {
-                    newSuperviosr = jQuery.parseJSON(data);
+                    newSupervisor = jQuery.parseJSON(data);
                 } catch (err) {
                     $('#createsupervisorsection').html(data);
                     addToolTips();
                     return;
                 }
-                if (newSuperviosr.isNew) {
-                    $('#previous').append('<option value="' + $('#applicationId').val() + '|' + newSuperviosr.id + '" category="previous" disabled="disabled">' + newSuperviosr.firstname + ' ' + newSuperviosr.lastname + '</option>');
-                    appendNewSupervisorToList($('#applicationId').val() + '|' + newSuperviosr.id, newSuperviosr.firstname + ' ' + newSuperviosr.lastname , "");
+                if (newSupervisor.isNew) {
+                    $('#previous').append('<option value="' + $('#applicationId').val() + '|' + newSupervisor.id + '" category="previous" disabled="disabled">' + newSupervisor.firstname + ' ' + ' (' + newSupervisor.email + ')</option>');
+                    appendNewSupervisorToList($('#applicationId').val() + '|' + newSupervisor.id, newSupervisor.firstname + ' ' + newSupervisor.lastname + ' (' + newSupervisor.email + ')', "");
                 } else {
-                    addExistingUserToSupervisorsLists(newSuperviosr);
+                    addExistingUserToSupervisorsLists(newSupervisor);
                 }
                 resetSupervisorsErrors();
                 getCreateSupervisorsSection();
@@ -150,10 +151,10 @@ function addExistingUserToSupervisorsLists(newSupervisor) {
         return;
     }
 
-    $('#previous').append('<option value="' + $('#applicationId').val() + '|' + newSupervisor.id + '" category="previous" disabled="disabled">' + newSupervisor.firstname + ' ' + newSupervisor.lastname + '</option>');
-    $('#applicationSupervisors').append('<option value="' + $('#applicationId').val() + '|' + newSupervisor.id + '">' + newSupervisor.firstname + ' ' + newSupervisor.lastname + '</option>');
+    $('#previous').append('<option value="' + $('#applicationId').val() + '|' + newSupervisor.id + '" category="previous" disabled="disabled">' + newSupervisor.firstname + ' ' + newSupervisor.lastname  + ' (' + newSupervisor.email + ')</option>');
+    $('#applicationSupervisors').append('<option value="' + $('#applicationId').val() + '|' + newSupervisor.id + '">' + newSupervisor.firstname + ' ' + newSupervisor.lastname + ' (' + newSupervisor.email + ')</option>');
     
-    appendNewSupervisorToList($('#applicationId').val() + '|' + newSupervisor.id, newSupervisor.firstname + ' ' + newSupervisor.lastname, "");
+    appendNewSupervisorToList($('#applicationId').val() + '|' + newSupervisor.id, newSupervisor.firstname + ' ' + newSupervisor.lastname, + ' (' + newSupervisor.email + ')', "");
 
 }
 

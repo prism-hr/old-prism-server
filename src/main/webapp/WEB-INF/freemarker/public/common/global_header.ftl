@@ -6,5 +6,4 @@
 </div>
 <div id="header">
     <!-- Custom theme header -->
-   
 </div>

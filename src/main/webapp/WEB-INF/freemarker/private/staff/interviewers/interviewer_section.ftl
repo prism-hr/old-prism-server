@@ -7,7 +7,7 @@
     <div class="field">
         <select id="programInterviewers" class="list-select-from" multiple="multiple" size="8">
 	        <#if usersInterestedInApplication?has_content>
-		    	<optgroup id="nominated" label="Users interested in Applicant"> 
+		    	<optgroup id="nominated" label="Users Interested in Applicant"> 
 		            <#list usersInterestedInApplication as interviewer> 
 		                <option value="${encrypter.encrypt(interviewer.id)}" category="nominated" <#if interviewer.isInterviewerInInterview(interview)>disabled="disabled"</#if>>
 		                ${interviewer.firstName?html} ${interviewer.lastName?html}
@@ -16,7 +16,7 @@
         		</optgroup>
         	</#if>
         	<#if usersPotentiallyInterestedInApplication?has_content>
-		    	<optgroup id="previous" label="Other users in your Programme">
+		    	<optgroup id="previous" label="Users in your Programme">
 		    		<#list usersPotentiallyInterestedInApplication as interviewer> 
                 		<option value="${encrypter.encrypt(interviewer.id)}" category="previous" <#if interviewer.isInterviewerInInterview(interview)>disabled="disabled"</#if>>
                 			${interviewer.firstName?html} ${interviewer.lastName?html}
@@ -42,7 +42,7 @@
       <select id="applicationInterviewers" class="list-select-to" multiple="multiple" size="8">
         <#list interview.interviewers as interviewer>
 	        <option value="${encrypter.encrypt(interviewer.user.id)}">
-	        	${interviewer.user.firstName?html} ${interviewer.user.lastName?html}
+	        	${interviewer.user.firstName?html} ${interviewer.user.lastName?html} (${interviewer.user.email?html})
 	        </option>
         </#list>
       </select>

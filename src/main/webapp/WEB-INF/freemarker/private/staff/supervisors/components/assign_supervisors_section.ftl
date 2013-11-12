@@ -5,19 +5,19 @@
     <div class="field">
     	<select id="programSupervisors" class="list-select-from" class="max" multiple="multiple" size="8">
       		<#if usersInterestedInApplication?has_content>
-		    	<optgroup id="nominated" label="Users interested in Applicant"> 
+		    	<optgroup id="nominated" label="Users Interested in Applicant"> 
 	      			<#list usersInterestedInApplication as supervisor> 
 	      				<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="nominated" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
-	      					${supervisor.firstName?html} ${supervisor.lastName?html}
+	      					${supervisor.firstName?html} ${supervisor.lastName?html} (${supervisor.email?html})
 	      				</option>
 	      			</#list>
       			</optgroup>
       		</#if>
      		<#if usersPotentiallyInterestedInApplication?has_content>
-		    	<optgroup id="previous" label="Other users in your Programme">
+		    	<optgroup id="previous" label="Users in your Programme">
 		    		<#list usersPotentiallyInterestedInApplication as supervisor> 
 	      				<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous" <#if supervisor.isSupervisorInApprovalRound(approvalRound)> disabled="disabled" </#if>>
-	      					${supervisor.firstName?html} ${supervisor.lastName?html}
+	      					${supervisor.firstName?html} ${supervisor.lastName?html} (${supervisor.email?html})
 	      				</option>
       				</#list>
      			</optgroup>
@@ -40,7 +40,7 @@
       <ol id="applicationSupervisorsList">
         <#list supervisors as supervisor>
 	        <li data-supervisorid="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" class="ui-widget-content">
-	          ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}
+	          ${supervisor.user.firstName?html} ${supervisor.user.lastName?html} (${supervisor.user.email?html})
 	          <span style="float:right; padding-right:20px;"> <input type="radio" value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" name="primarySupervisor"
 	          <#if  supervisor.isPrimary?? && supervisor.isPrimary >
 	            checked="checked"

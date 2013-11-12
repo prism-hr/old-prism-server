@@ -117,7 +117,7 @@ public class ApplicationFormUserRole implements Serializable {
     }
 
     public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
-        this.raisesUpdateFlag = raisesUrgentFlag;
+        this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
     public List<ApplicationFormActionRequired> getActions() {

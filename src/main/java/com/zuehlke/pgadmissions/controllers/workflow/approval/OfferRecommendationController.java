@@ -126,7 +126,7 @@ public class OfferRecommendationController {
             offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
             modelMap.put("application", application.getApplicationNumber());
-            applicationFormUserRoleService.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
             return "redirect:/applications";
         } else {
             return "redirect:/rejectApplication?applicationId=" + application.getApplicationNumber() + "&rejectionId=7";
@@ -174,7 +174,7 @@ public class OfferRecommendationController {
     
     @ModelAttribute("usersPotentiallyInterestedInApplication") 
     public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId).getProgram());
     }
     
 }

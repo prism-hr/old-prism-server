@@ -111,7 +111,7 @@ public class MoveToInterviewController {
 
         interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
         applicationFormUserRoleService.movedToInterviewStage(interview);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         if (interview.isParticipant(getUser())) {
             modelMap.addAttribute("message", "redirectToVote");
             return "/private/common/simpleResponse";
@@ -133,7 +133,7 @@ public class MoveToInterviewController {
     
     @ModelAttribute("usersPotentiallyInterestedInApplication") 
     public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId).getProgram());
     }
 
     @ModelAttribute("interview")

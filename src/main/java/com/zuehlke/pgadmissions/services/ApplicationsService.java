@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -51,18 +52,22 @@ public class ApplicationsService {
 
     private ProgramDAO programDAO;
 
+	private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+
     public ApplicationsService() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationsService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormListDAO applicationFormListDAO,
-            final MailSendingService mailService, final ProgrammeDetailsService programmeDetailsService, final ProgramDAO programDAO) {
+            final MailSendingService mailService, final ProgrammeDetailsService programmeDetailsService, final ProgramDAO programDAO,
+            final ApplicationFormUserRoleDAO applicationFormUserRoleDAO) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
         this.programmeDetailsService = programmeDetailsService;
         this.programDAO = programDAO;
+        this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
     }
 
     public Date getBatchDeadlineForApplication(ApplicationForm form) {
@@ -167,7 +172,12 @@ public class ApplicationsService {
     }
 
     public List<ApplicationDescriptor> getAllVisibleAndMatchedApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
-        return applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
+        List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
+    	for (ApplicationDescriptor application : applications) {
+    		application.getActionDefinitions().addAll(applicationFormUserRoleDAO.
+    				findActionsByUserIdAndApplicationIdAndApplicationFormStatus(user.getId(), application.getApplicationFormId(), application.getApplicationFormStatus()));
+    	}
+    	return applications;
     }
 
     public void delegateInterviewAdministration(final ApplicationForm applicationForm, final RegisteredUser delegate) {

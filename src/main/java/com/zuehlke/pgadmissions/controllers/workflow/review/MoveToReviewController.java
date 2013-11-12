@@ -90,7 +90,7 @@ public class MoveToReviewController {
 
         reviewService.moveApplicationToReview(applicationForm, reviewRound);
         applicationFormUserRoleService.movedToReviewStage(reviewRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.ALL_USERS);
 
         return "/private/common/ajax_OK";
     }
@@ -102,7 +102,7 @@ public class MoveToReviewController {
     
     @ModelAttribute("usersPotentiallyInterestedInApplication") 
     public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId).getProgram());
     }
 
     @ModelAttribute("reviewRound")

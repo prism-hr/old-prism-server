@@ -6,16 +6,20 @@
 	<div class="field">
 	  <select id="programReviewers" class="list-select-from" multiple="multiple" size="8">
 	    <#if usersInterestedInApplication?has_content>
-	    	<optgroup id="nominated" label="Users interested in Applicant">
+	    	<optgroup id="nominated" label="Users Interested in Applicant">
 		      	<#list usersInterestedInApplication as reviewer>
-		      		<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="nominated" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+		      		<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="nominated" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>
+		      			${reviewer.firstName?html} ${reviewer.lastName?html} (${reviewer.email?html})
+		      		</option>
 		     	</#list>
 	    	</optgroup>
 	    </#if>
 	    <#if usersPotentiallyInterestedInApplication?has_content>
-		    <optgroup id="previous" label="Other users in your Programme">
+		    <optgroup id="previous" label="Users in your Programme">
 		     	<#list usersPotentiallyInterestedInApplication as reviewer>
-		      		<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+		      		<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous" <#if reviewer.isReviewerInReviewRound(reviewRound)>disabled="disabled"</#if>>
+		      			${reviewer.firstName?html} ${reviewer.lastName?html} (${reviewer.email?html})
+		      		</option>
 		      	</#list>		
 		    </optgroup>
 		</#if>
@@ -39,7 +43,7 @@
 	  <select id="applicationReviewers" class="list-select-to" multiple="multiple" size="8">
 		  <#list reviewRound.reviewers as reviewer>
 			    <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.user.id)}">
-			      ${reviewer.user.firstName?html} ${reviewer.user.lastName?html}
+			      ${reviewer.user.firstName?html} ${reviewer.user.lastName?html} (${reviewer.user.email?html})
 			    </option>
 		  </#list>	  
 	  </select>

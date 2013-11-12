@@ -119,7 +119,7 @@ public class InterviewService {
         if (previousStatus == ApplicationFormStatus.VALIDATION) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
             ApplicationFormUserRoleService.validationStageCompleted(applicationForm);
-            ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+            ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         }
 
     }
@@ -169,7 +169,7 @@ public class InterviewService {
         removeApplicationAdministratorReminders(interview);
         sendConfirmationEmails(interview);    
         ApplicationFormUserRoleService.interviewConfirmed(interview);
-        ApplicationFormUserRoleService.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
+        ApplicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void createParticipants(final Interview interview) {

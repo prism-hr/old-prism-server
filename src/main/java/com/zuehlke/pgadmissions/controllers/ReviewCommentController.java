@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -174,7 +173,7 @@ public class ReviewCommentController {
         applicantRatingService.computeAverageRating(comment.getReviewer().getReviewRound());
         applicantRatingService.computeAverageRating(applicationForm);
         ApplicationFormUserRoleService.reviewPosted(comment.getReviewer());
-        ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
+        ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
 
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }

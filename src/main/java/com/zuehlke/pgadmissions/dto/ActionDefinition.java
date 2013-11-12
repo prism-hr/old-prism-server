@@ -5,6 +5,9 @@ public class ActionDefinition {
     private String action;
 
     private Boolean raisesUrgentFlag;
+    
+    public ActionDefinition() {
+    }
 
     public ActionDefinition(String action, Boolean raisesUrgentFlag) {
         this.action = action;
@@ -14,9 +17,17 @@ public class ActionDefinition {
     public String getAction() {
         return action;
     }
+    
+    public void setAction(String action) {
+    	this.action = action;
+    }
 
     public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
+    }
+    
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
+    	this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
     @Override

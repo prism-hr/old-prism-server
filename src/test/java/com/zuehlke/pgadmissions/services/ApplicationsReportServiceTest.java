@@ -23,6 +23,7 @@ import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.NumberValue;
 import com.google.visualization.datasource.datatable.value.TextValue;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -76,6 +77,8 @@ public class ApplicationsReportServiceTest {
     private ApplicationsService applicationsServiceMock;
     
     private ApplicantRatingService applicantRatingServiceMock;
+    
+    private ApplicationFormDAO applicationFormDAOMock;
 
     @Test
     public void testGetEmptyApplicationsReport() {
@@ -119,7 +122,7 @@ public class ApplicationsReportServiceTest {
         ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).build();
         ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1).build();
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationForm(app1);
+        applicationDescriptor.setApplicationFormId(app1.getId());
         List<ApplicationDescriptor> applications = Lists.newArrayList(applicationDescriptor);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
@@ -219,7 +222,7 @@ public class ApplicationsReportServiceTest {
         
         
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationForm(app1);
+        applicationDescriptor.setApplicationFormId(app1.getId());
         List<ApplicationDescriptor> applications = Lists.newArrayList(applicationDescriptor);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
@@ -320,7 +323,7 @@ public class ApplicationsReportServiceTest {
         ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1)
                 .approvalRounds(approvalRound).personalDetails(personalDetails).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).build();
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationForm(app1);
+        applicationDescriptor.setApplicationFormId(app1.getId());
         List<ApplicationDescriptor> applications = Lists.newArrayList(applicationDescriptor);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
@@ -345,7 +348,7 @@ public class ApplicationsReportServiceTest {
         ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(null).build();
         ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1).build();
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationForm(app1);
+        applicationDescriptor.setApplicationFormId(app1.getId());
         List<ApplicationDescriptor> applications = Lists.newArrayList(applicationDescriptor);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
@@ -403,7 +406,8 @@ public class ApplicationsReportServiceTest {
         user = new RegisteredUser();
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         applicantRatingServiceMock = EasyMock.createMock(ApplicantRatingService.class);
-        service = new ApplicationsReportService(applicationsServiceMock, applicantRatingServiceMock);
+        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
+        service = new ApplicationsReportService(applicationsServiceMock, applicantRatingServiceMock, applicationFormDAOMock);
     }
 
     public String getTextValue(DataTable table, TableRow row, String columnId) {

@@ -26,6 +26,7 @@ import com.google.visualization.datasource.datatable.value.NumberValue;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -62,14 +63,18 @@ public class ApplicationsReportService {
     
     private final ApplicantRatingService applicantRatingService;
 
+	private ApplicationFormDAO applicationFormDAO;
+
     public ApplicationsReportService() {
-        this(null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public ApplicationsReportService(ApplicationsService applicationsService, ApplicantRatingService applicantRatingService) {
+    public ApplicationsReportService(ApplicationsService applicationsService, ApplicantRatingService applicantRatingService,
+    		ApplicationFormDAO applicationFormDAO) {
         this.applicationsService = applicationsService;
-        this.applicantRatingService = applicantRatingService; 
+        this.applicantRatingService = applicantRatingService;
+        this.applicationFormDAO = applicationFormDAO;
     }
 
     public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering) {
@@ -147,7 +152,7 @@ public class ApplicationsReportService {
 
             // Fill the data table.
             for (ApplicationDescriptor application : applications) {
-            	ApplicationForm app = application.getApplicationForm();
+            	ApplicationForm app = applicationFormDAO.get(application.getApplicationFormId());
 
                 if (!app.isSubmitted() || app.getWithdrawnBeforeSubmit()) {
                     continue;

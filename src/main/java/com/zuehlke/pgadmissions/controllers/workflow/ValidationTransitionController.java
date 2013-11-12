@@ -134,7 +134,7 @@ public class ValidationTransitionController extends StateTransitionController {
 
         applicationsService.save(form);
         applicationFormUserRoleService.stateChanged(comment);
-        applicationFormUserRoleService.registerApplicationUpdate(form, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(form, user, ApplicationUpdateScope.ALL_USERS);
 
         if (BooleanUtils.isTrue(delegate)) {
             return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();

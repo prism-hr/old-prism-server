@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -127,7 +126,7 @@ public class RefereeController {
         }
 
         applicationsService.save(application);
-        applicationFormUserRoleService.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
     }
     

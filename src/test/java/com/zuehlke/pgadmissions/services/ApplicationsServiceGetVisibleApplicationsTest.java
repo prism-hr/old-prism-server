@@ -19,6 +19,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -71,13 +72,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private RoleDAO roleDAO;
 
+	private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+
     @Before
     public void prepare() {
+    	
         applicationFormListDAO = new ApplicationFormListDAO(sessionFactory);
 
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
+        
+        applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
 
-        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null);
+        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null, applicationFormUserRoleDAO);
 
         roleDAO = new RoleDAO(sessionFactory);
 
@@ -100,10 +106,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     public void shouldGetListOfVisibleApplicationsFromDAOAndSetDefaultValues() {
         ApplicationForm form = new ApplicationFormBuilder().id(1).build();
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationForm(form);
+        applicationDescriptor.setApplicationFormId(form.getId());
         
         ApplicationFormListDAO applicationFormDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
-        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null, null);
+        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null, null, applicationFormUserRoleDAO);
         RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
         EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(Arrays.asList(applicationDescriptor));
@@ -121,24 +127,24 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION)
                 .submittedDate(new Date()).appDate(format.parse("01 01 2012")).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
-        applicationDescriptorOne.setApplicationForm(applicationFormOne);
+        applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.UNSUBMITTED)
                 .appDate(format.parse("01 01 2012")).submittedDate(format.parse("01 04 2012")).build();
         ApplicationDescriptor applicationDescriptorTwo = new ApplicationDescriptor();
-        applicationDescriptorTwo.setApplicationForm(applicationFormTwo);
+        applicationDescriptorTwo.setApplicationFormId(applicationFormTwo.getId());
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.UNSUBMITTED)
                 .appDate(format.parse("01 02 2012")) // this is insertable=false. We can not properly test this?
                 .build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
-        applicationDescriptorThree.setApplicationForm(applicationFormThree);
+        applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.UNSUBMITTED)
                 .appDate(format.parse("01 02 2012")) // this is insertable=false. We can not properly test this?
                 .submittedDate(format.parse("01 03 2012")).build();
         ApplicationDescriptor applicationDescriptorFour = new ApplicationDescriptor();
-        applicationDescriptorFour.setApplicationForm(applicationFormFour);
+        applicationDescriptorFour.setApplicationFormId(applicationFormFour.getId());
 
         Role role = roleDAO.getRoleByAuthority(Authority.APPLICANT);
         ApplicationFormUserRole applicationFormUserRole1 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(applicant)
@@ -158,10 +164,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1));
 
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
-        assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationForm().getId());
-        assertEquals(applicationFormFour.getId(), applications.get(2).getApplicationForm().getId());
-        assertEquals(applicationFormThree.getId(), applications.get(3).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
+        assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationFormId());
+        assertEquals(applicationFormFour.getId(), applications.get(2).getApplicationFormId());
+        assertEquals(applicationFormThree.getId(), applications.get(3).getApplicationFormId());
     }
 
     @Test
@@ -170,22 +176,22 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
-        applicationDescriptorOne.setApplicationForm(applicationFormOne);
+        applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorTwo = new ApplicationDescriptor();
-        applicationDescriptorTwo.setApplicationForm(applicationFormTwo);
+        applicationDescriptorTwo.setApplicationFormId(applicationFormTwo.getId());
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicationNumber("ABCD").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
-        applicationDescriptorThree.setApplicationForm(applicationFormThree);
+        applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorFour = new ApplicationDescriptor();
-        applicationDescriptorFour.setApplicationForm(applicationFormFour);
+        applicationDescriptorFour.setApplicationFormId(applicationFormFour.getId());
         
         Role role = roleDAO.getRoleByAuthority(Authority.APPLICANT);
         ApplicationFormUserRole applicationFormUserRole1 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(applicant)
@@ -234,7 +240,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
     }
 
     @Test
@@ -259,7 +265,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
     }
 
     @Test
@@ -306,7 +312,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
     }
 
     @Test
@@ -332,7 +338,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
     }
 
     @Test
@@ -367,7 +373,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicationNumber("ABC").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
-        applicationDescriptorOne.setApplicationForm(applicationFormOne);
+        applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -375,7 +381,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicationNumber("ABCD").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
-        applicationDescriptorThree.setApplicationForm(applicationFormThree);
+        applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -411,7 +417,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).applicationNumber("ABC").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
-        applicationDescriptorOne.setApplicationForm(applicationFormOne);
+        applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -442,7 +448,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
     }
 
     @Test
@@ -452,7 +458,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
-        applicationDescriptorOne.setApplicationForm(applicationFormOne);
+        applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -483,7 +489,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(1, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
     }
 
     @Test
@@ -560,8 +566,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(2, applications.size());
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
-        assertEquals(applicationFormThree.getId(), applications.get(1).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
+        assertEquals(applicationFormThree.getId(), applications.get(1).getApplicationFormId());
     }
 
     @Test
@@ -598,10 +604,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1));
 
-        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getApplicationForm().getId());
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationFormId());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationFormId());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getApplicationFormId());
     }
 
     @Test
@@ -648,10 +654,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1, filter));
 
         Assert.assertEquals(4, applications.size());
-        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormThree.getId(), applications.get(0).getApplicationForm().getId());
-        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormFour.getId(), applications.get(1).getApplicationForm().getId());
-        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormOne.getId(), applications.get(2).getApplicationForm().getId());
-        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormTwo.getId(), applications.get(3).getApplicationForm().getId());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormThree.getId(), applications.get(0).getApplicationFormId());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormFour.getId(), applications.get(1).getApplicationFormId());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormOne.getId(), applications.get(2).getApplicationFormId());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormTwo.getId(), applications.get(3).getApplicationFormId());
     }
 
     @Test
@@ -698,10 +704,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1, filter));
 
         Assert.assertEquals(4, applications.size());
-        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getApplicationForm().getId());
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationFormId());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationFormId());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getApplicationFormId());
     }
 
     @Test
@@ -751,10 +757,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
 
-        Assert.assertEquals(applicationFormFour.getId(), applications.get(0).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationForm().getId());
-        Assert.assertEquals(applicationFormOne.getId(), applications.get(3).getApplicationForm().getId());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(0).getApplicationFormId());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationFormId());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationFormId());
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(3).getApplicationFormId());
         
     }
 
@@ -809,7 +815,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
-        assertEquals(supervisor.getLastname(), applications.get(0).getApplicationForm().getProgrammeDetails().getSuggestedSupervisors().get(0).getLastname());
+        assertEquals(supervisor.getLastname(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getProgrammeDetails().getSuggestedSupervisors().get(0).getLastname());
     }
 
     @Test
@@ -839,7 +845,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
-        assertEquals(supervisor1.getUser().getLastName(), applications.get(0).getApplicationForm().getApprovalRounds().get(0).getSupervisors().get(0).getUser().getLastName());
+        assertEquals(supervisor1.getUser().getLastName(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getApprovalRounds().get(0).getSupervisors().get(0).getUser().getLastName());
     }
 
     @Test
@@ -878,10 +884,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, filter));
 
-        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationForm().getId());
-        assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationForm().getId());
-        assertEquals(applicationFormFour.getId(), applications.get(2).getApplicationForm().getId());
-        assertEquals(applicationFormThree.getId(), applications.get(3).getApplicationForm().getId());
+        assertEquals(applicationFormOne.getId(), applications.get(0).getApplicationFormId());
+        assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationFormId());
+        assertEquals(applicationFormFour.getId(), applications.get(2).getApplicationFormId());
+        assertEquals(applicationFormThree.getId(), applications.get(3).getApplicationFormId());
     }
 
     @Test
@@ -908,7 +914,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private boolean listContainsId(ApplicationDescriptor descriptor, List<ApplicationDescriptor> applications) {
         for (ApplicationDescriptor entry : applications) {
-            if (descriptor.getApplicationForm().getId().equals(entry.getApplicationForm().getId())) {
+            if (descriptor.getApplicationFormId().equals(entry.getApplicationFormId())) {
                 return true;
             }
         }

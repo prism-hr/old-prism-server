@@ -37,12 +37,10 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 
 @Repository
 public class ApplicationFormListDAO {
+	
+	private final SessionFactory sessionFactory;
 
     public static final DateTimeFormatter USER_DATE_FORMAT = DateTimeFormat.forPattern("dd MMM yyyy");
-    
-    private final Criteria criteria;
-    
-    private final ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
     
     public ApplicationFormListDAO() {
         this(null);
@@ -50,27 +48,36 @@ public class ApplicationFormListDAO {
 
     @Autowired
     public ApplicationFormListDAO(SessionFactory sessionFactory) {
-        this.criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class);
-        this.applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO();
+        this.sessionFactory = sessionFactory;
     }
     
     @SuppressWarnings("unchecked")
     public List<ApplicationDescriptor> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {
     	// Now that we can understand what this is doing, it should be possible to tune the performance!
-    	criteria.setReadOnly(true)
+    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+    		.setReadOnly(true)
     		.setProjection(Projections.projectionList()
-    			.add(Projections.groupProperty("application"), "applicationForm")
+    			.add(Projections.groupProperty("applicationForm.id"), "applicationFormId")
     			.add(Projections.max("raisesUrgentFlag"), "needsToSeeUrgentFlag")
     			.add(Projections.max("raisesUpdateFlag"), "needsToSeeUpdateFlag")
     			.add(Projections.property("applicant.id"), "applicantId")
     			.add(Projections.property("applicant.firstName"), "applicantFirstName")
     			.add(Projections.property("applicant.firstName2"), "applicantFirstName2")
     			.add(Projections.property("applicant.firstName3"), "applicantFirstName3")
-    			.add(Projections.property("applicant.LastName"), "applicantLastName")
+    			.add(Projections.property("applicant.lastName"), "applicantLastName")
+    			.add(Projections.property("applicant.email"), "applicantEmail")
+    			.add(Projections.property("applicationForm.applicationNumber"), "applicationFormNumber")
     			.add(Projections.property("program.title"), "programTitle")
     			.add(Projections.property("advert.title"), "projectTitle")
     			.add(Projections.property("applicationForm.projectTitle"), "oldProjectTitle")
-    			.add(Projections.max("updateTimestamp"), "applicationFormUpdatedTimestmap"))
+    			.add(Projections.property("applicationForm.averageRating"), "applicantAverageRating")
+    			.add(Projections.property("applicationForm.status"), "applicationFormStatus")
+    			.add(Projections.property("applicationForm.withdrawnBeforeSubmit"), "applicationFormWithdrawnBeforeSubmitted")
+    			.add(Projections.property("applicationForm.nextStatus"), "applicationFormNextStatus")
+    			.add(Projections.property("applicationForm.personalStatement.id"), "applicationFormPersonalStatementId")
+    			.add(Projections.property("applicationForm.cv.id"), "applicationFormCvId")
+    			.add(Projections.property("applicationForm.submittedDate"), "applicationFormCreatedTimestamp")
+    			.add(Projections.max("updateTimestamp"), "applicationFormUpdatedTimestamp"))
 		.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
 		.createAlias("applicationForm.applicant", "applicant", JoinType.INNER_JOIN)
 		.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
@@ -78,20 +85,14 @@ public class ApplicationFormListDAO {
 		.createAlias("project.advert", "advert", JoinType.LEFT_OUTER_JOIN)
        	.add(Restrictions.eq("user", user));
     	
-    	appendWhereStatement(filtering);
-    	appendOrderStatement(filtering);
-    	appendLimitStatement((filtering.getBlockCount() - 1) * itemsPerPage, itemsPerPage);
+    	appendWhereStatement(criteria, filtering);
+    	appendOrderStatement(criteria, filtering);
+    	appendLimitStatement(criteria, (filtering.getBlockCount() - 1) * itemsPerPage, itemsPerPage);
     	
-    	List <ApplicationDescriptor> applications = criteria.setResultTransformer(Transformers.aliasToBean(ApplicationDescriptor.class)).list();
-    	
-        for (ApplicationDescriptor application : applications) {
-        	application.getActionDefinitions().addAll(applicationFormUserRoleDAO.findActionsByUserAndApplicationForm(user, application.getApplicationForm()));
-        }
-      
-        return applications;
+    	return criteria.setResultTransformer(Transformers.aliasToBean(ApplicationDescriptor.class)).list();
     }
     
-    private void appendWhereStatement(ApplicationsFiltering filtering) {
+    private void appendWhereStatement(Criteria criteria, ApplicationsFiltering filtering) {
     	
         if (filtering != null) {
             boolean useDisjunction = filtering.getUseDisjunction();
@@ -154,11 +155,11 @@ public class ApplicationFormListDAO {
                     } else if (searchCategory.getType() == CategoryType.DATE) {
                     	
                         if (searchCategory == SearchCategory.SUBMISSION_DATE) {
-                            criterion = getCriteriaForDate(searchPredicate, searchTerm, criteria, "applicationForm.submittedDate");
+                            criterion = getCriteriaForDate(searchPredicate, searchTerm, "applicationForm.submittedDate");
                         } else if (searchCategory == SearchCategory.LAST_EDITED_DATE) {
-                            criterion = getCriteriaForDate(searchPredicate, searchTerm, criteria, "applicationForm.lastUpdated");
+                            criterion = getCriteriaForDate(searchPredicate, searchTerm, "applicationForm.lastUpdated");
                         } else if (searchCategory == SearchCategory.CLOSING_DATE) {
-                            criterion = getCriteriaForDate(searchPredicate, searchTerm, criteria, "applicationForm.batchDeadline");
+                            criterion = getCriteriaForDate(searchPredicate, searchTerm, "applicationForm.batchDeadline");
                         }
                         
                     }
@@ -180,8 +181,8 @@ public class ApplicationFormListDAO {
         }
     }
     
-    private Criterion getCriteriaForDate(final SearchPredicate searchPredicate, final String term, final Criteria criteria, final String field) {
-        Criterion newCriterion = null;
+    private Criterion getCriteriaForDate(final SearchPredicate searchPredicate, final String term, final String field) {
+        Criterion criterion = null;
         Date submissionDate;    
         try {
             submissionDate = USER_DATE_FORMAT.parseDateTime(term).toDate();
@@ -194,24 +195,24 @@ public class ApplicationFormListDAO {
         }
         switch (searchPredicate) {
         case FROM_DATE:
-            newCriterion = Restrictions.ge(field, submissionDate);
+            criterion = Restrictions.ge(field, submissionDate);
             break;
         case ON_DATE:
             Conjunction conjunction = Restrictions.conjunction();
             conjunction.add(Restrictions.ge(field, submissionDate));
             conjunction.add(Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate()));
-            newCriterion = conjunction;
+            criterion = conjunction;
             break;
         case TO_DATE:
-            newCriterion = Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate());
+            criterion = Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate());
             break;
         default:
             return null;
         }
-        return newCriterion;
+        return criterion;
     }
     
-    private void appendOrderStatement(final ApplicationsFiltering filtering) {
+    private void appendOrderStatement(Criteria criteria, final ApplicationsFiltering filtering) {
     	SortCategory sortCategory = filtering.getSortCategory();
     	
     	if (sortCategory == null) {
@@ -245,7 +246,7 @@ public class ApplicationFormListDAO {
 	        default:
 	        case APPLICATION_DATE:
 	            criteria.addOrder(getOrderCriteria("applicationForm.submittedDate", ascending));
-	            criteria.addOrder(getOrderCriteria("applicationFrm=ork.applicationTimestamp", ascending));
+	            criteria.addOrder(getOrderCriteria("applicationForm.applicationTimestamp", ascending));
 	            break;
 	        }
     	}
@@ -259,7 +260,7 @@ public class ApplicationFormListDAO {
         }
     }
     
-    private void appendLimitStatement(int recordStart, int recordCount) {
+    private void appendLimitStatement(Criteria criteria, int recordStart, int recordCount) {
     	criteria.setFirstResult(recordStart);
     	criteria.setMaxResults(recordCount);
     }

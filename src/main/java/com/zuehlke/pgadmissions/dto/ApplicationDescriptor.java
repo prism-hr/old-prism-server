@@ -1,14 +1,17 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.utils.MathUtils;
 
 public class ApplicationDescriptor {
 	
-	private ApplicationForm applicationForm;
+	private Integer applicationFormId;
 	
 	private Boolean needsToSeeUrgentFlag;
 	
@@ -26,25 +29,41 @@ public class ApplicationDescriptor {
     
     private String applicantEmail;
     
+    private String applicationFormNumber;
+    
     private String programTitle;
     
     private String projectTitle;
     
     private String oldProjectTitle;
     
+    private BigDecimal applicantAverageRating;
+    
+    private ApplicationFormStatus applicationFormStatus;
+    
+	private boolean applicationFormWithdrawnBeforeSubmitted;
+    
+    private ApplicationFormStatus applicationFormNextStatus;
+    
     private List<ActionDefinition> actionDefinitions = Lists.newArrayList();
+    
+    private Integer applicationFormPersonalStatementId;
+    
+    private Integer applicationFormCvId;
+    
+    private Date applicationFormCreatedTimestamp;
     
     private Date applicationFormUpdatedTimestamp;
     
 	public ApplicationDescriptor() {
     }
 
-    public ApplicationForm getApplicationForm() {
-		return applicationForm;
+    public Integer getApplicationFormId() {
+		return applicationFormId;
 	}
 
-	public void setApplicationForm(ApplicationForm applicationForm) {
-		this.applicationForm = applicationForm;
+	public void setApplicationFormId(Integer applicationFormId) {
+		this.applicationFormId = applicationFormId;
 	}
 
     public Boolean getNeedsToSeeUpdateFlag() {
@@ -131,6 +150,14 @@ public class ApplicationDescriptor {
 		this.applicantEmail = applicantEmail;
 	}
 	
+	public String getApplicationFormNumber() {
+		return applicationFormNumber;
+	}
+
+	public void setApplicationFormNumber(String applicationFormNumber) {
+		this.applicationFormNumber = applicationFormNumber;
+	}
+
 	public String getProgramTitle() {
 		return programTitle;
 	}
@@ -165,16 +192,79 @@ public class ApplicationDescriptor {
 		}
 	}
 	
-    public List<ActionDefinition> getActionDefinitions() {
+	public String getApplicantAverageRating() {
+		return MathUtils.formatRating(applicantAverageRating);
+	}
+
+	public void setApplicantAverageRating(BigDecimal applicantAverageRating) {
+		this.applicantAverageRating = applicantAverageRating;
+	}
+
+	public ApplicationFormStatus getApplicationFormStatus() {
+		return applicationFormStatus;
+	}
+
+	public void setApplicationFormStatus(ApplicationFormStatus applicationFormStatus) {
+		this.applicationFormStatus = applicationFormStatus;
+	}
+	
+    public boolean isApplicationFormWithdrawnBeforeSubmitted() {
+		return applicationFormWithdrawnBeforeSubmitted;
+	}
+
+	public void setApplicationFormWithdrawnBeforeSubmitted(boolean applicationFormWithdrawnBeforeSubmitted) {
+		this.applicationFormWithdrawnBeforeSubmitted = applicationFormWithdrawnBeforeSubmitted;
+	}
+
+	public ApplicationFormStatus getApplicationFormNextStatus() {
+		return applicationFormNextStatus;
+	}
+
+	public boolean getApplicationFormSubmitted() {
+		return applicationFormStatus != ApplicationFormStatus.UNSUBMITTED;
+	}
+	
+	public void setApplicationFormNextStatus(ApplicationFormStatus applicationFormNextStatus) {
+		this.applicationFormNextStatus = applicationFormNextStatus;
+	}
+
+	public List<ActionDefinition> getActionDefinitions() {
+    	if (actionDefinitions == null) {
+    		actionDefinitions = new ArrayList<ActionDefinition>();
+    	}
         return actionDefinitions;
     }
+
+	public Integer getApplicationFormPersonalStatementId() {
+		return applicationFormPersonalStatementId;
+	}
+
+	public void setApplicationFormPersonalStatementId(Integer applicationFormPersonalStatementId) {
+		this.applicationFormPersonalStatementId = applicationFormPersonalStatementId;
+	}
+
+	public Integer getApplicationFormCvId() {
+		return applicationFormCvId;
+	}
+
+	public void setApplicationFormCvId(Integer applicationFormCvId) {
+		this.applicationFormCvId = applicationFormCvId;
+	}
+
+	public Date getApplicationFormCreatedTimestamp() {
+		return applicationFormCreatedTimestamp;
+	}
+
+	public void setApplicationFormCreatedTimestamp(
+			Date applicationFormCreatedTimestamp) {
+		this.applicationFormCreatedTimestamp = applicationFormCreatedTimestamp;
+	}
 
 	public Date getApplicationFormUpdatedTimestamp() {
 		return applicationFormUpdatedTimestamp;
 	}
 
-	public void setApplicationFormUpdatedTimestamp(
-			Date applicationFormUpdatedTimestamp) {
+	public void setApplicationFormUpdatedTimestamp(Date applicationFormUpdatedTimestamp) {
 		this.applicationFormUpdatedTimestamp = applicationFormUpdatedTimestamp;
 	}
 	

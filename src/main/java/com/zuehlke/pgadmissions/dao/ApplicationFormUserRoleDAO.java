@@ -1,18 +1,18 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
@@ -116,6 +117,37 @@ public class ApplicationFormUserRoleDAO {
     	actionList.addAll(optionalActionList);
     	return actionList;
     }
+    
+    public List<ActionDefinition> findActionsByUserIdAndApplicationIdAndApplicationFormStatus(Integer registeredUserId, Integer applicationFormId, ApplicationFormStatus status) {
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL SELECT_USER_APPLICATION_FORM_ACTION_LIST(?, ?, ?);")
+	    		.setInteger(0, registeredUserId)
+	    		.setInteger(1, applicationFormId)
+	    		.setString(2, status.toString());
+    	
+    	List<Object[]> rows = (List<Object[]>) query.list();
+    	List<ActionDefinition> actionDefinitions = new ArrayList<ActionDefinition>();
+    	
+    	boolean hasViewAction = false;
+    	
+    	for (Object[] row : rows) {
+    		String action = (String) row[0];
+    		Boolean raisesUrgentFlag = BooleanUtils.toBooleanObject((Integer) row[1]);
+			
+			if (action.equals("VIEW")) {
+				hasViewAction = true;
+			}
+    		
+    		if (action.equals("VIEW_EDIT") &&
+    			BooleanUtils.isTrue(hasViewAction)) {
+    			actionDefinitions.remove(actionDefinitions.size() - 1);
+    		}
+    		
+			actionDefinitions.add(new ActionDefinition(action, raisesUrgentFlag));
+    	}
+    	
+    	return actionDefinitions;
+    }
 
     public Boolean findRaisesUpdateFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
         Boolean raisesUpdateFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
@@ -159,107 +191,125 @@ public class ApplicationFormUserRoleDAO {
     }
     
     public void insertUserinRole(RegisteredUser registeredUser, Authority authority) {
-    	Session session = sessionFactory.getCurrentSession();
-    	Query query = session.createSQLQuery("CALL INSERT_USER_IN_ROLE(?, ?);");
-    	query.setInteger(0, registeredUser.getId());
-    	query.setString(1, authority.toString());
-    	query.executeUpdate();
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL INSERT_USER_IN_ROLE(?, ?);")
+	    		.setInteger(0, registeredUser.getId())
+	    		.setString(1, authority.toString());
+    		query.executeUpdate();
     }
     	
     public void insertUserInProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
-    	Session session = sessionFactory.getCurrentSession();
-    	Query query = session.createSQLQuery("CALL INSERT_USER_IN_PROGRAM_ROLE(?, ?, ?);");
-    	query.setInteger(0, registeredUser.getId());
-    	query.setInteger(1, program.getId());
-    	query.setString(2, authority.toString());
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL INSERT_USER_IN_PROGRAM_ROLE(?, ?, ?);")
+	    		.setInteger(0, registeredUser.getId())
+	    		.setInteger(1, program.getId())
+	    		.setString(2, authority.toString());
     	query.executeUpdate();
     }
     
     public void deleteUserFromRole (RegisteredUser registeredUser, Authority authority) {
-    	Session session = sessionFactory.getCurrentSession();
-    	Query query = session.createSQLQuery("CALL DELETE_USER_FROM_ROLE(?, ?);");
-    	query.setInteger(0, registeredUser.getId());
-    	query.setString(1, authority.toString());
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL DELETE_USER_FROM_ROLE(?, ?);")
+	    		.setInteger(0, registeredUser.getId())
+	    		.setString(1, authority.toString());
     	query.executeUpdate();
     }
     
     public void deleteUserFromProgramRole (RegisteredUser registeredUser, Program program, Authority authority) {
-    	Session session = sessionFactory.getCurrentSession();
-    	Query query = session.createSQLQuery("CALL DELETE_USER_FROM_PROGRAM_ROLE(?, ?, ?);");
-    	query.setInteger(0, registeredUser.getId());
-    	query.setInteger(1, program.getId());
-    	query.setString(2, authority.toString());
-    	query.executeUpdate();
-    }
-    
-    public void updateRaisesUrgentFlag () {
-    	Session session = sessionFactory.getCurrentSession();
-    	Query query = session.createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
-    	query.executeUpdate();
-    }
-    
-    public List<RegisteredUser> findUsersInterestedInApplication(ApplicationForm applicationForm) {
-        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-        		.createAlias("applicationFormUserRoles", "roles")
-        		.add(Restrictions.eq("roles.applicationForm", applicationForm))
-                .add(Restrictions.eq("roles.interestedInApplicant", true))
-                .addOrder(Order.asc("lastName"))
-                .addOrder(Order.asc("firstName"))
-                .addOrder(Order.asc("id")) 
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("id"))).list();
-    }
-    
-    public List<RegisteredUser> findUsersPotentiallyInterestedInApplication(Program program) {
-        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-        		.createAlias("applicationFormUserRoles", "roles")
-        		.createAlias("roles.applicationForm.program", "program")
-        		.add(Restrictions.eq("program", program))
-        		.add(Restrictions.in("roles.role", Arrays.asList("REVIEWER", "INTEVIEWER", "SUPERVISOR")))
-                .add(Restrictions.eq("roles.interestedInApplicant", false))
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("id"))).list();
-    }
-    
-    private List<ActionDefinition> findRequiredActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
-        List<Object[]> actionObjects = (List<Object[]>) sessionFactory.getCurrentSession()
-                .createCriteria(ApplicationFormActionRequired.class)
-                .createAlias("applicationFormUserRole", "role")
-                .add(Restrictions.eq("role.applicationForm", applicationForm))
-                .add(Restrictions.eq("role.user", user))
-                .addOrder(Order.desc("raisesUrgentFlag")).addOrder(Order.asc("action"))
-                .setProjection(Projections.projectionList().add(Projections.groupProperty("action")).add(Projections.max("raisesUrgentFlag"))).list();
+		Query query = sessionFactory.getCurrentSession()
+			.createSQLQuery("CALL DELETE_USER_FROM_PROGRAM_ROLE(?, ?, ?);")
+				.setInteger(0, registeredUser.getId())
+				.setInteger(1, program.getId())
+				.setString(2, authority.toString());
+		query.executeUpdate();
+	}
 
-        List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
-        for (Object[] actionObject : actionObjects) {
-            ActionDefinition actionDefinition = new ActionDefinition((String) actionObject[0], (Boolean) actionObject[1]);
-            actionDefinitions.add(actionDefinition);
-        }
-        return actionDefinitions;
-    }
+	public void updateRaisesUrgentFlag() {
+		Query query = sessionFactory.getCurrentSession().
+			createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
+		query.executeUpdate();
+	}
 
-    private List<ActionDefinition> findOptionalActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm application) {
-        DetachedCriteria subquery = DetachedCriteria.forClass(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", application))
-                .add(Restrictions.eq("user", user)).setProjection(Projections.property("role.id"));
+	public List<RegisteredUser> findUsersInterestedInApplication(ApplicationForm applicationForm) {
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user"), "user"))
+				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("applicationForm", applicationForm))
+				.add(Restrictions.eq("interestedInApplicant", true))
+				.addOrder(Order.asc("registeredUser.lastName"))
+				.addOrder(Order.asc("registeredUser.firstName"))
+				.addOrder(Order.asc("registeredUser.id")).list();
+	}
 
-        List<Object> actionObjects = (List<Object>) sessionFactory.getCurrentSession()
-                .createCriteria(ApplicationFormActionOptional.class)
-                .add(Subqueries.propertyIn("id.role.id", subquery))
-                .add(Restrictions.eq("id.status", application.getStatus()))
-                .addOrder(Order.asc("id.action")).setProjection(Projections.distinct(Projections.property("id.action"))).list();
+	public List<RegisteredUser> findUsersPotentiallyInterestedInApplication(Program program) {
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user"), "user"))
+				.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+				.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("program.id", program.getId()))
+				.add(Restrictions.eq("interestedInApplicant", true))
+				.addOrder(Order.asc("registeredUser.lastName"))
+				.addOrder(Order.asc("registeredUser.firstName"))
+				.addOrder(Order.asc("registeredUser.id")).list();
+	}
 
-        List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
-        boolean hasViewAction = false;
-        for (Object actionObject : actionObjects) {
-        	String definition = (String) actionObject;
-        	if (definition.equals("VIEW")) {
-        		hasViewAction = true;
-        	} else if (definition.equals("VIEW_EDIT")
-        			&& BooleanUtils.isTrue(hasViewAction)) {
-        		actionDefinitions.remove(actionDefinitions.size() - 1);
-        	}
-            ActionDefinition actionDefinition = new ActionDefinition((String) definition, false);
-            actionDefinitions.add(actionDefinition);
-        }
-        return actionDefinitions;
-    }
-    
+	private List<ActionDefinition> findRequiredActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
+		List<Object[]> actionObjects = (List<Object[]>) sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationFormActionRequired.class)
+				.createAlias("applicationFormUserRole", "role")
+				.add(Restrictions.eq("role.applicationForm", applicationForm))
+				.add(Restrictions.eq("role.user", user))
+				.addOrder(Order.desc("raisesUrgentFlag"))
+				.addOrder(Order.asc("action"))
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("action"))
+					.add(Projections.max("raisesUrgentFlag"))).list();
+
+		List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
+		for (Object[] actionObject : actionObjects) {
+			ActionDefinition actionDefinition = new ActionDefinition((String) actionObject[0], (Boolean) actionObject[1]);
+			actionDefinitions.add(actionDefinition);
+		}
+		return actionDefinitions;
+	}
+
+	private List<ActionDefinition> findOptionalActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm application) {	
+		DetachedCriteria subquery = DetachedCriteria
+				.forClass(ApplicationFormUserRole.class)
+				.add(Restrictions.eq("applicationForm", application))
+				.add(Restrictions.eq("user", user))
+				.setProjection(Projections.property("role.id"));
+		
+		List<Object> actionObjects = (List<Object>) sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationFormActionOptional.class)
+					.setProjection(Projections.groupProperty("id.action"))
+				.add(Subqueries.propertyIn("id.role.id", subquery))
+				.add(Restrictions.eq("id.status", application.getStatus()))
+				.addOrder(Order.asc("id.action")).list();
+		
+		List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
+		
+		boolean hasViewAction = false;
+		
+		for (Object optionalAction : actionObjects) {
+			String definition = (String) optionalAction;
+			
+			if (definition.equals("VIEW")) {
+				hasViewAction = true;
+			} 
+			
+			if (definition.equals("VIEW_EDIT") &&
+				BooleanUtils.isTrue(hasViewAction)) {
+				actionDefinitions.remove(actionDefinitions.size() - 1);
+			}
+				
+			actionDefinitions.add(new ActionDefinition((String) definition, false));
+		}
+		
+		return actionDefinitions;
+	}
 }

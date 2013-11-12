@@ -46,9 +46,9 @@ $(document).ready(function()
 				}
 				if(newReviewer.isNew){
 					$('#previous').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '" category="previous" disabled="disabled">' +
-							newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
+							newReviewer.firstname + ' ' + newReviewer.lastname + ' (' + newReviewer.email + ' )</option>');
 					$('#applicationReviewers').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '">' +
-							newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
+							newReviewer.firstname + ' ' + newReviewer.lastname + ' (' + newReviewer.email + ' )</option>');
 					$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);					
 					
 				}else{
@@ -211,9 +211,9 @@ function addExistingUserToReviewersLists(newReviewer){
 	}
 	
 	$('#previous').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '" category="previous" disabled="disabled">' +
-			newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
+			newReviewer.firstname + ' ' + newReviewer.lastname + ' (' + newReviewer.email + ' )</option>');
 	$('#applicationReviewers').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '">' +
-			newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
+			newReviewer.firstname + ' ' + newReviewer.lastname + ' (' + newReviewer.email + ' )</option>');
 	$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
 
 }

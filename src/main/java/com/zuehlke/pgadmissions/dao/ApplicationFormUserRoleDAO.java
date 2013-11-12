@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -67,20 +69,6 @@ public class ApplicationFormUserRoleDAO {
     public List<ApplicationFormUserRole> findByApplicationFormAndAuthorities(ApplicationForm applicationForm, Authority... authorities) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.in("role.id", authorities)).list();
-    }
-
-    public List<ApplicationFormUserRole> findByUserAndProgramAndAuthority(RegisteredUser registeredUser, Program program, Authority authority) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).createAlias("applicationForm.program", "program")
-                .add(Restrictions.eq("user", registeredUser)).add(Restrictions.eq("program", program)).add(Restrictions.eq("role.id", authority)).list();
-    }
-
-    public List<ApplicationFormUserRole> findByUserAndAuthority(RegisteredUser registeredUser, Authority authority) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("user", registeredUser))
-                .add(Restrictions.eq("role.id", authority)).list();
-    }
-
-    public List<ApplicationFormUserRole> findByApplicationForm(ApplicationForm applicationForm) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm)).list();
     }
 
     public ApplicationFormUserRole get(Integer id) {
@@ -219,8 +207,11 @@ public class ApplicationFormUserRoleDAO {
 	}
 	
 	public void updateApplicationFormActionRequiredDeadline(ApplicationForm applicationForm, Date deadlineTimestamp) {
-		Query query = sessionFactory.getCurrentSession()
-			.createSQLQuery("CALL UPDATE_APPLICATION_FORM_ACTION_REQUIRED_DEADLINE(?, ?);")
+		applicationForm.setDueDate(deadlineTimestamp);
+		Session session = sessionFactory.getCurrentSession();
+		session.flush();
+		
+		Query query = session.createSQLQuery("CALL UPDATE_APPLICATION_FORM_ACTION_REQUIRED_DEADLINE(?, ?);")
 			.setInteger(0, applicationForm.getId())
 			.setDate(1, deadlineTimestamp);
 		query.executeUpdate();
@@ -233,9 +224,23 @@ public class ApplicationFormUserRoleDAO {
 				.setInteger(0, applicationForm.getId())
 				.setInteger(1, registeredUser.getId())
 				.setDate(2, updateTimestamp)
-				.setInteger(3, Integer.parseInt(updateVisibility.toString()));
+				.setInteger(3, ApplicationUpdateScope.valueOf(updateVisibility.toString()).ordinal());
 		query.executeUpdate();
 		
+	}
+	
+	public void deleteAllApplicationFormActions (ApplicationForm applicationForm) {
+		Query query = sessionFactory.getCurrentSession()
+			.createSQLQuery("CALL DELETE_APPLICATION_FORM_ACTIONS(?);")
+				.setInteger(0, applicationForm.getId());
+		query.executeUpdate();
+	}
+	
+	public void deleteApplicationFormActionsForStateBoundedWorkers(ApplicationForm applicationForm) {
+		Query query = sessionFactory.getCurrentSession()
+			.createSQLQuery("CALL DELETE_ACTIONS_FOR_STATE_BOUNDED_WORKERS(?);")
+				.setInteger(0, applicationForm.getId());
+		query.executeUpdate();
 	}
 
 	public List<RegisteredUser> findUsersInterestedInApplication(ApplicationForm applicationForm) {
@@ -245,6 +250,7 @@ public class ApplicationFormUserRoleDAO {
 				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("applicationForm", applicationForm))
 				.add(Restrictions.eq("interestedInApplicant", true))
+				.add(Restrictions.eq("registeredUser.enabled", true))
 				.addOrder(Order.asc("registeredUser.lastName"))
 				.addOrder(Order.asc("registeredUser.firstName"))
 				.addOrder(Order.asc("registeredUser.id")).list();
@@ -258,11 +264,19 @@ public class ApplicationFormUserRoleDAO {
 				.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
 				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("program.id", program.getId()))
-				.add(Restrictions.eq("interestedInApplicant", true))
+				.add(Restrictions.in("role.id", Arrays.asList(Authority.REVIEWER, Authority.INTERVIEWER, 
+					Authority.SUPERVISOR, Authority.SUGGESTEDSUPERVISOR, Authority.APPROVER, Authority.REVIEWADMINISTRATOR,
+					Authority.INTERVIEWADMINISTRATOR, Authority.APPROVALADMINISTRATOR, Authority.PROJECTADMINISTRATOR)))
+				.add(Restrictions.eq("registeredUser.enabled", true))
 				.add(Restrictions.isNull("registeredUser.primaryAccount"))
 				.addOrder(Order.asc("registeredUser.lastName"))
 				.addOrder(Order.asc("registeredUser.firstName"))
 				.addOrder(Order.asc("registeredUser.id")).list();
 	}
 	
+	public void deleteActionsAndFlushToDB(ApplicationFormUserRole applicationFormUserRole) {
+		applicationFormUserRole.getActions().clear();
+		applicationFormUserRole.setRaisesUrgentFlag(false);
+		sessionFactory.getCurrentSession().flush();
+	}
 }

@@ -227,7 +227,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     
     @ModelAttribute("usersPotentiallyInterestedInApplication") 
     public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId).getProgram());
     }
 
     @ModelAttribute("explanation")
@@ -267,7 +267,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         sessionStatus.setComplete();
         return "/private/common/ajax_OK";
     }
@@ -287,7 +287,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return PROPOSE_OFFER_RECOMMENDATION_SECTION;
     }
 
@@ -299,7 +299,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return QUALIFICATION_SECTION;
     }
 
@@ -342,7 +342,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
 
-            applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
             applicationsService.save(applicationForm);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());

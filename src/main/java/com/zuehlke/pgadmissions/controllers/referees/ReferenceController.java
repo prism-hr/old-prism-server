@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.referees;
 
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -195,7 +194,7 @@ public class ReferenceController {
         }
 
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
 

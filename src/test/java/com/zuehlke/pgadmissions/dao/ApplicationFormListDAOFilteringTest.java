@@ -39,6 +39,8 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCase {
 
     private ApplicationFormListDAO applicationDAO;
+    
+    private ApplicationFormDAO applicationFormDAO;
 
     private RegisteredUser applicant;
 
@@ -71,6 +73,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     @Before
     public void prepare() {
         applicationDAO = new ApplicationFormListDAO(sessionFactory);
+        applicationFormDAO = new ApplicationFormDAO(sessionFactory);
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         role = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
@@ -439,7 +442,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     	List<ApplicationForm> applicationForms = new ArrayList<ApplicationForm>();
         
         for (ApplicationDescriptor application : applications) {
-        	applicationForms.add(application.getApplicationForm());
+        	applicationForms.add(applicationFormDAO.get(application.getApplicationFormId()));
         }
         
         return applicationForms;

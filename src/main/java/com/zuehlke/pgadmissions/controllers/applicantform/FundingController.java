@@ -101,7 +101,7 @@ public class FundingController {
         
 		fundingService.save(funding);
 		applicationService.save(applicationForm);
-		applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+		applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber();
 	}
 
@@ -145,7 +145,5 @@ public class FundingController {
 	public String getMessage(@RequestParam(required=false)String message) {		
 		return message;
 	}
-
-
 
 }

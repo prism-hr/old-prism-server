@@ -204,7 +204,7 @@ public class UserService {
         }
         newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
         for (Authority authority : authorities) {
-            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
+            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER, Authority.SUGGESTEDSUPERVISOR).contains(authority)) {
             	applicationFormUserRoleService.createUserInRole(newUser, authority);
             }
         }

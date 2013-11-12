@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK;
 
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -178,7 +177,7 @@ public class InterviewCommentController {
 
         applicationsService.save(applicationForm);
         applicationFormUserRoleService.interviewFeedbackPosted(comment.getInterviewer());
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
     }
 

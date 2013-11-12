@@ -105,7 +105,7 @@ public class SubmitApplicationFormController {
         assignBatchDeadline(applicationForm);
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleService.applicationSubmitted(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -58,7 +56,7 @@ public class WithdrawController {
         withdrawService.withdrawApplication(applicationForm);
         withdrawService.sendToPortico(applicationForm);
         applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
     }
 

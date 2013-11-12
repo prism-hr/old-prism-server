@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -97,7 +96,7 @@ public class RejectApplicationController {
         rejectService.moveApplicationToReject(application, rejection);
         rejectService.sendToPortico(application);
         applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
-        applicationFormUserRoleService.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
         return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
     }
 

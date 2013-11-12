@@ -88,7 +88,7 @@ public class DeleteApplicationFormEntitiesController {
     }
 
     private void updateLastAccessAndLastModified(RegisteredUser currentUser, ApplicationForm applicationForm) {
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, currentUser, ApplicationUpdateScope.ALL_USERS);
         applicationsService.save(applicationForm);
     }
 

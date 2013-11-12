@@ -125,7 +125,7 @@ public class GenericCommentController {
         
         commentService.save(comment);
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.INTERNAL);
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }
 

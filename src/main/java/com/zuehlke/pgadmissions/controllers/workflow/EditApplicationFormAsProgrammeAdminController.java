@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +167,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             map.putAll(FieldErrorUtils.populateMapWithErrors(refereesAdminEditDTOResult, messageSource));
         }
         
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         Gson gson = new Gson();
         return gson.toJson(map);
     }
@@ -212,7 +211,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
             applicationsService.save(applicationForm);
             applicationFormUserRoleService.referencePosted(referee);
-            applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);

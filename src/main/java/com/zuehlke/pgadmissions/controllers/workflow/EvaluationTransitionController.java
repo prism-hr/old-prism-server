@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.Date;
-
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -121,7 +119,7 @@ public class EvaluationTransitionController extends StateTransitionController {
         applicationsService.save(applicationForm);
         commentService.save(newComment);
         applicationFormUserRoleService.stateChanged(newComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         if (nextStatus == ApplicationFormStatus.APPROVAL) {
             applicationsService.makeApplicationNotEditable(applicationForm);
         }

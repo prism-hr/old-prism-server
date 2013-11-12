@@ -145,7 +145,7 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
         
         // This is not finished but I put it here so that we would remember what to do when it is finished
         applicationFormUserRoleService.processingDelegated(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
         if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
             return stateTransitionService.resolveView(applicationForm);
         }

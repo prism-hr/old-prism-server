@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -97,7 +96,7 @@ public class AddressController {
         currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
 
         applicationService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         return "redirect:/update/getAddress?applicationId=" + applicationForm.getApplicationNumber();
     }

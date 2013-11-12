@@ -61,7 +61,7 @@
      <td colspan="7"><div class="application-lhs">
       <div class="details row-fluid">
         <div class="span2">
-          <div class="thumbnail"><img  data-field="gravatar" style="height: 110px;" src="http://0.gravatar.com/avatar/42ba66a9f4503f18fb2d13bfde6c69bf?s=64&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D64&amp;r=G"></div>
+          <div class="thumbnail"><img  data-field="gravatar" style="height: 110px;" src="<@spring.url '/design/default/images/gravatar_spoof.jpg'/>"></div>
         </div>
         <div class="span6">
           <div class="row dates">

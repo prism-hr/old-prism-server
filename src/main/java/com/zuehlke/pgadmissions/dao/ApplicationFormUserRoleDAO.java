@@ -229,7 +229,7 @@ public class ApplicationFormUserRoleDAO {
 	public void updateApplicationFormUpdateTimestamp(ApplicationForm applicationForm, RegisteredUser registeredUser, 
 			Date updateTimestamp, ApplicationUpdateScope updateVisibility) {
 		Query query = sessionFactory.getCurrentSession()
-			.createSQLQuery("CALL INSERT_APPLICATION_FROM_USER_ROLE_UPDATE(?, ?, ?, ?);")
+			.createSQLQuery("CALL INSERT_APPLICATION_FORM_USER_ROLE_UPDATE(?, ?, ?, ?);")
 				.setInteger(0, applicationForm.getId())
 				.setInteger(1, registeredUser.getId())
 				.setDate(2, updateTimestamp)

@@ -5,7 +5,7 @@
     <h2 class="no-arrow">Assign Supervisors</h2>
     <div>
     	<form>
-			  <@spring.bind "approvalRound.supervisors" />
+		<@spring.bind "approvalRound.supervisors" />
         <#if spring.status.errors.hasErrors()>
           <div class="alert alert-error"> <i class="icon-warning-sign"></i> 
         <#else>

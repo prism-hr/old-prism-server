@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.easymock.EasyMock.eq;
 import static org.junit.Assert.assertEquals;
-
-import java.util.Date;
 
 import org.easymock.EasyMock;
 import org.junit.Before;

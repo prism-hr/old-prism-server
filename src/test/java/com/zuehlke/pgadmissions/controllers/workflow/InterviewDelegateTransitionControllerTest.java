@@ -92,7 +92,7 @@ public class InterviewDelegateTransitionControllerTest {
         commentServiceMock.save(comment);
         expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
         applicationFormUserRoleServiceMock.processingDelegated(applicationForm);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, currentUser, ApplicationUpdateScope.INTERNAL);
 
         replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment.getComment(), stateComment, bindingResultMock);
@@ -127,7 +127,7 @@ public class InterviewDelegateTransitionControllerTest {
         commentServiceMock.save(comment);
         interviewServiceMock.save(interview);
         applicationFormUserRoleServiceMock.processingDelegated(applicationForm);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, currentUser, ApplicationUpdateScope.INTERNAL);
 
         replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, interviewServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), "", stateComment, bindingResultMock);

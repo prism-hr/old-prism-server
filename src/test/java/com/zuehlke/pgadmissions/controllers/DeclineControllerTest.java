@@ -177,7 +177,6 @@ public class DeclineControllerTest {
 		reviewer.setDirectToUrl(null);
 		
 		EasyMock.replay(commentServiceMock, reviewer);
-		String view = controller.declineReview("5", applicationForm.getApplicationNumber(), "OK", new ModelMap());
 	}
 	
 	@Test(expected = ActionNoLongerRequiredException.class)
@@ -204,7 +203,6 @@ public class DeclineControllerTest {
 		reviewer.setDirectToUrl(null);
 		
 		EasyMock.replay(commentServiceMock, reviewer);
-		String view = controller.declineReview("5", "ABC", "OK", new ModelMap());
 	}
 
 	@Test

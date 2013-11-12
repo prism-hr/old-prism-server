@@ -116,25 +116,6 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         assertThat(roles, contains(role1, role3));
     }
 
-    @Test
-    public void shouldFindApplicationFormUserRoleByApplicationForm() throws ParseException {
-
-        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
-        Role admitterRole = roleDAO.getRoleByAuthority(Authority.ADMITTER);
-        Role superAdministratorRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
-
-        ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
-                .interestedInApplicant(true).build();
-        ApplicationFormUserRole role2 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(admitterRole)
-                .interestedInApplicant(true).build();
-        ApplicationFormUserRole role3 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(superAdministratorRole)
-                .interestedInApplicant(true).build();
-        save(role1, role2, role3);
-
-        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationForm(application);
-        assertThat(roles, containsInAnyOrder(role1, role2, role3));
-    }
-
     @SuppressWarnings("unchecked")
     @Test
     public void shouldFindRequiredActionsByUserAndApplicationForm() {

@@ -336,12 +336,7 @@ public class ApplicationFormUserRoleService {
     public void registerApplicationUpdate (ApplicationForm applicationForm, RegisteredUser author, ApplicationUpdateScope updateVisibility) {
         Date updateTimestamp = new Date();
         applicationForm.setLastUpdated(updateTimestamp);
-    	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndAuthorityUpdateVisility(applicationForm, updateVisibility)) {
-    		if (applicationFormUserRole.getUser() != author) {
-	    		applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
-	    		applicationFormUserRole.setRaisesUpdateFlag(true);
-    		}
-    	}
+    	applicationFormUserRoleDAO.updateApplicationFormUpdateTimestamp(applicationForm, author, updateTimestamp, updateVisibility);
     }
     
     public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
@@ -438,18 +433,7 @@ public class ApplicationFormUserRoleService {
 
     private void resetActionDeadline(ApplicationForm applicationForm, Date newDueDate) {
         applicationForm.setDueDate(newDueDate);
-        List<ApplicationFormUserRole> applicationFormUserRoles = applicationFormUserRoleDAO.findByApplicationForm(applicationForm);
-        Boolean raisesUrgentFlag = newDueDate.before(new Date());
-        for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoles) {
-            List<ApplicationFormActionRequired> actions = applicationFormUserRole.getActions();
-            for (ApplicationFormActionRequired action : actions) {
-                if (action.getBindDeadlineToDueDate()) {
-                    action.setDeadlineTimestamp(newDueDate);
-                    action.setRaisesUrgentFlag(raisesUrgentFlag);
-                }
-            }
-        	applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
-        }
+        applicationFormUserRoleDAO.updateApplicationFormActionRequiredDeadline(applicationForm, newDueDate);
     }
     
 }

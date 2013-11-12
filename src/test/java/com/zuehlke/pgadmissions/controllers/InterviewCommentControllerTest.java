@@ -213,7 +213,7 @@ public class InterviewCommentControllerTest {
         applicantRatingServiceMock.computeAverageRating(interview);
         applicantRatingServiceMock.computeAverageRating(application);
         applicationFormUserRoleServiceMock.interviewFeedbackPosted(interviewer);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, userServiceMock.getCurrentUser(), ApplicationUpdateScope.INTERNAL);
 
         replay(commentServiceMock, applicationsServiceMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=interview.feedback&application=abc", controller.addComment(comment, errorsMock, modelMap));

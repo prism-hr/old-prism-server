@@ -244,7 +244,7 @@ public class SubmitApplicationFormControllerTest {
         StageDuration validationDuration = new StageDurationBuilder().duration(1).stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).build();
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(validationDuration);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock, applicationFormUserRoleServiceMock);
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
@@ -275,7 +275,7 @@ public class SubmitApplicationFormControllerTest {
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
         String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);

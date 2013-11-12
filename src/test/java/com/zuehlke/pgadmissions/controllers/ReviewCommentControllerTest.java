@@ -210,7 +210,7 @@ public class ReviewCommentControllerTest {
         applicantRatingServiceMock.computeAverageRating(reviewRound);
         applicantRatingServiceMock.computeAverageRating(applicationForm);
         applicationFormUserRoleServiceMock.reviewPosted(reviewer);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.INTERNAL);
 
         replay(commentServiceMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber(),

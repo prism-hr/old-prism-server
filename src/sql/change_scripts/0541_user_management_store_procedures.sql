@@ -6,9 +6,7 @@
 			ON APPLICATION_FORM_ACTION_REQUIRED.application_form_user_role_id = APPLICATION_FORM_USER_ROLE.id
     	SET APPLICATION_FORM_ACTION_REQUIRED.raises_urgent_flag = 1,
 			APPLICATION_FORM_USER_ROLE.raises_urgent_flag = 1
-    	WHERE deadline_timestamp < CURRENT_DATE();
-		
-		SELECT "COMPLETED";
+    	WHERE deadline_timestamp <= CURRENT_DATE();
 	
 	END
 ;
@@ -29,8 +27,6 @@
 		FROM APPLICATION_FORM_USER_ROLE
 		WHERE APPLICATION_FORM_USER_ROLE.registered_user_id = in_registered_user_id
 			AND APPLICATION_FORM_USER_ROLE.application_role_id = in_application_role_id;
-		
-		SELECT "COMPLETED";
 	
 	END
 ;
@@ -57,8 +53,6 @@
 		WHERE APPLICATION_FORM_USER_ROLE.registered_user_id = in_registered_user_id
 			AND APPLICATION_FORM.program_id = in_program_id
 			AND APPLICATION_FORM_USER_ROLE.application_role_id = in_application_role_id;
-		
-		SELECT "COMPLETED";
 		   
 	END
 ;	
@@ -127,8 +121,6 @@
 				
 		END IF;
 		
-		SELECT "COMPLETED";
-		
 	END
 ;
 	
@@ -193,8 +185,6 @@
 						AND APPLICATION_FORM_ACTION_REQUIRED.action_id != "CONFIRM_ELIGIBILITY";
 		
 		END IF;
-		
-		SELECT "COMPLETED";
 		
 	END
 ;

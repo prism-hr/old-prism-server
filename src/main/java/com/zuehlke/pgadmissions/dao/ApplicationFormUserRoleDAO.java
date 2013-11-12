@@ -16,7 +16,6 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionOptional;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
@@ -51,12 +50,6 @@ public class ApplicationFormUserRoleDAO {
     public List<ApplicationFormUserRole> findByApplicationFormAndUser(ApplicationForm applicationForm, RegisteredUser user) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user)).list();
-    }
-
-    public List<ApplicationFormUserRole> findByApplicationFormAndAuthorityUpdateVisility(ApplicationForm applicationForm,
-            ApplicationUpdateScope updateVisibility) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).createAlias("role", "role")
-                .add(Restrictions.eq("applicationForm", applicationForm)).add(Restrictions.ge("role.updateVisibility", updateVisibility)).list();
     }
 
     public Date findUpdateTimestampByApplicationFormAndAuthorityUpdateVisility(ApplicationForm applicationForm, ApplicationUpdateScope updateVisibility) {
@@ -110,12 +103,7 @@ public class ApplicationFormUserRoleDAO {
     }
     
     public List<ActionDefinition> findActionsByUserAndApplicationForm (RegisteredUser user, ApplicationForm applicationForm) {
-    	List<ActionDefinition> requiredActionList = findRequiredActionsByUserAndApplicationForm(user, applicationForm);
-    	List<ActionDefinition> optionalActionList = findOptionalActionsByUserAndApplicationForm(user, applicationForm);
-    	List<ActionDefinition> actionList = Lists.newArrayListWithCapacity(requiredActionList.size() + optionalActionList.size());
-    	actionList.addAll(requiredActionList);
-    	actionList.addAll(optionalActionList);
-    	return actionList;
+    	return findActionsByUserIdAndApplicationIdAndApplicationFormStatus(user.getId(), applicationForm.getId(), applicationForm.getStatus());
     }
     
     public List<ActionDefinition> findActionsByUserIdAndApplicationIdAndApplicationFormStatus(Integer registeredUserId, Integer applicationFormId, ApplicationFormStatus status) {
@@ -229,6 +217,26 @@ public class ApplicationFormUserRoleDAO {
 			createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
 		query.executeUpdate();
 	}
+	
+	public void updateApplicationFormActionRequiredDeadline(ApplicationForm applicationForm, Date deadlineTimestamp) {
+		Query query = sessionFactory.getCurrentSession()
+			.createSQLQuery("CALL UPDATE_APPLICATION_FORM_ACTION_REQUIRED_DEADLINE(?, ?);")
+			.setInteger(0, applicationForm.getId())
+			.setDate(1, deadlineTimestamp);
+		query.executeUpdate();
+	}
+	
+	public void updateApplicationFormUpdateTimestamp(ApplicationForm applicationForm, RegisteredUser registeredUser, 
+			Date updateTimestamp, ApplicationUpdateScope updateVisibility) {
+		Query query = sessionFactory.getCurrentSession()
+			.createSQLQuery("CALL INSERT_APPLICATION_FROM_USER_ROLE_UPDATE(?, ?, ?, ?);")
+				.setInteger(0, applicationForm.getId())
+				.setInteger(1, registeredUser.getId())
+				.setDate(2, updateTimestamp)
+				.setInteger(3, Integer.parseInt(updateVisibility.toString()));
+		query.executeUpdate();
+		
+	}
 
 	public List<RegisteredUser> findUsersInterestedInApplication(ApplicationForm applicationForm) {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
@@ -251,65 +259,10 @@ public class ApplicationFormUserRoleDAO {
 				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("program.id", program.getId()))
 				.add(Restrictions.eq("interestedInApplicant", true))
+				.add(Restrictions.isNull("registeredUser.primaryAccount"))
 				.addOrder(Order.asc("registeredUser.lastName"))
 				.addOrder(Order.asc("registeredUser.firstName"))
 				.addOrder(Order.asc("registeredUser.id")).list();
 	}
-
-	private List<ActionDefinition> findRequiredActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
-		List<Object[]> actionObjects = (List<Object[]>) sessionFactory.getCurrentSession()
-				.createCriteria(ApplicationFormActionRequired.class)
-				.createAlias("applicationFormUserRole", "role")
-				.add(Restrictions.eq("role.applicationForm", applicationForm))
-				.add(Restrictions.eq("role.user", user))
-				.addOrder(Order.desc("raisesUrgentFlag"))
-				.addOrder(Order.asc("action"))
-				.setProjection(Projections.projectionList()
-					.add(Projections.groupProperty("action"))
-					.add(Projections.max("raisesUrgentFlag"))).list();
-
-		List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
-		for (Object[] actionObject : actionObjects) {
-			ActionDefinition actionDefinition = new ActionDefinition((String) actionObject[0], (Boolean) actionObject[1]);
-			actionDefinitions.add(actionDefinition);
-		}
-		return actionDefinitions;
-	}
-
-	private List<ActionDefinition> findOptionalActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm application) {	
-		DetachedCriteria subquery = DetachedCriteria
-				.forClass(ApplicationFormUserRole.class)
-				.add(Restrictions.eq("applicationForm", application))
-				.add(Restrictions.eq("user", user))
-				.setProjection(Projections.property("role.id"));
-		
-		List<Object> actionObjects = (List<Object>) sessionFactory
-				.getCurrentSession()
-				.createCriteria(ApplicationFormActionOptional.class)
-					.setProjection(Projections.groupProperty("id.action"))
-				.add(Subqueries.propertyIn("id.role.id", subquery))
-				.add(Restrictions.eq("id.status", application.getStatus()))
-				.addOrder(Order.asc("id.action")).list();
-		
-		List<ActionDefinition> actionDefinitions = Lists.newArrayListWithCapacity(actionObjects.size());
-		
-		boolean hasViewAction = false;
-		
-		for (Object optionalAction : actionObjects) {
-			String definition = (String) optionalAction;
-			
-			if (definition.equals("VIEW")) {
-				hasViewAction = true;
-			} 
-			
-			if (definition.equals("VIEW_EDIT") &&
-				BooleanUtils.isTrue(hasViewAction)) {
-				actionDefinitions.remove(actionDefinitions.size() - 1);
-			}
-				
-			actionDefinitions.add(new ActionDefinition((String) definition, false));
-		}
-		
-		return actionDefinitions;
-	}
+	
 }

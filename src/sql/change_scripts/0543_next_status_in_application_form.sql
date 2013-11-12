@@ -67,11 +67,53 @@ BEGIN
 	(SELECT APPLICATION_FORM_ACTION_OPTIONAL.action_id AS action,
 		APPLICATION_FORM_ACTION_OPTIONAL.raises_urgent_flag AS raisesUrgentFlag
 	FROM APPLICATION_FORM_ACTION_OPTIONAL INNER JOIN APPLICATION_FORM_USER_ROLE
-		ON APPLICATION_FORM_USER_ROLE.registered_user_id = in_registered_user_id
-		AND APPLICATION_FORM_USER_ROLE.application_form_id = in_application_form_id
-		AND APPLICATION_FORM_ACTION_OPTIONAL.application_role_id = APPLICATION_FORM_USER_ROLE.application_role_id
-	WHERE APPLICATION_FORM_ACTION_OPTIONAL.state_id = in_state_id
+		ON APPLICATION_FORM_ACTION_OPTIONAL.application_role_id = APPLICATION_FORM_USER_ROLE.application_role_id
+	WHERE APPLICATION_FORM_USER_ROLE.application_form_id = in_application_form_id	
+		AND APPLICATION_FORM_USER_ROLE.registered_user_id = in_registered_user_id
+		AND APPLICATION_FORM_ACTION_OPTIONAL.state_id = in_state_id
 	GROUP BY APPLICATION_FORM_ACTION_OPTIONAL.action_id ASC);
+	
+END
+;
+
+CREATE PROCEDURE UPDATE_APPLICATION_FORM_ACTION_REQUIRED_DEADLINE (
+	IN in_application_form_id INT(10) UNSIGNED, 
+	IN in_deadline_timestamp DATE)
+BEGIN
+	
+	DECLARE in_raises_urgent_flag INT(1) UNSIGNED;
+	
+	SET in_raises_urgent_flag = (
+		SELECT IF (in_deadline_timestamp <= CURRENT_DATE(),
+						1,
+						0));
+
+	UPDATE APPLICATION_FORM_USER_ROLE INNER JOIN APPLICATION_FORM_ACTION_REQUIRED 
+		ON APPLICATION_FORM_USER_ROLE.id = APPLICATION_FORM_ACTION_REQUIRED.application_form_user_role_id
+	SET APPLICATION_FORM_ACTION_REQUIRED.deadline_timestamp = in_deadline_timestamp,
+		APPLICATION_FORM_ACTION_REQUIRED.raises_urgent_flag = in_raises_urgent_flag
+	WHERE APPLICATION_FORM_USER_ROLE.application_form_id = in_application_form_id
+		AND APPLICATION_FORM_ACTION_REQUIRED.bind_deadline_to_due_date = 1;
+		
+END
+;
+
+CREATE PROCEDURE INSERT_APPLICATION_FROM_USER_ROLE_UPDATE (
+	IN in_application_form_id INT(10) UNSIGNED, 
+	IN in_registered_user_id INT(10) UNSIGNED, 
+	IN in_update_timestamp DATE, 
+	IN in_update_visibility INT(1) UNSIGNED)
+BEGIN
+
+	UPDATE APPLICATION_FORM_USER_ROLE INNER JOIN APPLICATION_ROLE
+		ON APPLICATION_FORM_USER_ROLE.application_role_id = APPLICATION_ROLE.id
+	SET APPLICATION_FORM_USER_ROLE.update_timestamp = in_update_timestamp,
+		APPLICATION_FORM_USER_ROLE.raises_update_flag = 
+			IF (APPLICATION_FORM_USER_ROLE.registered_user_id = in_registered_user_id,
+				0,
+				1)
+	WHERE APPLICATION_FORM_USER_ROLE.application_form_id = in_application_form_id
+		AND APPLICATION_ROLE.update_visibility >= in_update_visibility;
 	
 END
 ;

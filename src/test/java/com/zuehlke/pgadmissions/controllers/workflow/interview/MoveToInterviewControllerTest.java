@@ -200,7 +200,7 @@ public class MoveToInterviewControllerTest {
 
         interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         replay(interviewServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.moveToInterview(interview, bindingResultMock, modelMap);
@@ -221,7 +221,7 @@ public class MoveToInterviewControllerTest {
         expect(currentUserMock.getId()).andReturn(3).anyTimes();
         interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         
         replay(interviewServiceMock, currentUserMock, applicationFormUserRoleServiceMock);
         String view = controller.moveToInterview(interview, bindingResultMock, modelMap);

@@ -170,7 +170,7 @@ public class AdmitterCommentControllerTest {
         applicationsServiceMock.save(application);
         commentServiceMock.save(comment);
         applicationFormUserRoleServiceMock.admitterCommentPosted(comment);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, currentUser, ApplicationUpdateScope.INTERNAL);
         
         replay();
         String result = controller.confirmEligibility(modelMap, comment, resultMock);

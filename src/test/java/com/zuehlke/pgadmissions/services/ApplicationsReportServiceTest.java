@@ -23,7 +23,6 @@ import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.NumberValue;
 import com.google.visualization.datasource.datatable.value.TextValue;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -66,7 +65,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 
 public class ApplicationsReportServiceTest {
 
@@ -77,16 +75,14 @@ public class ApplicationsReportServiceTest {
     private ApplicationsService applicationsServiceMock;
     
     private ApplicantRatingService applicantRatingServiceMock;
-    
-    private ApplicationFormDAO applicationFormDAOMock;
 
     @Test
     public void testGetEmptyApplicationsReport() {
         // GIVEN
-        List<ApplicationDescriptor> applications = Lists.newArrayList();
+        List<ApplicationForm> applications = Lists.newArrayList();
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
@@ -102,7 +98,7 @@ public class ApplicationsReportServiceTest {
         ApplicationsFiltering filtering = EasyMock.createMock(ApplicationsFiltering.class);
         filtering.setBlockCount(1);
         
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(Collections.<ApplicationDescriptor>emptyList());
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(Collections.<ApplicationForm>emptyList());
         EasyMock.expect(filtering.getBlockCount()).andReturn(1);
         filtering.setBlockCount(2);
         
@@ -121,13 +117,11 @@ public class ApplicationsReportServiceTest {
         PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
         ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).build();
         ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1).build();
-        ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationFormId(app1.getId());
-        List<ApplicationDescriptor> applications = Lists.newArrayList(applicationDescriptor);
+        List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(new ArrayList<ApplicationDescriptor>());
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(new ArrayList<ApplicationForm>());
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
@@ -221,13 +215,12 @@ public class ApplicationsReportServiceTest {
                 .approvalRounds(approvalRound).personalDetails(personalDetails).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).latestReviewRound(reviewRound).averageRating(new BigDecimal("1.56")).build();
         
         
-        ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationFormId(app1.getId());
-        List<ApplicationDescriptor> applications = Lists.newArrayList(applicationDescriptor);
+        ApplicationForm applicationForm = new ApplicationForm();
+        List<ApplicationForm> applications = Lists.newArrayList(applicationForm);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(new ArrayList<ApplicationDescriptor>());
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(new ArrayList<ApplicationForm>());
         EasyMock.expect(applicantRatingServiceMock.getAverageReferenceRating(app1)).andReturn(new BigDecimal("3.33"));
 
         // WHEN
@@ -322,13 +315,12 @@ public class ApplicationsReportServiceTest {
         
         ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1)
                 .approvalRounds(approvalRound).personalDetails(personalDetails).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).build();
-        ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationFormId(app1.getId());
-        List<ApplicationDescriptor> applications = Lists.newArrayList(applicationDescriptor);
+
+        List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(new ArrayList<ApplicationDescriptor>());
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(new ArrayList<ApplicationForm>());
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
@@ -347,13 +339,12 @@ public class ApplicationsReportServiceTest {
         PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
         ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(null).build();
         ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1).build();
-        ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.setApplicationFormId(app1.getId());
-        List<ApplicationDescriptor> applications = Lists.newArrayList(applicationDescriptor);
+
+        List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(new ArrayList<ApplicationDescriptor>());
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(new ArrayList<ApplicationForm>());
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
@@ -406,8 +397,7 @@ public class ApplicationsReportServiceTest {
         user = new RegisteredUser();
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         applicantRatingServiceMock = EasyMock.createMock(ApplicantRatingService.class);
-        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-        service = new ApplicationsReportService(applicationsServiceMock, applicantRatingServiceMock, applicationFormDAOMock);
+        service = new ApplicationsReportService(applicationsServiceMock, applicantRatingServiceMock);
     }
 
     public String getTextValue(DataTable table, TableRow row, String columnId) {

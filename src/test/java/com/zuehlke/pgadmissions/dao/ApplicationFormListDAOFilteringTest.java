@@ -133,7 +133,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("app").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter), 50);
 
         assertContainsApplications(unpackApplications(applications), app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
@@ -150,7 +150,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER)
                 .searchPredicate(SearchPredicate.NOT_CONTAINING).searchTerm("app").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter), 50);
 
         assertContainsApplications(unpackApplications(applications), otherApplicationForm);
@@ -161,7 +161,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter nameFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("app").build();
         ApplicationsFilter statusFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Review").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, nameFilter, statusFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app6InReview, app2InReview);
@@ -172,7 +172,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter statusfilter2 = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Validation").build();
         ApplicationsFilter statusFilter1 = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Review").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, true, statusfilter2, statusFilter1), 50);
 
         assertContainsApplications(unpackApplications(applications), app6InReview, app3InValidation, app2InReview);
@@ -184,7 +184,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
                 .searchPredicate(SearchPredicate.NOT_CONTAINING).searchTerm("app2").build();
         ApplicationsFilter statusFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Review").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, nameFilter, statusFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app6InReview);
@@ -195,7 +195,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter statusFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Review").build();
         ApplicationsFilter nameFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("app").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, nameFilter, statusFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app6InReview, app2InReview);
@@ -206,7 +206,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter statusFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Approval").build();
         ApplicationsFilter nameFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("app5").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, true, nameFilter, statusFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app5InInterview, app1InApproval);
@@ -225,7 +225,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("czka").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.DESCENDING, 1, filter), 50);
 
         assertContainsApplications(unpackApplications(applications), otherApplicationForm);
@@ -244,7 +244,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("czka").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.DESCENDING, 1, filter), 50);
 
         assertContainsApplications(unpackApplications(applications), otherApplicationForm);
@@ -258,7 +258,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchTerm(lastEditedDatePlus2String)
                 .searchPredicate(SearchPredicate.FROM_DATE).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, dateFilter, statusFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app2InReview);
@@ -277,7 +277,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchTerm(lastEditedDatePlus2String)
                 .searchPredicate(SearchPredicate.FROM_DATE).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, dateFilter, notReviewFilter, notApprovalFilter, notValidationFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app4InApproved);
@@ -290,7 +290,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchTerm(lastEditedDatePlus2String)
                 .searchPredicate(SearchPredicate.TO_DATE).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, dateFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app6InReview, app5InInterview, app4InApproved);
@@ -303,7 +303,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchTerm(lastEditedDatePlus2String)
                 .searchPredicate(SearchPredicate.ON_DATE).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, dateFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app4InApproved);
@@ -316,7 +316,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUBMISSION_DATE).searchTerm(submissionDatePlus2String)
                 .searchPredicate(SearchPredicate.FROM_DATE).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, dateFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app6InReview, app5InInterview, app4InApproved, app3InValidation);
@@ -329,7 +329,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUBMISSION_DATE).searchTerm(submissionDatePlus2String)
                 .searchPredicate(SearchPredicate.TO_DATE).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, dateFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app3InValidation, app2InReview, app1InApproval);
@@ -342,7 +342,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUBMISSION_DATE).searchTerm(submissionDatePlus2String)
                 .searchPredicate(SearchPredicate.ON_DATE).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, dateFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app3InValidation);
@@ -353,7 +353,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("")
                 .searchPredicate(SearchPredicate.CONTAINING).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, dateFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
@@ -372,7 +372,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("ciszek Pieczka").build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.DESCENDING, 1, filter), 50);
 
         assertContainsApplications(unpackApplications(applications), otherApplicationForm);
@@ -394,7 +394,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         ApplicationsFilter programFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm(program.getTitle())
                 .searchPredicate(SearchPredicate.CONTAINING).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.ASCENDING, 1, programFilter), 50);
 
         assertContainsApplications(unpackApplications(applications), app1InApproval);
@@ -405,7 +405,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         ApplicationsFilter programFilter = new ApplicationsFilterBuilder().searchCategory(null).searchTerm(null).searchPredicate(null).build();
 
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplications(currentUser,
+        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.RATING, SortOrder.ASCENDING, 1, programFilter), 50);
 
         List<ApplicationForm> expectedApplications = Lists.newArrayList(app4InApproved, app3InValidation, app5InInterview, app1InApproval, app2InReview,

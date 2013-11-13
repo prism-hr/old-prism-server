@@ -118,7 +118,7 @@ public class ApplicationListController {
             final ModelMap model) {
         RegisteredUser user = getUser();  
         filtering.setUseDisjunction(useDisjunction);
-        List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
+        List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);
         model.addAttribute("applications", applications);
         model.addAttribute("latestConsideredFlagIndex", filtering.getLatestConsideredFlagIndex());
         return APPLICATION_LIST_SECTION_VIEW_NAME;

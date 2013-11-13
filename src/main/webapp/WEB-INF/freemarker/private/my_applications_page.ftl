@@ -89,13 +89,12 @@
           </div>
           </#if> </#if>
           <div id="table-bar"> 
-           <div id="prefilterBox">
+           <div id="prefilterBox" style="display:none">
           	<div class="filterOperators">
              <span>Show applications matching</span> <div id="operatorSwitch" class="switch switch-mini" data-on-label="ANY" data-off-label="ALL">
                 <input id="useDisjunctionId" type="checkbox" <#if filtering.useDisjunction> checked="checked" </#if> />
              </div>
              <span>of the following filters.</span>
-             
             </div>
            
             </div>

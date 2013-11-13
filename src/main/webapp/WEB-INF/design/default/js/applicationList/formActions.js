@@ -6,6 +6,7 @@ $(document).ready(function() {
 
 	// Modal window functionality.
 	setupModalBox();
+	checkSwitch();
 	
 	$('#search-box').find('.date').each(function() {
 	    bindDatePicker($(this));
@@ -191,7 +192,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	$("#search-reset").live('click', function() {
 		clearCurrentFilters(true);
-		checkSwich();
+		checkSwitch();
 	});
 
 	// --------------------------------------------------------------------------------
@@ -284,7 +285,7 @@ $(document).ready(function() {
 			$('#search-go').click();
 		}
 		cleanUpFilterIds();
-		checkSwich();
+		checkSwitch();
 	});
 	
 	// Remove current filter
@@ -297,7 +298,7 @@ $(document).ready(function() {
 				$('#search-go').click();
 			}
 		}
-		checkSwich();
+		checkSwitch();
 	});
 	
 	$('#operatorSwitch').on('switch-change', function () {
@@ -306,11 +307,11 @@ $(document).ready(function() {
 		},800);
 	});
 });
-function checkSwich() {
+function checkSwitch() {
 	if ($('.filter').length > 1) {
-		$('.filterOperators').show();
+		$('#prefilterBox').show();		
 	} else  {
-		$('.filterOperators').hide();
+		$('#prefilterBox').hide();
 	}
 }
 
@@ -328,9 +329,9 @@ function inputBackNormal(mainInput) {
 		   .removeAttr('readonly').val('');
 	} else {
 	// Replace field if select
-		idswich = $inputSelected.attr('id');
+		idSwitch = $inputSelected.attr('id');
 		$inputSelected.remove();
-		$('<input type=\"text\" value=\"\" name=\"searchTerm\" placeholder=\"Filter by...\" class=\"filterInput\" style=\"margin-left: 3px;\" />').insertAfter(mainInput.find('.selectPredicate')).attr('id',idswich);
+		$('<input type=\"text\" value=\"\" name=\"searchTerm\" placeholder=\"Filter by...\" class=\"filterInput\" style=\"margin-left: 3px;\" />').insertAfter(mainInput.find('.selectPredicate')).attr('id',idSwitch);
 	}
 }
 //field changer
@@ -344,10 +345,10 @@ function fieldChange(selected, id) {
 		for(var val in data) {
 			$("<option />", {value: data[val], text: data[val]}).appendTo(selector);
 		}
-		idswich = id.parent().find('.filterInput').attr('id');
-		$("input#" + idswich).remove();
+		idSwitch = id.parent().find('.filterInput').attr('id');
+		$("input#" + idSwitch).remove();
 		
-		$(selector).insertAfter(id.parent().find('.selectPredicate')).attr('id',idswich);
+		$(selector).insertAfter(id.parent().find('.selectPredicate')).attr('id',idSwitch);
 
 		
 	} else if (selected == "LAST_EDITED_DATE" || selected == "SUBMISSION_DATE" || selected == "CLOSING_DATE") {
@@ -512,7 +513,7 @@ function getFilters() {
 			});
 		}
 	});
-	checkSwich();
+	checkSwitch();
 	return filters;
 }
 
@@ -558,7 +559,7 @@ function clearFilter(filter){
 	$(filter).find(".selectPredicate").empty();
 	$(filter).find(".filterInput").val('');
 	inputBackNormal($(filter));
-	checkSwich();
+	checkSwitch();
 }
 
 function cleanUpFilterIds(){

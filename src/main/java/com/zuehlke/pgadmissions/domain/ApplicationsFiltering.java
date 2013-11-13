@@ -106,7 +106,5 @@ public class ApplicationsFiltering implements Serializable {
     public void setBlockCount(Integer blockCount) {
         this.blockCount = blockCount;
     }
-    
-    
 
 }

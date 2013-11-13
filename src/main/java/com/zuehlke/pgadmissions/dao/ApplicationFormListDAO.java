@@ -53,7 +53,6 @@ public class ApplicationFormListDAO {
     
     @SuppressWarnings("unchecked")
     public List<ApplicationDescriptor> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {
-    	// Now that we can understand what this is doing, it should be possible to tune the performance!
     	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
     		.setReadOnly(true)
     		.setProjection(Projections.projectionList()
@@ -215,41 +214,59 @@ public class ApplicationFormListDAO {
     private void appendOrderStatement(Criteria criteria, final ApplicationsFiltering filtering) {
     	SortCategory sortCategory = filtering.getSortCategory();
     	
-    	if (sortCategory == null) {
-            criteria.addOrder(Order.desc("raisesUrgentFlag"));
-            criteria.addOrder(Order.desc("raisesUpdateFlag"));
-    	} else {
-	        boolean ascending = true;
-	        
-	        if (filtering.getOrder() == SortOrder.DESCENDING) {
-	            ascending = false;
-	        }
-	        
-	        switch (sortCategory) {
+    	boolean doSortAscending = true;    
+        if (filtering.getOrder() == SortOrder.DESCENDING) {
+            doSortAscending = false;
+        }
+        
+        switch (sortCategory) {
+        
+	        case URGENT:
+	        	applyOrderByUrgentAndUpdate(criteria, doSortAscending);   
+	        	break;
+	        	
+	        case UPDATE:
+	        	applyOrderByUrgentAndUpdate(criteria, doSortAscending);
+	        	break;
 	
 	        case APPLICANT_NAME:
-	            criteria.addOrder(getOrderCriteria("applicant.lastName", ascending));
-	            criteria.addOrder(getOrderCriteria("applicant.firstName", ascending));
+	            criteria.addOrder(getOrderCriteria("applicant.lastName", doSortAscending));
+	            criteria.addOrder(getOrderCriteria("applicant.firstName", doSortAscending));
+	            applyDefaultSortOrder(criteria, doSortAscending);
 	            break;
 	
 	        case PROGRAMME_NAME:
-	            criteria.addOrder(getOrderCriteria("project.title", ascending));
+	            criteria.addOrder(getOrderCriteria("project.title", doSortAscending));
+	            applyDefaultSortOrder(criteria, doSortAscending);
 	            break;
 	
 	        case RATING:
-	            criteria.addOrder(getOrderCriteria("applicationForm.averageRating", ascending));
+	            criteria.addOrder(getOrderCriteria("applicationForm.averageRating", doSortAscending));
+	            applyDefaultSortOrder(criteria, doSortAscending);
 	
 	        case APPLICATION_STATUS:
-	            criteria.addOrder(getOrderCriteria("applicationForm.status", ascending));
+	            criteria.addOrder(getOrderCriteria("applicationForm.status", doSortAscending));
+	            applyDefaultSortOrder(criteria, doSortAscending);
 	            break;
 	
 	        default:
 	        case APPLICATION_DATE:
-	            criteria.addOrder(getOrderCriteria("applicationForm.submittedDate", ascending));
-	            criteria.addOrder(getOrderCriteria("applicationForm.applicationTimestamp", ascending));
+	        	applyDefaultSortOrder(criteria, doSortAscending);
 	            break;
-	        }
-    	}
+	            
+        }
+        
+    }
+    
+    private void applyDefaultSortOrder(Criteria criteria, Boolean doSortAscending) {
+        criteria.addOrder(getOrderCriteria("applicationForm.submittedDate", doSortAscending));
+        criteria.addOrder(getOrderCriteria("applicationForm.applicationTimestamp", doSortAscending));
+    }
+    
+    private void applyOrderByUrgentAndUpdate(Criteria criteria, Boolean doSortAscending) {
+    	criteria.addOrder(Order.desc("raisesUrgentFlag"));
+        criteria.addOrder(Order.desc("raisesUpdateFlag"));
+        applyDefaultSortOrder(criteria, doSortAscending);
     }
     
     private Order getOrderCriteria(String propertyName, boolean ascending) {

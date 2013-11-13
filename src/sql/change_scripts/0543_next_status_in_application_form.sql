@@ -62,7 +62,8 @@ BEGIN
 		ON APPLICATION_FORM_ACTION_REQUIRED.application_form_user_role_id = APPLICATION_FORM_USER_ROLE.id
 	WHERE APPLICATION_FORM_USER_ROLE.registered_user_id = in_registered_user_id
 		AND APPLICATION_FORM_USER_ROLE.application_form_id = in_application_form_id
-	GROUP BY APPLICATION_FORM_ACTION_REQUIRED.action_id ASC)
+	GROUP BY APPLICATION_FORM_ACTION_REQUIRED.action_id ASC
+	ORDER BY APPLICATION_FORM_ACTION_REQUIRED.raises_urgent_flag)
 		UNION
 	(SELECT APPLICATION_FORM_ACTION_OPTIONAL.action_id AS action,
 		APPLICATION_FORM_ACTION_OPTIONAL.raises_urgent_flag AS raisesUrgentFlag
@@ -91,7 +92,8 @@ BEGIN
 	UPDATE APPLICATION_FORM_USER_ROLE INNER JOIN APPLICATION_FORM_ACTION_REQUIRED 
 		ON APPLICATION_FORM_USER_ROLE.id = APPLICATION_FORM_ACTION_REQUIRED.application_form_user_role_id
 	SET APPLICATION_FORM_ACTION_REQUIRED.deadline_timestamp = in_deadline_timestamp,
-		APPLICATION_FORM_ACTION_REQUIRED.raises_urgent_flag = in_raises_urgent_flag
+		APPLICATION_FORM_ACTION_REQUIRED.raises_urgent_flag = in_raises_urgent_flag,
+		APPLICATION_FORM_USER_ROLE.raises_urgent_flag = in_raises_urgent_flag
 	WHERE APPLICATION_FORM_USER_ROLE.application_form_id = in_application_form_id
 		AND APPLICATION_FORM_ACTION_REQUIRED.bind_deadline_to_due_date = 1;
 		

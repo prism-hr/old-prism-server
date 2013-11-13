@@ -23,6 +23,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -52,7 +53,7 @@ public class ApplicationFormListDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public List<ApplicationDescriptor> getVisibleApplications(final RegisteredUser user, final ApplicationsFiltering filtering, final int itemsPerPage) {
+    public List<ApplicationDescriptor> getVisibleApplicationsForList(final RegisteredUser registeredUser, final ApplicationsFiltering filtering, final int itemsPerPage) {
     	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
     		.setReadOnly(true)
     		.setProjection(Projections.projectionList()
@@ -76,22 +77,39 @@ public class ApplicationFormListDAO {
     			.add(Projections.property("applicationForm.personalStatement.id"), "applicationFormPersonalStatementId")
     			.add(Projections.property("applicationForm.cv.id"), "applicationFormCvId")
     			.add(Projections.property("applicationForm.submittedDate"), "applicationFormCreatedTimestamp")
-    			.add(Projections.max("updateTimestamp"), "applicationFormUpdatedTimestamp"))
-		.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
-		.createAlias("applicationForm.applicant", "applicant", JoinType.INNER_JOIN)
-		.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
-		.createAlias("applicationForm.project", "project", JoinType.LEFT_OUTER_JOIN)
-		.createAlias("project.advert", "advert", JoinType.LEFT_OUTER_JOIN)
-       	.add(Restrictions.eq("user", user));
-    	
-    	appendWhereStatement(criteria, filtering);
+    			.add(Projections.max("updateTimestamp"), "applicationFormUpdatedTimestamp"));
+       	
+    	appendJoinStatements(criteria);
+    	appendWhereStatement(criteria, registeredUser, filtering);
     	appendOrderStatement(criteria, filtering);
     	appendLimitStatement(criteria, (filtering.getBlockCount() - 1) * itemsPerPage, itemsPerPage);
     	
     	return criteria.setResultTransformer(Transformers.aliasToBean(ApplicationDescriptor.class)).list();
     }
     
-    private void appendWhereStatement(Criteria criteria, ApplicationsFiltering filtering) {
+    @SuppressWarnings("unchecked")
+    public List<ApplicationForm> getVisibleApplicationsForReport(final RegisteredUser registeredUser, final ApplicationsFiltering filtering) {
+    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.setReadOnly(true)
+        		.setProjection(Projections.groupProperty("applicationForm"));
+        
+        appendJoinStatements(criteria);
+    	appendWhereStatement(criteria, registeredUser, filtering);
+    	appendOrderStatement(criteria, filtering);
+    	
+    	return criteria.list();
+    }
+    
+    private void appendJoinStatements(Criteria criteria) {
+		criteria.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+			.createAlias("applicationForm.applicant", "applicant", JoinType.INNER_JOIN)
+			.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+			.createAlias("applicationForm.project", "project", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("project.advert", "advert", JoinType.LEFT_OUTER_JOIN);
+    }
+    
+    private void appendWhereStatement(Criteria criteria, RegisteredUser registeredUser, ApplicationsFiltering filtering) {
+    	criteria.add(Restrictions.eq("user", registeredUser));
     	
         if (filtering != null) {
             boolean useDisjunction = filtering.getUseDisjunction();

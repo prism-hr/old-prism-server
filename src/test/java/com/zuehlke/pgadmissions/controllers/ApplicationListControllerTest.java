@@ -172,7 +172,7 @@ public class ApplicationListControllerTest {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         List<ApplicationDescriptor> applications = new ArrayList<ApplicationDescriptor>();
         
-        expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user, filtering)).andReturn(applications);
+        expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForList(user, filtering)).andReturn(applications);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 

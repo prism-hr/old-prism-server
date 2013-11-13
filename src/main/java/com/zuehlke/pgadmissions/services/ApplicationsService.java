@@ -171,13 +171,17 @@ public class ApplicationsService {
         applicationForm.setIsEditableByApplicant(false);
     }
 
-    public List<ApplicationDescriptor> getAllVisibleAndMatchedApplications(final RegisteredUser user, final ApplicationsFiltering filtering) {
-        List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplications(user, filtering, APPLICATION_BLOCK_SIZE);
+    public List<ApplicationDescriptor> getAllVisibleAndMatchedApplicationsForList(final RegisteredUser user, final ApplicationsFiltering filtering) {
+        List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
     	for (ApplicationDescriptor application : applications) {
     		application.getActionDefinitions().addAll(applicationFormUserRoleDAO.
     				findActionsByUserIdAndApplicationIdAndApplicationFormStatus(user.getId(), application.getApplicationFormId(), application.getApplicationFormStatus()));
     	}
     	return applications;
+    }
+    
+    public List<ApplicationForm> getAllVisibleAndMatchedApplicationsForReport(final RegisteredUser user, final ApplicationsFiltering filtering) {
+    	return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
     }
 
     public void delegateInterviewAdministration(final ApplicationForm applicationForm, final RegisteredUser delegate) {

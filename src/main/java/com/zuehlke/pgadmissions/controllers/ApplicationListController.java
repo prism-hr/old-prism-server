@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
+import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
@@ -83,7 +84,8 @@ public class ApplicationListController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getApplicationListPage(@RequestParam(required = false) String applyFilters, ModelMap model, HttpSession session) {
+    public String getApplicationListPage(@RequestParam(required = false) String applyFilters, 
+    	ModelMap model, HttpSession session) {
         Object alertDefinition = session.getAttribute("alertDefinition");
         if (alertDefinition != null) {
             model.addAttribute("alertDefinition", alertDefinition);
@@ -92,9 +94,13 @@ public class ApplicationListController {
 
         ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
 
-        if (applyFilters != null) { // custom apply filters action
-            if ("reload".equals(applyFilters)) {
-                filtering = filteringService.getStoredOrDefaultFiltering(getUser());
+        if (applyFilters != null) {
+            if ("urgent".equals(applyFilters)) {
+            	filtering.setSortCategory(SortCategory.URGENT);
+            } else if ("update".equals(applyFilters)) {
+            	filtering.setSortCategory(SortCategory.UPDATE);
+            } else if ("reload".equals(applyFilters)) {
+            	filtering = filteringService.getStoredOrDefaultFiltering(getUser());               
             }
         }
 
@@ -107,10 +113,10 @@ public class ApplicationListController {
     }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
-    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering, 
-    		@RequestParam Boolean useDisjunction,
+    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering,
+    		@RequestParam(required=false) Boolean useDisjunction,
             final ModelMap model) {
-        RegisteredUser user = getUser();
+        RegisteredUser user = getUser();  
         filtering.setUseDisjunction(useDisjunction);
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplications(user, filtering);
         model.addAttribute("applications", applications);

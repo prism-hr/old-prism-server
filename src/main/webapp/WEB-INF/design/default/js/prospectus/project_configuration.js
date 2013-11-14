@@ -14,7 +14,7 @@ $(document).ready(function(){
 		clearAll();
 		loadProjects();
 		$('#projectsClear').hide();
-		initEditorsProjects()
+		initEditorsProjects();
 });
 function initEditorsProjects() {
 	tinymce.init({
@@ -22,6 +22,7 @@ function initEditorsProjects() {
 	    plugins: ["link wordcount"],
 	    width: 480,
 	    menubar: false,
+	    content: "",
 	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
 	    /*setup : function(ed) {
 	    	ed.on('keyup', function(e) { $('textArea#programAdvertDescriptionText').val(tinymce.get('programAdvertDescriptionText').getContent())});
@@ -32,6 +33,7 @@ function initEditorsProjects() {
 	    plugins: ["link wordcount"],
 	    width: 480,
 	    menubar: false,
+	    content: "",
 	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
 	});
 }
@@ -49,8 +51,8 @@ function registerAutosuggest(){
 
 function registerProgramSelect() {
 	$("#projectAdvertProgramSelect").change(function() {
-		clearAll();
 		loadProjects();
+		clearAll();
 	});
 }
 
@@ -198,6 +200,7 @@ function clearAll(){
 	clearProjectAdvertErrors();
 	$('#projectsClear').hide();
 	$('html, body').animate({ scrollTop: $('body').offset().top}, 300);
+	initEditorsProjects();
 	addCounter();
 }
 
@@ -417,7 +420,6 @@ function checktoDisableProjet() {
 		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo").attr("disabled", "disabled");
 		$("#addProjectAdvert").addClass("disabled");
 		clearAll();
-		$("#projectAdvertDescriptionText").text('1000 Characters left');
 	}
 }
 function changeInfoBarNameProject(text,advertUpdated) {

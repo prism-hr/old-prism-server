@@ -14,16 +14,18 @@ function initEditors() {
 	    plugins: ["link wordcount"],
 	    width: 480,
 	    menubar: false,
-	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo",
-	    setup : function(ed) {
+	    content: "",
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	  /*setup : function(ed) {
 	    	ed.on('keyup', function(e) { $('textArea#programAdvertDescriptionText').val(tinymce.get('programAdvertDescriptionText').getContent())});
-	    }
+	    }*/
 	});
 	tinymce.init({
 	    selector: "#programAdvertFundingText",
 	    plugins: ["link wordcount"],
 	    width: 480,
 	    menubar: false,
+	    content: "",
 	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
 	});
 }
@@ -430,14 +432,14 @@ function isAdvertLoaded(){
 }
 
 function clearAdvert(){
-	setTextAreaValue($("#programAdvertDescriptionText"),"");
-	setTextAreaValue($("#programAdvertFundingText"),"");
+	$("#programAdvertDescriptionText").val("");
+	$("#programAdvertFundingText").val("");
 	$("#programAdvertId").val("");
 	$("#programAdvertStudyDurationInput").val("");
 	$("#programAdvertStudyDurationUnitSelect").val("");
-	$("#programAdvertFundingText").val("");
 	$("#programAdvertIsActiveRadioYes").prop("checked", false);
 	$("#programAdvertIsActiveRadioNo").prop("checked", false);
+	initEditors();
 }
 
 function setTextAreaValue(textArea, value){
@@ -463,6 +465,7 @@ function clearAll(){
 }
 
 function clearClosingDate(){
+	$("#programAdvertDescriptionText").val("");
 	$("#programAdvertClosingDateId").val("");
 	$("#programAdvertClosingDateInput").val("");
 	$("#programAdvertStudyPlacesInput").val("");

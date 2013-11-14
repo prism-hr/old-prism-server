@@ -86,8 +86,14 @@ public class ApplicationFormUserRoleService {
     		RegisteredUser registeringUser = userDAO.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
     		if (registeringUser == null) {
     			registeringUser = new RegisteredUser();
+    			registeringUser.setUsername(suggestedSupervisor.getEmail());
     			registeringUser.setFirstName(suggestedSupervisor.getFirstname());
-    			registeringUser.setFirstName(suggestedSupervisor.getFirstname());
+    			registeringUser.setLastName(suggestedSupervisor.getFirstname());
+    			registeringUser.setEmail(suggestedSupervisor.getEmail());
+    			registeringUser.setAccountNonExpired(true);
+    			registeringUser.setAccountNonLocked(true);
+    			registeringUser.setCredentialsNonExpired(true);
+    			registeringUser.setEnabled(true);
     			userDAO.save(registeringUser);
     		}
             createApplicationFormUserRole(applicationForm, registeringUser, Authority.SUGGESTEDSUPERVISOR, true);

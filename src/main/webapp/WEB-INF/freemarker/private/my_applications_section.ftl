@@ -51,11 +51,15 @@
           </#if>
         </#list>
     </select></td>
-  <td class="centre"><#if application.applicationFormWithdrawnBeforeSubmitted>
-        Aborted
+      <td class="centre">
+        <#if application.applicationFormWithdrawnBeforeSubmitted>
+          Aborted
         <#elseif application.applicationFormCreatedTimestamp?has_content>
-        ${(application.applicationFormCreatedTimestamp?string("dd MMM yyyy"))}
-        <#else> <a class="btn btn-success" href="/pgadmissions/application?view=view&applicationId=${application.applicationFormNumber}">Proceed</a> </#if> </td>
+          ${(application.applicationFormCreatedTimestamp?string("dd MMM yyyy"))}
+        <#else>
+          <a class="btn btn-success" href="/pgadmissions/application?view=view&applicationId=${application.applicationFormNumber}">Proceed</a>
+        </#if> 
+      </td>
 </tr>
     <tr class="application-details" data-application-id="${application.applicationFormNumber}" data-application-status="${application.applicationFormStatus}" data-application-issubmitted="${application.applicationFormSubmitted?string("true", "false")}">
      <td colspan="7"><div class="application-lhs">

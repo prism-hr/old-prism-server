@@ -104,17 +104,19 @@ public class EvaluationTransitionController extends StateTransitionController {
 
         RegisteredUser user = getCurrentUser();
 
-        if (BooleanUtils.isNotTrue(delegate)) {
-            applicationForm.setApplicationAdministrator(null);
-        }
 
         if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
         ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
 
+        RegisteredUser loadedAdministrator = null;
+        if (delegatedAdministrator.getEmail() != null) {
+            loadedAdministrator = userService.getUserByEmailIncludingDisabledAccounts(delegatedAdministrator.getEmail());
+        }
+
         StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(),
-                stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus, delegatedAdministrator);
+                stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus, loadedAdministrator);
 
         applicationsService.save(applicationForm);
         commentService.save(newComment);
@@ -124,7 +126,7 @@ public class EvaluationTransitionController extends StateTransitionController {
             applicationsService.makeApplicationNotEditable(applicationForm);
         }
 
-        if (BooleanUtils.isTrue(delegate)) {
+        if (delegatedAdministrator.getEmail() != null) {
             return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
         }
 

@@ -120,10 +120,10 @@ public class ValidationTransitionController extends StateTransitionController {
             applicationsService.fastTrackApplication(form.getApplicationNumber());
         }
 
-        if (delegatedAdministrator.getEmail() != null) {
-            RegisteredUser loadedAdministrator = userService.getUserByEmailIncludingDisabledAccounts(delegatedAdministrator.getEmail());
-            comment.setDelegateAdministrator(loadedAdministrator);
-        }
+//        if (delegatedAdministrator.getEmail() != null) {
+//            RegisteredUser loadedAdministrator = userService.getUserByEmailIncludingDisabledAccounts(delegatedAdministrator.getEmail());
+//            comment.setDelegateAdministrator(loadedAdministrator);
+//        }
 
         comment.setDate(new Date());
         commentService.save(comment);
@@ -132,13 +132,14 @@ public class ValidationTransitionController extends StateTransitionController {
             applicationsService.makeApplicationNotEditable(form);
         }
 
+        form.setNextStatus(comment.getNextStatus());
         applicationsService.save(form);
         applicationFormUserRoleService.stateChanged(comment);
         applicationFormUserRoleService.registerApplicationUpdate(form, user, ApplicationUpdateScope.ALL_USERS);
 
-        if (delegatedAdministrator.getEmail() != null) {
-            return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();
-        }
+//        if (delegatedAdministrator.getEmail() != null) {
+//            return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();
+//        }
 
         applicationsService.refresh(form);
         return stateTransitionService.resolveView(form);

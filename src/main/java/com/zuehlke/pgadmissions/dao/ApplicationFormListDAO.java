@@ -254,7 +254,7 @@ public class ApplicationFormListDAO {
 	            break;
 	
 	        case PROGRAMME_NAME:
-	            criteria.addOrder(getOrderCriteria("project.title", doSortAscending));
+	            criteria.addOrder(getOrderCriteria("program.title", doSortAscending));
 	            applyDefaultSortOrder(criteria, doSortAscending);
 	            break;
 	

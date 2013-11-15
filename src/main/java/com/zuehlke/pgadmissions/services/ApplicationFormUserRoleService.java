@@ -84,18 +84,19 @@ public class ApplicationFormUserRoleService {
         for (SuggestedSupervisor suggestedSupervisor : applicationForm.getProgrammeDetails().getSuggestedSupervisors()) {
     		String supervisorEmail = suggestedSupervisor.getEmail();
     		RegisteredUser registeringUser = userDAO.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
+    		
     		if (registeringUser == null) {
     			registeringUser = new RegisteredUser();
     			registeringUser.setUsername(suggestedSupervisor.getEmail());
     			registeringUser.setFirstName(suggestedSupervisor.getFirstname());
     			registeringUser.setLastName(suggestedSupervisor.getFirstname());
-    			registeringUser.setEmail(suggestedSupervisor.getEmail());
+    			registeringUser.setEmail(supervisorEmail);
     			registeringUser.setAccountNonExpired(true);
     			registeringUser.setAccountNonLocked(true);
     			registeringUser.setCredentialsNonExpired(true);
     			registeringUser.setEnabled(true);
     			userDAO.save(registeringUser);
-    		}
+    		}	
             createApplicationFormUserRole(applicationForm, registeringUser, Authority.SUGGESTEDSUPERVISOR, true);
         }   
     }
@@ -142,7 +143,7 @@ public class ApplicationFormUserRoleService {
             for (RegisteredUser superAdministrator : userDAO.getSuperadministrators()) {
                 createApplicationFormUserRole(application, superAdministrator, Authority.SUPERADMINISTRATOR, false, 
                 		new ApplicationFormActionRequired("COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true),
-                		new ApplicationFormActionRequired("COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true));
+                		new ApplicationFormActionRequired("MOVE_TO_DIFFERENT_STAGE", new Date(), false, true));
             }
         }
 
@@ -150,7 +151,7 @@ public class ApplicationFormUserRoleService {
             for (RegisteredUser approver : approvers) {
                 createApplicationFormUserRole(application, approver, Authority.APPROVER, false, 
                 		new ApplicationFormActionRequired(initiateStageMap.get(nextStatus), new Date(), false, true),
-                		new ApplicationFormActionRequired("COMPLETE_OFFER_RECOMMENDATION", new Date(), false, true));
+                		new ApplicationFormActionRequired("MOVE_TO_DIFFERENT_STAGE", new Date(), false, true));
             }
         }
     }
@@ -303,10 +304,6 @@ public class ApplicationFormUserRoleService {
         
     }
 
-    public void processingDelegated(ApplicationForm applicationForm) {
-        // TODO Auto-generated method stub
-    }
-
     public void supervisionConfirmed(Supervisor supervisor) {
         ApprovalRound approval = supervisor.getApprovalRound();
         ApplicationForm application = approval.getApplication();
@@ -413,6 +410,7 @@ public class ApplicationFormUserRoleService {
                 administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
             }
         }
+        
         for (Entry<RegisteredUser, Authority> administrator : administrators.entrySet()) {
         	Boolean raisesUrgentFlag = dueDate.before(new Date());
         	

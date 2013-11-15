@@ -4,6 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -22,6 +25,14 @@ public class StateChangeComment extends Comment {
 	@Enumerated(EnumType.STRING)
 	@Column(name="next_status")
 	private ApplicationFormStatus nextStatus = null;
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade = {
+			javax.persistence.CascadeType.PERSIST,
+			javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@JoinColumn(name = "delegate_administrator_id")
+	private RegisteredUser delegateAdministrator;
+	@Column(name="delegate_administrator_id")
 	
 	@Transient
 	private Boolean fastTrackApplication = null;
@@ -49,4 +60,13 @@ public class StateChangeComment extends Comment {
     public void setFastTrackApplication(Boolean fastTrackApplication) {
         this.fastTrackApplication = fastTrackApplication;
     }
+    
+    public RegisteredUser getDelegateAdministrator() {
+    	return delegateAdministrator;
+    }
+    
+    public void setDelegateAdministrator(RegisteredUser delegateAdministrator) {
+    	this.delegateAdministrator = delegateAdministrator;
+    }
+    
 }

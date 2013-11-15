@@ -149,8 +149,8 @@ public class StateTransitionController {
         return getCurrentUser();
     }
 
-    @ModelAttribute("delegatedInterviewer")
-    public RegisteredUser getDelegatedInterviewer() {
+    @ModelAttribute("delegatedAdministrator")
+    public RegisteredUser getDelegatedAdministrator() {
         return new RegisteredUser();
     }
 

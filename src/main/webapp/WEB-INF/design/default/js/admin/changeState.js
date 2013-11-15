@@ -102,12 +102,14 @@ function changeState() {
 }
 
 function refreshControls() {
-    if ($('#status').val() == 'INTERVIEW') {
+    if ($('#status').val() == 'REVIEW' ||
+    	$('#status').val() == 'INTERVIEW' ||
+    	$('#status').val() == 'APPROVAL') {
         $("#approvedDetails").hide();
         
-        // temporarily removed
-//        $("#interviewDelegation").show();
-//        $("#interviewDelegation").find("div.alert").remove();
+
+        $("#interviewDelegation").show();
+        $("#interviewDelegation").find("div.alert").remove();
         
         
         $("#fastTrackApplicationSection").show();

@@ -1,5 +1,5 @@
 <div class="row">
-	<label id="delegateLabel" class="plain-label normal">Delegate interview administration<em>*</em></label> 
+	<label id="delegateLabel" class="plain-label normal">Delegate Administration<em>*</em></label> 
 	<span class="hint" data-desc="<@spring.message 'validateApp.delegate'/>"> </span>
     <div class="field">
       <#assign isDelegate = user.isApplicationAdministrator(applicationForm)>

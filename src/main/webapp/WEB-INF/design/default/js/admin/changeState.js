@@ -102,15 +102,11 @@ function changeState() {
 }
 
 function refreshControls() {
-    if ($('#status').val() == 'REVIEW' ||
-    	$('#status').val() == 'INTERVIEW' ||
-    	$('#status').val() == 'APPROVAL') {
+    if ($('#status').val() == 'HIDE') {
         $("#approvedDetails").hide();
-        
 
         $("#interviewDelegation").show();
         $("#interviewDelegation").find("div.alert").remove();
-        
         
         $("#fastTrackApplicationSection").show();
         if ($('input:radio[name=switch]:checked').val() == 'yes') {

@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 public class CommentFactory {
 
     public Comment createComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, List<Document> documents, CommentType commentType,
-            ApplicationFormStatus nextStatus) {
+            ApplicationFormStatus nextStatus, RegisteredUser delegateAdministrator) {
         Comment comment;
         if (commentType == CommentType.INTERVIEW_EVALUATION) {
             comment = createInterviewEvaluationComment(applicationForm, user, strComment, commentType, nextStatus);
@@ -36,7 +36,7 @@ public class CommentFactory {
         } else if (commentType == CommentType.REVIEW) {
             comment = createReviewComment(applicationForm, user, strComment, commentType);
         } else if (commentType == CommentType.APPROVAL) {
-            comment = creatStateChangeComment(applicationForm, user, strComment, commentType, nextStatus);
+            comment = creatStateChangeComment(applicationForm, user, strComment, commentType, nextStatus, delegateAdministrator);
         } else {
             comment = new Comment();
         }
@@ -70,11 +70,12 @@ public class CommentFactory {
     }
 
     private Comment creatStateChangeComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType,
-            ApplicationFormStatus nextStatus) {
+            ApplicationFormStatus nextStatus, RegisteredUser delegateAdministrator) {
         StateChangeComment stateChangeComment = new StateChangeComment();
         stateChangeComment.setComment(strComment);
         stateChangeComment.setType(commentType);
         setNextStatus(stateChangeComment, applicationForm, nextStatus);
+        stateChangeComment.setDelegateAdministrator(delegateAdministrator);
         return stateChangeComment;
     }
 

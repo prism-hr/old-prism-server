@@ -185,9 +185,7 @@ public class ApplicationsService {
     }
 
     public void delegateInterviewAdministration(final ApplicationForm applicationForm, final RegisteredUser delegate) {
-        applicationForm.setSuppressStateChangeNotifications(true);
-        applicationForm.setApplicationAdministrator(delegate);
-        applicationFormDAO.save(applicationForm);
+        applicationForm.getLatestStateChangeComment().setDelegateAdministrator(delegate);
     }
 
     public void sendSubmissionConfirmationToApplicant(final ApplicationForm applicationForm) {

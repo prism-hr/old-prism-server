@@ -53,8 +53,7 @@ public class ValidationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
-    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, 
-    		@RequestParam(required = false) String action, ModelMap model) {
+    public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String action, ModelMap model) {
         RegisteredUser user = getCurrentUser();
 
         if (action != null && action.equals("abort")) {
@@ -117,12 +116,13 @@ public class ValidationTransitionController extends StateTransitionController {
             return STATE_TRANSITION_VIEW;
         }
 
-        if (BooleanUtils.isNotTrue(delegate)) {
-            form.setApplicationAdministrator(null);
-        }
-
         if (BooleanUtils.isTrue(comment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(form.getApplicationNumber());
+        }
+
+        if (delegatedAdministrator.getEmail() != null) {
+            RegisteredUser loadedAdministrator = userService.getUserByEmailIncludingDisabledAccounts(delegatedAdministrator.getEmail());
+            comment.setDelegateAdministrator(loadedAdministrator);
         }
 
         comment.setDate(new Date());
@@ -136,7 +136,7 @@ public class ValidationTransitionController extends StateTransitionController {
         applicationFormUserRoleService.stateChanged(comment);
         applicationFormUserRoleService.registerApplicationUpdate(form, user, ApplicationUpdateScope.ALL_USERS);
 
-        if (BooleanUtils.isTrue(delegate)) {
+        if (delegatedAdministrator.getEmail() != null) {
             return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();
         }
 

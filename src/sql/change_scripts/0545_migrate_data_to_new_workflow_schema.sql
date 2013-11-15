@@ -53,7 +53,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 							"CONFIRM_REJECTION"
 					END)
 			WHEN APPLICATION_FORM.status = "REVIEW" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp > REVIEW_ROUND.created_date,
+				IF (LATEST_STATECHANGE_COMMENT.created_timestamp >= REVIEW_ROUND.created_date,
 					"COMPLETE_REVIEW_STAGE",
 					CASE 
 						WHEN STATECHANGE_COMMENT.next_status = "REVIEW" THEN
@@ -66,7 +66,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 							"CONFIRM_REJECTION"
 					END)
 			WHEN APPLICATION_FORM.status = "INTERVIEW" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp > INTERVIEW.created_date,
+				IF (LATEST_STATECHANGE_COMMENT.created_timestamp >= INTERVIEW.created_date,
 					IF (INTERVIEW.stage = "SCHEDULING",
 						"CONFIRM_INTERVIEW_ARRANGEMENTS",
 						"COMPLETE_INTERVIEW_STAGE"),
@@ -81,7 +81,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 							"CONFIRM_REJECTION"
 					END)
 			WHEN APPLICATION_FORM.status = "APPROVAL" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp > APPROVAL_ROUND.created_date,
+				IF (LATEST_STATECHANGE_COMMENT.created_timestamp >= APPROVAL_ROUND.created_date,
 					"COMPLETE_APPROVAL_STAGE",
 					CASE 
 						WHEN STATECHANGE_COMMENT.next_status = "REVIEW" THEN
@@ -98,7 +98,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		END,
 		CASE
 			WHEN APPLICATION_FORM.status = "VALIDATION" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp <= APPLICATION_FORM.submitted_on_timestamp,
+				IF (LATEST_STATECHANGE_COMMENT.id IS NULL,
 					DATE(APPLICATION_FORM.due_date),
 					DATE(LATEST_STATECHANGE_COMMENT.created_timestamp))
 			WHEN APPLICATION_FORM.status = "REVIEW" THEN
@@ -118,7 +118,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		END,		
 		CASE
 			WHEN APPLICATION_FORM.status = "VALIDATION" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp <= APPLICATION_FORM.submitted_on_timestamp,
+				IF (LATEST_STATECHANGE_COMMENT.id IS NULL,
 					1,
 					0)
 			WHEN APPLICATION_FORM.status = "REVIEW" THEN
@@ -662,7 +662,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		END,
 		CASE
 			WHEN APPLICATION_FORM.status = "VALIDATION" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp <= APPLICATION_FORM.submitted_on_timestamp,
+				IF (LATEST_STATECHANGE_COMMENT.id IS NULL,
 					DATE(APPLICATION_FORM.due_date),
 					DATE(LATEST_STATECHANGE_COMMENT.created_timestamp))
 			WHEN APPLICATION_FORM.status = "REVIEW" THEN
@@ -682,7 +682,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		END,		
 		CASE
 			WHEN APPLICATION_FORM.status = "VALIDATION" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp <= APPLICATION_FORM.submitted_on_timestamp,
+				IF (LATEST_STATECHANGE_COMMENT.id IS NULL,
 					1,
 					0)
 			WHEN APPLICATION_FORM.status = "REVIEW" THEN
@@ -801,7 +801,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		END,
 		CASE
 			WHEN APPLICATION_FORM.status = "VALIDATION" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp <= APPLICATION_FORM.submitted_on_timestamp,
+				IF (LATEST_STATECHANGE_COMMENT.id IS NULL,
 					DATE(APPLICATION_FORM.due_date),
 					DATE(LATEST_STATECHANGE_COMMENT.created_timestamp))
 			WHEN APPLICATION_FORM.status = "REVIEW" THEN
@@ -821,7 +821,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		END,		
 		CASE
 			WHEN APPLICATION_FORM.status = "VALIDATION" THEN
-				IF (LATEST_STATECHANGE_COMMENT.created_timestamp <= APPLICATION_FORM.submitted_on_timestamp,
+				IF (LATEST_STATECHANGE_COMMENT.id IS NULL,
 					1,
 					0)
 			WHEN APPLICATION_FORM.status = "REVIEW" THEN
@@ -912,6 +912,13 @@ INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id,
 	WHERE REGISTERED_USER.id IS NOT NULL
 		AND APPLICATION_FORM_USER_ROLE.registered_user_id IS NULL
 	AND APPLICATION_FORM.status IN ("VALIDATION", "REVIEW", "INTERVIEW", "APPROVAL")
+;
+
+DELETE FROM APPLICATION_FORM_USER_ROLE
+WHERE (next_required_action_id IS NOT NULL
+	AND next_required_action_deadline IS NULL)
+	OR (next_required_action_id2 IS NOT NULL
+		AND next_required_action_deadline2 IS NULL)
 ;
 
 INSERT INTO APPLICATION_FORM_ACTION_REQUIRED (application_form_user_role_id, action_id, deadline_timestamp, bind_deadline_to_due_date)

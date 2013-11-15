@@ -249,15 +249,9 @@
 											<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitEvaluationComment'/>">
 										</#if>
 									<#else>
-										<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitInterviewEvaluationComment'/>">
+										<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitDelegateStateChangeComment'/>">
 									</#if>
-									<#if applicationForm.isInState('VALIDATION')>
-										<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitValidationComment'/>">
-									<#elseif !user.hasAdminRightsOnApplication(applicationForm)>
-										<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitInterviewEvaluationComment'/>">
-									<#else>
-										<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitEvaluationComment'/>">
-									</#if>
+									
 										<input type="hidden" id="applicationId" name="applicationId" value="${(applicationForm.applicationNumber)!}"/>
 										<input type="hidden" id="commentField" name="comment" value=""/>				
 										<input type="hidden" id="nextStatus" name="nextStatus"  value=""/>

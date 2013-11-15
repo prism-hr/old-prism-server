@@ -61,9 +61,9 @@ public class ValidationTransitionController extends StateTransitionController {
             if (user.hasAdminRightsOnApplication(applicationForm)) {
                 model.put("comment", applicationForm.getLatestStateChangeComment());
                 if (applicationForm.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
-                    if (applicationForm.getApplicationAdministrator() != null) {
+                    if (applicationForm.getLatestStateChangeComment().getDelegateAdministrator() != null) {
                         model.put("delegate", true);
-                        model.put("delegatedInterviewer", applicationForm.getApplicationAdministrator());
+                        model.put("delegatedAdministrator", applicationForm.getLatestStateChangeComment().getDelegateAdministrator());
                     }
 
                     else {
@@ -93,7 +93,7 @@ public class ValidationTransitionController extends StateTransitionController {
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
     public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
             @Valid @ModelAttribute("comment") ValidationComment comment, BindingResult result, ModelMap model,
-            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedAdministrator") RegisteredUser delegatedAdministrator) {
 
         model.put("delegate", delegate);
         ApplicationForm form = getApplicationForm(applicationId);

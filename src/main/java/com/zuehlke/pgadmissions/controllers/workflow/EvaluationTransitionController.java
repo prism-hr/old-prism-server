@@ -68,7 +68,7 @@ public class EvaluationTransitionController extends StateTransitionController {
     public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
             @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap,
             @RequestParam(required = false) String action, @RequestParam(required = false) Boolean delegate,
-            @ModelAttribute("delegatedInterviewer") RegisteredUser delegatedInterviewer) {
+            @ModelAttribute("delegatedAdministrator") RegisteredUser delegatedAdministrator) {
 
         modelMap.put("delegate", delegate);
 
@@ -114,7 +114,7 @@ public class EvaluationTransitionController extends StateTransitionController {
         ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
 
         StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(),
-                stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus);
+                stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus, delegatedAdministrator);
 
         applicationsService.save(applicationForm);
         commentService.save(newComment);

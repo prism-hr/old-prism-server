@@ -216,7 +216,7 @@
 											</#if>> 
 									
 											<div class="row-group" id="interviewDelegation" style="display:none">
-												<#include "/private/staff/admin/interview_delegation.ftl"/>
+												<#include "/private/staff/admin/state_administration_delegation.ftl"/>
 											</div>
 									
 										</div>

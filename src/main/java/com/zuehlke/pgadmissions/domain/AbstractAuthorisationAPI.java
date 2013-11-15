@@ -184,7 +184,11 @@ public abstract class AbstractAuthorisationAPI {
     }
 
     public boolean isApplicationAdministrator(final ApplicationForm form, final RegisteredUser user) {
-        return areEqual(user, form.getApplicationAdministrator());
+    	StateChangeComment latestStateChangeComment = form.getLatestStateChangeComment();
+    	if (latestStateChangeComment == null) {
+    		return false;
+    	}
+    	return areEqual(user, latestStateChangeComment.getDelegateAdministrator());
     }
 
     public boolean isApplicant(final ApplicationForm form, final RegisteredUser user) {

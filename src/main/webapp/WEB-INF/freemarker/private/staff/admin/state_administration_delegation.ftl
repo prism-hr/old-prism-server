@@ -19,7 +19,7 @@
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateFirstName'/>"></span>
   <div class="field">
     <input class="full" type="text" name="delegateFirstName" id="delegateFirstName" autocomplete="off"   
-    <#if delegatedInterviewer?? && delegatedInterviewer.firstName??>value="${delegatedInterviewer.firstName}"</#if>/>
+    <#if delegatedAdministrator?? && delegatedAdministrator.firstName??>value="${delegatedAdministrator.firstName}"</#if>/>
   </div>
 </div>
 <div class="row">
@@ -27,7 +27,7 @@
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateLastName'/>"></span>
   <div class="field">
     <input class="full" type="text" name="delegateLastName" id="delegateLastName" autocomplete="off" 
-    <#if delegatedInterviewer?? && delegatedInterviewer.lastName??>value="${delegatedInterviewer.lastName}"</#if>/>
+    <#if delegatedAdministrator?? && delegatedAdministrator.lastName??>value="${delegatedAdministrator.lastName}"</#if>/>
   </div>
 </div>
 <div class="row">
@@ -35,7 +35,7 @@
   <span class="hint" data-desc="<@spring.message 'validateApp.delegateEmail'/>"></span>
   <div class="field">
     <input class="full" type="email"  name="delegateEmail" id="delegateEmail" autocomplete="off" 
-    <#if delegatedInterviewer?? && delegatedInterviewer.email??>value="${delegatedInterviewer.email}"</#if>/>
+    <#if delegatedAdministrator?? && delegatedAdministrator.email??>value="${delegatedAdministrator.email}"</#if>/>
   </div>
 </div>
 <script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>

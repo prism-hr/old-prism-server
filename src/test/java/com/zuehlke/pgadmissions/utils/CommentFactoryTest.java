@@ -43,14 +43,14 @@ public class CommentFactoryTest {
         String strComment = "bob";
         List<Document> documents = Collections.emptyList();
 
-        Comment comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.GENERIC, null);
+        Comment comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.GENERIC, null, null);
         assertEquals(Comment.class, comment.getClass());
         assertEquals(applicationForm, comment.getApplication());
         assertEquals("bob", comment.getComment());
         assertEquals(user, comment.getUser());
         assertSame(documents, comment.getDocuments());
 
-        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.VALIDATION, ApplicationFormStatus.INTERVIEW);
+        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.VALIDATION, ApplicationFormStatus.INTERVIEW, null);
         assertEquals(ValidationComment.class, comment.getClass());
         assertEquals(applicationForm, comment.getApplication());
         assertEquals("bob", comment.getComment());
@@ -59,7 +59,7 @@ public class CommentFactoryTest {
         assertEquals(user, comment.getUser());
         assertSame(documents, comment.getDocuments());
 
-        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.REVIEW_EVALUATION, ApplicationFormStatus.INTERVIEW);
+        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.REVIEW_EVALUATION, ApplicationFormStatus.INTERVIEW, null);
         assertEquals(ReviewEvaluationComment.class, comment.getClass());
         assertEquals(applicationForm, comment.getApplication());
         assertEquals("bob", comment.getComment());
@@ -68,7 +68,7 @@ public class CommentFactoryTest {
         assertEquals(user, comment.getUser());
         assertSame(documents, comment.getDocuments());
 
-        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.INTERVIEW_EVALUATION, ApplicationFormStatus.APPROVAL);
+        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.INTERVIEW_EVALUATION, ApplicationFormStatus.APPROVAL, null);
         assertEquals(InterviewEvaluationComment.class, comment.getClass());
         assertEquals(applicationForm, comment.getApplication());
         assertEquals("bob", comment.getComment());
@@ -77,14 +77,14 @@ public class CommentFactoryTest {
         assertEquals(user, comment.getUser());
         assertSame(documents, comment.getDocuments());
 
-        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.REVIEW, null);
+        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.REVIEW, null, null);
         assertEquals(ReviewComment.class, comment.getClass());
         assertEquals(applicationForm, comment.getApplication());
         assertEquals("bob", comment.getComment());
         assertEquals(user, comment.getUser());
         assertSame(documents, comment.getDocuments());
 
-        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.APPROVAL, ApplicationFormStatus.APPROVED);
+        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.APPROVAL, ApplicationFormStatus.APPROVED, null);
         assertEquals(StateChangeComment.class, comment.getClass());
         assertEquals(applicationForm, comment.getApplication());
         assertEquals("bob", comment.getComment());
@@ -92,7 +92,7 @@ public class CommentFactoryTest {
         assertSame(documents, comment.getDocuments());
         assertEquals(ApplicationFormStatus.APPROVED, ((StateChangeComment) comment).getNextStatus());
 
-        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.APPROVAL_EVALUATION, ApplicationFormStatus.APPROVED);
+        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.APPROVAL_EVALUATION, ApplicationFormStatus.APPROVED, null);
         assertEquals(ApprovalEvaluationComment.class, comment.getClass());
         assertEquals(applicationForm, comment.getApplication());
         assertEquals("bob", comment.getComment());
@@ -101,7 +101,7 @@ public class CommentFactoryTest {
         assertEquals(ApplicationFormStatus.APPROVED, ((StateChangeComment) comment).getNextStatus());
         assertEquals(user, comment.getUser());
 
-        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.APPROVAL_EVALUATION, ApplicationFormStatus.REJECTED);
+        comment = commentFactory.createComment(applicationForm, user, strComment, documents, CommentType.APPROVAL_EVALUATION, ApplicationFormStatus.REJECTED, null);
         assertEquals(ApprovalEvaluationComment.class, comment.getClass());
         assertEquals(applicationForm, comment.getApplication());
         assertEquals("bob", comment.getComment());

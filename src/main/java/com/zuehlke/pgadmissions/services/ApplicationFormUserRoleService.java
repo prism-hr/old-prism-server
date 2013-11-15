@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -409,6 +410,25 @@ public class ApplicationFormUserRoleService {
             if (projectAdministrator != null) {
                 administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
             }
+        }
+        
+        if (applicationForm.getNextStatus() != null) {
+        	ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
+        	if (Arrays.asList(ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL).contains(nextStatus)) {
+        		RegisteredUser stateAdministrator = applicationForm.getLatestStateChangeComment().getDelegateAdministrator();
+        		switch (nextStatus) {
+	        		case REVIEW:
+	        			administrators.put(stateAdministrator, Authority.REVIEWADMINISTRATOR);
+	        		break;
+	        		case INTERVIEW:
+	        			administrators.put(stateAdministrator, Authority.INTERVIEWADMINISTRATOR);
+	        		break;
+	        		case APPROVAL:
+	        			administrators.put(stateAdministrator, Authority.APPROVALADMINISTRATOR);
+	        		break;
+	        		default:
+        		}
+        	}
         }
         
         for (Entry<RegisteredUser, Authority> administrator : administrators.entrySet()) {

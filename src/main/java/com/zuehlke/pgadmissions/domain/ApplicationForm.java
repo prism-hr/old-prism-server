@@ -837,8 +837,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>,
 		return applicationAdministrator;
 	}
 
-	public void setApplicationAdministrator(
-			RegisteredUser applicationAdministrator) {
+	public void setApplicationAdministrator(RegisteredUser applicationAdministrator) {
 		this.applicationAdministrator = applicationAdministrator;
 	}
 

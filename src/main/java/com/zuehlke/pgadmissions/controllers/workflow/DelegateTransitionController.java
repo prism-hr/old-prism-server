@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
@@ -41,18 +40,18 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 
 @Controller
 @RequestMapping("/progress")
-public class InterviewDelegateTransitionController extends StateTransitionController {
+public class DelegateTransitionController extends StateTransitionController {
 
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
     private InterviewService interviewService;
 
-    public InterviewDelegateTransitionController() {
+    public DelegateTransitionController() {
         this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public InterviewDelegateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+    public DelegateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
             ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, InterviewService interviewService) {
@@ -83,27 +82,34 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
         return applicationForm;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/submitInterviewEvaluationComment")
+    @RequestMapping(method = RequestMethod.GET, value = "/submitDelegateStateChangeComment")
     public String defaultGet(@RequestParam String applicationId) {
         applicationFormUserRoleService.deregisterApplicationUpdate(getApplicationForm(applicationId), getCurrentUser());
         return MY_APPLICATIONS_VIEW;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/submitInterviewEvaluationComment")
+    @RequestMapping(method = RequestMethod.POST, value = "/submitDelegateStateChangeComment")
     public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
             @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
 
-        // validate validation action is still available
-
-        ApplicationFormAction invokedAction;
+        ApplicationFormAction invokedAction = null;
 
         if (action != null && action.length() > 0 && action.equals("abort")) {
             invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
-        }
-
-        else {
-            invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+        } else {
+        	switch (applicationForm.getStatus()) {
+        		case REVIEW:
+        			invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
+        			break;
+        		case INTERVIEW:
+        			invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+        			break;
+        		case APPROVAL:
+        			invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
+        			break;
+        		default:
+        	}
         }
 
         actionsProvider.validateAction(applicationForm, getCurrentUser(), invokedAction);
@@ -113,17 +119,13 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
         }
 
         RegisteredUser user = getCurrentUser();
-
         Comment comment = null;
-        if (applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW && stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
-            // delegate should be able to restart interview
+        
+        if (applicationForm.getStatus() == applicationForm.getNextStatus()) {
             comment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
-                    stateChangeComment.getType(), stateChangeComment.getNextStatus());
+                    stateChangeComment.getType(), stateChangeComment.getNextStatus(), stateChangeComment.getDelegateAdministrator());
 
-        }
-
-        else {
-            // in other scenarios just post a suggestion
+        } else {
             comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
                     stateChangeComment.getNextStatus());
             Interview interview = applicationForm.getLatestInterview();
@@ -131,7 +133,6 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
                 interview.setStage(InterviewStage.INACTIVE);
                 interviewService.save(interview);
             }
-            applicationForm.setApplicationAdministrator(null);
             applicationForm.setDueDate(new Date());
         }
 
@@ -142,13 +143,12 @@ public class InterviewDelegateTransitionController extends StateTransitionContro
         applicationsService.save(applicationForm);
         commentService.save(comment);
         applicationsService.refresh(applicationForm);
-        
-        // This is not finished but I put it here so that we would remember what to do when it is finished
-        applicationFormUserRoleService.processingDelegated(applicationForm);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
-        if (stateChangeComment.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
+        
+        if (stateChangeComment.getNextStatus() == applicationForm.getNextStatus()) {
             return stateTransitionService.resolveView(applicationForm);
         }
+        
         return "redirect:/applications?messageCode=state.change.suggestion&application=" + applicationForm.getApplicationNumber();
     }
 }

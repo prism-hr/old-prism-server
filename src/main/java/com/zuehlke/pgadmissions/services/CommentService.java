@@ -54,7 +54,6 @@ public class CommentService {
     public void declineReview(RegisteredUser user, ApplicationForm application) {
         Reviewer currentReviewer = user.getReviewerForCurrentUserFromLatestReviewRound(application);
         if (!commentDAO.getReviewCommentsForReviewerAndApplication(currentReviewer, application).isEmpty()) {
-            // a comment already exists for this reviewer.
             return;
         }
 
@@ -67,16 +66,6 @@ public class CommentService {
         reviewComment.setReviewer(currentReviewer);
         
         save(reviewComment);
-    }
-
-    public void createDelegateComment(RegisteredUser user, ApplicationForm application) {
-        Comment comment = getNewGenericComment();
-        comment.setApplication(application);
-        comment.setUser(user);
-        comment.setComment("Delegating interview administration to: "
-                + application.getApplicationAdministrator().getFirstName() + " "
-                + application.getApplicationAdministrator().getLastName());
-        save(comment);
     }
 
     public Comment getNewGenericComment() {

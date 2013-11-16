@@ -91,20 +91,22 @@ function saveComment() {
 }
 
 function changeState() {
-    if ($('#status').val() == 'INTERVIEW') {
+    if ($('#status').val() == 'REVIEW' ||
+    	$('#status').val() == 'INTERVIEW' ||
+    	$('#status').val() == 'APPROVAL') {
         if ($('input:radio[name=switch]:checked').val() == 'yes') {
         	saveInterviewDelegate();
         	return;
         } 
     } 
-
     saveComment();
 }
 
 function refreshControls() {
-    if ($('#status').val() == 'HIDE') {
+	if ($('#status').val() == 'REVIEW' ||
+	    $('#status').val() == 'INTERVIEW' ||
+	    $('#status').val() == 'APPROVAL') {
         $("#approvedDetails").hide();
-
         $("#interviewDelegation").show();
         $("#interviewDelegation").find("div.alert").remove();
         
@@ -192,4 +194,3 @@ function saveInterviewDelegate() {
          }
      });
 }
-

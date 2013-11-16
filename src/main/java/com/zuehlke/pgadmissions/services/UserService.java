@@ -195,14 +195,19 @@ public class UserService {
     private boolean newAuthoritiesContains(Authority[] newAuthorities, Authority authority) {
         return Arrays.asList(newAuthorities).contains(authority);
     }
-
+    
     public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, 
-    		final DirectURLsEnum directURL, final ApplicationForm application, final Authority... authorities) {
+    		final Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
         if (newUser != null) {
             throw new IllegalStateException(String.format("user with email: %s already exists!", email));
         }
-        newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
+        return newUser;
+    } 
+
+    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, 
+    		final DirectURLsEnum directURL, final ApplicationForm application, final Authority... authorities) {
+        RegisteredUser newUser = createNewUserInRole(firstName, lastName, email, authorities);
         for (Authority authority : authorities) {
             if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER, Authority.SUGGESTEDSUPERVISOR).contains(authority)) {
             	applicationFormUserRoleService.createUserInRole(newUser, authority);

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_INTERVIEWERS;
-
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -87,7 +86,7 @@ public class MoveToInterviewController {
     public String getInterviewDetailsPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ASSIGN_INTERVIEWERS);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return INTERVIEW_PAGE;
     }
@@ -103,7 +102,7 @@ public class MoveToInterviewController {
     		BindingResult bindingResult, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ASSIGN_INTERVIEWERS);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
 
         if (bindingResult.hasErrors()) {
             return INTERVIEWERS_SECTION;

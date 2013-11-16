@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_ELIGIBILITY;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -29,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.builders.AdmitterCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -137,7 +137,7 @@ public class AdmitterCommentControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", currentUser);
 
-        actionsProviderMock.validateAction(applicationForm, currentUser, CONFIRM_ELIGIBILITY);
+        actionsProviderMock.validateAction(applicationForm, currentUser, ApplicationFormAction.CONFIRM_ELIGIBILITY);
         applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, currentUser);
 
         replay();
@@ -166,7 +166,7 @@ public class AdmitterCommentControllerTest {
         event.setUser(currentUser);
         expect(eventFactoryMock.createEvent(comment)).andReturn(event);
 
-        actionsProviderMock.validateAction(application, currentUser, CONFIRM_ELIGIBILITY);
+        actionsProviderMock.validateAction(application, currentUser, ApplicationFormAction.CONFIRM_ELIGIBILITY);
         applicationsServiceMock.save(application);
         commentServiceMock.save(comment);
         applicationFormUserRoleServiceMock.admitterCommentPosted(comment);

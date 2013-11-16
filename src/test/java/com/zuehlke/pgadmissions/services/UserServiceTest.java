@@ -415,7 +415,7 @@ public class UserServiceTest {
 
         EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(existingUser);
         EasyMock.replay(userDAOMock);
-        userService.createNewUserInRole("la", "le", "some@email.com", null, null, Authority.APPROVER);
+        userService.createNewUserInRole("la", "le", "some@email.com", Authority.APPROVER);
     }
 
     @Test
@@ -428,7 +428,7 @@ public class UserServiceTest {
 
         EasyMock.replay(userDAOMock, userFactoryMock);
 
-        RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole("la", "le", "some@email.com", null, null, Authority.REVIEWER);
+        RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole("la", "le", "some@email.com", Authority.REVIEWER);
 
         EasyMock.verify(userDAOMock, userFactoryMock);
         assertEquals(newUser, createdUser);

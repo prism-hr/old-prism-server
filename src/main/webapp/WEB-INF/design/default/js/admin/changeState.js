@@ -2,7 +2,6 @@ var originalPostUrl;
 
 $(document).ready(function() {
     originalPostUrl = $('#stateChangeForm').attr('action');
-
     refreshControls();
 
     // ------------------------------------------------------------------------------
@@ -95,11 +94,10 @@ function changeState() {
     	$('#status').val() == 'INTERVIEW' ||
     	$('#status').val() == 'APPROVAL') {
         if ($('input:radio[name=switch]:checked').val() == 'yes') {
-        	saveInterviewDelegate();
+        	saveDelegatedAdministrator();
         	return;
         } 
     } 
-    saveComment();
 }
 
 function refreshControls() {
@@ -157,7 +155,7 @@ function isProjectAcceptingApplications(){
 	return null;
 }
 
-function saveInterviewDelegate() {
+function saveDelegatedAdministrator() {
 	 $.ajax({
          type : 'POST',
          statusCode : {

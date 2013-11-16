@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.review;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.ASSIGN_REVIEWERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -28,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -55,7 +55,7 @@ public class MoveToReviewControllerTest {
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
 
-        actionsProviderMock.validateAction(applicationForm, currentUserMock, ASSIGN_REVIEWERS);
+        actionsProviderMock.validateAction(applicationForm, currentUserMock, ApplicationFormAction.ASSIGN_REVIEWERS);
 
         EasyMock.replay(actionsProviderMock);
         String reviewRoundDetailsPage = controller.getReviewRoundDetailsPage(modelMap);

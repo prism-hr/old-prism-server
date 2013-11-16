@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
@@ -16,6 +15,7 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -53,7 +53,7 @@ public class ConfirmSupervisionControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
 
         EasyMock.replay(actionsProviderMock);
         String res = controller.confirmSupervision(modelMap);
@@ -76,7 +76,7 @@ public class ConfirmSupervisionControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
 
         EasyMock.replay(approvalServiceMock, actionsProviderMock);
         String res = controller.applyConfirmSupervision(confirmSupervisionDTO, result, modelMap);

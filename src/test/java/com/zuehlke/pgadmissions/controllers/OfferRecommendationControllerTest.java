@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
@@ -24,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
@@ -64,7 +64,7 @@ public class OfferRecommendationControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_OFFER_RECOMMENDATION);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
 
         EasyMock.replay(actionsProviderMock);
         String res = controller.getOfferRecommendationPage(modelMap);
@@ -94,7 +94,7 @@ public class OfferRecommendationControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_OFFER_RECOMMENDATION);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
         EasyMock.expect(offerRecommendationServiceMock.moveToApproved(applicationForm, comment)).andReturn(true);
         offerRecommendationServiceMock.sendToPortico(applicationForm);
 
@@ -136,7 +136,7 @@ public class OfferRecommendationControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, CONFIRM_OFFER_RECOMMENDATION);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
         EasyMock.expect(offerRecommendationServiceMock.moveToApproved(applicationForm, comment)).andReturn(false);
 
         EasyMock.replay(offerRecommendationServiceMock, actionsProviderMock);

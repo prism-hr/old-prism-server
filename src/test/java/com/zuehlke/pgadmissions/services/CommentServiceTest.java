@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -127,27 +126,7 @@ public class CommentServiceTest {
         Assert.assertFalse(reviewComment.isDecline());
         
         EasyMock.verify(commentDAOMock);
-    }	
-	
-	@Test
-	public void shouldcreateDelegateComment(){
-		final Comment comment = new CommentBuilder().id(1).build();
-		service = new CommentService(commentDAOMock){
-			@Override
-			public Comment getNewGenericComment(){
-				return comment;
-			}
-		};
-		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("joan").lastName("kyp").id(1).build();
-		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
-		ApplicationForm application = new ApplicationFormBuilder().applicationAdministrator(reviewerUser).latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).build();
-		service.save(comment);
-		service.createDelegateComment(reviewerUser, application);
-		Assert.assertEquals("Delegating interview administration to: joan kyp", comment.getComment());
-		Assert.assertEquals(reviewerUser, comment.getUser());
-		Assert.assertEquals(application, comment.getApplication());
-	}
+    }
 	
 	@Before
 	public void setUp() {

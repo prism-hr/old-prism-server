@@ -17,10 +17,7 @@ import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.StateChangeSuggestionComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class CommentFactory {
@@ -76,8 +73,8 @@ public class CommentFactory {
         StateChangeComment stateChangeComment = new StateChangeComment();
         stateChangeComment.setComment(strComment);
         stateChangeComment.setType(commentType);
-        setNextStatus(stateChangeComment, applicationForm, nextStatus);
-        setDelegatedAdministrator(stateChangeComment, delegateAdministrator);
+        stateChangeComment.setNextStatus(nextStatus);
+        stateChangeComment.setDelegateAdministrator(delegateAdministrator);
         stateChangeComment.setDelegateAdministrator(delegateAdministrator);
         return stateChangeComment;
     }
@@ -93,8 +90,8 @@ public class CommentFactory {
         ValidationComment validationComment = new ValidationComment();
         validationComment.setComment(strComment);
         validationComment.setType(commentType);
-        setNextStatus(validationComment, applicationForm, nextStatus);
-        setDelegatedAdministrator(validationComment, delegateAdministrator);
+        validationComment.setNextStatus(nextStatus);
+        validationComment.setDelegateAdministrator(delegateAdministrator);
         return validationComment;
     }
 
@@ -102,8 +99,8 @@ public class CommentFactory {
             ApplicationFormStatus nextStatus, RegisteredUser delegateAdministrator) {
         ReviewEvaluationComment reviewEvaluationComment = new ReviewEvaluationComment();
         reviewEvaluationComment.setType(commentType);
-        setNextStatus(reviewEvaluationComment, applicationForm, nextStatus);
-        setDelegatedAdministrator(reviewEvaluationComment, delegateAdministrator);
+        reviewEvaluationComment.setNextStatus(nextStatus);
+        reviewEvaluationComment.setDelegateAdministrator(delegateAdministrator);
         reviewEvaluationComment.setReviewRound(applicationForm.getLatestReviewRound());
         return reviewEvaluationComment;
     }
@@ -112,8 +109,8 @@ public class CommentFactory {
             ApplicationFormStatus nextStatus, RegisteredUser delegateAdministrator) {
         InterviewEvaluationComment interviewEvaluationComment = new InterviewEvaluationComment();
         interviewEvaluationComment.setType(commentType);
-        setNextStatus(interviewEvaluationComment, applicationForm, nextStatus);
-        setDelegatedAdministrator(interviewEvaluationComment, delegateAdministrator);
+        interviewEvaluationComment.setNextStatus(nextStatus);
+        interviewEvaluationComment.setDelegateAdministrator(delegateAdministrator);
         interviewEvaluationComment.setInterview(applicationForm.getLatestInterview());
         return interviewEvaluationComment;
     }
@@ -122,33 +119,10 @@ public class CommentFactory {
             ApplicationFormStatus nextStatus, RegisteredUser delegateAdministrator) {
         ApprovalEvaluationComment approvalEvaluationComment = new ApprovalEvaluationComment();
         approvalEvaluationComment.setType(commentType);
-        setNextStatus(approvalEvaluationComment, applicationForm, nextStatus);
-        setDelegatedAdministrator(approvalEvaluationComment, delegateAdministrator);
+        approvalEvaluationComment.setNextStatus(nextStatus);
+        approvalEvaluationComment.setDelegateAdministrator(delegateAdministrator);
         approvalEvaluationComment.setApprovalRound(applicationForm.getLatestApprovalRound());
         return approvalEvaluationComment;
-    }
-    
-    private void setNextStatus(StateChangeComment comment, ApplicationForm applicationForm, ApplicationFormStatus nextStatus) {
-    	comment.setNextStatus(nextStatus);
-    	applicationForm.setNextStatus(nextStatus);
-    }
-    
-    private void setDelegatedAdministrator (StateChangeComment comment, RegisteredUser delegatedAdministrator) {
-    	if (delegatedAdministrator != null) {
-    		UserDAO userDAO = new UserDAO();
-    		UserService userService = new UserService();
-    		
-	        String delegatedAdministratorEmail = delegatedAdministrator.getEmail();         
-	        RegisteredUser userToRegister = userService.getUserByEmailIncludingDisabledAccounts(delegatedAdministratorEmail);
-	
-	        if (userToRegister == null) {
-	        	userToRegister = userService.createNewUserInRole(delegatedAdministrator.getFirstName(), delegatedAdministrator.getLastName(), 
-	        			delegatedAdministratorEmail, Authority.STATEADMINISTRATOR);
-	            userDAO.save(userToRegister);
-	        }
-	        comment.setDelegateAdministrator(userToRegister);
-    	}
-    	comment.setDelegateAdministrator(delegatedAdministrator);
     }
     
 }

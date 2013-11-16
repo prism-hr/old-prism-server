@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -15,7 +16,9 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
@@ -154,4 +157,30 @@ public class StateTransitionController {
         return new RegisteredUser();
     }
 
+    protected void postStateChangeComment(ApplicationForm applicationForm, RegisteredUser registeredUser, 
+    		StateChangeComment stateChangeComment, RegisteredUser delegateAdministrator) {
+    	ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
+    	applicationForm.setNextStatus(nextStatus);
+    	
+    	String delegateAdministratorEmail = delegateAdministrator.getEmail();
+    	RegisteredUser userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
+    	
+    	if (userToSaveAsDelegate == null) {
+    		if (!Arrays.asList(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), delegateAdministratorEmail).contains(null)) {
+    		userToSaveAsDelegate = userService.createNewUserInRole(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), 
+    				delegateAdministratorEmail, Authority.SUGGESTEDSUPERVISOR);
+    		}
+    	}
+    	
+    	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
+    	
+        if (nextStatus == ApplicationFormStatus.APPROVAL) {
+            applicationsService.makeApplicationNotEditable(applicationForm);
+        }
+    	
+    	commentService.save(stateChangeComment);
+        applicationsService.save(applicationForm);
+        applicationFormUserRoleService.stateChanged(stateChangeComment);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);	
+    }
 }

@@ -17,8 +17,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -68,7 +66,7 @@ public class EvaluationTransitionController extends StateTransitionController {
     public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
             @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap,
             @RequestParam(required = false) String action, @RequestParam(required = false) Boolean delegate,
-            @ModelAttribute("delegatedAdministrator") RegisteredUser delegatedAdministrator) {
+            @ModelAttribute("delegatedAdministrator") RegisteredUser delegateAdministrator) {
     	modelMap.put("delegate", delegate);
     	ApplicationFormAction invokedAction;
         RegisteredUser registeredUser = getCurrentUser();
@@ -101,18 +99,7 @@ public class EvaluationTransitionController extends StateTransitionController {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
         
-        ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
-        StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, registeredUser, stateChangeComment.getComment(),
-                stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus, delegatedAdministrator);
-
-        commentService.save(newComment);
-        applicationsService.save(applicationForm);
-        applicationFormUserRoleService.stateChanged(newComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);
-        
-        if (nextStatus == ApplicationFormStatus.APPROVAL) {
-            applicationsService.makeApplicationNotEditable(applicationForm);
-        }
+        postStateChangeComment(applicationForm, registeredUser, stateChangeComment, delegateAdministrator);
 
         if (BooleanUtils.isTrue(delegate)) {
         	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();

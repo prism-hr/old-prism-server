@@ -150,7 +150,7 @@ public class ApplicationFormUserRoleDAO {
                 .createAlias("applicationFormUserRole", "role")
                 .add(Restrictions.eq("role.applicationForm", applicationForm))
                 .add(Restrictions.eq("role.user", user))
-                .add(Restrictions.eq("action", action.name()))
+                .add(Restrictions.eq("action", action))
                 .setProjection(Projections.projectionList()
                 .add(Projections.groupProperty("action"))).uniqueResult();
 

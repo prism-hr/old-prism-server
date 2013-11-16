@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -91,7 +89,7 @@ public class ValidationTransitionController extends StateTransitionController {
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
     public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
             @Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap model,
-            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedAdministrator") RegisteredUser delegatedAdministrator) {
+            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedAdministrator") RegisteredUser delegateAdministrator) {
         model.put("delegate", delegate);
         ApplicationFormAction invokedAction;
         RegisteredUser registeredUser = getCurrentUser();
@@ -113,18 +111,7 @@ public class ValidationTransitionController extends StateTransitionController {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
         
-        ApplicationFormStatus nextStatus = validationComment.getNextStatus();
-        StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, registeredUser, validationComment.getComment(),
-                validationComment.getDocuments(), validationComment.getType(), nextStatus, delegatedAdministrator);
-
-        if (validationComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
-            applicationsService.makeApplicationNotEditable(applicationForm);
-        }
-
-        commentService.save(newComment);
-        applicationsService.save(applicationForm);
-        applicationFormUserRoleService.stateChanged(newComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);
+        postStateChangeComment(applicationForm, registeredUser, validationComment, delegateAdministrator);
 
         if (BooleanUtils.isTrue(delegate)) {
         	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();

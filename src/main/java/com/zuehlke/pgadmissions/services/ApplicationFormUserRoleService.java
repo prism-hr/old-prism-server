@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
@@ -50,7 +51,7 @@ public class ApplicationFormUserRoleService {
 
     private final UserDAO userDAO;
     
-    private final UserService userService;
+    private final EncryptionUtils encryptionUtils;
 
     private final Map<ApplicationFormStatus, ApplicationFormAction> initiateStageMap = Maps.newHashMap();
 
@@ -59,11 +60,12 @@ public class ApplicationFormUserRoleService {
     }
 
     @Autowired
-    public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, RoleDAO roleDAO, UserDAO userDAO, UserService userService) {
+    public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, RoleDAO roleDAO, UserDAO userDAO, 
+    		EncryptionUtils encryptionUtils) {
         this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
-        this.userService = userService;
+        this.encryptionUtils = encryptionUtils;
 
         initiateStageMap.put(ApplicationFormStatus.REVIEW, ApplicationFormAction.ASSIGN_REVIEWERS);
         initiateStageMap.put(ApplicationFormStatus.INTERVIEW, ApplicationFormAction.ASSIGN_INTERVIEWERS);
@@ -83,15 +85,23 @@ public class ApplicationFormUserRoleService {
 
         for (SuggestedSupervisor suggestedSupervisor : applicationForm.getProgrammeDetails().getSuggestedSupervisors()) {
             String supervisorEmail = suggestedSupervisor.getEmail();
-            RegisteredUser userToRegister = userDAO.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
+            RegisteredUser userToSaveAsSuggestedSupervisor = userDAO.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
 
-            if (userToRegister == null) {
-            	userToRegister =  userService.createNewUserInRole(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), 
-            			suggestedSupervisor.getEmail(), Authority.SUGGESTEDSUPERVISOR);
-                userDAO.save(userToRegister);
+            if (userToSaveAsSuggestedSupervisor == null) {
+                userToSaveAsSuggestedSupervisor = new RegisteredUser();
+                userToSaveAsSuggestedSupervisor.setFirstName(suggestedSupervisor.getFirstname());
+                userToSaveAsSuggestedSupervisor.setLastName(suggestedSupervisor.getLastname());
+                userToSaveAsSuggestedSupervisor.setUsername(suggestedSupervisor.getEmail());
+                userToSaveAsSuggestedSupervisor.setEmail(suggestedSupervisor.getEmail());
+                userToSaveAsSuggestedSupervisor.setAccountNonExpired(true);
+                userToSaveAsSuggestedSupervisor.setAccountNonLocked(true);
+                userToSaveAsSuggestedSupervisor.setEnabled(false);
+                userToSaveAsSuggestedSupervisor.setCredentialsNonExpired(true);
+                userToSaveAsSuggestedSupervisor.setActivationCode(encryptionUtils.generateUUID());
+                userDAO.save(userToSaveAsSuggestedSupervisor);
             }
             
-            createApplicationFormUserRole(applicationForm, userToRegister, Authority.SUGGESTEDSUPERVISOR, true);
+            createApplicationFormUserRole(applicationForm, userToSaveAsSuggestedSupervisor, Authority.SUGGESTEDSUPERVISOR, true);
         }
     }
 

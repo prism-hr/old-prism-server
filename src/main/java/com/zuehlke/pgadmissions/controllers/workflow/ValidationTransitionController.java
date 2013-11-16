@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.Date;
-
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -17,12 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
-import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -91,58 +90,48 @@ public class ValidationTransitionController extends StateTransitionController {
 
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
     public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
-            @Valid @ModelAttribute("comment") ValidationComment comment, BindingResult result, ModelMap model,
+            @Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap model,
             @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedAdministrator") RegisteredUser delegatedAdministrator) {
-
         model.put("delegate", delegate);
-        ApplicationForm form = getApplicationForm(applicationId);
-        RegisteredUser user = getCurrentUser();
-
-        // validate action is still available
-
         ApplicationFormAction invokedAction;
+        RegisteredUser registeredUser = getCurrentUser();
+        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
 
         if (action != null && action.equals("abort")) {
             invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
-        }
-
-        else {
+        } else {
             invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
         }
 
-        actionsProvider.validateAction(form, user, invokedAction);
+        actionsProvider.validateAction(applicationForm, registeredUser, invokedAction);
 
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
+        
+        if (BooleanUtils.isTrue(validationComment.getFastTrackApplication())) {
+            applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
+        }
+        
+        ApplicationFormStatus nextStatus = validationComment.getNextStatus();
+        StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, registeredUser, validationComment.getComment(),
+                validationComment.getDocuments(), validationComment.getType(), nextStatus, delegatedAdministrator);
 
-        if (BooleanUtils.isTrue(comment.getFastTrackApplication())) {
-            applicationsService.fastTrackApplication(form.getApplicationNumber());
+        if (validationComment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
+            applicationsService.makeApplicationNotEditable(applicationForm);
         }
 
-//        if (delegatedAdministrator.getEmail() != null) {
-//            RegisteredUser loadedAdministrator = userService.getUserByEmailIncludingDisabledAccounts(delegatedAdministrator.getEmail());
-//            comment.setDelegateAdministrator(loadedAdministrator);
-//        }
+        commentService.save(newComment);
+        applicationsService.save(applicationForm);
+        applicationFormUserRoleService.stateChanged(newComment);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);
 
-        comment.setDate(new Date());
-        commentService.save(comment);
-
-        if (comment.getNextStatus() == ApplicationFormStatus.APPROVAL) {
-            applicationsService.makeApplicationNotEditable(form);
+        if (BooleanUtils.isTrue(delegate)) {
+        	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
         }
 
-        form.setNextStatus(comment.getNextStatus());
-        applicationsService.save(form);
-        applicationFormUserRoleService.stateChanged(comment);
-        applicationFormUserRoleService.registerApplicationUpdate(form, user, ApplicationUpdateScope.ALL_USERS);
-
-//        if (delegatedAdministrator.getEmail() != null) {
-//            return "redirect:/applications?messageCode=delegate.success&application=" + form.getApplicationNumber();
-//        }
-
-        applicationsService.refresh(form);
-        return stateTransitionService.resolveView(form);
+        applicationsService.refresh(applicationForm);
+        return stateTransitionService.resolveView(applicationForm);
     }
 
     @ModelAttribute("validationQuestionOptions")

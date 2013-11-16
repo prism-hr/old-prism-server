@@ -150,7 +150,7 @@
 		          	</#if>
 		          
 		            <#list timelineObject.comments as comment>
-			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'VALIDATION' || comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'INTERVIEW_VOTE' || comment.type == 'INTERVIEW_SCHEDULE'>                                                    
+			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'VALIDATION' || comment.type == 'INTERVIEW_VOTE' || comment.type == 'INTERVIEW_SCHEDULE'>                                                    
 			           		<#if comment.user.isProgrammeAdministrator(comment.application)>
 			           			<#assign role = "administrator"/>     
 			           		<#elseif comment.user.isInRole('SUPERADMINISTRATOR')>
@@ -197,8 +197,13 @@
                                 <p class="restart"><span/><b>Restart of approval stage requested.</b></p>
 							<#elseif comment.comment?starts_with("Referred to")>
                                 <p class="referral"><span data-desc="Referral"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
-							<#elseif comment.comment?starts_with("Delegating interview")>
-                                <p class="delegate"><span data-desc="delegate"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em>.</p>
+							<#elseif (comment.type == "VALIDATION" || 
+								comment.type == "REVIEW_EVALUATION" ||  
+								comment.type == "INTERVIEW_EVALUATION" || 
+								comment.type == "APPROVAL_EVALUATION") &&
+								comment.delegateAdministrator?has_content>
+                                <p class="delegate"><span data-desc="delegate"></span><em>Delegated next stage administration to
+                                	${(comment.delegateAdministrator.firstName?html)!} ${(comment.delegateAdministrator.lastName?html)!} (${(comment.delegateAdministrator.email?html)!})</em>.</p>
                             <!-- General comment box-->	
           				    <#elseif comment.comment?trim?length &gt; 0>
                                 <div class="textContainer">

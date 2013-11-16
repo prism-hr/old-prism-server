@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +18,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -40,21 +40,24 @@ public class InterviewVoteController {
     private final InterviewParticipantValidator interviewParticipantValidator;
     private final AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor;
     private final ActionsProvider actionsProvider;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public InterviewVoteController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewVoteController(ApplicationsService applicationsService, UserService userService,
             InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
-            AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider) {
+            AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider,
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;
         this.interviewParticipantValidator = interviewParticipantValidator;
         this.acceptedTimeslotsPropertyEditor = acceptedTimeslotsPropertyEditor;
         this.actionsProvider = actionsProvider;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @ModelAttribute("applicationForm")
@@ -98,7 +101,8 @@ public class InterviewVoteController {
     public String getInterviewVotePage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, PROVIDE_INTERVIEW_AVAILABILITY);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return INTERVIEW_VOTE_PAGE;
     }
 
@@ -107,7 +111,7 @@ public class InterviewVoteController {
             @RequestParam(required = false) String comment, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, PROVIDE_INTERVIEW_AVAILABILITY);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
 
         if (bindingResult.hasErrors()) {
             return INTERVIEW_VOTE_PAGE;
@@ -126,7 +130,6 @@ public class InterviewVoteController {
         interviewVoteComment.setApplication(applicationForm);
         interviewVoteComment.setUser(currentParticipant.getUser());
         interviewVoteComment.setInterviewParticipant(currentParticipant);
-
         interviewService.postVote(currentParticipant, interviewVoteComment);
 
         return "redirect:/applications?messageCode=interview.vote.feedback&application=" + applicationForm.getApplicationNumber();

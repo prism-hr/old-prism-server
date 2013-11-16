@@ -58,7 +58,7 @@ public class CreateNewSupervisorController {
 		
 		modelAndView.getModel().put("isNew", true);
 		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewSupervisorUser.getFirstName(), suggestedNewSupervisorUser.getLastName(), suggestedNewSupervisorUser.getEmail(),
-				DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR,applicationForm, Authority.SUPERVISOR);
+				DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm, Authority.SUPERVISOR);
 		modelAndView.getModel().put("user", newUser);
 		return modelAndView;
 	}

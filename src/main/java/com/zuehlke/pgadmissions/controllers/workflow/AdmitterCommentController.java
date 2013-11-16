@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_ELIGIBILITY;
-
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -23,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -116,7 +115,7 @@ public class AdmitterCommentController {
     public String getConfirmEligibilityPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, CONFIRM_ELIGIBILITY);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_ELIGIBILITY);
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
@@ -125,7 +124,7 @@ public class AdmitterCommentController {
     public String confirmEligibility(ModelMap modelMap, @Valid @ModelAttribute("comment") AdmitterComment comment, BindingResult result) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, CONFIRM_ELIGIBILITY);
+        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_ELIGIBILITY);
 
         if (result.hasErrors()) {
             return GENERIC_COMMENT_PAGE;

@@ -16,9 +16,9 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.dto.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -69,18 +69,13 @@ public class EvaluationTransitionController extends StateTransitionController {
             @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap,
             @RequestParam(required = false) String action, @RequestParam(required = false) Boolean delegate,
             @ModelAttribute("delegatedAdministrator") RegisteredUser delegatedAdministrator) {
-
-        modelMap.put("delegate", delegate);
-
-        // validate validation action is still available
-
-        ApplicationFormAction invokedAction;
+    	modelMap.put("delegate", delegate);
+    	ApplicationFormAction invokedAction;
+        RegisteredUser registeredUser = getCurrentUser();
 
         if (action != null && action.equals("abort")) {
             invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
-        }
-
-        else {
+        } else {
             switch (stateChangeComment.getType()) {
             case APPROVAL_EVALUATION:
                 invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
@@ -96,39 +91,32 @@ public class EvaluationTransitionController extends StateTransitionController {
             }
         }
 
-        actionsProvider.validateAction(applicationForm, getCurrentUser(), invokedAction);
+        actionsProvider.validateAction(applicationForm, registeredUser, invokedAction);
 
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
 
-        RegisteredUser user = getCurrentUser();
-
-
         if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
+        
         ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
+        StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, registeredUser, stateChangeComment.getComment(),
+                stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus, delegatedAdministrator);
 
-//        RegisteredUser loadedAdministrator = null;
-//        if (delegatedAdministrator.getEmail() != null) {
-//            loadedAdministrator = userService.getUserByEmailIncludingDisabledAccounts(delegatedAdministrator.getEmail());
-//        }
-
-        StateChangeComment newComment = (StateChangeComment) commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(),
-                stateChangeComment.getDocuments(), stateChangeComment.getType(), nextStatus, null);
-
-        applicationsService.save(applicationForm);
         commentService.save(newComment);
+        applicationsService.save(applicationForm);
         applicationFormUserRoleService.stateChanged(newComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);
+        
         if (nextStatus == ApplicationFormStatus.APPROVAL) {
             applicationsService.makeApplicationNotEditable(applicationForm);
         }
 
-//        if (delegatedAdministrator.getEmail() != null) {
-//            return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
-//        }
+        if (BooleanUtils.isTrue(delegate)) {
+        	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
+        }
 
         applicationsService.refresh(applicationForm);
         return stateTransitionService.resolveView(applicationForm);

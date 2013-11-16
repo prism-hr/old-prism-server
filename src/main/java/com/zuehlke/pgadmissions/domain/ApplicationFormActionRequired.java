@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,6 +16,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 
 @Entity(name = "APPLICATION_FORM_ACTION_REQUIRED")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -26,7 +30,8 @@ public class ApplicationFormActionRequired implements Serializable {
     private Integer id;
 
     @Column(name = "action_id")
-    private String action;
+    @Enumerated(EnumType.STRING)
+    private ApplicationFormAction action;
 
     @Column(name = "deadline_timestamp")
     @Temporal(value = TemporalType.DATE)
@@ -45,7 +50,7 @@ public class ApplicationFormActionRequired implements Serializable {
     public ApplicationFormActionRequired() {
     }
 
-    public ApplicationFormActionRequired(String action, Date deadlineTimestamp, Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag) {
+    public ApplicationFormActionRequired(ApplicationFormAction action, Date deadlineTimestamp, Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag) {
         this.action = action;
         this.deadlineTimestamp = deadlineTimestamp;
         this.bindDeadlineToDueDate = bindDeadlineToDueDate;
@@ -60,11 +65,11 @@ public class ApplicationFormActionRequired implements Serializable {
         this.id = id;
     }
 
-    public String getAction() {
+    public ApplicationFormAction getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(ApplicationFormAction action) {
         this.action = action;
     }
 

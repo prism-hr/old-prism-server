@@ -136,7 +136,7 @@ public class InterviewService {
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
         ApplicationFormUserRoleService.interviewParticipantResponded(interviewParticipant);
-
+        ApplicationFormUserRoleService.registerApplicationUpdate(interviewVoteComment.getApplication(), interviewParticipant.getUser(), ApplicationUpdateScope.INTERNAL);
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION;
-
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -23,6 +21,7 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
@@ -131,7 +130,7 @@ public class ConfirmSupervisionController {
     public String confirmSupervision(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
@@ -140,7 +139,7 @@ public class ConfirmSupervisionController {
     public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, CONFIRM_PRIMARY_SUPERVISION);
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
 
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;

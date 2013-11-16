@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import static com.zuehlke.pgadmissions.dto.ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION;
-
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -85,7 +84,7 @@ public class OfferRecommendationController {
     public String getOfferRecommendationPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, CONFIRM_OFFER_RECOMMENDATION);
+        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
 
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
         ApprovalRound approvalRound = application.getLatestApprovalRound();
@@ -115,7 +114,7 @@ public class OfferRecommendationController {
             ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, CONFIRM_OFFER_RECOMMENDATION);
+        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
 
         if (errors.hasErrors()) {
             modelMap.put("offerRecommendedComment", offerRecommendedComment);

@@ -35,8 +35,8 @@ public enum Authority {
     /* A user that has delegated administrative privileges for one application */
     PROJECTADMINISTRATOR, 
     
-    /* A user that has delegated administrative privileges for a given application context */
-    REVIEWADMINISTRATOR, INTERVIEWADMINISTRATOR, APPROVALADMINISTRATOR,
+    /* A user that has delegated administrative privileges for a given stage */
+    STATEADMINISTRATOR,
     
     /* A user that an applicant suggests as their supervisor */
     SUGGESTEDSUPERVISOR

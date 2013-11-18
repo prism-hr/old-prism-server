@@ -167,10 +167,6 @@ public class ApplicationsService {
         return Iterables.getLast(sortedApplications, null);
     }
 
-    public void makeApplicationNotEditable(ApplicationForm applicationForm) {
-        applicationForm.setIsEditableByApplicant(false);
-    }
-
     public List<ApplicationDescriptor> getAllVisibleAndMatchedApplicationsForList(final RegisteredUser user, final ApplicationsFiltering filtering) {
         List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
     	for (ApplicationDescriptor application : applications) {
@@ -182,10 +178,6 @@ public class ApplicationsService {
     
     public List<ApplicationForm> getAllVisibleAndMatchedApplicationsForReport(final RegisteredUser user, final ApplicationsFiltering filtering) {
     	return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
-    }
-
-    public void delegateInterviewAdministration(final ApplicationForm applicationForm, final RegisteredUser delegate) {
-        applicationForm.getLatestStateChangeComment().setDelegateAdministrator(delegate);
     }
 
     public void sendSubmissionConfirmationToApplicant(final ApplicationForm applicationForm) {

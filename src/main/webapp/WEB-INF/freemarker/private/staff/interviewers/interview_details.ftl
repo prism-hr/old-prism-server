@@ -11,7 +11,6 @@
 <meta name="prism.version" content="<@spring.message 'prism.version'/>" >
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/global_private.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/application.css'/>" />
-<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/staff/add_interviewer.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />" />
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>

@@ -88,11 +88,8 @@ public class CreateNewReviewerController {
     
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (application == null
-				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
-						.isReviewerInLatestReviewRoundOfApplicationForm(application))) {
+		if (application == null) {
 			throw new ResourceNotFoundException();
 		}
 		return application;

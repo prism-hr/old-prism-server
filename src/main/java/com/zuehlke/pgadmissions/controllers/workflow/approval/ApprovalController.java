@@ -39,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -127,9 +126,11 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
     public String getMoveToApprovalPage(ModelMap modelMap, @RequestParam(required = false) String action) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        RegisteredUser registeredUser = (RegisteredUser) modelMap.get("user");
+        
+        actionsProvider.validateAction(applicationForm, registeredUser, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        
         modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         if (applicationForm.getLatestApprovalRound() != null) {
             SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
@@ -139,7 +140,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
             modelMap.put("sendToPorticoData", porticoData);
         }
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, registeredUser);
         return APPROVAL_PAGE;
     }
 
@@ -153,9 +155,6 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
     }  
@@ -259,15 +258,15 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult,
             SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        RegisteredUser registeredUser = getCurrentUser();
+        actionsProvider.validateAction(applicationForm, registeredUser, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         if (bindingResult.hasErrors()) {
             return PROPOSE_OFFER_RECOMMENDATION_SECTION;
         }
 
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);
         sessionStatus.setComplete();
         return "/private/common/ajax_OK";
     }

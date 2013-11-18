@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.Date;
-
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -15,14 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -32,7 +28,6 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
@@ -44,20 +39,17 @@ public class DelegateTransitionController extends StateTransitionController {
 
     private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
-    private InterviewService interviewService;
-
     public DelegateTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public DelegateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
             StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, InterviewService interviewService) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         super(applicationsService, userService, commentService, commentFactory, encryptionHelper, documentService, approvalService, stateChangeValidator,
                 documentPropertyEditor, stateTransitionService, applicationFormUserRoleService, actionsProvider);
-        this.interviewService = interviewService;
     }
 
     @ModelAttribute("comment")
@@ -92,6 +84,7 @@ public class DelegateTransitionController extends StateTransitionController {
     public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
             @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
+        applicationForm.setNextStatus(stateChangeComment.getNextStatus());
 
         ApplicationFormAction invokedAction = null;
 
@@ -118,34 +111,24 @@ public class DelegateTransitionController extends StateTransitionController {
             return STATE_TRANSITION_VIEW;
         }
 
-        RegisteredUser user = getCurrentUser();
-        Comment comment = null;
-        
-        if (applicationForm.getStatus() == applicationForm.getNextStatus()) {
-            comment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getDocuments(),
-                    stateChangeComment.getType(), stateChangeComment.getNextStatus(), stateChangeComment.getDelegateAdministrator());
-
-        } else {
-            comment = commentFactory.createStateChangeSuggestionComment(user, applicationForm, stateChangeComment.getComment(),
-                    stateChangeComment.getNextStatus());
-            Interview interview = applicationForm.getLatestInterview();
-            if (interview != null) {
-                interview.setStage(InterviewStage.INACTIVE);
-                interviewService.save(interview);
-            }
-            applicationForm.setDueDate(new Date());
+        RegisteredUser registeredUser = getCurrentUser();
+        ApplicationFormStatus status = applicationForm.getStatus();
+        ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
+        if (status == nextStatus) {
+        	stateChangeComment.setDelegateAdministrator(registeredUser);
         }
 
         if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
 
+        commentService.save(stateChangeComment);
         applicationsService.save(applicationForm);
-        commentService.save(comment);
         applicationsService.refresh(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.stateChanged(stateChangeComment);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.INTERNAL);
         
-        if (stateChangeComment.getNextStatus() == applicationForm.getNextStatus()) {
+        if (status == nextStatus) {
             return stateTransitionService.resolveView(applicationForm);
         }
         

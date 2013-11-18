@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -54,21 +55,22 @@ public class ValidationTransitionController extends StateTransitionController {
         RegisteredUser user = getCurrentUser();
 
         if (action != null && action.equals("abort")) {
-            if (user.hasAdminRightsOnApplication(applicationForm)) {
-                model.put("comment", applicationForm.getLatestStateChangeComment());
-                if (applicationForm.getNextStatus() == ApplicationFormStatus.INTERVIEW) {
-                    if (applicationForm.getLatestStateChangeComment().getDelegateAdministrator() != null) {
-                        model.put("delegate", true);
-                        model.put("delegatedAdministrator", applicationForm.getLatestStateChangeComment().getDelegateAdministrator());
-                    }
-
-                    else {
-                        model.put("delegate", false);
-                    }
+        	StateChangeComment latestStateChangeComment = applicationForm.getLatestStateChangeComment();
+        	RegisteredUser delegateAdministrator = latestStateChangeComment.getDelegateAdministrator();
+            if (user.hasAdminRightsOnApplication(applicationForm) ||
+            		(applicationForm.getStatus() == ApplicationFormStatus.APPROVAL &&
+            		user.isApproverInProgram(applicationForm.getProgram())) ||
+            		user == delegateAdministrator) {
+                model.put("comment", latestStateChangeComment);
+                if (delegateAdministrator != null) {
+                    model.put("delegate", true);
+                    model.put("delegatedAdministrator", delegateAdministrator);
+                } else {
+                    model.put("delegate", false);
                 }
             }
-
         }
+        
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return stateTransitionService.resolveView(applicationForm, action);
     }

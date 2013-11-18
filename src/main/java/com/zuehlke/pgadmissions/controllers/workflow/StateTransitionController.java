@@ -133,13 +133,8 @@ public class StateTransitionController {
                         return false;
                     }
                 }
-                if (form.getNextStatus() != null && status.equals(form.getNextStatus())) {
-                    if (!status.equals(ApplicationFormStatus.INTERVIEW)) {
-                        return false;
-                    }
-                    if (!currentUser.hasAdminRightsOnApplication(form)) {
-                        return false;
-                    }
+                if (status.equals(form.getNextStatus())) {
+                	return false;
                 }
                 return true;
             }
@@ -168,18 +163,15 @@ public class StateTransitionController {
     	if (userToSaveAsDelegate == null) {
     		if (!Arrays.asList(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), delegateAdministratorEmail).contains(null)) {
     		userToSaveAsDelegate = userService.createNewUserInRole(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), 
-    				delegateAdministratorEmail, Authority.SUGGESTEDSUPERVISOR);
+    				delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
     		}
     	}
     	
     	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
     	
-        if (nextStatus == ApplicationFormStatus.APPROVAL) {
-            applicationsService.makeApplicationNotEditable(applicationForm);
-        }
-    	
     	commentService.save(stateChangeComment);
         applicationsService.save(applicationForm);
+        applicationsService.refresh(applicationForm);
         applicationFormUserRoleService.stateChanged(stateChangeComment);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);	
     }

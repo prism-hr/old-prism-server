@@ -547,6 +547,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public void setStatus(ApplicationFormStatus status) {
         this.status = status;
         this.nextStatus = null;
+        
+        if (Arrays.asList(ApplicationFormStatus.UNSUBMITTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
+        		ApplicationFormStatus.INTERVIEW).contains(status)) {
+        	this.isEditableByApplicant = true;
+        } else {
+        	this.isEditableByApplicant = false;
+        }
+        
     }
 
     public ApplicationFormStatus getNextStatus() {
@@ -1071,5 +1079,5 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return stateChangeComment;
     }
-
+    
 }

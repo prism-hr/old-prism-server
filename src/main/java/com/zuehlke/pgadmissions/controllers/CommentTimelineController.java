@@ -43,9 +43,8 @@ public class CommentTimelineController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String id) {
-		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
-		if (applicationForm == null || !currentUser.canSee(applicationForm)) {
+		if (applicationForm == null) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
@@ -77,8 +76,5 @@ public class CommentTimelineController {
 	public RegisteredUser getUser() {		
 		return userService.getCurrentUser();
 	}
-
-
-
 
 }

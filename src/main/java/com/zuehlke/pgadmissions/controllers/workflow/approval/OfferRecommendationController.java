@@ -105,6 +105,7 @@ public class OfferRecommendationController {
             offerRecommendedComment.getSupervisors().addAll(approvalRound.getSupervisors());
         }
         modelMap.put("offerRecommendedComment", offerRecommendedComment);
+        modelMap.put("approvalRound", approvalRound);
         applicationFormUserRoleService.deregisterApplicationUpdate(application, user);
         return OFFER_RECOMMENDATION_VIEW_NAME;
     }

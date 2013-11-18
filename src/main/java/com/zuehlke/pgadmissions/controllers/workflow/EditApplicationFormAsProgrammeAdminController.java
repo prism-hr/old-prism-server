@@ -34,12 +34,12 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -144,6 +144,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
+    	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.VIEW_EDIT);
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
@@ -179,7 +180,6 @@ public class EditApplicationFormAsProgrammeAdminController {
 
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         model.addAttribute("editedRefereeId", editedRefereeId);
-        // save "send to UCL" data first
         if (sendToPorticoData.getRefereesSendToPortico() != null) {
             refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
         }
@@ -267,9 +267,6 @@ public class EditApplicationFormAsProgrammeAdminController {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!getCurrentUser().canEditAsAdministrator(applicationForm)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
     }

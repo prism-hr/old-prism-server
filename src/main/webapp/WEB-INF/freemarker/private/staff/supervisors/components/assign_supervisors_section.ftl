@@ -42,7 +42,7 @@
 	        <li data-supervisorid="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" class="ui-widget-content">
 	          ${supervisor.user.firstName?html} ${supervisor.user.lastName?html} (${supervisor.user.email?html})
 	          <span style="float:right; padding-right:20px;"> <input type="radio" value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" name="primarySupervisor"
-	          <#if  supervisor.isPrimary?? && supervisor.isPrimary >
+	          <#if supervisor.isPrimary?? && supervisor.isPrimary >
 	            checked="checked"
 	          </#if>
 	          > Primary Supervisor </span>

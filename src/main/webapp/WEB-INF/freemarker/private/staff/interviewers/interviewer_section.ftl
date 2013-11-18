@@ -10,7 +10,7 @@
 		    	<optgroup id="nominated" label="Users Interested in Applicant"> 
 		            <#list usersInterestedInApplication as interviewer> 
 		                <option value="${encrypter.encrypt(interviewer.id)}" category="nominated" <#if interviewer.isInterviewerInInterview(interview)>disabled="disabled"</#if>>
-		                ${interviewer.firstName?html} ${interviewer.lastName?html}
+		                ${interviewer.firstName?html} ${interviewer.lastName?html} (${interviewer.email?html})
 		                </option>
 		            </#list>
         		</optgroup>
@@ -19,7 +19,7 @@
 		    	<optgroup id="previous" label="Users in your Programme">
 		    		<#list usersPotentiallyInterestedInApplication as interviewer> 
                 		<option value="${encrypter.encrypt(interviewer.id)}" category="previous" <#if interviewer.isInterviewerInInterview(interview)>disabled="disabled"</#if>>
-                			${interviewer.firstName?html} ${interviewer.lastName?html}
+                			${interviewer.firstName?html} ${interviewer.lastName?html} (${interviewer.email?html})
                 		</option>
             		</#list> 
         		</optgroup>

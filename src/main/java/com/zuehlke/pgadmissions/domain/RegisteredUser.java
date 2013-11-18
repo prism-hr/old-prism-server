@@ -295,8 +295,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return id;
 	}
 
-	public List<Interviewer> getInterviewersForApplicationForm(
-			final ApplicationForm form) {
+	public List<Interviewer> getInterviewersForApplicationForm(final ApplicationForm form) {
 		List<Interviewer> interviewers = new ArrayList<Interviewer>();
 		List<Interviewer> formInterviewers = form.getLatestInterview()
 				.getInterviewers();
@@ -375,15 +374,12 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return referees;
 	}
 
-	public Reviewer getReviewerForCurrentUserFromLatestReviewRound(
-			final ApplicationForm form) {
+	public Reviewer getReviewerForCurrentUserFromLatestReviewRound(final ApplicationForm form) {
 		ReviewRound latestReviewRound = form.getLatestReviewRound();
 
 		if (latestReviewRound == null) {
 			throw new IllegalStateException(
-					String.format(
-							"latestReviewRound is null for application[applicationNumber=%s]",
-							form.getApplicationNumber()));
+					String.format("latestReviewRound is null for application[applicationNumber=%s]", form.getApplicationNumber()));
 		}
 
 		List<Reviewer> formReviewers = latestReviewRound.getReviewers();
@@ -413,8 +409,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return hasAdminRightsOnApplication(form, this);
 	}
 
-	public boolean hasDeclinedToProvideReviewForApplication(
-			final ApplicationForm form) {
+	public boolean hasDeclinedToProvideReviewForApplication(final ApplicationForm form) {
 		for (Comment comment : comments) {
 			if (comment.getApplication().getId().equals(form.getId())
 					&& comment.getType().equals(CommentType.REVIEW)) {
@@ -431,8 +426,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return getRefereeForApplicationForm(form) != null;
 	}
 
-	public boolean hasRespondedToProvideInterviewFeedbackForApplication(
-			final ApplicationForm form) {
+	public boolean hasRespondedToProvideInterviewFeedbackForApplication(final ApplicationForm form) {
 		for (Comment comment : comments) {
 			if (comment.getApplication().getId().equals(form.getId())
 					&& comment.getType().equals(CommentType.INTERVIEW)) {
@@ -442,8 +436,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return false;
 	}
 
-	public boolean hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(
-			final ApplicationForm form) {
+	public boolean hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(final ApplicationForm form) {
 		List<Interviewer> interviewers = form.getLatestInterview()
 				.getInterviewers();
 		for (Interviewer interviewer : interviewers) {
@@ -457,8 +450,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return false;
 	}
 
-	public boolean hasRespondedToProvideReviewForApplication(
-			final ApplicationForm form) {
+	public boolean hasRespondedToProvideReviewForApplication(final ApplicationForm form) {
 		for (Comment comment : comments) {
 			if (comment.getApplication().getId().equals(form.getId())
 					&& comment.getType().equals(CommentType.REVIEW)) {
@@ -468,8 +460,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return false;
 	}
 
-	public boolean hasRespondedToProvideReviewForApplicationLatestRound(
-			final ApplicationForm form) {
+	public boolean hasRespondedToProvideReviewForApplicationLatestRound(final ApplicationForm form) {
 		List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
 		for (Reviewer reviewer : reviewers) {
 			if (reviewer.getReviewRound().getId()
@@ -593,8 +584,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return isRefereeOfApplication(form, this);
 	}
 
-	public boolean isReviewerInLatestReviewRoundOfApplicationForm(
-			final ApplicationForm form) {
+	public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
 		return isReviewerInLatestReviewRoundOfApplication(form, this);
 	}
 

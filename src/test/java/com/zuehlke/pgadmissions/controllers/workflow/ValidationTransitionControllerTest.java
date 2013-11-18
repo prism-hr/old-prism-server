@@ -102,7 +102,6 @@ public class ValidationTransitionControllerTest {
 
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         applicationServiceMock.save(applicationForm);
-        applicationServiceMock.makeApplicationNotEditable(applicationForm);
         applicationFormUserRoleService.stateChanged(comment);
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);

@@ -66,7 +66,8 @@
   								<li class="${timelineObject.type}">
   									<div class="box">
                       <div class="title">
-                        <span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
+                        <span class="icon-role 
+                        <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
                         <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
                         <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
                       </div>
@@ -88,6 +89,12 @@
   							<ul class="status-info">
   								<li class="${timelineObject.type}">
   									<div class="box">
+ 					  <div class="title">
+                        <span class="icon-role 
+                        <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="${(timelineObject.getTooltipMessage()?html)!}"></span>
+                        <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span> <span class="commented">commented:</span>
+                        <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
+                      </div>
   										<p class="added">
   											<#assign size_users = timelineObject.interview.interviewers?size>
   											<#list timelineObject.interview.interviewers as interviewer>
@@ -197,14 +204,6 @@
                                 <p class="restart"><span/><b>Restart of approval stage requested.</b></p>
 							<#elseif comment.comment?starts_with("Referred to")>
                                 <p class="referral"><span data-desc="Referral"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
-							<#elseif (comment.type == "VALIDATION" || 
-								comment.type == "REVIEW_EVALUATION" ||  
-								comment.type == "INTERVIEW_EVALUATION" || 
-								comment.type == "APPROVAL_EVALUATION") &&
-								comment.delegateAdministrator?has_content>
-                                <p class="delegate"><span data-desc="delegate"></span><em>Delegated next stage administration to
-                                	${(comment.delegateAdministrator.firstName?html)!} ${(comment.delegateAdministrator.lastName?html)!} (${(comment.delegateAdministrator.email?html)!})</em>.</p>
-                            <!-- General comment box-->	
           				    <#elseif comment.comment?trim?length &gt; 0>
                                 <div class="textContainer">
                                 	<p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
@@ -217,8 +216,15 @@
                                     <li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
                                 </#list>
                                 </ul>
-                            </#if> 
-                            
+                            </#if>
+                            <#if (comment.type == "VALIDATION" || 
+								comment.type == "REVIEW_EVALUATION" ||  
+								comment.type == "INTERVIEW_EVALUATION" || 
+								comment.type == "APPROVAL_EVALUATION") &&
+								comment.delegateAdministrator?has_content>
+                                <p class="delegate"><span data-desc="delegate"></span><em>Delegated next stage administration to
+                                	${(comment.delegateAdministrator.firstName?html)!} ${(comment.delegateAdministrator.lastName?html)!} (${(comment.delegateAdministrator.email?html)!})</em>.</p>
+                            </#if>
                             <!-- To move to validation questions-->	
   			                <#if comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT'>
   			                	<#include "timeline_snippets/validation_comment.ftl"/>
@@ -226,20 +232,20 @@
   			                	<#include "timeline_snippets/review_comment.ftl"/>
   			                <#elseif comment.type == 'INTERVIEW'>
   			                	<#include "timeline_snippets/interview_comment.ftl"/>
-		                	  <#elseif comment.type == 'INTERVIEW_VOTE'>
-			                		<#assign interviewVoteParticipant=comment.interviewParticipant>
-			                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
-			                		<#if interviewVoteParticipant.responded>
-                                        <#if interviewVoteParticipant.acceptedTimeslots?has_content>
-                                            <h3 class="answer yes"><span aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
-                                        <#else>
-                                            <h3 class="answer no"><span aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
-                                        </#if>
-		                		   </#if>
-	                		  <#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
-	                		    <h3 class="recommend">
-								  <span class="icon-hand-right"></span>Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
-                		        </h3>
+	                	  	<#elseif comment.type == 'INTERVIEW_VOTE'>
+		                		<#assign interviewVoteParticipant=comment.interviewParticipant>
+		                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
+		                		<#if interviewVoteParticipant.responded>
+                                    <#if interviewVoteParticipant.acceptedTimeslots?has_content>
+                                        <h3 class="answer yes"><span aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
+                                    <#else>
+                                        <h3 class="answer no"><span aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
+                                    </#if>
+	                		</#if>
+	                		<#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
+	                			<h3 class="recommend">
+								  	<span class="icon-hand-right"></span>Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
+                		       	</h3>
   			                </#if>
   			              </div>
   			            </li>

@@ -203,7 +203,6 @@ public class EvaluationTransitionControllerTest {
                         stateComment.getNextStatus(), null)).andReturn(comment);
         commentServiceMock.save(comment);
         EasyMock.expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
-        applicationServiceMock.makeApplicationNotEditable(applicationForm);
         EasyMock.expectLastCall();
         applicationServiceMock.save(applicationForm);
         applicationServiceMock.refresh(applicationForm);

@@ -248,6 +248,9 @@
 										<#else>
 											<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitEvaluationComment'/>">
 										</#if>
+									<#elseif user.isApproverInProgram(applicationForm.program) &&
+										applicationForm.isInState('APPROVAL')>
+											<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitEvaluationComment'/>">
 									<#else>
 										<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitDelegateStateChangeComment'/>">
 									</#if>

@@ -66,8 +66,6 @@ $(document).ready(function()
 		
 	});
 	
-
-
 	$('#moveToReviewBtn').click(function() {
 		
 		$('#ajaxloader').show();
@@ -156,46 +154,45 @@ function getReviewersSection(){
 	});
 }
 
-function getCreateReviewersSection(){
-	$('#ajaxloader').show();
-	
-	$.ajax({
-		type: 'GET',
-		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  },
-			  500: function() {
-				  window.location.href = "/pgadmissions/error";
-			  },
-			  404: function() {
-				  window.location.href = "/pgadmissions/404";
-			  },
-			  400: function() {
-				  window.location.href = "/pgadmissions/400";
-			  },				  
-			  403: function() {
-				  window.location.href = "/pgadmissions/404";
-			  }
-		  },
-		url:"/pgadmissions/review/create_reviewer_section?applicationId=" + $('#applicationId').val(), 
-		success: function(data)
-		{
-			$('#ajaxloader').fadeOut('fast');
-			$('#createreviewersection').html(data);
-		}
-	});
+function getCreateReviewersSection() {
+    $('#ajaxloader').show();
+
+    $.ajax({
+        type : 'GET',
+        statusCode : {
+            401 : function() {
+                window.location.reload();
+            },
+            500 : function() {
+                window.location.href = "/pgadmissions/error";
+            },
+            404 : function() {
+                window.location.href = "/pgadmissions/404";
+            },
+            400 : function() {
+                window.location.href = "/pgadmissions/400";
+            },
+            403 : function() {
+                window.location.href = "/pgadmissions/404";
+            }
+        },
+        url : "/pgadmissions/review/create_reviewer_section?applicationId=" + $('#applicationId').val(),
+        success : function(data) {
+            $('#createreviewersection').html(data);
+        },
+        complete : function() {
+            $('#ajaxloader').fadeOut('fast');
+        }
+    });
 }
 
 function addExistingUserToReviewersLists(newReviewer){
 	
 	if($('#applicationReviewers option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').length > 0){
 		
-		
 		return;
 	}
 	
-
 	if($('#default option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').length > 0){		
 		$('#default option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').attr("selected", 'selected');		
 		$('#addReviewerBtn').trigger('click');

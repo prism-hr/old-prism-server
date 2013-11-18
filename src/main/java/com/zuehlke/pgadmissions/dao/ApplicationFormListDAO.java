@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
@@ -109,7 +110,8 @@ public class ApplicationFormListDAO {
     }
     
     private void appendWhereStatement(Criteria criteria, RegisteredUser registeredUser, ApplicationsFiltering filtering) {
-    	criteria.add(Restrictions.eq("user", registeredUser));
+    	criteria.add(Restrictions.eq("user", registeredUser))
+    		.add(Restrictions.ne("role.id", Authority.SUGGESTEDSUPERVISOR));
     	
         if (filtering != null) {
             boolean useDisjunction = filtering.getUseDisjunction();

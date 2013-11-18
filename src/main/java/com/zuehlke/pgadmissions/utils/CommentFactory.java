@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
-import com.zuehlke.pgadmissions.domain.StateChangeSuggestionComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -56,16 +55,6 @@ public class CommentFactory {
         scheduleComment.setUser(user);
         scheduleComment.setApplication(application);
         return scheduleComment;
-    }
-
-    public StateChangeSuggestionComment createStateChangeSuggestionComment(RegisteredUser user, ApplicationForm application, String comment,
-            ApplicationFormStatus nextStatus) {
-        StateChangeSuggestionComment stateChangeSuggestionComment = new StateChangeSuggestionComment();
-        stateChangeSuggestionComment.setUser(user);
-        stateChangeSuggestionComment.setApplication(application);
-        stateChangeSuggestionComment.setComment(comment);
-        stateChangeSuggestionComment.setNextStatus(nextStatus);
-        return stateChangeSuggestionComment;
     }
 
     private Comment creatStateChangeComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType,

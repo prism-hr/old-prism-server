@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +74,7 @@ public class ApplicationFormUserRoleService {
     }
 
     public void applicationSubmitted(ApplicationForm applicationForm) {
-        createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, true);
+        createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, false);
 
         assignToAdministrators(applicationForm, ApplicationFormAction.COMPLETE_VALIDATION_STAGE, applicationForm.getDueDate(), true);
 
@@ -201,7 +200,6 @@ public class ApplicationFormUserRoleService {
 
     public void movedToApprovalStage(ApprovalRound approvalRound) {
         ApplicationForm applicationForm = approvalRound.getApplication();
-
         deassignFromStateBoundedWorkers(applicationForm);
 
         Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
@@ -227,8 +225,10 @@ public class ApplicationFormUserRoleService {
 
     public void referencePosted(Referee referee) {
         ApplicationForm application = referee.getApplication();
-        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, referee.getUser(), Authority.REFEREE);
-        applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
+        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, referee.getUser(), Authority.REFEREE);     
+        if (role != null) {
+        	applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
+        }
     }
 
     public void reviewPosted(Reviewer reviewer) {
@@ -346,7 +346,6 @@ public class ApplicationFormUserRoleService {
 
     public void registerApplicationUpdate(ApplicationForm applicationForm, RegisteredUser author, ApplicationUpdateScope updateVisibility) {
         Date updateTimestamp = new Date();
-        applicationForm.setLastUpdated(updateTimestamp);
         applicationFormUserRoleDAO.updateApplicationFormUpdateTimestamp(applicationForm, author, updateTimestamp, updateVisibility);
     }
 
@@ -417,13 +416,11 @@ public class ApplicationFormUserRoleService {
             }
         }
 
-        if (applicationForm.getNextStatus() != null) {
-            ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
-            if (Arrays.asList(ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL).contains(nextStatus)) {
-                RegisteredUser stateAdministrator = applicationForm.getLatestStateChangeComment().getDelegateAdministrator();
-                if (stateAdministrator != null) {
-                    administrators.put(stateAdministrator, Authority.STATEADMINISTRATOR);
-                }
+        StateChangeComment latestStateChangeComment = applicationForm.getLatestStateChangeComment();    
+        if (latestStateChangeComment != null) {
+            RegisteredUser stateAdministrator = latestStateChangeComment.getDelegateAdministrator();
+            if (stateAdministrator != null) {
+                administrators.put(stateAdministrator, Authority.STATEADMINISTRATOR);
             }
         }
 

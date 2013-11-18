@@ -74,14 +74,14 @@ public class EvaluationTransitionController extends StateTransitionController {
         if (action != null && action.equals("abort")) {
             invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
         } else {
-            switch (stateChangeComment.getType()) {
-            case APPROVAL_EVALUATION:
+            switch (applicationForm.getStatus()) {
+            case APPROVAL:
                 invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
                 break;
-            case REVIEW_EVALUATION:
+            case REVIEW:
                 invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
                 break;
-            case INTERVIEW_EVALUATION:
+            case INTERVIEW:
                 invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
                 break;
             default:
@@ -105,7 +105,6 @@ public class EvaluationTransitionController extends StateTransitionController {
         	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
         }
 
-        applicationsService.refresh(applicationForm);
         return stateTransitionService.resolveView(applicationForm);
     }
 }

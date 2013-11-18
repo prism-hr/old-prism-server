@@ -227,8 +227,8 @@ section.form-rows .field.upload-delete input[type="file"] { display: inline-bloc
 #withdrawButton { float: left; }
 
 /* Selecting lists of users. */
-select.list-select-from { height: 300px; width: 400px; }
-select.list-select-to { width: 400px; }
+select.list-select-from { height: 300px; width: 500px; }
+select.list-select-to { width: 500px; }
 select.list-select-from option:last-child,
 select.list-select-to option:last-child { border-bottom: none; }
 
@@ -250,14 +250,14 @@ select.list-select-from option {
 select.list-select-to { min-height:34px; }
 select.list-select-to option { padding: 5px; }
 
-.list-select-buttons .field { padding: 6px 0 8px !important; text-align: center; width: 400px; }
+.list-select-buttons .field { padding: 6px 0 8px !important; text-align: center; width: 500px; }
 .list-select-buttons .field button { margin: 0 5px; width: 90px; }
 
 /* Select Supervisors */
 #applicationSupervisorsList { border: 1px solid #999999; min-height:34px }
 #applicationSupervisorsList .ui-selecting { background: #3399FF; color: white; }
 #applicationSupervisorsList .ui-selected { background: #3399FF; color: white; }
-#applicationSupervisorsList { list-style-type: none; margin: 0; margin-bottom:10px; padding: 0; width: 400px; }
+#applicationSupervisorsList { list-style-type: none; margin: 0; margin-bottom:10px; padding: 0; width: 500px; }
 #applicationSupervisorsList li { padding:5px; }
 .ui-widget-content { border: 0px }
 

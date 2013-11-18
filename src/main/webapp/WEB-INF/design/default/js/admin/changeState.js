@@ -97,7 +97,9 @@ function changeState() {
         	saveDelegatedAdministrator();
         	return;
         } 
-    } 
+    }
+    saveComment();
+    return;
 }
 
 function refreshControls() {

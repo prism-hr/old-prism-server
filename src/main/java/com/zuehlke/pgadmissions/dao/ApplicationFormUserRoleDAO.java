@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -9,17 +10,14 @@ import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormActionOptional;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -90,7 +88,7 @@ public class ApplicationFormUserRoleDAO {
         sessionFactory.getCurrentSession().flush();
     }
     
-    public List<ActionDefinition> findActionsByUserAndApplicationForm (RegisteredUser user, ApplicationForm applicationForm) {
+    public List<ActionDefinition> findActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
     	return findActionsByUserIdAndApplicationIdAndApplicationFormStatus(user.getId(), applicationForm.getId(), applicationForm.getStatus());
     }
     
@@ -104,17 +102,17 @@ public class ApplicationFormUserRoleDAO {
     	List<Object[]> rows = (List<Object[]>) query.list();
     	List<ActionDefinition> actionDefinitions = new ArrayList<ActionDefinition>();
     	
-    	boolean hasViewAction = false;
+    	Boolean hasViewAction = false;
     	
     	for (Object[] row : rows) {
-    		String action = (String) row[0];
+    		ApplicationFormAction action = ApplicationFormAction.valueOf((String)row[0]);
     		Boolean raisesUrgentFlag = BooleanUtils.toBooleanObject((Integer) row[1]);
 			
-			if (action.equals("VIEW")) {
+			if (action == ApplicationFormAction.VIEW) {
 				hasViewAction = true;
 			}
     		
-    		if (action.equals("VIEW_EDIT") &&
+    		if (action == ApplicationFormAction.VIEW_EDIT &&
     			BooleanUtils.isTrue(hasViewAction)) {
     			actionDefinitions.remove(actionDefinitions.size() - 1);
     		}
@@ -145,25 +143,14 @@ public class ApplicationFormUserRoleDAO {
         return BooleanUtils.toBoolean(raisesUrgentFlag);
     }
 
-    public boolean checkActionAvailableForUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm, ApplicationFormAction action) {
-        Object requiredResult = sessionFactory.getCurrentSession().createCriteria(ApplicationFormActionRequired.class)
-                .createAlias("applicationFormUserRole", "role")
-                .add(Restrictions.eq("role.applicationForm", applicationForm))
-                .add(Restrictions.eq("role.user", user))
-                .add(Restrictions.eq("action", action))
-                .setProjection(Projections.projectionList()
-                .add(Projections.groupProperty("action"))).uniqueResult();
-
-        DetachedCriteria subquery = DetachedCriteria.forClass(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
-                .add(Restrictions.eq("user", user)).setProjection(Projections.property("role.id"));
-
-        Object optionalResult = sessionFactory.getCurrentSession()
-                .createCriteria(ApplicationFormActionOptional.class)
-                .add(Subqueries.propertyIn("id.role.id", subquery))
-                .add(Restrictions.eq("id.status", applicationForm.getStatus()))
-                .add(Restrictions.eq("id.action", action.name()))
-                .uniqueResult();
-        return requiredResult != null || optionalResult != null;
+    public boolean checkActionAvailableForUserAndApplicationForm(RegisteredUser registeredUser, ApplicationForm applicationForm, ApplicationFormAction action) {
+        List<ActionDefinition> availableActions = this.findActionsByUserAndApplicationForm(registeredUser, applicationForm);
+        for (ActionDefinition availableAction : availableActions) {
+        	if (availableAction.getAction() == action) {
+        		return true;
+        	}
+        }
+        return false;
     }
     
     public void insertUserinRole(RegisteredUser registeredUser, Authority authority) {
@@ -213,20 +200,23 @@ public class ApplicationFormUserRoleDAO {
 		
 		Query query = session.createSQLQuery("CALL UPDATE_APPLICATION_FORM_ACTION_REQUIRED_DEADLINE(?, ?);")
 			.setInteger(0, applicationForm.getId())
-			.setDate(1, deadlineTimestamp);
+			.setString(1, javaDateToMySQLDateString(deadlineTimestamp));
 		query.executeUpdate();
 	}
 	
 	public void updateApplicationFormUpdateTimestamp(ApplicationForm applicationForm, RegisteredUser registeredUser, 
 			Date updateTimestamp, ApplicationUpdateScope updateVisibility) {
+        applicationForm.setLastUpdated(updateTimestamp);
+		Session session = sessionFactory.getCurrentSession();
+		session.flush();
+		
 		Query query = sessionFactory.getCurrentSession()
 			.createSQLQuery("CALL INSERT_APPLICATION_FORM_USER_ROLE_UPDATE(?, ?, ?, ?);")
 				.setInteger(0, applicationForm.getId())
 				.setInteger(1, registeredUser.getId())
-				.setDate(2, updateTimestamp)
+				.setString(2, javaDateToMySQLDateString(updateTimestamp))
 				.setInteger(3, ApplicationUpdateScope.valueOf(updateVisibility.toString()).ordinal());
 		query.executeUpdate();
-		
 	}
 	
 	public void deleteAllApplicationFormActions (ApplicationForm applicationForm) {
@@ -250,7 +240,11 @@ public class ApplicationFormUserRoleDAO {
 				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("applicationForm", applicationForm))
 				.add(Restrictions.eq("interestedInApplicant", true))
-				.add(Restrictions.eq("registeredUser.enabled", true))
+				.add(Restrictions.disjunction()
+						.add(Restrictions.eq("registeredUser.enabled", true))
+						.add(Restrictions.conjunction()
+							.add(Restrictions.eq("registeredUser.enabled", false))
+							.add(Restrictions.in("role.id", Arrays.asList(Authority.SUGGESTEDSUPERVISOR)))))
 				.addOrder(Order.asc("registeredUser.lastName"))
 				.addOrder(Order.asc("registeredUser.firstName"))
 				.addOrder(Order.asc("registeredUser.id")).list();
@@ -267,6 +261,8 @@ public class ApplicationFormUserRoleDAO {
 				.add(Restrictions.in("role.id", Arrays.asList(Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR, 
 						Authority.SUGGESTEDSUPERVISOR, Authority.APPROVER, Authority.STATEADMINISTRATOR, Authority.PROJECTADMINISTRATOR)))
 				.add(Restrictions.isNull("registeredUser.primaryAccount"))
+				.add(Restrictions.eq("registeredUser.enabled", true))
+				.add(Restrictions.eq("interestedInApplicant", false))
 				.addOrder(Order.asc("registeredUser.lastName"))
 				.addOrder(Order.asc("registeredUser.firstName"))
 				.addOrder(Order.asc("registeredUser.id")).list();
@@ -277,4 +273,10 @@ public class ApplicationFormUserRoleDAO {
 		applicationFormUserRole.setRaisesUrgentFlag(false);
 		sessionFactory.getCurrentSession().flush();
 	}
+	
+	private String javaDateToMySQLDateString(Date date) {
+		SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return outputDateFormat.format(date);
+	}
+	
 }

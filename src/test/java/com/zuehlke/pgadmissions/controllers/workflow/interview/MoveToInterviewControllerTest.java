@@ -87,67 +87,6 @@ public class MoveToInterviewControllerTest {
     }
 
     @Test
-    public void shouldReturnNewInterviewWithExistingRoundsInterviewersIfAny() {
-        Interviewer interviewerOne = new InterviewerBuilder().id(1).build();
-        Interviewer interviewerTwo = new InterviewerBuilder().id(2).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
-                .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
-        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
-
-        replay(applicationServiceMock);
-        Interview returnedInterview = controller.getInterview("abc");
-        verify(applicationServiceMock);
-
-        assertNull(returnedInterview.getId());
-        assertThat(returnedInterview.getInterviewers(), hasItems(interviewerOne, interviewerTwo));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldReturnNewInterviewWithApplicationAdministratorIfAny() {
-        RegisteredUser user = new RegisteredUserBuilder().id(8).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").applicationAdministrator(user).build();
-        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
-
-        replay(applicationServiceMock);
-        Interview returnedInterview = controller.getInterview("abc");
-        verify(applicationServiceMock);
-
-        assertNull(returnedInterview.getId());
-        assertThat(returnedInterview.getInterviewers(), Matchers.<Interviewer> hasItems(hasProperty("user", sameInstance(user))));
-    }
-
-    @Test
-    public void shouldReturnInterviewWithWillingToInterviewWithInterviewersOfPreviousInterviewRemoved() {
-        RegisteredUser userOne = new RegisteredUserBuilder().id(1).build();
-        ReviewComment reviewOne = new ReviewCommentBuilder().id(1).user(userOne).willingToInterview(true).build();
-        RegisteredUser userTwo = new RegisteredUserBuilder().id(2).build();
-        ReviewComment reviewTwo = new ReviewCommentBuilder().id(2).user(userTwo).willingToInterview(true).build();
-        RegisteredUser userThree = new RegisteredUserBuilder().id(3).build();
-        ReviewComment reviewThree = new ReviewCommentBuilder().id(3).user(userThree).willingToInterview(true).build();
-        Interviewer interviewerOne = new InterviewerBuilder().id(1).user(userOne).build();
-        Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(userTwo).build();
-
-        RegisteredUser decliningUser = new RegisteredUserBuilder().id(4).build();
-        InterviewComment interviewComment = new InterviewCommentBuilder().decline(true).build();
-        Interviewer decliningInterviewer = new InterviewerBuilder().id(4).user(decliningUser).interviewComment(interviewComment).build();
-
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(reviewOne, reviewTwo, reviewThree)
-                .latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo, decliningInterviewer).build()).build();
-        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
-
-        replay(applicationServiceMock);
-        Interview returnedInterview = controller.getInterview("abc");
-        verify(applicationServiceMock);
-
-        assertNull(returnedInterview.getId());
-        assertEquals(3, returnedInterview.getInterviewers().size());
-        assertTrue(returnedInterview.getInterviewers().containsAll(Arrays.asList(interviewerOne, interviewerTwo)));
-        assertNull(returnedInterview.getInterviewers().get(2).getId());
-        assertEquals(userThree, returnedInterview.getInterviewers().get(2).getUser());
-    }
-
-    @Test
     public void shouldReturnNewInterviewWithEmtpyInterviewersIfNoLatestInterview() {
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();

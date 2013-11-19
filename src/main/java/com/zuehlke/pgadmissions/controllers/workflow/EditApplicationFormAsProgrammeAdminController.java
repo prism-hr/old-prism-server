@@ -145,7 +145,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
     	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.VIEW_EDIT);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
+    	applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
 

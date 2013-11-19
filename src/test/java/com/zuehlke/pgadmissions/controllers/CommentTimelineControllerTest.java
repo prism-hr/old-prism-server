@@ -54,23 +54,6 @@ public class CommentTimelineControllerTest {
 		controller.getApplicationForm("5");
 	}
 
-
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentCannotSeeApplicationForm() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(currentUser, userServiceMock);
-
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("5");
-
-	}
-
 	@Test
 	public void shouldGetAllPhasesForApplication() throws ParseException {
 

@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
@@ -82,15 +81,15 @@ public class MoveToReviewController {
     		@Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, 
     		BindingResult bindingResult) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-
+        
+        RegisteredUser initiator = getUser();
+        
         actionsProvider.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
             return REVIEWERS_SECTION_NAME;
         }
 
-        reviewService.moveApplicationToReview(applicationForm, reviewRound);
-        applicationFormUserRoleService.movedToReviewStage(reviewRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.ALL_USERS);
+        reviewService.moveApplicationToReview(applicationForm, reviewRound, initiator);
 
         return "/private/common/ajax_OK";
     }
@@ -109,10 +108,14 @@ public class MoveToReviewController {
     public ReviewRound getReviewRound(@RequestParam String applicationId) {
         ReviewRound reviewRound = new ReviewRound();
         
-        for (RegisteredUser interestedUser : getUsersInterestedInApplication(applicationId)) {
-        	Reviewer reviewer = new Reviewer();
-        	reviewer.setUser(interestedUser);
-        	reviewRound.getReviewers().add(reviewer);
+        List<RegisteredUser> usersInterestedInApplication = getUsersInterestedInApplication(applicationId);
+        
+        if (usersInterestedInApplication != null) {
+	        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
+	        	Reviewer reviewer = new Reviewer();
+	        	reviewer.setUser(registeredUser);
+	        	reviewRound.getReviewers().add(reviewer);
+	        }
         }
         
         return reviewRound;

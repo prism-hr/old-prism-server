@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -68,32 +69,26 @@ public class EvaluationTransitionController extends StateTransitionController {
             @RequestParam(required = false) String action, @RequestParam(required = false) Boolean delegate,
             @ModelAttribute("delegatedAdministrator") RegisteredUser delegateAdministrator) {
     	modelMap.put("delegate", delegate);
-    	ApplicationFormAction invokedAction;
-        RegisteredUser registeredUser = getCurrentUser();
-
-        if (action != null && action.equals("abort")) {
-            invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
-        } else {
-            switch (applicationForm.getStatus()) {
-            case APPROVAL:
-                invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
-                break;
-            case REVIEW:
-                invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
-                break;
-            case INTERVIEW:
-                invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
-                break;
-            default:
-                throw new IllegalStateException("illegal StateChangeComment type passed to evaluation controller");
-            }
-        }
-
-        actionsProvider.validateAction(applicationForm, registeredUser, invokedAction);
 
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
+        
+    	ApplicationFormAction invokedAction = null;
+        ApplicationFormStatus status = applicationForm.getStatus();
+    	
+        if (action != null && action.equals("abort")) {
+            invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
+        } else if (status == ApplicationFormStatus.REVIEW) {
+        	invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
+        } else if (status == ApplicationFormStatus.INTERVIEW) {
+        	invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+        } else if (status == ApplicationFormStatus.APPROVAL) {
+        	invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
+        }
+
+        RegisteredUser registeredUser = getCurrentUser();
+        actionsProvider.validateAction(applicationForm, registeredUser, invokedAction);
 
         if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());

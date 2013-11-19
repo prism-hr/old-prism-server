@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,14 +17,11 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
@@ -86,33 +81,6 @@ public class MoveToReviewControllerTest {
     }
 
     @Test
-    public void shouldReturnNewReviewRoundWithExistingRoundsReviewersWhoHaveNotDeclined() {
-        Reviewer reviewerOne = new ReviewerBuilder().id(1).build();
-        ReviewComment reviewTwoComment = new ReviewCommentBuilder().decline(true).build();
-        Reviewer reviewerTwo = new ReviewerBuilder().id(2).review(reviewTwoComment).build();
-        Reviewer reviewerThree = new ReviewerBuilder().id(2).build();
-
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
-                .latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo, reviewerThree).build()).build();
-
-        controller = new MoveToReviewController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock,
-                reviewerPropertyEditorMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                if (applicationId.equals("bob")) {
-                    return application;
-                }
-                return null;
-            }
-
-        };
-        ReviewRound returnedReviewRound = controller.getReviewRound("bob");
-        assertNull(returnedReviewRound.getId());
-        assertEquals(2, returnedReviewRound.getReviewers().size());
-        assertTrue(returnedReviewRound.getReviewers().containsAll(Arrays.asList(reviewerOne, reviewerThree)));
-    }
-
-    @Test
     public void shouldReturnNewReviewRoundWithEmtpyReviewersIfNoLatestReviewRound() {
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
@@ -135,6 +103,7 @@ public class MoveToReviewControllerTest {
 
     @Test
     public void shouldMoveApplicationToReview() {
+
         ReviewRound reviewRound = new ReviewRoundBuilder().id(4).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
@@ -147,7 +116,7 @@ public class MoveToReviewControllerTest {
 
         };
 
-        reviewServiceMock.moveApplicationToReview(application, reviewRound);
+        reviewServiceMock.moveApplicationToReview(application, reviewRound, currentUserMock);
         EasyMock.replay(reviewServiceMock);
 
         String view = controller.moveToReview("abc", reviewRound, bindingResultMock);

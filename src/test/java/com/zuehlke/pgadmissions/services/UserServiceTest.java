@@ -446,6 +446,7 @@ public class UserServiceTest {
         RegisteredUser newUser = new RegisteredUserBuilder().id(5).build();
         EasyMock.expect(userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Authority.REVIEWER)).andReturn(newUser);
         userDAOMock.save(newUser);
+        EasyMock.expectLastCall().times(2);
 
         EasyMock.replay(userDAOMock, userFactoryMock);
 
@@ -469,6 +470,7 @@ public class UserServiceTest {
         RegisteredUser newUser = new RegisteredUserBuilder().id(5).build();
         EasyMock.expect(userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Authority.INTERVIEWER)).andReturn(newUser);
         userDAOMock.save(newUser);
+        EasyMock.expectLastCall().times(2);
 
         EasyMock.replay(userDAOMock, userFactoryMock);
 

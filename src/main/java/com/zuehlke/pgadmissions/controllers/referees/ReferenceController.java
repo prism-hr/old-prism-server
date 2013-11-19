@@ -185,7 +185,7 @@ public class ReferenceController {
             return ADD_REFERENCES_VIEW_NAME;
         }
 
-        if (comment.getReferee().getReference() == null) { // check if the reference isn't already submitted
+        if (comment.getReferee().getReference() == null) {
             commentService.save(comment);
             applicationForm.getApplicationComments().add(comment);
             applicantRatingService.computeAverageRating(applicationForm);

@@ -58,7 +58,6 @@ public class ValidationTransitionControllerTest {
     private BindingResult bindingResultMock;
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private RegisteredUser currentUser;
 
@@ -85,12 +84,11 @@ public class ValidationTransitionControllerTest {
     public void shouldCreateValidationCommentWithQuestionValuesIfNoValidationErrors() {
         Program program = new ProgramBuilder().id(1).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        applicationForm.setNextStatus(ApplicationFormStatus.APPROVAL);
         ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO)
                 .englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.APPROVAL)
                 .comment("comment").type(CommentType.VALIDATION).id(6).fastTrackApplication(false).build();
-        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
 
-        commentServiceMock.save(comment);
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,
                 applicationFormUserRoleServiceMock, actionsProviderMock) {
@@ -101,12 +99,10 @@ public class ValidationTransitionControllerTest {
         };
 
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        applicationServiceMock.save(applicationForm);
-        applicationFormUserRoleService.stateChanged(comment);
+        controller.postStateChangeComment(applicationForm, currentUser, comment, null);
 
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-        String result = controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), true,
-                delegatedInterviewer);
+        String result = controller.addComment(applicationForm, comment, bindingResultMock, new ModelMap(), null, true, null);
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
 
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
@@ -131,14 +127,12 @@ public class ValidationTransitionControllerTest {
         };
         ValidationComment comment = new ValidationCommentBuilder().comment("comment").type(CommentType.VALIDATION).documents(documentOne, documentTwo).id(6)
                 .fastTrackApplication(false).build();
-        RegisteredUser delegatedInterviewer = new RegisteredUserBuilder().id(10).build();
-        commentServiceMock.save(comment);
+        controller.postStateChangeComment(applicationForm, currentUser, comment, null);
         EasyMock.expect(stateTransitionServiceMock.resolveView(applicationForm)).andReturn("view");
-        applicationFormUserRoleService.stateChanged(comment);
 
         EasyMock.replay(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock);
         assertEquals("view",
-                controller.addComment(applicationForm.getApplicationNumber(), null, comment, bindingResultMock, new ModelMap(), false, delegatedInterviewer));
+                controller.addComment(applicationForm, comment, bindingResultMock, new ModelMap(), null, false, null));
         EasyMock.verify(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock);
 
         assertEquals(2, comment.getDocuments().size());
@@ -160,7 +154,6 @@ public class ValidationTransitionControllerTest {
         documentServiceMock = EasyMock.createMock(DocumentService.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        applicationFormUserRoleService = createMock(ApplicationFormUserRoleService.class);
 
         controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, stateTransitionServiceMock,

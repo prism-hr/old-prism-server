@@ -6,9 +6,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,17 +14,7 @@ import org.springframework.validation.BindingResult;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.StateChangeComment;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewEvaluationCommentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -60,41 +47,6 @@ public class DelegateTransitionControllerTest {
     private RegisteredUser currentUser = new RegisteredUser();
 
     @Test
-    public void shouldCreateInterviewEvaluationCommentWithLatestInterview() {
-        Interview interview = new InterviewBuilder().id(5).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestInterview(interview).status(ApplicationFormStatus.INTERVIEW).build();
-        List<Document> documents = Collections.emptyList();
-        StateChangeComment stateComment = new StateChangeComment();
-        stateComment.setComment("comment");
-        stateComment.setDocuments(documents);
-        stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
-        stateComment.setType(CommentType.APPROVAL_EVALUATION);
-        stateComment.setFastTrackApplication(false);
-        controller = new DelegateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-                encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
-                stateTransitionViewServiceMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-
-        };
-        InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).build();
-        expect(
-                commentFactoryMock.createComment(applicationForm, currentUser, stateComment.getComment(), stateComment.getDocuments(), stateComment.getType(),
-                        stateComment.getNextStatus(), currentUser)).andReturn(comment);
-        commentServiceMock.save(comment);
-        expect(stateTransitionViewServiceMock.resolveView(applicationForm)).andReturn("bob");
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, currentUser, ApplicationUpdateScope.INTERNAL);
-
-        replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, applicationFormUserRoleServiceMock);
-        String view = controller.addComment(applicationForm.getApplicationNumber(), stateComment.getComment(), stateComment, bindingResultMock);
-        verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, userServiceMock, applicationFormUserRoleServiceMock);
-
-        assertEquals("bob", view);
-    }
-
-    @Test
     public void shouldReturnViewIfErrors() {
         expect(bindingResultMock.hasErrors()).andReturn(true);
 
@@ -105,9 +57,8 @@ public class DelegateTransitionControllerTest {
                 return new ApplicationForm();
             }
         };
-
         replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock);
-        String view = controller.addComment(null, "", null, bindingResultMock);
+        String view = controller.addComment(null, "", null, null, bindingResultMock);
         verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock);
 
         assertEquals("private/staff/admin/state_transition", view);

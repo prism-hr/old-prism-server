@@ -142,23 +142,6 @@ public class CreateNewSupervisorControllerTest {
 		controller.getApplicationForm("5");
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrSupervisorOfApplicationProgram() {
-
-		Program program = new ProgramBuilder().id(6).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
-		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-		EasyMock.expect(currentUserMock.isSupervisorOfApplicationForm(applicationForm)).andReturn(false);
-
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUserMock);
-
-		controller.getApplicationForm("5");
-	}
-
-	
-
 	@Before
 	public void setup() {
 		newUserValidatorMock = EasyMock.createMock(NewUserByAdminValidator.class);

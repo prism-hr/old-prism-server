@@ -49,7 +49,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
@@ -108,6 +107,8 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
                 refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, messageSourceMock, scoringDefinitionParserMock,
                 scoresPropertyEditorMock, scoreFactoryMock, domicileServiceMock, domicilePropertyEditorMock, applicationFormUserRoleServiceMock,
                 actionsProviderMock);
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(null).anyTimes();
     }
 
     @Test
@@ -301,7 +302,6 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
     @Test
     public void shouldReturnRefereesAdminEditDTO() throws Exception {
-        final RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).program(program).build();
@@ -313,7 +313,6 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         customQuestions.getQuestion().add(question1);
         ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
@@ -328,12 +327,10 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
     @Test
     public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
-        final RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).program(program).build();
 
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 
@@ -348,8 +345,9 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     @Test
     public void shouldGetMainPage() {
         ApplicationForm applicationForm = new ApplicationForm();
-
+        EasyMock.replay(userServiceMock, applicationServiceMock, scoringDefinitionParserMock, scoreFactoryMock);
         String viewName = controller.view(applicationForm);
+        EasyMock.verify(userServiceMock, applicationServiceMock, scoringDefinitionParserMock, scoreFactoryMock);
         assertEquals("/private/staff/admin/application/main_application_page_programme_administrator", viewName);
     }
 
@@ -368,34 +366,6 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         controller.registerPropertyEditors(binderMock);
 
         EasyMock.verify(binderMock);
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowExceptionIfUserCannotSeeApplicationForm() {
-        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
-        EasyMock.replay(userServiceMock);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("3")).andReturn(applicationForm);
-        EasyMock.expect(userMock.canEditAsAdministrator(applicationForm)).andReturn(false);
-        EasyMock.replay(applicationServiceMock, userMock);
-
-        controller.getApplicationForm("3");
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowExceptionIfUserIsNotInterviewer() {
-        RegisteredUser applicant = new RegisteredUserBuilder().id(2).firstName("Franciszek").lastName("Pieczka").email("pieczka@test.com").build();
-
-        Program program = new ProgramBuilder().title("some title").build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.INTERVIEW).applicant(applicant).build();
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("3")).andReturn(applicationForm);
-
-        EasyMock.replay(userServiceMock, applicationServiceMock);
-        controller.getApplicationForm("3");
     }
 
 }

@@ -24,6 +24,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.Capture;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +57,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -113,15 +115,18 @@ public class ApprovalServiceTest {
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
         applicationFormDAOMock.save(applicationForm);
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(null).times(2);
 
         StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).build();
         expect(eventFactoryMock.createEvent(approvalRound)).andReturn(event);
         applicationFormUserRoleService.validationStageCompleted(applicationForm);
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
 
-        replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleService);
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleService);
+        replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleService, userServiceMock);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound, userServiceMock.getCurrentUser());
+        verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleService, userServiceMock);
 
         assertEquals(DateUtils.truncate(com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 2 * 1400), Calendar.DATE),
                 DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
@@ -139,6 +144,7 @@ public class ApprovalServiceTest {
     @Test
     public void shouldCopyLastNotifiedForSupervisorsWhoWereAlsoInPreviousRound() throws ParseException {
         Date lastNotified = new SimpleDateFormat("dd MM yyyy").parse("05 06 2012");
+        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
         RegisteredUser repeatUser = new RegisteredUserBuilder().id(1).build();
         Supervisor repeatSupervisorOld = new SupervisorBuilder().id(1).user(repeatUser).lastNotified(lastNotified).build();
         Supervisor repeatSupervisorNew = new SupervisorBuilder().id(2).user(repeatUser).build();
@@ -162,7 +168,7 @@ public class ApprovalServiceTest {
         expect(eventFactoryMock.createEvent(newApprovalRound)).andReturn(event);
 
         replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, commentDAOMock);
-        approvalService.moveApplicationToApproval(applicationForm, newApprovalRound);
+        approvalService.moveApplicationToApproval(applicationForm, newApprovalRound, initiator);
         verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, commentDAOMock);
 
         assertNull(nonRepeatUserSupervisor.getLastNotified());
@@ -186,14 +192,16 @@ public class ApprovalServiceTest {
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
         applicationFormDAOMock.save(applicationForm);
-        expect(userServiceMock.getCurrentUser()).andReturn(user);
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).once();
 
         Capture<ApprovalComment> approvalCommentCapture = new Capture<ApprovalComment>();
         commentDAOMock.save(capture(approvalCommentCapture));
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
 
         replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, userServiceMock, applicationFormUserRoleService);
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound, user);
         verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, userServiceMock, applicationFormUserRoleService);
 
         ApprovalComment approvalComment = approvalCommentCapture.getValue();
@@ -224,15 +232,16 @@ public class ApprovalServiceTest {
         applicationFormDAOMock.save(applicationForm);
         commentDAOMock.save(isA(ApprovalComment.class));
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
 
         replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, applicationFormUserRoleService);
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound, null);
         verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, applicationFormUserRoleService);
-
     }
 
     @Test
     public void shouldFailIfApplicationInInvalidState() {
+        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
         ApplicationFormStatus[] values = ApplicationFormStatus.values();
         for (ApplicationFormStatus status : values) {
             if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.APPROVAL && status != ApplicationFormStatus.REVIEW
@@ -240,7 +249,7 @@ public class ApprovalServiceTest {
                 ApplicationForm application = new ApplicationFormBuilder().id(3).status(status).build();
                 boolean threwException = false;
                 try {
-                    approvalService.moveApplicationToApproval(application, new ApprovalRoundBuilder().id(1).build());
+                    approvalService.moveApplicationToApproval(application, new ApprovalRoundBuilder().id(1).build(), initiator);
                 } catch (IllegalStateException ise) {
                     if (ise.getMessage().equals("Application in invalid status: '" + status + "'!")) {
                         threwException = true;
@@ -253,28 +262,31 @@ public class ApprovalServiceTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailIfApplicationHasNoReferencesForSendingToPortico() {
+        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
         applyValidSendToPorticoData(applicationForm);
         for (Referee referee : applicationForm.getReferees()) {
             referee.setSendToUCL(false);
         }
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound, initiator);
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailIfApplicationHasNoQualicifacionsForSendingToPorticoAndNoExplanation() {
+        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
         applyValidSendToPorticoData(applicationForm);
         for (Qualification qualifications : applicationForm.getQualifications()) {
             qualifications.setSendToUCL(false);
         }
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound, initiator);
     }
 
     @Test
     public void shouldMoveToApprovalIfInApplicationWithNoQualificationsButExplanationProvided() {
+        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
         applyValidSendToPorticoData(applicationForm);
@@ -287,9 +299,10 @@ public class ApprovalServiceTest {
         applicationFormDAOMock.save(applicationForm);
         commentDAOMock.save(isA(ApprovalComment.class));
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, initiator, ApplicationUpdateScope.ALL_USERS);
 
         replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, applicationFormUserRoleService);
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound, initiator);
         verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, applicationFormUserRoleService);
 
     }
@@ -319,7 +332,7 @@ public class ApprovalServiceTest {
 
         Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
         commentDAOMock.save(capture(supervisionConfirmationCommentcapture));
-        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).once();
 
         replay(commentDAOMock, userServiceMock);
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
@@ -375,10 +388,11 @@ public class ApprovalServiceTest {
         confirmSupervisionDTO.setRecommendedConditionsAvailable(true);
         confirmSupervisionDTO.setRecommendedConditions("conditions");
         confirmSupervisionDTO.setSecondarySupervisorEmail("a.n.other@ucl.co.uk");
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).once();
 
         Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
         commentDAOMock.save(capture(supervisionConfirmationCommentcapture));
-        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         expect(userServiceMock.getUserByEmail("a.n.other@ucl.co.uk")).andReturn(anotherUser);
 
         replay(commentDAOMock, userServiceMock);
@@ -408,7 +422,7 @@ public class ApprovalServiceTest {
 
         Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
         commentDAOMock.save(capture(supervisionConfirmationCommentcapture));
-        expect(userServiceMock.getCurrentUser()).andReturn(user1);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user1).once();
 
         replay(commentDAOMock, userServiceMock);
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);

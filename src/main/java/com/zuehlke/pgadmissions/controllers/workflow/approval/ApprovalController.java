@@ -258,15 +258,14 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult,
             SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser registeredUser = getCurrentUser();
-        actionsProvider.validateAction(applicationForm, registeredUser, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        RegisteredUser initiator = getCurrentUser();
+        actionsProvider.validateAction(applicationForm, initiator, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         if (bindingResult.hasErrors()) {
             return PROPOSE_OFFER_RECOMMENDATION_SECTION;
         }
 
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound, initiator);
         sessionStatus.setComplete();
         return "/private/common/ajax_OK";
     }

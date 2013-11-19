@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -64,12 +63,8 @@ public class DelegateTransitionController extends StateTransitionController {
     @Override
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        RegisteredUser currentUser = getCurrentUser();
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!currentUser.isApplicationAdministrator(applicationForm)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
     }
@@ -82,38 +77,30 @@ public class DelegateTransitionController extends StateTransitionController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitDelegateStateChangeComment")
     public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
-            @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        applicationForm.setNextStatus(stateChangeComment.getNextStatus());
-
-        ApplicationFormAction invokedAction = null;
-
-        if (action != null && action.length() > 0 && action.equals("abort")) {
-            invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
-        } else {
-        	switch (applicationForm.getStatus()) {
-        		case REVIEW:
-        			invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
-        			break;
-        		case INTERVIEW:
-        			invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
-        			break;
-        		case APPROVAL:
-        			invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
-        			break;
-        		default:
-        	}
-        }
-
-        actionsProvider.validateAction(applicationForm, getCurrentUser(), invokedAction);
-
+    		@ModelAttribute("applicationForm") ApplicationForm applicationForm,
+            @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result) {     
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
         }
-
-        RegisteredUser registeredUser = getCurrentUser();
+        
+        ApplicationFormAction invokedAction = null;
         ApplicationFormStatus status = applicationForm.getStatus();
+        
+        if (action != null && action.length() > 0 && action.equals("abort")) {
+            invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
+        } else if (status == ApplicationFormStatus.REVIEW) {
+        	invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
+        } else if (status == ApplicationFormStatus.INTERVIEW) {
+        	invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+    	} else if (status == ApplicationFormStatus.APPROVAL) {
+			invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;        	
+        }
+        
+        actionsProvider.validateAction(applicationForm, getCurrentUser(), invokedAction);
+        
+        RegisteredUser registeredUser = getCurrentUser();
         ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
+        applicationForm.setNextStatus(nextStatus);
         if (status == nextStatus) {
         	stateChangeComment.setDelegateAdministrator(registeredUser);
         }

@@ -152,59 +152,7 @@ public class DeclineControllerTest {
         String view = controller.declineReview("5", applicationForm.getApplicationNumber(), null, new ModelMap());
         assertEquals(DECLINE_CONFIRMATION_VIEW_NAME, view);
     }
-
-	@Test(expected = InsufficientApplicationFormPrivilegesException.class)
-	public void shouldThrowExceptionIfUserNotReviewerInLatestRoundOfReviews() {
-		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
-		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
-			@Override
-			public RegisteredUser getReviewer(String activationCode){
-				if("5".equals(activationCode)){
-					return reviewer;
-				}
-				return null;
-			}
-			@Override
-			public ApplicationForm getApplicationForm(String applicationId){
-				if(applicationId.equals("ABC")){
-					return applicationForm;
-				}
-				return null;
-			}
-		}; 
-		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(false);		
-		reviewer.setDirectToUrl(null);
-		
-		EasyMock.replay(commentServiceMock, reviewer);
-	}
 	
-	@Test(expected = ActionNoLongerRequiredException.class)
-	public void shouldThrowExceptionIfUserApplicationNotInReview() {
-		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
-		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
-			@Override
-			public RegisteredUser getReviewer(String activationCode){
-				if("5".equals(activationCode)){
-					return reviewer;
-				}
-				return null;
-			}
-			@Override
-			public ApplicationForm getApplicationForm(String applicationId){
-				if(applicationId.equals("ABC")){
-					return applicationForm;
-				}
-				return null;
-			}
-		}; 
-		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);		
-		reviewer.setDirectToUrl(null);
-		
-		EasyMock.replay(commentServiceMock, reviewer);
-	}
-
 	@Test
 	public void shouldReturnConfirmationDialogForReference() {
 	    final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).build();

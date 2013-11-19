@@ -13,6 +13,7 @@ import static org.junit.Assert.assertSame;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.easymock.EasyMock;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -259,7 +260,7 @@ public class ReferenceControllerTest {
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
         actionsProviderMock.validateAction(application, currentUser, ApplicationFormAction.PROVIDE_REFERENCE);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, currentUser, ApplicationUpdateScope.ALL_USERS);
 
         replay(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors, modelMap));

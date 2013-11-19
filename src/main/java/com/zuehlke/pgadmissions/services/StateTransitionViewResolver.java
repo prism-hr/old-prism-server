@@ -29,14 +29,10 @@ public class StateTransitionViewResolver {
         if (!programInstanceService.isProgrammeStillAvailable(applicationForm)) {
             return REJECTION_VIEW + applicationForm.getApplicationNumber() + 
             		"&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString() + "&rejectionIdForced=true";
-        }
-
-        else if (action != null &&
+        } else if (action != null &&
         		action.equals("abort")) {
         	return STATE_TRANSITION_VIEW;
-        } 
-        
-        else {
+        } else {
 	        ApplicationFormStatus nextStatus = applicationForm.getNextStatus();
 	        if (nextStatus != null) {
 	            switch (nextStatus) {
@@ -53,10 +49,8 @@ public class StateTransitionViewResolver {
 	            default:
 	            }
 	        }
-	
 	        return STATE_TRANSITION_VIEW;
-	
 	    }
-    }
-    
+        
+    }   
 }

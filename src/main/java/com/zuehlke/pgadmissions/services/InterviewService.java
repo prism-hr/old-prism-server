@@ -119,9 +119,8 @@ public class InterviewService {
         if (previousStatus == ApplicationFormStatus.VALIDATION) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
             ApplicationFormUserRoleService.validationStageCompleted(applicationForm);
-            ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         }
-
+        ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void assignInterviewDueDate(final Interview interview, ApplicationForm applicationForm) {

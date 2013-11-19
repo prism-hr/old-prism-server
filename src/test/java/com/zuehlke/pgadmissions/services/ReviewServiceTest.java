@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -123,9 +124,10 @@ public class ReviewServiceTest {
 		mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
 		applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
 		applicationFormUserRoleServiceMock.movedToReviewStage(reviewRound);
+		applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
 		
 		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, mailServiceMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleServiceMock);
-		reviewService.moveApplicationToReview(applicationForm, reviewRound);
+		reviewService.moveApplicationToReview(applicationForm, reviewRound, null);
 		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock, mailServiceMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleServiceMock);
 		
 		assertEquals(DateUtils.truncate(com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 2*1400), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
@@ -147,11 +149,11 @@ public class ReviewServiceTest {
 		reviewRoundDAOMock.save(reviewRound);
 		applicationFormDAOMock.save(applicationForm);
 		applicationFormUserRoleServiceMock.movedToReviewStage(reviewRound);
+		applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
 		
 		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, applicationFormUserRoleServiceMock);
-		reviewService.moveApplicationToReview(applicationForm, reviewRound);
+		reviewService.moveApplicationToReview(applicationForm, reviewRound, null);
 		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, applicationFormUserRoleServiceMock);
-
 	}
 
 	@Test

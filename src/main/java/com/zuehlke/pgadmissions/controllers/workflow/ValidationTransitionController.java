@@ -89,25 +89,26 @@ public class ValidationTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(value = "/submitValidationComment", method = RequestMethod.POST)
-    public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
-            @Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap model,
-            @RequestParam(required = false) Boolean delegate, @ModelAttribute("delegatedAdministrator") RegisteredUser delegateAdministrator) {
+    public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm, 
+    		@Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap model, 
+    		@RequestParam(required = false) String action, @RequestParam(required = false) Boolean delegate, 
+    		@ModelAttribute("delegatedAdministrator") RegisteredUser delegateAdministrator) {
         model.put("delegate", delegate);
+        
+        if (result.hasErrors()) {
+            return STATE_TRANSITION_VIEW;
+        }
+        
         ApplicationFormAction invokedAction;
-        RegisteredUser registeredUser = getCurrentUser();
-        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-
+        
         if (action != null && action.equals("abort")) {
             invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
         } else {
             invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
         }
-
+        
+        RegisteredUser registeredUser = getCurrentUser();
         actionsProvider.validateAction(applicationForm, registeredUser, invokedAction);
-
-        if (result.hasErrors()) {
-            return STATE_TRANSITION_VIEW;
-        }
         
         if (BooleanUtils.isTrue(validationComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
@@ -119,7 +120,6 @@ public class ValidationTransitionController extends StateTransitionController {
         	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
         }
 
-        applicationsService.refresh(applicationForm);
         return stateTransitionService.resolveView(applicationForm);
     }
 

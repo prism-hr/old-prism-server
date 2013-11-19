@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -47,7 +48,7 @@ public class ReviewService {
         this.applicationFormUserRoleService = applicationFormUserRoleService;
 	}
 
-	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound) {
+	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound, RegisteredUser initiator) {
 	    DateTime baseDate;
 	    
 	    if (application.getBatchDeadline() == null || application.getLatestReviewRound() != null) {
@@ -71,6 +72,7 @@ public class ReviewService {
             applicationFormUserRoleService.validationStageCompleted(application);
         }
         applicationFormUserRoleService.movedToReviewStage(reviewRound);
+        applicationFormUserRoleService.registerApplicationUpdate(application, initiator, ApplicationUpdateScope.ALL_USERS);
 		applicationDAO.save(application);
 	}
 

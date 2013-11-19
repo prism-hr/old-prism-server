@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
@@ -134,7 +135,7 @@ public class ApprovalService {
         return supervisionConfirmationComment;
     }
 
-    public void moveApplicationToApproval(ApplicationForm form, ApprovalRound approvalRound) {
+    public void moveApplicationToApproval(ApplicationForm form, ApprovalRound approvalRound, RegisteredUser initiator) {
         checkApplicationStatus(form);
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
@@ -177,6 +178,7 @@ public class ApprovalService {
         }
         commentDAO.save(approvalComment);
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
+        applicationFormUserRoleService.registerApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void copyLastNotifiedForRepeatSupervisors(ApplicationForm form, ApprovalRound approvalRound) {

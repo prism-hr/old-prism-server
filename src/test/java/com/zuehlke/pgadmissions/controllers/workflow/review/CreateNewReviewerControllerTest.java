@@ -142,23 +142,6 @@ public class CreateNewReviewerControllerTest {
 		controller.getApplicationForm("5");
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrReviewerOfApplicationProgram() {
-
-		Program program = new ProgramBuilder().id(6).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
-		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-		EasyMock.expect(currentUserMock.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(false);
-
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUserMock);
-
-		controller.getApplicationForm("5");
-	}
-
-	
-
 	@Before
 	public void setup() {
 		newUserValidatorMock = EasyMock.createMock(NewUserByAdminValidator.class);

@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -54,7 +53,6 @@ import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -205,57 +203,6 @@ public class ApprovalControllerTest {
     }
 
     @Test
-    public void shouldReturnApprovalRoundWithWillingToApprovalRoundWithSupervisorsOfPreviousApprovalRoundRemoved() {
-        RegisteredUser userOne = new RegisteredUserBuilder().id(1).build();
-        InterviewComment interviewOne = new InterviewCommentBuilder().id(1).user(userOne).willingToSupervise(true).build();
-        RegisteredUser userTwo = new RegisteredUserBuilder().id(2).build();
-        InterviewComment interviewTwo = new InterviewCommentBuilder().id(2).user(userTwo).willingToSupervise(true).build();
-        RegisteredUser userThree = new RegisteredUserBuilder().id(3).build();
-        InterviewComment interviewThree = new InterviewCommentBuilder().id(3).user(userThree).willingToSupervise(true).build();
-        Supervisor supervisorOne = new SupervisorBuilder().id(1).user(userOne).build();
-        Supervisor supervisorTwo = new SupervisorBuilder().id(2).user(userTwo).build();
-
-        RegisteredUser decliningUser = new RegisteredUserBuilder().id(4).build();
-        Supervisor decliningSupervisor = new SupervisorBuilder().declinedSupervisionReason("Because I can! Hahaha!").user(decliningUser).build();
-
-        Date nowDate = new Date();
-        Date testDate = DateUtils.addMonths(nowDate, 1);
-        Date deadlineDate = DateUtils.addMonths(nowDate, 3);
-
-        final Program program = new Program();
-        program.setId(100000);
-
-        final ProgramInstance programInstance = new ProgramInstance();
-        programInstance.setId(1);
-        programInstance.setProgram(program);
-        programInstance.setApplicationStartDate(nowDate);
-        programInstance.setApplicationDeadline(deadlineDate);
-
-        final ApplicationForm application = new ApplicationFormBuilder()
-                .id(2)
-                .program(program)
-                .applicationNumber("abc")
-                .comments(interviewOne, interviewTwo, interviewThree)
-                .latestApprovalRound(
-                        new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, supervisorTwo, decliningSupervisor).build())
-                .build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
-
-        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
-        ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
-
-        assertNull(returnedApprovalRound.getId());
-        assertEquals(3, returnedApprovalRound.getSupervisors().size());
-        assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, supervisorTwo)));
-        assertNull(returnedApprovalRound.getSupervisors().get(2).getId());
-        assertEquals(userThree, returnedApprovalRound.getSupervisors().get(2).getUser());
-    }
-
-    @Test
     public void shouldReturnNewApprovalRoundWithEmtpySupervisorsIfNoLatestApprovalRound() {
 
         Date startDate = new Date();
@@ -323,7 +270,7 @@ public class ApprovalControllerTest {
         modelMap.put("user", currentUserMock);
 
         actionsProviderMock.validateAction(application, currentUserMock, ApplicationFormAction.ASSIGN_SUPERVISORS);
-        approvalServiceMock.moveApplicationToApproval(application, approvalRound);
+        approvalServiceMock.moveApplicationToApproval(application, approvalRound, currentUserMock);
 
         EasyMock.replay(approvalServiceMock, actionsProviderMock);
         String view = controller.assignSupervisors(modelMap, approvalRound, result, sessionStatus);

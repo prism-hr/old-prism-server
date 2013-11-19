@@ -157,8 +157,6 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 
 INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)	
-	INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
-	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)	
 	SELECT APPLICATION_FORM.id, PROGRAM_APPROVER_LINK.registered_user_id, "APPROVER", NULL,
 		IF (APPLICATION_FORM.status = "APPROVAL",
 			IF (APPLICATION_FORM.next_status IS NULL,

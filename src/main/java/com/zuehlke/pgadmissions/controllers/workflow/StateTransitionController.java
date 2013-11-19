@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -97,13 +96,8 @@ public class StateTransitionController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        RegisteredUser currentUser = getCurrentUser();
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!currentUser.hasAdminRightsOnApplication(applicationForm) && !currentUser.isApplicationAdministrator(applicationForm)
-                && !currentUser.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
     }
@@ -155,16 +149,23 @@ public class StateTransitionController {
     protected void postStateChangeComment(ApplicationForm applicationForm, RegisteredUser registeredUser, 
     		StateChangeComment stateChangeComment, RegisteredUser delegateAdministrator) {
     	ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
-    	applicationForm.setNextStatus(nextStatus);
     	
-    	String delegateAdministratorEmail = delegateAdministrator.getEmail();
-    	RegisteredUser userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
+    	if (nextStatus != null) {
+    		applicationForm.setNextStatus(nextStatus);
+    	}
     	
-    	if (userToSaveAsDelegate == null) {
-    		if (!Arrays.asList(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), delegateAdministratorEmail).contains(null)) {
-    		userToSaveAsDelegate = userService.createNewUserInRole(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), 
-    				delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
-    		}
+    	RegisteredUser userToSaveAsDelegate = null;
+    	
+    	if (delegateAdministrator != null) {
+	    	String delegateAdministratorEmail = delegateAdministrator.getEmail();
+	    	userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
+	    	
+	    	if (userToSaveAsDelegate == null) {
+	    		if (!Arrays.asList(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), delegateAdministratorEmail).contains(null)) {
+	    		userToSaveAsDelegate = userService.createNewUserInRole(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), 
+	    				delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
+	    		}
+	    	}
     	}
     	
     	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);

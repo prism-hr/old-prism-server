@@ -139,10 +139,14 @@ public class MoveToInterviewController {
     public Interview getInterview(@RequestParam String applicationId) {
         Interview interview = new Interview();
         
-        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
-        	Interviewer interviewer = new Interviewer();
-        	interviewer.setUser(registeredUser);
-        	interview.getInterviewers().add(interviewer);
+        List<RegisteredUser> usersInterestedInApplication = getUsersInterestedInApplication(applicationId);
+        
+        if (usersInterestedInApplication != null) {
+	        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
+	        	Interviewer interviewer = new Interviewer();
+	        	interviewer.setUser(registeredUser);
+	        	interview.getInterviewers().add(interviewer);
+	        }
         }
         
         return interview;

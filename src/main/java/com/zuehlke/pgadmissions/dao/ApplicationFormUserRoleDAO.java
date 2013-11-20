@@ -10,8 +10,10 @@ import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,7 +148,9 @@ public class ApplicationFormUserRoleDAO {
     public boolean checkActionAvailableForUserAndApplicationForm(RegisteredUser registeredUser, ApplicationForm applicationForm, ApplicationFormAction action) {
         List<ActionDefinition> availableActions = this.findActionsByUserAndApplicationForm(registeredUser, applicationForm);
         for (ActionDefinition availableAction : availableActions) {
-        	if (availableAction.getAction() == action) {
+        	if (availableAction.getAction() == action ||
+        			(availableAction.getAction() == ApplicationFormAction.VIEW_EDIT &&
+        			action == ApplicationFormAction.VIEW)) {
         		return true;
         	}
         }
@@ -200,7 +204,7 @@ public class ApplicationFormUserRoleDAO {
 		
 		Query query = session.createSQLQuery("CALL UPDATE_APPLICATION_FORM_ACTION_REQUIRED_DEADLINE(?, ?);")
 			.setInteger(0, applicationForm.getId())
-			.setString(1, javaDateToMySQLDateString(deadlineTimestamp));
+			.setDate(1, deadlineTimestamp);
 		query.executeUpdate();
 	}
 	
@@ -250,19 +254,25 @@ public class ApplicationFormUserRoleDAO {
 				.addOrder(Order.asc("registeredUser.id")).list();
 	}
 
-	public List<RegisteredUser> findUsersPotentiallyInterestedInApplication(Program program) {
+	public List<RegisteredUser> findUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+		DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user")))
+				.add(Restrictions.eq("applicationForm", applicationForm))
+				.add(Restrictions.eq("interestedInApplicant", true));
+		
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
 				.setProjection(Projections.projectionList()
 					.add(Projections.groupProperty("user"), "user"))
 				.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
 				.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
 				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-				.add(Restrictions.eq("program.id", program.getId()))
+				.add(Restrictions.eq("program.id", applicationForm.getProgram().getId()))
 				.add(Restrictions.in("role.id", Arrays.asList(Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR, 
 						Authority.SUGGESTEDSUPERVISOR, Authority.APPROVER, Authority.STATEADMINISTRATOR, Authority.PROJECTADMINISTRATOR)))
 				.add(Restrictions.isNull("registeredUser.primaryAccount"))
 				.add(Restrictions.eq("registeredUser.enabled", true))
-				.add(Restrictions.eq("interestedInApplicant", false))
+				.add(Property.forName("user").notIn(usersInterestedInApplicant))
 				.addOrder(Order.asc("registeredUser.lastName"))
 				.addOrder(Order.asc("registeredUser.firstName"))
 				.addOrder(Order.asc("registeredUser.id")).list();

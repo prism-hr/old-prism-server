@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -125,22 +124,15 @@ public class QualificationController {
 	
 	@RequestMapping(value = "/getQualification", method = RequestMethod.GET)
 	public String getQualificationView() {
-		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
 		return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
 	}
 	
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
 	public String editQualification(@Valid Qualification qualification, BindingResult result, Model model) {
-        if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
-
         if (qualification.getApplication().isDecided()) {
             throw new CannotUpdateApplicationException(qualification.getApplication().getApplicationNumber());
         }
-
+        
         if (result.hasErrors()) {
             if (qualification.getInstitutionCountry() != null) {
                 model.addAttribute("institutions", qualificationInstitutionDAO
@@ -216,7 +208,7 @@ public class QualificationController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
 		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		if(application == null || !userService.getCurrentUser().canSee(application)){
+		if(application == null) {
 			throw new ResourceNotFoundException();
 		}
 		return application;

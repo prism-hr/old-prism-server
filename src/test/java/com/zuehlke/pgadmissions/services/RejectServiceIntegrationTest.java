@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testIntegrationContext.xml")
+@ContextConfiguration("testIntegrationContext.xml")
 public class RejectServiceIntegrationTest {
 
 	@Autowired

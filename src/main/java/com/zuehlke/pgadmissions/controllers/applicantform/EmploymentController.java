@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -102,23 +101,19 @@ public class EmploymentController {
 
     @RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
     public String getEmploymentView() {
-        if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
         return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
     }
 
     @RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
     public String editEmployment(@Valid EmploymentPosition employment, BindingResult result) {
-        if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
         if (employment.getApplication().isDecided()) {
             throw new CannotUpdateApplicationException(employment.getApplication().getApplicationNumber());
         }
+        
         if (result.hasErrors()) {
             return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
         }
+        
         ApplicationForm applicationForm = employment.getApplication();
         
         employmentPositionService.save(employment);
@@ -155,7 +150,7 @@ public class EmploymentController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null || !userService.getCurrentUser().canSee(application)) {
+        if (application == null) {
             throw new ResourceNotFoundException();
         }
         return application;

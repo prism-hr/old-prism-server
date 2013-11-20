@@ -6,9 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
-import java.util.Calendar;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -68,26 +65,6 @@ public class RefereeControllerTest {
         controller.editReferee(null, referee, errors, modelMap);
         EasyMock.verify(refereeServiceMock);
 
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowExceptionOnSubmitIfCurrentUserNotApplicant() {
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build();
-        ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute("applicationForm", application);
-
-        currentUser.getRoles().clear();
-        controller.editReferee(null, null, null, modelMap);
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowExceptionOnGetIfCurrentUserNotApplicant() {
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build();
-        ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute("applicationForm", application);
-
-        currentUser.getRoles().clear();
-        controller.getRefereeView(null, modelMap);
     }
 
     @Test

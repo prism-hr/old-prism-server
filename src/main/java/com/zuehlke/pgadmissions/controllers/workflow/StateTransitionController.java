@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
@@ -147,28 +147,21 @@ public class StateTransitionController {
     }
 
     protected void postStateChangeComment(ApplicationForm applicationForm, RegisteredUser registeredUser, 
-    		StateChangeComment stateChangeComment, RegisteredUser delegateAdministrator) {
+    		StateChangeComment stateChangeComment, RegisteredUser delegateAdministrator, Boolean delegate) {
     	ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
+    	applicationForm.setNextStatus(nextStatus);
     	
-    	if (nextStatus != null) {
-    		applicationForm.setNextStatus(nextStatus);
-    	}
-    	
-    	RegisteredUser userToSaveAsDelegate = null;
-    	
-    	if (delegateAdministrator != null) {
+    	if (BooleanUtils.isTrue(delegate)) {
 	    	String delegateAdministratorEmail = delegateAdministrator.getEmail();
-	    	userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
+	    	RegisteredUser userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
 	    	
 	    	if (userToSaveAsDelegate == null) {
-	    		if (!Arrays.asList(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), delegateAdministratorEmail).contains(null)) {
 	    		userToSaveAsDelegate = userService.createNewUserInRole(delegateAdministrator.getFirstName(), delegateAdministrator.getLastName(), 
 	    				delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
-	    		}
 	    	}
+	    	
+	    	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
     	}
-    	
-    	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
     	
     	commentService.save(stateChangeComment);
         applicationsService.save(applicationForm);

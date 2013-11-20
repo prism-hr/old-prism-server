@@ -226,7 +226,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     
     @ModelAttribute("usersPotentiallyInterestedInApplication") 
     public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId).getProgram());
+    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("explanation")

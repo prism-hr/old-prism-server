@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -88,15 +87,9 @@ public class CreateNewInterviewerController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        RegisteredUser user = userService.getCurrentUser();
+    	ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-
-        if (!user.hasAdminRightsOnApplication(application) && !user.isApplicationAdministrator(application)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return application;
     }

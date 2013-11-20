@@ -5,12 +5,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,22 +74,6 @@ public class ProgrammeDetailsControllerTest {
 
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
-        currentUser.getRoles().clear();
-
-        Model model = new ExtendedModelMap();
-        model.addAttribute("user", currentUser);
-
-        controller.editProgrammeDetails(null, null, model);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
-        currentUser.getRoles().clear();
-        controller.getProgrammeDetailsView();
-    }
-
     @Test
     public void shouldReturnProgrammeDetailsView() {
         assertEquals("/private/pgStudents/form/components/programme_details", controller.getProgrammeDetailsView());
@@ -155,20 +137,6 @@ public class ProgrammeDetailsControllerTest {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.replay(userServiceMock);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-        EasyMock.replay(applicationsServiceMock, currentUser);
-        controller.getApplicationForm("1");
-
     }
 
     @Test

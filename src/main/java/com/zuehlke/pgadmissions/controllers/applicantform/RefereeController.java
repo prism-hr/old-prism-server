@@ -24,12 +24,9 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -81,12 +78,7 @@ public class RefereeController {
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
     public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap) {
-
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
-        }
 
         if (application.isDecided()) {
             throw new CannotUpdateApplicationException(application.getApplicationNumber());
@@ -189,22 +181,13 @@ public class RefereeController {
 
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
     public String getRefereeView(@RequestParam(required = false) String refereeId, ModelMap modelMap) {
-
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
-        }
+        
         Referee referee = getReferee(refereeId);
         if (referee == null) {
             referee = new Referee();
         }
         modelMap.put("referee", referee);
         return STUDENTS_FORM_REFEREES_VIEW;
-    }
-
-    private RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
     }
 
 }

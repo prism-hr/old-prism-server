@@ -120,6 +120,7 @@ public class InterviewService {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
             ApplicationFormUserRoleService.validationStageCompleted(applicationForm);
         }
+        ApplicationFormUserRoleService.movedToInterviewStage(interview);
         ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }
 

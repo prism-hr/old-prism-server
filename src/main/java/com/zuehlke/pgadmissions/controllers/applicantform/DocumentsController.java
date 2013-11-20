@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -55,9 +54,6 @@ public class DocumentsController {
 
     @RequestMapping(value = "/editDocuments", method = RequestMethod.POST)
     public String editDocuments(ApplicationForm applicationForm, BindingResult result) {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
         
         if (applicationForm.isDecided()) {
             throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
@@ -78,17 +74,13 @@ public class DocumentsController {
 
     @RequestMapping(value = "/getDocuments", method = RequestMethod.GET)
     public String getDocumentsView() {
-
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
         return STUDENTS_FORM_DOCUMENTS_VIEW;
     }
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null || !getCurrentUser().canSee(application)) {
+        if (application == null) {
             throw new ResourceNotFoundException();
         }
         return application;

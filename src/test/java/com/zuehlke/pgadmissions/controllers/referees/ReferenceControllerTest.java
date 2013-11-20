@@ -8,12 +8,10 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.easymock.EasyMock;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,12 +40,9 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
@@ -84,12 +79,6 @@ public class ReferenceControllerTest {
     @Test
     public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        Referee referee = new RefereeBuilder().build();
-
-        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-
-        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
         expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         replay(applicationsServiceMock, currentUser, userServiceMock);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
@@ -105,19 +94,6 @@ public class ReferenceControllerTest {
         controller.getApplicationForm("1");
     }
 
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowResourceNoFoundExceptionIfUserNotRefereeForForm() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        currentUser = createMock(RegisteredUser.class);
-        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-
-        replay(applicationsServiceMock, currentUser, userServiceMock);
-        controller.getApplicationForm("1");
-        verify(applicationsServiceMock, currentUser, userServiceMock);
-    }
-
     @Test
     public void shouldReturnUploadReferencePage() {
         ApplicationForm applicationForm = new ApplicationForm();
@@ -130,32 +106,6 @@ public class ReferenceControllerTest {
         replay(actionsProviderMock);
         assertEquals("private/referees/upload_references", controller.getUploadReferencesPage(modelMap));
         verify(actionsProviderMock);
-    }
-
-    @Test(expected = ActionNoLongerRequiredException.class)
-    public void shouldReturnExpiredViewIfApplicationAlreadyDecided() {
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).build();
-        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-        replay(currentUser, userServiceMock, applicationsServiceMock);
-        assertSame(applicationForm, controller.getApplicationForm("app1"));
-        verify(currentUser, userServiceMock, applicationsServiceMock);
-    }
-
-    @Test(expected = ActionNoLongerRequiredException.class)
-    public void shoulThrowExceptionIfRefereeHasAlreadyProvidedReferecne() {
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
-        Referee referee = new RefereeBuilder().reference(new ReferenceComment()).build();
-
-        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
-        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-        expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
-
-        replay(currentUser, userServiceMock, applicationsServiceMock);
-        controller.getApplicationForm("app1");
-        verify(currentUser, userServiceMock, applicationsServiceMock);
     }
 
     @Test
@@ -174,7 +124,6 @@ public class ReferenceControllerTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
         expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
         expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
@@ -200,7 +149,6 @@ public class ReferenceControllerTest {
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
         expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
         expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 

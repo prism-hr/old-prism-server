@@ -53,21 +53,24 @@ public class ApplicationsService {
     private ProgramDAO programDAO;
 
 	private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+	
+	private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public ApplicationsService() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationsService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormListDAO applicationFormListDAO,
             final MailSendingService mailService, final ProgrammeDetailsService programmeDetailsService, final ProgramDAO programDAO,
-            final ApplicationFormUserRoleDAO applicationFormUserRoleDAO) {
+            final ApplicationFormUserRoleDAO applicationFormUserRoleDAO, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
         this.programmeDetailsService = programmeDetailsService;
         this.programDAO = programDAO;
         this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     public Date getBatchDeadlineForApplication(ApplicationForm form) {
@@ -115,7 +118,8 @@ public class ApplicationsService {
             programmeDetails.setApplication(applicationForm);
             programmeDetailsService.save(programmeDetails);
         }
-
+        applicationFormUserRoleService.applicationCreated(applicationForm);
+        
         return applicationForm;
     }
 
@@ -149,7 +153,6 @@ public class ApplicationsService {
             }
         });
 
-        // first order by applications status, then by last updated
         @SuppressWarnings("unchecked")
         Ordering<ApplicationForm> ordering = Ordering//
                 .from(new BeanComparator("status"))//

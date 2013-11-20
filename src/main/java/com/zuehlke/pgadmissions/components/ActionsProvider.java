@@ -27,11 +27,13 @@ public class ActionsProvider {
     }
     
     public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
-        boolean actionAvailable = applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, applicationForm, action);
-        
-        if (!actionAvailable) {
+        if (!checkActionAvailable(applicationForm, user, action)) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
+    }
+    
+    public Boolean checkActionAvailable(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
+    	return applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, applicationForm, action);
     }
 
 }

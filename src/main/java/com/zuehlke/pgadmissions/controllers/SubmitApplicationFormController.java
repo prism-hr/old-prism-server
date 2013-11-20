@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -81,7 +83,7 @@ public class SubmitApplicationFormController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
-        if (!getCurrentUser().getId().equals(applicationForm.getApplicant().getId()) || applicationForm.isDecided()) {
+        if (!getCurrentUser().getId().equals(applicationForm.getApplicant().getId())) {
             throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
         }
 
@@ -131,8 +133,11 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = getCurrentUser();
-        
+
+        System.out.print("I got here.");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);      
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        
         if (user.canEditAsApplicant(applicationForm)) {
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
@@ -141,7 +146,7 @@ public class SubmitApplicationFormController {
             return VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME;
         }
 
-        if (user.canEditAsAdministrator(applicationForm)) {
+        if (BooleanUtils.isTrue(actionsProvider.checkActionAvailable(applicationForm, user, ApplicationFormAction.VIEW_EDIT))) {
             return "redirect:/editApplicationFormAsProgrammeAdmin?applicationId=" + applicationForm.getApplicationNumber();
         }
 
@@ -157,9 +162,6 @@ public class SubmitApplicationFormController {
         ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!getCurrentUser().canSee(applicationForm)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return applicationForm;
     }

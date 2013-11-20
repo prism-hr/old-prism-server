@@ -15,6 +15,9 @@ import org.springframework.validation.BindingResult;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -54,13 +57,15 @@ public class DelegateTransitionControllerTest {
                 encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
                 stateTransitionViewServiceMock, applicationFormUserRoleServiceMock, actionsProviderMock) {
             public ApplicationForm getApplicationForm(String applicationId) {
-                return new ApplicationForm();
+            	return new ApplicationForm();
             }
         };
-        replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock);
-        String view = controller.addComment(null, "", null, null, bindingResultMock);
-        verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock);
-
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
+        actionsProviderMock.validateAction(applicationForm, null, ApplicationFormAction.COMPLETE_REVIEW_STAGE);
+        
+        replay(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock, actionsProviderMock);
+        String view = controller.addComment(null, applicationForm, null, bindingResultMock);
+        verify(commentFactoryMock, commentServiceMock, stateTransitionViewServiceMock, bindingResultMock, applicationServiceMock, actionsProviderMock);
         assertEquals("private/staff/admin/state_transition", view);
     }
 

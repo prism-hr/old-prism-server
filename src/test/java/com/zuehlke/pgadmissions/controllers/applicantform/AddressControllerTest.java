@@ -63,18 +63,6 @@ public class AddressControllerTest {
 
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
-        currentUser.getRoles().clear();
-        controller.editAddresses(null, null, null);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
-        currentUser.getRoles().clear();
-        controller.getAddressView();
-    }
-
     @Test
     public void shouldReturnAddressView() {
         assertEquals("/private/pgStudents/form/components/address_details", controller.getAddressView());
@@ -100,20 +88,6 @@ public class AddressControllerTest {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.replay(userServiceMock);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-        EasyMock.replay(applicationsServiceMock, currentUser);
-        controller.getApplicationForm("1");
-
     }
 
     @Test

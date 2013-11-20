@@ -6,19 +6,13 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import org.easymock.EasyMock;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,21 +25,14 @@ import org.springframework.web.bind.WebDataBinder;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
@@ -138,8 +125,6 @@ public class MoveToInterviewControllerTest {
         modelMap.put("user", currentUserMock);
 
         interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
-        applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         replay(interviewServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.moveToInterview(interview, bindingResultMock, modelMap);
@@ -159,8 +144,6 @@ public class MoveToInterviewControllerTest {
 
         expect(currentUserMock.getId()).andReturn(3).anyTimes();
         interviewServiceMock.moveApplicationToInterview(currentUserMock, interview, application);
-        applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         
         replay(interviewServiceMock, currentUserMock, applicationFormUserRoleServiceMock);
         String view = controller.moveToInterview(interview, bindingResultMock, modelMap);

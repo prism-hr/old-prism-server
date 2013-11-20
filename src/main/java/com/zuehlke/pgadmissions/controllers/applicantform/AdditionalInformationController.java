@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import java.util.Date;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -65,18 +62,18 @@ public class AdditionalInformationController {
 
     @RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
     public String editAdditionalInformation(@Valid AdditionalInformation info, BindingResult result) {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
-        if (info.getApplication().isDecided()) {
+    	ApplicationForm applicationForm = info.getApplication();
+        
+        if (applicationForm.isDecided()) {
             throw new CannotUpdateApplicationException(info.getApplication().getApplicationNumber());
         }
+        
         if (result.hasErrors()) {
             return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
         }
+        
         additionalService.save(info);
-
-        applicationFormUserRoleService.registerApplicationUpdate(info.getApplication(), getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getApplicationNumber();
 
@@ -84,9 +81,6 @@ public class AdditionalInformationController {
 
     @RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
     public String getAdditionalInformationView() {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
         return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
     }
 
@@ -128,7 +122,7 @@ public class AdditionalInformationController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null || !getCurrentUser().canSee(application)) {
+        if (application == null) {
             throw new ResourceNotFoundException();
         }
         return application;

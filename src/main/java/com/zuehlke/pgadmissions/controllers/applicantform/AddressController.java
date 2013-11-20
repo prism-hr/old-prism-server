@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -62,20 +61,22 @@ public class AddressController {
 
     @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
     public String editAddresses(@Valid AddressSectionDTO addressSectionDTO, BindingResult result, @ModelAttribute ApplicationForm applicationForm) {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
+ 
         if (applicationForm.isDecided()) {
             throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
         }
+        
         if (result.hasErrors()) {
             return APPLICATION_ADDRESS_VIEW;
         }
+        
         Address contactAddress = applicationForm.getContactAddress();
+        
         if (contactAddress == null) {
             contactAddress = new Address();
             applicationForm.setContactAddress(contactAddress);
         }
+        
         contactAddress.setDomicile(addressSectionDTO.getContactAddressDomicile());
         contactAddress.setAddress1(addressSectionDTO.getContactAddress1());
         contactAddress.setAddress2(addressSectionDTO.getContactAddress2());
@@ -84,10 +85,12 @@ public class AddressController {
         contactAddress.setAddress5(addressSectionDTO.getContactAddress5());
 
         Address currentAddress = applicationForm.getCurrentAddress();
+        
         if (currentAddress == null) {
             currentAddress = new Address();
             applicationForm.setCurrentAddress(currentAddress);
         }
+        
         currentAddress.setDomicile(addressSectionDTO.getCurrentAddressDomicile());
         currentAddress.setAddress1(addressSectionDTO.getCurrentAddress1());
         currentAddress.setAddress2(addressSectionDTO.getCurrentAddress2());
@@ -103,10 +106,6 @@ public class AddressController {
 
     @RequestMapping(value = "/getAddress", method = RequestMethod.GET)
     public String getAddressView() {
-
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
         return APPLICATION_ADDRESS_VIEW;
     }
 
@@ -124,7 +123,7 @@ public class AddressController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null || !getCurrentUser().canSee(application)) {
+        if (application == null) {
             throw new ResourceNotFoundException();
         }
         return application;

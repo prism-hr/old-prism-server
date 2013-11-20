@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -109,8 +108,6 @@ public class MoveToInterviewController {
         }
 
         interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
-        applicationFormUserRoleService.movedToInterviewStage(interview);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         if (interview.isParticipant(getUser())) {
             modelMap.addAttribute("message", "redirectToVote");
             return "/private/common/simpleResponse";
@@ -132,7 +129,7 @@ public class MoveToInterviewController {
     
     @ModelAttribute("usersPotentiallyInterestedInApplication") 
     public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId).getProgram());
+    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("interview")

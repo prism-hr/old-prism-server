@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -103,20 +102,6 @@ public class RejectApplicationControllerTest {
         modelMap.put("user", admin);
 
         Assert.assertEquals(VIEW_RESULT, controllerUT.getRejectPage(modelMap));
-    }
-
-    @Test(expected = ActionNoLongerRequiredException.class)
-    public void shouldThrowExceptionIfNoProviledgesForRejectionPage() {
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", application);
-        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-        modelMap.put("user", userMock);
-
-        EasyMock.expect(userMock.hasAdminRightsOnApplication(application)).andReturn(false);
-
-        EasyMock.replay(userMock);
-        Assert.assertEquals(VIEW_RESULT, controllerUT.getRejectPage(modelMap));
-        EasyMock.verify(userMock);
     }
 
     @Test

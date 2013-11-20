@@ -84,7 +84,8 @@ public class ValidationTransitionControllerTest {
     public void shouldCreateValidationCommentWithQuestionValuesIfNoValidationErrors() {
         Program program = new ProgramBuilder().id(1).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
-        applicationForm.setNextStatus(ApplicationFormStatus.APPROVAL);
+        	applicationForm.setNextStatus(ApplicationFormStatus.APPROVAL);
+        final RegisteredUser delegateUser = new RegisteredUserBuilder().id(1).firstName("test").lastName("test").email("test@test.com").build();
         ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO)
                 .englishCompentencyOk(ValidationQuestionOptions.NO).homeOrOverseas(HomeOrOverseas.HOME).nextStatus(ApplicationFormStatus.APPROVAL)
                 .comment("comment").type(CommentType.VALIDATION).id(6).fastTrackApplication(false).build();
@@ -97,12 +98,12 @@ public class ValidationTransitionControllerTest {
                 return applicationForm;
             }
         };
-
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        controller.postStateChangeComment(applicationForm, currentUser, comment, null);
-
+        
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-        String result = controller.addComment(applicationForm, comment, bindingResultMock, new ModelMap(), null, true, null);
+        controller.postStateChangeComment(applicationForm, currentUser, comment, delegateUser, true);
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(delegateUser.getEmail())).andReturn(delegateUser).once();
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        String result = controller.addComment(applicationForm, comment, bindingResultMock, new ModelMap(), null, false, null);
         EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
 
         assertEquals("redirect:/applications?messageCode=delegate.success&application=1", result);
@@ -127,7 +128,7 @@ public class ValidationTransitionControllerTest {
         };
         ValidationComment comment = new ValidationCommentBuilder().comment("comment").type(CommentType.VALIDATION).documents(documentOne, documentTwo).id(6)
                 .fastTrackApplication(false).build();
-        controller.postStateChangeComment(applicationForm, currentUser, comment, null);
+        controller.postStateChangeComment(applicationForm, currentUser, comment, null, false);
         EasyMock.expect(stateTransitionServiceMock.resolveView(applicationForm)).andReturn("view");
 
         EasyMock.replay(commentServiceMock, stateTransitionServiceMock, encryptionHelperMock, documentServiceMock);

@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -150,10 +149,6 @@ public class PersonalDetailsController {
 
     @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
     public String getPersonalDetailsView(@RequestParam String applicationId, Model model) {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
-
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
 
@@ -170,10 +165,6 @@ public class PersonalDetailsController {
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
     public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult,
             @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model, SessionStatus sessionStatus) {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
-
         if (personalDetails.getApplication().isDecided()) {
             throw new CannotUpdateApplicationException(personalDetails.getApplication().getApplicationNumber());
         }
@@ -206,10 +197,6 @@ public class PersonalDetailsController {
     public String deleteAllLanguageQualifications(@RequestParam(value = "englishFirstLanguage", required = false) Boolean englishFirstLanguage,
             @RequestParam(value = "languageQualificationAvailable", required = false) Boolean languageQualificationAvailable,
             @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
-
         for (LanguageQualification languageQualification : personalDetails.getLanguageQualifications()) {
             languageQualification.setLanguageQualificationDocument(null);
         }
@@ -223,10 +210,6 @@ public class PersonalDetailsController {
 
     @RequestMapping(value = "/deleteLanguageQualificationsDocument", method = RequestMethod.POST)
     public String deleteLanguageQualificationsDocument(@RequestParam String documentId, Model model) {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
-
         if (StringUtils.isNotBlank(documentId)) {
             documentService.delete(documentService.getDocumentById(encryptionHelper.decryptToInteger(documentId)));
         }
@@ -301,7 +284,7 @@ public class PersonalDetailsController {
     @ModelAttribute
     public ApplicationForm getApplicationForm(String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null || !getCurrentUser().canSee(application)) {
+        if (application == null) {
             throw new ResourceNotFoundException();
         }
         return application;

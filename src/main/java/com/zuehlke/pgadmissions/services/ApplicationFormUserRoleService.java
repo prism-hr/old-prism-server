@@ -72,10 +72,12 @@ public class ApplicationFormUserRoleService {
         initiateStageMap.put(ApplicationFormStatus.REJECTED, ApplicationFormAction.CONFIRM_REJECTION);
 
     }
+    
+    public void applicationCreated(ApplicationForm applicationForm) {
+    	createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, false);
+    }
 
     public void applicationSubmitted(ApplicationForm applicationForm) {
-        createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, false);
-
         assignToAdministrators(applicationForm, ApplicationFormAction.COMPLETE_VALIDATION_STAGE, applicationForm.getDueDate(), true);
 
         for (RegisteredUser approver : applicationForm.getProgram().getApprovers()) {
@@ -237,7 +239,7 @@ public class ApplicationFormUserRoleService {
         ReviewComment review = reviewer.getReview();
 
         ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, reviewer.getUser(), Authority.REVIEWER);
-        role.setInterestedInApplicant(review.getWillingToInterview() || review.getWillingToWorkWithApplicant());
+        setInterestedInApplication(application, reviewer.getUser(), review.getWillingToInterview() || review.getWillingToWorkWithApplicant());
 
         applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
 
@@ -300,7 +302,7 @@ public class ApplicationFormUserRoleService {
 
         ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, interviewer.getUser(),
                 Authority.INTERVIEWER);
-        role.setInterestedInApplicant(interviewComment.getWillingToSupervise());
+        setInterestedInApplication(application, interviewer.getUser(), interviewComment.getWillingToSupervise());
 
         applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
 
@@ -316,7 +318,7 @@ public class ApplicationFormUserRoleService {
 
         ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, supervisor.getUser(),
                 Authority.SUPERVISOR);
-        role.setInterestedInApplicant(supervisor.getConfirmedSupervision());
+        setInterestedInApplication(application, supervisor.getUser(), supervisor.getConfirmedSupervision());
 
         applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
 
@@ -353,8 +355,8 @@ public class ApplicationFormUserRoleService {
         return applicationFormUserRoleDAO.findUsersInterestedInApplication(applicationForm);
     }
 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(Program program) {
-        return applicationFormUserRoleDAO.findUsersPotentiallyInterestedInApplication(program);
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+        return applicationFormUserRoleDAO.findUsersPotentiallyInterestedInApplication(applicationForm);
     }
 
     public void deregisterApplicationUpdate(ApplicationForm applicationForm, RegisteredUser registeredUser) {
@@ -445,6 +447,12 @@ public class ApplicationFormUserRoleService {
 
     private void resetActionDeadline(ApplicationForm applicationForm, Date deadlineTimestamp) {
         applicationFormUserRoleDAO.updateApplicationFormActionRequiredDeadline(applicationForm, deadlineTimestamp);
+    }
+    
+    private void setInterestedInApplication(ApplicationForm applicationForm, RegisteredUser registeredUser, Boolean interested) {
+    	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndUser(applicationForm, registeredUser)) {
+    		applicationFormUserRole.setInterestedInApplicant(interested);
+    	}
     }
 
 }

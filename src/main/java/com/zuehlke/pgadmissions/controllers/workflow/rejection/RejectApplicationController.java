@@ -21,9 +21,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -74,9 +74,7 @@ public class RejectApplicationController {
     public String getRejectPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        if (!user.hasAdminRightsOnApplication(application)) {
-            throw new ActionNoLongerRequiredException(application.getApplicationNumber());
-        }
+        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
         applicationFormUserRoleService.deregisterApplicationUpdate(application, user);
         return REJECT_VIEW_NAME;
     }
@@ -85,10 +83,8 @@ public class RejectApplicationController {
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors, ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        if (!user.hasAdminRightsOnApplication(application)) {
-            throw new ActionNoLongerRequiredException(application.getApplicationNumber());
-        }
-
+        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
+        
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;
         }

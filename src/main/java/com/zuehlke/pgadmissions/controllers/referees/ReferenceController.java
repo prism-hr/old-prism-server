@@ -30,8 +30,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
@@ -92,16 +90,8 @@ public class ReferenceController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        RegisteredUser currentUser = getCurrentUser();
-
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
-        }
-        if (!currentUser.isRefereeOfApplicationForm(applicationForm)) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationId);
-        }
-        if (applicationForm.isDecided() || applicationForm.isWithdrawn() || currentUser.getRefereeForApplicationForm(applicationForm).hasResponded()) {
-            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
         return applicationForm;
     }

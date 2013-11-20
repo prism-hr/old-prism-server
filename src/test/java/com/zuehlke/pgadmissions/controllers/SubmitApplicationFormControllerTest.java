@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -114,9 +116,12 @@ public class SubmitApplicationFormControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).applicationNumber("abc").program(program)
                 .applicant(student).build();
 
-        reset(userServiceMock);
+        reset(userServiceMock, actionsProviderMock);
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
-        replay(userServiceMock);
+        actionsProviderMock.validateAction(applicationForm, admin, ApplicationFormAction.VIEW);
+        EasyMock.expectLastCall().once();
+        expect(actionsProviderMock.checkActionAvailable(applicationForm, admin, ApplicationFormAction.VIEW_EDIT)).andReturn(true).once();
+        replay(userServiceMock, actionsProviderMock);
 
         String view = applicationController.getApplicationView(null, applicationForm);
         assertEquals("redirect:/editApplicationFormAsProgrammeAdmin?applicationId=abc", view);
@@ -341,26 +346,6 @@ public class SubmitApplicationFormControllerTest {
         expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
         replay(applicationsServiceMock);
         applicationController.getApplicationForm("2");
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowSubmitExceptionIfApplicationIsDecided() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).status(ApplicationFormStatus.APPROVED).build();
-        applicationController.submitApplication(applicationForm, null, httpServletRequestMock);
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowExceptionIfUserCannotSeeApplicationForm() {
-        RegisteredUser userMock = createMock(RegisteredUser.class);
-        reset(userServiceMock);
-        expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
-        replay(userServiceMock);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("3")).andReturn(applicationForm);
-        expect(userMock.canSee(applicationForm)).andReturn(false);
-        replay(applicationsServiceMock, userMock);
-
-        applicationController.getApplicationForm("3");
     }
 
     @Test

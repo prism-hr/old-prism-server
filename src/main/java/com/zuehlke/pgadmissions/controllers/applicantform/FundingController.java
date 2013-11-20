@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -87,16 +86,14 @@ public class FundingController {
 
 	@RequestMapping(value = "/editFunding", method = RequestMethod.POST)
 	public String editFunding(@Valid Funding funding, BindingResult result) {
-
-		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
 		if(funding.getApplication().isDecided()){
 			throw new CannotUpdateApplicationException(funding.getApplication().getApplicationNumber());
 		}
+		
 		if(result.hasErrors()){
 			return STUDENT_FUNDING_DETAILS_VIEW;
 		}
+		
         ApplicationForm applicationForm = funding.getApplication();
         
 		fundingService.save(funding);
@@ -108,10 +105,6 @@ public class FundingController {
 
 	@RequestMapping(value = "/getFunding", method = RequestMethod.GET)
 	public String getFundingView() {
-
-		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
 		return STUDENT_FUNDING_DETAILS_VIEW;
 	}
 
@@ -135,7 +128,7 @@ public class FundingController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
 		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		if(application == null || !userService.getCurrentUser().canSee(application)){
+		if(application == null){
 			throw new ResourceNotFoundException();
 		}
 		return application;

@@ -8,13 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -30,31 +29,29 @@ public class DeclineController {
 	private static final String DECLINE_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
 	private static final String DECLINE_CONFIRMATION_VIEW_NAME = "/private/reviewers/decline_confirmation";
 	private final RefereeService refereeService;
+	private final ActionsProvider actionsProvider;
 
 	DeclineController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public DeclineController(UserService userService, CommentService commentService, ApplicationsService applicationsService, RefereeService refereeService) {
+	public DeclineController(UserService userService, CommentService commentService, ApplicationsService applicationsService, RefereeService refereeService, ActionsProvider actionsProvider) {
 		this.userService = userService;
 		this.commentService = commentService;
 		this.applicationsService = applicationsService;
 		this.refereeService = refereeService;
+		this.actionsProvider = actionsProvider;
 	}
 
 	@RequestMapping(value = "/review", method = RequestMethod.GET)
 	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
 	    RegisteredUser reviewer = getReviewer(activationCode);
 	    ApplicationForm application = getApplicationForm(applicationId);
+	    
+	    actionsProvider.validateAction(application, reviewer, ApplicationFormAction.PROVIDE_REVIEW);
+	    
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
-		    // the user clicked on "Confirm"
-		    if (application.getStatus() != ApplicationFormStatus.REVIEW){
-		        throw new ActionNoLongerRequiredException(applicationId);
-		    }
-		    if (!reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
-		        throw new InsufficientApplicationFormPrivilegesException(applicationId);
-		    }
 		    commentService.declineReview(reviewer, application);
 		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
 		    reviewer.setDirectToUrl(null);
@@ -80,11 +77,7 @@ public class DeclineController {
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
-		Referee referee = user.getRefereeForApplicationForm(applicationForm);
-		if (referee == null) {
-			throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
-		}
-		return referee;
+		return user.getRefereeForApplicationForm(applicationForm);
 	}
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
@@ -92,6 +85,9 @@ public class DeclineController {
 	    ApplicationForm applicationForm = getApplicationForm(applicationId);
 	    Referee referee = getReferee(activationCode, applicationForm);
 	    RegisteredUser user = userService.getUserByActivationCode(activationCode);
+	    
+	    actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
+	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"
     		refereeService.declineToActAsRefereeAndSendNotification(referee);

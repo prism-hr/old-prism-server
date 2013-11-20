@@ -68,18 +68,6 @@ public class AdditionalInformationControllerTest {
 		SecurityContextHolder.clearContext();
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
-		currentUser.getRoles().clear();
-		controller.editAdditionalInformation(null, null);
-	}
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
-		currentUser.getRoles().clear();
-		controller.getAdditionalInformationView();
-	}
-
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void throwExceptionWhenApplicationFormAlreadySubmitted() {
 		ApplicationForm applForm = new ApplicationFormBuilder().id(1)//
@@ -216,17 +204,4 @@ public class AdditionalInformationControllerTest {
 		controller.getApplicationForm("1");
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowRNFEIfUserCAnnotSeeApplFormOnGet() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(applicationServiceMock, currentUser);
-		controller.getApplicationForm("1");
-
-	}
 }

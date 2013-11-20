@@ -73,6 +73,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     private RoleDAO roleDAO;
 
 	private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+	
+	private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @Before
     public void prepare() {
@@ -82,8 +84,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
         
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
+        
+        applicationFormUserRoleService = new ApplicationFormUserRoleService();
 
-        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null, applicationFormUserRoleDAO);
+        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null, applicationFormUserRoleDAO, applicationFormUserRoleService);
 
         roleDAO = new RoleDAO(sessionFactory);
 
@@ -109,7 +113,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         applicationDescriptor.setApplicationFormId(form.getId());
         
         ApplicationFormListDAO applicationFormDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
-        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null, null, applicationFormUserRoleDAO);
+        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null, null, applicationFormUserRoleDAO, applicationFormUserRoleService);
         RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
         EasyMock.expect(applicationFormDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(Arrays.asList(applicationDescriptor));

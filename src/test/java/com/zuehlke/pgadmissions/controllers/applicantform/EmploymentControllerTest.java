@@ -4,12 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -76,18 +74,6 @@ public class EmploymentControllerTest {
 
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
-        currentUser.getRoles().clear();
-        controller.editEmployment(null, null);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
-        currentUser.getRoles().clear();
-        controller.getEmploymentView();
-    }
-
     @Test
     public void shouldReturnEmploymentView() {
         assertEquals("/private/pgStudents/form/components/employment_position_details", controller.getEmploymentView());
@@ -122,20 +108,6 @@ public class EmploymentControllerTest {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.replay(userServiceMock);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-        EasyMock.replay(applicationsServiceMock, currentUser);
-        controller.getApplicationForm("1");
-
     }
 
     @Test

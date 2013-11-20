@@ -76,13 +76,9 @@ public class DelegateTransitionController extends StateTransitionController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/submitDelegateStateChangeComment")
-    public String addComment(@RequestParam String applicationId, @RequestParam(required = false) String action,
+    public String addComment(@RequestParam(required = false) String action,
     		@ModelAttribute("applicationForm") ApplicationForm applicationForm,
             @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result) {     
-        if (result.hasErrors()) {
-            return STATE_TRANSITION_VIEW;
-        }
-        
         ApplicationFormAction invokedAction = null;
         ApplicationFormStatus status = applicationForm.getStatus();
         
@@ -97,6 +93,10 @@ public class DelegateTransitionController extends StateTransitionController {
         }
         
         actionsProvider.validateAction(applicationForm, getCurrentUser(), invokedAction);
+        
+        if (result.hasErrors()) {
+            return STATE_TRANSITION_VIEW;
+        }
         
         RegisteredUser registeredUser = getCurrentUser();
         ApplicationFormStatus nextStatus = applicationForm.getNextStatus();

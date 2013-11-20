@@ -6,12 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -107,22 +105,6 @@ public class PersonalDetailsControllerTest {
                 .applicationForm(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build()).build();
         EasyMock.replay(userServiceMock);
         controller.editPersonalDetails(personalDetails, null, null, null, modelMock, sessionStatusMock);
-        EasyMock.verify(userServiceMock);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
-        currentUser.getRoles().clear();
-        EasyMock.replay(userServiceMock);
-        controller.editPersonalDetails(null, null, null, null, null, null);
-        EasyMock.verify(userServiceMock);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionOnGetIfCurrentUserNotApplicant() {
-        currentUser.getRoles().clear();
-        EasyMock.replay(userServiceMock);
-        controller.getPersonalDetailsView("1", modelMock);
         EasyMock.verify(userServiceMock);
     }
 
@@ -225,20 +207,6 @@ public class PersonalDetailsControllerTest {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.replay(userServiceMock);
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-        EasyMock.replay(applicationsServiceMock, currentUser);
-        controller.getApplicationForm("1");
-
     }
 
     @Test
@@ -365,8 +333,6 @@ public class PersonalDetailsControllerTest {
 
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
-
         EasyMock.expect(encryptionHelperMock.decryptToInteger("docId")).andReturn(8);
         EasyMock.expect(documentServiceMock.getDocumentById(8)).andReturn(document);
 

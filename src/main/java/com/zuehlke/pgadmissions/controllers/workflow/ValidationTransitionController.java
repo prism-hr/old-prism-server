@@ -94,11 +94,6 @@ public class ValidationTransitionController extends StateTransitionController {
     		@RequestParam(required = false) String action, @RequestParam(required = false) Boolean delegate, 
     		@ModelAttribute("delegatedAdministrator") RegisteredUser delegateAdministrator) {
         model.put("delegate", delegate);
-        
-        if (result.hasErrors()) {
-            return STATE_TRANSITION_VIEW;
-        }
-        
         ApplicationFormAction invokedAction;
         
         if (action != null && action.equals("abort")) {
@@ -110,11 +105,15 @@ public class ValidationTransitionController extends StateTransitionController {
         RegisteredUser registeredUser = getCurrentUser();
         actionsProvider.validateAction(applicationForm, registeredUser, invokedAction);
         
+        if (result.hasErrors()) {
+            return STATE_TRANSITION_VIEW;
+        }
+        
         if (BooleanUtils.isTrue(validationComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
         
-        postStateChangeComment(applicationForm, registeredUser, validationComment, delegateAdministrator);
+        postStateChangeComment(applicationForm, registeredUser, validationComment, delegateAdministrator, delegate);
 
         if (BooleanUtils.isTrue(delegate)) {
         	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();

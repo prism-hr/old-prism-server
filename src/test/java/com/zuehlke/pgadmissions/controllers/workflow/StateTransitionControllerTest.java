@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -121,24 +120,6 @@ public class StateTransitionControllerTest {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
         EasyMock.replay(applicationServiceMock);
 
-        controller.getApplicationForm("5");
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowExceptionIfUserNotAdminOrApproverInApplicationProgram() {
-
-        Program program = new ProgramBuilder().id(6).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
-        RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
-        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-        EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMITTER)).andReturn(false);
-        EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-
-        EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
         controller.getApplicationForm("5");
     }
 

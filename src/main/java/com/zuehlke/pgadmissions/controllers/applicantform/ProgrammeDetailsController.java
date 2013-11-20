@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -78,12 +77,6 @@ public class ProgrammeDetailsController {
 
     @RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
     public String editProgrammeDetails(@Valid ProgrammeDetails programmeDetails, BindingResult result, Model model) {
-
-        RegisteredUser user = (RegisteredUser) model.asMap().get("user");
-        if (!user.isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
-
         if (programmeDetails.getApplication().isDecided()) {
             throw new CannotUpdateApplicationException(programmeDetails.getApplication().getApplicationNumber());
         }
@@ -104,10 +97,6 @@ public class ProgrammeDetailsController {
     @RequestMapping(value = "/getProgrammeStartDate", method = RequestMethod.GET)
     @ResponseBody
     public String getProgrammeDetailsView(@RequestParam String applicationId, @RequestParam String studyOption) {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
-
         if (StringUtils.isBlank(studyOption) || StringUtils.isBlank(applicationId)) {
             return StringUtils.EMPTY;
         }
@@ -134,9 +123,6 @@ public class ProgrammeDetailsController {
 
     @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
     public String getProgrammeDetailsView() {
-        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-            throw new ResourceNotFoundException();
-        }
         return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
     }
 
@@ -152,9 +138,8 @@ public class ProgrammeDetailsController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null || !getCurrentUser().canSee(application)) {
+        if (application == null) {
             throw new ResourceNotFoundException();
         }
         return application;

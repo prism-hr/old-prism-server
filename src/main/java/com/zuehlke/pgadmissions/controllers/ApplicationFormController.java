@@ -66,5 +66,4 @@ public class ApplicationFormController {
         return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
     }
 
-
 }

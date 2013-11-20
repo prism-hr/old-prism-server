@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -79,9 +78,6 @@ public class InterviewVoteController {
     public InterviewParticipant getInterviewParticipant(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         InterviewParticipant participant = applicationForm.getLatestInterview().getParticipant(getUser());
-        if (participant == null) {
-            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
-        }
         return participant;
     }
 

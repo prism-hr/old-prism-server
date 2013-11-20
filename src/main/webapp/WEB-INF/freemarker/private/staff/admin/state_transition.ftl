@@ -211,12 +211,11 @@
 										</div><!-- close .row-group -->
 
 										<div id="interivewDelegateDiv"
-										
 											<#if !user.hasAdminRightsOnApplication(applicationForm) &&
 												!(user.isApproverInProgram(applicationForm.program) &&
 												applicationForm.isInState('APPROVAL'))>
 												style="display:none"
-											</#if>
+											</#if>>
 									
 											<div class="row-group" id="interviewDelegation" style="display:none">
 												<#include "/private/staff/admin/state_administration_delegation.ftl"/>

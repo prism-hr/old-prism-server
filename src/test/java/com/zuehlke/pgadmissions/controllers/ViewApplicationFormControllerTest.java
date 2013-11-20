@@ -7,12 +7,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -27,21 +27,12 @@ public class ViewApplicationFormControllerTest {
     private ApplicationPageModelBuilder applicationPageModelBuilderMock;
     private UserService userServiceMock;
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+	private ActionsProvider actionsProviderMock;
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
-        controller.getViewApplicationPage(null, "1", null, null, null);
-    }
-
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowExceptionIfCurrentCannotSeeApplicatioForm() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
-        EasyMock.replay(applicationsServiceMock, userMock);
-
         controller.getViewApplicationPage(null, "1", null, null, null);
     }
 
@@ -51,7 +42,6 @@ public class ViewApplicationFormControllerTest {
         String uploadErrorCode = "abc";
         String view = "def";
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(userMock.getId()).andReturn(99).anyTimes();
         ApplicationPageModel model = new ApplicationPageModel();
 
@@ -72,7 +62,6 @@ public class ViewApplicationFormControllerTest {
         String uploadErrorCode = "abc";
         String view = "def";
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(userMock.getId()).andReturn(99).anyTimes();
         ApplicationPageModel model = new ApplicationPageModel();
 
@@ -93,7 +82,6 @@ public class ViewApplicationFormControllerTest {
         String uploadErrorCode = "abc";
         String view = "def";
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(userMock.getId()).andReturn(99).anyTimes();
 
         ApplicationPageModel model = new ApplicationPageModel();
@@ -115,7 +103,8 @@ public class ViewApplicationFormControllerTest {
         applicationPageModelBuilderMock = EasyMock.createMock(ApplicationPageModelBuilder.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
-        controller = new ViewApplicationFormController(applicationsServiceMock, userServiceMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
+        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
+        controller = new ViewApplicationFormController(applicationsServiceMock, userServiceMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock, actionsProviderMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
         EasyMock.replay(userServiceMock);
     }

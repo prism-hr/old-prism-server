@@ -4,10 +4,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,18 +67,6 @@ public class FundingControllerTest {
 
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
-		currentUser.getRoles().clear();
-		controller.editFunding(null, null);
-	}
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
-		currentUser.getRoles().clear();
-		controller.getFundingView();
-	}
-
 	@Test
 	public void shouldReturnFundingView() {
 		assertEquals("/private/pgStudents/form/components/funding_details", controller.getFundingView());
@@ -113,22 +99,6 @@ public class FundingControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
 		controller.getApplicationForm("1");
-	}
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-		EasyMock.replay(userServiceMock);
-	
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(applicationsServiceMock, currentUser);
-		controller.getApplicationForm("1");
-
 	}
 
 	@Test

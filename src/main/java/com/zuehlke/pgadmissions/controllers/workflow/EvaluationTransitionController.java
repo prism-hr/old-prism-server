@@ -69,11 +69,6 @@ public class EvaluationTransitionController extends StateTransitionController {
             @RequestParam(required = false) String action, @RequestParam(required = false) Boolean delegate,
             @ModelAttribute("delegatedAdministrator") RegisteredUser delegateAdministrator) {
     	modelMap.put("delegate", delegate);
-
-        if (result.hasErrors()) {
-            return STATE_TRANSITION_VIEW;
-        }
-        
     	ApplicationFormAction invokedAction = null;
         ApplicationFormStatus status = applicationForm.getStatus();
     	
@@ -90,11 +85,15 @@ public class EvaluationTransitionController extends StateTransitionController {
         RegisteredUser registeredUser = getCurrentUser();
         actionsProvider.validateAction(applicationForm, registeredUser, invokedAction);
 
+        if (result.hasErrors()) {
+            return STATE_TRANSITION_VIEW;
+        }
+
         if (BooleanUtils.isTrue(stateChangeComment.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
         
-        postStateChangeComment(applicationForm, registeredUser, stateChangeComment, delegateAdministrator);
+        postStateChangeComment(applicationForm, registeredUser, stateChangeComment, delegateAdministrator, delegate);
 
         if (BooleanUtils.isTrue(delegate)) {
         	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();

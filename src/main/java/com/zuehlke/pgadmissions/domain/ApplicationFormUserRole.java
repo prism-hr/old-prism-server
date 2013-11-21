@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -44,6 +46,7 @@ public class ApplicationFormUserRole implements Serializable {
     private Boolean interestedInApplicant = false;
     
     @Column(name = "update_timestamp")
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date updateTimestamp;
     
     @Column(name = "raises_update_flag")
@@ -51,6 +54,10 @@ public class ApplicationFormUserRole implements Serializable {
     
     @Column(name = "raises_urgent_flag")
     private Boolean raisesUrgentFlag = false;
+    
+    @Column(name = "assigned_timestamp")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date assignedTimestamp;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_user_role_id", nullable = false)
@@ -118,6 +125,10 @@ public class ApplicationFormUserRole implements Serializable {
 
     public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+    
+    public Date getAssignedTimestamp() {
+    	return assignedTimestamp;
     }
 
     public List<ApplicationFormActionRequired> getActions() {

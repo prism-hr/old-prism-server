@@ -2,9 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -62,7 +60,7 @@ public class WithdrawServiceTest {
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
         assertEquals(1, applicationForm.getEvents().size());
         assertSame(event, applicationForm.getEvents().get(0));
-        assertFalse(applicationForm.getWithdrawnBeforeSubmit());
+        assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getStatusWhenWithdrawn());
     }
 
     @Test
@@ -82,7 +80,7 @@ public class WithdrawServiceTest {
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
         assertEquals(1, applicationForm.getEvents().size());
         assertSame(event, applicationForm.getEvents().get(0));
-        assertTrue(applicationForm.getWithdrawnBeforeSubmit());
+        assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getStatusWhenWithdrawn());
     }
 
     @Test

@@ -150,7 +150,7 @@ public class ApplicationsReportService {
         
         for (ApplicationForm app : applications) {
 
-            if (!app.isSubmitted() || app.getWithdrawnBeforeSubmit()) {
+            if (!app.isSubmitted() || app.getStatusWhenWithdrawn() == ApplicationFormStatus.UNSUBMITTED) {
                 continue;
             }
             

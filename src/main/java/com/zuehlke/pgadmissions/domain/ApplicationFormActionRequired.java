@@ -42,6 +42,10 @@ public class ApplicationFormActionRequired implements Serializable {
 
     @Column(name = "raises_urgent_flag")
     private Boolean raisesUrgentFlag = false;
+    
+    @Column(name = "assigned_timestamp")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date assignedTimestamp;
 
     @ManyToOne
     @JoinColumn(name = "application_form_user_role_id", nullable = false, updatable = false, insertable = false)
@@ -95,6 +99,10 @@ public class ApplicationFormActionRequired implements Serializable {
 
     public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+    
+    public Date getAssignedTimestamp() {
+    	return assignedTimestamp;
     }
 
     public ApplicationFormUserRole getApplicationFormUserRole() {

@@ -88,6 +88,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Enumerated(EnumType.STRING)
     @Column(name = "next_status")
     private ApplicationFormStatus nextStatus = null;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_when_withdrawn")
+    private ApplicationFormStatus statusWhenWithdrawn = null;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -231,9 +235,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "suppress_state_change_notifications")
     private Boolean suppressStateChangeNotifications = false;
-
-    @Column(name = "withdrawn_before_submit")
-    private Boolean withdrawnBeforeSubmit = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
@@ -545,6 +546,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setStatus(ApplicationFormStatus status) {
+    	if (status == ApplicationFormStatus.WITHDRAWN) {
+    		this.statusWhenWithdrawn = this.status;
+    	}
+    	
         this.status = status;
         this.nextStatus = null;
         
@@ -560,9 +565,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public ApplicationFormStatus getNextStatus() {
         return nextStatus;
     }
-
-    public void setNextStatus(ApplicationFormStatus nextStatus) {
-        this.nextStatus = nextStatus;
+    
+    public ApplicationFormStatus getStatusWhenWithdrawn() {
+        return statusWhenWithdrawn;
     }
 
     public Date getRejectNotificationDate() {
@@ -995,14 +1000,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return true;
         }
         return false;
-    }
-
-    public Boolean getWithdrawnBeforeSubmit() {
-        return withdrawnBeforeSubmit;
-    }
-
-    public void setWithdrawnBeforeSubmit(final Boolean withdrawnBeforeSubmit) {
-        this.withdrawnBeforeSubmit = withdrawnBeforeSubmit;
     }
 
     public boolean isNotInState(ApplicationFormStatus status) {

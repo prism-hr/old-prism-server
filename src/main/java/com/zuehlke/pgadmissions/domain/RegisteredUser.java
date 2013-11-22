@@ -174,6 +174,10 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 	@Column(name = "latest_task_notification_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date latestTaskNotificationDate;
+	
+	@Column(name = "application_list_last_access_timestamp")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date applicationListLastAccessTimestamp;
 
 	@Transient
 	private boolean canManageProjects;
@@ -780,6 +784,14 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		this.latestTaskNotificationDate = latestTaskNotificationDate;
 	}
 
+	public Date getApplicationListLastAccessTimestamp() {
+		return applicationListLastAccessTimestamp;
+	}
+
+	public void setApplicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
+		this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
+	}
+	
 	public List<ApplicationFormUserRole> getApplicationFormUserRoles() {
 		return applicationFormUserRoles;
 	}

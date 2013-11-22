@@ -398,4 +398,5 @@ public class UserService {
     public List<RegisteredUser> getUsersWithUpi(final String upi) {
         return userDAO.getUsersWithUpi(upi);
     }
+    
 }

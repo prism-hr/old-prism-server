@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -109,6 +110,7 @@ public class ApplicationListController {
         }
 
         model.addAttribute("filtering", filtering);
+        getUser().setApplicationListLastAccessTimestamp(new Date());
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }
 

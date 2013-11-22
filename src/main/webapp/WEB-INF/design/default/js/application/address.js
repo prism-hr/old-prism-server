@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$('.selectpicker').selectpicker();
+	
 	$("#acceptTermsADValue").val("NO");
 	//limitTextArea();
 

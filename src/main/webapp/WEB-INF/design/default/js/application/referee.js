@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-	$('.selectpicker').selectpicker();
+	
 	$("#acceptTermsRDValue").val("NO");
 	
 	//limitTextArea();

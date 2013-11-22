@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('.selectpicker').selectpicker();
+
     $("#acceptTermsQDValue").val("NO");
     showOrHideAddQualificationButtonOnly();
     showOrHideQualificationInstitution();
@@ -90,7 +90,6 @@ $(document).ready(function() {
                 options.append($("<option />").val("OTHER").text("Other"));
             },
             complete : function() {
-                $('#qualificationInstitution').selectpicker('refresh');
             }
         });
     });

@@ -86,7 +86,7 @@ $(document).ready(function() {
 					}
 				});
 			}
-			if ($(event.target).attr('class') == 'btn dropdown-toggle btn-default'
+			if ($(event.target).attr('class') == 'btn btn-default dropdown-toggle'
 				|| $(event.target).attr('class') == 'filter-option pull-left'
 				|| $(event.target).attr('class') == 'text'
 				|| $(event.target).attr('class') == 'caret'
@@ -149,7 +149,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	// SELECTION CHANGED FOR SELECT CATEGORY
 	// ------------------------------------------------------------------------------
-	$('.selectCategory').on("change",	function() {
+	$('.selectCategory').live("change",	function() {
 		var selected = $(this).val();
 		var predicateSelect = $(this).parent().find('.selectPredicate');
 		predicateSelect.empty();
@@ -190,7 +190,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	// CLEAR ALL FILTERS
 	// ------------------------------------------------------------------------------
-	$("#search-reset").on('click', function() {
+	$("#search-reset").live('click', function() {
 		clearCurrentFilters(true);
 		checkSwitch();
 	});
@@ -233,7 +233,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$("#loadMoreApplications").on('click', function() {
+	$("#loadMoreApplications").live('click', function() {
 		if (loading) {
 			return;
 		}
@@ -242,7 +242,7 @@ $(document).ready(function() {
 	});
 
 	// Load active applications
-	$("#loadActiveApplication").on('click', function() {
+	$("#loadActiveApplication").live('click', function() {
 		clearCurrentFilters(false);
 		$('#sort-column').val('APPLICATION_DATE');
 		$('#sort-order').val('DESCENDING');
@@ -275,7 +275,7 @@ $(document).ready(function() {
 	});
 
 	// Duplicate filters buttons
-	$(".add").on('click', function() {
+	$(".add").live('click', function() {
 		var existingFilter=$(this).parent();
 		var newFilter=$(existingFilter).clone(true);
 		newFilter.insertAfter($(this).parent());
@@ -289,7 +289,7 @@ $(document).ready(function() {
 	});
 	
 	// Remove current filter
-	$(".remove").on('click', function() {
+	$(".remove").live('click', function() {
 		var existingFilter= $(this).parent();
 		if ($("#search-box").find("div.filter").length > 1) {
 			var filterValue = existingFilter.find(".filterInput").val(); 

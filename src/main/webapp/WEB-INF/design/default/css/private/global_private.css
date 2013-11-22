@@ -200,9 +200,7 @@ select[multiple] { vertical-align: top; }
 
 iframe { border: 2px inset #999; font-family: Arial, Helvetica, sans-serif; }
 
-.visover {
-	overflow: visible !important;
-}
+	
 /* Validation errors. */
 span.invalid {
 	/* background: url(../../images/button_exclaim.png) no-repeat 0 .1em; */ 
@@ -2021,9 +2019,7 @@ background: #909194;
 	position: relative !important;
 }
 /* Responsive queries*/
-.row-group {
-	overflow: visible !important;
-}
+
 @media (min-width:768px) and (max-width:979px) {
 
 }

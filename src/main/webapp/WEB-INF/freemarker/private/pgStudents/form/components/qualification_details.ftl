@@ -78,7 +78,7 @@
       <div class="row">
         <label class="plain-label" for="institutionCountry">Institution Country<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'education.qualifications.institutionCountry'/>"></span>
-        <div class="field"> <select class="full selectpicker" data-live-search="true" data-size="6" id="institutionCountry" name="institutionCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+        <div class="field"> <select class="full" id="institutionCountry" name="institutionCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
           <option value="">Select...</option>
           <#list countries as country> <option value="${encrypter.encrypt(country.id)}"<#if qualification.institutionCountry?? && qualification.institutionCountry.id == country.id> selected="selected"</#if>>
           ${country.name?html}
@@ -97,7 +97,7 @@
       <div class="row">
         <label id="lbl-providerName" class="plain-label grey-label" for="qualificationInstitution">Institution / Provider Name<em>*</em></label>
         <span class="hint grey" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
-        <div class="field"> <select class="full selectpicker" data-live-search="true" data-size="6"  id="qualificationInstitution" name="qualificationInstitution"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+        <div class="field"> <select class="full" id="qualificationInstitution" name="qualificationInstitution"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
           <option value="">Select...</option>
           <#list institutions as inst> <option value="${inst.code}" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == inst.code> selected="selected"</#if>>
           ${inst.name?html}
@@ -134,7 +134,7 @@
       <div class="row">
         <label class="plain-label" for="qqualificationType">Qualification Type<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'education.qualifications.qualificationType'/>"></span>
-        <div class="field"> <select class="full selectpicker" data-live-search="true" data-size="6" id="qqualificationType" name="qqualificationType"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+        <div class="field"> <select class="full" id="qqualificationType" name="qqualificationType"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
           <option value="">Select...</option>
           <#list types as type> <option value="${encrypter.encrypt(type.id)}"<#if qualification.qualificationType?? && qualification.qualificationType.id == type.id> selected="selected"</#if>>
           ${type.name?html}

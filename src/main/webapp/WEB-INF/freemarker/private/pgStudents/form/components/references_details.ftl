@@ -293,7 +293,7 @@
           >Country<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'referee.country'/>"></span>
         <div class="field"> <#if referee.editable && (applicationForm.referees?size &lt; 4 || referee.id??) >
-          <select class="full selectpicker" data-live-search="true" data-size="6" name="ref_address_country" id="ref_address_country">
+          <select class="full" name="ref_address_country" id="ref_address_country">
             <option value="">Select...</option>
             <#list domiciles as domicile> <option value="${encrypter.encrypt(domicile.id)}" 
             <#if referee.addressLocation.domicile?? && referee.addressLocation.domicile.id == domicile.id> 

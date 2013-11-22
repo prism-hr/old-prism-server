@@ -83,7 +83,8 @@ public class ApplicationFormListDAO {
     	appendJoinStatements(criteria);   	
     	appendWhereStatement(criteria, registeredUser, filtering);
     	
-    	criteria.add(Restrictions.leProperty("assignedTimestamp", "registeredUser.applicationListLastAccessTimestamp"));
+    	// Not working yet
+    	// criteria.add(Restrictions.leProperty("assignedTimestamp", "registeredUser.applicationListLastAccessTimestamp"));
     	
     	appendOrderStatement(criteria, filtering);
     	appendLimitStatement(criteria, (filtering.getBlockCount() - 1) * itemsPerPage, itemsPerPage);

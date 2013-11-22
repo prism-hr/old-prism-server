@@ -110,6 +110,7 @@ public class ApplicationListController {
         }
 
         model.addAttribute("filtering", filtering);
+        getUser().setApplicationListLastAccessTimestamp(new Date());
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }
 
@@ -117,11 +118,6 @@ public class ApplicationListController {
     public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering,
     		@RequestParam Integer blockCount, @RequestParam(required = false) Boolean useDisjunction, final ModelMap model) {
         RegisteredUser user = getUser();
-        
-        if (blockCount == 1) {
-            user.setApplicationListLastAccessTimestamp(new Date());
-        }
-        
         filtering.setBlockCount(blockCount);
         filtering.setUseDisjunction(useDisjunction);
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);

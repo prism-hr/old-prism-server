@@ -7,3 +7,8 @@ ALTER TABLE APPLICATION_FORM_ACTION_REQUIRED
 	ADD COLUMN assigned_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	ADD INDEX (assigned_timestamp)
 ;
+
+ALTER TABLE REGISTERED_USER
+	ADD COLUMN application_list_last_access_timestamp DATETIME,
+	ADD INDEX (application_list_last_access_timestamp)
+;

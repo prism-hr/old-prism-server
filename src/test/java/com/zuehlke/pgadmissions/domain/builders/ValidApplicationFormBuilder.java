@@ -189,7 +189,7 @@ public class ValidApplicationFormBuilder {
                 .employmentPositions(employmentPosition).fundings(funding).lastUpdated(new Date()).personalDetails(personalDetails).program(program)
                 .programmeDetails(programDetails).projectTitle("Project Title").qualification(qualification1, qualification2)
                 .status(ApplicationFormStatus.APPROVED).submittedDate(new Date()).cv(cvDocument).personalStatement(personalStatement)
-                .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1").withdrawnBeforeSubmit(false);
+                .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();
         return applicationForm;
     }

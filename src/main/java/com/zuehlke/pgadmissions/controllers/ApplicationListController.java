@@ -116,9 +116,9 @@ public class ApplicationListController {
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
     public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering,
-    		@RequestParam(required=false) Boolean useDisjunction,
-            final ModelMap model) {
-        RegisteredUser user = getUser();  
+    		@RequestParam Integer blockCount, @RequestParam(required = false) Boolean useDisjunction, final ModelMap model) {
+        RegisteredUser user = getUser();
+        filtering.setBlockCount(blockCount);
         filtering.setUseDisjunction(useDisjunction);
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);
         model.addAttribute("applications", applications);

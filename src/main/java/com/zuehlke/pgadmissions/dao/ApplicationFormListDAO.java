@@ -73,15 +73,19 @@ public class ApplicationFormListDAO {
     			.add(Projections.property("applicationForm.projectTitle"), "oldProjectTitle")
     			.add(Projections.property("applicationForm.averageRating"), "applicantAverageRating")
     			.add(Projections.property("applicationForm.status"), "applicationFormStatus")
-    			.add(Projections.property("applicationForm.withdrawnBeforeSubmit"), "applicationFormWithdrawnBeforeSubmitted")
     			.add(Projections.property("applicationForm.nextStatus"), "applicationFormNextStatus")
+    			.add(Projections.property("applicationForm.statusWhenWithdrawn"), "applicationFormStatusWhenWithdrawn")
     			.add(Projections.property("applicationForm.personalStatement.id"), "applicationFormPersonalStatementId")
     			.add(Projections.property("applicationForm.cv.id"), "applicationFormCvId")
     			.add(Projections.property("applicationForm.submittedDate"), "applicationFormCreatedTimestamp")
     			.add(Projections.max("updateTimestamp"), "applicationFormUpdatedTimestamp"));
        	
-    	appendJoinStatements(criteria);
+    	appendJoinStatements(criteria);   	
     	appendWhereStatement(criteria, registeredUser, filtering);
+    	
+    	// Not working yet
+    	// criteria.add(Restrictions.leProperty("assignedTimestamp", "registeredUser.applicationListLastAccessTimestamp"));
+    	
     	appendOrderStatement(criteria, filtering);
     	appendLimitStatement(criteria, (filtering.getBlockCount() - 1) * itemsPerPage, itemsPerPage);
     	
@@ -105,6 +109,7 @@ public class ApplicationFormListDAO {
 		criteria.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
 			.createAlias("applicationForm.applicant", "applicant", JoinType.INNER_JOIN)
 			.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+			.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
 			.createAlias("applicationForm.project", "project", JoinType.LEFT_OUTER_JOIN)
 			.createAlias("project.advert", "advert", JoinType.LEFT_OUTER_JOIN);
     }

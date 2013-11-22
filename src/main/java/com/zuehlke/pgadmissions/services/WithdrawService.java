@@ -23,11 +23,6 @@ public class WithdrawService {
 
     @Transactional
     public void withdrawApplication(final ApplicationForm application) {
-
-        if (!application.isSubmitted()) {
-            application.setWithdrawnBeforeSubmit(true);
-        }
-
         application.setStatus(ApplicationFormStatus.WITHDRAWN);
         application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
         applicationService.save(application);

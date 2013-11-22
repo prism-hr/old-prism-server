@@ -57,7 +57,6 @@ public class ApplicationFormBuilder {
     private AdditionalInformation info;
     private Date lastUpdated;
     private Date rejectNotificationDate;
-
     private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
     private List<Interview> interviews = new ArrayList<Interview>();
     private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
@@ -70,15 +69,9 @@ public class ApplicationFormBuilder {
     private String uclBookingReferenceNumber;
     private String ipAddress;
     private Boolean suppressChangeStateNotifications;
-    private Boolean withdrawnBeforeSubmit = false;
     private Boolean isEditableByApplicant = true;
     private Project project = null;
     private BigDecimal averageRating;
-
-    public ApplicationFormBuilder withdrawnBeforeSubmit(Boolean flag) {
-        this.withdrawnBeforeSubmit = flag;
-        return this;
-    }
 
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -321,11 +314,8 @@ public class ApplicationFormBuilder {
         ApplicationForm application = new ApplicationForm();
         application.setId(id);
         application.setApplicant(applicant);
-
         application.setSubmittedDate(submittedDate);
-
         application.setReferees(referees);
-
         application.setApplicationTimestamp(appDate);
         application.getQualifications().addAll(qualifications);
         application.setProgrammeDetails(programmeDetails);
@@ -336,7 +326,6 @@ public class ApplicationFormBuilder {
         application.setCurrentAddress(currentAddress);
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
-
         application.setProgram(program);
         application.setEvents(events);
         application.setProjectTitle(projectTitle);
@@ -355,17 +344,11 @@ public class ApplicationFormBuilder {
         application.setRejection(rejection);
         application.setApplicationAdministrator(applicationAdministrator);
         application.setApplicationNumber(applicationNumber);
-
         application.setBatchDeadline(batchDeadline);
-
         application.setRejectNotificationDate(rejectNotificationDate);
-
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
-
         application.getEmploymentPositions().addAll(employmentPositions);
         application.setSuppressStateChangeNotifications(this.suppressChangeStateNotifications);
-
-        application.setWithdrawnBeforeSubmit(withdrawnBeforeSubmit);
         application.setIsEditableByApplicant(isEditableByApplicant);
         application.setProject(project);
         application.setAverageRating(averageRating);

@@ -1,4 +1,4 @@
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id,
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id,
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)
 	SELECT APPLICATION_FORM.id, APPLICATION_FORM.applicant_id, "APPLICANT", NULL,
 		IF (APPLICATION_FORM.next_status IS NULL
@@ -26,7 +26,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		AND APPLICATION_FORM.applicant_id = INTERVIEW_PARTICIPANT.user_id
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date,
 	next_required_action_id2, next_required_action_deadline2, bind_deadline_to_due_date2)	
 	SELECT APPLICATION_FORM.id, PROGRAM_ADMINISTRATOR_LINK.administrator_id, "ADMINISTRATOR", NULL,
@@ -155,7 +155,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 				AND APPLICATION_FORM.withdrawn_before_submit = 0
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)	
 	SELECT APPLICATION_FORM.id, PROGRAM_APPROVER_LINK.registered_user_id, "APPROVER", NULL,
 		IF (APPLICATION_FORM.status = "APPROVAL",
@@ -192,7 +192,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		AND APPLICATION_FORM.withdrawn_before_submit = 0
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id)
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id)
 	SELECT APPLICATION_FORM.id, PROGRAM_VIEWER_LINK.viewer_id, "VIEWER"
 	FROM APPLICATION_FORM INNER JOIN PROGRAM_VIEWER_LINK
 		ON APPLICATION_FORM.program_id = PROGRAM_VIEWER_LINK.program_id
@@ -200,7 +200,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 			AND APPLICATION_FORM.withdrawn_before_submit = 0
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id)
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id)
 	SELECT APPLICATION_FORM.id, USER_ROLE_LINK.registered_user_id, "SUPERADMINISTRATOR"
 	FROM APPLICATION_FORM INNER JOIN USER_ROLE_LINK
 		ON USER_ROLE_LINK.application_role_id = "SUPERADMINISTRATOR"
@@ -208,7 +208,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 			AND APPLICATION_FORM.withdrawn_before_submit = 0
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)
 	SELECT APPLICATION_FORM.id, USER_ROLE_LINK.registered_user_id, "ADMITTER", NULL,
 		IF (APPLICATION_FORM.status IN ("REVIEW", "INTERVIEW", "APPROVAL")
@@ -251,7 +251,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 	GROUP BY APPLICATION_FORM.id, USER_ROLE_LINK.registered_user_id
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)	
 	SELECT APPLICATION_FORM.id, APPLICATION_FORM_REFEREE.registered_user_id, "REFEREE", NULL,
 		IF (APPLICATION_FORM.status IN ("REVIEW", "INTERVIEW", "APPROVAL")
@@ -287,7 +287,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 	GROUP BY APPLICATION_FORM.id, APPLICATION_FORM_REFEREE.registered_user_id
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id,
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id,
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)
 	SELECT APPLICATION_FORM.id, REVIEWER.registered_user_id, "REVIEWER", 
 		IF (REVIEW_COMMENT.id IS NOT NULL,
@@ -341,7 +341,7 @@ INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id,
 	GROUP BY APPLICATION_FORM.id, REVIEWER.registered_user_id
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date,
 	next_required_action_id2, next_required_action_deadline2, bind_deadline_to_due_date2)
 	SELECT APPLICATION_FORM.id, APPLICATION_FORM.app_administrator_id, "STATEADMINISTRATOR", NULL,
@@ -402,7 +402,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 		OR APPLICATION_FORM.next_status = "INTERVIEW")
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)
 	SELECT APPLICATION_FORM.id, INTERVIEWER.registered_user_id, "INTERVIEWER",
 		IF (INTERVIEW_COMMENT.id IS NOT NULL,
@@ -465,7 +465,7 @@ INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id,
 	GROUP BY APPLICATION_FORM.id, INTERVIEWER.registered_user_id
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)
 	SELECT APPLICATION_FORM.id, SUPERVISOR.registered_user_id, "SUPERVISOR",
 		IF (SUPERVISION_CONFIRMATION_COMMENT.id IS NOT NULL,
@@ -510,7 +510,7 @@ INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id,
 	GROUP BY APPLICATION_FORM.id, SUPERVISOR.registered_user_id
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date,
 	next_required_action_id2, next_required_action_deadline2, bind_deadline_to_due_date2)	
 	SELECT APPLICATION_FORM.id, PROJECT.primary_supervisor_id, "PROJECTADMINISTRATOR", NULL,
@@ -639,7 +639,7 @@ INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id,
 				AND APPLICATION_FORM.withdrawn_before_submit = 0
 ;
 
-INSERT INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
+INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id, 
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date,
 	next_required_action_id2, next_required_action_deadline2, bind_deadline_to_due_date2)	
 	SELECT APPLICATION_FORM.id, PROJECT.administrator_id, "PROJECTADMINISTRATOR", NULL,
@@ -812,7 +812,7 @@ WHERE (next_required_action_id IS NOT NULL
 		AND next_required_action_deadline2 IS NULL)
 ;
 
-INSERT INTO APPLICATION_FORM_ACTION_REQUIRED (application_form_user_role_id, action_id, deadline_timestamp, bind_deadline_to_due_date)
+INSERT IGNORE INTO APPLICATION_FORM_ACTION_REQUIRED (application_form_user_role_id, action_id, deadline_timestamp, bind_deadline_to_due_date)
 	SELECT id, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date
 	FROM APPLICATION_FORM_USER_ROLE
 	WHERE next_required_action_id IS NOT NULL
@@ -822,7 +822,7 @@ INSERT INTO APPLICATION_FORM_ACTION_REQUIRED (application_form_user_role_id, act
 	WHERE next_required_action_id2 IS NOT NULL
 ;
 
-INSERT INTO APPLICATION_FORM_ACTION_REQUIRED (application_form_user_role_id, action_id, deadline_timestamp, bind_deadline_to_due_date)
+INSERT IGNORE INTO APPLICATION_FORM_ACTION_REQUIRED (application_form_user_role_id, action_id, deadline_timestamp, bind_deadline_to_due_date)
 	SELECT APPLICATION_FORM_USER_ROLE2.id, APPLICATION_FORM_ACTION_REQUIRED.action_id, 
 		APPLICATION_FORM_ACTION_REQUIRED.deadline_timestamp, APPLICATION_FORM_ACTION_REQUIRED.bind_deadline_to_due_date
 	FROM APPLICATION_FORM_USER_ROLE INNER JOIN APPLICATION_FORM_ACTION_REQUIRED

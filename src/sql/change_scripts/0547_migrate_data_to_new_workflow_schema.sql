@@ -1,7 +1,3 @@
-INSERT IGNORE INTO APPLICATION_ROLE (id, update_visibility)
-	SELECT "STATEADMINISTRATOR", 1
-;
-
 INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id,
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)
 	SELECT APPLICATION_FORM.id, APPLICATION_FORM.applicant_id, "APPLICANT", NULL,

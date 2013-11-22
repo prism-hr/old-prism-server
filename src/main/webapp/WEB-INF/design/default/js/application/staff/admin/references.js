@@ -11,7 +11,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // New reference button.
     // --------------------------------------------------------------------------------
-    $('#newReferenceButton').on("click", function () {
+    $('#newReferenceButton').live("click", function () {
 		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
 		$('#referee_newReferee').show();
 		$('#editedRefereeId').val('newReferee');
@@ -23,7 +23,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // Close button.
     // --------------------------------------------------------------------------------
-	$('#refereeCloseButton').on("click", function() {
+	$('#refereeCloseButton').live("click", function() {
 		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
 		$('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
 	});
@@ -31,7 +31,7 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
     // Clear button.
     // -------------------------------------------------------------------------------
-    $('#refereeClearButton').on("click", function() {
+    $('#refereeClearButton').live("click", function() {
         clearRefereeFormErrors();
         
         var refereeBeingEdited = getRefereeBeingEdited();
@@ -52,7 +52,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // SHOW SELECTED REFEREE
     // --------------------------------------------------------------------------------
-    $('a[name="showRefereeLink"]').on("click", function() {
+    $('a[name="showRefereeLink"]').live("click", function() {
         $('a[name="showRefereeLink"]').each(function() {
             $("#" + $(this).attr("toggles")).hide();
         });
@@ -65,7 +65,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // ONLY ALLOW A MAXIMUM OF 2 REFEREES TO BE SELECTED AT THE SAME TIME
     // --------------------------------------------------------------------------------
-    $('input[name="refereeSendToUcl"]:checkbox').on("change", function() {
+    $('input[name="refereeSendToUcl"]:checkbox').live("change", function() {
         var maxAllowed = 2;
         var checked = $('input[name="refereeSendToUcl"]:checked').size();
         if (checked > maxAllowed) {
@@ -76,14 +76,14 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // POST SEND TO PORTICO REFEREE DATA
     // --------------------------------------------------------------------------------
-    $('#refereeSaveButton').on("click", function(event) {
+    $('#refereeSaveButton').live("click", function(event) {
         postRefereesData(true, false, event);
     });
 
     // --------------------------------------------------------------------------------
     // POST ADD REFERENCE DATA
     // --------------------------------------------------------------------------------
-	$(".addReferenceButton").on("click", function(event) {
+	$(".addReferenceButton").live("click", function(event) {
 		postRefereesData(false, true, event);
     });
     
@@ -168,7 +168,7 @@ function showProperRefereeEntry() {
 
 function attachReferenceEditListeners () {
     $('.editReferenceButton').each(function() {
-    	$(this).on("click", function(event) {
+    	$(this).live("click", function(event) {
     		editReferenceData(event);
         });
     });

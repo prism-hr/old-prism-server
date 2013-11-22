@@ -69,10 +69,9 @@
       
       <!-- Country -->
       <div class="row">
-        
         <label class="plain-label" for="currentAddressDomicile">Country<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'addressDetails.CurrentAddress.country'/>"></span>
-        <div class="field"> <select class="full selectpicker" data-live-search="true" data-size="6" name="currentAddressDomicile" id="currentAddressDomicile"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled" </#if>>
+        <div class="field"> <select class="full" name="currentAddressDomicile" id="currentAddressDomicile"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled" </#if>>
           <option value="">Select...</option>
           <#list domiciles as domicile> <option value="${encrypter.encrypt(domicile.id)}"<#if addressSectionDTO.currentAddressDomicile?? && addressSectionDTO.currentAddressDomicile.id == domicile.id> selected="selected"</#if>>
           ${domicile.name?html}
@@ -156,7 +155,7 @@
       
       <!-- Country -->
       <div class="row"> <span id="country-two-lb" class="plain-label">Country<em id="country-two-em">*</em></span> <span class="hint" data-desc="<@spring.message 'addressDetails.ContactAddress.country'/>"></span>
-        <div class="field"> <select class="full selectpicker" data-live-search="true" data-size="6" name="contactAddressDomicile" id="contactAddressDomicile"<#if (applicationForm.isDecided() || applicationForm.isWithdrawn()) || (addressSectionDTO.sameAddress)> disabled="disabled" </#if>>
+        <div class="field"> <select class="full" name="contactAddressDomicile" id="contactAddressDomicile"<#if (applicationForm.isDecided() || applicationForm.isWithdrawn()) || (addressSectionDTO.sameAddress)> disabled="disabled" </#if>>
           <option value="">Select...</option>
           <#list domiciles as domicile><option value="${encrypter.encrypt(domicile.id)}"<#if addressSectionDTO.contactAddressDomicile?? && addressSectionDTO.contactAddressDomicile.id == domicile.id> selected="selected"</#if>>${domicile.name?html}</option>
           </#list>

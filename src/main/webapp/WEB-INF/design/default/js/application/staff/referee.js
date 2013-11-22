@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	
 	$('#refereeCloseButton').click(function(){
 		$('#referee-H2').trigger('click');
 		return false;

@@ -108,7 +108,6 @@ $(document).ready(function()
 	});
 	
 	generalTabing();
-	
 });
 
 function checkTableForm() {

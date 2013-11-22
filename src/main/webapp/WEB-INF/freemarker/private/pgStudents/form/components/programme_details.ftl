@@ -26,7 +26,7 @@
     	</div>  
     </#if>
   
-    <div class="row-group visover">
+    <div class="row-group">
       <#if programError?? && programError=='true'>
       <div class="alert alert-error">
           <i class="icon-warning-sign"></i>  
@@ -54,7 +54,7 @@
         <label class="plain-label" for="studyOption">Study Option<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.studyOption'/>"></span>
         <div class="field">
-          <select class="full selectpicker" id="studyOption" name="studyOption"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+          <select class="full" id="studyOption" name="studyOption"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
             <option value="">Select...</option>
             <#list studyOptions as studyOption>
             <option value="${studyOption.name}"<#if programmeDetails.studyOption?? &&  programmeDetails.studyOption == studyOption.name> selected="selected"</#if>>${studyOption.name}</option>
@@ -108,7 +108,7 @@
         <label class="plain-label" for="referrer">How did you find us?<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.howDidYouFindUs'/>"></span>
         <div class="field">
-          <select class="full selectpicker" data-live-search="true" data-size="6" id="referrer" name="referrer"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+          <select class="full" id="referrer" name="referrer"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
             <option value="">Select...</option>
             <#list sourcesOfInterests as interests>
                 <option value="${encrypter.encrypt(interests.id)!}"

@@ -41,9 +41,9 @@ public class ApplicationDescriptor {
     
     private ApplicationFormStatus applicationFormStatus;
     
-	private boolean applicationFormWithdrawnBeforeSubmitted;
-    
     private ApplicationFormStatus applicationFormNextStatus;
+    
+    private ApplicationFormStatus applicationFormStatusWhenWithdrawn;
     
     private List<ActionDefinition> actionDefinitions = Lists.newArrayList();
     
@@ -207,14 +207,6 @@ public class ApplicationDescriptor {
 	public void setApplicationFormStatus(ApplicationFormStatus applicationFormStatus) {
 		this.applicationFormStatus = applicationFormStatus;
 	}
-	
-    public boolean isApplicationFormWithdrawnBeforeSubmitted() {
-		return applicationFormWithdrawnBeforeSubmitted;
-	}
-
-	public void setApplicationFormWithdrawnBeforeSubmitted(boolean applicationFormWithdrawnBeforeSubmitted) {
-		this.applicationFormWithdrawnBeforeSubmitted = applicationFormWithdrawnBeforeSubmitted;
-	}
 
 	public ApplicationFormStatus getApplicationFormNextStatus() {
 		return applicationFormNextStatus;
@@ -226,6 +218,14 @@ public class ApplicationDescriptor {
 	
 	public void setApplicationFormNextStatus(ApplicationFormStatus applicationFormNextStatus) {
 		this.applicationFormNextStatus = applicationFormNextStatus;
+	}
+
+	public ApplicationFormStatus getApplicationFormStatusWhenWithdrawn() {
+		return applicationFormStatusWhenWithdrawn;
+	}
+
+	public void setApplicationFormStatusWhenWithdrawn(ApplicationFormStatus applicationFormStatusWhenWithdrawn) {
+		this.applicationFormStatusWhenWithdrawn = applicationFormStatusWhenWithdrawn;
 	}
 
 	public List<ActionDefinition> getActionDefinitions() {

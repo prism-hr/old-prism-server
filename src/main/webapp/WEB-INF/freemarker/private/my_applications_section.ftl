@@ -52,7 +52,8 @@
         </#list>
     </select></td>
       <td class="centre">
-        <#if application.applicationFormWithdrawnBeforeSubmitted>
+        <#if application.applicationFormStatusWhenWithdrawn?has_content &&
+        	 application.applicationFormStatusWhenWithdrawn == "UNSUBMITTED">
           Aborted
         <#elseif application.applicationFormCreatedTimestamp?has_content>
           ${(application.applicationFormCreatedTimestamp?string("dd MMM yyyy"))}

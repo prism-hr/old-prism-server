@@ -566,6 +566,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return nextStatus;
     }
     
+    public void setNextStatus(ApplicationFormStatus nextStatus) {
+        this.nextStatus = nextStatus;
+    }
+    
     public ApplicationFormStatus getStatusWhenWithdrawn() {
         return statusWhenWithdrawn;
     }

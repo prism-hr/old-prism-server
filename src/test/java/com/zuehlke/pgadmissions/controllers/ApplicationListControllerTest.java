@@ -178,7 +178,7 @@ public class ApplicationListControllerTest {
 
         // WHEN
         EasyMock.replay(userServiceMock, applicationsServiceMock);
-        assertEquals("private/my_applications_section", controller.getApplicationListSection(filtering, true, model));
+        assertEquals("private/my_applications_section", controller.getApplicationListSection(filtering, 1, true, model));
         EasyMock.verify(userServiceMock, applicationsServiceMock);
 
         // THEN

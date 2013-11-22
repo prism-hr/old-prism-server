@@ -75,7 +75,7 @@
 													<label for="programs" class="plain-label">Programme<em>*</em></label>
 													<span class="hint" data-desc="<@spring.message 'manageUsers.programme'/>"></span>
 													<div class="field">
-														<select class="max" name="selectedProgram" id="programs">
+														<select class="max selectpicker" data-live-search="true" data-size="6" name="selectedProgram" id="programs">
 															<option value="">Please select a program</option>
 															<#list programs as program>"
 															<option value='${program.code}' 
@@ -359,11 +359,12 @@
 </div>
 
 <!-- Scripts -->
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.1.10.2.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/roles.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap-select.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
 
 </body>

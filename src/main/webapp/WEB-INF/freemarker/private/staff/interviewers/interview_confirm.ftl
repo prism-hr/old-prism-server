@@ -171,10 +171,8 @@
           </form>
         </div>
         </section>
-      </div>
-      <div class="content-box">
-        <div class="content-box-inner"> <#include "/private/staff/admin/comment/timeline_application.ftl"/> </div>
-      </div>
+       <#include "/private/staff/admin/comment/timeline_application.ftl"/> 
+     </div>
       </article>
       </section>
     </div>

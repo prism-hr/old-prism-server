@@ -2,8 +2,8 @@
     <colgroup>
         <col style="width: 30px" />
         <col />
-        <col style="width: 90px" />
-        <col style="width: 30px" />
+        <col style="width: 150px" />
+        <col style="width: 36px" />
     </colgroup>
     <tbody>
         <#assign anyQualificationEnabled = false>

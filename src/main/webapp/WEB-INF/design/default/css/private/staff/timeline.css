@@ -190,7 +190,7 @@
 }
 
 .more-scores {
-	width: 712px;
+	width: auto;
   text-align: right;
   border-top: 1px solid #999;
 	cursor: pointer;

@@ -2,18 +2,10 @@
     <colgroup>
         <col style="width: 30px" />
         <col />
-        <col style="width: 90px" />
+        <col style="width: 155px" />
         <col style="width: 33px" />
         <col />
     </colgroup>
-    <thead>
-        <tr>
-            <th>&nbsp;</th>
-            <th id="primary-header">References</th>
-            <th>Responded</th>
-            <th>&nbsp;</th>
-        </tr>
-    </thead>
     <tbody>
         <tr>
             <td colspan="5" class="scrollparent">
@@ -22,7 +14,7 @@
                         <colgroup>
                             <col style="width: 30px" />
                             <col />
-                            <col style="width: 90px" />
+                            <col style="width: 155px" />
                             <col style="width: 33px" />
                             <col />
                         </colgroup>
@@ -42,11 +34,11 @@
                                 </td>
                                 <td>
                                     <#if existingReferee.hasProvidedReference()>
-                                        ${(existingReferee.reference.lastUpdated?string('dd MMM yyyy'))!}
+                                        Responded: <strong>${(existingReferee.reference.lastUpdated?string('dd MMM yyyy'))!}</strong>
                                     <#elseif existingReferee.isDeclined()>
-                                        Declined
+                                        <strong>Declined</strong>
                                     <#else>
-                                        Not Provided
+                                        <strong>Not Provided</strong>
                                     </#if>
                                 </td>
                                 <td>

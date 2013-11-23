@@ -70,7 +70,6 @@ public class ApplicationFormUserRoleService {
         initiateStageMap.put(ApplicationFormStatus.INTERVIEW, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         initiateStageMap.put(ApplicationFormStatus.APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
         initiateStageMap.put(ApplicationFormStatus.REJECTED, ApplicationFormAction.CONFIRM_REJECTION);
-
     }
     
     public void applicationCreated(ApplicationForm applicationForm) {
@@ -123,7 +122,7 @@ public class ApplicationFormUserRoleService {
             } else {
                 createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);
             }
-        }
+        }  
     }
 
     public void stateChanged(StateChangeComment stateChangeComment) {

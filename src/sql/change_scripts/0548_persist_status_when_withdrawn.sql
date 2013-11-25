@@ -1,7 +1,7 @@
 ALTER TABLE APPLICATION_FORM
 	ADD COLUMN status_when_withdrawn VARCHAR (50) AFTER next_status,
 	ADD INDEX (status_when_withdrawn),
-	ADD FOREIGN KEY (status_when_withdrawn) REFERENCES state (ID)
+	ADD CONSTRAINT application_form_status_when_withdrawn_fk_idx FOREIGN KEY (status_when_withdrawn) REFERENCES STATE (ID)
 ;
 
 CREATE TABLE LAST_STATE_BEFORE_WITHDRAWN (

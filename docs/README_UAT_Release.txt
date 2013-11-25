@@ -1,11 +1,4 @@
-		 _    _      _______   _____      _                     
-		| |  | |  /\|__   __| |  __ \    | |                    
-		| |  | | /  \  | |    | |__) |___| | ___  __ _ ___  ___ 
-		| |  | |/ /\ \ | |    |  _  // _ \ |/ _ \/ _` / __|/ _ \
-		| |__| / ____ \| |    | | \ \  __/ |  __/ (_| \__ \  __/
-		 \____/_/    \_\_|    |_|  \_\___|_|\___|\__,_|___/\___|
-		                                                        
-    	Release Instructions for Zuhlke Internal UTA Release
+            Prism Release Instructions
 
 ========================================================================
                       Setup on your local machine
@@ -14,29 +7,22 @@
 Make sure you've got that in your .m2/settings.xml
 
 <settings>
+...
     <servers>
-    	...
         <server>
-			<id>C12545-2</id>
-			<username>pgadmin</username>
-			<password>pg@m1ss1on</password>
+			<id>prism-dev.alumeni.co.uk</id>
+			<username>bitnami</username>
+			<privateKey>!!!!!PATH TO DEVELOPMENT SERVER PRIVATE KEY!!!!!</privateKey>
+			<passphrase>!!!!!DEVELOPMENT SERVER PRIVATE KEY PASSPHRASE!!!!!</passphrase>
 		</server>
 		<server>
-			<id>repo.zuehlke.com</id>
-			<username>!!!!!YOUR MERCURIAL USERNAME!!!!!</username>
-			<password>!!!!!YOUR MERCURIAL PASSWORD!!!!!</password>
+			<id>mercurial.alumeni.co.uk</id>
+            <username>!!!!!YOUR MERCURIAL USERNAME!!!!!</username>
+            <password>!!!!!YOUR MERCURIAL PASSWORD!!!!!</password>
 		</server>
     </servers>
-    
-    <proxies>
-        <proxy>
-            <active>true</active>
-            <protocol>http</protocol>
-            <host>proxy.zuehlke.com</host>
-            <port>8080</port>
-            <nonProxyHosts>localhost</nonProxyHosts>
-        </proxy>
-    </proxies>
+...
+</settings>
 
 ========================================================================
                           Release Procedure
@@ -54,5 +40,3 @@ Make sure you've got that in your .m2/settings.xml
 		4) Perform the release
 			# mvn release:perform
 
-		5) Go to Jenkins and deploy the release to UAT
-			# http://beacon.zuehlke.com/jenkins/job/pgadmissions-release/

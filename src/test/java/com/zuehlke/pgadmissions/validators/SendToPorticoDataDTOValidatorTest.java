@@ -111,7 +111,7 @@ public class SendToPorticoDataDTOValidatorTest {
     @Test
     public void shouldRejectIfExplanationIsKLongerThan500Characters() {
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 11, 12 }));
-        sendToPorticoDataDTO.setEmptyQualificationsExplanation(RandomStringUtils.random(501));
+        sendToPorticoDataDTO.setEmptyQualificationsExplanation(RandomStringUtils.randomAscii(501));
         
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);

@@ -205,14 +205,14 @@ public class UserService {
         }
         
         newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
+        userDAO.save(newUser);
         
         for (Authority authority : authorities) {
-            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER, Authority.STATEADMINISTRATOR).contains(authority)) {
+            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
             	applicationFormUserRoleService.createUserInRole(newUser, authority);
             }
         }
         
-        userDAO.save(newUser);
         return newUser;
     }
 

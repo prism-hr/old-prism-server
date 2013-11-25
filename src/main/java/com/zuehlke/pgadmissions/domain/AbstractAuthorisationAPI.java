@@ -191,7 +191,8 @@ public abstract class AbstractAuthorisationAPI {
     			return true;
     		}
     	}
-    	return false;    }
+    	return false;    
+    }
 
     public boolean isApplicant(final ApplicationForm form, final RegisteredUser user) {
         return areEqual(user, form.getApplicant());

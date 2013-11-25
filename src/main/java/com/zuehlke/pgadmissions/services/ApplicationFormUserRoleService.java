@@ -114,15 +114,24 @@ public class ApplicationFormUserRoleService {
         }
 
         Boolean anyUnsure = application.getValidationComment().isAtLeastOneAnswerUnsure();
-
-        for (RegisteredUser admitter : userDAO.getAdmitters()) {
-            if (BooleanUtils.isTrue(anyUnsure)) {
+        List<RegisteredUser> admitters = userDAO.getAdmitters();
+        List<ApplicationFormUserRole> superadministratorRoles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.SUPERADMINISTRATOR);
+        
+        if (BooleanUtils.isTrue(anyUnsure)) {
+        	for (RegisteredUser admitter : admitters) {
                 createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false, 
-                		new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, true));
-            } else {
-                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);
-            }
-        }  
+                		new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, true));        		
+        	}
+        	for (ApplicationFormUserRole superadministratorRole : superadministratorRoles) {
+        		superadministratorRole.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, true));
+        		superadministratorRole.setRaisesUrgentFlag(true);
+        	}
+        } else {
+        	for (RegisteredUser admitter : admitters) {
+                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);        		
+        	}
+        }
+        
     }
 
     public void stateChanged(StateChangeComment stateChangeComment) {

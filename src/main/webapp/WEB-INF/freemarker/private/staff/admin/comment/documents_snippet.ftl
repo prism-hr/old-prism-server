@@ -13,7 +13,8 @@
   <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
 <div id="commentDocumentProgress" class="progress" style="display: none;"></span> </div>
         <ul id="commentUploadedDocument"  class="uploaded-files" style="display:none;">
-        <#if comment??>
+        <#if comment?has_content &&
+        	comment.documents?has_content>
           <#list comment.documents as document>
             <li class="done"> 
             <span class="uploaded-file" name="supportingDocumentSpan">

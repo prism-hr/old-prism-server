@@ -69,7 +69,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         assertEquals(1, returned.getActions().size());
         ApplicationFormActionRequired actionRequired = returned.getActions().get(0);
-        assertEquals("PROVIDE_REFERENCE", actionRequired.getAction());
+        assertEquals(ApplicationFormAction.PROVIDE_REFERENCE, actionRequired.getAction());
         assertFalse(actionRequired.getBindDeadlineToDueDate());
 
     }
@@ -131,11 +131,10 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
                 .interestedInApplicant(true).build();
 
         role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.COMMENT, new Date(), false, false));
-        role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.EMAIL_APPLICANT, new Date(), false, false));
         role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.PROVIDE_REFERENCE, new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, false));
 
         role2.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, false));
-        role2.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.EMAIL_APPLICANT, new Date(), false, true));
 
         save(role1, role2, role3);
 
@@ -143,10 +142,11 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         System.out.println(actions);
 
         assertThat(actions, containsInAnyOrder( //
-                allOf(hasProperty("action", equalTo("COMMENT")), hasProperty("raisesUrgentFlag", equalTo(false))), //
-                allOf(hasProperty("action", equalTo("EMAIL_APPLICANT")), hasProperty("raisesUrgentFlag", equalTo(true))), //
-                allOf(hasProperty("action", equalTo("PROVIDE_REFERENCE")), hasProperty("raisesUrgentFlag", equalTo(false))), //
-                allOf(hasProperty("action", equalTo("CONFIRM_ELIGIBILITY")), hasProperty("raisesUrgentFlag", equalTo(false))))); //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.COMMENT)), hasProperty("raisesUrgentFlag", equalTo(false))), //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.PROVIDE_REFERENCE)), hasProperty("raisesUrgentFlag", equalTo(false))), //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.CONFIRM_ELIGIBILITY)), hasProperty("raisesUrgentFlag", equalTo(false))), //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.EMAIL_APPLICANT)), hasProperty("raisesUrgentFlag", equalTo(false))), //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.VIEW)), hasProperty("raisesUrgentFlag", equalTo(false))))); //
     }
 
     @SuppressWarnings("unchecked")
@@ -169,9 +169,9 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         System.out.println(actions);
 
         assertThat(actions, containsInAnyOrder( //
-                allOf(hasProperty("action", equalTo("COMMENT")), hasProperty("raisesUrgentFlag", equalTo(false))), //
-                allOf(hasProperty("action", equalTo("EMAIL_APPLICANT")), hasProperty("raisesUrgentFlag", equalTo(false))), //
-                allOf(hasProperty("action", equalTo("VIEW")), hasProperty("raisesUrgentFlag", equalTo(false))))); //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.COMMENT)), hasProperty("raisesUrgentFlag", equalTo(false))), //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.EMAIL_APPLICANT)), hasProperty("raisesUrgentFlag", equalTo(false))), //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.VIEW)), hasProperty("raisesUrgentFlag", equalTo(false))))); //
     }
 
     @Test
@@ -215,7 +215,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
                 .interestedInApplicant(true).build();
-        
+
         save(role1);
 
         Boolean actionAvailable = applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, application, ApplicationFormAction.COMMENT);
@@ -233,7 +233,8 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         save(role1);
 
-        Boolean actionAvailable = applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, application, ApplicationFormAction.PROVIDE_REVIEW);
+        Boolean actionAvailable = applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, application,
+                ApplicationFormAction.PROVIDE_REVIEW);
         assertFalse(actionAvailable);
     }
 

@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -111,6 +114,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationForm form = new ApplicationFormBuilder().id(1).build();
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
         applicationDescriptor.setApplicationFormId(form.getId());
+        applicationDescriptor.setApplicationFormStatus(ApplicationFormStatus.REVIEW);
         
         ApplicationFormListDAO applicationFormDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
         ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null, null, applicationFormUserRoleDAO, applicationFormUserRoleService);
@@ -120,7 +124,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         EasyMock.replay(applicationFormDAOMock);
         List<ApplicationDescriptor> visibleApplications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);
         EasyMock.verify(applicationFormDAOMock);
-        Assert.assertTrue(visibleApplications.contains(form));
+        assertThat(visibleApplications, contains(applicationDescriptor));
         Assert.assertEquals(1, visibleApplications.size());
     }
 
@@ -132,23 +136,27 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .submittedDate(new Date()).appDate(format.parse("01 01 2012")).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
         applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
+        applicationDescriptorOne.setApplicationFormStatus(ApplicationFormStatus.VALIDATION);
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.UNSUBMITTED)
                 .appDate(format.parse("01 01 2012")).submittedDate(format.parse("01 04 2012")).build();
         ApplicationDescriptor applicationDescriptorTwo = new ApplicationDescriptor();
         applicationDescriptorTwo.setApplicationFormId(applicationFormTwo.getId());
+        applicationDescriptorTwo.setApplicationFormStatus(ApplicationFormStatus.UNSUBMITTED);
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.UNSUBMITTED)
                 .appDate(format.parse("01 02 2012")) // this is insertable=false. We can not properly test this?
                 .build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
         applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
+        applicationDescriptorThree.setApplicationFormStatus(ApplicationFormStatus.UNSUBMITTED);
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.UNSUBMITTED)
                 .appDate(format.parse("01 02 2012")) // this is insertable=false. We can not properly test this?
                 .submittedDate(format.parse("01 03 2012")).build();
         ApplicationDescriptor applicationDescriptorFour = new ApplicationDescriptor();
         applicationDescriptorFour.setApplicationFormId(applicationFormFour.getId());
+        applicationDescriptorFour.setApplicationFormStatus(ApplicationFormStatus.UNSUBMITTED);
 
         Role role = roleDAO.getRoleByAuthority(Authority.APPLICANT);
         ApplicationFormUserRole applicationFormUserRole1 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(applicant)
@@ -181,21 +189,25 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
         applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
+        applicationDescriptorOne.setApplicationFormStatus(ApplicationFormStatus.APPROVAL);
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorTwo = new ApplicationDescriptor();
         applicationDescriptorTwo.setApplicationFormId(applicationFormTwo.getId());
+        applicationDescriptorTwo.setApplicationFormStatus(ApplicationFormStatus.APPROVAL);
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicationNumber("ABCD").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
         applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
+        applicationDescriptorThree.setApplicationFormStatus(ApplicationFormStatus.APPROVAL);
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorFour = new ApplicationDescriptor();
         applicationDescriptorFour.setApplicationFormId(applicationFormFour.getId());
+        applicationDescriptorFour.setApplicationFormStatus(ApplicationFormStatus.APPROVAL);
         
         Role role = roleDAO.getRoleByAuthority(Authority.APPLICANT);
         ApplicationFormUserRole applicationFormUserRole1 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(applicant)
@@ -216,9 +228,11 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
+        
         assertEquals(2, applications.size());
-        assertTrue(listContainsId(applicationDescriptorFour, applications));
-        assertTrue(listContainsId(applicationDescriptorTwo, applications));
+        
+        assertTrue(listContainsId(applicationFormFour, applications));
+        assertTrue(listContainsId(applicationFormTwo, applications));
     }
 
     @Test
@@ -410,8 +424,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
         assertEquals(2, applications.size());
-        assertTrue(listContainsId(applicationDescriptorOne, applications));
-        assertTrue(listContainsId(applicationDescriptorThree, applications));
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(listContainsId(applicationFormThree, applications));
     }
 
     @Test
@@ -916,9 +930,9 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount).filters(filters).build();
     }
 
-    private boolean listContainsId(ApplicationDescriptor descriptor, List<ApplicationDescriptor> applications) {
+    private boolean listContainsId(ApplicationForm application, List<ApplicationDescriptor> applications) {
         for (ApplicationDescriptor entry : applications) {
-            if (descriptor.getApplicationFormId().equals(entry.getApplicationFormId())) {
+            if (application.getId().equals(entry.getApplicationFormId())) {
                 return true;
             }
         }

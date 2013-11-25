@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.easymock.EasyMock.isA;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
@@ -67,7 +68,11 @@ public class ApplicationsServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ProgrammeDetailsService programmeDetailsServiceMock;;
+    private ProgrammeDetailsService programmeDetailsServiceMock;
+    
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldSendSubmissionsConfirmationToApplicant() {
@@ -115,6 +120,7 @@ public class ApplicationsServiceTest {
 
         EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
         applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
+        applicationFormUserRoleServiceMock.applicationCreated(isA(ApplicationForm.class));
 
         replay();
         ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null);
@@ -140,6 +146,7 @@ public class ApplicationsServiceTest {
 
         EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
         applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
+        applicationFormUserRoleServiceMock.applicationCreated(isA(ApplicationForm.class));
 
         replay();
         ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null);
@@ -258,6 +265,7 @@ public class ApplicationsServiceTest {
         applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
         Capture<ProgrammeDetails> programDetails = new Capture<ProgrammeDetails>();
         programmeDetailsServiceMock.save(EasyMock.capture(programDetails));
+        applicationFormUserRoleServiceMock.applicationCreated(isA(ApplicationForm.class));
 
         replay();
         ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, project);

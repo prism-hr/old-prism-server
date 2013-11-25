@@ -1,0 +1,9 @@
+/* CSS Document */
+
+#reviewer-list, #user-list { width: 400px; }
+#reviewer-list option, #user-list option { border-bottom: 1px solid #999; padding: 5px; }
+#reviewer-list option:last-child, #user-list option:last-child { border-bottom: none; }
+
+.reviewer-buttons .field { border-top: 2px solid #999; margin-top: 25px; text-align: center; width: 400px; }
+.reviewer-buttons .field span { background: #FFF; display: block; margin: -18px auto 0; padding: 4px; width: 210px; }
+.reviewer-buttons .field button { margin: 0 5px; width: 90px; }

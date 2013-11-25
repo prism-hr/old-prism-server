@@ -184,19 +184,22 @@ public abstract class AbstractAuthorisationAPI {
     }
 
     public boolean isApplicationAdministrator(final ApplicationForm form, final RegisteredUser user) {
-    	StateChangeComment latestStateChangeComment = form.getLatestStateChangeComment();
-    	if (latestStateChangeComment == null) {
-    		return false;
+    	List<Comment> comments = form.getApplicationComments();
+    	for (Comment comment : comments) {
+    		if (comment instanceof StateChangeComment &&
+    				areEqual(((StateChangeComment) comment).getDelegateAdministrator(), user)) {
+    			return true;
+    		}
     	}
-    	return areEqual(user, latestStateChangeComment.getDelegateAdministrator());
-    }
+    	return false;    }
 
     public boolean isApplicant(final ApplicationForm form, final RegisteredUser user) {
         return areEqual(user, form.getApplicant());
     }
 
     public boolean isProjectAdministrator(final ApplicationForm form, final RegisteredUser user) {
-        return form.getProject() != null && areEqual(user, form.getProject().getAdministrator());
+    	Project project = form.getProject();
+        return project != null && (areEqual(user, project.getAdministrator()) || areEqual(user, project.getPrimarySupervisor()));
     }
 
     public boolean isProgrammeAdministrator(final ApplicationForm form, final RegisteredUser user) {

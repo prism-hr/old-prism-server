@@ -110,7 +110,6 @@ public class ApplicationListController {
         }
 
         model.addAttribute("filtering", filtering);
-        getUser().setApplicationListLastAccessTimestamp(new Date());
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }
 
@@ -120,6 +119,11 @@ public class ApplicationListController {
         RegisteredUser user = getUser();
         filtering.setBlockCount(blockCount);
         filtering.setUseDisjunction(useDisjunction);
+        
+        if (blockCount == 1) {
+            user.setApplicationListLastAccessTimestamp(new Date());
+        }
+        
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);
         model.addAttribute("applications", applications);
         model.addAttribute("latestConsideredFlagIndex", filtering.getLatestConsideredFlagIndex());

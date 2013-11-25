@@ -34,13 +34,13 @@ $(document).ready(function() {
             case 'PROVIDE_REFERENCE':
                 window.location.href = "/pgadmissions/referee/addReferences?applicationId="+ id;
                 break;
-            case 'ASSIGN_INTERVIEWERS':
             case 'ASSIGN_REVIEWERS':
+            case 'ASSIGN_INTERVIEWERS':
             case 'ASSIGN_SUPERVISORS':
-            case 'COMPLETE_APPROVAL_STAGE':
-            case 'COMPLETE_INTERVIEW_STAGE':
-            case 'COMPLETE_REVIEW_STAGE':
             case 'COMPLETE_VALIDATION_STAGE':
+            case 'COMPLETE_REVIEW_STAGE':
+            case 'COMPLETE_INTERVIEW_STAGE':
+            case 'COMPLETE_APPROVAL_STAGE':
                 window.location.href = "/pgadmissions/progress/getPage?applicationId="+ id;
                 break;
             case 'MOVE_TO_DIFFERENT_STAGE':

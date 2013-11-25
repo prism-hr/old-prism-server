@@ -106,6 +106,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             this.occurrenceTp = occurrenceTp;
         }
 
+        @SuppressWarnings("unused")
         public ProgrammeOccurrenceTp getOccurrenceTp() {
             return occurrenceTp;
         }
@@ -120,6 +121,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             this.occurrenceTp = occurrenceTp;
         }
 
+        @SuppressWarnings("unused")
         public ProgrammeOccurrenceTp getOccurrenceTp() {
             return occurrenceTp;
         }

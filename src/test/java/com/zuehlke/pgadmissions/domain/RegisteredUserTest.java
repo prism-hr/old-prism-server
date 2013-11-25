@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewEvaluationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -186,9 +187,9 @@ public class RegisteredUserTest {
     @Test
     public void shouldReturnTrueIfApplicationAdmin() {
         RegisteredUser administrator = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.REVIEWER).build()).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicationAdministrator(administrator).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build();
+        applicationForm.getApplicationComments().add(new ReviewEvaluationCommentBuilder().delegateAdministrator(administrator).build());
         assertTrue(administrator.canSee(applicationForm));
-
     }
 
     @Test
@@ -289,17 +290,6 @@ public class RegisteredUserTest {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).program(program).build();
         assertTrue(admin.canEditAsAdministrator(applicationForm));
-    }
-
-    @Test
-    public void shouldAllowApplicationInterviewerToEdit() {
-        RegisteredUser interviewerUser = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.INTERVIEWER).build()).id(7).build();
-        Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
-        Interview interview = new InterviewBuilder().interviewers(interviewer).build();
-        Program program = new ProgramBuilder().id(1).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).program(program)
-                .latestInterview(interview).applicationAdministrator(interviewerUser).build();
-        assertTrue(interviewerUser.canEditAsAdministrator(applicationForm));
     }
 
     @Test

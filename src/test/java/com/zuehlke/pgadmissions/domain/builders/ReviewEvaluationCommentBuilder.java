@@ -19,6 +19,7 @@ public class ReviewEvaluationCommentBuilder {
 	private Integer id;
 	private ApplicationFormStatus nextStatus;
 	private ReviewRound reviewRound;
+	private RegisteredUser delegateAdministrator;
 
 	public ReviewEvaluationCommentBuilder reviewRound(ReviewRound reviewRound){
 		this.reviewRound = reviewRound;
@@ -61,6 +62,11 @@ public class ReviewEvaluationCommentBuilder {
 		return this;
 	}
 	
+	public ReviewEvaluationCommentBuilder delegateAdministrator(RegisteredUser delegateAdministrator){
+	    this.delegateAdministrator = delegateAdministrator;
+	    return this;
+	}
+	
 	public ReviewEvaluationComment build(){
 		ReviewEvaluationComment reviewEaluationComment = new ReviewEvaluationComment();
 		reviewEaluationComment.setApplication(application);
@@ -71,6 +77,7 @@ public class ReviewEvaluationCommentBuilder {
 		reviewEaluationComment.setUser(user);
 		reviewEaluationComment.setNextStatus(nextStatus);
 		reviewEaluationComment.setReviewRound(reviewRound);
+		reviewEaluationComment.setDelegateAdministrator(delegateAdministrator);
 		return reviewEaluationComment;
 	}
 }

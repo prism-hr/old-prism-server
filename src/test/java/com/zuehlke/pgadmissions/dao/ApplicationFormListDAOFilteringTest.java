@@ -232,25 +232,6 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     }
 
     @Test
-    public void shouldReturnAppsFilteredByNotApplicantName() {
-        RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
-                .password("franek123").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-
-        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().program(program).applicant(otherUser).status(ApplicationFormStatus.APPROVAL)
-                .applicationNumber("other1").build();
-        save(otherUser, otherApplicationForm);
-        createAndSaveApplicationFormUserRoles(otherApplicationForm);
-        flushAndClearSession();
-
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("czka").build();
-
-        List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
-                newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.DESCENDING, 1, filter), 50);
-
-        assertContainsApplications(unpackApplications(applications), otherApplicationForm);
-    }
-
-    @Test
     public void shouldReturnAppsFilteredByStatusAndLastUpdatedFromDate() {
         String lastEditedDatePlus2String = dateToString(searchTermDateForLastEdited);
 

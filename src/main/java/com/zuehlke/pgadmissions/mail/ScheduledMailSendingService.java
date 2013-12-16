@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.DigestNotificationType.UPDATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
@@ -8,7 +7,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -72,24 +70,28 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
 
     public void sendDigestsToUsers() {
-        log.trace("Sending email digest to users");
-        
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
+        
+        log.trace("Sending task reminder to users");
         List<Integer> users = thisProxy.getPotentialUsersForTaskReminder();
         for (Integer userId : users) {
-            thisProxy.sendTaskEmailIfNecessary(userId, DigestNotificationType.TASK_REMINDER);
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_REMINDER);
         }
+        log.trace("Finished sending task reminder to users");
 
+        log.trace("Sending task notification to users");
         users = thisProxy.getPotentialUsersForTaskNotification();
         for (Integer userId : users) {
-            thisProxy.sendTaskEmailIfNecessary(userId, DigestNotificationType.TASK_NOTIFICATION);
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_NOTIFICATION);
         }
+        log.trace("Finished sending task notification to users");
 
+        log.trace("Sending update notification to users");
         users = thisProxy.getUsersForUpdateNotification();
         for (Integer userId : users) {
-            thisProxy.sendUpdateEmail(userId);
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.UPDATE_NOTIFICATION);
         }
-        log.trace("Finished sending email digest to users");
+        log.trace("Finished sending update notification to users");
     }
 
     @Transactional
@@ -109,29 +111,13 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         updateApplicationFormActionUrgentFlag();
         return userDAO.getUsersForUpdateNotification();
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean sendDigestEmail(final Integer userId, DigestNotificationType digestNotificationType) {
+        final RegisteredUser user = userDAO.get(userId);
+        return sendDigest(user, digestNotificationType);
+    }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendTaskEmailIfNecessary(final Integer userId, DigestNotificationType digestNotificationType) {
-        final RegisteredUser user = userDAO.get(userId);
-        // FIXME amend implementation
-        List<ApplicationForm> applicationsWorthAttention = Collections.emptyList();
-//                applicationFormListDAO.getApplicationsWorthConsideringForAttentionFlag(user,
-//                new ApplicationsFiltering(), -1);
-        if (!applicationsWorthAttention.isEmpty()) {
-            if (sendDigest(user, digestNotificationType)) {
-                user.setLatestTaskNotificationDate(new Date());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendUpdateEmail(final Integer userId) {
-        final RegisteredUser user = userDAO.get(userId);
-        return sendDigest(user, UPDATE_NOTIFICATION);
-    }
-
     private boolean sendDigest(final RegisteredUser user, DigestNotificationType digestNotificationType) {
         try {
             EmailModelBuilder modelBuilder = new EmailModelBuilder() {
@@ -149,23 +135,32 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             messageBuilder.model(modelBuilder);
             messageBuilder.to(user);
             EmailTemplateName templateName;
+            
             switch (digestNotificationType) {
-            case TASK_REMINDER:
-                templateName = DIGEST_TASK_REMINDER;
-                break;
-            case TASK_NOTIFICATION:
-                templateName = DIGEST_TASK_NOTIFICATION;
-                break;
-            case UPDATE_NOTIFICATION:
-                templateName = DIGEST_UPDATE_NOTIFICATION;
-                break;
-            default:
-                throw new RuntimeException();
+	            case TASK_REMINDER:
+	                templateName = DIGEST_TASK_REMINDER;
+	                break;
+	            case TASK_NOTIFICATION:
+	                templateName = DIGEST_TASK_NOTIFICATION;
+	                break;
+	            case UPDATE_NOTIFICATION:
+	                templateName = DIGEST_UPDATE_NOTIFICATION;
+	                break;
+	            default:
+	                throw new RuntimeException();
             }
+            
             messageBuilder.subject(resolveMessage(templateName, (Object[]) null));
             messageBuilder.emailTemplate(templateName);
             PrismEmailMessage message = messageBuilder.build();
             sendEmail(message);
+            
+            if (digestNotificationType == DigestNotificationType.UPDATE_NOTIFICATION) {
+                user.setLatestUpdateNotificationDate(new Date());
+            } else {
+            	user.setLatestTaskNotificationDate(new Date());
+            }
+            
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);

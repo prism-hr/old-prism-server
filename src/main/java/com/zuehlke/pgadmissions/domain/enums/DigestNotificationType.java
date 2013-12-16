@@ -2,13 +2,13 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum DigestNotificationType {
 
+    NONE(0),
+    
     UPDATE_NOTIFICATION(1),
     
     TASK_NOTIFICATION(2),
     
-    TASK_REMINDER(3),
-    
-    NONE(0);
+    TASK_REMINDER(3);
     
     private final int priority;
     
@@ -34,4 +34,5 @@ public enum DigestNotificationType {
             return NONE;
         }
     }
+    
 }

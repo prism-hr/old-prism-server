@@ -175,6 +175,10 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date latestTaskNotificationDate;
 	
+	@Column(name = "latest_update_notification_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date latestUpdateNotificationDate;
+
 	@Column(name = "application_list_last_access_timestamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date applicationListLastAccessTimestamp;
@@ -782,7 +786,15 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 
 	public void setLatestTaskNotificationDate(Date latestTaskNotificationDate) {
 		this.latestTaskNotificationDate = latestTaskNotificationDate;
+	}	
+	
+	public Date getLatestUpdateNotificationDate() {
+		return latestUpdateNotificationDate;
 	}
+
+	public void setLatestUpdateNotificationDate(Date latestUpdateNotificationDate) {
+		this.latestUpdateNotificationDate = latestUpdateNotificationDate;
+	}	
 
 	public Date getApplicationListLastAccessTimestamp() {
 		return applicationListLastAccessTimestamp;

@@ -96,11 +96,13 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
-                .enabled(true).build();
+                .enabled(true).applicationListLastAccessTimestamp(new Date()).build();
 
         superUser = new RegisteredUserBuilder().firstName("John").lastName("Doe").email("email@test.com").username("superUserUsername").password("password")
                 .role(roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR)).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
-                .enabled(true).build();
+                .enabled(true).applicationListLastAccessTimestamp(new Date()).build();
+       
+        sessionFactory.getCurrentSession().flush();
 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
 

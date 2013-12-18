@@ -76,10 +76,13 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
         applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).applicationListLastAccessTimestamp(new Date()).build();
 
         currentUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).build();
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program)
+                .applicationListLastAccessTimestamp(new Date()).build();
+        
+        sessionFactory.getCurrentSession().flush();
 
         lastEditedDate = new GregorianCalendar(2011, 4, 7, 19, 33).getTime();
         submissionDate = new GregorianCalendar(2011, 3, 7, 17, 28).getTime();

@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -17,17 +18,18 @@ public class Advert implements Serializable {
     @GeneratedValue
     private Integer id;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title")
     private String title;
     
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 3000)
+    @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "study_duration")
     private Integer studyDuration;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @Size(max = 2000, message = "A maximum of 1000 characters are allowed.")
     @Column(name = "funding")
     private String funding;
 
@@ -82,6 +84,24 @@ public class Advert implements Serializable {
         this.active = active;
     }
     
-    
+    public String getDescriptionForFacebook() {
+    	return getStudyDurationToRead().toLowerCase() + " research study programme delivered by UCL Engineering.";
+    }
 
+    public String getStudyDurationToRead() {
+    	Integer studyDurationToRead = studyDuration;
+    	String timeIntervalToRead = "Month";
+    	
+    	if (studyDuration % 12 == 0) {
+    		studyDurationToRead = studyDuration / 12;
+    		timeIntervalToRead = "Year";
+    	}
+    	
+    	if (studyDurationToRead > 1) {
+    		timeIntervalToRead = timeIntervalToRead + "s";
+    	}
+    	
+    	return studyDurationToRead.toString() + " " + timeIntervalToRead;
+    }
+    
 }

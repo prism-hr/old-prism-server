@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -119,11 +118,6 @@ public class ApplicationListController {
         RegisteredUser user = getUser();
         filtering.setBlockCount(blockCount);
         filtering.setUseDisjunction(useDisjunction);
-        
-        if (blockCount == 1) {
-            user.setApplicationListLastAccessTimestamp(new Date());
-        }
-        
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);
         model.addAttribute("applications", applications);
         model.addAttribute("latestConsideredFlagIndex", filtering.getLatestConsideredFlagIndex());

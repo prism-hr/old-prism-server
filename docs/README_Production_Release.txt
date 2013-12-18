@@ -29,10 +29,10 @@
         # hg update -r <REVISION_NAME>
         # mvn clean package -DskipTests -Pucl-prod
         # mvn dbdeploy:update (runs the database change scripts)
-	# cd ../current
-	# bin/jboss-cli.sh --connect --controller=localhost:9999 --command=:shutdown
-        # cp ../pgadmissions/target/pgadmissions.war standalone/deployments/
-	# bin/standalone.sh -b 0.0.0.0 -Djboss.server.base.dir=standalone >/dev/null 2>/dev/null &
+		# cd ../current
+		# bin/jboss-cli.sh --connect --controller=localhost:9999 --command=:shutdown
+	        # cp ../pgadmissions/target/pgadmissions.war standalone/deployments/
+		# bin/standalone.sh -b 0.0.0.0 -Djboss.server.base.dir=standalone >/dev/null 2>/dev/null &
 
     5) Check the log files if everything works like expected
         # tail -f /usr/local/jboss/current/standalone/log/server.log

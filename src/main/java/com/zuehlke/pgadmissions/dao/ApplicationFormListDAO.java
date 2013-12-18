@@ -55,6 +55,11 @@ public class ApplicationFormListDAO {
     
     @SuppressWarnings("unchecked")
     public List<ApplicationDescriptor> getVisibleApplicationsForList(final RegisteredUser registeredUser, final ApplicationsFiltering filtering, final int itemsPerPage) {
+        if (filtering.getBlockCount() == 1) {
+        	registeredUser.setApplicationListLastAccessTimestamp(new Date());
+        	sessionFactory.getCurrentSession().flush();
+        }
+        
     	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
     		.setReadOnly(true)
     		.setProjection(Projections.projectionList()

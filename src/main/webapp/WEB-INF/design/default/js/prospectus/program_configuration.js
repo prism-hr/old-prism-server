@@ -401,6 +401,9 @@ function saveAdvert(){
 				if(map['description']){
 					$("#programAdvertDescriptionDiv").append(getErrorMessageHTML(map['description']));
 				}
+				if(map['funding']) {
+					$("#programAdvertFundingDiv").append(getErrorMessageHTML(map['funding']));
+				}
 				if(map['studyDuration']){
 					$("#programAdvertStudyDurationDiv").append(getErrorMessageHTML(map['studyDuration']));
 				}

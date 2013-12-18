@@ -19,7 +19,7 @@
     3) Make a backup of the existing database
         # cd /root/pgadmissions-backup
         # mkdir 2013-mm-dd (enter the current date)
-        # mysqldump -u pgadmissions -ppgadmissions pgadmissions > out.sql
+        # mysqldump -u pgadmissions -ppgadmissions pgadmissions --routines > out.sql
     
     4) Become the jboss user and update the current sources, build the WAR file 
         and run the database change scripts if necessary

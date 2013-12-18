@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.Size;
+
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -21,11 +23,11 @@ public class ProjectDTO {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     private String title;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @ATASConstraint
     private String description;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
+    @Size(max = 2000, message = "A maximum of 1000 characters are allowed.")
     private String funding;
 
     private Boolean closingDateSpecified;
@@ -100,11 +102,6 @@ public class ProjectDTO {
         return closingDate;
     }
 
-    /**
-     * Sets the date with day as most significant value.
-     * 
-     * @param closingDate
-     */
     public void setClosingDate(Date closingDate) {
         this.closingDate = closingDate == null ? closingDate : DateUtils.truncateToDay(closingDate);
     }

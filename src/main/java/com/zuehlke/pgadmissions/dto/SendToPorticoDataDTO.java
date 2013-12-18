@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import javax.validation.constraints.Size;
 
 public class SendToPorticoDataDTO {
 
@@ -12,7 +12,7 @@ public class SendToPorticoDataDTO {
     
     private List<Integer> qualificationsSendToPortico;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
+    @Size(max = 500, message = "A maximum of 500 characters are allowed.")
     private String emptyQualificationsExplanation;
     
     public String getApplicationNumber() {

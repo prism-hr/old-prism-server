@@ -40,7 +40,7 @@
                           </select>
                       </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="programAdvertFundingDiv">
                       <label for="programAdvertFundingText" class="plain-label">Funding Information</label> <span class="hint" data-desc="<@spring.message 'prospectus.fundingInformation'/>"></span>
                       <div class="field">
                           <textarea id="programAdvertFundingText" class="max" rows="6" cols="150"></textarea>

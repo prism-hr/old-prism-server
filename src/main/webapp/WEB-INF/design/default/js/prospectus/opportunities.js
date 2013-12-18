@@ -8,14 +8,15 @@ $(document).ready(function(){
     });
 });
 function setHsize() {
+	 var container;
 	 var paddings = 32;
 	 var header = $('#pholder header').height();
 	 var footer = $('#pholder footer').height();
 	 var isEmbed = window != window.parent;
 	 if (isEmbed) {
-	 	var container =  $(window).height();
+	 	container =  $(window).height();
 	 } else {
-	 	var container =  $('#pholder').parent().parent().height();
+	 	container =  $('#pholder').parent().parent().height();
 	 }
 	 var sum = container - header - footer - paddings;
 	 $('#plist').height(sum);
@@ -151,17 +152,20 @@ function renderAdvert(advert){
 		}
 		
 	}
+	var studyDuration = durationOfStudyString(advert.studyDuration);
+	var addThisDescription =  studyDuration.replace("s", "").toLowerCase()+' research study programme delivered by UCL Engineering.';
 	if ($('#pContainer').length > 0) {
-		popupbuttons = '<a class="addthis_button_facebook" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
-			'<a class="addthis_button_twitter" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
+		popupbuttons = '<a class="addthis_button_facebook" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+addThisDescription+'"></a>'+
+			'<a class="addthis_button_twitter" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+addThisDescription+'"></a>'+
 			'<a class="addthis_button_google_plusone_share"></a>'+
-			'<a class="addthis_button_linkedin" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'"></a>'+
+			'<a class="addthis_button_linkedin" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+addThisDescription+'"></a>'+
 			'<a class="addthis_button_expanded"></a>'+
 			'<a class="addthis_counter addthis_bubble_style"></a>'+
-			'<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>'
+			'<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>';
 	} else {
-		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>'
+		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>';
 	}
+	
 	return '<li class="'+ advert.type+' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
 	'<div class="pdetails clearfix">'+
 		'<h3>'+advert.title+'</h3>'+
@@ -170,12 +174,12 @@ function renderAdvert(advert){
 		'<div class="pdescription"><p>'+advert.description+'</p></div>'+
 		funding	+	
 		'<div class="cdate">'+closingDateString(advert.closingDate)+'</div>'+
-		'<div class="duration">Study duration: <span>'+durationOfStudyString(advert.studyDuration)+'</span></div>'+
+		'<div class="duration">Study duration: <span>'+ studyDuration +'</span></div>'+
 	'</div>'+
 	'<div class="pactions clearfix">'+
 		'<div class="social">'+
 			'<!-- AddThis Button BEGIN -->'+
-			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+advert.description+'">'+
+			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+' addthis:description="'+addThisDescription+'">'+
 			popupbuttons +
 			'</div>'+
 			'<!-- AddThis Button END -->'+

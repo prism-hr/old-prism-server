@@ -109,9 +109,13 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
     }
 
     @Test
-    public void shouldRejectIf_Funding_HasMoreThan_255_Characters() {
-        projectDTO.setFunding(_256_CHARACTERS_TEXT);
-        assertThatObjectFieldHasErrorMessage(projectDTO, "funding", "A maximum of 255 characters are allowed.");
+    public void shouldRejectIf_Funding_HasMoreThan_2000_Characters() {
+        StringBuilder sb2001Characters = new StringBuilder();
+    	for (int i = 0; i < 2001; i++) {
+            sb2001Characters.append("a");
+        }
+        projectDTO.setFunding(sb2001Characters.toString());
+        assertThatObjectFieldHasErrorMessage(projectDTO, "funding", "A maximum of 1000 characters are allowed.");
     }
 
     @Test
@@ -121,9 +125,9 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
     }
 
     @Test
-    public void shouldRejectIf_Description_HasMoreThan_2000_Characters() {
+    public void shouldRejectIf_Description_HasMoreThan_3000_Characters() {
         StringBuilder sb2001Characters = new StringBuilder();
-        for (int i = 0; i < 2001; i++) {
+        for (int i = 0; i < 3001; i++) {
             sb2001Characters.append("a");
         }
 

@@ -153,7 +153,9 @@ function renderAdvert(advert){
 		
 	}
 	var studyDuration = durationOfStudyString(advert.studyDuration);
-	var addThisDescription =  studyDuration.replace("s", "").toLowerCase()+' research study programme delivered by UCL Engineering.';
+	var addThisDescription =  studyDuration.replace("s", "").toLowerCase()+" research study programme delivered by UCL Engineering at London's global University. " +
+		"Click to find out more about the programme and apply for your place.";
+	
 	if ($('#pContainer').length > 0) {
 		popupbuttons = '<a class="addthis_button_facebook" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+addThisDescription+'"></a>'+
 			'<a class="addthis_button_twitter" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+addThisDescription+'"></a>'+

@@ -85,7 +85,8 @@ public class Advert implements Serializable {
     }
     
     public String getDescriptionForFacebook() {
-    	return getStudyDurationToRead().toLowerCase() + " research study programme delivered by UCL Engineering.";
+    	return getStudyDurationToRead().toLowerCase().replace("s", "") + " research study programme delivered by UCL Engineering at London's global University. " +
+    			"Click to find out more about the programme and apply for your place.";
     }
 
     public String getStudyDurationToRead() {

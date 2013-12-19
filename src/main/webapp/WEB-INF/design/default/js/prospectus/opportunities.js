@@ -1,5 +1,6 @@
+var buttonText;
+
 $(document).ready(function(){
-	var buttonText;
 	hideAdverts();
 	getAdverts();
 	setClass();
@@ -53,7 +54,6 @@ function getAdverts(){
 			user : user,
 			upi : upi
 		};
-		// standalone adverts for feed
 		$.ajax({
 			type: 'GET',
 			data: data,
@@ -92,7 +92,6 @@ function getAdverts(){
 }
 
 function processAdverts(adverts){
-	// hide if no adverts in the feed
 	if (adverts.length == 0) {
 		$('#pholder').hide();
 	}

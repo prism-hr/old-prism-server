@@ -17,8 +17,7 @@ $(document).ready(function() {
 	initEditorsProjects();
 });
 function initEditorsProjects() {
-	tinymce
-			.init({
+	tinymce.init({
 				selector : "#projectAdvertDescriptionText",
 				plugins : [ "link wordcount" ],
 				width : 480,
@@ -30,8 +29,7 @@ function initEditorsProjects() {
 			 * $('textArea#programAdvertDescriptionText').val(tinymce.get('programAdvertDescriptionText').getContent())}); }
 			 */
 			});
-	tinymce
-			.init({
+	tinymce.init({
 				selector : "#projectAdvertFundingText",
 				plugins : [ "link wordcount" ],
 				width : 480,

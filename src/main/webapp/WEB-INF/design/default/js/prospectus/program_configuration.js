@@ -424,11 +424,7 @@ function saveAdvert(){
 		}
 	});
 }
-function addBlankLinks(text) {
-	  var removePreviousBlank = text.replace(new RegExp("target=\"_blank\"","g"),"");
-	  var editdescription = removePreviousBlank.replace(new RegExp("<a href=","g"),"<a target=\"_blank\" href=");
-      return editdescription; 
-}
+
 function isAdvertLoaded(){
 	var advertId=$("#programAdvertId").val();
 	return  advertId !== undefined && advertId != "";

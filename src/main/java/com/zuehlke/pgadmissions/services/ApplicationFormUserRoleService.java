@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -391,6 +392,8 @@ public class ApplicationFormUserRoleService {
                 applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
                 applicationFormUserRole.setRaisesUpdateFlag(true);
             }
+            
+            
         }
 
         applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
@@ -418,9 +421,12 @@ public class ApplicationFormUserRoleService {
         for (RegisteredUser administrator : applicationForm.getProgram().getAdministrators()) {
             administrators.put(administrator, Authority.ADMINISTRATOR);
         }
-
-        if (applicationForm.getProject() != null) {
-            RegisteredUser projectAdministrator = applicationForm.getProject().getAdministrator();
+        
+        Project project = applicationForm.getProject();
+        if (project != null) {
+        	administrators.put(project.getPrimarySupervisor(), Authority.PROJECTADMINISTRATOR);
+        	
+        	RegisteredUser projectAdministrator = project.getAdministrator();
             if (projectAdministrator != null) {
                 administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
             }

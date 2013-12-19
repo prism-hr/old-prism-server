@@ -45,7 +45,7 @@ public class ApplicationFormActionRequired implements Serializable {
     
     @Column(name = "assigned_timestamp")
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date assignedTimestamp;
+    private Date assignedTimestamp = new Date();
 
     @ManyToOne
     @JoinColumn(name = "application_form_user_role_id", nullable = false, updatable = false, insertable = false)

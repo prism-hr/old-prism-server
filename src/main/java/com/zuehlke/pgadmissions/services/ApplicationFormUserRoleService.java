@@ -99,6 +99,7 @@ public class ApplicationFormUserRoleService {
                 userToSaveAsSuggestedSupervisor.setEnabled(false);
                 userToSaveAsSuggestedSupervisor.setCredentialsNonExpired(true);
                 userToSaveAsSuggestedSupervisor.setActivationCode(encryptionUtils.generateUUID());
+                userToSaveAsSuggestedSupervisor.getRoles().add(roleDAO.getRoleByAuthority(Authority.SUGGESTEDSUPERVISOR));
                 userDAO.save(userToSaveAsSuggestedSupervisor);
             }
             

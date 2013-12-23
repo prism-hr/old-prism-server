@@ -115,15 +115,6 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
 		assertProjectIncluded(true, projects, project);
 	}
 
-	@Test
-	public void shouldNotGetProjectsForProgramAndNotAuthor() {
-		projectDAO.save(project);
-		flushAndClearSession();
-		
-		List<Project> projects = projectDAO.getProjectsForProgramOfWhichAuthor(project.getProgram(), project.getPrimarySupervisor());
-		assertProjectIncluded(false, projects, project);
-	}
-
 	private void assertProjectIncluded(final boolean expected,List<Project> projects, Project expectedProject) {
 		assertTrue(projects.size() >=  (expected?1:0) );
 		boolean projectIncluded = false;

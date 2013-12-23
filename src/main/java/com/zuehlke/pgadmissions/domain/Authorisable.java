@@ -58,7 +58,7 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
             }
         }
 
-        if (isInRole(user, Authority.APPROVER)) {
+        if (isInRole(user, Authority.APPROVER) && isStatus(form, ApplicationFormStatus.APPROVAL)) {
             if (form.getProgram().isApprover(user)) {
                 return true;
             }
@@ -90,7 +90,7 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
     }
 
     public boolean canEditApplicationAsAdministrator(final ApplicationForm form, final RegisteredUser user) {
-        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR)
+        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
                 || user.isApplicationAdministrator(form) || user.isAdminInProgramme(form.getProgram());
         boolean reviewOrInterview = form.isInReviewStage() || form.isInInterviewStage();
 

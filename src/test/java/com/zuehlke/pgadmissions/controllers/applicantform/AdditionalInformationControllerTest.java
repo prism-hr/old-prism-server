@@ -134,7 +134,6 @@ public class AdditionalInformationControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).build();
 		applicationForm.setAdditionalInformation(additionalInfo);
 
-		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
 
 		EasyMock.replay(userMock, applicationServiceMock, addInfoServiceMock);
@@ -150,7 +149,7 @@ public class AdditionalInformationControllerTest {
 		controller.getAdditionalInformation("1");
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
+/*	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfUserCantseeForm() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 
@@ -166,7 +165,7 @@ public class AdditionalInformationControllerTest {
 
 		EasyMock.replay(userMock, applicationServiceMock, addInfoServiceMock);
 		controller.getAdditionalInformation("100");
-	}
+	}*/
 
 	@Test
 	public void shouldBindPropertyEditors() {

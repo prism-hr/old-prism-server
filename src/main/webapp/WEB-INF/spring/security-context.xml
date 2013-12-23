@@ -32,14 +32,14 @@
     <http use-expressions="true">
         <form-login login-page="/login" login-processing-url="/j_spring_security_check" authentication-failure-url="/login?login_error=t" />
         <logout logout-url="/j_spring_security_logout" />
-        <intercept-url pattern="/" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER', 'PROJECTADMINISTRATOR', 'STATEADMINISTRATOR')" />
-        <intercept-url pattern="/applications/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER', 'PROJECTADMINISTRATOR', 'STATEADMINISTRATOR')" />
-        <intercept-url pattern="/autosuggest/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER', 'PROJECTADMINISTRATOR', 'STATEADMINISTRATOR')" />
+        <intercept-url pattern="/" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER', 'PROJECTADMINISTRATOR', 'STATEADMINISTRATOR', 'SUGGESTEDSUPERVISOR')" />
+        <intercept-url pattern="/applications/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER', 'PROJECTADMINISTRATOR', 'STATEADMINISTRATOR', 'SUGGESTEDSUPERVISOR')" />
+        <intercept-url pattern="/autosuggest/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER', 'PROJECTADMINISTRATOR', 'STATEADMINISTRATOR', 'SUGGESTEDSUPERVISOR')" />
         <intercept-url pattern="/apply/**" access="hasRole('APPLICANT')" />
         <intercept-url pattern="/submit/**" access="hasRole('APPLICANT')" />
         <intercept-url pattern="/update/**" access="hasRole('APPLICANT')" />
         <intercept-url pattern="/rejectApplication/**" access="hasAnyRole('ADMINISTRATOR','SUPERADMINISTRATOR', 'PROJECTADMINISTRATOR', 'APPROVER')" />
-        <intercept-url pattern="/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER', 'PROJECTADMINISTRATOR', 'STATEADMINISTRATOR')" />
+        <intercept-url pattern="/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR', 'VIEWER', 'ADMITTER', 'PROJECTADMINISTRATOR', 'STATEADMINISTRATOR', 'SUGGESTEDSUPERVISOR')" />
         <session-management session-fixation-protection="migrateSession" />
     </http>
 

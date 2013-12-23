@@ -44,7 +44,7 @@ public class PrintControllerTest {
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
+		// EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser);
 		controller.printPage(request, response);
 		
@@ -67,7 +67,7 @@ public class PrintControllerTest {
 		response.setOutputStreamAccessAllowed(true);		
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(currentUser).build();
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+		// EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
 		byte[] bytes = "pdf".getBytes();
@@ -96,8 +96,8 @@ public class PrintControllerTest {
 
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new RegisteredUserBuilder().id(4).build()).build();
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new RegisteredUserBuilder().id(5).build()).build();
-		EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
-		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
+		// EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
+		// EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(EasyMock.eq(applicationFormOne))).andReturn(false);
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(EasyMock.eq(applicationFormTwo))).andReturn(false);
 		EasyMock.replay(currentUser);
@@ -129,7 +129,7 @@ public class PrintControllerTest {
 
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(currentUser).build();
 		
-		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
+		// EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(null).anyTimes();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
@@ -159,8 +159,8 @@ public class PrintControllerTest {
 
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(currentUser).build();
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(currentUser).build();
-		EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
-		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
+		// EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
+		// EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();

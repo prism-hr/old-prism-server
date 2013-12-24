@@ -189,25 +189,25 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
 
-	public boolean canSee(ApplicationForm applicationForm) {
-		return canSeeApplication(applicationForm, this);
-	}
+//	public boolean canSee(ApplicationForm applicationForm) {
+//		return canSeeApplication(applicationForm, this);
+//	}
 
-	public boolean canEditAsApplicant(ApplicationForm applicationForm) {
-		return canEditApplicationAsApplicant(applicationForm, this);
-	}
+//	public boolean canEditAsApplicant(ApplicationForm applicationForm) {
+//		return canEditApplicationAsApplicant(applicationForm, this);
+//	}
 
-	public boolean canEditAsAdministrator(ApplicationForm applicationForm) {
-		return canEditApplicationAsAdministrator(applicationForm, this);
-	}
+//	public boolean canEditAsAdministrator(ApplicationForm applicationForm) {
+//		return canEditApplicationAsAdministrator(applicationForm, this);
+//	}
 
-	public boolean canSeeReference(final ReferenceComment reference) {
-		return canSeeReference(reference, this);
-	}
+//	public boolean canSeeReference(final ReferenceComment reference) {
+//		return canSeeReference(reference, this);
+//	}
 
-	public boolean canSeeRestrictedInformation(final ApplicationForm form) {
-		return canSeeRestrictedInformation(form, this);
-	}
+//	public boolean canSeeRestrictedInformation(final ApplicationForm form) {
+//		return canSeeRestrictedInformation(form, this);
+//	}
 
 	@Override
 	public int compareTo(final RegisteredUser other) {
@@ -413,9 +413,9 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return username;
 	}
 
-	public boolean hasAdminRightsOnApplication(final ApplicationForm form) {
-		return hasAdminRightsOnApplication(form, this);
-	}
+//	public boolean hasAdminRightsOnApplication(final ApplicationForm form) {
+//		return hasAdminRightsOnApplication(form, this);
+//	}
 
 	public boolean hasDeclinedToProvideReviewForApplication(final ApplicationForm form) {
 		for (Comment comment : comments) {
@@ -481,9 +481,9 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return false;
 	}
 
-	public boolean hasStaffRightsOnApplicationForm(final ApplicationForm form) {
-		return hasStaffRightsOnApplication(form, this);
-	}
+//	public boolean hasStaffRightsOnApplicationForm(final ApplicationForm form) {
+//		return hasStaffRightsOnApplication(form, this);
+//	}
 
 	@Override
 	public boolean isAccountNonExpired() {
@@ -497,6 +497,10 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 
 	public boolean isAdminInProgramme(final Program programme) {
 		return isAdminInProgramme(programme, this);
+	}
+	
+	public boolean isAdminInProject(final Project project) {
+		return isAdminInProject(project, this);
 	}
 
 	@Override
@@ -545,9 +549,9 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return isInterviewerInInterview(interview, this);
 	}
 
-	public boolean isInterviewerOfApplicationForm(final ApplicationForm form) {
-		return isInterviewerOfApplication(form, this);
-	}
+//	public boolean isInterviewerOfApplicationForm(final ApplicationForm form) {
+//		return isInterviewerOfApplication(form, this);
+//	}
 
 	public boolean isApproverInProgram(final Program programme) {
 		return isApproverInProgramme(programme, this);
@@ -569,29 +573,29 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return isProgrammeAdministrator(form, this);
 	}
 
-	public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
-		return isPastOrPresentInterviewerOfApplication(form, this);
-	}
+//	public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
+//		return isPastOrPresentInterviewerOfApplication(form, this);
+//	}
 
-	public boolean isPastOrPresentReviewerOfApplicationForm(final ApplicationForm form) {
-		return isPastOrPresentReviewerOfApplication(form, this);
-	}
+//	public boolean isPastOrPresentReviewerOfApplicationForm(final ApplicationForm form) {
+//		return isPastOrPresentReviewerOfApplication(form, this);
+//	}
 
-	public boolean isPastOrPresentSupervisorOfApplicationForm(final ApplicationForm form) {
-		return isPastOrPresentSupervisorOfApplication(form, this);
-	}
+//	public boolean isPastOrPresentSupervisorOfApplicationForm(final ApplicationForm form) {
+//		return isPastOrPresentSupervisorOfApplication(form, this);
+//	}
 
 	public boolean isRefereeOfApplicationForm(final ApplicationForm form) {
 		return isRefereeOfApplication(form, this);
 	}
 
-	public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
-		return isReviewerInLatestReviewRoundOfApplication(form, this);
-	}
+//	public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
+//		return isReviewerInLatestReviewRoundOfApplication(form, this);
+//	}
 
-	public boolean isReviewerInReviewRound(final ReviewRound reviewRound) {
-		return isReviewerInReviewRound(reviewRound, this);
-	}
+//	public boolean isReviewerInReviewRound(final ReviewRound reviewRound) {
+//		return isReviewerInReviewRound(reviewRound, this);
+//	}
 
 	public boolean isSupervisorInApprovalRound(final ApprovalRound approvalRound) {
 		return isSupervisorInApprovalRound(approvalRound, this);

@@ -66,14 +66,18 @@ public class ProjectConfigurationController {
     private final ProjectDTOValidator projectDTOValidator;
 
     private final DatePropertyEditor datePropertyEditor;
+    
     private final ProgramPropertyEditor programPropertyEditor;
+    
     private final PersonPropertyEditor personPropertyEditor;
+    
     private final ProjectConverter projectConverter;
+    
     private final ApplyTemplateRenderer templateRenderer;
+    
     private final String host;
 
     private Gson gson;
-
     
     public ProjectConfigurationController() {
         this(null, null, null, null, null, null, null, null, null, null);
@@ -223,9 +227,14 @@ public class ProjectConfigurationController {
     }
 
     private void addSupervisorsRoles(Project project) {
-    	userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-    	if(project.getSecondarySupervisor()!=null){
-    		userService.updateUserWithNewRoles(project.getSecondarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
+    	RegisteredUser primarySupervisor = project.getPrimarySupervisor();
+    	Program program = project.getProgram();
+    	
+    	userService.updateUserWithNewRoles(primarySupervisor, program, Authority.SUPERVISOR);
+    	userService.updateUserWithNewRoles(primarySupervisor, program, Authority.PROJECTADMINISTRATOR);
+    	
+    	if (project.getSecondarySupervisor() != null) {
+    		userService.updateUserWithNewRoles(project.getSecondarySupervisor(), program, Authority.SUPERVISOR);
     	}
 	}
 

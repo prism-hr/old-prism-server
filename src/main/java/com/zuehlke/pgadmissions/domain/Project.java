@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -129,6 +131,13 @@ public class Project implements Serializable {
 
     public boolean isAcceptingApplications() {
         return !disabled && advert != null && advert.getActive();
+    }
+    
+    public List<RegisteredUser> getAdministrators() {
+    	List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(2);
+    	administrators.add(primarySupervisor);
+    	administrators.add(administrator);
+    	return administrators;
     }
 
 }

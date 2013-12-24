@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
-/**
- * Methods used by the domain objects to do authorisation/security decisions.
- */
 public abstract class Authorisable extends AbstractAuthorisationAPI {
 
     public Authorisable() {
@@ -16,105 +15,27 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
     }
 
     public boolean canSeeApplication(final ApplicationForm form, final RegisteredUser user) {
-        if (isStatus(form, ApplicationFormStatus.UNSUBMITTED) && isNotInRole(user, Authority.APPLICANT)) {
-            return false;
-        }
-
-        if (isInRole(user, Authority.SUPERADMINISTRATOR)) {
-            return true;
-        }
-
-        if (isInRole(user, Authority.ADMITTER)) {
-            return true;
-        }
-
-        if (isApplicationAdministrator(form, user)) {
-            return true;
-        }
-
-        if (isInRole(user, Authority.ADMINISTRATOR) && isProgrammeAdministrator(form, user)) {
-            return true;
-        }
-        
-        if(isProjectAdministrator(form, user)){
-            return true;
-        }
-
-        if (isStatus(form, ApplicationFormStatus.REVIEW)) {
-            if (isReviewerInReviewRound(form.getLatestReviewRound(), user)) {
-                return true;
-            }
-        }
-
-        if (isStatus(form, ApplicationFormStatus.INTERVIEW)) {
-            if (isInterviewerInInterview(form.getLatestInterview(), user)) {
-                return true;
-            }
-        }
-
-        if (isStatus(form, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.APPROVED)) {
-            if (isSupervisorInApprovalRound(form.getLatestApprovalRound(), user)) {
-                return true;
-            }
-        }
-
-        if (isInRole(user, Authority.APPROVER) && isStatus(form, ApplicationFormStatus.APPROVAL)) {
-            if (form.getProgram().isApprover(user)) {
-                return true;
-            }
-        }
-
-        if (isInRole(user, Authority.REFEREE)) {
-            for (Referee referee : form.getReferees()) {
-                if (!referee.isDeclined()) {
-                    if (areEqual(referee.getUser(), user) || containsReferee(referee, user.getReferees())) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        if (isInRole(user, Authority.VIEWER) && isViewerOfProgramme(form, user)) {
-            return true;
-        }
-
-        if (areEqual(user, form.getApplicant())) {
-            return true;
-        }
-
-        return false;
+        return ActionsProvider.checkActionAvailable(form, user, ApplicationFormAction.VIEW_EDIT) ||
+        		ActionsProvider.checkActionAvailable(form, user, ApplicationFormAction.VIEW);
     }
 
     public boolean canEditApplicationAsApplicant(final ApplicationForm form, final RegisteredUser user) {
-        return user.getId() == form.getApplicant().getId() && !form.isTerminated() && form.getIsEditableByApplicant();
+        return user.getId() == form.getApplicant().getId() && 
+        		ActionsProvider.checkActionAvailable(form, user, ApplicationFormAction.VIEW_EDIT);
     }
 
     public boolean canEditApplicationAsAdministrator(final ApplicationForm form, final RegisteredUser user) {
-        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
-                || user.isApplicationAdministrator(form) || user.isAdminInProgramme(form.getProgram());
-        boolean reviewOrInterview = form.isInReviewStage() || form.isInInterviewStage();
-
-        return hasPermissionToEdit && reviewOrInterview;
+        return (user.isInRole(Authority.SUPERADMINISTRATOR) || 
+        		user.isApplicationAdministrator(form) || 
+        		user.isAdminInProgramme(form.getProgram())) &&
+        		ActionsProvider.checkActionAvailable(form, user, ApplicationFormAction.VIEW_EDIT);
     }
 
-    public boolean hasAdminRightsOnApplication(final ApplicationForm form, final RegisteredUser user) {
-        if (isStatus(form, ApplicationFormStatus.UNSUBMITTED)) {
-            return false;
-        }
-
-        if (isInRole(user, Authority.SUPERADMINISTRATOR)) {
-            return true;
-        }
-
-        if (isProjectAdministrator(form, user)) {
-            return true;
-        }
-        
-        if (isProgrammeAdministrator(form, user)) {
-            return true;
-        }
-
-        return false;
+    public boolean hasAdminRightsOnApplication(final ApplicationForm form, final RegisteredUser user) {        
+        return !isStatus(form, ApplicationFormStatus.UNSUBMITTED) &&
+    			(isInRole(user, Authority.SUPERADMINISTRATOR) ||
+    			isProjectAdministrator(form, user) ||
+    			isProgrammeAdministrator(form, user));
     }
 
     public boolean hasStaffRightsOnApplication(final ApplicationForm form, final RegisteredUser user) {

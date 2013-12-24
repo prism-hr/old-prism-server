@@ -17,11 +17,10 @@ $(document).ready(function() {
         
 		$(element).find('.application-details:odd').addClass('odd').addClass('loading');
 		
-        $(element).find('.applicationRow').not('.applicationRow.binded').bind('click',function(event) {
+        $(element).find('.applicationRow').not('.applicationRow.binded').bind('click', function(event) {
             
             var applicationDetails = $(this).next();
 			
-            // alert ($(event.target).attr('class'));
 			if (applicationDetails.attr('data-application-status') == 'UNSUBMITTED' 
 				|| applicationDetails.attr('data-application-status') == 'WITHDRAWN') {
 				return;
@@ -54,8 +53,8 @@ $(document).ready(function() {
 						} 
 						
 						applicationDetails.find('[data-field=applicant-name]').text(applicant.name);
-						applicationDetails.find('[data-field=submitted-date]').text(data.applicationUpdateDate);
-						applicationDetails.find('[data-field=last-edited-date]').text(data.applicationSubmissionDate);
+						applicationDetails.find('[data-field=submitted-date]').text(data.applicationSubmissionDate);
+						applicationDetails.find('[data-field=last-edited-date]').text(data.applicationUpdateDate);
 						
 						applicationDetails.find('[data-field=most-recent-qualification]').text(applicant.mostRecentQualification);
 						

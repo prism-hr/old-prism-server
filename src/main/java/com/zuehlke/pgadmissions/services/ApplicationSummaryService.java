@@ -50,37 +50,25 @@ public class ApplicationSummaryService {
 	}
 
 	@Autowired
-	public ApplicationSummaryService(
-			final ApplicationsService applicationsService,
-			final UserService userService, EncryptionHelper encryptionHelper,
-			final ActionsProvider actionsProvider) {
+	public ApplicationSummaryService(final ApplicationsService applicationsService, final UserService userService, 
+			final EncryptionHelper encryptionHelper, final ActionsProvider actionsProvider) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.encryptionHelper = encryptionHelper;
 		this.actionsProvider = actionsProvider;
 	}
 
-	private void addApplicationProperties(final ApplicationForm form,
-			final Map<String, String> result) {
+	private void addApplicationProperties(final ApplicationForm form, final Map<String, String> result) {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-		result.put("applicationSubmissionDate",
-				dateFormat.format(form.getSubmittedDate()));
-		result.put("applicationUpdateDate",
-				dateFormat.format(form.getLastUpdated()));
-		ApplicationDescriptor applicationDescriptor = actionsProvider
-				.getApplicationDescriptorForUser(form,
-						userService.getCurrentUser());
-		result.put("requiresAttention", BooleanUtils
-				.toStringTrueFalse(applicationDescriptor
-						.getNeedsToSeeUrgentFlag()));
+		result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
+		result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
+		ApplicationDescriptor applicationDescriptor = actionsProvider.getApplicationDescriptorForUser(form, userService.getCurrentUser());
+		result.put("requiresAttention", BooleanUtils.toStringTrueFalse(applicationDescriptor.getNeedsToSeeUrgentFlag()));
 		result.put("applicationNumber", form.getApplicationNumber());
 	}
 
-	private void addActiveApplications(final RegisteredUser applicant,
-			final Map<String, String> result) {
-		result.put("numberOfActiveApplications", userService
-				.getNumberOfActiveApplicationsForApplicant(applicant)
-				.toString());
+	private void addActiveApplications(final RegisteredUser applicant, final Map<String, String> result) {
+		result.put("numberOfActiveApplications", userService.getNumberOfActiveApplicationsForApplicant(applicant).toString());
 	}
 
 	private void addApplicantDetails(final ApplicationForm form,
@@ -93,8 +81,7 @@ public class ApplicationSummaryService {
 		result.put("applicationStatus", form.getStatus().displayValue());
 	}
 
-	private void addQualifications(final ApplicationForm form,
-			final Map<String, String> result) {
+	private void addQualifications(final ApplicationForm form, final Map<String, String> result) {
 		List<Qualification> qualifications = form.getQualifications();
 		if (qualifications.isEmpty()) {
 			result.put("mostRecentQualification", NONE_PROVIDED);
@@ -105,8 +92,7 @@ public class ApplicationSummaryService {
 				new Comparator<Qualification>() {
 					@Override
 					public int compare(Qualification o1, Qualification o2) {
-						return o1.getQualificationAwardDate().compareTo(
-								o2.getQualificationAwardDate());
+						return o1.getQualificationAwardDate().compareTo(o2.getQualificationAwardDate());
 					}
 				});
 
@@ -124,8 +110,7 @@ public class ApplicationSummaryService {
 		result.put("mostRecentQualification", builder.toString());
 	}
 
-	private void trimToEmptyAndJoin(StringBuilder builder, String input,
-			boolean addBracket) {
+	private void trimToEmptyAndJoin(StringBuilder builder, String input, boolean addBracket) {
 		String separator = " ";
 		if (input != null) {
 			if (addBracket) {
@@ -138,8 +123,7 @@ public class ApplicationSummaryService {
 		}
 	}
 
-	private void addEmployments(final ApplicationForm form,
-			Map<String, String> result) {
+	private void addEmployments(final ApplicationForm form, Map<String, String> result) {
 		List<EmploymentPosition> employments = form.getEmploymentPositions();
 		if (employments.isEmpty()) {
 			result.put("mostRecentEmployment", NONE_PROVIDED);
@@ -149,8 +133,7 @@ public class ApplicationSummaryService {
 		EmploymentPosition mostRecentEmployment = Collections.max(employments,
 				new Comparator<EmploymentPosition>() {
 					@Override
-					public int compare(EmploymentPosition o1,
-							EmploymentPosition o2) {
+					public int compare(EmploymentPosition o1, EmploymentPosition o2) {
 						Date e1Date = o1.getEndDate();
 						Date e2Date = o2.getEndDate();
 						if (e1Date == null) {
@@ -162,12 +145,10 @@ public class ApplicationSummaryService {
 						return e1Date.compareTo(e2Date);
 					}
 				});
-		result.put("mostRecentEmployment",
-				mostRecentEmployment.getEmployerName());
+		result.put("mostRecentEmployment", mostRecentEmployment.getEmployerName());
 	}
 
-	private void addFundings(final ApplicationForm form,
-			Map<String, String> result, final Gson gson) {
+	private void addFundings(final ApplicationForm form, Map<String, String> result, final Gson gson) {
 		Long fundingSum = 0L;
 		for (Funding funding : form.getFundings()) {
 			if (StringUtils.isNumericSpace(funding.getValue())) {
@@ -196,15 +177,12 @@ public class ApplicationSummaryService {
 		result.put("numberOfReferences", numberOfResponsed.toString());
 	}
 
-	private void addPersonalStatement(ApplicationForm form,
-			Map<String, String> result) {
+	private void addPersonalStatement(ApplicationForm form, Map<String, String> result) {
 		Document personalStatement = form.getPersonalStatement();
 		if (personalStatement != null) {
 			result.put("personalStatementProvided", "true");
-			result.put("personalStatementId",
-					encryptionHelper.encrypt(personalStatement.getId()));
-			result.put("personalStatementFilename",
-					personalStatement.getFileName());
+			result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));
+			result.put("personalStatementFilename", personalStatement.getFileName());
 		} else {
 			result.put("personalStatementProvided", "false");
 		}
@@ -220,10 +198,9 @@ public class ApplicationSummaryService {
 	}
 
 	public Map<String, String> getSummary(final String applicationNumber) {
-		ApplicationForm form = applicationsService
-				.getApplicationByApplicationNumber(applicationNumber);
+		ApplicationForm form = applicationsService.getApplicationByApplicationNumber(applicationNumber);
 
-		if (form.getStatus().equals(ApplicationFormStatus.WITHDRAWN)
+		if (form.getStatus().equals(ApplicationFormStatus.WITHDRAWN) 
 				|| form.getStatus().equals(ApplicationFormStatus.UNSUBMITTED)) {
 			return Collections.emptyMap();
 		}
@@ -244,4 +221,5 @@ public class ApplicationSummaryService {
 		result.put("applicant", gson.toJson(applicantResult));
 		return result;
 	}
+	
 }

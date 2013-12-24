@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 public class ActionsProvider {
 
     @Autowired
-    private static ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
     @Transactional
     public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final RegisteredUser user) {
@@ -26,13 +26,13 @@ public class ActionsProvider {
         return applicationDescriptor;
     }
     
-    public static void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
+    public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
         if (!checkActionAvailable(applicationForm, user, action)) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
     }
     
-    public static Boolean checkActionAvailable(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
+    public Boolean checkActionAvailable(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
     	return applicationFormUserRoleDAO.checkActionAvailableForUserAndApplicationForm(user, applicationForm, action);
     }
 

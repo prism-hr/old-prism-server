@@ -320,7 +320,6 @@ public class StateTransitionController {
 	    	}
     	} else {
             if (status == nextStatus) {
-            	userService.addRoleToUser(registeredUser, Authority.STATEADMINISTRATOR);
             	stateChangeComment.setDelegateAdministrator(registeredUser);
             }
     	}

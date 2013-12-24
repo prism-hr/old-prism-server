@@ -99,8 +99,11 @@ public class ApplicationFormUserRoleService {
                 userToSaveAsSuggestedSupervisor.setEnabled(false);
                 userToSaveAsSuggestedSupervisor.setCredentialsNonExpired(true);
                 userToSaveAsSuggestedSupervisor.setActivationCode(encryptionUtils.generateUUID());
-                userToSaveAsSuggestedSupervisor.getRoles().add(roleDAO.getRoleByAuthority(Authority.SUGGESTEDSUPERVISOR));
                 userDAO.save(userToSaveAsSuggestedSupervisor);
+            }
+            
+            if (!userToSaveAsSuggestedSupervisor.isInRole(Authority.SUGGESTEDSUPERVISOR)) {
+                userToSaveAsSuggestedSupervisor.getRoles().add(roleDAO.getRoleByAuthority(Authority.SUGGESTEDSUPERVISOR));
             }
             
             createApplicationFormUserRole(applicationForm, userToSaveAsSuggestedSupervisor, Authority.SUGGESTEDSUPERVISOR, true);
@@ -386,14 +389,19 @@ public class ApplicationFormUserRoleService {
             applicationFormUserRole.setApplicationForm(applicationForm);
             applicationFormUserRole.setRole(role);
             applicationFormUserRole.setUser(user);
+            
+            if (!user.isInRole(authority)) {
+                user.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            }
 
+            user.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            
             Date updateTimestamp = applicationFormUserRoleDAO.findUpdateTimestampByApplicationFormAndAuthorityUpdateVisility(applicationForm,
                     role.getUpdateVisibility());
             if (updateTimestamp != null) {
                 applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
                 applicationFormUserRole.setRaisesUpdateFlag(true);
             }
-            
             
         }
 

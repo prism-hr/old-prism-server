@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
-import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -27,23 +26,21 @@ public class ReviewService {
 	private final ReviewRoundDAO reviewRoundDAO;
 	private final StageDurationService stageDurationService;
 	private final EventFactory eventFactory;
-	private final ReviewerDAO reviewerDAO;
 	private final MailSendingService mailService;
 	private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
 	public ReviewService() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
     public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO,
-            StageDurationService stageDurationService, EventFactory eventFactory, ReviewerDAO reviewerDAO,
-            MailSendingService mailService, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            StageDurationService stageDurationService, EventFactory eventFactory, MailSendingService mailService, 
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
 		this.applicationDAO = applicationDAO;
 		this.reviewRoundDAO = reviewRoundDAO;
 		this.stageDurationService = stageDurationService;
 		this.eventFactory = eventFactory;
-		this.reviewerDAO = reviewerDAO;
         this.mailService = mailService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
 	}
@@ -63,7 +60,7 @@ public class ReviewService {
 		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, reviewStageDuration.getDurationInMinutes());
         application.setDueDate(dueDate.toDate());
-        boolean sendReferenceRequest = application.getStatus()==ApplicationFormStatus.VALIDATION;
+        boolean sendReferenceRequest = application.getStatus() == ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
 		application.removeNotificationRecord(NotificationType.REVIEW_REMINDER);
@@ -78,24 +75,6 @@ public class ReviewService {
 
 	public void save(ReviewRound reviewRound) {
 		reviewRoundDAO.save(reviewRound);
-	}
-
-	public void createReviewerInNewReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
-		Reviewer reviewer = newReviewer();
-		reviewer.setUser(newUser);
-		reviewerDAO.save(reviewer);
-		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-		if (latestReviewRound == null) {
-			ReviewRound reviewRound = newReviewRound();
-			reviewRound.getReviewers().add(reviewer);
-			reviewRound.setApplication(applicationForm);
-			save(reviewRound);
-			applicationForm.setLatestReviewRound(reviewRound);
-		} else {
-			latestReviewRound.getReviewers().add(reviewer);
-			save(latestReviewRound);
-		}
-
 	}
 
 	public Reviewer newReviewer() {

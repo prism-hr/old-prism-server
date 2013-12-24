@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
+/**
+ * A small API which facilitates the writing of complex authorisation rules.
+ */
 public abstract class AbstractAuthorisationAPI {
 
     private final Logger log = LoggerFactory.getLogger(AbstractAuthorisationAPI.class);
@@ -89,13 +92,13 @@ public abstract class AbstractAuthorisationAPI {
         return false;
     }
 
-//    public boolean isNotInRole(final RegisteredUser user, final Authority authority) {
-//        return !isInRole(user, authority);
-//    }
-//
-//    public boolean isNotInRole(final RegisteredUser user, final String authority) {
-//        return !isInRole(user, authority);
-//    }
+    public boolean isNotInRole(final RegisteredUser user, final Authority authority) {
+        return !isInRole(user, authority);
+    }
+
+    public boolean isNotInRole(final RegisteredUser user, final String authority) {
+        return !isInRole(user, authority);
+    }
 
     public boolean isInRoleInProgramme(final Program programme, final RegisteredUser user, final String authority) {
         try {
@@ -208,53 +211,57 @@ public abstract class AbstractAuthorisationAPI {
         return containsUser(user, form.getProgram().getViewers());
     }
 
-//    public boolean isPastOrPresentReviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-//        for (ReviewRound reviewRound : form.getReviewRounds()) {
-//            for (Reviewer reviewer : reviewRound.getReviewers()) {
-//                if (areEqual(user, reviewer.getUser())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+    public boolean isPastOrPresentReviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
+        for (ReviewRound reviewRound : form.getReviewRounds()) {
+            for (Reviewer reviewer : reviewRound.getReviewers()) {
+                if (areEqual(user, reviewer.getUser())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-//    public boolean isPastOrPresentInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-//        for (Interview interview : form.getInterviews()) {
-//            for (Interviewer interviewer : interview.getInterviewers()) {
-//                if (areEqual(user, interviewer.getUser())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+    public boolean isPastOrPresentInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
+        for (Interview interview : form.getInterviews()) {
+            for (Interviewer interviewer : interview.getInterviewers()) {
+                if (areEqual(user, interviewer.getUser())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-//    public boolean isPastOrPresentSupervisorOfApplication(final ApplicationForm form, final RegisteredUser user) {
-//        for (ApprovalRound approvalRound : form.getApprovalRounds()) {
-//            for (Supervisor supervisor : approvalRound.getSupervisors()) {
-//                if (areEqual(user, supervisor.getUser())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+    public boolean isPastOrPresentSupervisorOfApplication(final ApplicationForm form, final RegisteredUser user) {
+        for (ApprovalRound approvalRound : form.getApprovalRounds()) {
+            for (Supervisor supervisor : approvalRound.getSupervisors()) {
+                if (areEqual(user, supervisor.getUser())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public boolean isRefereeOfApplication(final ApplicationForm form, final RegisteredUser user) {
         return isInRole(user, Authority.REFEREE) && user.hasRefereesInApplicationForm(form);
     }
 
-//    public boolean isInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-//        return isInterviewerInInterview(form.getLatestInterview(), user);
-//    }
+    public boolean isInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
+        return isInterviewerInInterview(form.getLatestInterview(), user);
+    }
 
-//    public boolean isReviewerInLatestReviewRoundOfApplication(final ApplicationForm form, final RegisteredUser user) {
-//        return isReviewerInReviewRound(form.getLatestReviewRound(), user);
-//    }
+    public boolean isReviewerInLatestReviewRoundOfApplication(final ApplicationForm form, final RegisteredUser user) {
+        return isReviewerInReviewRound(form.getLatestReviewRound(), user);
+    }
 
     public boolean isAdminInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
+            return false;
+        }
+
+        if (isNotInRole(user, Authority.ADMINISTRATOR)) {
             return false;
         }
 
@@ -263,24 +270,13 @@ public abstract class AbstractAuthorisationAPI {
         }
         return false;
     }
-    
-    public boolean isAdminInProject(final Project project, final RegisteredUser user) {
-    	if (project == null) {
-    		return false;
-    	}
-    	
-    	if (areEqual(user, project.getAdministrator())) {
-    		return true;
-    	}
-    	
-    	if (areEqual(user, project.getPrimarySupervisor())) {
-    		return true;
-    	}
-    	return false;
-    }
 
     public boolean isApproverInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
+            return false;
+        }
+
+        if (isNotInRole(user, Authority.APPROVER)) {
             return false;
         }
         return containsUser(user, programme.getApprovers());
@@ -288,6 +284,10 @@ public abstract class AbstractAuthorisationAPI {
 
     public boolean isViewerInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
+            return false;
+        }
+
+        if (isNotInRole(user, Authority.VIEWER)) {
             return false;
         }
         return containsUser(user, programme.getViewers());

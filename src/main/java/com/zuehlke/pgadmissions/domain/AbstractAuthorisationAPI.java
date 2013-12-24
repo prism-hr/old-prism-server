@@ -89,10 +89,10 @@ public abstract class AbstractAuthorisationAPI {
         return false;
     }
 
-    public boolean isNotInRole(final RegisteredUser user, final Authority authority) {
-        return !isInRole(user, authority);
-    }
-
+//    public boolean isNotInRole(final RegisteredUser user, final Authority authority) {
+//        return !isInRole(user, authority);
+//    }
+//
 //    public boolean isNotInRole(final RegisteredUser user, final String authority) {
 //        return !isInRole(user, authority);
 //    }
@@ -245,36 +245,51 @@ public abstract class AbstractAuthorisationAPI {
         return isInRole(user, Authority.REFEREE) && user.hasRefereesInApplicationForm(form);
     }
 
-    public boolean isInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        return isInterviewerInInterview(form.getLatestInterview(), user);
-    }
+//    public boolean isInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
+//        return isInterviewerInInterview(form.getLatestInterview(), user);
+//    }
 
-    public boolean isReviewerInLatestReviewRoundOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        return isReviewerInReviewRound(form.getLatestReviewRound(), user);
-    }
+//    public boolean isReviewerInLatestReviewRoundOfApplication(final ApplicationForm form, final RegisteredUser user) {
+//        return isReviewerInReviewRound(form.getLatestReviewRound(), user);
+//    }
 
     public boolean isAdminInProgramme(final Program programme, final RegisteredUser user) {
-    	return !(programme == null) &&
-    			!isNotInRole(user, Authority.ADMINISTRATOR) &&
-    			containsUser(user, programme.getAdministrators());
+        if (programme == null) {
+            return false;
+        }
+
+        if (containsUser(user, programme.getAdministrators())) {
+            return true;
+        }
+        return false;
     }
     
     public boolean isAdminInProject(final Project project, final RegisteredUser user) {
-    	return !(project == null) &&
-    			!isNotInRole(user, Authority.PROJECTADMINISTRATOR) &&
-    			containsUser(user, project.getAdministrators());
+    	if (project == null) {
+    		return false;
+    	}
+    	
+    	if (areEqual(user, project.getAdministrator())) {
+    		return true;
+    	}
+    	
+    	if (areEqual(user, project.getPrimarySupervisor())) {
+    		return true;
+    	}
+    	return false;
     }
 
     public boolean isApproverInProgramme(final Program programme, final RegisteredUser user) {
-    	return !(programme == null) &&
-    			!isNotInRole(user, Authority.APPROVER) &&
-    			containsUser(user, programme.getApprovers());
+        if (programme == null) {
+            return false;
+        }
+        return containsUser(user, programme.getApprovers());
     }
 
     public boolean isViewerInProgramme(final Program programme, final RegisteredUser user) {
-    	return !(programme == null) &&
-    			!isNotInRole(user, Authority.VIEWER) &&
-    			containsUser(user, programme.getViewers());
+        if (programme == null) {
+            return false;
+        }
+        return containsUser(user, programme.getViewers());
     }
-    
 }

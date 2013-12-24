@@ -65,6 +65,7 @@ public class Reviewer implements Serializable {
 		this.user = user;
 	}
 
+
 	public Date getLastNotified() {
 		return lastNotified;
 	}

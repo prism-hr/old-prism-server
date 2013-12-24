@@ -115,6 +115,8 @@ public class UserService {
     }
 
     public void updateUserWithNewRoles(final RegisteredUser selectedUser, final Program selectedProgram, final Authority... newAuthorities) {
+        // Please note: it is a deliberate decision to never remove people from SUPERADMIN role.
+
         for (Authority authority : Authority.values()) {
             addToRoleIfRequired(selectedUser, newAuthorities, authority);
         }

@@ -133,6 +133,8 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = getCurrentUser();
+
+        System.out.print("I got here.");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);      
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         

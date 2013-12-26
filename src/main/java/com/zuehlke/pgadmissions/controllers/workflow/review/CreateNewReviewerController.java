@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -59,8 +58,7 @@ public class CreateNewReviewerController {
 		}
 		
 		modelAndView.getModel().put("isNew", true);
-		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewReviewerUser.getFirstName(), suggestedNewReviewerUser.getLastName(), suggestedNewReviewerUser.getEmail(),
-				DirectURLsEnum.ADD_REVIEW, applicationForm, Authority.REVIEWER);
+		RegisteredUser newUser = userService.createNewUserInRoles(suggestedNewReviewerUser.getFirstName(), suggestedNewReviewerUser.getLastName(), suggestedNewReviewerUser.getEmail(), Authority.REVIEWER);
 		modelAndView.getModel().put("user", newUser);
 		return modelAndView;
 	}

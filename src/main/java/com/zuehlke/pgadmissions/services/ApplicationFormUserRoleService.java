@@ -330,6 +330,7 @@ public class ApplicationFormUserRoleService extends UserService {
 
     public void revokeUserFromRole(RegisteredUser registeredUser, Authority authority) {
         applicationFormUserRoleDAO.deleteUserFromRole(registeredUser, authority);
+        super.revokeRoleFromUser(registeredUser, authority);
     }
 
     public void revokeUserFromProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {

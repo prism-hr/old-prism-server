@@ -1,3 +1,17 @@
+INSERT INTO APPLICATION_ROLE (id, update_visibility, do_send_update_notification)
+VALUES ("SAFETYNET", 0, 0)
+;
+
+ALTER TABLE APPLICATION_ROLE
+	ADD COLUMN do_send_role_notification INT(1) UNSIGNED NOT NULL DEFAULT 0,
+	ADD INDEX (do_send_role_notification)
+;
+
+UPDATE APPLICATION_ROLE
+SET do_send_role_notification = 1
+WHERE id IN ("SUPERADMINISTRATOR", "ADMITTER", "ADMINISTRATOR", "APPROVER", "VIEWER")
+;
+
 DROP PROCEDURE DELETE_USER_FROM_ROLE
 ;
 

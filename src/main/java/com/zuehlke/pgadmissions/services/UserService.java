@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,18 +105,26 @@ public class UserService {
         return user;
     }
 
-    public void addRoleToUser(RegisteredUser user, Authority authority) {
-    	Role roleToAdd = roleDAO.getRoleByAuthority(authority);
+    protected void addRoleToUser(RegisteredUser user, Authority authority) {
+    	Role roleToAssign = roleDAO.getRoleByAuthority(authority);
     	List<Role> userRoles = user.getRoles();
     	
-    	if (!userRoles.contains(roleToAdd)) {
+    	if (!userRoles.contains(roleToAssign)) {
             user.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            
+            if (BooleanUtils.isTrue(roleToAssign.getDoSendRoleNotification())) {
+            	addPendingRoleNotification(user, authority);
+            }
     	}
     	
     	userDAO.save(user);
     }
+    
+    protected void revokeRoleFromUser(RegisteredUser user, Authority authority) {
+    	user.getRoles().remove(roleDAO.getRoleByAuthority(authority));
+    }
 
-    public void updateUserWithNewRoles(final RegisteredUser selectedUser, final Program selectedProgram, final Authority... newAuthorities) {
+    protected void updateUserWithNewRoles(final RegisteredUser selectedUser, final Program selectedProgram, final Authority... newAuthorities) {
         for (Authority authority : newAuthorities) {
             if (!selectedUser.isInRole(authority)) {
                 selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
@@ -129,7 +138,7 @@ public class UserService {
         userDAO.save(selectedUser);
     }
 
-    public void deleteUserFromProgramme(final RegisteredUser selectedUser, final Program selectedProgram) {
+    protected void deleteUserFromProgramme(final RegisteredUser selectedUser, final Program selectedProgram) {
     	deleteUserFromProgramAdministratorRole(selectedUser, selectedProgram);
     	deleteUserFromProgramApproverRole(selectedUser, selectedProgram);
     	deleteUserFromProgramViewerRole(selectedUser, selectedProgram);
@@ -184,8 +193,15 @@ public class UserService {
         	deleteUserFromProgramViewerRole(selectedUser, selectedProgram);
         }
     }
+    
+    private void addPendingRoleNotification(RegisteredUser selectedUser, Authority authority) {
+        PendingRoleNotification pendingRoleNotification = new PendingRoleNotification();
+        pendingRoleNotification.setRole(roleDAO.getRoleByAuthority(authority));
+        pendingRoleNotification.setAddedByUser(getCurrentUser());
+        selectedUser.getPendingRoleNotifications().add(pendingRoleNotification);
+    }
 
-    private void addPendingRoleNotificationToUser(RegisteredUser selectedUser, Authority authority, Program program) {
+    private void addPendingProgramRoleNotification(RegisteredUser selectedUser, Authority authority, Program program) {
         PendingRoleNotification pendingRoleNotification = new PendingRoleNotification();
         pendingRoleNotification.setRole(roleDAO.getRoleByAuthority(authority));
         pendingRoleNotification.setProgram(program);
@@ -222,7 +238,12 @@ public class UserService {
         List<Role> userRoles = newUser.getRoles();
         
         for (Authority authority : authorities) {
-            userRoles.add(roleDAO.getRoleByAuthority(authority));
+        	Role roleToAssign = roleDAO.getRoleByAuthority(authority);
+            userRoles.add(roleToAssign);
+            
+            if (BooleanUtils.isTrue(roleToAssign.getDoSendRoleNotification())) {
+            	addPendingRoleNotification(newUser, authority);
+            }
         }
         
         userRoles.add(roleDAO.getRoleByAuthority(Authority.SAFETYNET));
@@ -230,7 +251,7 @@ public class UserService {
         return newUser;
     }
 
-    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, 
+    public RegisteredUser createNewUserInRoles(final String firstName, final String lastName, final String email, 
     		final DirectURLsEnum directURL, final ApplicationForm application, final Authority... authorities) {
         RegisteredUser newUser = createNewUserInRoles(firstName, lastName, email, authorities);
         
@@ -255,17 +276,17 @@ public class UserService {
 
         if (authList.contains(Authority.ADMINISTRATOR)) {
             newUser.getProgramsOfWhichAdministrator().add(program);
-            addPendingRoleNotificationToUser(newUser, Authority.ADMINISTRATOR, program);
+            addPendingProgramRoleNotification(newUser, Authority.ADMINISTRATOR, program);
         }
 
         if (authList.contains(Authority.APPROVER)) {
             newUser.getProgramsOfWhichApprover().add(program);
-            addPendingRoleNotificationToUser(newUser, Authority.APPROVER, program);
+            addPendingProgramRoleNotification(newUser, Authority.APPROVER, program);
         }
 
         if (authList.contains(Authority.VIEWER)) {
             newUser.getProgramsOfWhichViewer().add(program);
-            addPendingRoleNotificationToUser(newUser, Authority.VIEWER, program);
+            addPendingProgramRoleNotification(newUser, Authority.VIEWER, program);
         }
 
         userDAO.save(newUser);    

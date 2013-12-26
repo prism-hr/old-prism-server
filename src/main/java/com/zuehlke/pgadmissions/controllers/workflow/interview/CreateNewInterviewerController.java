@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -59,8 +58,7 @@ public class CreateNewInterviewerController {
         }
 
         modelAndView.getModel().put("isNew", true);
-        RegisteredUser newUser = userService.createNewUserInRole(suggestedNewInterviewerUser.getFirstName(), suggestedNewInterviewerUser.getLastName(),
-                suggestedNewInterviewerUser.getEmail(), DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm, Authority.INTERVIEWER);
+        RegisteredUser newUser = userService.createNewUserInRoles(suggestedNewInterviewerUser.getFirstName(), suggestedNewInterviewerUser.getLastName(), suggestedNewInterviewerUser.getEmail(), Authority.INTERVIEWER);
         modelAndView.getModel().put("user", newUser);
         return modelAndView;
     }

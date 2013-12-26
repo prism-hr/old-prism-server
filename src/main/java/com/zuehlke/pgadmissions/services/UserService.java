@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
@@ -36,27 +37,23 @@ public class UserService {
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
     private final ApplicationsFilteringDAO filteringDAO;
-    private final UserFactory userFactory;
     private final EncryptionUtils encryptionUtils;
     private final MailSendingService mailService;
     private final ProgramsService programsService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public UserService() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, UserFactory userFactory, EncryptionUtils encryptionUtils,
+    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, EncryptionUtils encryptionUtils,
             MailSendingService mailService, ProgramsService programsService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.filteringDAO = filteringDAO;
-        this.userFactory = userFactory;
         this.encryptionUtils = encryptionUtils;
         this.mailService = mailService;
         this.programsService = programsService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     public RegisteredUser getUser(Integer id) {
@@ -108,17 +105,21 @@ public class UserService {
     }
 
     public void addRoleToUser(RegisteredUser user, Authority authority) {
-        user.getRoles().add(roleDAO.getRoleByAuthority(authority));
-        if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
-        	applicationFormUserRoleService.createUserInRole(user, authority);
-        }
+    	Role roleToAdd = roleDAO.getRoleByAuthority(authority);
+    	List<Role> userRoles = user.getRoles();
+    	
+    	if (!userRoles.contains(roleToAdd)) {
+            user.getRoles().add(roleDAO.getRoleByAuthority(authority));
+    	}
+    	
+    	userDAO.save(user);
     }
 
     public void updateUserWithNewRoles(final RegisteredUser selectedUser, final Program selectedProgram, final Authority... newAuthorities) {
-        // Please note: it is a deliberate decision to never remove people from SUPERADMIN role.
-
-        for (Authority authority : Authority.values()) {
-            addToRoleIfRequired(selectedUser, newAuthorities, authority);
+        for (Authority authority : newAuthorities) {
+            if (!selectedUser.isInRole(authority)) {
+                selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            }
         }
 
         addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newAuthorities);
@@ -129,58 +130,58 @@ public class UserService {
     }
 
     public void deleteUserFromProgramme(final RegisteredUser selectedUser, final Program selectedProgram) {
-        selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
-        applicationFormUserRoleService.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
-        if (selectedUser.getProgramsOfWhichAdministrator().isEmpty()) {
-            selectedUser.removeRole(Authority.ADMINISTRATOR);
-        }
-        selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
-        applicationFormUserRoleService.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
-        if (selectedUser.getProgramsOfWhichApprover().isEmpty()) {
-            selectedUser.removeRole(Authority.APPROVER);
-        }
-        selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
-        applicationFormUserRoleService.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.VIEWER);
+    	deleteUserFromProgramAdministratorRole(selectedUser, selectedProgram);
+    	deleteUserFromProgramApproverRole(selectedUser, selectedProgram);
+    	deleteUserFromProgramViewerRole(selectedUser, selectedProgram);
+    	
         userDAO.save(selectedUser);
     }
+    
+    private void deleteUserFromProgramAdministratorRole(final RegisteredUser selectedUser, final Program selectedProgram) {
+        selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
+        
+    	if (selectedUser.getProgramsOfWhichAdministrator().isEmpty()) {
+            selectedUser.removeRole(Authority.ADMINISTRATOR);
+        }
+    }
+    
+    private void deleteUserFromProgramApproverRole(final RegisteredUser selectedUser, final Program selectedProgram) {
+    	selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
+    	
+    	if (selectedUser.getProgramsOfWhichApprover().isEmpty()) {
+            selectedUser.removeRole(Authority.APPROVER);
+        }
+    }
+    
+    private void deleteUserFromProgramViewerRole(final RegisteredUser selectedUser, final Program selectedProgram) {
+    	selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
+    	
+    	if (selectedUser.getProgramsOfWhichViewer().isEmpty()) {
+            selectedUser.removeRole(Authority.VIEWER);
+        }
+    }
 
-    private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+    private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority... newAuthorities) {
         if (newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
             selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);
-            applicationFormUserRoleService.createUserInProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
-        } else if (!newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR)
-                && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
-            selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
-            applicationFormUserRoleService.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
+        } else if (!newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
+        	deleteUserFromProgramAdministratorRole(selectedUser, selectedProgram);
         }
     }
 
-    private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+    private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority... newAuthorities) {
         if (newAuthoritiesContains(newAuthorities, Authority.APPROVER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichApprover())) {
             selectedUser.getProgramsOfWhichApprover().add(selectedProgram);
-            applicationFormUserRoleService.createUserInProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
         } else if (!newAuthoritiesContains(newAuthorities, Authority.APPROVER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichApprover())) {
-            selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
-            applicationFormUserRoleService.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
+        	deleteUserFromProgramApproverRole(selectedUser, selectedProgram);
         }
     }
 
-    private void addOrRemoveFromProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+    private void addOrRemoveFromProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority... newAuthorities) {
         if (newAuthoritiesContains(newAuthorities, Authority.VIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichViewer())) {
             selectedUser.getProgramsOfWhichViewer().add(selectedProgram);
-            applicationFormUserRoleService.createUserInProgramRole(selectedUser, selectedProgram, Authority.VIEWER);
         } else if (!newAuthoritiesContains(newAuthorities, Authority.VIEWER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichViewer())) {
-            selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
-            applicationFormUserRoleService.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.VIEWER);
-        }
-    }
-
-    private void addToRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities, Authority authority) {
-        if (!selectedUser.isInRole(authority) && newAuthoritiesContains(newAuthorities, authority)) {
-            selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
-            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
-            	applicationFormUserRoleService.createUserInRole(selectedUser, authority);
-            }
+        	deleteUserFromProgramViewerRole(selectedUser, selectedProgram);
         }
     }
 
@@ -196,76 +197,78 @@ public class UserService {
         return Arrays.asList(newAuthorities).contains(authority);
     }
     
-    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, 
-    		final Authority... authorities) {
+    private RegisteredUser createRegisteredUser(final String firstname, final String lastname, final String email) {
+        RegisteredUser user = new RegisteredUser();
+        user.setFirstName(firstname);
+        user.setLastName(lastname);
+        user.setUsername(email);
+        user.setEmail(email);
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setEnabled(false);
+        user.setCredentialsNonExpired(true);
+        user.setActivationCode(encryptionUtils.generateUUID());
+        return user;
+    }
+    
+    public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email, Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
         
         if (newUser != null) {
-            throw new IllegalStateException(String.format("user with email: %s already exists!", email));
+            throw new IllegalStateException(String.format("User with email: %s already exists!", email));
         }
-        
-        newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
-        userDAO.save(newUser);
+    	
+        newUser = createRegisteredUser(firstname, lastname, email);
+        List<Role> userRoles = newUser.getRoles();
         
         for (Authority authority : authorities) {
-            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
-            	applicationFormUserRoleService.createUserInRole(newUser, authority);
-            }
+            userRoles.add(roleDAO.getRoleByAuthority(authority));
         }
         
+        userRoles.add(roleDAO.getRoleByAuthority(Authority.SAFETYNET));
+        userDAO.save(newUser);
         return newUser;
     }
 
     public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, 
     		final DirectURLsEnum directURL, final ApplicationForm application, final Authority... authorities) {
-        RegisteredUser newUser = createNewUserInRole(firstName, lastName, email, authorities);
-        setDirectURLAndSaveUser(directURL, application, newUser);
-        return newUser;
-    }
-
-    public void setDirectURLAndSaveUser(DirectURLsEnum directURL, ApplicationForm application, RegisteredUser newUser) {
+        RegisteredUser newUser = createNewUserInRoles(firstName, lastName, email, authorities);
+        
         if (directURL != null && application != null) {
             newUser.setDirectToUrl(directURL.displayValue() + application.getApplicationNumber());
         }
+        
         userDAO.save(newUser);
+        return newUser;
     }
-
+    
     public RegisteredUser createNewUserForProgramme(final String firstName, final String lastName, final String email, final Program program,
             final Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
 
         if (newUser != null) {
-            throw new IllegalStateException(String.format("user with email: %s already exists!", email));
+            throw new IllegalStateException(String.format("User with email: %s already exists!", email));
         }
 
         List<Authority> authList = new ArrayList<Authority>(Arrays.asList(authorities));
-
-        newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authList);
-        if (authList.contains(Authority.SUPERADMINISTRATOR)) {
-            addPendingRoleNotificationToUser(newUser, Authority.SUPERADMINISTRATOR, null);
-            applicationFormUserRoleService.createUserInRole(newUser, Authority.SUPERADMINISTRATOR);
-        }
+        newUser = createNewUserInRoles(firstName, lastName, email, authorities);
 
         if (authList.contains(Authority.ADMINISTRATOR)) {
             newUser.getProgramsOfWhichAdministrator().add(program);
             addPendingRoleNotificationToUser(newUser, Authority.ADMINISTRATOR, program);
-            applicationFormUserRoleService.createUserInProgramRole(newUser, program, Authority.ADMINISTRATOR);
         }
 
         if (authList.contains(Authority.APPROVER)) {
             newUser.getProgramsOfWhichApprover().add(program);
             addPendingRoleNotificationToUser(newUser, Authority.APPROVER, program);
-            applicationFormUserRoleService.createUserInProgramRole(newUser, program, Authority.APPROVER);
         }
 
         if (authList.contains(Authority.VIEWER)) {
             newUser.getProgramsOfWhichViewer().add(program);
             addPendingRoleNotificationToUser(newUser, Authority.VIEWER, program);
-            applicationFormUserRoleService.createUserInProgramRole(newUser, program, Authority.VIEWER);
         }
 
-        userDAO.save(newUser);
-        
+        userDAO.save(newUser);    
         return newUser;
     }
 
@@ -285,8 +288,8 @@ public class UserService {
 
     public void resetPassword(String email) {
         RegisteredUser storedUser = userDAO.getUserByEmailIncludingDisabledAccounts(email);
-        if (storedUser == null) { // user-mail not found -> ignore
-            log.info("reset password request failed, e-mail not found: " + email);
+        if (storedUser == null) {
+            log.info("Reset password request failed, e-mail not found: " + email + ".");
             return;
         }
         try {

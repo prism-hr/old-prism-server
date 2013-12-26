@@ -39,5 +39,8 @@ public enum Authority {
     STATEADMINISTRATOR,
     
     /* A user that an applicant suggests as their supervisor */
-    SUGGESTEDSUPERVISOR
+    SUGGESTEDSUPERVISOR,
+    
+    /* Allows a user with no active role to continue to log in */
+    SAFETYNET
 }

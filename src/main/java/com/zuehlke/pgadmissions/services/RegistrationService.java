@@ -48,11 +48,9 @@ public class RegistrationService {
 	private final RefereeDAO refereeDAO;
 	
 	private final MailSendingService mailService;
-
-	private final String host;
 	
 	public RegistrationService() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -64,8 +62,7 @@ public class RegistrationService {
 			final ReviewerDAO reviewerDAO, 
 			final SupervisorDAO supervisorDAO, 
 			final RefereeDAO refereeDAO,
-			final MailSendingService mailService,
-			@Value("${application.host}") final String host) {
+			final MailSendingService mailService) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
@@ -74,7 +71,6 @@ public class RegistrationService {
 		this.mailService = mailService;
 		this.supervisorDAO = supervisorDAO;
 		this.refereeDAO = refereeDAO;
-		this.host = host;
 	}
 
 	public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, String queryString) {
@@ -144,14 +140,6 @@ public class RegistrationService {
 		} catch (Exception e) {
 			log.warn("{}", e);
 		}
-	}
-
-	Map<String, Object> populateModelForRegistrationConfirmation(RegisteredUser newUser) {
-		Map<String, Object> model = modelMap();
-		model.put("user", newUser);
-		model.put("host", host);
-		model.put("action", getRegistrationConfirmationAction(newUser));
-		return model;
 	}
 
 	public RegisteredUser findUserForActivationCode(String activationCode) {

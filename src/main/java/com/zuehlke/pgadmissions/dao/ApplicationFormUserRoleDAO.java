@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -69,6 +70,12 @@ public class ApplicationFormUserRoleDAO {
                 .add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.ge("role.updateVisibility", updateVisibility))
                 .setProjection(Projections.max("updateTimestamp")).uniqueResult();
+    }
+    
+    public List<ApplicationFormUserRole> findByUserAndAuthority(RegisteredUser user, Authority authority) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .add(Restrictions.eq("user", user))
+                .add(Restrictions.eq("role.id", authority)).list();
     }
     
     public List<ApplicationFormUserRole>findByUserAndRoleWithOutstandingActions(RegisteredUser registeredUser, Role role) {
@@ -186,6 +193,15 @@ public class ApplicationFormUserRoleDAO {
     	query.executeUpdate();
     }
     
+    public void insertUserInProjectRole(RegisteredUser registeredUser, Project project, Authority authority) {
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL INSERT_USER_IN_PROJECT_ROLE(?, ?, ?);")
+	    		.setInteger(0, registeredUser.getId())
+	    		.setInteger(1, project.getId())
+	    		.setString(2, authority.toString());
+    	query.executeUpdate();
+    }
+    
     public void deleteUserFromRole (RegisteredUser registeredUser, Authority authority) {
     	Query query = sessionFactory.getCurrentSession()
     		.createSQLQuery("CALL DELETE_USER_FROM_ROLE(?, ?);")
@@ -202,6 +218,15 @@ public class ApplicationFormUserRoleDAO {
 				.setString(2, authority.toString());
 		query.executeUpdate();
 	}
+    
+    public void deleteUserFromProjectRole (RegisteredUser registeredUser, Project project, Authority authority) {
+		Query query = sessionFactory.getCurrentSession()
+				.createSQLQuery("CALL DELETE_USER_FROM_PROJECT_ROLE(?, ?, ?);")
+					.setInteger(0, registeredUser.getId())
+					.setInteger(1, project.getId())
+					.setString(2, authority.toString());
+			query.executeUpdate();
+    }
 
 	public void updateRaisesUrgentFlag() {
 		Query query = sessionFactory.getCurrentSession().

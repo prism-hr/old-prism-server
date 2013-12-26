@@ -16,10 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
@@ -28,7 +27,7 @@ public class CreateNewReviewerController {
 
 	private static final String CREATE_REVIEWER_SECTION = "/private/staff/reviewer/create_reviewer_section";
 	private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
-	private final UserService userService;
+	private final ApplicationFormUserRoleService applicationFormUserRoleService;
 	private final ApplicationsService applicationsService;
 	private final NewUserByAdminValidator reviewerValidator;
 
@@ -37,9 +36,9 @@ public class CreateNewReviewerController {
 	}
 
 	@Autowired
-	public CreateNewReviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator) {
+	public CreateNewReviewerController(ApplicationsService applicationsService, ApplicationFormUserRoleService applicationFormUserRoleService, NewUserByAdminValidator reviewerValidator) {
 				this.applicationsService = applicationsService;
-				this.userService = userService;
+				this.applicationFormUserRoleService= applicationFormUserRoleService;
 				this.reviewerValidator = reviewerValidator;
 	}
 
@@ -49,17 +48,11 @@ public class CreateNewReviewerController {
 		if (bindingResult.hasErrors()) {
 			return new ModelAndView("/private/staff/reviewer/create_reviewer_section");
 		}
-		ModelAndView modelAndView = new ModelAndView(JSON_VIEW);
-		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(suggestedNewReviewerUser.getEmail());
-		if (existingUser != null) {
-			modelAndView.getModel().put("isNew", false);		
-			modelAndView.getModel().put("user", existingUser);
-			return modelAndView;
-		}
 		
-		modelAndView.getModel().put("isNew", true);
-		RegisteredUser newUser = userService.createNewUserInRoles(suggestedNewReviewerUser.getFirstName(), suggestedNewReviewerUser.getLastName(), suggestedNewReviewerUser.getEmail(), Authority.REVIEWER);
-		modelAndView.getModel().put("user", newUser);
+		ModelAndView modelAndView = new ModelAndView(JSON_VIEW);
+		RegisteredUser userToAssign = applicationFormUserRoleService.createRegisteredUser(suggestedNewReviewerUser.getFirstName(), suggestedNewReviewerUser.getLastName(), suggestedNewReviewerUser.getEmail());
+		modelAndView.getModel().put("isNew", applicationFormUserRoleService.isNewlyCreatedUser(userToAssign));		
+		modelAndView.getModel().put("user", userToAssign);
 		return modelAndView;
 	}
 

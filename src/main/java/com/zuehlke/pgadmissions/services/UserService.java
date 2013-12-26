@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -33,6 +35,7 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserDAO userDAO;
+    private final ProjectDAO projectDAO;
     private final RoleDAO roleDAO;
     private final ApplicationsFilteringDAO filteringDAO;
     private final EncryptionUtils encryptionUtils;
@@ -40,13 +43,14 @@ public class UserService {
     private final ProgramsService programsService;
 
     public UserService() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, EncryptionUtils encryptionUtils,
+    public UserService(UserDAO userDAO, ProjectDAO projectDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, EncryptionUtils encryptionUtils,
             MailSendingService mailService, ProgramsService programsService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.userDAO = userDAO;
+        this.projectDAO = projectDAO;
         this.roleDAO = roleDAO;
         this.filteringDAO = filteringDAO;
         this.encryptionUtils = encryptionUtils;
@@ -102,23 +106,27 @@ public class UserService {
         return user;
     }
 
-    public void addRoleToUser(RegisteredUser user, Authority authority) {
-    	Role roleToAssign = roleDAO.getRoleByAuthority(authority);
-    	List<Role> userRoles = user.getRoles();
-    	
-    	if (!userRoles.contains(roleToAssign)) {
-            user.getRoles().add(roleDAO.getRoleByAuthority(authority));
-            
-            if (BooleanUtils.isTrue(roleToAssign.getDoSendRoleNotification())) {
-            	addPendingRoleNotification(user, authority);
-            }
+    protected void grantRolesToUser(RegisteredUser user, Authority... authorities) {
+    	for (Authority authority : authorities) {
+	    	Role roleToAssign = roleDAO.getRoleByAuthority(authority);
+	    	List<Role> userRoles = user.getRoles();
+	    	
+	    	if (!userRoles.contains(roleToAssign)) {
+	            user.getRoles().add(roleDAO.getRoleByAuthority(authority));
+	            if (BooleanUtils.isTrue(roleToAssign.getDoSendRoleNotification())) {
+	            	addPendingRoleNotification(user, authority);
+	            }
+	    	}
     	}
     	
     	userDAO.save(user);
     }
     
-    protected void revokeRoleFromUser(RegisteredUser user, Authority authority) {
-    	user.getRoles().remove(roleDAO.getRoleByAuthority(authority));
+    protected void revokeRolesFromUser(RegisteredUser user, Authority... authorities) {
+    	for (Authority authority : authorities) {
+	    	user.getRoles().remove(roleDAO.getRoleByAuthority(authority));
+	    	userDAO.save(user);
+    	}
     }
 
     protected void updateUserProgramRoles(final RegisteredUser selectedUser, final Program selectedProgram, final Authority... newAuthorities) {
@@ -131,15 +139,22 @@ public class UserService {
         updateProgramsOfWhichUserIsAdministrator(selectedUser, selectedProgram, newAuthorities);
         updateProgramsOfWhichUserIsApprover(selectedUser, selectedProgram, newAuthorities);
         updateProgramsOfWhichUserIsViewer(selectedUser, selectedProgram, newAuthorities);
-
+        userDAO.save(selectedUser);
+    }
+    
+    protected void updateUserProjectRoles(final RegisteredUser selectedUser, final Project selectedProject, final Authority... newAuthorities) {
+        for (Authority authority : newAuthorities) {
+            if (!selectedUser.isInRole(authority)) {
+                selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            }
+        }
         userDAO.save(selectedUser);
     }
 
     protected void deleteUserFromProgramme(final RegisteredUser selectedUser, final Program selectedProgram) {
     	deleteUserFromProgramAdministratorRole(selectedUser, selectedProgram);
     	deleteUserFromProgramApproverRole(selectedUser, selectedProgram);
-    	deleteUserFromProgramViewerRole(selectedUser, selectedProgram);
-    	
+    	deleteUserFromProgramViewerRole(selectedUser, selectedProgram);	
         userDAO.save(selectedUser);
     }
     
@@ -194,6 +209,13 @@ public class UserService {
         }
     }
     
+    protected void deleteUserFromProject(final RegisteredUser selectedUser, final Project selectedProject) {
+    	if (projectDAO.getProjectsOfWhichAdministrator(selectedUser).isEmpty()) {
+            selectedUser.removeRole(Authority.PROJECTADMINISTRATOR);
+        }
+    	userDAO.save(selectedUser);
+    }
+    
     private void addPendingRoleNotification(RegisteredUser selectedUser, Authority authority) {
         PendingRoleNotification pendingRoleNotification = new PendingRoleNotification();
         pendingRoleNotification.setRole(roleDAO.getRoleByAuthority(authority));
@@ -218,16 +240,21 @@ public class UserService {
     }
     
     public RegisteredUser createRegisteredUser(final String firstname, final String lastname, final String email) {
-        RegisteredUser user = new RegisteredUser();
-        user.setFirstName(firstname);
-        user.setLastName(lastname);
-        user.setUsername(email);
-        user.setEmail(email);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setEnabled(false);
-        user.setCredentialsNonExpired(true);
-        user.setActivationCode(encryptionUtils.generateUUID());
+        RegisteredUser user = this.getUserByEmailIncludingDisabledAccounts(email);
+        if (user == null) {
+	        user = new RegisteredUser();
+	        user.setFirstName(firstname);
+	        user.setLastName(lastname);
+	        user.setUsername(email);
+	        user.setEmail(email);
+	        user.setAccountNonExpired(true);
+	        user.setAccountNonLocked(true);
+	        user.setEnabled(false);
+	        user.setCredentialsNonExpired(true);
+	        user.setActivationCode(encryptionUtils.generateUUID());
+	        user.getRoles().add(roleDAO.getRoleByAuthority(Authority.SAFETYNET));
+	        userDAO.save(user);
+        }
         return user;
     }
 
@@ -359,6 +386,10 @@ public class UserService {
 
     public List<RegisteredUser> getUsersWithUpi(final String upi) {
         return userDAO.getUsersWithUpi(upi);
+    }
+    
+    public Boolean isNewlyCreatedUser (RegisteredUser registeredUser) {
+    	return registeredUser.getPassword() == null;
     }
     
 }

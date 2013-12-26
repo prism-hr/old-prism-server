@@ -304,14 +304,7 @@ public class StateTransitionController {
     	
     	if (BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())) {
 	    	if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
-		    	String delegateAdministratorEmail = stateChangeDTO.getDelegateEmail();
-		    	RegisteredUser userToSaveAsDelegate = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
-		    	
-		    	if (userToSaveAsDelegate == null) {
-		    		userToSaveAsDelegate = applicationFormUserRoleService.createRegisteredUser(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), delegateAdministratorEmail);
-		    	}
-		    	
-		    	applicationFormUserRoleService.addRoleToUser(userToSaveAsDelegate, Authority.STATEADMINISTRATOR);
+		    	RegisteredUser userToSaveAsDelegate = applicationFormUserRoleService.createRegisteredUser(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), stateChangeDTO.getDelegateEmail());
 		    	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
 	    	}
     	} else {

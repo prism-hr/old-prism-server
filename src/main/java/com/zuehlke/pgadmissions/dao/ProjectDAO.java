@@ -49,5 +49,13 @@ public class ProjectDAO {
         			add(Restrictions.eq("primarySupervisor", author))).
         		add(Restrictions.eq("disabled", false)).list();
     }
+    
+    public List<Project> getProjectsOfWhichAdministrator(RegisteredUser registeredUser) {
+        return sessionFactory.getCurrentSession().createCriteria(Project.class).
+        		add(Restrictions.disjunction().
+        			add(Restrictions.eq("administrator", registeredUser)).
+        			add(Restrictions.eq("primarySupervisor", registeredUser))).
+        		add(Restrictions.eq("disabled", false)).list();
+    }
 
 }

@@ -84,13 +84,21 @@ public class ApplicationFormDAO {
     }
 
     public List<ApplicationForm> getApplicationsByApplicantAndProgram(RegisteredUser applicant, Program program) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+        		.add(Restrictions.eq("applicant", applicant))
                 .add(Restrictions.eq("program", program)).list();
     }
 
     public List<ApplicationForm> getApplicationsByApplicantAndProgramAndProject(RegisteredUser applicant, Program program, Project project) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
-                .add(Restrictions.eq("program", program)).add(Restrictions.eq("project", project)).list();
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+        		.add(Restrictions.eq("applicant", applicant))
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("project", project)).list();
+    }
+    
+    public List<ApplicationForm> getApplicationsByProject(Project project) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .add(Restrictions.eq("project", project)).list();
     }
     
 }

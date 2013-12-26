@@ -165,14 +165,9 @@ public class ManageUsersController {
             return NEW_USER_VIEW_NAME;
         }
         
-        String userToAssignToRoleEmail = userDTO.getEmail();
-        RegisteredUser userToAssignToRole = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
+        RegisteredUser userToAssign = applicationFormUserRoleService.createRegisteredUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        applicationFormUserRoleService.grantUserSystemRoles(userToAssign, Authority.SUPERADMINISTRATOR);
         
-        if (userToAssignToRole == null) {
-        	userToAssignToRole = applicationFormUserRoleService.createRegisteredUser(userDTO.getFirstName(), userDTO.getLastName(), userToAssignToRoleEmail);
-        }
-        
-        applicationFormUserRoleService.createUserInRole(userToAssignToRole, Authority.SUPERADMINISTRATOR);
         return "redirect:/manageUsers/edit";
 
     }
@@ -187,14 +182,9 @@ public class ManageUsersController {
             return NEW_USER_VIEW_NAME;
         }
 
-        String userToAssignToRoleEmail = userDTO.getEmail();
-        RegisteredUser userToAssignToRole = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
-        
-        if (userToAssignToRole == null) {
-        	userToAssignToRole = applicationFormUserRoleService.createRegisteredUser(userDTO.getFirstName(), userDTO.getLastName(), userToAssignToRoleEmail);
-        }
-        
-        applicationFormUserRoleService.createUserInProgramRoles(userToAssignToRole, userDTO.getSelectedProgram(), userDTO.getSelectedAuthorities());
+        RegisteredUser userToAssign = applicationFormUserRoleService.createRegisteredUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        Program program = userDTO.getSelectedProgram();
+        applicationFormUserRoleService.grantUserProgramRoles(userToAssign, program, userDTO.getSelectedAuthorities());
 
         if (userDTO.getSelectedProgram() == null) {
             return "redirect:/manageUsers/edit";

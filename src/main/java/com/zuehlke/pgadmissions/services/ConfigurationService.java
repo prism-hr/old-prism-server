@@ -110,28 +110,16 @@ public class ConfigurationService {
         }
         
         for (Person person : registryContacts) {
-            saveRegistryContactsAsUsers(person, requestedBy);
+        	RegisteredUser userToAssign = applicationFormUserRoleService.createRegisteredUser(person.getFirstname(), person.getLastname(), person.getEmail());
+        	applicationFormUserRoleService.grantUserSystemRoles(userToAssign, Authority.ADMITTER);
         }
     }
     
     private void removeAdmitterRoleToUser(String email) {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(email);
-        if (user!=null) {
-            user.removeRole(Authority.ADMITTER);
-            userDAO.save(user);
-            applicationFormUserRoleService.revokeUserFromRole(user, Authority.ADMITTER);
+        if (user != null) {
+            applicationFormUserRoleService.revokeUserFromSystemRoles(user, Authority.ADMITTER);
         }
-    }
-
-    private void saveRegistryContactsAsUsers(final Person registryContact, RegisteredUser requestedBy) {
-    	String userToAssignToRoleEmail = registryContact.getEmail();
-        RegisteredUser userToAssignToRole = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(userToAssignToRoleEmail);
-        
-        if (userToAssignToRole == null) {
-        	userToAssignToRole = applicationFormUserRoleService.createRegisteredUser(registryContact.getFirstname(), registryContact.getLastname(), userToAssignToRoleEmail);
-        }
-        
-        applicationFormUserRoleService.createUserInRole(userToAssignToRole, Authority.ADMITTER);
     }
 
     @Transactional

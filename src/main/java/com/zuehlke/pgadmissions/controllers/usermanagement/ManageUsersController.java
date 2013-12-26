@@ -166,8 +166,7 @@ public class ManageUsersController {
         if (existingUser != null) {
             userService.updateUserWithNewRoles(existingUser, null, Authority.SUPERADMINISTRATOR);
         } else {
-            existingUser = userService.createNewUserForProgramme(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), null,
-                    Authority.SUPERADMINISTRATOR);
+            existingUser = userService.createNewUserInRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), Authority.SUPERADMINISTRATOR);
         }
 
         return "redirect:/manageUsers/edit";

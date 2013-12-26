@@ -308,10 +308,10 @@ public class StateTransitionController {
 		    	RegisteredUser userToSaveAsDelegate = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
 		    	
 		    	if (userToSaveAsDelegate == null) {
-		    		userToSaveAsDelegate = applicationFormUserRoleService.createNewUserInRoles(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), 
-		    				delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
+		    		userToSaveAsDelegate = applicationFormUserRoleService.createRegisteredUser(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), delegateAdministratorEmail);
 		    	}
 		    	
+		    	applicationFormUserRoleService.addRoleToUser(userToSaveAsDelegate, Authority.STATEADMINISTRATOR);
 		    	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
 	    	}
     	} else {

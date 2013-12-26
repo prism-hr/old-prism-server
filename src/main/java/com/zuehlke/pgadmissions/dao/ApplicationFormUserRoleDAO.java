@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -50,24 +51,35 @@ public class ApplicationFormUserRoleDAO {
     }
 
     public List<ApplicationFormUserRole> findByApplicationFormAndUser(ApplicationForm applicationForm, RegisteredUser user) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user)).list();
-    }
-
-    public Date findUpdateTimestampByApplicationFormAndAuthorityUpdateVisility(ApplicationForm applicationForm, ApplicationUpdateScope updateVisibility) {
-        return (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).createAlias("role", "role")
-                .add(Restrictions.eq("applicationForm", applicationForm)).add(Restrictions.ge("role.updateVisibility", updateVisibility))
-                .setProjection(Projections.projectionList().add(Projections.max("updateTimestamp"))).uniqueResult();
     }
 
     public ApplicationFormUserRole findByApplicationFormAndUserAndAuthority(ApplicationForm applicationForm, RegisteredUser user, Authority authority) {
         return (ApplicationFormUserRole) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .add(Restrictions.eq("applicationForm", applicationForm)).add(Restrictions.eq("user", user)).add(Restrictions.eq("role.id", authority))
-                .uniqueResult();
+                .add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.eq("user", user))
+                .add(Restrictions.eq("role.id", authority)).uniqueResult();
+    }
+    
+    public Date findUpdateTimestampByApplicationFormAndAuthorityUpdateVisility(ApplicationForm applicationForm, ApplicationUpdateScope updateVisibility) {
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.createAlias("role", "role")
+                .add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.ge("role.updateVisibility", updateVisibility))
+                .setProjection(Projections.max("updateTimestamp")).uniqueResult();
+    }
+    
+    public List<ApplicationFormUserRole>findByUserAndRoleWithOutstandingActions(RegisteredUser registeredUser, Role role) {
+    	return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("role", role)).list();
     }
 
     public List<ApplicationFormUserRole> findByApplicationFormAndAuthorities(ApplicationForm applicationForm, Authority... authorities) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.in("role.id", authorities)).list();
     }
 

@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 
 @Service
 public class ConfigurationService {
@@ -44,7 +43,7 @@ public class ConfigurationService {
     
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
     
-    private final UserFactory userFactory;
+    private final UserService userService;
     
 
     public ConfigurationService() {
@@ -55,14 +54,14 @@ public class ConfigurationService {
     public ConfigurationService(final StageDurationDAO stageDurationDAO,
             final ReminderIntervalDAO reminderIntervalDAO, final NotificationsDurationDAO notificationsDurationDAO,
             final PersonDAO personDAO, final UserDAO userDAO, final ApplicationFormUserRoleService applicationFormUserRoleService,
-            final UserFactory userFactory, final RoleDAO roleDAO) {
+            final UserService userService, final RoleDAO roleDAO) {
         this.stageDurationDAO = stageDurationDAO;
         this.reminderIntervalDAO = reminderIntervalDAO;
         this.notificationsDurationDAO = notificationsDurationDAO;
         this.personDAO = personDAO;
         this.userDAO  = userDAO;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.userFactory = userFactory;
+        this.userService = userService;
         this.roleDAO = roleDAO;
     }
 
@@ -143,7 +142,7 @@ public class ConfigurationService {
         viewerNotification.setAddedByUser(requestedBy);
         viewerNotification.setRole(roleDAO.getRoleByAuthority(Authority.VIEWER));
         if (user == null) {
-            user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(), Authority.VIEWER, Authority.ADMITTER);
+            user = userService.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(), Authority.VIEWER, Authority.ADMITTER);
             user.getPendingRoleNotifications().add(viewerNotification);
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);

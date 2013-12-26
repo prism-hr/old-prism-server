@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
@@ -39,33 +38,25 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
-public class ApplicationFormUserRoleService {
+public class ApplicationFormUserRoleService extends UserService {
 
     private final ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
     private final RoleDAO roleDAO;
 
-    private final UserDAO userDAO;
-    
-    private final EncryptionUtils encryptionUtils;
-
     private final Map<ApplicationFormStatus, ApplicationFormAction> initiateStageMap = Maps.newHashMap();
 
     public ApplicationFormUserRoleService() {
-        this(null, null, null, null);
+        this(null, null);
     }
 
     @Autowired
-    public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, RoleDAO roleDAO, UserDAO userDAO, 
-    		EncryptionUtils encryptionUtils) {
+    public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, RoleDAO roleDAO) {
         this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
         this.roleDAO = roleDAO;
-        this.userDAO = userDAO;
-        this.encryptionUtils = encryptionUtils;
 
         initiateStageMap.put(ApplicationFormStatus.REVIEW, ApplicationFormAction.ASSIGN_REVIEWERS);
         initiateStageMap.put(ApplicationFormStatus.INTERVIEW, ApplicationFormAction.ASSIGN_INTERVIEWERS);
@@ -85,21 +76,10 @@ public class ApplicationFormUserRoleService {
         }
 
         for (SuggestedSupervisor suggestedSupervisor : applicationForm.getProgrammeDetails().getSuggestedSupervisors()) {
-            String supervisorEmail = suggestedSupervisor.getEmail();
-            RegisteredUser userToSaveAsSuggestedSupervisor = userDAO.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
-
+            RegisteredUser userToSaveAsSuggestedSupervisor = super.getUserByEmail(suggestedSupervisor.getEmail());
+           
             if (userToSaveAsSuggestedSupervisor == null) {
-                userToSaveAsSuggestedSupervisor = new RegisteredUser();
-                userToSaveAsSuggestedSupervisor.setFirstName(suggestedSupervisor.getFirstname());
-                userToSaveAsSuggestedSupervisor.setLastName(suggestedSupervisor.getLastname());
-                userToSaveAsSuggestedSupervisor.setUsername(suggestedSupervisor.getEmail());
-                userToSaveAsSuggestedSupervisor.setEmail(suggestedSupervisor.getEmail());
-                userToSaveAsSuggestedSupervisor.setAccountNonExpired(true);
-                userToSaveAsSuggestedSupervisor.setAccountNonLocked(true);
-                userToSaveAsSuggestedSupervisor.setEnabled(false);
-                userToSaveAsSuggestedSupervisor.setCredentialsNonExpired(true);
-                userToSaveAsSuggestedSupervisor.setActivationCode(encryptionUtils.generateUUID());
-                userDAO.save(userToSaveAsSuggestedSupervisor);
+            	super.createNewUserInRoles(suggestedSupervisor.getFirstname(), suggestedSupervisor.getLastname(), suggestedSupervisor.getEmail(), Authority.SUGGESTEDSUPERVISOR);
             }
             
             createApplicationFormUserRole(applicationForm, userToSaveAsSuggestedSupervisor, Authority.SUGGESTEDSUPERVISOR, true);
@@ -115,7 +95,7 @@ public class ApplicationFormUserRoleService {
         }
 
         Boolean anyUnsure = application.getValidationComment().isAtLeastOneAnswerUnsure();
-        List<RegisteredUser> admitters = userDAO.getAdmitters();
+        List<RegisteredUser> admitters = super.getUsersInRole(Authority.ADMITTER);
         List<ApplicationFormUserRole> superadministratorRoles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.SUPERADMINISTRATOR);
         
         if (BooleanUtils.isTrue(anyUnsure)) {
@@ -155,7 +135,7 @@ public class ApplicationFormUserRoleService {
                         false, true));
             }
 
-            for (RegisteredUser superAdministrator : userDAO.getSuperadministrators()) {
+            for (RegisteredUser superAdministrator : super.getUsersInRole(Authority.SUPERADMINISTRATOR)) {
                 createApplicationFormUserRole(application, superAdministrator, Authority.SUPERADMINISTRATOR, false, 
                 		new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION, new Date(), false, true), 
                 		new ApplicationFormActionRequired(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE, new Date(), false, true));
@@ -341,6 +321,7 @@ public class ApplicationFormUserRoleService {
 
     public void createUserInRole(RegisteredUser registeredUser, Authority authority) {
         applicationFormUserRoleDAO.insertUserinRole(registeredUser, authority);
+        super.addRoleToUser(registeredUser, authority);
     }
 
     public void createUserInProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
@@ -376,9 +357,10 @@ public class ApplicationFormUserRoleService {
 
     private ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,
             Boolean interestedInApplicant, ApplicationFormActionRequired... actions) {
-
+        Role role = roleDAO.getRoleByAuthority(authority); 
+        super.addRoleToUser(user, authority);
+        
         ApplicationFormUserRole applicationFormUserRole = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(applicationForm, user, authority);
-        Role role = roleDAO.getRoleByAuthority(authority);
 
         if (applicationFormUserRole == null) {
             applicationFormUserRole = new ApplicationFormUserRole();
@@ -413,7 +395,7 @@ public class ApplicationFormUserRoleService {
     private void assignToAdministrators(ApplicationForm applicationForm, ApplicationFormAction action, Date dueDate, Boolean bindDeadlineToDueDate) {
         Map<RegisteredUser, Authority> administrators = Maps.newHashMap();
 
-        for (RegisteredUser superAdministrator : userDAO.getSuperadministrators()) {
+        for (RegisteredUser superAdministrator : super.getUsersInRole(Authority.SUPERADMINISTRATOR)) {
             administrators.put(superAdministrator, Authority.SUPERADMINISTRATOR);
         }
 

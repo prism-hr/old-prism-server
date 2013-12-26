@@ -23,7 +23,8 @@ public class RoleDAO {
 	}
 
 	public Role getRoleByAuthority(final Authority authority) {
-		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", authority)).uniqueResult();
+		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).
+				add(Restrictions.eq("id", authority)).uniqueResult();
 	}
 	
 }

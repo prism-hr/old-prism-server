@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -94,12 +93,10 @@ public class RegistrationService {
 	public RegisteredUser updateOrSaveUser(RegisteredUser pendingUser, String queryString) {
 		RegisteredUser user = null;
 		if (StringUtils.isNotEmpty(pendingUser.getActivationCode())) {
-		    // User has been invited to join PRISM
 		    user = userDAO.getUserByActivationCode(pendingUser.getActivationCode());
 		    user.setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
 	        user.setUsername(user.getEmail());
 		} else {
-		    // User is an applicant
 		    user = processPendingApplicantUser(pendingUser, queryString);
 		}
 		
@@ -174,9 +171,6 @@ public class RegistrationService {
 		}
 		if (user.getDirectToUrl().startsWith(DirectURLsEnum.ADD_REFERENCE.displayValue())) {
 			return "complete your reference";
-		}
-		if (user.getDirectToUrl().startsWith(DirectURLsEnum.ADD_REVIEW.displayValue())) {
-			return "complete your review";
 		}
 		return "view the application";
 	}

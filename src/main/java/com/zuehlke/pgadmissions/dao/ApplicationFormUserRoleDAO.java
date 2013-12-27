@@ -115,7 +115,7 @@ public class ApplicationFormUserRoleDAO {
     
     public List<ActionDefinition> findActionsByUserIdAndApplicationIdAndApplicationFormStatus(Integer registeredUserId, Integer applicationFormId, ApplicationFormStatus status) {
     	Query query = sessionFactory.getCurrentSession()
-    		.createSQLQuery("CALL SELECT_USER_APPLICATION_FORM_ACTION_LIST(?, ?, ?);")
+    		.createSQLQuery("CALL SELECT_APPLICATION_FORM_ACTION(?, ?, ?);")
 	    		.setInteger(0, registeredUserId)
 	    		.setInteger(1, applicationFormId)
 	    		.setString(2, status.toString());
@@ -178,7 +178,7 @@ public class ApplicationFormUserRoleDAO {
     
     public void insertUserinRole(RegisteredUser registeredUser, Authority authority) {
     	Query query = sessionFactory.getCurrentSession()
-    		.createSQLQuery("CALL INSERT_USER_IN_ROLE(?, ?);")
+    		.createSQLQuery("CALL INSERT_USER_IN_SYSTEM_ROLE(?, ?);")
 	    		.setInteger(0, registeredUser.getId())
 	    		.setString(1, authority.toString());
     		query.executeUpdate();
@@ -204,7 +204,7 @@ public class ApplicationFormUserRoleDAO {
     
     public void deleteUserFromRole (RegisteredUser registeredUser, Authority authority) {
     	Query query = sessionFactory.getCurrentSession()
-    		.createSQLQuery("CALL DELETE_USER_FROM_ROLE(?, ?);")
+    		.createSQLQuery("CALL DELETE_USER_FROM_SYSTEM_ROLE(?, ?);")
 	    		.setInteger(0, registeredUser.getId())
 	    		.setString(1, authority.toString());
     	query.executeUpdate();
@@ -239,7 +239,7 @@ public class ApplicationFormUserRoleDAO {
 		Session session = sessionFactory.getCurrentSession();
 		session.flush();
 		
-		Query query = session.createSQLQuery("CALL UPDATE_APPLICATION_FORM_ACTION_REQUIRED_DEADLINE(?, ?);")
+		Query query = session.createSQLQuery("CALL UPDATE_APPLICATION_FORM_DUE_DATE(?, ?);")
 			.setInteger(0, applicationForm.getId())
 			.setDate(1, deadlineTimestamp);
 		query.executeUpdate();
@@ -252,7 +252,7 @@ public class ApplicationFormUserRoleDAO {
 		session.flush();
 		
 		Query query = sessionFactory.getCurrentSession()
-			.createSQLQuery("CALL INSERT_APPLICATION_FORM_USER_ROLE_UPDATE(?, ?, ?, ?);")
+			.createSQLQuery("CALL INSERT_APPLICATION_FORM_UPDATE(?, ?, ?, ?);")
 				.setInteger(0, applicationForm.getId())
 				.setInteger(1, registeredUser.getId())
 				.setString(2, javaDateToMySQLDateString(updateTimestamp))

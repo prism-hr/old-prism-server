@@ -232,35 +232,29 @@ public class UserService {
 	        user.setEnabled(false);
 	        user.setCredentialsNonExpired(true);
 	        user.setActivationCode(encryptionUtils.generateUUID());
-	        user.getRoles().add(roleDAO.getRoleByAuthority(Authority.SAFETYNET));
 	        userDAO.save(user);
         }
         return user;
     }
     
-    public RegisteredUser enableApplicantUser(RegisteredUser pendingApplicantUser, String applyQueryString) {
-    	pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
-		pendingApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
-		pendingApplicantUser.setAccountNonExpired(true);
-		pendingApplicantUser.setAccountNonLocked(true);
-		pendingApplicantUser.setEnabled(false);
-		pendingApplicantUser.setCredentialsNonExpired(true);
-		pendingApplicantUser.setOriginalApplicationQueryString(applyQueryString);
-        pendingApplicantUser.getRoles().add(roleDAO.getRoleByAuthority(Authority.SAFETYNET));
-		pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
-		userDAO.save(pendingApplicantUser);
-		mailService.sendRegistrationConfirmation(pendingApplicantUser);
-		return pendingApplicantUser;
+    public RegisteredUser enableRegisteredUser(RegisteredUser newUser, String queryString) {
+    	newUser.setUsername(newUser.getEmail());
+		newUser.setPassword(encryptionUtils.getMD5Hash(newUser.getPassword()));
+		
+		if (StringUtils.isEmpty(newUser.getActivationCode())) {
+			newUser.setAccountNonExpired(true);
+			newUser.setAccountNonLocked(true);
+			newUser.setEnabled(false);
+			newUser.setCredentialsNonExpired(true);
+			newUser.setOriginalApplicationQueryString(queryString);
+			newUser.setActivationCode(encryptionUtils.generateUUID());
+		}
+		
+	    newUser.getRoles().add(roleDAO.getRoleByAuthority(Authority.SAFETYNET));
+		userDAO.save(newUser);
+		mailService.sendRegistrationConfirmation(newUser);
+		return newUser;
     }
-    
-    public RegisteredUser enableNonApplicantUser(RegisteredUser pendingNonApplicantUser) {
-	    pendingNonApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingNonApplicantUser.getPassword()));
-        pendingNonApplicantUser.setUsername(pendingNonApplicantUser.getEmail());
-		userDAO.save(pendingNonApplicantUser);
-		mailService.sendRegistrationConfirmation(pendingNonApplicantUser);
-		return pendingNonApplicantUser;
-    }
-
 
     public void updateCurrentUser(RegisteredUser user) {
         RegisteredUser currentUser = getCurrentUser();

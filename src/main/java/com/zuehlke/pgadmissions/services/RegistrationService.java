@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +30,7 @@ public class RegistrationService {
 	
 	private final RefereeDAO refereeDAO;
 	
-	private final ApplicationFormUserRoleService applicationFormUserRoleService;
+	private final UserService userService;
 	
 	public RegistrationService() {
 		this(null, null, null, null, null, null);
@@ -44,23 +43,17 @@ public class RegistrationService {
 			final ReviewerDAO reviewerDAO, 
 			final SupervisorDAO supervisorDAO, 
 			final RefereeDAO refereeDAO,
-			final ApplicationFormUserRoleService applicationFormUserRoleService) {
+			final UserService userService) {
 		this.userDAO = userDAO;
 		this.interviewerDAO = interviewerDAO;
 		this.reviewerDAO = reviewerDAO;
 		this.supervisorDAO = supervisorDAO;
 		this.refereeDAO = refereeDAO;
-		this.applicationFormUserRoleService = applicationFormUserRoleService;
+		this.userService = userService;
 	}
 
 	public RegisteredUser updateOrSaveUser(RegisteredUser pendingUser, String queryString) {
-		RegisteredUser user = null;
-		if (StringUtils.isNotEmpty(pendingUser.getActivationCode())) {
-		    user = applicationFormUserRoleService.enableNonApplicantUser(userDAO.getUserByActivationCode(pendingUser.getActivationCode()));
-		} else {
-		    user = applicationFormUserRoleService.enableApplicantUser(pendingUser, queryString);
-		}
-		return user;
+		return userService.enableRegisteredUser(pendingUser, queryString);
 	}
 
 	public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser user) {

@@ -276,14 +276,14 @@ public class ApplicationFormUserRoleDAO {
 	
 	public void deleteAllApplicationRoles (ApplicationForm applicationForm) {
 		Query query = sessionFactory.getCurrentSession()
-			.createSQLQuery("CALL DELETE_APPLICATION_FORM_ACTIONS(?);")
+			.createSQLQuery("CALL DELETE_APPLICATION_ROLES(?);")
 				.setInteger(0, applicationForm.getId());
 		query.executeUpdate();
 	}
 	
 	public void deleteAllStateRoles(ApplicationForm applicationForm) {
 		Query query = sessionFactory.getCurrentSession()
-			.createSQLQuery("CALL DELETE_ACTIONS_FOR_STATE_BOUNDED_WORKERS(?);")
+			.createSQLQuery("CALL DELETE_STATE_ROLES(?);")
 				.setInteger(0, applicationForm.getId());
 		query.executeUpdate();
 	}

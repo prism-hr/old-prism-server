@@ -35,8 +35,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
@@ -46,6 +44,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -88,9 +87,10 @@ public class PersonalDetailsController {
     private final EncryptionHelper encryptionHelper;
     private final PersonalDetailsUserValidator personalDetailsUserValidator;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final ContentAccessProvider contentAccessProvider;
 
     public PersonalDetailsController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -101,7 +101,7 @@ public class PersonalDetailsController {
             EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, PersonalDetailsService personalDetailsService,
             DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor,
             DocumentService documentService, EncryptionHelper encryptionHelper, PersonalDetailsUserValidator personalDetailsUserValidator,
-            final ApplicationFormUserRoleService applicationFormUserRoleService) {
+            final ApplicationFormUserRoleService applicationFormUserRoleService, ContentAccessProvider contentAccessProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -123,6 +123,7 @@ public class PersonalDetailsController {
         this.encryptionHelper = encryptionHelper;
         this.personalDetailsUserValidator = personalDetailsUserValidator;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.contentAccessProvider = contentAccessProvider;
     }
 
     @InitBinder(value = "personalDetails")
@@ -148,8 +149,7 @@ public class PersonalDetailsController {
     }
 
     @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
-    public String getPersonalDetailsView(@RequestParam String applicationId, Model model) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+    public String getPersonalDetailsView(Model model, @ModelAttribute ApplicationForm applicationForm) {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
 
         if (personalDetails.getLanguageQualifications().isEmpty()) {
@@ -164,11 +164,8 @@ public class PersonalDetailsController {
 
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
     public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult,
-            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model, SessionStatus sessionStatus) {
-        if (personalDetails.getApplication().isDecided()) {
-            throw new CannotUpdateApplicationException(personalDetails.getApplication().getApplicationNumber());
-        }
-
+            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model, 
+            @ModelAttribute ApplicationForm applicationForm, SessionStatus sessionStatus) {
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
             return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
         }
@@ -176,8 +173,6 @@ public class PersonalDetailsController {
         if (BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
             personalDetails.getLanguageQualifications().clear();
         }
-        
-        ApplicationForm applicationForm = personalDetails.getApplication();
         
         userService.updateCurrentUser(updatedUser);
         personalDetailsService.save(personalDetails);
@@ -196,7 +191,7 @@ public class PersonalDetailsController {
     @RequestMapping(value = "/deleteAllLanguageQualifications", method = RequestMethod.POST)
     public String deleteAllLanguageQualifications(@RequestParam(value = "englishFirstLanguage", required = false) Boolean englishFirstLanguage,
             @RequestParam(value = "languageQualificationAvailable", required = false) Boolean languageQualificationAvailable,
-            @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
+            @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model,  @ModelAttribute ApplicationForm applicationForm) {
         for (LanguageQualification languageQualification : personalDetails.getLanguageQualifications()) {
             languageQualification.setLanguageQualificationDocument(null);
         }
@@ -209,7 +204,7 @@ public class PersonalDetailsController {
     }
 
     @RequestMapping(value = "/deleteLanguageQualificationsDocument", method = RequestMethod.POST)
-    public String deleteLanguageQualificationsDocument(@RequestParam String documentId, Model model) {
+    public String deleteLanguageQualificationsDocument(@RequestParam String documentId, Model model, @ModelAttribute ApplicationForm applicationForm) {
         if (StringUtils.isNotBlank(documentId)) {
             documentService.delete(documentService.getDocumentById(encryptionHelper.decryptToInteger(documentId)));
         }
@@ -281,12 +276,10 @@ public class PersonalDetailsController {
         return applicationForm.getPersonalDetails();
     }
 
-    @ModelAttribute
+    @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
+        contentAccessProvider.validateCanEditAsApplicant(application, getCurrentUser());
         return application;
     }
 

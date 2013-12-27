@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -57,9 +58,11 @@ public class RegisterController {
 	private final ApplicationQueryStringParser applicationQueryStringParser;
 
 	private final AdvertService advertService;
+	
+	private final MailSendingService mailService;
 
 	public RegisterController() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -68,7 +71,8 @@ public class RegisterController {
 			ApplicationsService applicationsService,
 			ProgramsService programService,
 			ApplicationQueryStringParser applicationQueryStringParser,
-			EncryptionHelper encryptionHelper, AdvertService advertService) {
+			EncryptionHelper encryptionHelper, AdvertService advertService,
+			MailSendingService mailService) {
 		this.registerFormValidator = validator;
 		this.userService = userService;
 		this.registrationService = registrationService;
@@ -76,6 +80,7 @@ public class RegisterController {
 		this.programService = programService;
 		this.applicationQueryStringParser = applicationQueryStringParser;
 		this.advertService = advertService;
+		this.mailService = mailService;
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.GET)
@@ -115,7 +120,7 @@ public class RegisterController {
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
-		registrationService.sendConfirmationEmail(user);
+		mailService.sendRegistrationConfirmation(user);
 		model.addAttribute("pendingUser", user);
 		return REGISTER_COMPLETE_VIEW_NAME;
 	}

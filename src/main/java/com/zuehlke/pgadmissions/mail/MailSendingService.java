@@ -62,9 +62,6 @@ public class MailSendingService extends AbstractMailSendingService {
     }
 
     private void sendReferenceRequest(Referee referee, ApplicationForm applicationForm) {
-
-        processRefereeAndGetAsUser(referee);
-
         PrismEmailMessage message = null;
         try {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
@@ -296,15 +293,10 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendRegistrationConfirmation(RegisteredUser user, String action) {
+    public void sendRegistrationConfirmation(RegisteredUser user) {
         PrismEmailMessage message = null;
-        if (action == null) {
-            log.error("Error while sending confirmation email to registering user: action is null");
-            return;
-        }
-
         try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "action", "host" }, new Object[] { user, action, getHostName() });
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "host" }, new Object[] { user, getHostName() });
             String subject = resolveMessage(REGISTRATION_CONFIRMATION, (Object[]) null);
             message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
             sendEmail(message);

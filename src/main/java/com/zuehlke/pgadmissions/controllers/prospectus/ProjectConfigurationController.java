@@ -223,42 +223,24 @@ public class ProjectConfigurationController {
         if (!result.hasErrors()) {
         	Project toBeUpdated = projectDAO.getProjectById(projectDTO.getId());
         	RegisteredUser oldAdministrator = toBeUpdated.getAdministrator();
-        	RegisteredUser newAdministrator = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(projectDTO.getAdministrator().getEmail());
-        	if (oldAdministrator != null) {
-        		if (oldAdministrator != newAdministrator) {
-        			applicationFormUserRoleService.revokeUserFromProjectRoles(oldAdministrator, toBeUpdated, Authority.PROJECTADMINISTRATOR);
-        		}
-        	}
         	RegisteredUser oldPrimarySupervisor = toBeUpdated.getPrimarySupervisor();
-        	RegisteredUser newPrimarySupervisor = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(projectDTO.getPrimarySupervisor().getEmail());
-    		if (oldPrimarySupervisor != newPrimarySupervisor) {
-    			applicationFormUserRoleService.revokeUserFromProjectRoles(oldPrimarySupervisor, toBeUpdated, Authority.PROJECTADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR);
-    		}
         	RegisteredUser oldSecondarySupervisor = toBeUpdated.getSecondarySupervisor();
-        	RegisteredUser newSecondarySupervisor = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(projectDTO.getSecondarySupervisor().getEmail());
-        	if (oldSecondarySupervisor != null) {
-        		if (oldSecondarySupervisor != newSecondarySupervisor) {
-        			applicationFormUserRoleService.revokeUserFromProjectRoles(oldSecondarySupervisor, toBeUpdated, Authority.SUGGESTEDSUPERVISOR);
-        		}
-        	}
             Project project = projectConverter.toDomainObject(projectDTO);
-            if (project == null){
-            	throw new ResourceNotFoundException();
-            }
-            if (!applicationsService.getApplicationsForProject(project).isEmpty()) {
-            	applicationFormUserRoleService.grantUserProjectRoles(newPrimarySupervisor, project, Authority.PROJECTADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR);
-            	if (newAdministrator != null) {
-                	applicationFormUserRoleService.grantUserProjectRoles(newAdministrator, project, Authority.PROJECTADMINISTRATOR);
-            	}
-            	if (newSecondarySupervisor != null) {
-            		applicationFormUserRoleService.grantUserProjectRoles(newSecondarySupervisor, project, Authority.SUGGESTEDSUPERVISOR);	
-            	}
-            }
-            programsService.saveProject(project);
+        	RegisteredUser newAdministrator = project.getAdministrator();
+        	RegisteredUser newPrimarySupervisor = project.getPrimarySupervisor();
+        	RegisteredUser newSecondarySupervisor = project.getSecondarySupervisor();
+        	if (!applicationsService.getApplicationsForProject(project).isEmpty()) {
+	        	applicationFormUserRoleService.grantUserProjectRoles(oldAdministrator, newAdministrator, project, Authority.PROJECTADMINISTRATOR);
+	        	applicationFormUserRoleService.grantUserProjectRoles(oldPrimarySupervisor, newPrimarySupervisor, project, Authority.PROJECTADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR);
+	        	applicationFormUserRoleService.grantUserProjectRoles(oldSecondarySupervisor, newSecondarySupervisor, project, Authority.SUGGESTEDSUPERVISOR);
+        	}
+        	programsService.saveProject(project);
             map.put("success", "true");
         }
         return gson.toJson(map);
     }
+    
+
 
 	private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(result.getErrorCount());

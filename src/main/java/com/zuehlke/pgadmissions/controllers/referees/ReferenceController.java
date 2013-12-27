@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -54,9 +53,9 @@ public class ReferenceController {
     private final ApplicationsService applicationsService;
     private final DocumentPropertyEditor documentPropertyEditor;
     private final FeedbackCommentValidator referenceValidator;
-    private final RefereeService refereeService;
     private final UserService userService;
     private final CommentService commentService;
+    private final RefereeService refereeService;
     private final ScoringDefinitionParser scoringDefinitionParser;
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
@@ -69,16 +68,16 @@ public class ReferenceController {
     }
 
     @Autowired
-    public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
-            DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
-            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
-            final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService) {
+    public ReferenceController(ApplicationsService applicationsService, UserService userService, DocumentPropertyEditor documentPropertyEditor, 
+    		FeedbackCommentValidator referenceValidator, CommentService commentService, RefereeService refereeService, ScoringDefinitionParser scoringDefinitionParser, 
+    		ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationFormUserRoleService applicationFormUserRoleService, 
+    		ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
-        this.refereeService = refereeService;
         this.userService = userService;
         this.documentPropertyEditor = documentPropertyEditor;
         this.referenceValidator = referenceValidator;
         this.commentService = commentService;
+        this.refereeService = refereeService;
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
@@ -174,17 +173,16 @@ public class ReferenceController {
         if (bindingResult.hasErrors()) {
             return ADD_REFERENCES_VIEW_NAME;
         }
-
-        if (comment.getReferee().getReference() == null) {
+        
+        Referee referee = comment.getReferee();
+        if (referee.getReference() == null) {
             commentService.save(comment);
             applicationForm.getApplicationComments().add(comment);
             applicantRatingService.computeAverageRating(applicationForm);
-            refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
-            applicationFormUserRoleService.referencePosted(comment.getReferee());
+            refereeService.addReferenceEventToApplication(referee);
+            applicationsService.save(applicationForm);
         }
-
-        applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
 

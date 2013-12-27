@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -58,10 +59,6 @@ public class RefereeService {
 
     public void refresh(Referee referee) {
         refereeDAO.refresh(referee);
-    }
-
-    public void saveReferenceAndSendMailNotifications(Referee referee) {
-        addReferenceEventToApplication(referee);
     }
 
     public void processRefereesRoles(List<Referee> referees) {
@@ -130,7 +127,6 @@ public class RefereeService {
         }
         
         applicantRatingService.computeAverageRating(applicationForm);
-
         return reference;
     }
 
@@ -157,9 +153,7 @@ public class RefereeService {
             referee.setSendToUCL(true);
         }
         
-        applicationFormUserRoleService.referencePosted(referee);
-
-        saveReferenceAndSendMailNotifications(referee);
+        this.addReferenceEventToApplication(referee);
         return referenceComment;
     }
 
@@ -197,10 +191,12 @@ public class RefereeService {
         return referenceComment;
     }
 
-    private void addReferenceEventToApplication(Referee referee) {
+    public void addReferenceEventToApplication(Referee referee) {
         ApplicationForm application = referee.getApplication();
         application.getEvents().add(eventFactory.createEvent(referee));
         applicationFormDAO.save(application);
+        applicationFormUserRoleService.referencePosted(referee);
+        applicationFormUserRoleService.registerApplicationUpdate(application, referee.getUser(), ApplicationUpdateScope.ALL_USERS);
     }
 
 }

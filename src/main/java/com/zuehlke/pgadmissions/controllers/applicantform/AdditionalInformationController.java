@@ -17,10 +17,9 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -39,9 +38,10 @@ public class AdditionalInformationController {
     private final BooleanPropertyEditor booleanPropertyEditor;
     private final UserService userService;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final ContentAccessProvider contentAccessProvider;
 
     AdditionalInformationController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -50,7 +50,8 @@ public class AdditionalInformationController {
             ApplicationFormPropertyEditor applicationFormPropertyEditor,
             BooleanPropertyEditor booleanEditor,
             AdditionalInfoService addInfoServiceMock, AdditionalInformationValidator infoValidator,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            ApplicationFormUserRoleService applicationFormUserRoleService,
+            ContentAccessProvider contentAccessProvider) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -58,16 +59,12 @@ public class AdditionalInformationController {
         this.additionalService = addInfoServiceMock;
         this.additionalInformationValidator = infoValidator;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.contentAccessProvider = contentAccessProvider;
     }
 
     @RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
-    public String editAdditionalInformation(@Valid AdditionalInformation info, BindingResult result) {
-    	ApplicationForm applicationForm = info.getApplication();
-        
-        if (applicationForm.isDecided()) {
-            throw new CannotUpdateApplicationException(info.getApplication().getApplicationNumber());
-        }
-        
+    public String editAdditionalInformation(@Valid AdditionalInformation info, BindingResult result,
+    		@ModelAttribute ApplicationForm applicationForm) {
         if (result.hasErrors()) {
             return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
         }
@@ -80,16 +77,13 @@ public class AdditionalInformationController {
     }
 
     @RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
-    public String getAdditionalInformationView() {
+    public String getAdditionalInformationView(@ModelAttribute ApplicationForm applicationForm) {
         return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
     }
 
     @ModelAttribute("additionalInformation")
     public AdditionalInformation getAdditionalInformation(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
         return application.getAdditionalInformation();
     }
 
@@ -122,9 +116,7 @@ public class AdditionalInformationController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
+        contentAccessProvider.validateCanEditAsApplicant(application, getCurrentUser());
         return application;
     }
 }

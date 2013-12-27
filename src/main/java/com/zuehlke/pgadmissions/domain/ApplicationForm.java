@@ -327,7 +327,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean isDecided() {
-        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {
+        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN) {
             return true;
         }
         return false;

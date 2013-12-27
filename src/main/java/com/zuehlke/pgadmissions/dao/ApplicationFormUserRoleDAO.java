@@ -89,6 +89,13 @@ public class ApplicationFormUserRoleDAO {
         		.add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.in("role.id", authorities)).list();
     }
+    
+    public List<Authority> getUserRolesForApplication(ApplicationForm applicationForm, RegisteredUser user) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.setProjection(Projections.groupProperty("role.id"))
+        		.add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.eq("user", user)).list();
+    }
 
     public ApplicationFormUserRole get(Integer id) {
         return (ApplicationFormUserRole) sessionFactory.getCurrentSession().get(ApplicationFormUserRole.class, id);

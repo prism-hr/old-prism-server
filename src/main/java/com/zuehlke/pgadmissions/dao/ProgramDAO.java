@@ -15,12 +15,14 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -100,6 +102,16 @@ public class ProgramDAO {
 	            .list();
 	}
 	
-	
+	public List<Program> getProgramsOfWhichPotentialSupervisor(RegisteredUser user) {
+		Authority[] rolesToConsiderAsPotentialSupervisor = {Authority.INTERVIEWER, Authority.PROJECTADMINISTRATOR,
+				Authority.REVIEWER, Authority.STATEADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR, Authority.SUPERVISOR};
+		
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+				.setProjection(Projections.groupProperty("program"))
+				.createAlias("applicationForm", "applicationForm")
+				.createAlias("applicationForm.program", "program")
+				.add(Restrictions.eq("user", user))
+				.add(Restrictions.in("role.id", rolesToConsiderAsPotentialSupervisor)).list();
+	}
 
 }

@@ -37,8 +37,8 @@ public class QualificationInstitutionsController {
     }
     
     @Autowired
-    public QualificationInstitutionsController(EncryptionHelper encryptionHelper, 
-            DomicileDAO domicileDAO, QualificationInstitutionDAO qualificationInstitutionDAO) {
+    public QualificationInstitutionsController(EncryptionHelper encryptionHelper, DomicileDAO domicileDAO, 
+    		QualificationInstitutionDAO qualificationInstitutionDAO) {
         this.encryptionHelper = encryptionHelper;
         this.domicileDAO = domicileDAO;
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
@@ -69,4 +69,5 @@ public class QualificationInstitutionsController {
         });
         return gson.create().toJson(institutions);
     }
+	
 }

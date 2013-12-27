@@ -13,13 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -35,7 +33,6 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserDAO userDAO;
-    private final ProjectDAO projectDAO;
     private final RoleDAO roleDAO;
     private final ApplicationsFilteringDAO filteringDAO;
     private final EncryptionUtils encryptionUtils;
@@ -43,14 +40,13 @@ public class UserService {
     private final ProgramsService programsService;
 
     public UserService() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public UserService(UserDAO userDAO, ProjectDAO projectDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, EncryptionUtils encryptionUtils,
+    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, EncryptionUtils encryptionUtils,
             MailSendingService mailService, ProgramsService programsService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.userDAO = userDAO;
-        this.projectDAO = projectDAO;
         this.roleDAO = roleDAO;
         this.filteringDAO = filteringDAO;
         this.encryptionUtils = encryptionUtils;
@@ -141,15 +137,6 @@ public class UserService {
         updateProgramsOfWhichUserIsViewer(selectedUser, selectedProgram, newAuthorities);
         userDAO.save(selectedUser);
     }
-    
-    protected void updateUserProjectRoles(final RegisteredUser selectedUser, final Project selectedProject, final Authority... newAuthorities) {
-        for (Authority authority : newAuthorities) {
-            if (!selectedUser.isInRole(authority)) {
-                selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
-            }
-        }
-        userDAO.save(selectedUser);
-    }
 
     protected void deleteUserFromProgramme(final RegisteredUser selectedUser, final Program selectedProgram) {
     	deleteUserFromProgramAdministratorRole(selectedUser, selectedProgram);
@@ -209,13 +196,6 @@ public class UserService {
         }
     }
     
-    protected void deleteUserFromProject(final RegisteredUser selectedUser, final Project selectedProject) {
-    	if (projectDAO.getProjectsOfWhichAdministrator(selectedUser).isEmpty()) {
-            selectedUser.removeRole(Authority.PROJECTADMINISTRATOR);
-        }
-    	userDAO.save(selectedUser);
-    }
-    
     private void addPendingRoleNotification(RegisteredUser selectedUser, Authority authority) {
         PendingRoleNotification pendingRoleNotification = new PendingRoleNotification();
         pendingRoleNotification.setRole(roleDAO.getRoleByAuthority(authority));
@@ -257,6 +237,30 @@ public class UserService {
         }
         return user;
     }
+    
+    public RegisteredUser enableApplicantUser(RegisteredUser pendingApplicantUser, String applyQueryString) {
+    	pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
+		pendingApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
+		pendingApplicantUser.setAccountNonExpired(true);
+		pendingApplicantUser.setAccountNonLocked(true);
+		pendingApplicantUser.setEnabled(false);
+		pendingApplicantUser.setCredentialsNonExpired(true);
+		pendingApplicantUser.setOriginalApplicationQueryString(applyQueryString);
+        pendingApplicantUser.getRoles().add(roleDAO.getRoleByAuthority(Authority.SAFETYNET));
+		pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
+		userDAO.save(pendingApplicantUser);
+		mailService.sendRegistrationConfirmation(pendingApplicantUser);
+		return pendingApplicantUser;
+    }
+    
+    public RegisteredUser enableNonApplicantUser(RegisteredUser pendingNonApplicantUser) {
+	    pendingNonApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingNonApplicantUser.getPassword()));
+        pendingNonApplicantUser.setUsername(pendingNonApplicantUser.getEmail());
+		userDAO.save(pendingNonApplicantUser);
+		mailService.sendRegistrationConfirmation(pendingNonApplicantUser);
+		return pendingNonApplicantUser;
+    }
+
 
     public void updateCurrentUser(RegisteredUser user) {
         RegisteredUser currentUser = getCurrentUser();

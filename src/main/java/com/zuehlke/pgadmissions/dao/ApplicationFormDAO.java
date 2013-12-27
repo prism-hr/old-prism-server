@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -25,6 +26,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 public class ApplicationFormDAO {
 
     private final SessionFactory sessionFactory;
+    
+    private List<ApplicationFormStatus> activeStates = Lists.newArrayList();
 
     public ApplicationFormDAO() {
         this(null);
@@ -33,6 +36,10 @@ public class ApplicationFormDAO {
     @Autowired
     public ApplicationFormDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+        activeStates.add(ApplicationFormStatus.VALIDATION);
+        activeStates.add(ApplicationFormStatus.REVIEW);
+        activeStates.add(ApplicationFormStatus.INTERVIEW);
+        activeStates.add(ApplicationFormStatus.APPROVAL);
     }
 
     public void save(ApplicationForm application) {
@@ -48,12 +55,14 @@ public class ApplicationFormDAO {
     }
 
     public List<ApplicationForm> getAllApplications() {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+        		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
     }
 
     public List<Qualification> getQualificationsByApplication(ApplicationForm application) {
-        return sessionFactory.getCurrentSession().createCriteria(Qualification.class).add(Restrictions.eq("application", application))
+        return sessionFactory.getCurrentSession().createCriteria(Qualification.class)
+        		.add(Restrictions.eq("application", application))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
@@ -68,8 +77,10 @@ public class ApplicationFormDAO {
 
         Date endYear = DateUtils.addYears(startYear, 1);
 
-        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setProjection(Projections.rowCount())
-                .add(Restrictions.eq("program", program)).add(Restrictions.between("applicationTimestamp", startYear, endYear)).uniqueResult();
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+        		.setProjection(Projections.rowCount())
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.between("applicationTimestamp", startYear, endYear)).uniqueResult();
     }
 
     public ApplicationForm getApplicationByApplicationNumber(String applicationNumber) {
@@ -99,6 +110,18 @@ public class ApplicationFormDAO {
     public List<ApplicationForm> getApplicationsByProject(Project project) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .add(Restrictions.eq("project", project)).list();
+    }
+    
+    public List<ApplicationForm> getActiveApplicationsByProgram(Program program) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.in("state", activeStates)).list();
+    }
+    
+    public List<ApplicationForm> getActiveApplicationsByProject(Project project) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .add(Restrictions.eq("project", project))
+                .add(Restrictions.in("state", activeStates)).list();
     }
     
 }

@@ -45,4 +45,5 @@ public class ForgotPasswordController {
 		userService.resetPassword(email);
 		return FORGOT_PW_CONFIRMATION_VIEW_NAME;
 	}
+	
 }

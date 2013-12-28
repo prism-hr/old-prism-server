@@ -67,6 +67,7 @@ public class DeclineController {
             modelMap.put("cancelButton", "Provide Reference");
             return DECLINE_CONFIRMATION_VIEW_NAME;
 	    }
+	    
 	}
 
 	@ModelAttribute("applicationForm")

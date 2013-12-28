@@ -28,10 +28,10 @@ public class ActionsProvider {
     }
     
     public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
-        if (!checkActionAvailable(applicationForm, user, action)) {
+    	if (applicationForm == null) {
+    		throw new ResourceNotFoundException();
+    	} else if (!checkActionAvailable(applicationForm, user, action)) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
-        } else if (applicationForm == null) {
-        	throw new ResourceNotFoundException();
         }
     }
     

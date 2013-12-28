@@ -46,7 +46,7 @@ public class CommentTimelineController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String id) {
 		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
-		contentAccessProvider.validateCanView(applicationForm, getUser());
+		contentAccessProvider.validateCanViewApplication(applicationForm, getUser());
 		return applicationForm;
 	}
 

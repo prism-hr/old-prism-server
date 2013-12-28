@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 
 @Component
 public class ScoreFactory {
+	
 	public List<Score> createScores(List<Question> questions)
 			throws ScoringDefinitionParseException {
 		List<Score> scores = Lists.newArrayListWithExpectedSize(questions
@@ -25,4 +26,5 @@ public class ScoreFactory {
 		}
 		return scores;
 	}
+	
 }

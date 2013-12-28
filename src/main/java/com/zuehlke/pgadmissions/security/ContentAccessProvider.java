@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -26,18 +27,20 @@ import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationEx
 public class ContentAccessProvider extends ActionsProvider {
 	
 	@Autowired
-	private ApplicationFormDAO applicationFormDAO;
+	private ApplicationFormDAO applicationDAO;
 	private ProgramDAO programDAO;
     
     public void validateCanEditAsApplicant(ApplicationForm application, RegisteredUser user) {
-    	if (application == null || !(user.isApplicant(application) && super.checkActionAvailable(application, user, ApplicationFormAction.VIEW_EDIT))) {
-    		throw new ResourceNotFoundException();
-    	} else if (application.isDecided()) {
+    	if (!checkCanEditAsApplicant(application, user)) {
     		throw new CannotUpdateApplicationException(application.getApplicationNumber());
     	}
     }
     
-    public void validateCanView(ApplicationForm application, RegisteredUser user) {
+    public boolean checkCanEditAsApplicant(ApplicationForm application, RegisteredUser user) {
+    	return application != null && user.isApplicant(application) && super.checkActionAvailable(application, user, ApplicationFormAction.VIEW_EDIT);
+    }
+    
+    public void validateCanViewApplication(ApplicationForm application, RegisteredUser user) {
     	if (application == null || !super.checkActionAvailable(application, user, ApplicationFormAction.VIEW)) {
     		throw new ResourceNotFoundException();
     	}
@@ -219,24 +222,24 @@ public class ContentAccessProvider extends ActionsProvider {
     	return permissions;
     }
     
-    public void validateCanDownloadApplication(ApplicationForm applicationForm, RegisteredUser user) {
-    	if (!checkCanDownloadApplication(applicationForm, user)) {
+    public void validateCanDownloadApplication(ApplicationForm application, RegisteredUser user) {
+    	if (!checkCanDownloadApplication(application, user)) {
     		throw new ResourceNotFoundException();
     	}
     }
     
-    public boolean checkCanDownloadApplication(ApplicationForm applicationForm, RegisteredUser user) {
-    	return super.checkActionAvailable(applicationForm, user, ApplicationFormAction.VIEW);
+    public boolean checkCanDownloadApplication(ApplicationForm application, RegisteredUser user) {
+    	return super.checkActionAvailable(application, user, ApplicationFormAction.VIEW);
     }
     
-    public void validateCanSeeReport(ApplicationForm applicationForm, RegisteredUser user) {
-    	if (!checkCanSeeReport(applicationForm, user)) {
+    public void validateCanSeeReport(ApplicationForm application, RegisteredUser user) {
+    	if (!checkCanSeeReport(application, user)) {
     		throw new ResourceNotFoundException();
     	}
     }
     
-    public boolean checkCanSeeReport(ApplicationForm applicationForm, RegisteredUser user) {
-    	return canSeeAssessments(applicationForm, user);
+    public boolean checkCanSeeReport(ApplicationForm application, RegisteredUser user) {
+    	return canSeeApplicationAssessments(application, user);
     }
     
     public void validateCanSeeReference(ReferenceComment comment, RegisteredUser user) {
@@ -246,27 +249,27 @@ public class ContentAccessProvider extends ActionsProvider {
     }
     
     public boolean checkCanSeeReference(ReferenceComment comment, RegisteredUser user) {
-    	return canSeeAssessments(comment.getApplication(), user) || comment.getUser() == user;
+    	return canSeeApplicationAssessments(comment.getApplication(), user) || comment.getUser() == user;
     }
     
-    public void validateCanSeeEqualOpportunitiesInformation(ApplicationForm applicationForm, RegisteredUser user) {
-    	if (!checkCanSeeEqualOpportunitiesInformation(applicationForm, user)) {
+    public void validateCanSeeEqualOpportunitiesInformation(ApplicationForm application, RegisteredUser user) {
+    	if (!checkCanSeeEqualOpportunitiesInformation(application, user)) {
     		throw new ResourceNotFoundException();
     	}
     }
     
-    public boolean checkCanSeeEqualOpportunitiesInformation(ApplicationForm applicationForm, RegisteredUser user) {
-    	return user.isApplicant(applicationForm);
+    public boolean checkCanSeeEqualOpportunitiesInformation(ApplicationForm application, RegisteredUser user) {
+    	return user.isApplicant(application);
     }
     
-    public void validateCanSeeCriminalConvictionsInformation(ApplicationForm applicationForm, RegisteredUser user) {
-    	if (!checkCanSeeCriminalConvictionsInformation(applicationForm, user)) {
+    public void validateCanSeeCriminalConvictionsInformation(ApplicationForm application, RegisteredUser user) {
+    	if (!checkCanSeeCriminalConvictionsInformation(application, user)) {
     		throw new ResourceNotFoundException();
     	}
     }
     
-    public boolean checkCanSeeCriminalConvictionsInformation(ApplicationForm applicationForm, RegisteredUser user) {
-    	if (user.isApplicant(applicationForm)) {
+    public boolean checkCanSeeCriminalConvictionsInformation(ApplicationForm application, RegisteredUser user) {
+    	if (user.isApplicant(application)) {
     		return true;
     	} else {
 	    	List<Authority> rolesThatCanSee = new ArrayList<Authority>();
@@ -275,13 +278,47 @@ public class ContentAccessProvider extends ActionsProvider {
 	    	rolesThatCanSee.add(Authority.ADMINISTRATOR);
 	    	rolesThatCanSee.add(Authority.APPROVER);
 	    	rolesThatCanSee.add(Authority.PROJECTADMINISTRATOR);
-	    	for (Authority role : super.applicationFormUserRoleDAO.getUserRolesForApplication(applicationForm, user)) {
+	    	for (Authority role : super.applicationFormUserRoleDAO.getUserRolesForApplication(application, user)) {
 	    		if (rolesThatCanSee.contains(role)) {
 	    			return true;
 	    		}
 	    	}
 	    	return false;
     	}
+    }
+    
+    public void validateCanDeleteDocument(Document document, RegisteredUser user) {
+    	if (!checkCanDeleteDocument(document, user)) {
+    		throw new ResourceNotFoundException();
+    	}
+    }
+    
+    public boolean checkCanDeleteDocument(Document document, RegisteredUser user) {
+    	return document.getUploadedBy() == user;
+    }
+    
+    public void validateCanDeleteApplicationDocument(ApplicationForm application, RegisteredUser user) {
+    	if (!checkCanEditAsApplicant(application, user)) {
+    		throw new CannotUpdateApplicationException(application.getApplicationNumber());
+    	}
+    }
+    
+    public boolean checkCanDeleteApplicationDocument(ApplicationForm application, RegisteredUser user) {
+    	return checkCanEditAsApplicant(application, user);
+    }
+    
+    public void validateCanSeeDocument(Document document, RegisteredUser user) {
+    	if (!checkCanSeeDocument(document, user)) {
+    		throw new ResourceNotFoundException();
+    	}
+    }
+    
+    public boolean checkCanSeeDocument(Document document, RegisteredUser user) {
+    	ApplicationForm application = applicationDAO.getApplicationByDocument(document);
+    	if (application != null) {
+    		return super.checkActionAvailable(application, user, ApplicationFormAction.VIEW);
+    	}
+    	return false;
     }
     
     private boolean hasAdminRightsForActivePrograms(RegisteredUser user) {
@@ -305,20 +342,20 @@ public class ContentAccessProvider extends ActionsProvider {
     
     private boolean containsActiveProgram(List<Program> programs) {
     	for (Program program : programs) {
-    		if (program.isEnabled() || !applicationFormDAO.getActiveApplicationsByProgram(program).isEmpty()) {
+    		if (program.isEnabled() || !applicationDAO.getActiveApplicationsByProgram(program).isEmpty()) {
     			return true;
     		}
     	}
 		return false;
     }
     
-    private boolean canSeeAssessments(ApplicationForm applicationForm, RegisteredUser user) {
-    	if (!super.checkActionAvailable(applicationForm, user, ApplicationFormAction.VIEW)) {
+    private boolean canSeeApplicationAssessments(ApplicationForm application, RegisteredUser user) {
+    	if (!super.checkActionAvailable(application, user, ApplicationFormAction.VIEW)) {
     		return false;
-    	} else if (user.isApplicant(applicationForm)) {
+    	} else if (user.isApplicant(application)) {
     		return false;
     	}
-    	List<Authority> roles = super.applicationFormUserRoleDAO.getUserRolesForApplication(applicationForm, user);
+    	List<Authority> roles = super.applicationFormUserRoleDAO.getUserRolesForApplication(application, user);
     	return !(roles.size() == 1 && roles.get(0) == Authority.REFEREE);
     }
     

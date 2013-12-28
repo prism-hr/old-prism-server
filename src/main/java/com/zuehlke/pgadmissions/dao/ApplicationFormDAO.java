@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -122,6 +123,22 @@ public class ApplicationFormDAO {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .add(Restrictions.eq("project", project))
                 .add(Restrictions.in("state", activeStates)).list();
+    }
+    
+    public ApplicationForm getApplicationByDocument(Document document) {
+        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+        		.createAlias("personalDetails", "personalDetails")
+        		.createAlias("personalDetails.languageQualifications", "languageQualification")
+        		.createAlias("qualifications", "qualification")
+        		.createAlias("fundings", "funding")
+        		.createAlias("applicationComments", "comment")
+        		.add(Restrictions.disjunction()
+        				.add(Restrictions.eq("languageQualication.languageQualificationDocument", document))
+        				.add(Restrictions.eq("qualification.proofOfAward", document))
+        				.add(Restrictions.eq("funding.document", document))
+        				.add(Restrictions.eq("comment.documents", document))
+        				.add(Restrictions.eq("personalStatement", document))
+        				.add(Restrictions.eq("cv", document))).uniqueResult();
     }
     
 }

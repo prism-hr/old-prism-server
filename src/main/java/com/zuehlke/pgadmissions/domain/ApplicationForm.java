@@ -119,7 +119,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_statement_id")
-    private Document personalStatement = null;
+    private Document personalStatement;
 
     @Column(name = "app_date_time", insertable = false)
     @Generated(GenerationTime.INSERT)

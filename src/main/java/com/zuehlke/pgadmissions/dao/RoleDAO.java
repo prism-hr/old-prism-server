@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -44,15 +45,11 @@ public class RoleDAO {
     }
     
     public List<Authority> getUserRolesForProgram(Program program, RegisteredUser user) {
-    	List<Authority> roles = new ArrayList<Authority>(user.getAuthoritiesForSystem());
+    	HashSet<Authority> roles = new HashSet<Authority>(getUserRolesForSystem(user));
     	roles.addAll(user.getAuthoritiesForProgram(program));
     	
     	for (Project project : program.getProjects()) {
-    		if (project.getAdministrator() == user || project.getPrimarySupervisor() == user) {
-    			roles.add(Authority.PROJECTADMINISTRATOR);
-    		} else if (project.getAuthor() == user) {
-    			roles.add(Authority.PROJECTAUTHOR);
-    		}
+    		roles.addAll(user.getAuthoritiesForProject(project));
     		if (roles.containsAll(Arrays.asList(AuthorityGroup.PROJECT.authorities()))) {
     			break;
     		}
@@ -69,18 +66,13 @@ public class RoleDAO {
         		.add(Restrictions.eq("program.enabled", true))
                 .add(Restrictions.eq("user", user)).list());
     	
-    	return roles;
+    	return new ArrayList<Authority>(roles);
     }
     
     public List<Authority> getUserRolesForProject(Project project, RegisteredUser user) {
-    	List<Authority> roles = new ArrayList<Authority>(user.getAuthoritiesForSystem());
+    	HashSet<Authority> roles = new HashSet<Authority>(user.getAuthoritiesForSystem());
     	roles.addAll(user.getAuthoritiesForProgram(project.getProgram()));
-    	
-		if (project.getAdministrator() == user || project.getPrimarySupervisor() == user) {
-			roles.add(Authority.PROJECTADMINISTRATOR);
-		} else if (project.getAuthor() == user) {
-			roles.add(Authority.PROJECTAUTHOR);
-		}
+    	roles.addAll(user.getAuthoritiesForProject(project));
     	
     	roles.addAll(
     		sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
@@ -93,7 +85,7 @@ public class RoleDAO {
         		.add(Restrictions.eq("project.disabled", false))
                 .add(Restrictions.eq("user", user)).list());
     	
-    	return roles;
+    	return new ArrayList<Authority>(roles);
     }
     
     public List<Authority> getUserRolesForApplication(ApplicationForm applicationForm, RegisteredUser user) {

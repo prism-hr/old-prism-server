@@ -74,15 +74,6 @@ public abstract class AbstractAuthorisationAPI {
         return false;
     }
 
-    public boolean isInRole(final RegisteredUser user, final String strAuthority) {
-        try {
-            return isInRole(user, Authority.valueOf(strAuthority));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return false;
-    }
-
     public boolean isInRole(final RegisteredUser user, final Authority authority) {
         for (Role role : user.getRoles()) {
             if (role.getId() == authority) {
@@ -90,14 +81,6 @@ public abstract class AbstractAuthorisationAPI {
             }
         }
         return false;
-    }
-
-    public boolean isNotInRole(final RegisteredUser user, final Authority authority) {
-        return !isInRole(user, authority);
-    }
-
-    public boolean isNotInRole(final RegisteredUser user, final String authority) {
-        return !isInRole(user, authority);
     }
 
     public boolean isInRoleInProgramme(final Program programme, final RegisteredUser user, final String authority) {
@@ -113,7 +96,6 @@ public abstract class AbstractAuthorisationAPI {
         if (programme == null) {
             return false;
         }
-
         if (Authority.SUPERADMINISTRATOR == authority && isInRole(user, Authority.SUPERADMINISTRATOR)) {
             return true;
         }
@@ -136,6 +118,16 @@ public abstract class AbstractAuthorisationAPI {
 
     public boolean isNotInRoleInProgramme(final Program programme, final RegisteredUser user, final Authority authority) {
         return !isInRoleInProgramme(programme, user, authority);
+    }
+    
+    public List<Authority>getAuthoritiesForProject(final Project project, final RegisteredUser user) {
+    	List<Authority> roles = new ArrayList<Authority>();
+		if (areEqual(project.getAdministrator(), user) || areEqual(project.getPrimarySupervisor(), user)) {
+			roles.add(Authority.PROJECTADMINISTRATOR);
+		} else if (areEqual(project.getAuthor(), user)) {
+			roles.add(Authority.PROJECTAUTHOR);
+		}
+		return roles;
     }
 
     protected boolean areEqual(RegisteredUser u1, RegisteredUser u2) {
@@ -183,17 +175,6 @@ public abstract class AbstractAuthorisationAPI {
         return isSupervisorInApprovalRound(form.getLatestApprovalRound(), user);
     }
 
-    public boolean isApplicationAdministrator(final ApplicationForm form, final RegisteredUser user) {
-    	List<Comment> comments = form.getApplicationComments();
-    	for (Comment comment : comments) {
-    		if (comment instanceof StateChangeComment &&
-    				areEqual(((StateChangeComment) comment).getDelegateAdministrator(), user)) {
-    			return true;
-    		}
-    	}
-    	return false;    
-    }
-
     public boolean isApplicant(final ApplicationForm form, final RegisteredUser user) {
         return areEqual(user, form.getApplicant());
     }
@@ -209,39 +190,6 @@ public abstract class AbstractAuthorisationAPI {
 
     public boolean isViewerOfProgramme(final ApplicationForm form, final RegisteredUser user) {
         return containsUser(user, form.getProgram().getViewers());
-    }
-
-    public boolean isPastOrPresentReviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        for (ReviewRound reviewRound : form.getReviewRounds()) {
-            for (Reviewer reviewer : reviewRound.getReviewers()) {
-                if (areEqual(user, reviewer.getUser())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isPastOrPresentInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        for (Interview interview : form.getInterviews()) {
-            for (Interviewer interviewer : interview.getInterviewers()) {
-                if (areEqual(user, interviewer.getUser())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isPastOrPresentSupervisorOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        for (ApprovalRound approvalRound : form.getApprovalRounds()) {
-            for (Supervisor supervisor : approvalRound.getSupervisors()) {
-                if (areEqual(user, supervisor.getUser())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public boolean isRefereeOfApplication(final ApplicationForm form, final RegisteredUser user) {
@@ -260,23 +208,11 @@ public abstract class AbstractAuthorisationAPI {
         if (programme == null) {
             return false;
         }
-
-        if (isNotInRole(user, Authority.ADMINISTRATOR)) {
-            return false;
-        }
-
-        if (containsUser(user, programme.getAdministrators())) {
-            return true;
-        }
-        return false;
+        return containsUser(user, programme.getAdministrators());
     }
 
     public boolean isApproverInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
-            return false;
-        }
-
-        if (isNotInRole(user, Authority.APPROVER)) {
             return false;
         }
         return containsUser(user, programme.getApprovers());
@@ -284,10 +220,6 @@ public abstract class AbstractAuthorisationAPI {
 
     public boolean isViewerInProgramme(final Program programme, final RegisteredUser user) {
         if (programme == null) {
-            return false;
-        }
-
-        if (isNotInRole(user, Authority.VIEWER)) {
             return false;
         }
         return containsUser(user, programme.getViewers());

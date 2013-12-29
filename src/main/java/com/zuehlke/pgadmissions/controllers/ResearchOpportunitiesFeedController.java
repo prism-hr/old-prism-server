@@ -56,7 +56,7 @@ public class ResearchOpportunitiesFeedController {
     @ResponseBody
     public List<Map<String, Object>> getProgrammes() {
         ArrayList<Map<String, Object>> response = new ArrayList<Map<String, Object>>();
-        for (Program p : programsService.getProgramsForWhichCanManageProjects(getCurrentUser())) {
+        for (Program p : programsService.getProgramsOfWhichAuthor(getCurrentUser())) {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("id", p.getId());
             map.put("title", p.getTitle());
@@ -177,4 +177,5 @@ public class ResearchOpportunitiesFeedController {
         
         return responseMap;
     }
+    
 }

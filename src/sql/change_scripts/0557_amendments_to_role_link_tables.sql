@@ -27,30 +27,6 @@ INSERT INTO USER_ROLE_LINK (registered_user_id, application_role_id)
 	GROUP BY registered_user_id
 ;
 
-CREATE PROCEDURE UPDATE_USER_PROJECT_ROLE (
-	IN in_new_registered_user_id INT(10) UNSIGNED, 
-	IN in_old_registered_user_id INT(10) UNSIGNED, 
-	IN in_project_id INT(10) UNSIGNED, 
-	IN application_role_id VARCHAR(50))
-BEGIN
-	
-	UPDATE APPLICATION_FORM_USER_ROLE INNER JOIN APPLICATION_FORM
-		ON APPLICATION_FORM_USER_ROLE.application_form_id = APPLICATION_FORM.id
-	SET APPLICATION_FORM_USER_ROLE.registered_user_id = in_new_registered_user_id,
-		APPLICATION_FORM_USER_ROLE.update_timestamp = CURRENT_TIMESTAMP(),
-		APPLICATION_FORM_USER_ROLE.raises_update_flag = 1
-	WHERE APPLICATION_FORM_USER_ROLE.registered_user_id = in_old_registered_user_id
-		AND APPLICATION_FORM.project_id = in_project_id
-		AND APPLICATION_FORM_USER_ROLE.application_role_id = in_application_role_id;
-	
-	INSERT IGNORE INTO USER_ROLE_LINK (registered_user_id, application_role_id)
-	VALUES (NEW.registered_user_id, NEW.application_role_id);
-	
-	CALL DELETE_USER_FROM_PROJECT_ROLE(in_old_registered_user_id, in_project_id, in_application_role_id);
-	
-END
-;
-
 ALTER TABLE APPLICATION_ROLE
 	ADD COLUMN scope VARCHAR(50) NOT NULL DEFAULT "STATE",
 	ADD INDEX (scope)
@@ -654,4 +630,8 @@ BEGIN
 		AND APPLICATION_FORM_USER_ROLE.application_role_id = in_application_role_id;
 
 END
+;
+
+INSERT INTO APPLICATION_ROLE (update_visibility, do_send_update_notification, do_send_role_notification, scope)
+	VALUES(1, 0, 0, "PROJECT")
 ;

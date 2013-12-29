@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.security.ContentAccessProvider;
@@ -95,7 +94,7 @@ public class AddressController {
         currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
 
         applicationService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationEdited(applicationForm, getCurrentUser());
 
         return "redirect:/update/getAddress?applicationId=" + applicationForm.getApplicationNumber();
     }

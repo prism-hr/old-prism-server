@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.security.ContentAccessProvider;
@@ -70,7 +69,7 @@ public class AdditionalInformationController {
         }
         
         additionalService.save(info);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationEdited(applicationForm, getCurrentUser());
 
         return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getApplicationNumber();
 

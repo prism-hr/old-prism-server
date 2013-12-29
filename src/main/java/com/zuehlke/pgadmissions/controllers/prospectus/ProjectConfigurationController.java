@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -81,19 +82,21 @@ public class ProjectConfigurationController {
     
     private final String host;
     
-    private ProjectDAO projectDAO;
+    private final ProjectDAO projectDAO;
 
     private Gson gson;
+
+	private ContentAccessProvider contentAccessProvider;
     
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProjectConfigurationController(ApplicationsService applicationsService, ApplicationFormUserRoleService applicationFormUserRoleService, ProgramsService programsService, 
     		ApplicationContext applicationContext, ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
             PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer, @Value("${application.host}") final String host,
-            ProjectDAO projectDAO) {
+            ProjectDAO projectDAO, ContentAccessProvider contentAccessProvider) {
     	this.applicationsService = applicationsService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.programsService = programsService;
@@ -106,6 +109,7 @@ public class ProjectConfigurationController {
 		this.templateRenderer = templateRenderer;
 		this.host = host;
 		this.projectDAO = projectDAO;
+		this.contentAccessProvider = contentAccessProvider;
     }
 
     @PostConstruct
@@ -144,7 +148,9 @@ public class ProjectConfigurationController {
         if (programCode == null) {
             return null;
         }
-        return programsService.getProgramByCode(programCode);
+        Program program = programsService.getProgramByCode(programCode);
+        contentAccessProvider.validateCanManageProgramProjectAdverts(program, getCurrentUser());
+        return program;
     }
 	
     @ModelAttribute("user")
@@ -154,12 +160,14 @@ public class ProjectConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String addProject(@ModelAttribute("projectDTO") @Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
-        Map<String, Object> map = getErrorValues(result, request);
+    public String addProject(@ModelAttribute("projectDTO") @Valid ProjectDTO projectDTO, BindingResult result, 
+    		HttpServletRequest request, @ModelAttribute Program program) {
+    	Map<String, Object> map = getErrorValues(result, request);
         if (map.isEmpty()) {
             RegisteredUser currentUser = getCurrentUser();
             Project project = projectConverter.toDomainObject(projectDTO);
             project.setAuthor(currentUser);
+            applicationFormUserRoleService.grantUserProjectRoles(null, currentUser, project, Authority.PROJECTADMINISTRATOR);
             programsService.saveProject(project);
             map.put("success", "true");
         } 
@@ -168,12 +176,11 @@ public class ProjectConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Object> listProjects(@RequestParam String programCode) {
+    public Map<String, Object> listProjects(@ModelAttribute Program program) {
         Map<String, Object> json = new HashMap<String, Object>();
-        Program program = programsService.getProgramByCode(programCode);
         List<Project> projects = Collections.emptyList();
         if (program != null) {
-            projects = programsService.listProjects(getCurrentUser(), program);
+            projects = projectDAO.getProgramProjectsOfWhichProjectEditor(program, getCurrentUser());
         }
         json.put("projects", gson.toJson(projects));
         json.put("closingDate", programsService.getDefaultClosingDate(program));
@@ -195,10 +202,11 @@ public class ProjectConfigurationController {
     @ResponseBody
     public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
     	Map<String, Object> map = Maps.newHashMap();
-        Project project = programsService.getProject(projectId);
-        if(project == null || project.isDisabled()){
+        Project project = programsService.getProject(projectId);  
+        if(project == null) {
         	throw new ResourceNotFoundException();
         }
+        contentAccessProvider.validateCanManageProjectAdvert(project, getCurrentUser());
         map.put("project", project);
         map.putAll(createApplyTemplates(project));
         return gson.toJson(map);
@@ -222,6 +230,7 @@ public class ProjectConfigurationController {
         Map<String, Object> map = getErrorValues(result, request);
         if (!result.hasErrors()) {
         	Project toBeUpdated = projectDAO.getProjectById(projectDTO.getId());
+        	contentAccessProvider.validateCanManageProjectAdvert(toBeUpdated, getCurrentUser());
         	RegisteredUser oldAdministrator = toBeUpdated.getAdministrator();
         	RegisteredUser oldPrimarySupervisor = toBeUpdated.getPrimarySupervisor();
         	RegisteredUser oldSecondarySupervisor = toBeUpdated.getSecondarySupervisor();
@@ -255,6 +264,7 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody
     public String removeProject(@PathVariable("projectId") int projectId) {
+    	contentAccessProvider.validateCanManageProjectAdvert(programsService.getProject(projectId), getCurrentUser());
         programsService.removeProject(projectId);
         return "ok";
     }

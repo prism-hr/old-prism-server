@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -115,7 +114,7 @@ public class EmploymentController {
         
         employmentPositionService.save(employment);
         applicationService.save(employment.getApplication());
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationEdited(applicationForm, userService.getCurrentUser());
         
         return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
     }
@@ -167,4 +166,5 @@ public class EmploymentController {
     public String getMessage(@RequestParam(required = false) String message) {
         return message;
     }
+    
 }

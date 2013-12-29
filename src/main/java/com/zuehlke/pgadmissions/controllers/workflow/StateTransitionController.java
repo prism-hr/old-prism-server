@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
@@ -40,6 +38,7 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -176,7 +175,7 @@ public class StateTransitionController {
         	stateChangeDTO.setDelegate(false);
         }
         
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, registeredUser);
+        applicationFormUserRoleService.applicationViewed(applicationForm, registeredUser);
         return stateTransitionService.resolveView(applicationForm, action);
     }
     
@@ -317,8 +316,7 @@ public class StateTransitionController {
     	commentService.save(stateChangeComment);
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);
-        applicationFormUserRoleService.stateChanged(stateChangeComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);	
+        applicationFormUserRoleService.stateChanged(stateChangeComment);	
     }
     
 }

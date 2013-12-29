@@ -55,4 +55,5 @@ public class ApplyTemplateRenderer {
 	    writer.close();
 	    return result;
 	}
+	
 }

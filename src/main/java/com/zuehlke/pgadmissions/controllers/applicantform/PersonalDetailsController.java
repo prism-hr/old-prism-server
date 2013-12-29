@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -177,7 +176,7 @@ public class PersonalDetailsController {
         userService.updateCurrentUser(updatedUser);
         personalDetailsService.save(personalDetails);
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationEdited(applicationForm, getUser());
 
         sessionStatus.setComplete();
 
@@ -302,4 +301,5 @@ public class PersonalDetailsController {
     public String getErrorCode(String errorCode) {
         return errorCode;
     }
+    
 }

@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -196,7 +195,6 @@ public class RefereeService {
         application.getEvents().add(eventFactory.createEvent(referee));
         applicationFormDAO.save(application);
         applicationFormUserRoleService.referencePosted(referee);
-        applicationFormUserRoleService.registerApplicationUpdate(application, referee.getUser(), ApplicationUpdateScope.ALL_USERS);
     }
 
 }

@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -95,7 +94,7 @@ public class FundingController {
         
 		fundingService.save(funding);
 		applicationService.save(applicationForm);
-		applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+		applicationFormUserRoleService.applicationEdited(applicationForm, userService.getCurrentUser());
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber();
 	}
 

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -29,13 +28,13 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
+import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -89,9 +88,7 @@ public class ReferenceController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
+        actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.PROVIDE_REFERENCE);
         return applicationForm;
     }
 
@@ -144,18 +141,16 @@ public class ReferenceController {
     }
 
     @RequestMapping(value = "/addReferences", method = RequestMethod.GET)
-    public String getUploadReferencesPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+    public String getUploadReferencesPage(ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
+        applicationFormUserRoleService.applicationViewed(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
 
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
-    public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult, ModelMap modelMap)
-            throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+    public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult, 
+    		ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) throws ScoringDefinitionParseException {
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
 

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,20 +46,9 @@ public class ProjectDAO {
         return sessionFactory.getCurrentSession().createCriteria(Project.class).list();
     }
     
-    public List<Project> getAllActiveProjects() {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class)
-        		.add(Restrictions.eq("disabled", false)).list();
-    }
-    
     public List<Project> getAllProjectsForProgram(Program program) {
         return sessionFactory.getCurrentSession().createCriteria(Project.class).
         		add(Restrictions.eq("program", program)).list();
-    }
-
-    public List<Project> getAllActiveProjectsForProgram(Program program) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class).
-        		add(Restrictions.eq("program", program)).
-        		add(Restrictions.eq("disabled", false)).list();
     }
     
 	public List<Project> getProgramProjectsOfWhichProjectEditor(Program program, RegisteredUser user) {
@@ -72,30 +62,15 @@ public class ProjectDAO {
 				return getAllActiveProjectsForProgram(program);
 			}
 		}
-		
-		/* This is horrible. If we generalised it in the DB we could clean it up. */
-		HashSet<Project> projects = new HashSet<Project>();
+
 		for (Authority programRole : AuthorityGroup.PROGRAM.authorities()) {
 			if (authorRoles.contains(programRole)) {
-				switch (programRole) {
-					case ADMINISTRATOR:
-						projects.addAll(getEnabledProjects(program.getProjects()));
-						authorRoles.remove(Authority.ADMINISTRATOR);
-						break;
-					case APPROVER:
-						projects.addAll(getEnabledProjects(program.getProjects()));
-						authorRoles.remove(Authority.APPROVER);
-						break;
-					case VIEWER:
-						projects.addAll(getEnabledProjects(program.getProjects()));
-						authorRoles.remove(Authority.VIEWER);
-						break;
-					default: break;
-				}
+				return getAllActiveProjectsForProgram(program);
 			}
 		}
 		
-		/* As per previous code block. */
+		/* This is horrible. If we generalised it in the DB we could clean it up. */
+		HashSet<Project> projects = new HashSet<Project>();
 		for (Authority projectRole : AuthorityGroup.PROJECT.authorities()) {
 			if (authorRoles.contains(projectRole)) {
 				switch (projectRole) {
@@ -117,39 +92,40 @@ public class ProjectDAO {
 				sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
 					.setProjection(Projections.groupProperty("applicationForm.project"))
 					.createAlias("applicationForm", "applicationForm")
+					.createAlias("applicationForm.project", "project")
 					.add(Restrictions.eq("user", user))
-					.add(Restrictions.eq("enabled", true))
+					.add(Restrictions.eq("project.disabled", false))
 					.add(Restrictions.in("role.id", authorRoles))
 					.add(Restrictions.not(
-							Restrictions.in("applicationForm.project", projectsFinal))).list());
+							Restrictions.in("project", projectsFinal)))
+					.addOrder(Order.asc("project.title")).list());
 		
 		return projectsFinal;
 	}
     
+    private List<Project> getAllActiveProjectsForProgram(Program program) {
+        return sessionFactory.getCurrentSession().createCriteria(Project.class)
+        		.add(Restrictions.eq("program", program))
+        		.add(Restrictions.eq("disabled", false))
+        		.addOrder(Order.asc("title")).list();
+    }
+    
     private List<Project> getProgramProjectsOfWhichAdministrator(Program program, RegisteredUser registeredUser) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class).
-        		add(Restrictions.eq("program", program)).
-        		add(Restrictions.disjunction().
-        			add(Restrictions.eq("administrator", registeredUser)).
-        			add(Restrictions.eq("primarySupervisor", registeredUser))).
-        		add(Restrictions.eq("disabled", false)).list();
+        return sessionFactory.getCurrentSession().createCriteria(Project.class)
+        		.add(Restrictions.eq("program", program))
+        		.add(Restrictions.disjunction()
+        			.add(Restrictions.eq("administrator", registeredUser))
+        			.add(Restrictions.eq("primarySupervisor", registeredUser)))
+        		.add(Restrictions.eq("disabled", false))
+        		.addOrder(Order.asc("title")).list();
     }
 
     private List<Project> getProgramProjectsOfWhichAuthor(Program program, RegisteredUser author) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class).
-        		add(Restrictions.eq("program", program)).
-        		add(Restrictions.eq("author", author)).
-        		add(Restrictions.eq("disabled", false)).list();
+        return sessionFactory.getCurrentSession().createCriteria(Project.class)
+        		.add(Restrictions.eq("program", program))
+        		.add(Restrictions.eq("author", author))
+        		.add(Restrictions.eq("disabled", false))
+        		.addOrder(Order.asc("title")).list();
     }
-    
-	private List<Project> getEnabledProjects(List<Project> projects) {
-		List<Project> enabledProjects = new ArrayList<Project>();
-		for (Project project : projects) {
-			if (!project.isDisabled()) {
-				enabledProjects.add(project);
-			}
-		}
-		return enabledProjects;
-	}
 
 }

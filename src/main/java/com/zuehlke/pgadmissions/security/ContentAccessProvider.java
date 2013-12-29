@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
@@ -21,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.enums.ContentSection;
 import com.zuehlke.pgadmissions.domain.enums.ProspectusSection;
 import com.zuehlke.pgadmissions.domain.enums.UserManagementSection;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 
 /**
  * Organises all of the logic that the system needs to make decisions about granting access to content and functions.
@@ -45,26 +45,6 @@ public class ContentAccessProvider extends ActionsProvider {
         this.applicationFormDAO = applicationFormDAO;
         this.programDAO = programDAO;
         this.roleDAO = roleDAO;
-    }
-    
-    public void validateCanEditAsApplicant(ApplicationForm application, RegisteredUser user) {
-    	if (!checkCanEditAsApplicant(application, user)) {
-    		throw new CannotUpdateApplicationException(application.getApplicationNumber());
-    	}
-    }
-    
-    public boolean checkCanEditAsApplicant(ApplicationForm application, RegisteredUser user) {
-    	return application != null && user.isApplicant(application) && super.checkActionAvailable(application, user, ApplicationFormAction.VIEW_EDIT);
-    }
-    
-    public void validateCanViewApplication(ApplicationForm application, RegisteredUser user) {
-    	if (!checkCanViewApplication(application, user)) {
-    		throw new ResourceNotFoundException();
-    	}
-    }
-    
-    public boolean checkCanViewApplication(ApplicationForm application, RegisteredUser user) {
-    	return application != null && super.checkActionAvailable(application, user, ApplicationFormAction.VIEW);
     }
 
     public void validateCanConfigureSystem(RegisteredUser user) {
@@ -272,6 +252,36 @@ public class ContentAccessProvider extends ActionsProvider {
     public boolean checkCanManageProjectAdvert(Project project, RegisteredUser user) {
     	return !project.isDisabled() && hasRolesForProject(project, user, AuthorityGroup.PROJECTEDITOR.authorities());
     }
+
+    public void validateCanManageAdvertFeed(ResearchOpportunitiesFeed feed, RegisteredUser user) {
+    	if (!checkCanManageAdvertFeed(feed, user)) {
+    		throw new ResourceNotFoundException();
+    	}
+    }
+    
+    public boolean checkCanManageAdvertFeed(ResearchOpportunitiesFeed feed, RegisteredUser user) {
+    	return feed.getUser() == user;
+    }
+    
+    public void validateCanEditAsApplicant(ApplicationForm application, RegisteredUser user) {
+    	if (!checkCanEditAsApplicant(application, user)) {
+    		throw new ResourceNotFoundException();
+    	}
+    }
+    
+    public boolean checkCanEditAsApplicant(ApplicationForm application, RegisteredUser user) {
+    	return application != null && user.isApplicant(application) && super.checkActionAvailable(application, user, ApplicationFormAction.VIEW_EDIT);
+    }
+    
+    public void validateCanViewApplication(ApplicationForm application, RegisteredUser user) {
+    	if (!checkCanViewApplication(application, user)) {
+    		throw new ResourceNotFoundException();
+    	}
+    }
+    
+    public boolean checkCanViewApplication(ApplicationForm application, RegisteredUser user) {
+    	return application != null && super.checkActionAvailable(application, user, ApplicationFormAction.VIEW);
+    }
     
     public void validateCanDownloadApplication(ApplicationForm application, RegisteredUser user) {
     	if (!checkCanDownloadApplication(application, user)) {
@@ -335,7 +345,7 @@ public class ContentAccessProvider extends ActionsProvider {
     
     public void validateCanDeleteApplicationDocument(ApplicationForm application, RegisteredUser user) {
     	if (!checkCanEditAsApplicant(application, user)) {
-    		throw new CannotUpdateApplicationException(application.getApplicationNumber());
+    		throw new ResourceNotFoundException();
     	}
     }
     

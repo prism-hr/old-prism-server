@@ -141,11 +141,13 @@ public class ProgramDAO {
 				sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
 					.setProjection(Projections.groupProperty("applicationForm.program"))
 					.createAlias("applicationForm", "applicationForm")
+					.createAlias("applicationForm.program", "program")
 					.add(Restrictions.eq("user", user))
-					.add(Restrictions.eq("enabled", true))
+					.add(Restrictions.eq("program.enabled", true))
 					.add(Restrictions.in("role.id", authorRoles))
 					.add(Restrictions.not(
-							Restrictions.in("applicationForm.program", programsFinal))).list());
+							Restrictions.in("program", programsFinal)))
+					.addOrder(Order.desc("program.title")).list());
 		
 		return programsFinal;
 	}
@@ -165,7 +167,8 @@ public class ProgramDAO {
 				.add(Restrictions.eq("project.disabled", false))
 				.add(Restrictions.disjunction()
 	        			.add(Restrictions.eq("project.administrator", user))
-	        			.add(Restrictions.eq("project.primarySupervisor", user))).list();
+	        			.add(Restrictions.eq("project.primarySupervisor", user)))
+	        	.addOrder(Order.asc("title")).list();
 	}
 	
 	private List<Program> getProgramsOfWhichAssignedProjectAuthor(RegisteredUser user) {
@@ -174,7 +177,8 @@ public class ProgramDAO {
 				.createAlias("projects", "project")
 				.add(Restrictions.eq("enabled", true))
 				.add(Restrictions.eq("project.disabled", false))
-				.add(Restrictions.eq("project.author", user)).list();
+				.add(Restrictions.eq("project.author", user))
+				.addOrder(Order.asc("title")).list();
 	}
 	
 	private List<Program> getEnabledPrograms(List<Program> programs) {

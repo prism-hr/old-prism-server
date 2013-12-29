@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends Authorisable implements Serializable {
+public class Program extends AbstractAuthorisationAPI implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;
 

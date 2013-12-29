@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 /**
  * This class and {@link SystemArchitecture} can be used to 
  * do some rudimentary performance measuring of the Spring Controllers.
- * It outputs the execution time of methods withing the controllers in milliseconds.
+ * It outputs the execution time of methods within the controllers in milliseconds.
  * <p>
  * To enable this feature uncomment {@code <aop:aspectj-autoproxy />} in the {@code applicationContext.xml}.
  */

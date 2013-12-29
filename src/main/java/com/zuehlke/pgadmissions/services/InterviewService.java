@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -116,8 +115,7 @@ public class InterviewService {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
             applicationFormUserRoleService.validationStageCompleted(applicationForm);
         }
-        applicationFormUserRoleService.movedToInterviewStage(interview);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.movedToInterviewStage(interview, user);
     }
 
     private void assignInterviewDueDate(final Interview interview, ApplicationForm applicationForm) {
@@ -132,7 +130,6 @@ public class InterviewService {
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(interviewParticipant);
-        applicationFormUserRoleService.registerApplicationUpdate(interviewVoteComment.getApplication(), interviewParticipant.getUser(), ApplicationUpdateScope.INTERNAL);
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 
@@ -163,8 +160,7 @@ public class InterviewService {
         ApplicationForm application = interview.getApplication(); 
         assignInterviewDueDate(interview, application);
         sendConfirmationEmails(interview);    
-        applicationFormUserRoleService.interviewConfirmed(interview);
-        applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.interviewConfirmed(interview, user);
     }
 
     private void createParticipants(final Interview interview) {

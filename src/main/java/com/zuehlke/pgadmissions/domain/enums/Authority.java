@@ -35,6 +35,9 @@ public enum Authority {
     /* A user that has delegated administrative privileges for a given project */
     PROJECTADMINISTRATOR,
     
+    /* A user that wrote the entry for a project and can manage it */
+    PROJECTAUTHOR,
+    
     /* A user that has delegated administrative privileges for a given stage */
     STATEADMINISTRATOR,
     

@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -101,7 +100,7 @@ public class DeleteApplicationFormEntitiesController {
     }
     
     private void updateLastAccessAndLastModified(RegisteredUser currentUser, ApplicationForm applicationForm) {
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, currentUser, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationEdited(applicationForm, currentUser);
         applicationsService.save(applicationForm);
     }
 

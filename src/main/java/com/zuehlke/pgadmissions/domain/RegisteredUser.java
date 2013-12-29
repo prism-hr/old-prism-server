@@ -37,6 +37,7 @@ import org.hibernate.search.annotations.Store;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -183,9 +184,6 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date applicationListLastAccessTimestamp;
 
-	@Transient
-	private boolean canManageProjects;
-
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
 
@@ -241,6 +239,16 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 	@Transient
 	public Collection<Role> getAuthorities() {
 		return getRoles();
+	}
+	
+	public List<Authority> getAuthoritiesForSystem() {
+		List<Authority> foundRoles = new ArrayList<Authority>();
+		for (Authority role : AuthorityGroup.SYSTEM.authorities()) {
+			if (isInRole(role)) {
+				foundRoles.add(role);
+			}
+		}
+		return foundRoles;
 	}
 
 	public List<Authority> getAuthoritiesForProgram(final Program programme) {
@@ -734,14 +742,6 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 
 	public void setUpi(final String upi) {
 		this.upi = upi;
-	}
-
-	public boolean isCanManageProjects() {
-		return canManageProjects;
-	}
-
-	public void setCanManageProjects(boolean canManageProjects) {
-		this.canManageProjects = canManageProjects;
 	}
 
 	@Override

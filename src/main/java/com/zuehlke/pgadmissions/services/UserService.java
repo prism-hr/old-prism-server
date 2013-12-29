@@ -37,21 +37,19 @@ public class UserService {
     private final ApplicationsFilteringDAO filteringDAO;
     private final EncryptionUtils encryptionUtils;
     private final MailSendingService mailService;
-    private final ProgramsService programsService;
 
     public UserService() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, EncryptionUtils encryptionUtils,
-            MailSendingService mailService, ProgramsService programsService, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            MailSendingService mailService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.filteringDAO = filteringDAO;
         this.encryptionUtils = encryptionUtils;
         this.mailService = mailService;
-        this.programsService = programsService;
     }
 
     public RegisteredUser getUser(Integer id) {
@@ -97,8 +95,6 @@ public class UserService {
     public RegisteredUser getCurrentUser() {
         RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
         RegisteredUser user = userDAO.get(currentUser.getId());
-        boolean canManageProjects = !programsService.getProgramsForWhichCanManageProjects(user).isEmpty();
-        user.setCanManageProjects(canManageProjects);
         return user;
     }
 
@@ -219,7 +215,7 @@ public class UserService {
         return Arrays.asList(newAuthorities).contains(authority);
     }
     
-    public RegisteredUser createRegisteredUser(final String firstname, final String lastname, final String email) {
+	public RegisteredUser createRegisteredUser(final String firstname, final String lastname, final String email) {
         RegisteredUser user = this.getUserByEmailIncludingDisabledAccounts(email);
         if (user == null) {
 	        user = new RegisteredUser();

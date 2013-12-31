@@ -78,7 +78,8 @@ public class ContentAccessProvider extends ActionsProvider {
     }
     
     public boolean checkCanConfigureSystem(RegisteredUser user) {
-    	return checkCanConfigureServiceLevels(user) || checkCanConfigureInterfaces(user) || checkCanConfigureNotifications(user) || checkCanConfigureForms(user);
+    	return checkCanConfigureServiceLevels(user) || checkCanConfigureInterfaces(user) || checkCanConfigureNotifications(user) 
+    			|| checkCanConfigureForms(user);
     }
     
     public boolean checkCanConfigureServiceLevels(RegisteredUser user) {
@@ -168,7 +169,8 @@ public class ContentAccessProvider extends ActionsProvider {
     }
     
     public boolean checkCanManageProspectus(RegisteredUser user) {
-    	return checkCanManageProgramAdverts(user) || checkCanManageProjectAdverts(user) || checkCanManageAdvertFeeds(user) || checkCanManageExternalIdentity(user);
+    	return checkCanManageProgramAdverts(user) || checkCanManageProjectAdverts(user) || checkCanManageAdvertFeeds(user) 
+    			|| checkCanManageExternalIdentity(user);
     }
     
     public boolean checkCanManageProgramAdverts(RegisteredUser user) {
@@ -260,7 +262,7 @@ public class ContentAccessProvider extends ActionsProvider {
     }
     
     public boolean checkCanManageAdvertFeed(ResearchOpportunitiesFeed feed, RegisteredUser user) {
-    	return feed.getUser() == user;
+    	return feed.getUser().equals(user);
     }
     
     public void validateCanEditAsApplicant(ApplicationForm application, RegisteredUser user) {
@@ -270,7 +272,8 @@ public class ContentAccessProvider extends ActionsProvider {
     }
     
     public boolean checkCanEditAsApplicant(ApplicationForm application, RegisteredUser user) {
-    	return application != null && user.isApplicant(application) && super.checkActionAvailable(application, user, ApplicationFormAction.VIEW_EDIT);
+    	return application != null && hasRolesForApplication(application, user, Authority.APPLICANT) 
+    			&& super.checkActionAvailable(application, user, ApplicationFormAction.VIEW_EDIT);
     }
     
     public void validateCanViewApplication(ApplicationForm application, RegisteredUser user) {
@@ -300,7 +303,7 @@ public class ContentAccessProvider extends ActionsProvider {
     }
     
     public boolean checkCanSeeExtendedReport(ApplicationForm application, RegisteredUser user) {
-    	return application != null && hasRolesForApplication(application, user, AuthorityGroup.RATINGSVIEWER.authorities());
+    	return application != null && hasRolesForApplication(application, user, AuthorityGroup.COMMENTVIEWER.authorities());
     }
     
     public void validateCanSeeReferences(ApplicationForm application, RegisteredUser user) {
@@ -310,7 +313,7 @@ public class ContentAccessProvider extends ActionsProvider {
     }
     
     public boolean checkCanSeeReferences(ApplicationForm application, RegisteredUser user) {
-    	return application != null && hasRolesForApplication(application, user, AuthorityGroup.REFERENCESVIEWER.authorities());
+    	return application != null && hasRolesForApplication(application, user, AuthorityGroup.COMMENTVIEWER.authorities());
     }
     
     public void validateCanSeeEqualOpportunitiesInformation(ApplicationForm application, RegisteredUser user) {
@@ -340,7 +343,7 @@ public class ContentAccessProvider extends ActionsProvider {
     }
     
     public boolean checkCanDeleteDocument(Document document, RegisteredUser user) {
-    	return document != null && document.getUploadedBy() == user;
+    	return document != null && document.getUploadedBy().equals(user);
     }
     
     public void validateCanDeleteApplicationDocument(ApplicationForm application, RegisteredUser user) {

@@ -92,12 +92,11 @@ public class ProgramDAO {
 	public List<Program> getProgramsForWhichUserHasRoles(RegisteredUser user, Authority... authorities) {
 		List<Authority> authorRoles = Arrays.asList(authorities);
 		for (Authority systemRole : AuthorityGroup.SYSTEM.authorities()) {
-			if (authorRoles.contains(systemRole) && user.isInRole(systemRole)) {
+			if (authorRoles.contains(systemRole) && user.isInSystemRole(systemRole)) {
 				return getAllActivePrograms();
 			}
 		}
 		
-		/* This is horrible. If we generalised it in the DB we could clean it up. */
 		HashSet<Program> programs = new HashSet<Program>();
 		for (Authority programRole : AuthorityGroup.PROGRAM.authorities()) {
 			if (authorRoles.contains(programRole)) {
@@ -119,7 +118,6 @@ public class ProgramDAO {
 			}
 		}
 		
-		/* As per previous code block. */
 		for (Authority projectRole : AuthorityGroup.PROJECT.authorities()) {
 			if (authorRoles.contains(projectRole)) {
 				switch (projectRole) {

@@ -76,12 +76,12 @@ public class DeclineController {
 		return applicationForm;
 	}
 	
-	public Referee getReferee(String activationCode, ApplicationForm applicationForm) {
+	public Referee getReferee(String activationCode, ApplicationForm application) {
 		RegisteredUser user = applicationFormUserRoleService.getUserByActivationCode(activationCode);
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
-		return user.getRefereeForApplicationForm(applicationForm);
+		return refereeService.getRefereeForApplication(user, application);
 	}
 	
 }

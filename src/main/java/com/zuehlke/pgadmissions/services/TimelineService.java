@@ -71,7 +71,7 @@ public class TimelineService {
 		} else if (event instanceof ApprovalStateChangeEvent) {
 			phase.setApprovalRound(((ApprovalStateChangeEvent) event).getApprovalRound());
 		}
-		if (phase.getStatus() == ApplicationFormStatus.REJECTED && event.getUser().isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
+		if (phase.getStatus() == ApplicationFormStatus.REJECTED && event.getUser().isInProgramRole(applicationForm.getProgram(), Authority.APPROVER)) {
 			phase.setRejectedByApprover(true);
 		}
 		if(((StateChangeEvent) event).getNewStatus().equals(ApplicationFormStatus.APPROVAL)){

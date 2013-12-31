@@ -162,6 +162,18 @@ public class InterviewService {
         sendConfirmationEmails(interview);    
         applicationFormUserRoleService.interviewConfirmed(interview, user);
     }
+    
+    public Interviewer newInterviewer() {
+        return new Interviewer();
+    }
+
+    public Interview newInterview() {
+        return new Interview();
+    }
+    
+    public Interviewer getInterviewerForInterview(RegisteredUser user, Interview interview) {
+    	return interviewerDAO.getInterviewerByUserAndInterview(user, interview);
+    }
 
     private void createParticipants(final Interview interview) {
         List<InterviewParticipant> participants = Lists.newLinkedList();
@@ -185,14 +197,6 @@ public class InterviewService {
         } catch (Exception e) {
             log.warn("{}", e);
         }
-    }
-
-    public Interviewer newInterviewer() {
-        return new Interviewer();
-    }
-
-    public Interview newInterview() {
-        return new Interview();
     }
 
 }

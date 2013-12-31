@@ -41,7 +41,6 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -138,19 +137,19 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getConfigurationPage() {
-        contentAccessProvider.validateCanConfigureSystem(getUser());
+        contentAccessProvider.validateCanConfigureSystem(getCurrentUser());
         return CONFIGURATION_VIEW_NAME;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "config_section")
     public String getConfigurationSection() {
-    	contentAccessProvider.validateCanConfigureServiceLevels(getUser());
+    	contentAccessProvider.validateCanConfigureServiceLevels(getCurrentUser());
         return CONFIGURATION_SECTION_NAME;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute ServiceLevelsDTO serviceLevelsDTO) {
-     	contentAccessProvider.validateCanConfigureServiceLevels(getUser());
+     	contentAccessProvider.validateCanConfigureServiceLevels(getCurrentUser());
         configurationService.saveConfigurations(serviceLevelsDTO);
         return "redirect:/configuration/config_section";
     }
@@ -158,7 +157,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{id:\\d+}")
     @ResponseBody
     public Map<String, Object> getTemplateVersion(@PathVariable Long id) {
-    	contentAccessProvider.validateCanConfigureNotifications(getUser());
+    	contentAccessProvider.validateCanConfigureNotifications(getCurrentUser());
         EmailTemplate template = templateService.getEmailTemplate(id);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("content", template.getContent());
@@ -170,7 +169,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/getThrottle")
     @ResponseBody
     public Map<String, Object> getThrottle() {
-    	contentAccessProvider.validateCanConfigureInterfaces(getUser());
+    	contentAccessProvider.validateCanConfigureInterfaces(getCurrentUser());
         Throttle throttle = throttleService.getThrottle();
         if (throttle == null) {
             return Collections.emptyMap();
@@ -186,7 +185,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
     @ResponseBody
     public Map<String, Object> updateThrottle(@Valid Throttle throttle, BindingResult throttleErrors) {
-    	contentAccessProvider.validateCanConfigureInterfaces(getUser());
+    	contentAccessProvider.validateCanConfigureInterfaces(getCurrentUser());
         Map<String, Object> errorsMap = FieldErrorUtils.populateMapWithErrors(throttleErrors, applicationContext);
         if (!errorsMap.isEmpty()) {
             return errorsMap;
@@ -205,7 +204,7 @@ public class ConfigurationController {
     @ResponseBody
     public Map<String, String> editScoringDefinition(@RequestParam String programCode, @RequestParam ScoringStage scoringStage,
             @RequestParam String scoringContent, HttpServletResponse response) {
-    	contentAccessProvider.validateCanConfigureForms(getUser());
+    	contentAccessProvider.validateCanConfigureForms(getCurrentUser());
         Map<String, String> errors = validateScoringDefinition(programCode, scoringContent);
         if (errors.isEmpty()) {
             if (scoringContent.equals("")) {
@@ -220,7 +219,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/getScoringDefinition")
     @ResponseBody
     public String getScoringDefinition(@RequestParam String programCode, @RequestParam ScoringStage scoringStage) {
-    	contentAccessProvider.validateCanConfigureForms(getUser());
+    	contentAccessProvider.validateCanConfigureForms(getCurrentUser());
         Program program = programsService.getProgramByCode(programCode);
         ScoringDefinition scoringDefinition = program.getScoringDefinitions().get(scoringStage);
         if (scoringDefinition != null) {
@@ -233,7 +232,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{templateName:[a-zA-Z_]+}")
     @ResponseBody
     public Map<Object, Object> getVersionsForTemplate(@PathVariable String templateName) {
-    	contentAccessProvider.validateCanConfigureNotifications(getUser());
+    	contentAccessProvider.validateCanConfigureNotifications(getCurrentUser());
         EmailTemplate template = templateService.getActiveEmailTemplate(valueOf(templateName));
         Map<Long, String> versions = templateService.getEmailTemplateVersions(template.getName());
         Map<Object, Object> result = new HashMap<Object, Object>();
@@ -248,7 +247,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{templateName:[a-zA-Z_]+}" })
     @ResponseBody
     public Map<String, Object> saveTemplate(@PathVariable EmailTemplateName templateName, @RequestParam String content, @RequestParam String subject) {
-    	contentAccessProvider.validateCanConfigureNotifications(getUser());
+    	contentAccessProvider.validateCanConfigureNotifications(getCurrentUser());
         return saveNewTemplate(templateName, content, subject);
     }
 
@@ -264,7 +263,7 @@ public class ConfigurationController {
     @ResponseBody
     public Map<String, Object> activateTemplate(@PathVariable String templateName, @PathVariable Long id, @RequestParam Boolean saveCopy,
             @RequestParam(required = false) String newContent, @RequestParam(required = false) String newSubject) {
-    	contentAccessProvider.validateCanConfigureNotifications(getUser());
+    	contentAccessProvider.validateCanConfigureNotifications(getCurrentUser());
         Map<String, Object> result = new HashMap<String, Object>();
         if (saveCopy != null && saveCopy) {
             result = saveNewTemplate(valueOf(templateName), newContent, newSubject);
@@ -287,7 +286,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.POST, value = { "deleteEmailTemplate/{id:\\d+}" })
     @ResponseBody
     public Map<String, Object> deleteTemplate(@PathVariable Long id) {
-    	contentAccessProvider.validateCanConfigureNotifications(getUser());
+    	contentAccessProvider.validateCanConfigureNotifications(getCurrentUser());
         Map<String, Object> result = new HashMap<String, Object>();
         EmailTemplate toDeleteTemplate = templateService.getEmailTemplate(id);
         EmailTemplateName templateName = toDeleteTemplate.getName();
@@ -306,7 +305,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.POST, value = { "previewTemplate" })
     @ResponseBody
     public Map<String, String> getTemplatePreview(@RequestParam String templateContent) {
-    	contentAccessProvider.validateCanConfigureNotifications(getUser());
+    	contentAccessProvider.validateCanConfigureNotifications(getCurrentUser());
         return Collections.singletonMap("template", templateService.processTemplateContent(templateContent));
     }
 
@@ -328,7 +327,7 @@ public class ConfigurationController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
 
@@ -365,10 +364,7 @@ public class ConfigurationController {
 
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
-        if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllPrograms();
-        }
-        return userService.getCurrentUser().getProgramsOfWhichAdministrator();
+        return programsService.getProgramsOfWhichAdministrator(getCurrentUser());
     }
 
     private Map<String, String> validateScoringDefinition(String programCode, String scoringContent) {
@@ -396,7 +392,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.POST, value = "/fakeSubmitScores")
     public String dummySubmitScores(@ModelAttribute("dummyComment") Comment dummyComment, BindingResult result, @RequestParam String scoringContent, Model model)
             throws ScoringDefinitionParseException {
-    	contentAccessProvider.validateCanConfigureForms(getUser());
+    	contentAccessProvider.validateCanConfigureForms(getCurrentUser());
         List<Score> scores = dummyComment.getScores();
         CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);
         model.addAttribute("scores", scores);
@@ -416,7 +412,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.POST, value = "/previewScoringDefinition")
     public String previewScoringDefinition(@RequestParam String programCode, @RequestParam String scoringContent, Model model, HttpServletResponse response)
             throws IOException {
-    	contentAccessProvider.validateCanConfigureForms(getUser());
+    	contentAccessProvider.validateCanConfigureForms(getCurrentUser());
         String errorMessage = "";
         try {
             CustomQuestions parseScoringDefinition = scoringDefinitionParser.parseScoringDefinition(scoringContent);
@@ -431,4 +427,5 @@ public class ConfigurationController {
         response.sendError(418, errorMessage);
         return null;
     }
+    
 }

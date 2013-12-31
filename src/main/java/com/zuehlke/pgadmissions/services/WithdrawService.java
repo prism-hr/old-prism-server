@@ -26,13 +26,14 @@ public class WithdrawService {
         application.setStatus(ApplicationFormStatus.WITHDRAWN);
         application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
         applicationService.save(application);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
+        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application, application.getApplicant());
     }
 
     @Transactional
     public void sendToPortico(final ApplicationForm form) {
-        if (form.getStatusWhenWithdrawn() != ApplicationFormStatus.UNSUBMITTED) {
+        if (form.getPreviousStatus() != ApplicationFormStatus.UNSUBMITTED) {
             porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
         }
     }
+    
 }

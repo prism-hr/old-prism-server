@@ -8,12 +8,12 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -21,14 +21,13 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatusType;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class ApplicationFormDAO {
 
     private final SessionFactory sessionFactory;
-    
-    private List<ApplicationFormStatus> activeStates = Lists.newArrayList();
 
     public ApplicationFormDAO() {
         this(null);
@@ -37,10 +36,6 @@ public class ApplicationFormDAO {
     @Autowired
     public ApplicationFormDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        activeStates.add(ApplicationFormStatus.VALIDATION);
-        activeStates.add(ApplicationFormStatus.REVIEW);
-        activeStates.add(ApplicationFormStatus.INTERVIEW);
-        activeStates.add(ApplicationFormStatus.APPROVAL);
     }
 
     public void save(ApplicationForm application) {
@@ -100,6 +95,17 @@ public class ApplicationFormDAO {
         		.add(Restrictions.eq("applicant", applicant))
                 .add(Restrictions.eq("program", program)).list();
     }
+    
+    public ApplicationForm getMostRecentApplicationByApplicantAndProgram(RegisteredUser applicant, Program program) {
+        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+        		.add(Restrictions.eq("applicant", applicant))
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.not(
+                		Restrictions.in("status", ApplicationFormStatusType.COMPLETED.states())))
+                .addOrder(Order.desc("id"))
+                .setFirstResult(0)
+                .setMaxResults(1).uniqueResult();
+    }
 
     public List<ApplicationForm> getApplicationsByApplicantAndProgramAndProject(RegisteredUser applicant, Program program, Project project) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
@@ -116,13 +122,13 @@ public class ApplicationFormDAO {
     public List<ApplicationForm> getActiveApplicationsByProgram(Program program) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .add(Restrictions.eq("program", program))
-                .add(Restrictions.in("state", activeStates)).list();
+                .add(Restrictions.in("state", ApplicationFormStatusType.UNDERCONSIDERATION.states())).list();
     }
     
     public List<ApplicationForm> getActiveApplicationsByProject(Project project) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .add(Restrictions.eq("project", project))
-                .add(Restrictions.in("state", activeStates)).list();
+                .add(Restrictions.in("state", ApplicationFormStatusType.UNDERCONSIDERATION.states())).list();
     }
     
     public ApplicationForm getApplicationByDocument(Document document) {

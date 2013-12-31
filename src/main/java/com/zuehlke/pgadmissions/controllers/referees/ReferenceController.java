@@ -106,18 +106,18 @@ public class ReferenceController {
 
     @ModelAttribute("comment")
     public ReferenceComment getComment(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser currentUser = getCurrentUser();
-        Referee refereeForApplicationForm = currentUser.getRefereeForApplicationForm(applicationForm);
+        ApplicationForm application = getApplicationForm(applicationId);
+        RegisteredUser user = getCurrentUser();
+        Referee refereeForApplicationForm = refereeService.getRefereeForApplication(user, application);
 
         ReferenceComment referenceComment = new ReferenceComment();
-        referenceComment.setApplication(applicationForm);
-        referenceComment.setUser(currentUser);
+        referenceComment.setApplication(application);
+        referenceComment.setUser(user);
         referenceComment.setComment("");
         referenceComment.setType(CommentType.REFERENCE);
         referenceComment.setReferee(refereeForApplicationForm);
 
-        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
+        ScoringDefinition scoringDefinition = application.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
             try {
                 CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
@@ -125,7 +125,7 @@ public class ReferenceController {
                 referenceComment.getScores().addAll(scores);
                 referenceComment.setAlert(customQuestion.getAlert());
             } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
+                log.error("Incorrect scoring XML configuration for reference stage in program: " + application.getProgram().getTitle());
             }
         }
 

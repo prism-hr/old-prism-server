@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICATION_MOVED_TO_REJECT_NOTIFICATION;
-
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -52,7 +49,7 @@ public class RejectService {
 		return rejectDao.getRejectReasonById(id);
 	}
 
-	public void moveApplicationToReject(final ApplicationForm form, final Rejection rejection) {
+	public void rejectApplication(ApplicationForm form, Rejection rejection, RegisteredUser rejector) {
 
 		form.setStatus(ApplicationFormStatus.REJECTED);		
 		form.setRejection(rejection);
@@ -60,18 +57,12 @@ public class RejectService {
 		
 		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);
-		applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form);
+		applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form, rejector);
 	}
 	
 	private void sendRejectNotificationToApplicant(ApplicationForm form) {
 		try {
 			mailService.sendRejectionConfirmationToApplicant(form);
-			NotificationRecord notificationRecord = form.getNotificationForType(APPLICATION_MOVED_TO_REJECT_NOTIFICATION);
-			if (notificationRecord == null) {
-				notificationRecord = new NotificationRecord(APPLICATION_MOVED_TO_REJECT_NOTIFICATION);
-				form.addNotificationRecord(notificationRecord);
-			}
-			notificationRecord.setDate(new Date());
 		}
 		catch (Exception e) {
     		log.warn("{}", e);

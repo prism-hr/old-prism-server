@@ -1,30 +1,22 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICANT_SUBMISSION_NOTIFICATION;
-
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -143,31 +135,7 @@ public class ApplicationsService {
     }
 
     private ApplicationForm findMostRecentApplication(final RegisteredUser user, final Program program, Project project) {
-        List<ApplicationForm> applications = project == null ? applicationFormDAO.getApplicationsByApplicantAndProgram(user, program) : applicationFormDAO
-                .getApplicationsByApplicantAndProgramAndProject(user, program, project);
-
-        Iterable<ApplicationForm> filteredApplications = Iterables.filter(applications, new Predicate<ApplicationForm>() {
-            @Override
-            public boolean apply(ApplicationForm applicationForm) {
-                return !applicationForm.isDecided() && !applicationForm.isWithdrawn();
-            }
-        });
-
-        @SuppressWarnings("unchecked")
-        Ordering<ApplicationForm> ordering = Ordering//
-                .from(new BeanComparator("status"))//
-                .compound(new Comparator<ApplicationForm>() {
-                    @Override
-                    public int compare(ApplicationForm o1, ApplicationForm o2) {
-                        Date date1 = o1.getLastUpdated() != null ? o1.getLastUpdated() : o1.getApplicationTimestamp();
-                        Date date2 = o2.getLastUpdated() != null ? o2.getLastUpdated() : o2.getApplicationTimestamp();
-                        return date1.compareTo(date2);
-                    }
-                });
-
-        List<ApplicationForm> sortedApplications = ordering.sortedCopy(filteredApplications);
-
-        return Iterables.getLast(sortedApplications, null);
+    	return applicationFormDAO.getMostRecentApplicationByApplicantAndProgram(user, program);
     }
 
     public List<ApplicationDescriptor> getAllVisibleAndMatchedApplicationsForList(final RegisteredUser user, final ApplicationsFiltering filtering) {
@@ -186,12 +154,6 @@ public class ApplicationsService {
     public void sendSubmissionConfirmationToApplicant(final ApplicationForm applicationForm) {
         try {
             mailService.sendSubmissionConfirmationToApplicant(applicationForm);
-            NotificationRecord notificationRecord = applicationForm.getNotificationForType(APPLICANT_SUBMISSION_NOTIFICATION);
-            if (notificationRecord == null) {
-                notificationRecord = new NotificationRecord(APPLICANT_SUBMISSION_NOTIFICATION);
-                applicationForm.addNotificationRecord(notificationRecord);
-            }
-            notificationRecord.setDate(new Date());
             applicationFormDAO.save(applicationForm);
         } catch (Exception e) {
             log.warn("{}", e);

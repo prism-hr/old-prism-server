@@ -58,7 +58,7 @@ public class ProjectDAO {
     public List<Project> getProgramProjectsForWhichUserHasRoles(Program program, RegisteredUser user, Authority... authorities) {
 		List<Authority> authorRoles = Arrays.asList(authorities);
 		for (Authority systemRole : AuthorityGroup.SYSTEM.authorities()) {
-			if (authorRoles.contains(systemRole) && user.isInRole(systemRole)) {
+			if (authorRoles.contains(systemRole) && user.isInSystemRole(systemRole)) {
 				return getAllActiveProjectsForProgram(program);
 			}
 		}
@@ -69,7 +69,6 @@ public class ProjectDAO {
 			}
 		}
 		
-		/* This is horrible. If we generalised it in the DB we could clean it up. */
 		HashSet<Project> projects = new HashSet<Project>();
 		for (Authority projectRole : AuthorityGroup.PROJECT.authorities()) {
 			if (authorRoles.contains(projectRole)) {

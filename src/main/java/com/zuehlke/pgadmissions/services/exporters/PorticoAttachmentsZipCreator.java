@@ -73,26 +73,16 @@ public class PorticoAttachmentsZipCreator {
     protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
         List<ReferenceComment> references = applicationForm.getReferencesToSendToPortico();
         String filename;
-        switch (references.size()) {
-            case 2:
-                if (references.get(1) != null) {
-                    filename = getRandomFilename();
-                    zos.putNextEntry(new ZipEntry(filename));
-                    combinedReferenceBuilder.build(references.get(1), zos);
-                    zos.closeEntry();
-                    contentsProperties.put("reference.2.serverFilename", filename);
-                    contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
-                }
-
-                if (references.get(0) != null) {
-                    filename = getRandomFilename();
-                    zos.putNextEntry(new ZipEntry(filename));
-                    combinedReferenceBuilder.build(references.get(0), zos);
-                    zos.closeEntry();
-                    contentsProperties.put("reference.1.serverFilename", filename);
-                    contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
-                }
-                break;
+        for (int i = 0; i < ApplicationForm.MAXIMUM_REFERENCES_FOR_EXPORT; i++) {
+        	if (references.get(i) != null) {
+                filename = getRandomFilename();
+                zos.putNextEntry(new ZipEntry(filename));
+                combinedReferenceBuilder.build(references.get(i), zos);
+                zos.closeEntry();
+                String is = Integer.toString(i + 1);
+                contentsProperties.put("reference." + is + ".serverFilename", filename);
+                contentsProperties.put("reference." + is + ".applicationFilename", "References." + is + ".pdf");
+            }
         }
     }
 
@@ -135,31 +125,24 @@ public class PorticoAttachmentsZipCreator {
     protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
         List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
         String filename;
-        
-        switch (qualifications.size()) {
-        case 2:
-            filename = getRandomFilename();
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(qualifications.get(1).getContent());
-            zos.closeEntry();
-            contentsProperties.put("transcript.2.serverFilename", filename);
-            contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
-        case 1:
-            filename = getRandomFilename();
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(qualifications.get(0).getContent());
-            zos.closeEntry();
-            contentsProperties.put("transcript.1.serverFilename", filename);
-            contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
-            break;
-        case 0:
-            filename = getRandomFilename();
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(transcriptBuilder.build(applicationForm));
-            zos.closeEntry();
-            contentsProperties.put("transcript.1.serverFilename", filename);
-            contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
-            break;
+        int qualificationsToSend = qualifications.size();
+        if (qualificationsToSend == 0) {
+        	 filename = getRandomFilename();
+             zos.putNextEntry(new ZipEntry(filename));
+             zos.write(transcriptBuilder.build(applicationForm));
+             zos.closeEntry();
+             contentsProperties.put("transcript.1.serverFilename", filename);
+             contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
+        } else {
+        	for (int i = 0; i < ApplicationForm.MAXIMUM_QUALIFICATIONS_FOR_EXPORT; i++) {
+        		 filename = getRandomFilename();
+                 zos.putNextEntry(new ZipEntry(filename));
+                 zos.write(qualifications.get(i).getContent());
+                 zos.closeEntry();
+                 String is = Integer.toString(i + 1);
+                 contentsProperties.put("transcript." + is + ".serverFilename", filename);
+                 contentsProperties.put("transcript." + is + ".applicationFilename", qualifications.get(1).getFileName());
+        	}
         }
     }
     

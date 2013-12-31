@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends AbstractAuthorisationAPI implements Serializable {
+public class Program implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;
 
@@ -128,14 +128,6 @@ public class Program extends AbstractAuthorisationAPI implements Serializable {
     public void setAdministrators(final List<RegisteredUser> administrators) {
         this.administrators.clear();
         this.administrators.addAll(administrators);
-    }
-
-    public boolean isApprover(final RegisteredUser user) {
-        return isApproverInProgramme(this, user);
-    }
-
-    public boolean isAdministrator(final RegisteredUser user) {
-        return isAdminInProgramme(this, user);
     }
 
     public List<ProgramInstance> getInstances() {

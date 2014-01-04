@@ -19,6 +19,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 @Entity(name = "APPLICATION_FORM_USER_ROLE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -55,9 +57,10 @@ public class ApplicationFormUserRole implements Serializable {
     @Column(name = "raises_urgent_flag")
     private Boolean raisesUrgentFlag = false;
     
-    @Column(name = "assigned_timestamp")
+    @Column(name = "assigned_timestamp", insertable = false)
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date assignedTimestamp = new Date();
+    @Generated(GenerationTime.INSERT)
+    private Date assignedTimestamp;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_user_role_id", nullable = false)
@@ -129,6 +132,10 @@ public class ApplicationFormUserRole implements Serializable {
     
     public Date getAssignedTimestamp() {
     	return assignedTimestamp;
+    }
+    
+    public void setAssignedTimestamp(Date assignedTimestamp) {
+    	this.assignedTimestamp = assignedTimestamp;
     }
 
     public List<ApplicationFormActionRequired> getActions() {

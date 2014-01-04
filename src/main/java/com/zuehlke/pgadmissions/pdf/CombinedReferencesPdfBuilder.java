@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.pdf;
 
 import java.io.OutputStream;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.Document;
@@ -26,7 +25,7 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-            writer.setCloseStream(false); // otherwise we're loosing our ZipOutputstream for calling zos.closeEntry();
+            writer.setCloseStream(false);
             document.open();
 
             PdfPTable table = new PdfPTable(1);
@@ -34,12 +33,7 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
             table.addCell(newGrayTableCell("Referee Comment", BOLD_FONT));
             document.add(table);
             document.add(addSectionSeparators());
-
-            if (referenceComment.getReferee() != null && BooleanUtils.isTrue(referenceComment.getReferee().isDeclined())) {
-                document.add(new Paragraph("Comment:\nDeclined to provide a reference."));
-            } else {
-                document.add(new Paragraph("Comment:\n" + referenceComment.getComment()));
-            }
+            document.add(new Paragraph("Comment:\n" + referenceComment.getComment()));
 
             PdfContentByte cb = writer.getDirectContent();
             for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
@@ -56,4 +50,5 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
             throw new PdfDocumentBuilderException(e);
         }
     }
+    
 }

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
 public enum DurationUnitEnum {
+	
 	DAYS("Days", "DAY"), 
 	WEEKS("Weeks", "WEEK");
 	

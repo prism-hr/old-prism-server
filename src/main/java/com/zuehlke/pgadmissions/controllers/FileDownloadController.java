@@ -55,7 +55,7 @@ public class FileDownloadController {
 	public void downloadReferenceDocument(@RequestParam("referenceId") String encryptedReferenceId, HttpServletResponse response) throws IOException {
 		ReferenceComment reference = referenceService.getReferenceById(encryptionHelper.decryptToInteger(encryptedReferenceId));
 		RegisteredUser currentUser = userService.getCurrentUser();
-		contentAccessProvider.validateCanSeeReferences(reference.getApplication(), currentUser);
+		contentAccessProvider.validateCanSeeReference(reference, currentUser);
 		Document document = reference.getDocuments().get(0);
 		sendDocument(response, document);
 	}

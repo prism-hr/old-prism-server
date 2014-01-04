@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -11,10 +9,6 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 public class InterviewScheduleComment extends Comment {
 
     private static final long serialVersionUID = -3138212534729565852L;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "comment_type")
-    private CommentType type = CommentType.INTERVIEW_SCHEDULE;
 
     @Column(name = "further_details")
     private String furtherDetails;
@@ -24,10 +18,6 @@ public class InterviewScheduleComment extends Comment {
 
     @Column(name = "location_url")
     private String locationUrl;
-
-    public CommentType getType() {
-        return type;
-    }
 
     public void setType(CommentType type) {
     }

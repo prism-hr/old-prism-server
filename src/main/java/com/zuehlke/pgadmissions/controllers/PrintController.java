@@ -83,11 +83,7 @@ public class PrintController {
 	private PdfModelBuilder buildPDFModel(ApplicationForm application) throws ResourceNotFoundException {
 		RegisteredUser user = userService.getCurrentUser();
 		contentAccessProvider.validateCanDownloadApplication(application, user);	
-		PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();	
-		pdfModelBuilder.includeEqualOpportunities(contentAccessProvider.checkCanSeeEqualOpportunitiesInformation(application, user));
-		pdfModelBuilder.includeEqualOpportunities(contentAccessProvider.checkCanSeeCriminalConvictionsInformation(application, user));
-		pdfModelBuilder.includeEqualOpportunities(contentAccessProvider.checkCanSeeReferences(application, user));
-		return pdfModelBuilder;
+		return new PdfModelBuilder(application, user);
 	}
 
 	private void sendPDF(final HttpServletResponse response, final String pdfFileNamePostFix, final byte[] pdf) throws IOException {

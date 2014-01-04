@@ -1,12 +1,5 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -76,21 +69,21 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         log.trace("Sending task reminder to users");
         List<Integer> users = thisProxy.getPotentialUsersForTaskReminder();
         for (Integer userId : users) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_REMINDER);
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.DIGEST_TASK_REMINDER);
         }
         log.trace("Finished sending task reminder to users");
 
         log.trace("Sending task notification to users");
         users = thisProxy.getPotentialUsersForTaskNotification();
         for (Integer userId : users) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_NOTIFICATION);
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.DIGEST_TASK_NOTIFICATION);
         }
         log.trace("Finished sending task notification to users");
 
         log.trace("Sending update notification to users");
         users = thisProxy.getUsersForUpdateNotification();
         for (Integer userId : users) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.UPDATE_NOTIFICATION);
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.DIGEST_UPDATE_NOTIFICATION);
         }
         log.trace("Finished sending update notification to users");
     }
@@ -129,28 +122,13 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
             messageBuilder.model(modelBuilder);
             messageBuilder.to(user);
-            EmailTemplateName templateName;
-            
-            switch (digestNotificationType) {
-	            case TASK_REMINDER:
-	                templateName = DIGEST_TASK_REMINDER;
-	                break;
-	            case TASK_NOTIFICATION:
-	                templateName = DIGEST_TASK_NOTIFICATION;
-	                break;
-	            case UPDATE_NOTIFICATION:
-	                templateName = DIGEST_UPDATE_NOTIFICATION;
-	                break;
-	            default:
-	                throw new RuntimeException();
-            }
-            
+            EmailTemplateName templateName = EmailTemplateName.valueOf(digestNotificationType.toString());
             messageBuilder.subject(resolveMessage(templateName, (Object[]) null));
             messageBuilder.emailTemplate(templateName);
             PrismEmailMessage message = messageBuilder.build();
             sendEmail(message);
             
-            if (digestNotificationType == DigestNotificationType.UPDATE_NOTIFICATION) {
+            if (digestNotificationType == DigestNotificationType.DIGEST_UPDATE_NOTIFICATION) {
                 user.setLatestUpdateNotificationDate(new Date());
             } else {
             	user.setLatestTaskNotificationDate(new Date());
@@ -180,14 +158,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message;
         try {
             Referee referee = refereeDAO.getRefereeById(refereeId);
-            String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
+            String subject = resolveMessage(EmailTemplateName.REFEREE_REMINDER, referee.getApplication());
 
             ApplicationForm applicationForm = referee.getApplication();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
                     adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName() });
 
-            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
+            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), EmailTemplateName.REFEREE_REMINDER);
             sendEmail(message);
             referee.setLastNotified(new Date());
             refereeDAO.save(referee);
@@ -216,13 +194,13 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         InterviewParticipant participant = interviewParticipantDAO.getParticipantById(participantId);
         ApplicationForm application = participant.getInterview().getApplication();
         try {
-            String subject = resolveMessage(INTERVIEW_VOTE_REMINDER, application);
+            String subject = resolveMessage(EmailTemplateName.INTERVIEW_VOTE_REMINDER, application);
 
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
                     adminsEmails, participant, application, getHostName() });
 
-            message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
+            message = buildMessage(participant.getUser(), subject, modelBuilder.build(), EmailTemplateName.INTERVIEW_VOTE_REMINDER);
             sendEmail(message);
             participant.setLastNotified(new Date());
         } catch (Exception e) {
@@ -248,7 +226,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public boolean sendNewUserInvitation(Integer userId) {
         PrismEmailMessage message = null;
         RegisteredUser user = userDAO.get(userId);
-        String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
+        String subject = resolveMessage(EmailTemplateName.NEW_USER_SUGGESTION, (Object[]) null);
         for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
             if (notification.getNotificationDate() == null) {
                 notification.setNotificationDate(new Date());
@@ -258,7 +236,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
         try {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "host" }, new Object[] { user, admin, getHostName() });
-            message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
+            message = buildMessage(user, subject, modelBuilder.build(), EmailTemplateName.NEW_USER_SUGGESTION);
             sendEmail(message);
             userDAO.save(user);
         } catch (Exception e) {

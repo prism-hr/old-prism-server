@@ -43,6 +43,10 @@ public enum SearchCategory {
     }
 
     public static enum CategoryType {
-        TEXT, DATE
+        
+    	TEXT, 
+        DATE
+        
     }
+    
 }

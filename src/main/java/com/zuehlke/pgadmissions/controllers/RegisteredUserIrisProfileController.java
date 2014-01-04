@@ -30,15 +30,16 @@ public class RegisteredUserIrisProfileController {
     
     private final MessageSource messageSource;
     
+    public RegisteredUserIrisProfileController() {
+        this(null, null, null);
+    }
+    
     @Autowired
-    public RegisteredUserIrisProfileController(final UclIrisProfileService irisService, final UserService userService, final MessageSource messageSource) {
+    public RegisteredUserIrisProfileController(final UclIrisProfileService irisService, final UserService userService, 
+    		final MessageSource messageSource) {
         this.irisService = irisService;
         this.userService = userService;
         this.messageSource = messageSource;
-    }
-    
-    public RegisteredUserIrisProfileController() {
-        this(null, null, null);
     }
     
     private boolean isNotValidUpi(final String upi) {
@@ -120,4 +121,5 @@ public class RegisteredUserIrisProfileController {
         }
         
     }
+    
 }

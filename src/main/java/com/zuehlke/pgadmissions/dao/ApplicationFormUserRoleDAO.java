@@ -76,7 +76,8 @@ public class ApplicationFormUserRoleDAO {
                 .add(Restrictions.eq("role.id", authority)).list();
     }
     
-    public List<ApplicationFormUserRole>findByUserAndRoleWithOutstandingActions(RegisteredUser registeredUser, Role role) {
+    //TODO: Complete the query so that it only returns for the transient roles 
+    public List<ApplicationFormUserRole>findByUserAndTransientRoleWithOutstandingActions(RegisteredUser registeredUser, Role role) {
     	return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
         		.createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("role", role)).list();
@@ -222,36 +223,36 @@ public class ApplicationFormUserRoleDAO {
     public void insertUserInProjectRole(RegisteredUser user, Project project, Authority authority) {
     	insertRoles(project.getProgram(), project, user, authority);
     }
-	
-	public void deleteAllProgramRoles (Program program) {
-		deleteRoles(program, null, null, null, null, ActionScope.APPLICATION);
+    
+	public void deleteAllApplicationActions(ApplicationForm application) {
+		deleteActions(application, ActionScope.APPLICATION);
 	}
 	
-	public void deleteAllProjectRoles (Project project) {
-		deleteRoles(project.getProgram(), project, null, null, null, ActionScope.APPLICATION);
+	public void deleteAllStateActions(ApplicationForm application) {
+		deleteActions(application, ActionScope.STATE);
 	}
 	
-	public void deleteAllApplicationRoles (ApplicationForm application) {
-		deleteRoles(application.getProgram(), application.getProject(), application, null, null, ActionScope.APPLICATION);
+	public void deleteAllProgramRoles(Program program) {
+		deleteRoles(program, null, null, null);
 	}
 	
-	public void deleteAllStateRoles(ApplicationForm application) {
-		deleteRoles(application.getProgram(), application.getProject(), application, null, null, ActionScope.STATE);
+	public void deleteAllProjectRoles(Project project) {
+		deleteRoles(project.getProgram(), project, null, null);
 	}
 	
-    public void deleteUserFromSystemRole (RegisteredUser user, Authority authority) {
-		deleteRoles(null, null, null, user, authority, ActionScope.APPLICATION);
+    public void deleteUserFromSystemRole(RegisteredUser user, Authority authority) {
+		deleteRoles(null, null, user, authority);
     }
     
-    public void deleteUserFromProgramRole (RegisteredUser user, Program program, Authority authority) {
-		deleteRoles(program, null, null, user, authority, ActionScope.APPLICATION);
+    public void deleteUserFromProgramRole(RegisteredUser user, Program program, Authority authority) {
+		deleteRoles(program, null, user, authority);;
 	}
     
-    public void deleteUserFromProjectRole (RegisteredUser user, Project project, Authority authority) {
-		deleteRoles(project.getProgram(), project, null, user, authority, ActionScope.APPLICATION);
+    public void deleteUserFromProjectRole(RegisteredUser user, Project project, Authority authority) {
+		deleteRoles(project.getProgram(), project, user, authority);
     }
 	
-	public void deleteActionsAndFlushToDB(ApplicationFormUserRole applicationFormUserRole) {
+	public void deleteOutstandingActions(ApplicationFormUserRole applicationFormUserRole) {
 		applicationFormUserRole.getActions().clear();
 		applicationFormUserRole.setRaisesUrgentFlag(false);
 		sessionFactory.getCurrentSession().flush();
@@ -275,16 +276,25 @@ public class ApplicationFormUserRoleDAO {
 		session.flush();
 	}
 
-	private void deleteRoles(Program program, Project project, ApplicationForm application, RegisteredUser user, Authority authority, ActionScope scope) {
+	private void deleteRoles(Program program, Project project, RegisteredUser user, Authority authority) {
 		Session session = sessionFactory.getCurrentSession();
 		
-		Query query = session.createSQLQuery("CALL DELETE_ROLES(?, ?, ?, ?, ?, ?);")
+		Query query = session.createSQLQuery("CALL DELETE_ROLES(?, ?, ?, ?);")
 					.setInteger(0, program.getId())
 					.setInteger(1, project.getId())
-					.setInteger(2, application.getId())
-					.setInteger(3, user.getId())
-					.setText(4, authority.toString())
-					.setText(5, scope.toString());
+					.setInteger(2, user.getId())
+					.setText(3, authority.toString());
+		query.executeUpdate();
+			
+		session.flush();
+	}
+	
+	private void deleteActions(ApplicationForm application, ActionScope scope) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		Query query = session.createSQLQuery("CALL DELETE_ACTIONS(?, ?);")
+					.setInteger(0, application.getId())
+					.setText(1, scope.toString());
 		query.executeUpdate();
 			
 		session.flush();

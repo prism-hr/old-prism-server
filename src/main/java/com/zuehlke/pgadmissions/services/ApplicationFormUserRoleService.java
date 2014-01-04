@@ -102,7 +102,7 @@ public class ApplicationFormUserRoleService extends UserService {
     }
 
     public void validationStageCompleted(ApplicationForm application) {
-        applicationFormUserRoleDAO.deleteAllStateRoles(application);
+        applicationFormUserRoleDAO.deleteAllStateActions(application);
 
         for (Referee referee : application.getReferees()) {
         	RegisteredUser refereeUser = super.createRegisteredUser(referee.getFirstname(), referee.getLastname(), referee.getEmail());
@@ -133,7 +133,7 @@ public class ApplicationFormUserRoleService extends UserService {
 
     public void stateChanged(StateChangeComment stateChangeComment) {
         ApplicationForm application = stateChangeComment.getApplication();
-        applicationFormUserRoleDAO.deleteAllStateRoles(application);
+        applicationFormUserRoleDAO.deleteAllStateActions(application);
         
         ApplicationFormStatus nextStatus = stateChangeComment.getNextStatus();
         assignToAdministrators(application, initiateStageMap.get(nextStatus), new Date(), false);
@@ -167,7 +167,7 @@ public class ApplicationFormUserRoleService extends UserService {
 
     public void movedToReviewStage(ReviewRound reviewRound, RegisteredUser mover) {
         ApplicationForm application = reviewRound.getApplication();
-        applicationFormUserRoleDAO.deleteAllStateRoles(application);
+        applicationFormUserRoleDAO.deleteAllStateActions(application);
 
         for (Reviewer reviewer : reviewRound.getReviewers()) {
             grantUserApplicationRole(reviewRound.getApplication(), reviewer.getUser(), Authority.REVIEWER, false, 
@@ -180,7 +180,7 @@ public class ApplicationFormUserRoleService extends UserService {
 
     public void movedToInterviewStage(Interview interview, RegisteredUser mover) {
         ApplicationForm application = interview.getApplication();
-        applicationFormUserRoleDAO.deleteAllStateRoles(application);
+        applicationFormUserRoleDAO.deleteAllStateActions(application);
 
         if (interview.isScheduling()) {
             assignToAdministrators(application, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS, application.getDueDate(), true);
@@ -205,7 +205,7 @@ public class ApplicationFormUserRoleService extends UserService {
 
     public void movedToApprovalStage(ApprovalRound approvalRound, RegisteredUser mover) {
         ApplicationForm application = approvalRound.getApplication();
-        applicationFormUserRoleDAO.deleteAllStateRoles(application);
+        applicationFormUserRoleDAO.deleteAllStateActions(application);
 
         Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
         grantUserApplicationRole(approvalRound.getApplication(), primarySupervisor.getUser(), Authority.PRIMARYSUPERVISOR, false,
@@ -228,7 +228,7 @@ public class ApplicationFormUserRoleService extends UserService {
         ApplicationForm application = comment.getApplication();
         List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.ADMITTER);
         for (ApplicationFormUserRole role : roles) {
-            deleteActionsAndFlushToDB(role);
+            deleteOutstandingActions(role);
         }
     }
 
@@ -238,7 +238,7 @@ public class ApplicationFormUserRoleService extends UserService {
         ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.REFEREE);     
         
         if (role != null) {
-        	deleteActionsAndFlushToDB(role);
+        	deleteOutstandingActions(role);
         }
         
         registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
@@ -253,7 +253,7 @@ public class ApplicationFormUserRoleService extends UserService {
         ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.REVIEWER);
         setInterestedInApplication(application, reviewer.getUser(), review.getWillingToInterview() || review.getWillingToWorkWithApplicant());
 
-        deleteActionsAndFlushToDB(role);
+        deleteOutstandingActions(role);
 
         if (reviewRound.hasAllReviewersResponded()) {
             resetActionDeadline(application, new Date());
@@ -274,7 +274,7 @@ public class ApplicationFormUserRoleService extends UserService {
             role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.INTERVIEWER);
         }
 
-        deleteActionsAndFlushToDB(role);
+        deleteOutstandingActions(role);
 
         if (interview.hasAllParticipantsProvidedAvailability()) {
             resetActionDeadline(application, new Date());
@@ -285,7 +285,7 @@ public class ApplicationFormUserRoleService extends UserService {
 
     public void interviewConfirmed(Interview interview, RegisteredUser confirmer) {
         ApplicationForm application = interview.getApplication();
-        applicationFormUserRoleDAO.deleteAllStateRoles(application);
+        applicationFormUserRoleDAO.deleteAllStateActions(application);
 
         for (InterviewParticipant participant : interview.getParticipants()) {
             RegisteredUser user = participant.getUser();
@@ -298,7 +298,7 @@ public class ApplicationFormUserRoleService extends UserService {
                 role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.INTERVIEWER);
             }
 
-            deleteActionsAndFlushToDB(role);
+            deleteOutstandingActions(role);
 
             if (!isApplicant) {
                 Date dateNow = new Date();
@@ -320,7 +320,7 @@ public class ApplicationFormUserRoleService extends UserService {
                 Authority.INTERVIEWER);
         setInterestedInApplication(application, user, interviewComment.getWillingToSupervise());
 
-        deleteActionsAndFlushToDB(role);
+        deleteOutstandingActions(role);
 
         if (interview.hasAllInterviewersProvidedFeedback()) {
             resetActionDeadline(application, new Date());
@@ -337,14 +337,14 @@ public class ApplicationFormUserRoleService extends UserService {
                 Authority.PRIMARYSUPERVISOR);
         setInterestedInApplication(application, supervisor.getUser(), supervisor.getConfirmedSupervision());
 
-        deleteActionsAndFlushToDB(role);
+        deleteOutstandingActions(role);
 
         resetActionDeadline(application, new Date());
 
     }
 
     public void moveToApprovedOrRejectedOrWithdrawn(ApplicationForm application, RegisteredUser mover) {
-        applicationFormUserRoleDAO.deleteAllApplicationRoles(application); 
+        applicationFormUserRoleDAO.deleteAllApplicationActions(application); 
         Program program = application.getProgram();
         Project project = application.getProject();
         
@@ -495,13 +495,13 @@ public class ApplicationFormUserRoleService extends UserService {
         }
     }
     
-    private void deleteActionsAndFlushToDB(ApplicationFormUserRole applicationFormUserRole) {
-    	applicationFormUserRoleDAO.deleteActionsAndFlushToDB(applicationFormUserRole);
-    	RegisteredUser registeredUser = applicationFormUserRole.getUser();
+    private void deleteOutstandingActions(ApplicationFormUserRole applicationFormUserRole) {
+    	applicationFormUserRoleDAO.deleteOutstandingActions(applicationFormUserRole);
+    	RegisteredUser user = applicationFormUserRole.getUser();
     	Role role = applicationFormUserRole.getRole();
     	
-    	if (applicationFormUserRoleDAO.findByUserAndRoleWithOutstandingActions(registeredUser, role).isEmpty()) {
-    		super.revokeRolesFromUser(registeredUser, Authority.valueOf(role.getAuthority()));
+    	if (applicationFormUserRoleDAO.findByUserAndTransientRoleWithOutstandingActions(user, role).isEmpty()) {
+    		super.revokeRolesFromUser(user, Authority.valueOf(role.getAuthority()));
     	}
     }
 

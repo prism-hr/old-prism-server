@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum FundingType {
 
-	SCHOLARSHIP("Scholarship/Grant"), EMPLOYER("Employer"), SPONSOR("Industrial sponsor");
+	SCHOLARSHIP("Scholarship/Grant"), 
+	EMPLOYER("Employer"), 
+	SPONSOR("Industrial sponsor");
 
 	private final String displayValue;
 
@@ -14,5 +16,4 @@ public enum FundingType {
 		return displayValue;
 	}
 
-	
 }

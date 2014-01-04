@@ -84,8 +84,6 @@ public class Referee implements FormSectionObject, Serializable {
 	@Column(name="send_to_ucl")
 	private Boolean sendToUCL;
 
-	private boolean declined = false;
-
 	public ApplicationForm getApplication() {
 		return application;
 	}
@@ -189,30 +187,13 @@ public class Referee implements FormSectionObject, Serializable {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
-	public boolean isDeclined() {
-		return declined;
-	}
-
-	public void setDeclined(boolean declined) {
-		this.declined = declined;
-	}
-
+	
 	public Date getLastNotified() {
 		return lastNotified;
 	}
 
 	public void setLastNotified(Date lastNotified) {
 		this.lastNotified = lastNotified;
-	}
-
-	public boolean isEditable() {
-		return !hasProvidedReference() && !declined && (application == null || application.isModifiable());
-	}
-
-	public boolean hasResponded() {
-		return isDeclined() || hasProvidedReference();
-		
 	}
 
 	public boolean isAcceptedTerms() {

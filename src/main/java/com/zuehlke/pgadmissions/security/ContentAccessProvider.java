@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -306,16 +307,6 @@ public class ContentAccessProvider extends ActionsProvider {
     	return application != null && hasRolesForApplication(application, user, AuthorityGroup.COMMENTVIEWER.authorities());
     }
     
-    public void validateCanSeeReferences(ApplicationForm application, RegisteredUser user) {
-    	if (!checkCanSeeReferences(application, user)) {
-    		throw new ResourceNotFoundException();
-    	}
-    }
-    
-    public boolean checkCanSeeReferences(ApplicationForm application, RegisteredUser user) {
-    	return application != null && hasRolesForApplication(application, user, AuthorityGroup.COMMENTVIEWER.authorities());
-    }
-    
     public void validateCanSeeEqualOpportunitiesInformation(ApplicationForm application, RegisteredUser user) {
     	if (!checkCanSeeEqualOpportunitiesInformation(application, user)) {
     		throw new ResourceNotFoundException();
@@ -324,6 +315,18 @@ public class ContentAccessProvider extends ActionsProvider {
     
     public boolean checkCanSeeEqualOpportunitiesInformation(ApplicationForm application, RegisteredUser user) {
     	return application != null && hasRolesForApplication(application, user, AuthorityGroup.EQUALOPPSVIEWER.authorities());
+    }
+    
+    public void validateCanSeeReference(Comment comment, RegisteredUser user) {
+    	if (!checkCanSeeComment(comment, user)) {
+    		throw new ResourceNotFoundException();
+    	}
+    }
+    
+    public boolean checkCanSeeComment(Comment comment, RegisteredUser user) {
+    	ApplicationForm application = comment.getApplication();
+    	return application != null && (hasRolesForApplication(application, user, AuthorityGroup.COMMENTVIEWER.authorities())
+    			|| comment.getUser().equals(user));
     }
     
     public void validateCanSeeCriminalConvictionsInformation(ApplicationForm application, RegisteredUser user) {

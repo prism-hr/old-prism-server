@@ -23,11 +23,9 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -84,32 +82,28 @@ public class ReviewCommentController {
         this.applicantRatingService = applicantRatingService;
         this.reviewService = reviewService;
     }
-
+    
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
+        actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.PROVIDE_REVIEW);
         return applicationForm;
     }
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(getApplicationForm(applicationId), getCurrentUser());
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("comment")
-    public ReviewComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm application = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
+    public ReviewComment getComment(@RequestParam String applicationId, @ModelAttribute ApplicationForm application) 
+    		throws ScoringDefinitionParseException {
+        RegisteredUser user = getCurrentUser();
         ReviewComment reviewComment = new ReviewComment();
         reviewComment.setApplication(application);
         reviewComment.setUser(user);
@@ -140,17 +134,16 @@ public class ReviewCommentController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getReviewFeedbackPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+    public String getReviewFeedbackPage(ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
-        ApplicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        ApplicationFormUserRoleService.applicationViewed(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result, ModelMap modelMap) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+    public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result, 
+    		@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) throws ScoringDefinitionParseException {
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
 
@@ -176,7 +169,6 @@ public class ReviewCommentController {
         applicantRatingService.computeAverageRating(comment.getReviewer().getReviewRound());
         applicantRatingService.computeAverageRating(applicationForm);
         ApplicationFormUserRoleService.reviewPosted(comment.getReviewer());
-        ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
 
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }

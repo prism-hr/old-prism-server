@@ -40,10 +40,6 @@ public class Interview implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "last_notified")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastNotified;
-
     @Column(name = "interview_time")
     private String interviewTime;
 
@@ -51,6 +47,10 @@ public class Interview implements Serializable {
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
+    
+    @Column(name = "completed_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date completedDate;
 
     @Column(name = "further_details")
     private String furtherDetails;
@@ -93,9 +93,15 @@ public class Interview implements Serializable {
     @JoinColumn(name = "interview_id")
     @IndexColumn(name = "timeslot_position")
     private List<InterviewTimeslot> timeslots = new ArrayList<InterviewTimeslot>();
-
-    @Column(name = "avg_rating", precision = 3, scale = 2)
+    
+    @Column(name = "average_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;
+    
+    @Column(name = "total_negative_endorsements")
+    private Integer totalPositiveEndorsements = 0;
+    
+    @Column(name = "total_negative_endorsements")
+    private Integer totalNegativeEndorsements = 0;
 
     @Transient
     private String timeHours;
@@ -105,14 +111,6 @@ public class Interview implements Serializable {
 
     @Transient
     private Boolean takenPlace = false;
-
-    public Date getLastNotified() {
-        return lastNotified;
-    }
-
-    public void setLastNotified(Date lastNotified) {
-        this.lastNotified = lastNotified;
-    }
 
     public String getFurtherDetails() {
         return furtherDetails;
@@ -183,7 +181,15 @@ public class Interview implements Serializable {
         this.createdDate = created;
     }
 
-    public String getInterviewTime() {
+    public Date getCompletedDate() {
+		return completedDate;
+	}
+
+	public void setCompletedDate(Date completedDate) {
+		this.completedDate = completedDate;
+	}
+
+	public String getInterviewTime() {
         return interviewTime;
     }
 
@@ -260,7 +266,23 @@ public class Interview implements Serializable {
         this.averageRating = averageRating;
     }
 
-    public boolean isScheduled() {
+    public Integer getTotalPositiveEndorsements() {
+		return totalPositiveEndorsements;
+	}
+
+	public void setTotalPositiveEndorsements(Integer totalPositiveEndorsements) {
+		this.totalPositiveEndorsements = totalPositiveEndorsements;
+	}
+
+	public Integer getTotalNegativeEndorsements() {
+		return totalNegativeEndorsements;
+	}
+
+	public void setTotalNegativeEndorsements(Integer totalNegativeEndorsements) {
+		this.totalNegativeEndorsements = totalNegativeEndorsements;
+	}
+
+	public boolean isScheduled() {
         return getStage() == InterviewStage.SCHEDULED;
     }
 
@@ -314,6 +336,5 @@ public class Interview implements Serializable {
     public String getAverageRatingFormatted(){
         return MathUtils.formatRating(getAverageRating());
     }
-
 
 }

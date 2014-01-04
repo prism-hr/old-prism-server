@@ -167,7 +167,16 @@ public class ProjectConfigurationController {
             RegisteredUser currentUser = getCurrentUser();
             Project project = projectConverter.toDomainObject(projectDTO);
             project.setAuthor(currentUser);
-            applicationFormUserRoleService.grantUserProjectRoles(null, currentUser, project, Authority.PROJECTADMINISTRATOR);
+            applicationFormUserRoleService.grantUserProjectRoles(currentUser, project, Authority.PROJECTAUTHOR);
+            applicationFormUserRoleService.grantUserProjectRoles(project.getPrimarySupervisor(), project, Authority.PROJECTPRIMARYSUPERVISOR);
+            RegisteredUser administrator = project.getAdministrator();
+            if (administrator != null) {
+            	applicationFormUserRoleService.grantUserProjectRoles(administrator, project, Authority.PROJECTADMINISTRATOR);
+            }
+            RegisteredUser secondarySupervisor = project.getSecondarySupervisor();
+            if (secondarySupervisor != null) {
+            	applicationFormUserRoleService.grantUserProjectRoles(secondarySupervisor, project, Authority.SECONDARYSUPERVISOR);
+            }
             programsService.saveProject(project);
             map.put("success", "true");
         } 
@@ -239,9 +248,9 @@ public class ProjectConfigurationController {
         	RegisteredUser newPrimarySupervisor = project.getPrimarySupervisor();
         	RegisteredUser newSecondarySupervisor = project.getSecondarySupervisor();
         	if (!applicationsService.getApplicationsForProject(project).isEmpty()) {
-	        	applicationFormUserRoleService.grantUserProjectRoles(oldAdministrator, newAdministrator, project, Authority.PROJECTADMINISTRATOR);
-	        	applicationFormUserRoleService.grantUserProjectRoles(oldPrimarySupervisor, newPrimarySupervisor, project, Authority.PROJECTADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR);
-	        	applicationFormUserRoleService.grantUserProjectRoles(oldSecondarySupervisor, newSecondarySupervisor, project, Authority.SUGGESTEDSUPERVISOR);
+	        	applicationFormUserRoleService.switchUserProjectRoles(oldAdministrator, newAdministrator, project, Authority.PROJECTADMINISTRATOR);
+	        	applicationFormUserRoleService.switchUserProjectRoles(oldPrimarySupervisor, newPrimarySupervisor, project, Authority.PROJECTADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR);
+	        	applicationFormUserRoleService.switchUserProjectRoles(oldSecondarySupervisor, newSecondarySupervisor, project, Authority.SUGGESTEDSUPERVISOR);
         	}
         	programsService.saveProject(project);
             map.put("success", "true");

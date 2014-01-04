@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -90,9 +92,7 @@ public class FullTextSearchDAO {
     
     private List<RegisteredUser> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<RegisteredUser> comparator) {
         
-    	Criterion notAnApplicantCriterion = Restrictions.in("r.id", new Authority[] {
-                Authority.ADMINISTRATOR, Authority.APPROVER, Authority.INTERVIEWER,
-                Authority.REFEREE, Authority.REVIEWER, Authority.SUPERADMINISTRATOR, Authority.SUPERVISOR });
+    	Criterion notAnApplicantCriterion = Restrictions.in("r.id", ArrayUtils.add(AuthorityGroup.COMMENTVIEWER.authorities(), Authority.REFEREE));
         
         String trimmedSearchTerm = StringUtils.trimToEmpty(searchTerm);
 

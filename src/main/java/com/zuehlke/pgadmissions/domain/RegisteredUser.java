@@ -139,7 +139,7 @@ public class RegisteredUser implements UserDetails,
 	private RegisteredUser primaryAccount;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
+	@JoinTable(name = "USER_ROLE", joinColumns = { @JoinColumn(name = "registered_user_id") }, inverseJoinColumns = { @JoinColumn(name = "application_role_id") })
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	private List<Role> roles = new ArrayList<Role>();
 
@@ -227,16 +227,16 @@ public class RegisteredUser implements UserDetails,
 		List<Program> programsToSearch = new ArrayList<Program>();
 		for (Authority authority : AuthorityGroup.PROGRAM.authorities()) {
 			switch (authority) {
-			case ADMINISTRATOR:
-				programsToSearch = getProgramsOfWhichAdministrator();
-				break;
-			case APPROVER:
-				programsToSearch = getProgramsOfWhichApprover();
-				break;
-			case VIEWER:
-				programsToSearch = getProgramsOfWhichViewer();
-				break;
-			default: break;
+				case ADMINISTRATOR:
+					programsToSearch = getProgramsOfWhichAdministrator();
+					break;
+				case APPROVER:
+					programsToSearch = getProgramsOfWhichApprover();
+					break;
+				case VIEWER:
+					programsToSearch = getProgramsOfWhichViewer();
+					break;
+				default: break;
 			}
 			if (programsToSearch.contains(program)) {
 				rolesFound.add(authority);

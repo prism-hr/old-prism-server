@@ -210,5 +210,9 @@ public class ApplicationsService {
     public List<ApplicationForm> getAllApplicationsByStatus(final ApplicationFormStatus status) {
         return applicationFormDAO.getAllApplicationsByStatus(status);
     }
+    
+    public List<ApplicationForm> getApplicationsForProject(final Project project) {
+    	return applicationFormDAO.getApplicationsByProject(project);
+    }
 
 }

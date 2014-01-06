@@ -16,11 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
@@ -28,7 +26,7 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 public class CreateNewSupervisorController {
 	private static final String CREATE_SUPERVISOR_SECTION = "/private/staff/supervisors/create_supervisor_section";
 	private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
-	private final UserService userService;
+	private final ApplicationFormUserRoleService applicationFormUserRoleService;
 	private final ApplicationsService applicationsService;
 	private final NewUserByAdminValidator supervisorValidator;
 
@@ -37,9 +35,9 @@ public class CreateNewSupervisorController {
 	}
 
 	@Autowired
-	public CreateNewSupervisorController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator) {
+	public CreateNewSupervisorController(ApplicationsService applicationsService, ApplicationFormUserRoleService applicationFormUserRoleService, NewUserByAdminValidator supervisorValidator) {
 				this.applicationsService = applicationsService;
-				this.userService = userService;
+				this.applicationFormUserRoleService = applicationFormUserRoleService;
 				this.supervisorValidator = supervisorValidator;
 	}
 
@@ -48,18 +46,11 @@ public class CreateNewSupervisorController {
 		if (bindingResult.hasErrors()) {
 			return new ModelAndView(CREATE_SUPERVISOR_SECTION);
 		}
+
 		ModelAndView modelAndView = new ModelAndView(JSON_VIEW);
-		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(suggestedNewSupervisorUser.getEmail());
-		if (existingUser != null) {
-			modelAndView.getModel().put("isNew", false);		
-			modelAndView.getModel().put("user", existingUser);
-			return modelAndView;
-		}
-		
-		modelAndView.getModel().put("isNew", true);
-		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewSupervisorUser.getFirstName(), suggestedNewSupervisorUser.getLastName(), suggestedNewSupervisorUser.getEmail(),
-				DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm, Authority.SUPERVISOR);
-		modelAndView.getModel().put("user", newUser);
+		RegisteredUser userToAssign = applicationFormUserRoleService.createRegisteredUser(suggestedNewSupervisorUser.getFirstName(), suggestedNewSupervisorUser.getLastName(), suggestedNewSupervisorUser.getEmail());
+		modelAndView.getModel().put("isNew", applicationFormUserRoleService.isNewlyCreatedUser(userToAssign));		
+		modelAndView.getModel().put("user", userToAssign);
 		return modelAndView;
 	}
 

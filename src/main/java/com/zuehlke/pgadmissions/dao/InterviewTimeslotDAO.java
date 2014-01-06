@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 
 @Repository
-@SuppressWarnings("unchecked")
 public class InterviewTimeslotDAO {
 
 	private final SessionFactory sessionFactory;

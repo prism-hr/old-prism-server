@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -37,28 +35,27 @@ public class DocumentsController {
     private final UserService userService;
     
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    
+    private final ContentAccessProvider contentAccessProvider;
 
     public DocumentsController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public DocumentsController(ApplicationsService applicationsService, UserService userService,
-            DocumentSectionValidator documentSectionValidator, DocumentPropertyEditor documentPropertyEditor, final ApplicationFormUserRoleService applicationFormUserRoleService) {
+    public DocumentsController(ApplicationsService applicationsService, UserService userService, DocumentSectionValidator documentSectionValidator, 
+    		DocumentPropertyEditor documentPropertyEditor, final ApplicationFormUserRoleService applicationFormUserRoleService,
+    		ContentAccessProvider contentAccessProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.documentSectionValidator = documentSectionValidator;
         this.documentPropertyEditor = documentPropertyEditor;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.contentAccessProvider = contentAccessProvider;
     }
 
     @RequestMapping(value = "/editDocuments", method = RequestMethod.POST)
-    public String editDocuments(ApplicationForm applicationForm, BindingResult result) {
-        
-        if (applicationForm.isDecided()) {
-            throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
-        }
-        
+    public String editDocuments(@ModelAttribute ApplicationForm applicationForm, BindingResult result) {
         if (applicationForm.getPersonalStatement() == null) {
             result.rejectValue("personalStatement", "file.upload.empty");
         }
@@ -68,21 +65,19 @@ public class DocumentsController {
         }
         
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationEdited(applicationForm, getCurrentUser());
         return "redirect:/update/getDocuments?applicationId=" + applicationForm.getApplicationNumber();
     }
 
     @RequestMapping(value = "/getDocuments", method = RequestMethod.GET)
-    public String getDocumentsView() {
+    public String getDocumentsView(@ModelAttribute ApplicationForm applicationForm) {
         return STUDENTS_FORM_DOCUMENTS_VIEW;
     }
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
+        contentAccessProvider.validateCanEditAsApplicant(application, getCurrentUser());
         return application;
     }
 

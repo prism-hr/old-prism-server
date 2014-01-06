@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -57,9 +58,11 @@ public class RegisterController {
 	private final ApplicationQueryStringParser applicationQueryStringParser;
 
 	private final AdvertService advertService;
+	
+	private final MailSendingService mailService;
 
 	public RegisterController() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -68,7 +71,8 @@ public class RegisterController {
 			ApplicationsService applicationsService,
 			ProgramsService programService,
 			ApplicationQueryStringParser applicationQueryStringParser,
-			EncryptionHelper encryptionHelper, AdvertService advertService) {
+			EncryptionHelper encryptionHelper, AdvertService advertService,
+			MailSendingService mailService) {
 		this.registerFormValidator = validator;
 		this.userService = userService;
 		this.registrationService = registrationService;
@@ -76,20 +80,18 @@ public class RegisterController {
 		this.programService = programService;
 		this.applicationQueryStringParser = applicationQueryStringParser;
 		this.advertService = advertService;
+		this.mailService = mailService;
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.GET)
-	public String defaultGet(
-			@ModelAttribute("pendingUser") RegisteredUser pendingUser,
-			Model model, HttpSession session) {
+	public String defaultGet(@ModelAttribute("pendingUser") RegisteredUser pendingUser, Model model, HttpSession session) {
 		model.addAttribute("pendingUser", pendingUser);
 		return REGISTER_USERS_VIEW_NAME;
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
-	public String submitRegistration(
-			@ModelAttribute("pendingUser") RegisteredUser pendingUser,
-			BindingResult result, Model model, HttpServletRequest request) {
+	public String submitRegistration(@ModelAttribute("pendingUser") RegisteredUser pendingUser, BindingResult result, Model model,
+			HttpServletRequest request) {
 
 		registerFormValidator.validate(pendingUser, result);
 
@@ -98,44 +100,34 @@ public class RegisterController {
 			return REGISTER_USERS_VIEW_NAME;
 		}
 
-		RegisteredUser existingDisabledUser = userService
-				.getUserByEmailDisabledAccountsOnly(pendingUser.getEmail());
-		if (existingDisabledUser != null
-				&& StringUtils.isBlank(pendingUser.getActivationCode())) {
-			// Kevin: This means a user tries to register without using the link
-			// provided in the registration email.
-			registrationService
-					.sendInstructionsToRegisterIfActivationCodeIsMissing(existingDisabledUser);
+		RegisteredUser existingDisabledUser = userService.getUserByEmailDisabledAccountsOnly(pendingUser.getEmail());
+		if (existingDisabledUser != null && StringUtils.isBlank(pendingUser.getActivationCode())) {
+			// Kevin: This means a user tries to register without using the link provided in the registration email.
+			registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(existingDisabledUser);
 			return REGISTER_NOT_COMPLETE_VIEW_NAME;
 		}
 
-		String queryString = (String) request.getSession().getAttribute(
-				"applyRequest");
-		RegisteredUser registeredUser = registrationService.updateOrSaveUser(
-				pendingUser, queryString);
+		String queryString = (String) request.getSession().getAttribute("applyRequest");
+		RegisteredUser registeredUser = registrationService.updateOrSaveUser(pendingUser, queryString);
 		model.addAttribute("pendingUser", registeredUser);
 		return REGISTER_COMPLETE_VIEW_NAME;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/resendConfirmation")
-	public String resendConfirmation(@RequestParam String activationCode,
-			Model model) {
+	public String resendConfirmation(@RequestParam String activationCode, Model model) {
 
-		RegisteredUser user = userService
-				.getUserByActivationCode(activationCode);
+		RegisteredUser user = userService.getUserByActivationCode(activationCode);
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
-		registrationService.sendConfirmationEmail(user);
+		mailService.sendRegistrationConfirmation(user);
 		model.addAttribute("pendingUser", user);
 		return REGISTER_COMPLETE_VIEW_NAME;
 	}
 
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
-	public String activateAccountSubmit(@RequestParam String activationCode,
-			HttpServletRequest request) {
-		RegisteredUser user = userService
-				.getUserByActivationCode(activationCode);
+	public String activateAccountSubmit(@RequestParam String activationCode, HttpServletRequest request) {
+		RegisteredUser user = userService.getUserByActivationCode(activationCode);
 
 		if (user == null) {
 			return REGISTER_INFO_VIEW_NAME;
@@ -147,14 +139,11 @@ public class RegisterController {
 		String redirectView = "redirect:";
 
 		if (user.getOriginalApplicationQueryString() != null) {
-			redirectView = createApplicationAndReturnApplicationViewValue(user,
-					redirectView);
+			redirectView = createApplicationAndReturnApplicationViewValue(user, redirectView);
 		} else if (user.getDirectToUrl() != null) {
 			redirectView += user.getDirectToUrl();
-		} else if (StringUtils.isNotBlank((String) request.getSession()
-				.getAttribute("directToUrl"))) {
-			redirectView += (String) request.getSession().getAttribute(
-					"directToUrl");
+		} else if (StringUtils.isNotBlank((String) request.getSession().getAttribute("directToUrl"))) {
+			redirectView += (String) request.getSession().getAttribute("directToUrl");
 		} else {
 			redirectView += "/applications";
 		}
@@ -170,12 +159,9 @@ public class RegisterController {
 		return redirectView;
 	}
 
-	private String createApplicationAndReturnApplicationViewValue(
-			final RegisteredUser user, final String redirectView) {
-		Map<String, String> params = applicationQueryStringParser.parse(user
-				.getOriginalApplicationQueryString());
-		Program program = programService
-				.getProgramByCode(params.get("program"));
+	private String createApplicationAndReturnApplicationViewValue(final RegisteredUser user, final String redirectView) {
+		Map<String, String> params = applicationQueryStringParser.parse(user.getOriginalApplicationQueryString());
+		Program program = programService.getProgramByCode(params.get("program"));
 		Project project = null;
 		String projectId = params.get("project");
 		if (!StringUtils.isBlank(projectId) && StringUtils.isNumeric(projectId)) {
@@ -185,45 +171,29 @@ public class RegisterController {
 			}
 		}
 		String applyingAdvertId = params.get("advert");
-		String applyingAdvert = !StringUtils.isBlank(applyingAdvertId) ? "&advert="
-				+ applyingAdvertId
-				: "";
-		ApplicationForm newApplicationForm = applicationsService
-				.createOrGetUnsubmittedApplicationForm(user, program, project);
-		return redirectView + "/application?applicationId="
-				+ newApplicationForm.getApplicationNumber() + applyingAdvert;
+		String applyingAdvert = !StringUtils.isBlank(applyingAdvertId) ? "&advert=" + applyingAdvertId : "";
+		ApplicationForm newApplicationForm = applicationsService.createOrGetUnsubmittedApplicationForm(user, program, project);
+		return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber() + applyingAdvert;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getRegisterPage(
-			@RequestParam(required = false) String activationCode,
-			@RequestParam(required = false) String directToUrl,
-			@RequestParam(required = false) String advert, Model modelMap,
-			HttpServletRequest request, HttpSession session) {
+	public String getRegisterPage(@RequestParam(required = false) String activationCode, @RequestParam(required = false) String directToUrl,
+			@RequestParam(required = false) String advert, Model modelMap, HttpServletRequest request, HttpSession session) {
 		session.removeAttribute("CLICKED_ON_ALREADY_REGISTERED");
 		RegisteredUser pendingUser = getPendingUser(activationCode, directToUrl);
-		if (pendingUser == null
-				&& !StringUtils.containsIgnoreCase(
-						getReferrerFromHeader(request), "pgadmissions")
-				&& !isAnApplyNewRequest(request)) {
+		if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
 			return "redirect:/login";
 		}
 
-		if (pendingUser != null && pendingUser.getDirectToUrl() != null
-				&& pendingUser.isEnabled()) {
+		if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
 			return "redirect:" + pendingUser.getDirectToUrl();
 		}
 
-		if (pendingUser != null && !pendingUser.isEnabled()
-				&& StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
-			request.getSession().setAttribute("directToUrl",
-					pendingUser.getDirectToUrl());
+		if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
+			request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
 		}
 
-		if (pendingUser == null
-				&& !StringUtils.containsIgnoreCase(
-						getReferrerFromHeader(request), "pgadmissions")
-				&& !isAnApplyNewRequest(request)) {
+		if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
 			return "redirect:/login";
 		}
 
@@ -243,14 +213,12 @@ public class RegisterController {
 		return REGISTER_USERS_VIEW_NAME;
 	}
 
-	public RegisteredUser getPendingUser(final String activationCode,
-			final String directToUrl) {
+	public RegisteredUser getPendingUser(final String activationCode, final String directToUrl) {
 		if (StringUtils.isBlank(activationCode)) {
 			return null;
 		}
 
-		RegisteredUser pendingUser = userService
-				.getUserByActivationCode(activationCode);
+		RegisteredUser pendingUser = userService.getUserByActivationCode(activationCode);
 		if (pendingUser == null) {
 			throw new ResourceNotFoundException();
 		}
@@ -266,18 +234,15 @@ public class RegisterController {
 		return StringUtils.trimToEmpty(request.getHeader("referer"));
 	}
 
-	private DefaultSavedRequest getDefaultSavedRequest(
-			final HttpServletRequest request) {
-		return (DefaultSavedRequest) request.getSession().getAttribute(
-				"SPRING_SECURITY_SAVED_REQUEST");
+	private DefaultSavedRequest getDefaultSavedRequest(final HttpServletRequest request) {
+		return (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
 	}
 
 	private boolean isAnApplyNewRequest(final HttpServletRequest request) {
 		StringBuffer requestUrl = request.getRequestURL();
 		String requestQuery = request.getQueryString();
 		DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
-		if (defaultSavedRequest != null
-				&& StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new")
+		if (defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new")
 				|| (StringUtils.contains(requestUrl.toString(), "register"))
 					&& StringUtils.contains(requestQuery, "advert")) {
 			return true;

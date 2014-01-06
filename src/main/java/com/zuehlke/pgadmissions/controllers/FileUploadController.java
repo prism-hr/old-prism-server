@@ -19,8 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -37,47 +36,40 @@ public class FileUploadController {
 	private final DocumentService documentService;
 	
 	private final UserService userService;
+	
+	private final ContentAccessProvider contentAccessProvider;
 
 	FileUploadController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired		
 	public FileUploadController(ApplicationsService applicationService, DocumentValidator documentValidator, 
-	        DocumentService documentService, UserService userService) {
+	        DocumentService documentService, UserService userService, ContentAccessProvider contentAccessProvider) {
 		this.applicationService = applicationService;
 		this.documentValidator = documentValidator;
 		this.documentService = documentService;
 		this.userService = userService;
+		this.contentAccessProvider = contentAccessProvider;
 	}
 	
 	BindingResult newErrors(Document document) {
 		return new DirectFieldBindingResult(document, document.getFileName());
 	}
 
-	Document newDocument() {
-		return new Document();
-	}
-
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam(required=false)String id) {
-		if(id  == null){
+	public ApplicationForm getApplicationForm(@RequestParam(required=false) String applicationId) {
+		if(applicationId  == null) {
 			return null;
 		}
-		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
-		if (applicationForm == null || (applicationForm.getApplicant() != null && !userService.getCurrentUser().getId().equals(applicationForm.getApplicant().getId()))) {
-			throw new ResourceNotFoundException();
-		}
-		if (applicationForm.isSubmitted()) {
-			throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
-		}
-		return applicationForm;
+		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
+		contentAccessProvider.validateCanEditAsApplicant(application, userService.getCurrentUser());
+		return application;
 	}
 
 	@ModelAttribute
 	public Document getDocument(@RequestParam(value="file", required=false) MultipartFile multipartFile, 
-	        @RequestParam(value="type", required=false) DocumentType documentType) throws IOException {		 
-		
+	        @RequestParam(value="type", required=false) DocumentType documentType) throws IOException {		 	
 	    if (multipartFile == null) {
 			return null;
 		}
@@ -89,7 +81,6 @@ public class FileUploadController {
 		document.setType(documentType);
 		document.setUploadedBy(userService.getCurrentUser());
 		document.setFileData(multipartFile);
-		
 		return document;
 	}
 	
@@ -99,10 +90,12 @@ public class FileUploadController {
 	}
 	
 	@RequestMapping(value = "/async", method = RequestMethod.POST)
-	public String uploadFileAsynchronously(@Valid Document document, BindingResult errors) {
+	public String uploadFileAsynchronously(@Valid Document document, BindingResult errors,
+			@ModelAttribute ApplicationForm applicationForm) {
 		if(!errors.hasErrors()){
 			documentService.save(document);
 		}
 		return "/private/common/parts/supportingDocument";
 	}
+	
 }

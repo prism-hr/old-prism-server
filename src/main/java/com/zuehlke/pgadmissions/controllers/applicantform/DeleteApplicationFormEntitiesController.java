@@ -12,8 +12,8 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
@@ -34,16 +34,16 @@ public class DeleteApplicationFormEntitiesController {
     private final ApplicationsService applicationsService;
     private final UserService userService;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final ContentAccessProvider contentAccessProvider;
 
     DeleteApplicationFormEntitiesController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public DeleteApplicationFormEntitiesController(QualificationService qualificationService, EmploymentPositionService employmentService,
             FundingService fundingService, RefereeService refereeService, EncryptionHelper encryptionHelper, ApplicationsService applicationsService,
-            UserService userService, final ApplicationFormUserRoleService applicationFormUserRoleService) {
-
+            UserService userService, final ApplicationFormUserRoleService applicationFormUserRoleService, ContentAccessProvider contentAccessProvider) {
         this.qualificationService = qualificationService;
         this.employmentService = employmentService;
         this.fundingService = fundingService;
@@ -52,43 +52,55 @@ public class DeleteApplicationFormEntitiesController {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.contentAccessProvider = contentAccessProvider;
     }
 
     @RequestMapping(value = "/qualification", method = RequestMethod.POST)
     public String deleteQualification(@RequestParam("id") String encryptedQualificationId) {
         Qualification qualification = qualificationService.getQualificationById(encryptionHelper.decryptToInteger(encryptedQualificationId));
+        ApplicationForm application = qualification.getApplication();
+        RegisteredUser user = userService.getCurrentUser();
+        contentAccessProvider.validateCanEditAsApplicant(application, user);
         qualificationService.delete(qualification);
-        updateLastAccessAndLastModified(userService.getCurrentUser(), qualification.getApplication());
-        return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber() + "&message=deleted";
+        updateLastAccessAndLastModified(user, application);
+        return "redirect:/update/getQualification?applicationId=" + application.getApplicationNumber() + "&message=deleted";
     }
 
     @RequestMapping(value = "/funding", method = RequestMethod.POST)
     public String deleteFunding(@RequestParam("id") String encryptedFundingId) {
         Funding funding = fundingService.getFundingById(encryptionHelper.decryptToInteger(encryptedFundingId));
+        ApplicationForm application = funding.getApplication();
+        RegisteredUser user = userService.getCurrentUser();
+        contentAccessProvider.validateCanEditAsApplicant(application, user);
         fundingService.delete(funding);
-        updateLastAccessAndLastModified(userService.getCurrentUser(), funding.getApplication());
-        return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber() + "&message=deleted";
+        updateLastAccessAndLastModified(user, application);
+        return "redirect:/update/getFunding?applicationId=" + application.getApplicationNumber() + "&message=deleted";
     }
 
     @RequestMapping(value = "/employment", method = RequestMethod.POST)
     public String deleteEmployment(@RequestParam("id") String encryptedEmploymentId) {
         EmploymentPosition position = employmentService.getEmploymentPositionById(encryptionHelper.decryptToInteger(encryptedEmploymentId));
+        ApplicationForm application = position.getApplication();
+        RegisteredUser user = userService.getCurrentUser();
+        contentAccessProvider.validateCanEditAsApplicant(application, user);
         employmentService.delete(position);
-        updateLastAccessAndLastModified(userService.getCurrentUser(), position.getApplication());
-        return "redirect:/update/getEmploymentPosition?applicationId=" + position.getApplication().getApplicationNumber() + "&message=deleted";
+        updateLastAccessAndLastModified(user, application);
+        return "redirect:/update/getEmploymentPosition?applicationId=" + application.getApplicationNumber() + "&message=deleted";
     }
 
     @RequestMapping(value = "/referee", method = RequestMethod.POST)
     public String deleteReferee(@RequestParam("id") String encrypedRefereeId) {
-        Integer id = encryptionHelper.decryptToInteger(encrypedRefereeId);
-        Referee referee = refereeService.getRefereeById(id);
+        Referee referee = refereeService.getRefereeById(encryptionHelper.decryptToInteger(encrypedRefereeId));
+        ApplicationForm application = referee.getApplication();
+        RegisteredUser user = userService.getCurrentUser();
+        contentAccessProvider.validateCanEditAsApplicant(application, user);
         refereeService.delete(referee);
-        updateLastAccessAndLastModified(userService.getCurrentUser(), referee.getApplication());
-        return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";
+        updateLastAccessAndLastModified(user, application);
+        return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber() + "&message=deleted";
     }
-
+    
     private void updateLastAccessAndLastModified(RegisteredUser currentUser, ApplicationForm applicationForm) {
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, currentUser, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationEdited(applicationForm, currentUser);
         applicationsService.save(applicationForm);
     }
 

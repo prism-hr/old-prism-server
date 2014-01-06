@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.hibernate.criterion.Projections.distinct;
-import static org.hibernate.criterion.Projections.property;
-import static org.hibernate.criterion.Restrictions.eq;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -15,12 +14,12 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -38,7 +37,8 @@ public class ProgramDAO {
     }
 
     public List<Program> getAllPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+        return sessionFactory.getCurrentSession().createCriteria(Program.class)
+        		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .addOrder(Order.asc("title")).list();
     }
 
@@ -51,34 +51,17 @@ public class ProgramDAO {
     }
 
     public Program getProgramByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
+        		.add(Restrictions.eq("code", code)).uniqueResult();
     }
     
 	public void merge(Program program) {
 		sessionFactory.getCurrentSession().merge(program);
 	}
 	
-    public List<Program> getProgramsOfWhichPreviousReviewer(RegisteredUser user){
-        return sessionFactory.getCurrentSession().createCriteria(Reviewer.class, "r")
-               .createAlias("r.reviewRound", "rr")
-               .createAlias("rr.application", "a")
-               .add(eq("r.user", user))
-               .setProjection(distinct(property("a.program")))
-               .list();
-    }
-	
-	public List<Program> getProgramsOfWhichPreviousInterviewer(RegisteredUser user){
-        return sessionFactory.getCurrentSession().createCriteria(Interviewer.class, "u")
-               .createAlias("u.interview", "i")
-               .createAlias("i.application", "a")
-               .add(eq("u.user", user))
-               .setProjection(distinct(property("a.program")))
-               .list();
-    }
-    
-    
     public Date getNextClosingDateForProgram(Program program, Date today) {
-        List<Date> result = (List<Date>) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).setProjection(Projections.property("closingDate"))
+        List<Date> result = (List<Date>) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+        		.setProjection(Projections.property("closingDate"))
                 .add(Restrictions.eq("program", program))
                 .add(Restrictions.gt("closingDate", today))
                 .addOrder(Order.asc("closingDate"))
@@ -89,17 +72,123 @@ public class ProgramDAO {
         }
         return result.get(0);
     }
-    
-    
-	public List<Program> getProgramsOfWhichPreviousSupervisor(RegisteredUser user){
-	    return sessionFactory.getCurrentSession().createCriteria(Supervisor.class, "s")
-	            .createAlias("s.approvalRound", "ar")
-	            .createAlias("ar.application", "a")
-	            .add(eq("s.user", user))
-	            .setProjection(distinct(property("a.program")))
-	            .list();
+	
+	public List<Program> getProgramsOfWhichAdministrator(RegisteredUser user) {
+		return getProgramsForWhichUserHasRoles(user, AuthorityGroup.PROGRAMADMIN.authorities());
 	}
 	
+	public List<Program> getProgramsOfWhichAuthor(RegisteredUser user) {
+		return getProgramsForWhichUserHasRoles(user, AuthorityGroup.PROGRAMAUTHOR.authorities());
+	}
 	
+	public List<Program> getProgramsOfWhichProjectAuthor(RegisteredUser user) {
+		return getProgramsForWhichUserHasRoles(user, AuthorityGroup.PROJECTAUTHOR.authorities());
+	}
+	
+	public List<Program> getProgramsOfWhichProjectEditor(RegisteredUser user) {
+		return getProgramsForWhichUserHasRoles(user, AuthorityGroup.PROJECTEDITOR.authorities());
+	}
+	
+	public List<Program> getProgramsForWhichUserHasRoles(RegisteredUser user, Authority... authorities) {
+		List<Authority> authorRoles = Arrays.asList(authorities);
+		for (Authority systemRole : AuthorityGroup.SYSTEM.authorities()) {
+			if (authorRoles.contains(systemRole) && user.isInRole(systemRole)) {
+				return getAllActivePrograms();
+			}
+		}
+		
+		/* This is horrible. If we generalised it in the DB we could clean it up. */
+		HashSet<Program> programs = new HashSet<Program>();
+		for (Authority programRole : AuthorityGroup.PROGRAM.authorities()) {
+			if (authorRoles.contains(programRole)) {
+				switch (programRole) {
+					case ADMINISTRATOR:
+						programs.addAll(getEnabledPrograms(user.getProgramsOfWhichAdministrator()));
+						authorRoles.remove(Authority.ADMINISTRATOR);
+						break;
+					case APPROVER:
+						programs.addAll(getEnabledPrograms(user.getProgramsOfWhichApprover()));
+						authorRoles.remove(Authority.APPROVER);
+						break;
+					case VIEWER:
+						programs.addAll(getEnabledPrograms(user.getProgramsOfWhichViewer()));
+						authorRoles.remove(Authority.VIEWER);
+						break;
+					default: break;
+				}
+			}
+		}
+		
+		/* As per previous code block. */
+		for (Authority projectRole : AuthorityGroup.PROJECT.authorities()) {
+			if (authorRoles.contains(projectRole)) {
+				switch (projectRole) {
+					case PROJECTADMINISTRATOR:
+						programs.addAll(getProgramsOfWhichAssignedProjectAdministrator(user));
+						authorRoles.remove(Authority.PROJECTADMINISTRATOR);
+						break;
+					case PROJECTAUTHOR:
+						programs.addAll(getProgramsOfWhichAssignedProjectAuthor(user));
+						authorRoles.remove(Authority.PROJECTAUTHOR);
+						break;
+					default: break;
+				}
+			}
+		}
+		
+		List <Program> programsFinal = new ArrayList<Program>(programs);
+		programs.addAll(
+				sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+					.setProjection(Projections.groupProperty("applicationForm.program"))
+					.createAlias("applicationForm", "applicationForm")
+					.createAlias("applicationForm.program", "program")
+					.add(Restrictions.eq("user", user))
+					.add(Restrictions.eq("program.enabled", true))
+					.add(Restrictions.in("role.id", authorRoles))
+					.add(Restrictions.not(
+							Restrictions.in("program", programsFinal)))
+					.addOrder(Order.desc("program.title")).list());
+		
+		return programsFinal;
+	}
+	
+	private List<Program> getAllActivePrograms() {
+        return sessionFactory.getCurrentSession().createCriteria(Program.class)
+        		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+        		.add(Restrictions.eq("enabled", true))
+                .addOrder(Order.asc("title")).list();
+    }
+	
+	private List<Program> getProgramsOfWhichAssignedProjectAdministrator(RegisteredUser user) {
+		return sessionFactory.getCurrentSession().createCriteria(Program.class)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.createAlias("projects", "project")
+				.add(Restrictions.eq("enabled", true))
+				.add(Restrictions.eq("project.disabled", false))
+				.add(Restrictions.disjunction()
+	        			.add(Restrictions.eq("project.administrator", user))
+	        			.add(Restrictions.eq("project.primarySupervisor", user)))
+	        	.addOrder(Order.asc("title")).list();
+	}
+	
+	private List<Program> getProgramsOfWhichAssignedProjectAuthor(RegisteredUser user) {
+		return sessionFactory.getCurrentSession().createCriteria(Program.class)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.createAlias("projects", "project")
+				.add(Restrictions.eq("enabled", true))
+				.add(Restrictions.eq("project.disabled", false))
+				.add(Restrictions.eq("project.author", user))
+				.addOrder(Order.asc("title")).list();
+	}
+	
+	private List<Program> getEnabledPrograms(List<Program> programs) {
+		List<Program> enabledPrograms = new ArrayList<Program>();
+		for (Program program : programs) {
+			if (program.isEnabled()) {
+				enabledPrograms.add(program);
+			}
+		}
+		return enabledPrograms;
+	}
 
 }

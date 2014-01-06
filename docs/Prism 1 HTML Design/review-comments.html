@@ -1,0 +1,233 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<link type="text/css" rel="stylesheet" href="css/private/global_private.css" />
+<link type="text/css" rel="stylesheet" href="css/private/staff/review-comments.css" />
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+
+      <!-- App logo and tagline -->
+      <div class="logo"><img src="images/ph_logo_app.png" alt="" /></div>
+
+      <div class="tagline">Your Gateway to Research Opportunities</div>
+
+      <!-- Main tabbed menu -->
+      <nav>
+        <ul>
+          <li><a href="#">My account</a></li>    
+          <li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+          <li><a href="#">Messages</a></li>    
+          <li><a href="#">Help</a></li>    
+        </ul>
+        
+        <div class="user">
+          Jonathan Smith
+          <a class="button user-logout">Logout</a>
+        </div>
+      </nav>
+      
+    </header>
+    
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+      
+      <!-- "Tools" -->
+      <div id="tools">
+        <ul class="right">
+          <li class="current"><a href="#">New Applications <span class="indicator blue">7563</span></a></li>
+          <li><a href="#">Help Requests <span class="indicator blue">5</span></a></li>
+        </ul>
+      </div>
+
+      <!-- content box -->
+      <div class="content-box">
+        <div class="content-box-inner">
+        
+          <div id="filter">
+            
+            <div class="search-box">
+              <label><strong>Search</strong>
+                <input class="search" placeholder="Text" />
+                <button>Search</button>
+              </label>
+            </div>
+            
+            <div>
+              <label><strong>Filter by Actions</strong>
+                <select>
+                  <option>Set interview date</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <table class="data" border="0">
+            <colgroup>
+              <col style="width: 30px;" />
+              <col style="width: 90px;" />
+              <col style="width: 120px;" />
+              <col style="width: 130px;" />
+              <col style="width: 70px;" />
+              <col style="width: 90px;" />
+              <col style="width: 120px;" />
+              <col style="width: auto;" />
+              <col style="width: 50px;" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">&nbsp;</th>
+                <th scope="col">App. No.</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Qual's</th>
+                <th scope="col">Fee Status</th>
+                <th scope="col">Residence</th>
+                <th scope="col">Actions</th>
+                <th class="centre" scope="col">Select</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a class="row-arrow" href="#">&gt;</a></td>
+                <td scope="col">545128684C</td>
+                <td scope="col">Skye</td>
+                <td scope="col">Juice</td>
+                <td scope="col" class="flag"><span>Review</span></td>
+                <td scope="col">Overseas</td>
+                <td scope="col">Spain</td>
+                <td scope="col">
+                  <select>
+                    <option>Add note</option>
+                  </select>
+                </td>
+                <td class="centre"><input type="checkbox" name="select" /></td>
+              </tr>
+              <tr class="row-near-deadline">
+                <td><a class="row-arrow" href="#">&gt;</a></td>
+                <td scope="col">568952326C</td>
+                <td scope="col">Jemima</td>
+                <td scope="col">Puddleduck</td>
+                <td scope="col"><span>Yes</span></td>
+                <td scope="col">Home</td>
+                <td scope="col">UK</td>
+                <td scope="col">
+                  <select>
+                    <option>Add note</option>
+                  </select>
+                </td>
+                <td class="centre"><input type="checkbox" name="select" /></td>
+              </tr>
+              <tr class="row-past-deadline">
+                <td><a class="row-arrow" href="#">&gt;</a></td>
+                <td scope="col">684784531A</td>
+                <td scope="col">Jim</td>
+                <td scope="col">Jones</td>
+                <td scope="col" class="flag"><span>Review</span></td>
+                <td scope="col">Overseas</td>
+                <td scope="col">Spain</td>
+                <td scope="col">
+                  <select>
+                    <option>Add note</option>
+                  </select>
+                </td>
+                <td class="centre"><input type="checkbox" name="select" /></td>
+              </tr>
+              <tr>
+                <td><a class="row-arrow" href="#">&gt;</a></td>
+                <td scope="col">687584531X</td>
+                <td scope="col">Harrison</td>
+                <td scope="col">Ford</td>
+                <td scope="col"><span>No</span></td>
+                <td scope="col">Overseas</td>
+                <td scope="col">Spain</td>
+                <td scope="col">
+                  <select>
+                    <option>Add note</option>
+                  </select>
+                </td>
+                <td class="centre"><input type="checkbox" name="select" /></td>
+              </tr>
+            </tbody>
+          </table>
+
+
+          <p class="right">
+            <a href="#" class="button">Download All Applications</a>
+            &nbsp;
+            <a href="#" class="button">Download Selected</a>
+          </p>
+          
+          <ul class="key">
+            <li><span class="swatch row-past-deadline"></span> Red = Past Deadline</li>
+            <li><span class="swatch row-near-deadline"></span> Yellow = Approaching Deadline</li>
+          </ul>
+        </div><!-- .content-box-inner -->
+      </div><!-- .content-box -->
+      
+      <!-- Pagination -->
+      <div id="pagination">
+        <div class="page-number">Page 15 of 106</div>
+        <div class="previous"><a href="#">Previous</a></div>
+        <ul class="pages">
+          <li><a href="#">10</a></li>
+          <li><a href="#">11</a></li>
+          <li><a href="#">12</a></li>
+          <li><a href="#">13</a></li>
+          <li><a href="#">14</a></li>
+          <li class="current"><a href="#">15</a></li>
+          <li><a href="#">16</a></li>
+          <li><a href="#">17</a></li>
+          <li><a href="#">18</a></li>
+          <li><a href="#">19</a></li>
+          <li><a href="#">20</a></li>
+        </ul>
+        <div class="next"><a href="#">Next</a></div>
+        <div class="show-number">Show <a href="#">10</a> / <a href="#">20</a> / <a href="#">30</a> / <a href="#">All</a></div>
+      </div>
+      
+    </article>
+    
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript" src="js/review-comments.js"></script>
+</body>
+</html>

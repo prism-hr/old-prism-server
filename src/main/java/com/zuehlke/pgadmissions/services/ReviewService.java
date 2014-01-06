@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -64,6 +65,7 @@ public class ReviewService {
         boolean sendReferenceRequest = application.getStatus()==ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
+		application.removeNotificationRecord(NotificationType.REVIEW_REMINDER);
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);
             applicationFormUserRoleService.validationStageCompleted(application);
@@ -92,10 +94,6 @@ public class ReviewService {
 			save(latestReviewRound);
 		}
 
-	}
-	
-	public Reviewer getReviewerForReviewRound(RegisteredUser user, ReviewRound reviewRound) {
-		return reviewerDAO.getReviewerByUserAndReviewRound(user, reviewRound);
 	}
 
 	public Reviewer newReviewer() {

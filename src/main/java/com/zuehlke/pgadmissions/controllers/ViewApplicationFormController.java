@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.security.ActionsProvider;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -48,19 +48,22 @@ public class ViewApplicationFormController {
     public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam String applicationId,
            @RequestParam(required = false) String uploadErrorCode, @RequestParam(required = false) String uploadTwoErrorCode,
            @RequestParam(required = false) String fundingErrors) {
-       ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-       RegisteredUser user = userService.getCurrentUser();
+       ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+       RegisteredUser currentuser = userService.getCurrentUser();
        
-       actionsProvider.validateAction(application, user, ApplicationFormAction.VIEW); 
-       ApplicationFormUserRoleService.applicationViewed(application, user);
-
-       if (user.isInApplicationRole(application, Authority.APPLICANT) && application.isModifiable()) {
-    	   return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", 
-    			   applicationPageModelBuilder.createAndPopulatePageModel(application, uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
+       actionsProvider.validateAction(applicationForm, currentuser, ApplicationFormAction.VIEW); 
+       ApplicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, currentuser);
+        
+       if (applicationForm == null) {
+           throw new MissingApplicationFormException(applicationId);
        }
 
-       return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", 
-    		   applicationPageModelBuilder.createAndPopulatePageModel(application, uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
+       if (applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(currentuser.getId()) && applicationForm.isModifiable()) {
+    	   return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
+            		uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
+       }
+
+       return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
+    		   uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
     }
-    
 }

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
@@ -22,16 +21,14 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 public class CommentService {
 
     private final CommentDAO commentDAO;
-    private final ReviewerDAO reviewerDAO;
 
     public CommentService() {
-        this(null, null);
+        this(null);
     }
 
     @Autowired
-    public CommentService(CommentDAO commentDAO, ReviewerDAO reviewerDAO) {
+    public CommentService(CommentDAO commentDAO) {
         this.commentDAO = commentDAO;
-        this.reviewerDAO = reviewerDAO;
     }
 
     public void save(Comment comment) {
@@ -55,7 +52,7 @@ public class CommentService {
     }
 
     public void declineReview(RegisteredUser user, ApplicationForm application) {
-        Reviewer currentReviewer = reviewerDAO.getReviewerByUserAndReviewRound(user, application.getLatestReviewRound());
+        Reviewer currentReviewer = user.getReviewerForCurrentUserFromLatestReviewRound(application);
         if (!commentDAO.getReviewCommentsForReviewerAndApplication(currentReviewer, application).isEmpty()) {
             return;
         }
@@ -78,5 +75,4 @@ public class CommentService {
     public ReviewComment getNewReviewComment() {
         return new ReviewComment();
     }
-    
 }

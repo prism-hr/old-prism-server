@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
@@ -58,18 +57,16 @@ public class InterviewCommentController {
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final ActionsProvider actionsProvider;
     private final ApplicantRatingService applicantRatingService;
-    private final InterviewService interviewService;
 
     public InterviewCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ApplicantRatingService applicantRatingService,
-            InterviewService interviewService) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -81,7 +78,6 @@ public class InterviewCommentController {
         this.actionsProvider = actionsProvider;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.applicantRatingService = applicantRatingService;
-        this.interviewService = interviewService;
     }
 
     @ModelAttribute("applicationForm")
@@ -103,17 +99,17 @@ public class InterviewCommentController {
 
     @ModelAttribute("comment")
     public InterviewComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm application = getApplicationForm(applicationId);
-        RegisteredUser user = getCurrentUser();
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser currentUser = getCurrentUser();
 
         InterviewComment interviewComment = new InterviewComment();
-        interviewComment.setApplication(application);
-        interviewComment.setUser(user);
+        interviewComment.setApplication(applicationForm);
+        interviewComment.setUser(currentUser);
         interviewComment.setComment("");
         interviewComment.setType(CommentType.INTERVIEW);
-        interviewComment.setInterviewer(interviewService.getInterviewerForInterview(user, application.getLatestInterview()));
+        interviewComment.setInterviewer(currentUser.getInterviewersForApplicationForm(applicationForm).get(0));
 
-        ScoringDefinition scoringDefinition = application.getProgram().getScoringDefinitions().get(ScoringStage.INTERVIEW);
+        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.INTERVIEW);
 
         if (scoringDefinition != null) {
             try {
@@ -122,7 +118,7 @@ public class InterviewCommentController {
                 interviewComment.getScores().addAll(scores);
                 interviewComment.setAlert(customQuestion.getAlert());
             } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for interview stage in program: " + application.getProgram().getTitle());
+                log.error("Incorrect scoring XML configuration for interview stage in program: " + applicationForm.getProgram().getTitle());
             }
         }
 

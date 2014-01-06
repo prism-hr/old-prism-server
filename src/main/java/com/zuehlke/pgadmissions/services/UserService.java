@@ -123,7 +123,7 @@ public class UserService {
 
     protected void updateUserProgramRoles(final RegisteredUser selectedUser, final Program selectedProgram, final Authority... newAuthorities) {
         for (Authority authority : newAuthorities) {
-            if (!selectedUser.isInSystemRole(authority)) {
+            if (!selectedUser.isInRole(authority)) {
                 selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
             }
         }

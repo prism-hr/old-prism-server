@@ -59,578 +59,469 @@ import com.zuehlke.pgadmissions.utils.MathUtils;
 @Transactional
 public class ApplicationsReportService {
 
-	private static final String N_R = "N/R";
+    private static final String N_R = "N/R";
+    
+    private static Logger logger = Logger.getLogger(ClassName.class.getName());
 
-	private static Logger logger = Logger.getLogger(ClassName.class.getName());
+    private final ApplicationsService applicationsService;
+    
+    private final ApplicantRatingService applicantRatingService;
+    
+    private final ContentAccessProvider contentAccessProvider;
 
-	private final ApplicationsService applicationsService;
+    public ApplicationsReportService() {
+        this(null, null, null);
+    }
 
-	private final ApplicantRatingService applicantRatingService;
+    @Autowired
+    public ApplicationsReportService(ApplicationsService applicationsService, ApplicantRatingService applicantRatingService,
+    		ContentAccessProvider contentAccessProvider) {
+        this.applicationsService = applicationsService;
+        this.applicantRatingService = applicantRatingService;
+        this.contentAccessProvider = contentAccessProvider;
+    }
 
-	private final ContentAccessProvider contentAccessProvider;
+    public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering) {
+        DataTable data = new DataTable();
 
-	public ApplicationsReportService() {
-		this(null, null, null);
-	}
+        ArrayList<ColumnDescription> cd = Lists.newArrayList();
+        cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
+        cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
+        cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
+        cd.add(new ColumnDescription("email", ValueType.TEXT, "E-mail"));
+        cd.add(new ColumnDescription("nationality1", ValueType.TEXT, "Nationality 1"));
+        cd.add(new ColumnDescription("nationality2", ValueType.TEXT, "Nationality 2"));
+        cd.add(new ColumnDescription("dateOfBirth", ValueType.DATE, "Date Of Birth"));
+        cd.add(new ColumnDescription("gender", ValueType.TEXT, "Gender"));
+        cd.add(new ColumnDescription("programmeId", ValueType.TEXT, "Programme ID"));
+        cd.add(new ColumnDescription("programmeName", ValueType.TEXT, "Programme Name"));
+        cd.add(new ColumnDescription("projectTitle", ValueType.TEXT, "Project Title"));
+        cd.add(new ColumnDescription("studyOption", ValueType.TEXT, "Study Option"));
+        cd.add(new ColumnDescription("sourcesOfInterest", ValueType.TEXT, "How did you find us"));
+        cd.add(new ColumnDescription("sourcesOfInterestText", ValueType.TEXT, "Additional Information"));
+        cd.add(new ColumnDescription("provisionalSupervisors", ValueType.TEXT, "Provisional Supervisors"));
+        cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
+        cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
+        cd.add(new ColumnDescription("lastEditedDate", ValueType.DATE, "Last Edited"));
 
-	@Autowired
-	public ApplicationsReportService(ApplicationsService applicationsService,
-			ApplicantRatingService applicantRatingService,
-			ContentAccessProvider contentAccessProvider) {
-		this.applicationsService = applicationsService;
-		this.applicantRatingService = applicantRatingService;
-		this.contentAccessProvider = contentAccessProvider;
-	}
+        // overall rating
+        cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
+        cd.add(new ColumnDescription("overallPositiveEndorsements", ValueType.TEXT, "Overall Positive Endorsements"));
 
-	public DataTable getApplicationsReport(RegisteredUser user,
-			ApplicationsFiltering filtering) {
-		DataTable data = new DataTable();
+        cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
+        cd.add(new ColumnDescription("validationTime", ValueType.NUMBER, "Validation Time (hours)"));
+        cd.add(new ColumnDescription("feeStatus", ValueType.TEXT, "Fee status"));
+        cd.add(new ColumnDescription("academicallyQualified", ValueType.TEXT, "Academically Qualified?"));
+        cd.add(new ColumnDescription("adequateEnglish", ValueType.TEXT, "Adequate English?"));
 
-		ArrayList<ColumnDescription> cd = Lists.newArrayList();
-		cd.add(new ColumnDescription("applicationId", ValueType.TEXT,
-				"Application ID"));
-		cd.add(new ColumnDescription("firstNames", ValueType.TEXT,
-				"First Name(s)"));
-		cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
-		cd.add(new ColumnDescription("email", ValueType.TEXT, "E-mail"));
-		cd.add(new ColumnDescription("nationality1", ValueType.TEXT,
-				"Nationality 1"));
-		cd.add(new ColumnDescription("nationality2", ValueType.TEXT,
-				"Nationality 2"));
-		cd.add(new ColumnDescription("dateOfBirth", ValueType.DATE,
-				"Date Of Birth"));
-		cd.add(new ColumnDescription("gender", ValueType.TEXT, "Gender"));
-		cd.add(new ColumnDescription("programmeId", ValueType.TEXT,
-				"Programme ID"));
-		cd.add(new ColumnDescription("programmeName", ValueType.TEXT,
-				"Programme Name"));
-		cd.add(new ColumnDescription("projectTitle", ValueType.TEXT,
-				"Project Title"));
-		cd.add(new ColumnDescription("studyOption", ValueType.TEXT,
-				"Study Option"));
-		cd.add(new ColumnDescription("sourcesOfInterest", ValueType.TEXT,
-				"How did you find us"));
-		cd.add(new ColumnDescription("sourcesOfInterestText", ValueType.TEXT,
-				"Additional Information"));
-		cd.add(new ColumnDescription("provisionalSupervisors", ValueType.TEXT,
-				"Provisional Supervisors"));
-		cd.add(new ColumnDescription("academicYear", ValueType.TEXT,
-				"Academic Year"));
-		cd.add(new ColumnDescription("submittedDate", ValueType.DATE,
-				"Submitted"));
-		cd.add(new ColumnDescription("lastEditedDate", ValueType.DATE,
-				"Last Edited"));
+        // reference report
+        cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
+        cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
+        cd.add(new ColumnDescription("positiveReferenceEndorsements", ValueType.TEXT, "Positive Reference Endorsements"));
+        cd.add(new ColumnDescription("negativeReferenceEndorsements", ValueType.TEXT, "Negative Reference Endorsements"));
+        cd.add(new ColumnDescription("averageReferenceRating", ValueType.TEXT, "Average Reference Rating"));
 
-		// overall rating
-		cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT,
-				"Average Overall Rating"));
-		cd.add(new ColumnDescription("overallPositiveEndorsements",
-				ValueType.TEXT, "Overall Positive Endorsements"));
+        // review report
+        cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
+        cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
+        cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.TEXT, "Positive Review Endorsements"));
+        cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.TEXT, "Negative Review Endorsements"));
+        cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
 
-		cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
-		cd.add(new ColumnDescription("validationTime", ValueType.NUMBER,
-				"Validation Time (hours)"));
-		cd.add(new ColumnDescription("feeStatus", ValueType.TEXT, "Fee status"));
-		cd.add(new ColumnDescription("academicallyQualified", ValueType.TEXT,
-				"Academically Qualified?"));
-		cd.add(new ColumnDescription("adequateEnglish", ValueType.TEXT,
-				"Adequate English?"));
+        //interview report
+        cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
+        cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
+        cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
+        cd.add(new ColumnDescription("positiveInterviewEndorsements", ValueType.TEXT, "Positive Interview Endorsements"));
+        cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.TEXT, "Negative Interview Endorsements"));
+        cd.add(new ColumnDescription("averageInterviewRating", ValueType.TEXT, "Average Interview Rating"));
 
-		// reference report
-		cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER,
-				"Received References"));
-		cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER,
-				"Declined References"));
-		cd.add(new ColumnDescription("positiveReferenceEndorsements",
-				ValueType.TEXT, "Positive Reference Endorsements"));
-		cd.add(new ColumnDescription("negativeReferenceEndorsements",
-				ValueType.TEXT, "Negative Reference Endorsements"));
-		cd.add(new ColumnDescription("averageReferenceRating", ValueType.TEXT,
-				"Average Reference Rating"));
+        // approval report
+        cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time (hours)"));
+        cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER, "Approval Stages"));
+        cd.add(new ColumnDescription("primarySupervisor", ValueType.TEXT, "Primary Supervisor"));
+        cd.add(new ColumnDescription("secondarySupervisor", ValueType.TEXT, "Secondary Supervisor"));
+        cd.add(new ColumnDescription("outcome", ValueType.TEXT, "Outcome"));
+        cd.add(new ColumnDescription("outcomedate", ValueType.DATE, "Outcome Date"));
+        cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
+        cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
+        
+        data.addColumns(cd);
+        
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplicationsForReport(user, filtering);
+        
+        for (ApplicationForm app : applications) {
 
-		// review report
-		cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER,
-				"Review Stages"));
-		cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER,
-				"Review Time (hours)"));
-		cd.add(new ColumnDescription("positiveReviewEndorsements",
-				ValueType.TEXT, "Positive Review Endorsements"));
-		cd.add(new ColumnDescription("negativeReviewEndorsements",
-				ValueType.TEXT, "Negative Review Endorsements"));
-		cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT,
-				"Average Review Rating"));
+            if (!app.isSubmitted() || app.getStatusWhenWithdrawn() == ApplicationFormStatus.UNSUBMITTED) {
+                continue;
+            }
+            
+            try {
+            	RegisteredUser applicant = app.getApplicant();
+                PersonalDetails personalDetails = app.getPersonalDetails();
+                String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
+                Program program = app.getProgram();
+                ProgrammeDetails programmeDetails = app.getProgrammeDetails();
+                ValidationComment validationComment = getLatestvalidationComment(app);
+                int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
+                int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);
+                int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);
+                int[] interviewEndorsements = getNumberOfPositiveAndNegativeInterviewEndorsements(app);
 
-		// interview report
-		cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER,
-				"Interview Stages"));
-		cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER,
-				"Interview Time (hours)"));
-		cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER,
-				"Interview Reports"));
-		cd.add(new ColumnDescription("positiveInterviewEndorsements",
-				ValueType.TEXT, "Positive Interview Endorsements"));
-		cd.add(new ColumnDescription("negativeInterviewEndorsements",
-				ValueType.TEXT, "Negative Interview Endorsements"));
-		cd.add(new ColumnDescription("averageInterviewRating", ValueType.TEXT,
-				"Average Interview Rating"));
+                int overallPositiveEndorsements = referenceEndorsements[0] + reviewEndorsements[0] + interviewEndorsements[0];
 
-		// approval report
-		cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER,
-				"Approval Time (hours)"));
-		cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER,
-				"Approval Stages"));
-		cd.add(new ColumnDescription("primarySupervisor", ValueType.TEXT,
-				"Primary Supervisor"));
-		cd.add(new ColumnDescription("secondarySupervisor", ValueType.TEXT,
-				"Secondary Supervisor"));
-		cd.add(new ColumnDescription("outcome", ValueType.TEXT, "Outcome"));
-		cd.add(new ColumnDescription("outcomedate", ValueType.DATE,
-				"Outcome Date"));
-		cd.add(new ColumnDescription("outcomeType", ValueType.TEXT,
-				"Outcome Type"));
-		cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT,
-				"Outcome Note"));
+                Date approveDate = getApproveDate(app);
+                boolean canSeeRating = contentAccessProvider.checkCanSeeExtendedReport(app, user);
 
-		data.addColumns(cd);
+                TableRow row = new TableRow();
 
-		List<ApplicationForm> applications = applicationsService
-				.getAllVisibleAndMatchedApplicationsForReport(user, filtering);
+                row.addCell(app.getApplicationNumber());
+                row.addCell(firstNames);
+                row.addCell(applicant.getLastName());
+                row.addCell(applicant.getEmail());
+                row.addCell(personalDetails.getFirstNationality() != null ? personalDetails.getFirstNationality().getName() : StringUtils.EMPTY);
+                row.addCell(personalDetails.getSecondNationality() != null ? personalDetails.getSecondNationality().getName() : StringUtils.EMPTY);
+                row.addCell(getDateValue(personalDetails.getDateOfBirth()));
+                row.addCell(personalDetails.getGender().getDisplayValue());
+                row.addCell(program.getCode());
+                row.addCell(program.getTitle());
+                row.addCell(getProjectTitle(app));
+                row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : StringUtils.EMPTY);
+                row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterest().getName())
+                        : StringUtils.EMPTY);
+                row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterestText()));
+                row.addCell(getSuggestedSupervisors(programmeDetails));
+                row.addCell(getAcademicYear(app));
+                row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
+                row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
 
-		for (ApplicationForm app : applications) {
+                // overall rating
+                row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
+                row.addCell(canSeeRating ? String.valueOf(overallPositiveEndorsements) : N_R);
 
-			if (!app.isSubmitted()
-					|| (app.getStatus().equals(ApplicationFormStatus.WITHDRAWN))
-					&& app.getPreviousStatus().equals(
-							ApplicationFormStatus.UNSUBMITTED)) {
-				continue;
-			}
+                row.addCell(app.getStatus().displayValue());
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
+                row.addCell(validationComment != null && canSeeRating ? validationComment.getHomeOrOverseas().getDisplayValue() : N_R);
+                row.addCell(validationComment != null && canSeeRating ? validationComment.getQualifiedForPhd().getDisplayValue() : N_R);
+                row.addCell(validationComment != null && canSeeRating ? validationComment.getEnglishCompentencyOk().getDisplayValue() : N_R);
 
-			try {
-				RegisteredUser applicant = app.getApplicant();
-				PersonalDetails personalDetails = app.getPersonalDetails();
-				String firstNames = Joiner
-						.on(" ")
-						.skipNulls()
-						.join(applicant.getFirstName(),
-								applicant.getFirstName2(),
-								applicant.getFirstName3());
-				Program program = app.getProgram();
-				ProgrammeDetails programmeDetails = app.getProgrammeDetails();
-				ValidationComment validationComment = getLatestvalidationComment(app);
-				int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
-				int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);
-				int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);
-				int[] interviewEndorsements = getNumberOfPositiveAndNegativeInterviewEndorsements(app);
+                // reference report
+                row.addCell(receivedAndDeclinedReferences[0]);
+                row.addCell(receivedAndDeclinedReferences[1]);
+                row.addCell(canSeeRating ? String.valueOf(referenceEndorsements[0]) : N_R);
+                row.addCell(canSeeRating ? String.valueOf(referenceEndorsements[1]) : N_R);
+                row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app)) : N_R);
 
-				int overallPositiveEndorsements = referenceEndorsements[0]
-						+ reviewEndorsements[0] + interviewEndorsements[0];
+                // review report
+                row.addCell(new NumberValue(app.getReviewRounds().size()));
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
+                row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
+                row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
+                row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
 
-				Date approveDate = getApproveDate(app);
-				boolean canSeeRating = contentAccessProvider
-						.checkCanSeeExtendedReport(app, user);
+                // interview report
+                row.addCell(new NumberValue(app.getInterviews().size()));
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
+                row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
+                row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[0]) : N_R);
+                row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[1]) : N_R);
+                row.addCell(canSeeRating ? printRating(getAverageRatingForAllInterviewRounds(app)) : N_R);
 
-				TableRow row = new TableRow();
+                // approval report
+                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
+                row.addCell(new NumberValue(app.getApprovalRounds().size()));
+                row.addCell(getPrintablePrimarySupervisor(app));
+                row.addCell(getPrintableSecondarySupervisor(app));
+                row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
+                row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
+                row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
+                row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);
 
-				row.addCell(app.getApplicationNumber());
-				row.addCell(firstNames);
-				row.addCell(applicant.getLastName());
-				row.addCell(applicant.getEmail());
-				row.addCell(personalDetails.getFirstNationality() != null ? personalDetails
-						.getFirstNationality().getName() : StringUtils.EMPTY);
-				row.addCell(personalDetails.getSecondNationality() != null ? personalDetails
-						.getSecondNationality().getName() : StringUtils.EMPTY);
-				row.addCell(getDateValue(personalDetails.getDateOfBirth()));
-				row.addCell(personalDetails.getGender().getDisplayValue());
-				row.addCell(program.getCode());
-				row.addCell(program.getTitle());
-				row.addCell(getProjectTitle(app));
-				row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails
-						.getStudyOption() : StringUtils.EMPTY);
-				row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils
-						.trimToEmpty(programmeDetails.getSourcesOfInterest()
-								.getName()) : StringUtils.EMPTY);
-				row.addCell(StringUtils.trimToEmpty(programmeDetails
-						.getSourcesOfInterestText()));
-				row.addCell(getSuggestedSupervisors(programmeDetails));
-				row.addCell(getAcademicYear(app));
-				row.addCell(app.getSubmittedDate() != null ? getDateValue(app
-						.getSubmittedDate()) : DateValue.getNullValue());
-				row.addCell(app.getLastUpdated() != null ? getDateValue(app
-						.getLastUpdated()) : DateValue.getNullValue());
+                try {
+                    data.addRow(row);
+                } catch (TypeMismatchException e) {
+                    throw new RuntimeException(e);
+                }
+            	
+            } catch (NullPointerException e) {
+            	logger.info("User tried to download spreadsheet report for corrupted application: " + app.getApplicationNumber() + ".");
+            	continue;
+            }
+        }
+    
+        return data;
+    }
 
-				// overall rating
-				row.addCell(canSeeRating ? printRating(app
-						.getAverageRatingFormatted()) : N_R);
-				row.addCell(canSeeRating ? String
-						.valueOf(overallPositiveEndorsements) : N_R);
+    private long getTimeSpentIn(ApplicationForm app, ApplicationFormStatus applicationStatus) {
+        List<Event> events = app.getEvents();
+        List<StateChangeEvent> stateEvents = Lists.newArrayList(Iterables.filter(events, StateChangeEvent.class));
+        Collections.sort(stateEvents);
 
-				row.addCell(app.getStatus().displayValue());
-				row.addCell(new NumberValue(getTimeSpentIn(app,
-						ApplicationFormStatus.VALIDATION)));
-				row.addCell(validationComment != null && canSeeRating ? validationComment
-						.getHomeOrOverseas().getDisplayValue() : N_R);
-				row.addCell(validationComment != null && canSeeRating ? validationComment
-						.getQualifiedForPhd().getDisplayValue() : N_R);
-				row.addCell(validationComment != null && canSeeRating ? validationComment
-						.getEnglishCompentencyOk().getDisplayValue() : N_R);
+        Date stageBegin = null;
+        long millisSum = 0;
 
-				// reference report
-				row.addCell(receivedAndDeclinedReferences[0]);
-				row.addCell(receivedAndDeclinedReferences[1]);
-				row.addCell(canSeeRating ? String
-						.valueOf(referenceEndorsements[0]) : N_R);
-				row.addCell(canSeeRating ? String
-						.valueOf(referenceEndorsements[1]) : N_R);
-				row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app))
-						: N_R);
+        for (StateChangeEvent event : stateEvents) {
+            if (stageBegin != null) {
+                Date stageEnd = event.getDate();
+                long millisDiff = stageEnd.getTime() - stageBegin.getTime(); // hours
+                millisSum += millisDiff;
+                stageBegin = null;
+            }
 
-				// review report
-				row.addCell(new NumberValue(app.getReviewRounds().size()));
-				row.addCell(new NumberValue(getTimeSpentIn(app,
-						ApplicationFormStatus.REVIEW)));
-				row.addCell(canSeeRating ? String
-						.valueOf(reviewEndorsements[0]) : N_R);
-				row.addCell(canSeeRating ? String
-						.valueOf(reviewEndorsements[1]) : N_R);
-				row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app))
-						: N_R);
+            if (event.getNewStatus() == applicationStatus) {
+                stageBegin = event.getDate();
+            }
+        }
 
-				// interview report
-				row.addCell(new NumberValue(app.getInterviews().size()));
-				row.addCell(new NumberValue(getTimeSpentIn(app,
-						ApplicationFormStatus.INTERVIEW)));
-				row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
-				row.addCell(canSeeRating ? String
-						.valueOf(interviewEndorsements[0]) : N_R);
-				row.addCell(canSeeRating ? String
-						.valueOf(interviewEndorsements[1]) : N_R);
-				row.addCell(canSeeRating ? printRating(getAverageRatingForAllInterviewRounds(app))
-						: N_R);
+        if (stageBegin != null) {
+            Date stageEnd = new Date();
+            long millisDiff = stageEnd.getTime() - stageBegin.getTime();
+            millisSum += millisDiff;
+            stageBegin = null;
+        }
 
-				// approval report
-				row.addCell(new NumberValue(getTimeSpentIn(app,
-						ApplicationFormStatus.APPROVAL)));
-				row.addCell(new NumberValue(app.getApprovalRounds().size()));
-				row.addCell(getPrintablePrimarySupervisor(app));
-				row.addCell(getPrintableSecondarySupervisor(app));
-				row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved"
-						: "Not approved");
-				row.addCell(approveDate != null ? getDateValue(approveDate)
-						: DateValue.getNullValue());
-				row.addCell(approveDate != null ? getConditionalType(app)
-						: StringUtils.EMPTY);
-				row.addCell(approveDate != null ? getOfferConditions(app)
-						: StringUtils.EMPTY);
+        return millisSum / 3600000; // convert to hours
+    }
 
-				try {
-					data.addRow(row);
-				} catch (TypeMismatchException e) {
-					throw new RuntimeException(e);
-				}
+    private ValidationComment getLatestvalidationComment(ApplicationForm app) {
+        List<Comment> comments = app.getApplicationComments();
+        List<ValidationComment> validationComments = Lists.newArrayList(Iterables.filter(comments, ValidationComment.class));
+        validationComments = Ordering.natural().reverse().sortedCopy(validationComments);
+        return Iterables.getFirst(validationComments, null);
 
-			} catch (NullPointerException e) {
-				logger.info("User tried to download spreadsheet report for corrupted application: "
-						+ app.getApplicationNumber() + ".");
-				continue;
-			}
-		}
+    }
 
-		return data;
-	}
+    private String getSuggestedSupervisors(ProgrammeDetails programmeDetails) {
+        List<SuggestedSupervisor> supervisors = programmeDetails.getSuggestedSupervisors();
+        String supervisorsString = Joiner.on(", ").join(Iterables.transform(supervisors, new Function<SuggestedSupervisor, String>() {
+            public String apply(SuggestedSupervisor supervisor) {
+                return supervisor.getFirstname() + " " + supervisor.getLastname();
+            }
+        }));
+        return supervisorsString;
+    }
 
-	private long getTimeSpentIn(ApplicationForm app,
-			ApplicationFormStatus applicationStatus) {
-		List<Event> events = app.getEvents();
-		List<StateChangeEvent> stateEvents = Lists.newArrayList(Iterables
-				.filter(events, StateChangeEvent.class));
-		Collections.sort(stateEvents);
+    private DateValue getDateValue(Date date) {
+        GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        calendar.setTime(date);
+        return new DateValue(calendar);
+    }
 
-		Date stageBegin = null;
-		long millisSum = 0;
+    private int[] getNumberOfReceivedAndDeclinedReferences(ApplicationForm app) {
+        int[] reicevedAndDeclinedCount = new int[2];
+        for (Referee referee : app.getReferees()) {
+            if (referee.hasResponded() && referee.getReference() != null) {
+                reicevedAndDeclinedCount[0]++;
+            } else if (referee.isDeclined()) {
+                reicevedAndDeclinedCount[1]++;
+            }
+        }
+        return reicevedAndDeclinedCount;
+    }
 
-		for (StateChangeEvent event : stateEvents) {
-			if (stageBegin != null) {
-				Date stageEnd = event.getDate();
-				long millisDiff = stageEnd.getTime() - stageBegin.getTime(); // hours
-				millisSum += millisDiff;
-				stageBegin = null;
-			}
+    private int[] getNumberOfPositiveAndNegativeReferenceEndorsements(ApplicationForm app) {
+        int[] endorsements = new int[2];
+        for (Referee referee : app.getReferees()) {
+            if (referee.hasResponded() && referee.getReference() != null) {
+                ReferenceComment reference = referee.getReference();
+                if (BooleanUtils.isTrue(reference.getSuitableForProgramme())) {
+                    endorsements[0]++;
+                } else if (BooleanUtils.isFalse(reference.getSuitableForProgramme())) {
+                    endorsements[1]++;
+                }
 
-			if (event.getNewStatus() == applicationStatus) {
-				stageBegin = event.getDate();
-			}
-		}
+                if (BooleanUtils.isTrue(reference.getSuitableForUCL())) {
+                    endorsements[0]++;
+                } else if (BooleanUtils.isFalse(reference.getSuitableForUCL())) {
+                    endorsements[1]++;
+                }
+            }
+        }
+        return endorsements;
+    }
 
-		if (stageBegin != null) {
-			Date stageEnd = new Date();
-			long millisDiff = stageEnd.getTime() - stageBegin.getTime();
-			millisSum += millisDiff;
-			stageBegin = null;
-		}
+    private int[] getNumberOfPositiveAndNegativeReviewEndorsements(ApplicationForm app) {
+        int[] endorsements = new int[2];
+        ReviewRound review = app.getLatestReviewRound();
+        if (review == null) {
+            return endorsements;
+        }
+        for (Reviewer reviewer : review.getReviewers()) {
+            if (reviewer.getReview() != null) {
+                ReviewComment comment = reviewer.getReview();
+                Boolean[] answers = new Boolean[4];
+                answers[0] = comment.getSuitableCandidateForProgramme();
+                answers[1] = comment.getSuitableCandidateForUcl();
+                answers[2] = comment.getWillingToInterview();
+                answers[3] = comment.getWillingToWorkWithApplicant();
 
-		return millisSum / 3600000; // convert to hours
-	}
+                for (Boolean answer : answers) {
+                    if (BooleanUtils.isTrue(answer)) {
+                        endorsements[0]++;
+                    } else if (BooleanUtils.isFalse(answer)) {
+                        endorsements[1]++;
+                    }
+                }
+            }
+        }
+        return endorsements;
+    }
 
-	private ValidationComment getLatestvalidationComment(ApplicationForm app) {
-		List<Comment> comments = app.getApplicationComments();
-		List<ValidationComment> validationComments = Lists
-				.newArrayList(Iterables.filter(comments,
-						ValidationComment.class));
-		validationComments = Ordering.natural().reverse()
-				.sortedCopy(validationComments);
-		return Iterables.getFirst(validationComments, null);
+    private int getNumberOfInterviewReports(ApplicationForm app) {
+        Interview interview = app.getLatestInterview();
+        if (interview == null) {
+            return 0;
+        }
+        int count = 0;
+        for (Interviewer interviewer : interview.getInterviewers()) {
+            if (interviewer.getInterviewComment() != null) {
+                count++;
+            }
+        }
+        return count;
+    }
 
-	}
+    private int[] getNumberOfPositiveAndNegativeInterviewEndorsements(ApplicationForm app) {
+        int[] endorsements = new int[2];
+        Interview interview = app.getLatestInterview();
+        if (interview == null) {
+            return endorsements;
+        }
+        for (Interviewer interviewer : interview.getInterviewers()) {
+            if (interviewer.getInterviewComment() != null) {
+                InterviewComment comment = interviewer.getInterviewComment();
+                if (BooleanUtils.isTrue(comment.getSuitableCandidateForProgramme())) {
+                    endorsements[0]++;
+                } else if (BooleanUtils.isFalse(comment.getSuitableCandidateForProgramme())) {
+                    endorsements[1]++;
+                }
 
-	private String getSuggestedSupervisors(ProgrammeDetails programmeDetails) {
-		List<SuggestedSupervisor> supervisors = programmeDetails
-				.getSuggestedSupervisors();
-		String supervisorsString = Joiner.on(", ").join(
-				Iterables.transform(supervisors,
-						new Function<SuggestedSupervisor, String>() {
-							public String apply(SuggestedSupervisor supervisor) {
-								return supervisor.getFirstname() + " "
-										+ supervisor.getLastname();
-							}
-						}));
-		return supervisorsString;
-	}
+                if (BooleanUtils.isTrue(comment.getSuitableCandidateForUcl())) {
+                    endorsements[0]++;
+                } else if (BooleanUtils.isFalse(comment.getSuitableCandidateForUcl())) {
+                    endorsements[1]++;
+                }
+            }
+        }
+        return endorsements;
+    }
 
-	private DateValue getDateValue(Date date) {
-		GregorianCalendar calendar = new GregorianCalendar(
-				TimeZone.getTimeZone("GMT"));
-		calendar.setTime(date);
-		return new DateValue(calendar);
-	}
+    private String getPrintablePrimarySupervisor(ApplicationForm app) {
+        ApprovalRound approvalRound = app.getLatestApprovalRound();
+        if (approvalRound != null) {
+            Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
+            if (primarySupervisor != null) {
+                return primarySupervisor.getUser().getDisplayName();
+            }
+        }
+        return StringUtils.EMPTY;
+    }
 
-	private int[] getNumberOfReceivedAndDeclinedReferences(ApplicationForm app) {
-		int[] reicevedAndDeclinedCount = new int[2];
-		for (Referee referee : app.getReferees()) {
-			if (referee.hasResponded() && referee.getReference() != null) {
-				reicevedAndDeclinedCount[0]++;
-			} else if (referee.isDeclined()) {
-				reicevedAndDeclinedCount[1]++;
-			}
-		}
-		return reicevedAndDeclinedCount;
-	}
+    private String getPrintableSecondarySupervisor(ApplicationForm app) {
+        ApprovalRound approvalRound = app.getLatestApprovalRound();
+        if (approvalRound != null) {
+            Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
+            if (secondarySupervisor != null) {
+                return secondarySupervisor.getUser().getDisplayName();
+            }
+        }
+        return StringUtils.EMPTY;
+    }
 
-	private int[] getNumberOfPositiveAndNegativeReferenceEndorsements(
-			ApplicationForm app) {
-		int[] endorsements = new int[2];
-		for (Referee referee : app.getReferees()) {
-			if (referee.hasResponded() && referee.getReference() != null) {
-				ReferenceComment reference = referee.getReference();
-				if (BooleanUtils.isTrue(reference.getSuitableForProgramme())) {
-					endorsements[0]++;
-				} else if (BooleanUtils.isFalse(reference
-						.getSuitableForProgramme())) {
-					endorsements[1]++;
-				}
+    private Date getApproveDate(ApplicationForm app) {
+        List<Event> events = app.getEvents();
+        for (Event event : events) {
+            if (event instanceof StateChangeEvent) {
+                StateChangeEvent stateChangeEvent = (StateChangeEvent) event;
+                if (stateChangeEvent.getNewStatus() == ApplicationFormStatus.APPROVED) {
+                    return stateChangeEvent.getDate();
+                }
+            }
+        }
+        return null;
+    }
 
-				if (BooleanUtils.isTrue(reference.getSuitableForUCL())) {
-					endorsements[0]++;
-				} else if (BooleanUtils.isFalse(reference.getSuitableForUCL())) {
-					endorsements[1]++;
-				}
-			}
-		}
-		return endorsements;
-	}
+    private String getConditionalType(ApplicationForm app) {
+        ApprovalRound approvalRound = app.getLatestApprovalRound();
+        if (approvalRound != null) {
+            if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
+                return "Conditional";
+            } else if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
+                return "Unconditional";
+            }
+        }
+        return StringUtils.EMPTY;
+    }
 
-	private int[] getNumberOfPositiveAndNegativeReviewEndorsements(
-			ApplicationForm app) {
-		int[] endorsements = new int[2];
-		ReviewRound review = app.getLatestReviewRound();
-		if (review == null) {
-			return endorsements;
-		}
-		for (Reviewer reviewer : review.getReviewers()) {
-			if (reviewer.getReview() != null) {
-				ReviewComment comment = reviewer.getReview();
-				Boolean[] answers = new Boolean[4];
-				answers[0] = comment.getSuitableCandidateForProgramme();
-				answers[1] = comment.getSuitableCandidateForUcl();
-				answers[2] = comment.getWillingToInterview();
-				answers[3] = comment.getWillingToWorkWithApplicant();
+    private String getOfferConditions(ApplicationForm app) {
+        ApprovalRound approvalRound = app.getLatestApprovalRound();
+        if (approvalRound != null) {
+            if (approvalRound.getRecommendedConditions() != null) {
+                return approvalRound.getRecommendedConditions();
+            }
+        }
+        return StringUtils.EMPTY;
+    }
 
-				for (Boolean answer : answers) {
-					if (BooleanUtils.isTrue(answer)) {
-						endorsements[0]++;
-					} else if (BooleanUtils.isFalse(answer)) {
-						endorsements[1]++;
-					}
-				}
-			}
-		}
-		return endorsements;
-	}
+    private String getProjectTitle(ApplicationForm app) {
+        ApprovalRound approvalRound = app.getLatestApprovalRound();
+        if (approvalRound != null) {
+            if (approvalRound.getProjectTitle() != null) {
+                return approvalRound.getProjectTitle();
+            }
+        }
+        return StringUtils.EMPTY;
+    }
 
-	private int getNumberOfInterviewReports(ApplicationForm app) {
-		Interview interview = app.getLatestInterview();
-		if (interview == null) {
-			return 0;
-		}
-		int count = 0;
-		for (Interviewer interviewer : interview.getInterviewers()) {
-			if (interviewer.getInterviewComment() != null) {
-				count++;
-			}
-		}
-		return count;
-	}
+    private String getAcademicYear(ApplicationForm app) {
+        Date startDate = app.getProgrammeDetails().getStartDate();
+        if (startDate != null) {
+            for (ProgramInstance instance : app.getProgram().getInstances()) {
+                if (instance.isDateWithinBounds(startDate)) {
+                    return instance.getAcademic_year();
+                }
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+    
+    private String getAverageRatingForAllInterviewRounds(ApplicationForm app) {
+        List<Interview> interviews = app.getInterviews();
+        if (interviews.isEmpty()) {
+            return null;
+        }
+        BigDecimal ratingTotal = new BigDecimal(0);
+        for (Interview interview : interviews) {
+            BigDecimal averageRating = interview.getAverageRating();
+            if (averageRating != null) {
+                ratingTotal = ratingTotal.add(interview.getAverageRating());
+            }
+        }
+        return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / interviews.size()));
+    }
 
-	private int[] getNumberOfPositiveAndNegativeInterviewEndorsements(
-			ApplicationForm app) {
-		int[] endorsements = new int[2];
-		Interview interview = app.getLatestInterview();
-		if (interview == null) {
-			return endorsements;
-		}
-		for (Interviewer interviewer : interview.getInterviewers()) {
-			if (interviewer.getInterviewComment() != null) {
-				InterviewComment comment = interviewer.getInterviewComment();
-				if (BooleanUtils.isTrue(comment
-						.getSuitableCandidateForProgramme())) {
-					endorsements[0]++;
-				} else if (BooleanUtils.isFalse(comment
-						.getSuitableCandidateForProgramme())) {
-					endorsements[1]++;
-				}
+    private String getAverageReferenceRating(ApplicationForm app) {
+        BigDecimal referenceRating = applicantRatingService.getAverageReferenceRating(app);
+        return MathUtils.formatRating(referenceRating);
+    }
+    
+    private String getAverageRatingForAllReviewRounds(ApplicationForm app) {
+        List<ReviewRound> reviewRounds = app.getReviewRounds();
+        if (reviewRounds.isEmpty()) {
+            return null;
+        }
+        BigDecimal ratingTotal = new BigDecimal(0);
+        for (ReviewRound reviewRound : reviewRounds) {
+            BigDecimal averageRating = reviewRound.getAverageRating();
+            if (averageRating != null) {
+                ratingTotal = ratingTotal.add(averageRating);
+            }
+        }
+        return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / reviewRounds.size()));
+    }
 
-				if (BooleanUtils.isTrue(comment.getSuitableCandidateForUcl())) {
-					endorsements[0]++;
-				} else if (BooleanUtils.isFalse(comment
-						.getSuitableCandidateForUcl())) {
-					endorsements[1]++;
-				}
-			}
-		}
-		return endorsements;
-	}
-
-	private String getPrintablePrimarySupervisor(ApplicationForm app) {
-		ApprovalRound approvalRound = app.getLatestApprovalRound();
-		if (approvalRound != null) {
-			Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
-			if (primarySupervisor != null) {
-				return primarySupervisor.getUser().getDisplayName();
-			}
-		}
-		return StringUtils.EMPTY;
-	}
-
-	private String getPrintableSecondarySupervisor(ApplicationForm app) {
-		ApprovalRound approvalRound = app.getLatestApprovalRound();
-		if (approvalRound != null) {
-			Supervisor secondarySupervisor = approvalRound
-					.getSecondarySupervisor();
-			if (secondarySupervisor != null) {
-				return secondarySupervisor.getUser().getDisplayName();
-			}
-		}
-		return StringUtils.EMPTY;
-	}
-
-	private Date getApproveDate(ApplicationForm app) {
-		List<Event> events = app.getEvents();
-		for (Event event : events) {
-			if (event instanceof StateChangeEvent) {
-				StateChangeEvent stateChangeEvent = (StateChangeEvent) event;
-				if (stateChangeEvent.getNewStatus() == ApplicationFormStatus.APPROVED) {
-					return stateChangeEvent.getDate();
-				}
-			}
-		}
-		return null;
-	}
-
-	private String getConditionalType(ApplicationForm app) {
-		ApprovalRound approvalRound = app.getLatestApprovalRound();
-		if (approvalRound != null) {
-			if (BooleanUtils.isTrue(approvalRound
-					.getRecommendedConditionsAvailable())) {
-				return "Conditional";
-			} else if (BooleanUtils.isTrue(approvalRound
-					.getRecommendedConditionsAvailable())) {
-				return "Unconditional";
-			}
-		}
-		return StringUtils.EMPTY;
-	}
-
-	private String getOfferConditions(ApplicationForm app) {
-		ApprovalRound approvalRound = app.getLatestApprovalRound();
-		if (approvalRound != null) {
-			if (approvalRound.getRecommendedConditions() != null) {
-				return approvalRound.getRecommendedConditions();
-			}
-		}
-		return StringUtils.EMPTY;
-	}
-
-	private String getProjectTitle(ApplicationForm app) {
-		ApprovalRound approvalRound = app.getLatestApprovalRound();
-		if (approvalRound != null) {
-			if (approvalRound.getProjectTitle() != null) {
-				return approvalRound.getProjectTitle();
-			}
-		}
-		return StringUtils.EMPTY;
-	}
-
-	private String getAcademicYear(ApplicationForm app) {
-		Date startDate = app.getProgrammeDetails().getStartDate();
-		if (startDate != null) {
-			for (ProgramInstance instance : app.getProgram().getInstances()) {
-				if (instance.isDateWithinBounds(startDate)) {
-					return instance.getAcademic_year();
-				}
-			}
-		}
-		return StringUtils.EMPTY;
-	}
-
-	private String getAverageRatingForAllInterviewRounds(ApplicationForm app) {
-		List<Interview> interviews = app.getInterviews();
-		if (interviews.isEmpty()) {
-			return null;
-		}
-		BigDecimal ratingTotal = new BigDecimal(0);
-		for (Interview interview : interviews) {
-			BigDecimal averageRating = interview.getAverageRating();
-			if (averageRating != null) {
-				ratingTotal = ratingTotal.add(interview.getAverageRating());
-			}
-		}
-		return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue()
-				/ interviews.size()));
-	}
-
-	private String getAverageReferenceRating(ApplicationForm app) {
-		BigDecimal referenceRating = applicantRatingService
-				.getAverageReferenceRating(app);
-		return MathUtils.formatRating(referenceRating);
-	}
-
-	private String getAverageRatingForAllReviewRounds(ApplicationForm app) {
-		List<ReviewRound> reviewRounds = app.getReviewRounds();
-		if (reviewRounds.isEmpty()) {
-			return null;
-		}
-		BigDecimal ratingTotal = new BigDecimal(0);
-		for (ReviewRound reviewRound : reviewRounds) {
-			BigDecimal averageRating = reviewRound.getAverageRating();
-			if (averageRating != null) {
-				ratingTotal = ratingTotal.add(averageRating);
-			}
-		}
-		return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue()
-				/ reviewRounds.size()));
-	}
-
-	private String printRating(String rating) {
-		return rating == null ? N_R : rating;
-	}
-
+    private String printRating(String rating) {
+        return rating == null ? N_R : rating;
+    }
+    
 }

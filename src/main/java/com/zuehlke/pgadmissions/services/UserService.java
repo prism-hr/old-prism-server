@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -33,8 +32,8 @@ public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    protected final RoleDAO roleDAO;
     private final UserDAO userDAO;
+    private final RoleDAO roleDAO;
     private final ApplicationsFilteringDAO filteringDAO;
     private final EncryptionUtils encryptionUtils;
     private final MailSendingService mailService;
@@ -385,14 +384,6 @@ public class UserService {
     
     public Boolean isNewlyCreatedUser (RegisteredUser registeredUser) {
     	return registeredUser.getPassword() == null;
-    }
-    
-    public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
-    	return userDAO.findUsersInterestedInApplication(applicationForm);
-    }
-    
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
-    	return userDAO.findUsersPotentiallyInterestedInApplication(applicationForm);
     }
     
 }

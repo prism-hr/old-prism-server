@@ -1,40 +1,56 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.zuehlke.pgadmissions.domain.enums.CommentPropertyType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
+@Entity(name = "VALIDATION_COMMENT")
 public class ValidationComment extends StateChangeComment {
 
     private static final long serialVersionUID = 1545465975465291005L;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "qualified_for_phd")
+    private ValidationQuestionOptions qualifiedForPhd;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "english_compentency_ok")
+    private ValidationQuestionOptions englishCompentencyOk;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "home_or_overseas")
+    private HomeOrOverseas homeOrOverseas;
+
     public ValidationQuestionOptions getQualifiedForPhd() {
-    	return ValidationQuestionOptions.valueOf(super.getCommentProperty(CommentPropertyType.ACADMEMICALLYQUALIFIED).getValueText());
+        return qualifiedForPhd;
     }
-    
+
     public void setQualifiedForPhd(ValidationQuestionOptions qualifiedForPhd) {
-    	super.setCommentProperty(CommentPropertyType.ACADMEMICALLYQUALIFIED, qualifiedForPhd.toString());
+        this.qualifiedForPhd = qualifiedForPhd;
     }
-    
+
     public ValidationQuestionOptions getEnglishCompentencyOk() {
-    	return ValidationQuestionOptions.valueOf(super.getCommentProperty(CommentPropertyType.LINGUISTICALLYQUALIFIED).getValueText());
+        return englishCompentencyOk;
     }
-    
+
     public void setEnglishCompentencyOk(ValidationQuestionOptions englishCompentencyOk) {
-    	super.setCommentProperty(CommentPropertyType.LINGUISTICALLYQUALIFIED, englishCompentencyOk.toString());
+        this.englishCompentencyOk = englishCompentencyOk;
     }
-    
+
     public HomeOrOverseas getHomeOrOverseas() {
-    	return HomeOrOverseas.valueOf(super.getCommentProperty(CommentPropertyType.FEESTATUS).getValueText());
+        return homeOrOverseas;
     }
-    
+
     public void setHomeOrOverseas(HomeOrOverseas homeOrOverseas) {
-    	super.setCommentProperty(CommentPropertyType.FEESTATUS, homeOrOverseas.toString());
+        this.homeOrOverseas = homeOrOverseas;
     }
 
     public boolean isAtLeastOneAnswerUnsure() {
-        return getHomeOrOverseas() == HomeOrOverseas.UNSURE || getQualifiedForPhd() == ValidationQuestionOptions.UNSURE 
-        		|| getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
+        return getHomeOrOverseas() == HomeOrOverseas.UNSURE || getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
+                || getEnglishCompentencyOk() == ValidationQuestionOptions.UNSURE;
     }
-
 }

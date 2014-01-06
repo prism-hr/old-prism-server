@@ -75,10 +75,6 @@ public class ApprovalRound implements Serializable {
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
-    
-    @Column(name = "completed_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date completedDate;
 
     @Column(name = "project_accepting_applications")
     private Boolean projectAcceptingApplications;
@@ -115,15 +111,7 @@ public class ApprovalRound implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public Date getCompletedDate() {
-		return completedDate;
-	}
-
-	public void setCompletedDate(Date completedDate) {
-		this.completedDate = completedDate;
-	}
-
-	public List<Supervisor> getSupervisors() {
+    public List<Supervisor> getSupervisors() {
         return supervisors;
     }
 

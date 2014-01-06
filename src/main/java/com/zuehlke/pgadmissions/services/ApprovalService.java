@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -133,6 +134,7 @@ public class ApprovalService {
     public void moveApplicationToApproval(ApplicationForm form, ApprovalRound approvalRound, RegisteredUser initiator) {
         checkApplicationStatus(form);
         checkSendToPorticoStatus(form, approvalRound);
+        copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
         approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
@@ -155,10 +157,12 @@ public class ApprovalService {
         approvalComment.setComment(StringUtils.EMPTY);
         approvalComment.setType(CommentType.APPROVAL);
         approvalComment.setProjectAbstract(approvalRound.getProjectAbstract());
+        approvalComment.setProjectDescriptionAvailable(approvalRound.getProjectDescriptionAvailable());
         approvalComment.setProjectTitle(approvalRound.getProjectTitle());
         approvalComment.setRecommendedConditions(approvalRound.getRecommendedConditions());
         approvalComment.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
         approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
+        approvalComment.setSupervisor(approvalRound.getPrimarySupervisor());
         approvalComment.setSecondarySupervisor(approvalRound.getSecondarySupervisor());
         approvalComment.setUser(mover);
 
@@ -168,6 +172,21 @@ public class ApprovalService {
         }
         commentDAO.save(approvalComment);
         applicationFormUserRoleService.movedToApprovalStage(approvalRound, mover);
+    }
+
+    private void copyLastNotifiedForRepeatSupervisors(ApplicationForm form, ApprovalRound approvalRound) {
+        ApprovalRound latestApprovalRound = form.getLatestApprovalRound();
+        if (latestApprovalRound != null) {
+            List<Supervisor> supervisors = latestApprovalRound.getSupervisors();
+            for (Supervisor supervisor : supervisors) {
+                List<Supervisor> newSupervisors = approvalRound.getSupervisors();
+                for (Supervisor newSupervisor : newSupervisors) {
+                    if (supervisor.getUser().getId().equals(newSupervisor.getUser().getId())) {
+                        newSupervisor.setLastNotified(supervisor.getLastNotified());
+                    }
+                }
+            }
+        }
     }
 
     private void checkApplicationStatus(ApplicationForm form) {

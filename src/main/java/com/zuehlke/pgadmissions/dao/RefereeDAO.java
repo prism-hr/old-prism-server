@@ -54,8 +54,11 @@ public class RefereeDAO {
         ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class)
                 .add(Restrictions.eq("reminderType", ReminderType.REFERENCE)).uniqueResult();
         Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-        List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
+        List<Referee> referees = (List<Referee>) sessionFactory
+                .getCurrentSession()
+                .createCriteria(Referee.class)
                 .createAlias("application", "application")
+                .add(Restrictions.eq("declined", false))
                 .add(Restrictions.isNotNull("user"))
                 .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[] { ApplicationFormStatus.WITHDRAWN,
                         ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED })))
@@ -74,9 +77,8 @@ public class RefereeDAO {
     }
 
     public List<Referee> getRefereesWhoDidntProvideReferenceYet(ApplicationForm form) {
-        List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
-                .add(Restrictions.eq("application", form))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class).add(Restrictions.eq("declined", false))
+                .add(Restrictions.eq("application", form)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
         CollectionUtils.filter(referees, new Predicate() {
             @Override
             public boolean evaluate(final Object object) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
@@ -40,22 +41,33 @@ public class CommentDAO {
     }
 
     public List<Comment> getAllComments() {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class)
-        		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
+
+    public List<ReviewComment> getReviewCommentsDueNotification() {
+        return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class).add(Restrictions.eq("type", CommentType.REVIEW))
+                .add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", false)))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
+
+    public List<InterviewComment> getInterviewCommentsDueNotification() {
+        return (List<InterviewComment>) sessionFactory.getCurrentSession().createCriteria(InterviewComment.class)
+                .add(Restrictions.eq("type", CommentType.INTERVIEW))
+                .add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", false)))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public List<ReviewComment> getReviewCommentsForReviewerAndApplication(Reviewer reviewer, ApplicationForm applicationForm) {
-        return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class)
-                .add(Restrictions.eq("reviewer", reviewer))
-                .add(Restrictions.eq("application", applicationForm)).list();
+        return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class).add(Restrictions.eq("type", CommentType.REVIEW))
+                .add(Restrictions.eq("reviewer", reviewer)).add(Restrictions.eq("application", applicationForm)).list();
     }
 
     public ValidationComment getValidationCommentForApplication(ApplicationForm applicationForm) {
-        return (ValidationComment) sessionFactory.getCurrentSession().createCriteria(ValidationComment.class)
-                .add(Restrictions.eq("type", CommentType.VALIDATION))
-                .add(Restrictions.eq("application", applicationForm))
+        return (ValidationComment) sessionFactory.getCurrentSession().createCriteria(ValidationComment.class) //
+                .add(Restrictions.eq("type", CommentType.VALIDATION)) //
+                .add(Restrictions.eq("application", applicationForm)) //
                 .addOrder(Order.desc("date"))
-                .setMaxResults(1).uniqueResult();
+                .setMaxResults(1)
+                .uniqueResult();
     }
-    
 }

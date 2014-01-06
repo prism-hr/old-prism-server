@@ -5,5 +5,4 @@ public interface CodeObject {
     String getStringCode();
 	
 	String getName();
-	
 }

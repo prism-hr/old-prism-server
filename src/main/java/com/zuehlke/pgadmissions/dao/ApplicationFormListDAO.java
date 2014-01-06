@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
@@ -149,7 +150,7 @@ public class ApplicationFormListDAO {
                                     .add(Restrictions.like("program.code", StringUtils.lowerCase(searchTerm), MatchMode.ANYWHERE));
                             break;
                         case APPLICATION_STATUS:
-                        	criterion = Restrictions.eq("applicationForm.status", StringUtils.upperCase(searchTerm));
+                        	criterion = Restrictions.eq("applicationForm.status", ApplicationFormStatus.convert(searchTerm));
                             break;
                         case PROJECT_TITLE:
                         	criterion = Restrictions.disjunction()
